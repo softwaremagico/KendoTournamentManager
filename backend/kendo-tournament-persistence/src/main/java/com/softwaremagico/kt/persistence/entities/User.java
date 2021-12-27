@@ -1,138 +1,165 @@
 package com.softwaremagico.kt.persistence.entities;
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateCryptoConverter;
+/*
+ * #%L
+ * KendoTournamentGenerator
+ * %%
+ * Copyright (C) 2008 - 2012 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero.
+ * Jorge Hortelano Otero <softwaremagico@gmail.com>
+ * C/Quart 89, 3. Valencia CP:46008 (Spain).
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
-import org.hibernate.annotations.Cache;
+import com.softwaremagico.kt.utils.NameUtils;
+import com.softwaremagico.kt.utils.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.text.Collator;
+import java.util.Locale;
 
+/**
+ * A registered person is any person that is in a tournament. Can be a
+ * competitor, referee, public, etc.
+ */
 @Entity
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "users")
-public class User {
-    public static final int MAX_UNIQUE_COLUMN_LENGTH = 190;
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Table(name = "user")
+public class User implements Comparable<User> {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "id_card_number", length = MAX_UNIQUE_COLUMN_LENGTH)
+    @Column(name = "id_card")
     @Convert(converter = StringCryptoConverter.class)
-    private String idCardNumber;
+    private String idCard;
 
-    @Column(length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
+    @Column(name = "name")
     @Convert(converter = StringCryptoConverter.class)
-    private String firstname;
+    private String name = "";
 
-    @Column(length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
+    @Column(name = "lastname")
     @Convert(converter = StringCryptoConverter.class)
-    private String lastname;
+    private String lastname = "";
 
-    @Column(length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
-    private String email;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "club")
+    private Club club;
 
-    @Column(nullable = false)
-    @Convert(converter = LocalDateCryptoConverter.class)
-    private LocalDate birthdate;
+    public User() {
 
-    @Column(name = "phone_number", length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
-    private String phoneNumber;
+    }
 
-    @Column(length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
-    private String address;
 
-    @Column(name = "postal_code", length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
-    private String postalCode;
-
-    @Column(length = MAX_UNIQUE_COLUMN_LENGTH, nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
-    private String city;
+    public User(String idCard, String name, String lastname) {
+        setName(name);
+        setLastname(lastname);
+        setIdCard(idCard);
+    }
 
     public Integer getId() {
         return id;
     }
 
-    public String getIdCardNumber() {
-        return idCardNumber;
+    public final void setIdCard(String value) {
+        idCard = value.replaceAll("-", "").replaceAll(" ", "").trim().toUpperCase();
     }
 
-    public void setIdCardNumber(String idCardNumber) {
-        this.idCardNumber = idCardNumber;
+    public String getIdCard() {
+        return idCard;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public boolean isValid() {
+        return getName().length() > 0 && getIdCard().length() > 0;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    protected final void setName(String value) {
+        name = StringUtils.setCase(value);
+    }
+
+
+    protected final void setLastname(String value) {
+        lastname = StringUtils.setCase(value);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getLastname() {
         return lastname;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+
+    public void setClub(Club club) {
+        this.club = club;
     }
 
-    public String getEmail() {
-        return email;
+    public Club getClub() {
+        return club;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof User)) {
+            return false;
+        }
+        final User otherParticipant = (User) object;
+        return this.idCard.equals(otherParticipant.idCard);
     }
 
-    public LocalDate getBirthdate() {
-        return birthdate;
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.idCard != null ? this.idCard.hashCode() : 0);
+        return hash;
     }
 
-    public void setBirthdate(LocalDate birthdate) {
-        this.birthdate = birthdate;
-    }
+    /**
+     * Compare participants avoiding accent problems.
+     *
+     * @param otherParticipant
+     * @return
+     */
+    @Override
+    public int compareTo(User otherParticipant) {
+        final String string1 = this.lastname + " " + this.name;
+        final String string2 = otherParticipant.lastname + " " + otherParticipant.name;
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+        // Ignore accents
+        final Collator collator = Collator.getInstance(new Locale("es"));
+        collator.setStrength(Collator.SECONDARY);
+        collator.setDecomposition(Collator.FULL_DECOMPOSITION);
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+        return collator.compare(string1, string2);
     }
 
     @Override
     public String toString() {
-        return "User{" + "email='" + email + "'}";
+        return NameUtils.getLastnameName(getLastname(), getName());
     }
 }
