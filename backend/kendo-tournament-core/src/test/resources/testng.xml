@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="1" verbose="1" name="KendoTournament">
+    <test name="KendoTournament" enabled="true" preserve-order="true">
+        <groups>
+            <run>
+                <!***REMOVED***<include name="" /> -->
+            </run>
+        </groups>
+        <classes>
+            <!***REMOVED***<class name="com.softwaremagico."/> -->
+        </classes>
+    </test>
+</suite>
