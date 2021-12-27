@@ -20,7 +20,7 @@
     <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.softwaremagico.kt.logger.RestServerLogger" additivity="false" level="INFO">
+    <logger name="com.softwaremagico.kt.logger.RestServerLogger" additivity="false" level="NONE">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.softwaremagico.kt.logger.RestServerExceptionLogger" additivity="false" level="INFO">
