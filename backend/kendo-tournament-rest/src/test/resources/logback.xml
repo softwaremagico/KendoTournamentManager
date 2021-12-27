@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <!***REMOVED***Stop output INFO at start -->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5p %d{yyyy-MM-dd HH:mm:ss.SSS 'GMT'Z} %c{1} [%t] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!***REMOVED***Custom ones -->
+    <logger name="com.softwaremagico.kt.logger.EncryptorLogger" additivity="false" level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.softwaremagico.kt.logger.KendoTournamentLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.softwaremagico.kt.logger.RestServerLogger" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.softwaremagico.kt.logger.RestServerExceptionLogger" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+
+    <!***REMOVED***Default ones -->
+    <logger name="org.springframework" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.springframework.context.support.PostProcessorRegistrationDelegate" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" additivity="false" level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" additivity="false" level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <root level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
