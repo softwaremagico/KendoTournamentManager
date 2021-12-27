@@ -1,6 +1,5 @@
 package com.softwaremagico.kt.security;
 
-import com.softwaremagico.kt.persistence.entities.ImageType;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
     @Test
     public void checkForbiddenRestService() throws Exception {
         MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("type", ImageType.ID_CARD_FRONT.toString());
         requestParams.add("user", "1");
 
         mockMvc.perform(get("/files/users")
@@ -61,7 +59,6 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
     @Test
     public void checkForbiddenRestServiceWithAuth() throws Exception {
         MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("type", ImageType.ID_CARD_FRONT.toString());
         requestParams.add("user", "1");
 
         mockMvc.perform(get("/files/users")
