@@ -1,35 +1,34 @@
 package com.softwaremagico.kt.core.providers;
 
-import com.softwaremagico.kt.persistence.entities.ImageType;
-import com.softwaremagico.kt.persistence.entities.User;
 import com.softwaremagico.kt.persistence.entities.UserImage;
-import com.softwaremagico.kt.persistence.repositories.UserImagesRepository;
+import com.softwaremagico.kt.persistence.entities.User;
+import com.softwaremagico.kt.persistence.repositories.UserImageRepository;
+import org.hibernate.type.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class FileProvider {
 
-    private final UserImagesRepository userImagesRepository;
+    private final UserImageRepository photoRepository;
 
     @Autowired
-    public FileProvider(UserImagesRepository userImagesRepository) {
-        this.userImagesRepository = userImagesRepository;
+    public FileProvider(UserImageRepository photoRepository) {
+        this.photoRepository = photoRepository;
     }
 
-    public void add(MultipartFile file, ImageType imageType, User user) throws IOException {
+    public void add(MultipartFile file, User user) throws IOException {
         final UserImage userImage = new UserImage();
-        userImage.setType(imageType);
         userImage.setUser(user);
         userImage.setData(file.getBytes());
-
-        userImagesRepository.save(userImage);
+        photoRepository.save(userImage);
     }
 
-    public UserImage get(ImageType imageType, User user) {
-        return userImagesRepository.findByUserAndType(user, imageType);
+    public Optional<UserImage> get(ImageType imageType, User user) {
+        return photoRepository.findByUser(user);
     }
 }

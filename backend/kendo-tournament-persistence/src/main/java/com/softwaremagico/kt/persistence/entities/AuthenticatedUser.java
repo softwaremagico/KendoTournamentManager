@@ -1,5 +1,6 @@
 package com.softwaremagico.kt.persistence.entities;
 
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,12 +19,15 @@ public class AuthenticatedUser implements UserDetails {
     private Integer id;
 
     @Column(name = "password")
+    @Convert(converter = StringCryptoConverter.class)
     private String password;
 
     @Column(name = "username")
+    @Convert(converter = StringCryptoConverter.class)
     private String username;
 
     @Column(name = "full_name")
+    @Convert(converter = StringCryptoConverter.class)
     private String fullName;
 
     public Integer getId() {

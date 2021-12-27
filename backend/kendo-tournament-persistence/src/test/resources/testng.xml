@@ -9,7 +9,7 @@
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.persistence.repositories.UserRepositoryTests"/>
-            <class name="com.softwaremagico.kt.persistence.repositories.ImageRepositoryTest"/>
+            <class name="com.softwaremagico.kt.persistence.repositories.UserImageRepositoryTest"/>
         </classes>
     </test>
 </suite>

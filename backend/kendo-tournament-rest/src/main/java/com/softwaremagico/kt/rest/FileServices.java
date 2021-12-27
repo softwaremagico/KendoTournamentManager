@@ -1,10 +1,9 @@
 package com.softwaremagico.kt.rest;
 
 import com.softwaremagico.kt.core.exceptions.DataInputException;
-import com.softwaremagico.kt.persistence.entities.ImageType;
-import com.softwaremagico.kt.persistence.entities.UserImage;
 import com.softwaremagico.kt.core.providers.FileProvider;
 import com.softwaremagico.kt.core.providers.UserProvider;
+import com.softwaremagico.kt.persistence.entities.UserImage;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,10 +30,10 @@ public class FileServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Uploads a photo to a user profile")
     @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void upload(@RequestParam("file") MultipartFile file, @RequestParam("type") ImageType type,
+    public void upload(@RequestParam("file") MultipartFile file,
                        @RequestParam("user") int userId, HttpServletRequest request) {
         try {
-            fileProvider.add(file, type, userProvider.get(userId));
+            fileProvider.add(file, userProvider.get(userId));
         } catch (IOException e) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
@@ -43,8 +42,8 @@ public class FileServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets an image from a user")
     @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserImage getUserImage(@RequestParam("type") ImageType type, @RequestParam("user") int userId, HttpServletRequest request) {
-       // return fileProvider.get(type, userProvider.get(userId));
+    public UserImage getUserImage(@RequestParam("user") int userId, HttpServletRequest request) {
+        // return fileProvider.get(type, userProvider.get(userId));
         return null;
     }
 }
