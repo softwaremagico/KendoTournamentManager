@@ -21,36 +21,49 @@ export class ClubService {
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService) {
   }
 
+  getAll(): Observable<Club[]> {
+    const url: string = `${this.baseUrl}/`;
+    return this.http.get<Club[]>(url)
+      .pipe(
+        tap(_ => this.log(`fetched all clubs`)),
+        catchError(this.handleError<Club[]>(`gets all`))
+      );
+  }
+
   get(id: number): Observable<Club> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Club>(url).pipe(
-      tap(_ => this.log(`fetched club id=${id}`)),
-      catchError(this.handleError<Club>(`get id=${id}`))
-    );
+    return this.http.get<Club>(url)
+      .pipe(
+        tap(_ => this.log(`fetched club id=${id}`)),
+        catchError(this.handleError<Club>(`get id=${id}`))
+      );
   }
 
   delete(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url).pipe(
-      tap(_ => this.log(`deleting club id=${id}`)),
-      catchError(this.handleError<Club>(`delete id=${id}`))
-    );
+    this.http.delete(url)
+      .pipe(
+        tap(_ => this.log(`deleting club id=${id}`)),
+        catchError(this.handleError<Club>(`delete id=${id}`))
+      );
   }
 
   add(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Club>(url, club, this.httpOptions).pipe(
-      tap((newClub: Club) => this.log(`adding club ${newClub}`)),
-      catchError(this.handleError<Club>(`adding ${club}`))
-    );
+    return this.http.post<Club>(url, club, this.httpOptions)
+      .pipe(
+        tap((newClub: Club) => this.log(`adding club ${newClub}`)),
+        catchError(this.handleError<Club>(`adding ${club}`))
+      );
   }
 
   update(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Club>(url, club, this.httpOptions).pipe(
-      tap((updatedClub: Club) => this.log(`updating club ${updatedClub}`)),
-      catchError(this.handleError<Club>(`updating ${club}`))
-    );
+    return this.http.put<Club>(url, club, this.httpOptions)
+      .pipe(
+        tap((updatedClub: Club) => this.log(`updating club ${updatedClub}`)),
+        catchError(this.handleError<Club>(`updating ${club}`))
+      );
   }
 
   private log(message: string) {

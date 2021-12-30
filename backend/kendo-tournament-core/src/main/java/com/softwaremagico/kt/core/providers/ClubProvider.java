@@ -5,12 +5,23 @@ import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ClubProvider {
     private final ClubRepository clubRepository;
 
     public ClubProvider(ClubRepository clubRepository) {
         this.clubRepository = clubRepository;
+    }
+
+    public Club get(Integer id) {
+        return clubRepository.findById(id)
+                .orElseThrow(() -> new ClubNotFoundException(getClass(), "Club with id '" + id + "' not found"));
+    }
+
+    public List<Club> getAll() {
+        return clubRepository.findAll();
     }
 
     public Club add(Club club) {
@@ -27,11 +38,6 @@ public class ClubProvider {
             throw new ClubNotFoundException(getClass(), "Club with null id does not exists.");
         }
         return clubRepository.save(club);
-    }
-
-    public Club get(Integer id) {
-        return clubRepository.findById(id)
-                .orElseThrow(() -> new ClubNotFoundException(getClass(), "Club with id '" + id + "' not found"));
     }
 
     public void delete(Club club) {
