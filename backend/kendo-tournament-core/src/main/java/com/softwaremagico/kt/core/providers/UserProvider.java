@@ -6,6 +6,8 @@ import com.softwaremagico.kt.persistence.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserProvider {
 
@@ -19,6 +21,11 @@ public class UserProvider {
     public User get(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(getClass(), "User with id '" + id + "' not found"));
+    }
+
+
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 
     public User add(User user) {
