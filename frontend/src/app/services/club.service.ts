@@ -12,7 +12,7 @@ import {LoggerService} from "../logger.service";
 })
 export class ClubService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + 'clubs';
+  private baseUrl = this.environmentService.getBackendUrl() + '/clubs';
 
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -42,6 +42,14 @@ export class ClubService {
     return this.http.post<Club>(url, club, this.httpOptions).pipe(
       tap((newClub: Club) => this.log(`adding club ${newClub}`)),
       catchError(this.handleError<Club>(`adding ${club}`))
+    );
+  }
+
+  update(club: Club): Observable<Club> {
+    const url: string = `${this.baseUrl}`;
+    return this.http.put<Club>(url, club, this.httpOptions).pipe(
+      tap((updatedClub: Club) => this.log(`updating club ${updatedClub}`)),
+      catchError(this.handleError<Club>(`updating ${club}`))
     );
   }
 

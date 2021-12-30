@@ -2,6 +2,7 @@ package com.softwaremagico.kt.rest;
 
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.rest.model.ClubDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
@@ -24,7 +25,7 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Creates a club with some basic information.")
+    @ApiOperation(value = "Gets a club.")
     @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club get(@ApiParam(value = "Id of an existing club", required = true) @PathParam("id") Integer id,
                     HttpServletRequest request) {
@@ -59,8 +60,7 @@ public class ClubServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a club.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void update(@ApiParam(value = "Id of an existing club", required = true) @PathParam("id") Integer id,
-                       HttpServletRequest request) {
-        clubProvider.delete(id);
+    public void update(@RequestBody ClubDto club, HttpServletRequest request) {
+        clubProvider.update(modelMapper.map(club, Club.class));
     }
 }

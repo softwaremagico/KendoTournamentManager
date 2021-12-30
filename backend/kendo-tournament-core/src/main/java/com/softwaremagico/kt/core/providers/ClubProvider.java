@@ -22,6 +22,13 @@ public class ClubProvider {
         return clubRepository.save(club);
     }
 
+    public Club update(Club club) {
+        if (club.getId() == null) {
+            throw new ClubNotFoundException(getClass(), "Club with null id does not exists.");
+        }
+        return clubRepository.save(club);
+    }
+
     public Club get(Integer id) {
         return clubRepository.findById(id)
                 .orElseThrow(() -> new ClubNotFoundException(getClass(), "Club with id '" + id + "' not found"));
