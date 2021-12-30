@@ -98,12 +98,14 @@ public class AuthenticatedUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (grantedAuthorities == null) {
             grantedAuthorities = new HashSet<>();
-            roles.forEach(authority -> {
-                final AvailableRole availableRole = AvailableRole.get(authority);
-                if (availableRole != null) {
-                    grantedAuthorities.add(new SimpleGrantedAuthority(availableRole.name()));
-                }
-            });
+            if (roles != null) {
+                roles.forEach(authority -> {
+                    final AvailableRole availableRole = AvailableRole.get(authority);
+                    if (availableRole != null) {
+                        grantedAuthorities.add(new SimpleGrantedAuthority(availableRole.name()));
+                    }
+                });
+            }
         }
         return grantedAuthorities;
     }
