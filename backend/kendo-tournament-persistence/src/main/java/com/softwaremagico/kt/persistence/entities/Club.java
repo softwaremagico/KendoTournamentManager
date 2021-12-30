@@ -60,6 +60,10 @@ public class Club implements Comparable<Club> {
         setCity(city);
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     /**
      * Representative is a registered person of the club that will be use to
      * establish contact in future tournaments.

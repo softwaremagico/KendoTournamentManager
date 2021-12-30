@@ -1,6 +1,8 @@
-package com.softwaremagico.kt.rest;
+package com.softwaremagico.kt.rest.model;
 
 public class ClubDto {
+
+    private Integer id = null;
 
     private String name = "";
 
@@ -17,6 +19,14 @@ public class ClubDto {
     private String phone = null;
 
     private String web = "";
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
