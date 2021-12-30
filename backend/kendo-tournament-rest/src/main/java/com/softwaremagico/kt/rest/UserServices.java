@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -23,6 +24,13 @@ public class UserServices {
     public UserServices(UserProvider userProvider, ModelMapper modelMapper) {
         this.userProvider = userProvider;
         this.modelMapper = modelMapper;
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all users.")
+    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<User> getAll(HttpServletRequest request) {
+        return userProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")

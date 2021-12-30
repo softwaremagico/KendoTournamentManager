@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 @RequestMapping("/clubs")
@@ -23,6 +24,13 @@ public class ClubServices {
     public ClubServices(ClubProvider clubProvider, ModelMapper modelMapper) {
         this.clubProvider = clubProvider;
         this.modelMapper = modelMapper;
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all clubs.")
+    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Club> getAll(HttpServletRequest request) {
+        return clubProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
