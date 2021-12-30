@@ -20,4 +20,27 @@ public class UserProvider {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(getClass(), "User with id '" + id + "' not found"));
     }
+
+    public User add(User user) {
+        return userRepository.save(user);
+    }
+
+    public User update(User user) {
+        if (user.getId() == null) {
+            throw new UserNotFoundException(getClass(), "User with null id does not exists.");
+        }
+        return userRepository.save(user);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+    public void delete(Integer id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        } else {
+            throw new UserNotFoundException(getClass(), "User with id '" + id + "' not found");
+        }
+    }
 }
