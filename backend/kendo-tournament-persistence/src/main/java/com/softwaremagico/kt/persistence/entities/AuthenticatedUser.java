@@ -1,6 +1,7 @@
 package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.security.AvailableRole;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -97,7 +98,12 @@ public class AuthenticatedUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (grantedAuthorities == null) {
             grantedAuthorities = new HashSet<>();
-            roles.forEach(authority -> grantedAuthorities.add(new SimpleGrantedAuthority(authority)));
+            roles.forEach(authority -> {
+                final AvailableRole availableRole = AvailableRole.get(authority);
+                if (availableRole != null) {
+                    grantedAuthorities.add(new SimpleGrantedAuthority(availableRole.name()));
+                }
+            });
         }
         return grantedAuthorities;
     }
