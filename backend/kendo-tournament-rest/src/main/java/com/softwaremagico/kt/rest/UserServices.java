@@ -6,6 +6,7 @@ import com.softwaremagico.kt.rest.model.UserDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +35,15 @@ public class UserServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Creates a user.")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void add(@RequestBody UserDto user, HttpServletRequest request) {
-        userProvider.add(modelMapper.map(user, User.class));
+    public User add(@RequestBody UserDto user, HttpServletRequest request) {
+        return userProvider.add(modelMapper.map(user, User.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Deletes a user.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@ApiParam(value = "Id of an existing user", required = true) @PathParam("id") Integer id,
                        HttpServletRequest request) {
@@ -50,7 +53,7 @@ public class UserServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a user.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void update(@RequestBody UserDto user, HttpServletRequest request) {
-        userProvider.update(modelMapper.map(user, User.class));
+    public User update(@RequestBody UserDto user, HttpServletRequest request) {
+        return userProvider.update(modelMapper.map(user, User.class));
     }
 }
