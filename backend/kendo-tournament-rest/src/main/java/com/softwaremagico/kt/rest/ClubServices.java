@@ -33,7 +33,7 @@ public class ClubServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Creates a club with some basic information.")
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)
     public void add(@ApiParam(value = "Name of the new club", required = true) @RequestParam(name = "name") String name,
                     @ApiParam(value = "Country where the club is located", required = true) @RequestParam(name = "country") String country,
                     @ApiParam(value = "City where the club is located", required = true) @RequestParam(name = "city") String city,

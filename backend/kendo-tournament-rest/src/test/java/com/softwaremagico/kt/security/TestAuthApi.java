@@ -160,11 +160,13 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(badRequest)));
 
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(post("/api/public/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(badRequest)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test
