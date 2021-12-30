@@ -3,10 +3,13 @@ package com.softwaremagico.kt.persistence.entities;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Cacheable
@@ -29,6 +32,13 @@ public class AuthenticatedUser implements UserDetails {
     @Column(name = "full_name")
     @Convert(converter = StringCryptoConverter.class)
     private String fullName;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "authenticated_user"))
+    @Column(name = "roles")
+    private Set<String> roles;
+
+    private transient Set<SimpleGrantedAuthority> grantedAuthorities;
 
     public Integer getId() {
         return id;
@@ -79,8 +89,16 @@ public class AuthenticatedUser implements UserDetails {
         return true;
     }
 
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        if (grantedAuthorities == null) {
+            grantedAuthorities = new HashSet<>();
+            roles.forEach(authority -> grantedAuthorities.add(new SimpleGrantedAuthority(authority)));
+        }
+        return grantedAuthorities;
     }
 }
