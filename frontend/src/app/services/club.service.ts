@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {Observable, of} from "rxjs";
 import {Club} from "../models/club";
 import {LoggerService} from "../logger.service";
