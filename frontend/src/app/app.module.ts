@@ -16,7 +16,7 @@ import { ClubListComponent } from './club-list/club-list.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
-import { DialogBoxComponent } from './dialog-box/dialog-box.component';
+import { ClubDialogBoxComponent } from './club-list/club-dialog-box/club-dialog-box.component';
 import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDialogModule} from "@angular/material/dialog";
@@ -25,7 +25,7 @@ import {MatDialogModule} from "@angular/material/dialog";
   declarations: [
     AppComponent,
     ClubListComponent,
-    DialogBoxComponent
+    ClubDialogBoxComponent
   ],
   imports: [
     BrowserModule,
