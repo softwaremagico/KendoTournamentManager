@@ -11,13 +11,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppComponent } from './app.component';
-import { NavigationMenuComponent } from './navigation-menu/navigation-menu.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ClubListComponent } from './club-list/club-list.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavigationMenuComponent
+    ClubListComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +32,9 @@ import { AppRoutingModule } from './app-routing.module';
     MatButtonModule,
     MatIconModule,
     MatSliderModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]
