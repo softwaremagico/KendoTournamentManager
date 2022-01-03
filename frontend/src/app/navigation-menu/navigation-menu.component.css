@@ -1,4 +1,4 @@
-.softwaremagico{
+.companyName{
   font-size: 150%;
 }
 
@@ -11,7 +11,7 @@ div {
 }
 
 .mat-sidenav-container{
-  background-color: white;
+  background-color: lightskyblue;
   min-height: 93vh !important;
 }
 
