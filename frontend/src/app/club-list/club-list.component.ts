@@ -1,9 +1,12 @@
 import {Component, ViewChild, OnInit} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
+import {MatTable} from '@angular/material/table';
+import {MatDialog} from '@angular/material/dialog';
+import {SelectionModel} from "@angular/cdk/collections";
 import {ClubService} from '../services/club.service';
 import {Club} from '../models/club';
-import {SelectionModel} from "@angular/cdk/collections";
+import {DialogBoxComponent} from '../dialog-box/dialog-box.component';
 
 @Component({
   selector: 'app-club-list',
@@ -16,10 +19,12 @@ export class ClubListComponent implements OnInit {
   selection = new SelectionModel<Club>(false, []);
   clubs: Club[];
   dataSource: MatTableDataSource<Club>;
+  selectedClub: Club;
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
 
-  constructor(private clubService: ClubService) {
+  constructor(private clubService: ClubService, public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -38,15 +43,39 @@ export class ClubListComponent implements OnInit {
   }
 
   addClub(): void {
-
+    let club = new Club();
+    this.openDialog(club);
+    this.table.renderRows();
   }
 
   editClub(): void {
-
+    this.openDialog(this.selectedClub);
+    this.table.renderRows();
   }
 
   deleteClub(): void {
+    this.table.renderRows();
+  }
 
+  setSelectedItem(row: Club): void {
+    this.selectedClub = row;
+  }
+
+  openDialog(club: Club) {
+    const dialogRef = this.dialog.open(DialogBoxComponent, {
+      width: '250px',
+      data: club
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.event == 'Add') {
+        // this.addRowData(result.data);
+      } else if (result.event == 'Update') {
+        // this.updateRowData(result.data);
+      } else if (result.event == 'Delete') {
+        // this.deleteRowData(result.data);
+      }
+    });
   }
 
 }

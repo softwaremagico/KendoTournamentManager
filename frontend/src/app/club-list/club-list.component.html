@@ -54,7 +54,7 @@
 
     <tr mat-header-row *matHeaderRowDef="columns"></tr>
     <tr mat-row *matRowDef="let row; columns: columns;"
-        (click)="selection.toggle(row)" (mouseover)="row.hovered=true"
+        (click)="selection.toggle(row); setSelectedItem(row)" (mouseover)="row.hovered=true"
         [ngClass]="{hovered: row.hovered, highlighted: selection.isSelected(row)}"
         (mouseout)="row.hovered=false"></tr>
   </table>
