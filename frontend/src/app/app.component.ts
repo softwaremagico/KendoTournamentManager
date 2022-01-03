@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Kendo Tournament Generator';
+  title = 'Kendo Tournament Generator v2';
 }
