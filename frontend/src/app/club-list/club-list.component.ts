@@ -6,7 +6,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {SelectionModel} from "@angular/cdk/collections";
 import {ClubService} from '../services/club.service';
 import {Club} from '../models/club';
-import {DialogBoxComponent} from '../dialog-box/dialog-box.component';
+import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
+import {Action} from './club-dialog-box/club-dialog-box.component';
+
 
 @Component({
   selector: 'app-club-list',
@@ -44,12 +46,12 @@ export class ClubListComponent implements OnInit {
 
   addClub(): void {
     let club = new Club();
-    this.openDialog(club);
+    this.openDialog(Action.Add, club);
     this.table.renderRows();
   }
 
   editClub(): void {
-    this.openDialog(this.selectedClub);
+    this.openDialog(Action.Update, this.selectedClub);
     this.table.renderRows();
   }
 
@@ -61,8 +63,8 @@ export class ClubListComponent implements OnInit {
     this.selectedClub = row;
   }
 
-  openDialog(club: Club) {
-    const dialogRef = this.dialog.open(DialogBoxComponent, {
+  openDialog(action: Action, club: Club) {
+    const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
       width: '250px',
       data: club
     });
