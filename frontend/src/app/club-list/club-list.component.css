@@ -1,3 +1,42 @@
 table {
   width: 100%;
 }
+
+.upper-menu {
+  text-align: left;
+  padding-left: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.upper-menu .mat-button {
+  width: 80px;
+}
+
+.mat-header-cell {
+  text-align: left;
+  padding-right: 5px;
+  padding-left: 5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  border-right: 1px solid currentColor;
+}
+
+.mat-column-id {
+  width: 32px;
+  padding-right: 24px;
+  text-align: center;
+}
+
+.mat-column-name {
+}
+
+.mat-row.hovered {
+  background: #eee;
+}
+
+.mat-row.highlighted {
+  background: #999;
+}
+
