@@ -12,7 +12,7 @@ export enum Action {
 @Component({
   selector: 'app-club-dialog-box',
   templateUrl: './club-dialog-box.component.html',
-  styleUrls: ['./club-dialog-box.component.css']
+  styleUrls: ['./club-dialog-box.component.scss']
 })
 export class ClubDialogBoxComponent {
 
