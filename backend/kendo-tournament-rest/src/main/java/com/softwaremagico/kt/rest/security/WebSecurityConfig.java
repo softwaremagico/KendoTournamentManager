@@ -23,7 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
+import java.util.*;
 
 @Configuration
 @EnableWebSecurity
@@ -44,8 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     private final AuthenticatedUserProvider authenticatedUserProvider;
     private final JwtTokenFilter jwtTokenFilter;
 
-    @Value("${server.domain}")
-    private String serverDomain;
+    @Value("${server.cors.domains:null}")
+    private List<String> serverCorsDomains;
 
     @Autowired
     public WebSecurityConfig(AuthenticatedUserProvider authenticatedUserProvider, JwtTokenFilter jwtTokenFilter) {
@@ -96,9 +96,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         final UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200", serverDomain));
+        if (serverCorsDomains == null || serverCorsDomains.contains("*")) {
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+        } else {
+            config.setAllowedOrigins(serverCorsDomains);
+        }
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
