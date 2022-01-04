@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,11 +54,6 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private PasswordEncoder encoder;
-
-    private String password;
-
     public <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
     }
@@ -73,8 +67,6 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
-
-        password = encoder.encode(USER_PASSWORD);
     }
 
     @BeforeMethod
@@ -86,7 +78,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testAuthenticationToken() {
-        authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, password);
+        authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD);
 
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(USER_NAME, USER_PASSWORD));
@@ -94,7 +86,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, password);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -114,7 +106,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginFail() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(String.format(USER_NAME, System.currentTimeMillis()), USER_FULL_NAME, password);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(String.format(USER_NAME, System.currentTimeMillis()), USER_FULL_NAME, USER_PASSWORD);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -134,8 +126,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         CreateUserRequest goodRequest = new CreateUserRequest();
         goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
         goodRequest.setFullName(USER_FULL_NAME);
-        goodRequest.setPassword(password);
-        goodRequest.setRePassword(password);
+        goodRequest.setPassword(USER_PASSWORD);
+        goodRequest.setRePassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/api/public/register")
@@ -172,7 +164,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     @Test
     public void testJwt() throws Exception {
         //Login as user
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, password);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());

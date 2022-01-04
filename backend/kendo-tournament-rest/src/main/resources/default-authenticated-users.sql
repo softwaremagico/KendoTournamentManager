@@ -1,0 +1,1 @@
+INSERT INTO authenticated_users (username, password, full_name) VALUES ('admin@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Admin User');
