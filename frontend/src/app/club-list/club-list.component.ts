@@ -49,12 +49,12 @@ export class ClubListComponent implements OnInit {
 
   addClub(): void {
     let club = new Club();
-    this.openDialog(Action.Add, club);
+    this.openDialog('Add a new club', Action.Add, club);
     this.table.renderRows();
   }
 
   editClub(): void {
-    this.openDialog(Action.Update, this.selectedClub);
+    this.openDialog('Edit club', Action.Update, this.selectedClub);
     this.table.renderRows();
   }
 
@@ -66,18 +66,18 @@ export class ClubListComponent implements OnInit {
     this.selectedClub = row;
   }
 
-  openDialog(action: Action, club: Club) {
+  openDialog(title: string, action: Action, club: Club) {
     const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
       width: '250px',
-      data: club
+      data: {title: title, action: action, entity: club}
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.event == 'Add') {
+      if (result.event.action == Action.Add) {
         // this.addRowData(result.data);
-      } else if (result.event == 'Update') {
+      } else if (result.event.action == Action.Update) {
         // this.updateRowData(result.data);
-      } else if (result.event == 'Delete') {
+      } else if (result.event.action == Action.Delete) {
         // this.deleteRowData(result.data);
       }
     });
