@@ -11,7 +11,7 @@ export class LoggedInService implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authenticatedUserService.getToken()) {
+    if (this.authenticatedUserService.getJwtValue()) {
       // JWT Token exists, is a registered user.
       return true;
     }

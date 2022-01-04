@@ -28,14 +28,14 @@ public class UserServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets all users.")
-    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getAll(HttpServletRequest request) {
         return userProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets a user.")
-    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public User get(@ApiParam(value = "Id of an existing user", required = true) @PathParam("id") Integer id,
                     HttpServletRequest request) {
         return userProvider.get(id);

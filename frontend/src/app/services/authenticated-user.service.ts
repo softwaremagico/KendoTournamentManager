@@ -35,12 +35,12 @@ export class AuthenticatedUserService {
         }));
   }
 
-  setToken(token: string) {
-    this.cookies.set("token", token);
+  setJwtValue(token: string) {
+    this.cookies.set("jwt", token);
   }
 
-  getToken(): string {
-    return this.cookies.get("token");
+  getJwtValue(): string {
+    return this.cookies.get("jwt");
   }
 
   private log(message: string) {
