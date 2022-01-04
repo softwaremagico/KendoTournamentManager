@@ -1,5 +1,6 @@
 package com.softwaremagico.kt.rest.security;
 
+import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
@@ -50,6 +51,7 @@ public class AuthApi {
                     .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user))
                     .body(user);
         } catch (BadCredentialsException ex) {
+            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
