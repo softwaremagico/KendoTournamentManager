@@ -30,7 +30,6 @@ export class AuthenticatedUserService {
       .pipe(
         map((response: any) => {
           const jwt = response.headers.get('Authorization');
-          response.body // response content
           response.body.jwt = jwt;
           return response.body;
         }));
