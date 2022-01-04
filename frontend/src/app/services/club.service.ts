@@ -5,6 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {Observable, of} from "rxjs";
 import {Club} from "../models/club";
 import {LoggerService} from "../logger.service";
+import {AuthenticatedUserService} from "./authenticated-user.service";
 
 
 @Injectable({
@@ -15,15 +16,19 @@ export class ClubService {
   private baseUrl = this.environmentService.getBackendUrl() + '/clubs';
 
   httpOptions = {
-    headers: new HttpHeaders({'Content-Type': 'application/json'})
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+    })
   };
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService) {
+  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService,
+              public authenticatedUserService: AuthenticatedUserService) {
   }
 
   getAll(): Observable<Club[]> {
     const url: string = `${this.baseUrl}/`;
-    return this.http.get<Club[]>(url)
+    return this.http.get<Club[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched all clubs`)),
         catchError(this.handleError<Club[]>(`gets all`))
@@ -32,7 +37,7 @@ export class ClubService {
 
   get(id: number): Observable<Club> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Club>(url)
+    return this.http.get<Club>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched club id=${id}`)),
         catchError(this.handleError<Club>(`get id=${id}`))
@@ -41,7 +46,7 @@ export class ClubService {
 
   delete(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url)
+    this.http.delete(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`deleting club id=${id}`)),
         catchError(this.handleError<Club>(`delete id=${id}`))
