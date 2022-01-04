@@ -2,6 +2,7 @@ import {Component, ViewChild, OnInit} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatTable} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
 import {MatDialog} from '@angular/material/dialog';
 import {SelectionModel} from "@angular/cdk/collections";
 import {ClubService} from '../services/club.service';
@@ -25,6 +26,7 @@ export class ClubListComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
+  @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog) {
   }
@@ -33,6 +35,7 @@ export class ClubListComponent implements OnInit {
     this.showAllClubs();
     this.dataSource = new MatTableDataSource<Club>(this.clubs);
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   showAllClubs(): void {
