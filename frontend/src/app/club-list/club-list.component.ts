@@ -39,12 +39,7 @@ export class ClubListComponent implements OnInit {
   }
 
   showAllClubs(): void {
-    // this.clubService.getAll()
-    //   .subscribe(clubs => this.clubs = clubs);
-    this.clubs = [
-      {id: 1, name: 'Club1', country: 'Spain', city: 'Alcira'},
-      {id: 2, name: 'Club2', country: 'Spain', city: 'Torremolinos'}
-    ];
+    this.clubService.getAll().subscribe(clubs => this.clubs = clubs);
   }
 
   addClub(): void {
@@ -55,11 +50,10 @@ export class ClubListComponent implements OnInit {
 
   editClub(): void {
     this.openDialog('Edit club', Action.Update, this.selectedClub);
-    this.table.renderRows();
   }
 
   deleteClub(): void {
-    this.table.renderRows();
+    this.openDialog('Delete club', Action.Delete, this.selectedClub);
   }
 
   setSelectedItem(row: Club): void {
@@ -73,14 +67,33 @@ export class ClubListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result.event.action);
       if (result.event.action == Action.Add) {
-        // this.addRowData(result.data);
+        this.addRowData(result.data);
       } else if (result.event.action == Action.Update) {
-        // this.updateRowData(result.data);
+        this.updateRowData(result.data);
       } else if (result.event.action == Action.Delete) {
-        // this.deleteRowData(result.data);
+        this.deleteRowData(result.data);
       }
     });
+  }
+
+  addRowData(club: Club) {
+    this.clubService.add(club).subscribe(club => {
+      this.clubs.push(club);
+    });
+    this.table.renderRows();
+  }
+
+  updateRowData(club: Club) {
+    this.clubService.update(club).subscribe();
+    this.table.renderRows();
+  }
+
+  deleteRowData(club: Club) {
+    this.clubService.delete(club.id!);
+    this.clubs = this.clubs.filter(existing_club => existing_club !== club);
+    this.table.renderRows();
   }
 
 }
