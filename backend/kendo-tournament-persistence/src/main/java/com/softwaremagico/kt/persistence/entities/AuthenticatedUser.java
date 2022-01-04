@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -23,7 +24,7 @@ public class AuthenticatedUser implements UserDetails {
     private Integer id;
 
     @Column(name = "password")
-    @Convert(converter = StringCryptoConverter.class)
+    //@Convert(converter = StringCryptoConverter.class)
     private String password;
 
     @Column(name = "username")
@@ -50,7 +51,11 @@ public class AuthenticatedUser implements UserDetails {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (password == null) {
+            password = "";
+        }
+        //We use Bcrypt for Spring Web Security
+        this.password = new BCryptPasswordEncoder().encode(password);
     }
 
     public String getUsername() {
