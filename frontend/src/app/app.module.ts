@@ -20,6 +20,7 @@ import { ClubDialogBoxComponent } from './club-list/club-dialog-box/club-dialog-
 import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDialogModule} from "@angular/material/dialog";
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatMenuModule,
     FormsModule,
     MatFormFieldModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSortModule
   ],
   providers: [],
   bootstrap: [AppComponent]
