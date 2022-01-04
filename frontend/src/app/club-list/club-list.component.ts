@@ -14,7 +14,7 @@ import {Action} from './club-dialog-box/club-dialog-box.component';
 @Component({
   selector: 'app-club-list',
   templateUrl: './club-list.component.html',
-  styleUrls: ['./club-list.component.css']
+  styleUrls: ['./club-list.component.scss']
 })
 export class ClubListComponent implements OnInit {
 
