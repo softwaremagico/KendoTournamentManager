@@ -2,6 +2,7 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +43,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
     private final JwtTokenFilter jwtTokenFilter;
+
+    @Value("${server.domain}")
+    private String serverDomain;
 
     @Autowired
     public WebSecurityConfig(AuthenticatedUserProvider authenticatedUserProvider, JwtTokenFilter jwtTokenFilter) {
@@ -91,6 +96,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         final UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Arrays.asList("http://localhost:4200", serverDomain));
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
