@@ -1,13 +1,28 @@
-<h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
-  <mat-form-field *ngIf="action != ActionEnum.Delete; else elseTemplate">
-    <input placeholder="{{action}} Name" matInput [(ngModel)]="club.name">
+  <mat-form-field>
+    <input placeholder="Club Name" matInput [(ngModel)]="club.name">
   </mat-form-field>
-  <ng-template #elseTemplate>
-    Sure to delete <b>{{club.name}}</b>?
-  </ng-template>
+  <mat-form-field>
+    <input placeholder="Club Country" matInput [(ngModel)]="club.country">
+  </mat-form-field>
+  <mat-form-field>
+    <input placeholder="Club City" matInput [(ngModel)]="club.city">
+  </mat-form-field>
+  <mat-form-field>
+    <input placeholder="Club Address" matInput [(ngModel)]="club.address">
+  </mat-form-field>
+  <mat-form-field>
+    <input placeholder="Club Email" matInput [(ngModel)]="club.email">
+  </mat-form-field>
+  <mat-form-field>
+    <input placeholder="Club Phone" matInput [(ngModel)]="club.phone">
+  </mat-form-field>
+  <mat-form-field>
+    <input placeholder="Club Web" matInput [(ngModel)]="club.web">
+  </mat-form-field>
 </div>
-<div mat-dialog-actions>
-  <button mat-button (click)="doAction()">{{action}}</button>
+<div mat-dialog-actions class="button-container">
+  <button mat-button (click)="doAction()" mat-flat-button color="primary">{{actionName}}</button>
   <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
 </div>
