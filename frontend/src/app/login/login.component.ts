@@ -17,12 +17,11 @@ export class LoginComponent {
 
   login() {
     this.authenticatedUserService.login(this.email, this.password).subscribe(data => {
-      this.authenticatedUserService.setToken(data.jwt);
+      this.authenticatedUserService.setJwtValue(data.jwt);
 
-      this.activatedRoute.queryParams.subscribe((params: any) => {
-        const returnUrl = params['returnUrl'];
-        this.router.navigate([returnUrl]);
-      });
+      let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
+      this.router.navigate([returnUrl]);
+
     });
   }
 }

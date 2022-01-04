@@ -28,14 +28,14 @@ public class ClubServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets all clubs.")
-    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Club> getAll(HttpServletRequest request) {
         return clubProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets a club.")
-    @PostMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club get(@ApiParam(value = "Id of an existing club", required = true) @PathParam("id") Integer id,
                     HttpServletRequest request) {
         return clubProvider.get(id);
