@@ -100,8 +100,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             config.setAllowedOriginPatterns(Collections.singletonList("*"));
         } else {
             config.setAllowedOrigins(serverCorsDomains);
+            config.setAllowCredentials(true);
         }
-        config.setAllowCredentials(true);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
