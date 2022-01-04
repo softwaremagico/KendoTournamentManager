@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,7 +24,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -104,6 +106,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         }
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

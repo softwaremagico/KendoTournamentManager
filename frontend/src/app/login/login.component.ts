@@ -17,7 +17,6 @@ export class LoginComponent {
   login() {
     this.authenticatedUserService.login(this.email, this.password).subscribe(data => {
       this.authenticatedUserService.setToken(data.jwt);
-      console.log(data)
     });
   }
 }
