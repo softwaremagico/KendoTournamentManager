@@ -11,9 +11,14 @@
     </a>
     <span class="example-spacer"></span>
     <div fxShow="true" fxHide.lt-md="true">
-      <a mat-button routerLink="/clubs">Clubs</a>
-      <a mat-button routerLink="/tournaments">Tournaments</a>
-      <a mat-button routerLink="/reports">Reports</a>
+      <a mat-button routerLink="/clubs">{{'clubs' | translate}}</a>
+      <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
+      <a mat-button routerLink="/reports">{{'reports' | translate}}</a>
+      <mat-select [(value)]="selectedLanguage" (selectionChange)="switchLanguage(selectedLanguage.valueOf())">
+        <mat-option *ngFor="let language of translate.getLangs()" [value]="language">
+          <span> {{language}}</span>
+        </mat-option>
+      </mat-select>
     </div>
 
   </mat-toolbar>
@@ -21,9 +26,14 @@
 
     <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
       <div fxLayout="column">
-        <a mat-button routerLink="/clubs">Clubs</a>
-        <a mat-button routerLink="/tournaments">Tournaments</a>
-        <a mat-button routerLink="/reports">Reports</a>
+        <a mat-button routerLink="/clubs">{{'clubs' | translate}}</a>
+        <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
+        <a mat-button routerLink="/reports">{{'reports' | translate}}</a>
+        <mat-select [(value)]="selectedLanguage" (selectionChange)="switchLanguage(selectedLanguage.valueOf())">
+          <mat-option *ngFor="let language of translate.getLangs()" [value]="language">
+            <span> {{language}}</span>
+          </mat-option>
+        </mat-select>
       </div>
     </mat-sidenav>
 
