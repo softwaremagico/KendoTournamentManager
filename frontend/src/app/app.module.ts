@@ -7,8 +7,10 @@ import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -23,7 +25,8 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatSortModule} from '@angular/material/sort';
 import {MatInputModule} from "@angular/material/input";
 import {LoginComponent} from "./login/login.component";
-import { CookieService } from 'ngx-cookie-service';
+import {CookieService} from 'ngx-cookie-service';
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
   declarations: [
@@ -51,10 +54,22 @@ import { CookieService } from 'ngx-cookie-service';
     MatFormFieldModule,
     MatDialogModule,
     MatSortModule,
-    MatInputModule
+    MatInputModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient]
+      }
+    }),
+    MatSelectModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
+}
+
+export function httpTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http);
 }
