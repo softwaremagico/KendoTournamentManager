@@ -44,17 +44,26 @@ export class ClubService {
       );
   }
 
-  delete(id: number) {
+  deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url, this.httpOptions)
+    return this.http.delete<number>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`deleting club id=${id}`)),
-        catchError(this.handleError<Club>(`delete id=${id}`))
+        catchError(this.handleError<number>(`delete id=${id}`))
+      );
+  }
+
+  delete(club: Club): Observable<Club> {
+    const url: string = `${this.baseUrl}`;
+    return this.http.delete<Club>(url, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleting club ${club}`)),
+        catchError(this.handleError<Club>(`delete ${club}`))
       );
   }
 
   add(club: Club): Observable<Club> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/`;
     return this.http.post<Club>(url, club, this.httpOptions)
       .pipe(
         tap((newClub: Club) => this.log(`adding club ${newClub}`)),
@@ -63,7 +72,7 @@ export class ClubService {
   }
 
   update(club: Club): Observable<Club> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/`;
     return this.http.put<Club>(url, club, this.httpOptions)
       .pipe(
         tap((updatedClub: Club) => this.log(`updating club ${updatedClub}`)),

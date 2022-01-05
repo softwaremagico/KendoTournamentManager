@@ -63,8 +63,28 @@ public class Club implements Comparable<Club> {
         setCity(city);
     }
 
+    public void setRepresentativeId(String representativeId) {
+        this.representativeId = representativeId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setWeb(String web) {
+        this.web = web;
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     /**
@@ -81,7 +101,7 @@ public class Club implements Comparable<Club> {
         this.phone = phone;
     }
 
-    private void setName(String value) {
+    public void setName(String value) {
         this.name = StringUtils.setCase(value);
     }
 
@@ -94,7 +114,7 @@ public class Club implements Comparable<Club> {
      *
      * @param value
      */
-    private void setCountry(String value) {
+    public void setCountry(String value) {
         country = StringUtils.setCase(value);
     }
 
@@ -103,7 +123,7 @@ public class Club implements Comparable<Club> {
      *
      * @param value
      */
-    private void setCity(String value) {
+    public void setCity(String value) {
         city = StringUtils.setCase(value);
     }
 
