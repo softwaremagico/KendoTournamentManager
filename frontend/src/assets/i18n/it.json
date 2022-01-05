@@ -1,5 +1,13 @@
 {
+  "ca": "Català",
+  "de": "Deutsch",
+  "nl": "Dutch",
+  "en": "English",
+  "es": "Español",
+  "it": "Italiano",
+  "tournaments": "Poul",
   "clubs": "Clubs",
+  "reports": "Rapporti",
   "titleDatabaseConnection": "Connessione al database",
   "titleAboutBox": "Informazioni su...",
   "titleHelp": "Aiuto",
