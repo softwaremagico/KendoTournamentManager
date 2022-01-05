@@ -54,6 +54,9 @@ public class Club implements Comparable<Club> {
     @Convert(converter = StringCryptoConverter.class)
     private String web = "";
 
+    public Club() {
+    }
+
     public Club(String name, String country, String city) {
         setName(name);
         setCountry(country);
