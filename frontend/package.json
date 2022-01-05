@@ -21,6 +21,8 @@
     "@angular/platform-browser": "~13.1.0",
     "@angular/platform-browser-dynamic": "~13.1.0",
     "@angular/router": "~13.1.0",
+    "@ngx-translate/core": "^14.0.0",
+    "@ngx-translate/http-loader": "^7.0.0",
     "ngx-cookie-service": "^13.1.2",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
