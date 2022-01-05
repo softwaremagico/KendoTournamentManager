@@ -20,7 +20,6 @@ export class ClubListComponent implements OnInit {
 
   columns: string[] = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
   selection = new SelectionModel<Club>(false, []);
-  clubs: Club[];
   dataSource: MatTableDataSource<Club>;
   selectedClub: Club;
 
@@ -33,27 +32,32 @@ export class ClubListComponent implements OnInit {
 
   ngOnInit(): void {
     this.showAllClubs();
-    this.dataSource = new MatTableDataSource<Club>(this.clubs);
+    this.dataSource = new MatTableDataSource<Club>();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
   showAllClubs(): void {
-    this.clubService.getAll().subscribe(clubs => this.clubs = clubs);
+    this.clubService.getAll().subscribe(clubs => {
+      this.dataSource.data = clubs;
+    });
   }
 
   addClub(): void {
     let club = new Club();
     this.openDialog('Add a new club', Action.Add, club);
-    this.table.renderRows();
   }
 
   editClub(): void {
-    this.openDialog('Edit club', Action.Update, this.selectedClub);
+    if (this.selectedClub) {
+      this.openDialog('Edit club', Action.Update, this.selectedClub);
+    }
   }
 
   deleteClub(): void {
-    this.openDialog('Delete club', Action.Delete, this.selectedClub);
+    if (this.selectedClub) {
+      this.openDialog('Delete club', Action.Delete, this.selectedClub);
+    }
   }
 
   setSelectedItem(row: Club): void {
@@ -67,33 +71,32 @@ export class ClubListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result.event.action);
-      if (result.event.action == Action.Add) {
+      if (result.action == Action.Add) {
         this.addRowData(result.data);
-      } else if (result.event.action == Action.Update) {
+      } else if (result.action == Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.event.action == Action.Delete) {
+      } else if (result.action == Action.Delete) {
         this.deleteRowData(result.data);
       }
     });
   }
 
   addRowData(club: Club) {
+    console.log("Adding");
     this.clubService.add(club).subscribe(club => {
-      this.clubs.push(club);
+      this.dataSource.data.push(club);
+      this.dataSource._updateChangeSubscription();
     });
-    this.table.renderRows();
   }
 
   updateRowData(club: Club) {
     this.clubService.update(club).subscribe();
-    this.table.renderRows();
   }
 
   deleteRowData(club: Club) {
-    this.clubService.delete(club.id!);
-    this.clubs = this.clubs.filter(existing_club => existing_club !== club);
-    this.table.renderRows();
+    this.clubService.delete(club).subscribe(n =>
+      this.dataSource.data = this.dataSource.data.filter(existing_club => existing_club !== club)
+    );
   }
 
 }

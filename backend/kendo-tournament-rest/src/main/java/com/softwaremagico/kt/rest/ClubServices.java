@@ -70,6 +70,14 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes a club.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody ClubDto club, HttpServletRequest request) {
+        clubProvider.delete(modelMapper.map(club, Club.class));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a club.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club update(@RequestBody ClubDto club, HttpServletRequest request) {

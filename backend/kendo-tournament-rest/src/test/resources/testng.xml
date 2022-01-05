@@ -5,11 +5,13 @@
             <run>
                 <include name="authApi" />
                 <include name="restAccess" />
+                <include name="dtoToEntity" />
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.security.TestAuthApi" />
             <class name="com.softwaremagico.kt.security.RestAccessTests" />
+            <class name="com.softwaremagico.kt.rest.DtoToEntity" />
         </classes>
     </test>
 </suite>
