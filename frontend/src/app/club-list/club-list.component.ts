@@ -9,6 +9,7 @@ import {ClubService} from '../services/club.service';
 import {Club} from '../models/club';
 import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
 import {Action} from './club-dialog-box/club-dialog-box.component';
+import {MessageService} from "../services/message.service";
 
 
 @Component({
@@ -27,7 +28,7 @@ export class ClubListComponent implements OnInit {
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private clubService: ClubService, public dialog: MatDialog) {
+  constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -86,16 +87,22 @@ export class ClubListComponent implements OnInit {
     this.clubService.add(club).subscribe(club => {
       this.dataSource.data.push(club);
       this.dataSource._updateChangeSubscription();
+      this.messageService.infoMessage("clubStored");
     });
   }
 
   updateRowData(club: Club) {
-    this.clubService.update(club).subscribe();
+    this.clubService.update(club).subscribe(club => {
+        this.messageService.infoMessage("clubUpdated");
+      }
+    );
   }
 
   deleteRowData(club: Club) {
-    this.clubService.delete(club).subscribe(n =>
-      this.dataSource.data = this.dataSource.data.filter(existing_club => existing_club !== club)
+    this.clubService.delete(club).subscribe(n => {
+        this.dataSource.data = this.dataSource.data.filter(existing_club => existing_club !== club);
+        this.messageService.infoMessage("clubDeleted");
+      }
     );
   }
 
