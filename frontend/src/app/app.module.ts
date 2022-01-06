@@ -27,6 +27,7 @@ import {MatInputModule} from "@angular/material/input";
 import {LoginComponent} from "./login/login.component";
 import {CookieService} from 'ngx-cookie-service';
 import {MatSelectModule} from "@angular/material/select";
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import {MatSelectModule} from "@angular/material/select";
         deps: [HttpClient]
       }
     }),
-    MatSelectModule
+    MatSelectModule,
+    MatSnackBarModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
