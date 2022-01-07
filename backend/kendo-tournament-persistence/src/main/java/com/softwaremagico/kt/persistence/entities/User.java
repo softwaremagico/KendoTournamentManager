@@ -2,13 +2,12 @@ package com.softwaremagico.kt.persistence.entities;
 
 /*
  * #%L
- * KendoTournamentGenerator
+ * KendoTournamentManager
  * %%
- * Copyright (C) 2008 - 2012 Softwaremagico
+ * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
  * This software is designed by Jorge Hortelano Otero.
  * Jorge Hortelano Otero <softwaremagico@gmail.com>
- * C/Quart 89, 3. Valencia CP:46008 (Spain).
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
