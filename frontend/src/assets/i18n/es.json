@@ -452,7 +452,11 @@
   "fightInOtherArea": "Vas a editar un equipo que está en otro shiaijo. ¿Estás seguro de continuar?",
   "waitingConnection": "Esperando respuesta de la base de datos. Compruebe la conexión de red.",
   "passwordDoesNotMatch": "La contraseña insertada no coincide!",
-  "invalidDatabase": "La base de datos de destino no es válida. Probablemente pertenezca a una versión antigua del software."
+  "invalidDatabase": "La base de datos de destino no es válida. Probablemente pertenezca a una versión antigua del software.",
+  "invalidPassword": "Por favor, introduce una contraseña correcta.",
+  "invalidEmail": "Por favor, introduce un email correcto.",
+  "email": "Email",
+  "password": "Contraseña"
 }
 
 
