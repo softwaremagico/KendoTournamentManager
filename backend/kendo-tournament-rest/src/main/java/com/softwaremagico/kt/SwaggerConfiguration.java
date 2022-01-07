@@ -23,7 +23,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
-    private static final String SWAGGER_TITLE = "Kendo Tournament Generator";
+    private static final String SWAGGER_TITLE = "Kendo Tournament Manager";
     private static final String SWAGGER_REST_LOCATION = "com.softwaremagico.kt.rest";
     private static final Class[] IGNORED_CLASSES = {};
 

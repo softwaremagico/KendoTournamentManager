@@ -6,7 +6,7 @@
     <groupId>com.softwaremagico</groupId>
     <artifactId>kendo-tournament</artifactId>
     <version>2.0.0-SNAPSHOT</version>
-    <name>Kendo Tournament Generator</name>
+    <name>Kendo Tournament Manager</name>
     <packaging>pom</packaging>
 
 
@@ -18,21 +18,21 @@
     </modules>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentGenerator.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentGenerator.git
+        <connection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentManager.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentManager.git
         </developerConnection>
-        <url>https://github.com/softwaremagico/KendoTournamentGenerator.git</url>
+        <url>https://github.com/softwaremagico/KendoTournamentManager.git</url>
         <tag>kendo-tournament-2.0.0</tag>
     </scm>
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/softwaremagico/KendoTournamentGenerator/issues</url>
+        <url>https://github.com/softwaremagico/KendoTournamentManager/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis</system>
-        <url>https://travis-ci.org/softwaremagico/KendoTournamentGenerator</url>
+        <url>https://travis-ci.org/softwaremagico/KendoTournamentManager</url>
     </ciManagement>
 
     <parent>
