@@ -19,7 +19,7 @@ import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
 import {ClubDialogBoxComponent} from './club-list/club-dialog-box/club-dialog-box.component';
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSortModule} from '@angular/material/sort';
@@ -27,7 +27,8 @@ import {MatInputModule} from "@angular/material/input";
 import {LoginComponent} from "./login/login.component";
 import {CookieService} from 'ngx-cookie-service';
 import {MatSelectModule} from "@angular/material/select";
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
   declarations: [
@@ -64,7 +65,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
       }
     }),
     MatSelectModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

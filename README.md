@@ -5,6 +5,6 @@
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentGenerator.svg)](https://github.com/softwaremagico/KendoTournamentGenerator/issues)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentGenerator)](https://github.com/softwaremagico/KendoTournamentGenerator)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentGenerator)](https://github.com/softwaremagico/KendoTournamentGenerator)
-[![Time](https://img.shields.io/badge/time-30h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/time-30.5h-blueviolet.svg)]()
 [![Powered by](https://img.shields.io/badge/powered%20by%20angular-red.svg?logo=angular&logoColor=white)]()
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=java&logoColor=white)]()
