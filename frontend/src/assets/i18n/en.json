@@ -452,6 +452,12 @@
   "fightInOtherArea": "You are going to modify a team that is in other shiaijo. Are you sure to proceeded?",
   "waitingConnection": "Waiting database response. Check the network connection.",
   "passwordDoesNotMatch": "The inserted password does not match!",
-  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software."
+  "logIn": "Log In",
+  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
+  "invalidPassword": "Please provide a valid password",
+  "invalidEmail": "Please provide a valid email address",
+  "email": "Email",
+  "password": "Password",
+  "login": "Login"
 }
 

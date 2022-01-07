@@ -452,7 +452,11 @@
   "fightInOtherArea": "Editaràs un equip que està en un altre shiaijo. Estàs segur de continuar?",
   "waitingConnection": "Esperant resposta de la base de dades. Comprove la connexió de xarxa.",
   "passwordDoesNotMatch": "La contrasenya inserida no coincidix!",
-  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software."
+  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
+  "invalidPassword": "Per favor, introduïu una contrasenya correcte",
+  "invalidEmail": "Per favor, introduïu un email correcte",
+  "email": "Email",
+  "password": "Contrasenya"
 }
 
 
