@@ -5,7 +5,7 @@
   "en": "English",
   "es": "Español",
   "it": "Italiano",
-  "tournaments": "Poul",
+  "tournaments": "Campionati",
   "clubs": "Clubs",
   "reports": "Rapporti",
   "titleDatabaseConnection": "Connessione al database",
@@ -452,7 +452,11 @@
   "fightInOtherArea": "Si va a cambiare una squadra che sta in un altro shiaijo. Si è sicuro di continuare?",
   "waitingConnection": "Aspettando risposta dalla base di dati. Controllare la conessionne di rete.",
   "passwordDoesNotMatch": "La password digitata non corrisponde!",
-  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software."
+  "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
+  "invalidPassword": "Si prega di inserire una password corretta",
+  "invalidEmail": "Si prega di inserire un'e-mail corretta.",
+  "email": "E-mail",
+  "password": "Password"
 }
 
 

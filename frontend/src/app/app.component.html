@@ -1,5 +1,5 @@
 <div>
-  <mat-toolbar color="primary">
+  <mat-toolbar color="primary" *ngIf="loggedIn">
     <div fxShow="true" fxHide.gt-sm="true">
       <button mat-icon-button (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
@@ -24,7 +24,7 @@
   </mat-toolbar>
   <mat-sidenav-container fxFlexFill class="example-container">
 
-    <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true">
+    <mat-sidenav color="primary" #sidenav fxLayout="column" mode="over" opened="false" fxHide.gt-sm="true" >
       <div fxLayout="column">
         <a mat-button routerLink="/clubs">{{'clubs' | translate}}</a>
         <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
