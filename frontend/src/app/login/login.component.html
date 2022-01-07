@@ -1,29 +1,26 @@
 <mat-card>
   <mat-card-content>
     <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
-      <h2>Log In</h2>
+      <h2>{{'logIn' | translate}}</h2>
       <div>
         <mat-form-field class="full-width-input">
-          <input matInput placeholder="Email" formControlName="username" required>
+          <input matInput placeholder="{{'email' | translate}}" formControlName="username" required>
           <mat-error>
-            Please provide a valid email address
+            {{'invalidEmail' | translate}}
           </mat-error>
         </mat-form-field>
       </div>
       <div>
         <mat-form-field class="full-width-input">
-          <input matInput type="password" placeholder="Password" formControlName="password" required>
+          <input matInput type="password" placeholder="{{'password' | translate}}" formControlName="password" required>
           <mat-error>
-            Please provide a valid password
+            {{'invalidPassword' | translate}}
           </mat-error>
         </mat-form-field>
       </div>
       <div>
-        <button mat-raised-button color="primary">Login</button>
+        <button mat-raised-button color="primary">{{'login' | translate}}</button>
       </div>
-      <mat-error *ngIf="loginInvalid">
-        The username and password were not recognized
-      </mat-error>
     </form>
   </mat-card-content>
 </mat-card>
