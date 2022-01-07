@@ -8,7 +8,7 @@ import {TranslateService} from "@ngx-translate/core";
 })
 
 export class AppComponent {
-  title = 'Kendo Tournament Generator v2';
+  title = 'Kendo Tournament Manager v2';
   selectedLanguage = 'en';
 
   constructor(public translate: TranslateService) {
