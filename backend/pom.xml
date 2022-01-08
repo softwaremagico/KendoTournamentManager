@@ -9,6 +9,11 @@
     <name>Kendo Tournament Manager</name>
     <packaging>pom</packaging>
 
+    <organization>
+        <name>Softwaremagico</name>
+        <url>https://github.com/softwaremagico/KendoTournamentManager</url>
+    </organization>
+
 
     <modules>
         <module>kendo-tournament-logger</module>
@@ -35,6 +40,26 @@
         <url>https://travis-ci.org/softwaremagico/KendoTournamentManager</url>
     </ciManagement>
 
+    <developers>
+        <developer>
+            <id>jhortelano</id>
+            <name>Jorge Hortelano</name>
+            <email>softwaremagico@gmail.com</email>
+            <roles>
+                <role>Project-Administrator</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>GNU GPL v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -48,6 +73,7 @@
         <spotbugs.version>4.5.2.0</spotbugs.version>
         <org.testng.version>7.4.0</org.testng.version>
         <springfox-swagger.version>3.0.0</springfox-swagger.version>
+        <license-maven-plugin.version>1.12</license-maven-plugin.version>
         <postgresql.version>42.2.24</postgresql.version>
         <modelmapper.version>2.3.9</modelmapper.version>
         <maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
@@ -125,6 +151,29 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
+                <configuration>
+                    <inceptionYear>2021</inceptionYear>
+                    <licenseName>gnugpl</licenseName>
+                    <licenseResolver>file://${main.basedir}/license</licenseResolver>
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                        <exclude>**/*.xml</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
