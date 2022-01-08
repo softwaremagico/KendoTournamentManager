@@ -1,5 +1,5 @@
 <div>
-  <mat-toolbar color="primary" *ngIf="loggedIn">
+  <mat-toolbar color="primary" [ngClass]="{'submenu':selectedRow !== ''}" *ngIf="loggedIn">
     <mat-toolbar-row>
       <div fxShow="true" fxHide.gt-sm="true">
         <button mat-icon-button (click)="sidenav.toggle()">
@@ -12,21 +12,29 @@
       </a>
       <span class="example-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
-        <a mat-button (click)="toggleMenu('Registry')">Registry <mat-icon>expand_more</mat-icon></a>
+        <a mat-button (click)="toggleMenu('Registry')">Registry
+          <mat-icon *ngIf="selectedRow !== 'Registry'">expand_more</mat-icon>
+          <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
+        </a>
         <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
         <a mat-button routerLink="/reports">{{'reports' | translate}}</a>
-        <mat-select (click)="toggleMenu('Language')" [(value)]="selectedLanguage" (selectionChange)="switchLanguage(selectedLanguage.valueOf())">
+        <mat-select (click)="toggleMenu('')" [(value)]="selectedLanguage"
+                    (selectionChange)="switchLanguage(selectedLanguage.valueOf())">
           <mat-option *ngFor="let language of translate.getLangs()" [value]="language">
             <span> {{language}}</span>
           </mat-option>
         </mat-select>
       </div>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="selectedRow === 'Registry'">
+    <mat-toolbar-row *ngIf="selectedRow === 'Registry'" class="toolbar-submenu">
       <span class="example-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
-        <a mat-button routerLink="/clubs">{{'clubs' | translate}}</a>
-        <a mat-button routerLink="#">People</a>
+        <a mat-button routerLink="/clubs">
+          <mat-icon>home</mat-icon>
+          {{'clubs' | translate}}</a>
+        <a mat-button routerLink="#">
+          <mat-icon>people</mat-icon>
+          People</a>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
