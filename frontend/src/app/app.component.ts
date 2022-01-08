@@ -14,6 +14,7 @@ export class AppComponent {
   title = 'Kendo Tournament Manager v2';
   selectedLanguage = 'en';
   loggedIn = false;
+  selectedRow: string = '';
 
   constructor(public translate: TranslateService, public authenticatedUserService: AuthenticatedUserService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService) {
@@ -24,6 +25,10 @@ export class AppComponent {
       this.translate.use(userSessionService.getLanguage());
       this.selectedLanguage = userSessionService.getLanguage();
     }
+  }
+
+  toggleMenu(selectedRow: string) {
+    this.selectedRow = selectedRow;
   }
 
   switchLanguage(lang: string) {
