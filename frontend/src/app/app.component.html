@@ -18,14 +18,14 @@
         </a>
         <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
         <a mat-button routerLink="/reports">{{'reports' | translate}}</a>
-        <mat-select (click)="toggleMenu('')" [(value)]="selectedLanguage"
-                    (selectionChange)="switchLanguage(selectedLanguage.valueOf())">
-          <mat-option *ngFor="let language of translate.getLangs()" [value]="language">
-            <span> {{language}}</span>
-          </mat-option>
-        </mat-select>
+        <a mat-button (click)="toggleMenu('Language')">
+          {{'LanguageMenu' | translate}}
+          <mat-icon *ngIf="selectedRow !== 'Language'">expand_more</mat-icon>
+          <mat-icon *ngIf="selectedRow === 'Language'">expand_less</mat-icon>
+        </a>
       </div>
     </mat-toolbar-row>
+    <!-- Submenu -->
     <mat-toolbar-row *ngIf="selectedRow === 'Registry'" class="toolbar-submenu">
       <span class="example-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
@@ -35,6 +35,14 @@
         <a mat-button routerLink="#">
           <mat-icon>people</mat-icon>
           People</a>
+      </div>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="selectedRow === 'Language'" class="toolbar-submenu">
+      <span class="example-spacer"></span>
+      <div fxShow="true" fxHide.lt-md="true">
+        <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language); toggleMenu('')">
+          <mat-icon>flag</mat-icon>
+          {{language}}</a>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
@@ -61,11 +69,16 @@
         <mat-list-item routerLink="/reports">
           <mat-icon>dashboard</mat-icon>
           {{'reports' | translate}}</mat-list-item>
-        <mat-select [(value)]="selectedLanguage" (selectionChange)="switchLanguage(selectedLanguage.valueOf())">
-          <mat-option *ngFor="let language of translate.getLangs()" [value]="language">
-            <span> {{language}}</span>
-          </mat-option>
-        </mat-select>
+        <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
+          <mat-expansion-panel-header>
+            {{'LanguageMenu' | translate}}
+          </mat-expansion-panel-header>
+          <mat-nav-list dense>
+            <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
+              <mat-icon>flag</mat-icon>
+              {{language}}</a>
+          </mat-nav-list>
+        </mat-expansion-panel>
       </mat-nav-list>
     </mat-sidenav>
 
