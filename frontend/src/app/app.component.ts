@@ -28,7 +28,11 @@ export class AppComponent {
   }
 
   toggleMenu(selectedRow: string) {
-    this.selectedRow = selectedRow;
+    if (this.selectedRow === selectedRow) {
+      this.selectedRow = '';
+    } else {
+      this.selectedRow = selectedRow;
+    }
   }
 
   switchLanguage(lang: string) {
