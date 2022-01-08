@@ -29,6 +29,7 @@ import {CookieService} from 'ngx-cookie-service';
 import {MatSelectModule} from "@angular/material/select";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
+import {MatExpansionModule} from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import {MatCardModule} from "@angular/material/card";
     MatSnackBarModule,
     MatCardModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatExpansionModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]
