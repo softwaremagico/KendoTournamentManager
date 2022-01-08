@@ -43,6 +43,22 @@ a {
   text-align: center;
 }
 
+// Top Menu
+
+.mat-toolbar-row {
+  height: 64px;
+  line-height: 64px;
+}
+
+.mat-toolbar.mat-primary.mat-toolbar-multiple-rows.ng-star-inserted.submenu {
+  height: 128px;
+  line-height: 128px;
+}
+
+.mat-toolbar-row.toolbar-submenu {
+  font-size: 80%;
+}
+
 //Messages
 .mat-snack-bar-container.info-snackbar.message-service {
   background: #3700B3;
