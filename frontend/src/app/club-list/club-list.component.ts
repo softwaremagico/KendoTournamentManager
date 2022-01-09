@@ -109,4 +109,9 @@ export class ClubListComponent implements OnInit {
     );
   }
 
+  filter(event: Event) {
+    const filter = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filter.trim().toLowerCase();
+  }
+
 }
