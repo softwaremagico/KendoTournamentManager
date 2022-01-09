@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-body{
+body {
   margin: 0%;
 }
 
@@ -25,6 +25,21 @@ body{
 // Table
 .kendo-table {
   padding: 20px;
+}
+
+.upper-menu {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.upper-menu .cell {
+  display: flex;
+}
+
+.upper-menu .filter {
+  text-align: right;
+  flex: 1 1 100px;
+  padding-right: 50px;
 }
 
 .mat-form-field-wrapper {
