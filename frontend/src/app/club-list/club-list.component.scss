@@ -2,38 +2,18 @@ table {
   width: 100%;
 }
 
-.upper-menu {
-  text-align: left;
-  padding-left: 20px;
-  padding-top: 15px;
-  padding-bottom: 15px;
-}
-
-.upper-menu .mat-button {
-  width: 80px;
-}
-
 .mat-header-cell {
-  text-align: left;
-  padding-right: 5px;
-  padding-left: 5px;
+  text-align: center;
+  padding: 8px 20px 8px 20px !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
   border-right: 1px solid currentColor;
-}
-
-.mat-cell {
-  text-align: left;
-  padding-right: 5px;
-  padding-left: 5px;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
+  font-size: medium;
 }
 
 .mat-column-id {
-  width: 32px;
+  width: 60px;
   padding-right: 24px;
   text-align: center;
 }
@@ -41,11 +21,5 @@ table {
 .mat-column-name {
 }
 
-.mat-row.hovered {
-  background: #eee;
-}
 
-.mat-row.highlighted {
-  background: #999;
-}
 

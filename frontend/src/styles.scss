@@ -30,6 +30,14 @@ body {
 .upper-menu {
   display: flex;
   flex-flow: row wrap;
+  text-align: left;
+  padding-left: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.upper-menu .mat-button {
+  width: 80px;
 }
 
 .upper-menu .cell {
@@ -42,6 +50,32 @@ body {
   padding-right: 50px;
 }
 
+.mat-cell {
+  text-align: left;
+  padding: 3px 20px 3px 20px !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.mat-row.hovered {
+  background: #8097b3;
+}
+
+.mat-row.highlighted {
+  background: #012f67;
+  color: white;
+}
+
+.highlighted .mat-cell {
+  color: white;
+  font-weight: bold;
+}
+
 .mat-form-field-wrapper {
   font-size: 12px;
+}
+
+.mat-paginator-container {
+  color: #012f67;
 }
