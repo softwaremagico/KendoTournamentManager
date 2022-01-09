@@ -5,3 +5,24 @@ body{
   margin: 0%;
 }
 
+//Messages
+.mat-snack-bar-container.info-snackbar.message-service {
+  background: #3700B3;
+  color: aliceblue;
+  width: 80%;
+}
+
+.mat-snack-bar-container.warning-snackbar.message-service {
+  background: #FF9800;
+  color: aliceblue;
+}
+
+.mat-snack-bar-container.error-snackbar.message-service {
+  background: #6e0309;
+  color: #ffd740;
+}
+
+// Table
+.kendo-table {
+  padding: 20px;
+}

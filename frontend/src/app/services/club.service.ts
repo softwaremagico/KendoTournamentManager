@@ -54,8 +54,8 @@ export class ClubService {
   }
 
   delete(club: Club): Observable<Club> {
-    const url: string = `${this.baseUrl}`;
-    return this.http.delete<Club>(url, this.httpOptions)
+    const url: string = `${this.baseUrl}/delete`;
+    return this.http.post<Club>(url, club, this.httpOptions)
       .pipe(
         tap(_ => this.log(`deleting club ${club}`)),
         catchError(this.handleError<Club>(`delete ${club}`))
