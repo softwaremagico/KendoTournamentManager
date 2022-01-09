@@ -22,7 +22,7 @@ export class ClubListComponent implements OnInit {
   columns: string[] = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
   selection = new SelectionModel<Club>(false, []);
   dataSource: MatTableDataSource<Club>;
-  selectedClub: Club;
+  selectedClub: Club | undefined;
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -62,7 +62,11 @@ export class ClubListComponent implements OnInit {
   }
 
   setSelectedItem(row: Club): void {
-    this.selectedClub = row;
+    if (row === this.selectedClub) {
+      this.selectedClub = undefined;
+    } else {
+      this.selectedClub = row;
+    }
   }
 
   openDialog(title: string, action: Action, club: Club) {
@@ -83,7 +87,6 @@ export class ClubListComponent implements OnInit {
   }
 
   addRowData(club: Club) {
-    console.log("Adding");
     this.clubService.add(club).subscribe(club => {
       this.dataSource.data.push(club);
       this.dataSource._updateChangeSubscription();

@@ -36,7 +36,7 @@ export class ClubDialogBoxComponent {
   }
 
   closeDialog() {
-    this.dialogRef.close({action: this.action});
+    this.dialogRef.close({action: Action.Cancel});
   }
 
 }
