@@ -1,16 +1,18 @@
 <div class="mat-elevation-z8">
   <div class="kendo-table">
     <div class="upper-menu">
-      <button mat-button color="primary" (click)="addClub()">
-        <mat-icon>add</mat-icon>
-      </button>
-      <button mat-button [disabled]="!selectedClub" (click)="editClub()">
-        <mat-icon>create</mat-icon>
-      </button>
-      <button mat-button color="warn" [disabled]="!selectedClub" (click)="deleteClub()">
-        <mat-icon>clear</mat-icon>
-      </button>
-      <div style="text-align:right;display:inline;">
+      <div class="cell">
+        <button mat-button color="primary" (click)="addClub()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-button [disabled]="!selectedClub" (click)="editClub()">
+          <mat-icon>create</mat-icon>
+        </button>
+        <button mat-button color="warn" [disabled]="!selectedClub" (click)="deleteClub()">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <div class="filter">
         <mat-form-field>
           <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
         </mat-form-field>
