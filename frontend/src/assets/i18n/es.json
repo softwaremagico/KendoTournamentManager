@@ -456,9 +456,9 @@
   "invalidDatabase": "La base de datos de destino no es válida. Probablemente pertenezca a una versión antigua del software.",
   "invalidPassword": "Por favor, introduce una contraseña correcta.",
   "invalidEmail": "Por favor, introduce un email correcto.",
-  "email": "Email",
+  "emailHeader": "emailHeader",
   "password": "Contraseña",
-  "nameClubHeader": "Nombre"
+  "nameHeader": "Nombre"
 }
 
 

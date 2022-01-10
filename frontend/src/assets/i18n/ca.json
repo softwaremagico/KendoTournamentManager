@@ -456,9 +456,9 @@
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
   "invalidPassword": "Per favor, introduïu una contrasenya correcte",
   "invalidEmail": "Per favor, introduïu un email correcte",
-  "email": "Email",
+  "emailHeader": "emailHeader",
   "password": "Contrasenya",
-  "nameClubHeader": "Nom"
+  "nameHeader": "Nom"
 }
 
 

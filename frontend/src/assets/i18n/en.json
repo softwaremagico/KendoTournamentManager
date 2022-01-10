@@ -458,10 +458,10 @@
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
   "invalidPassword": "Please provide a valid password",
   "invalidEmail": "Please provide a valid email address",
-  "email": "Email",
+  "emailHeader": "Email",
   "password": "Password",
   "login": "Login",
   "filter": "Filter",
-  "nameClubHeader": "Name"
+  "nameHeader": "Name"
 }
 

@@ -30,6 +30,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -38,40 +39,41 @@ import {MatExpansionModule} from "@angular/material/expansion";
     ClubDialogBoxComponent,
     LoginComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FlexLayoutModule,
-    HttpClientModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSliderModule,
-    AppRoutingModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatMenuModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    MatSortModule,
-    MatInputModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient]
-      }
-    }),
-    MatSelectModule,
-    MatSnackBarModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatExpansionModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FlexLayoutModule,
+        HttpClientModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSliderModule,
+        AppRoutingModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatMenuModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatDialogModule,
+        MatSortModule,
+        MatInputModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpTranslateLoader,
+                deps: [HttpClient]
+            }
+        }),
+        MatSelectModule,
+        MatSnackBarModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatExpansionModule,
+        MatCheckboxModule
+    ],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })
