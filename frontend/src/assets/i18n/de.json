@@ -454,7 +454,7 @@
   "waitingConnection": "Waiting database response. Check the network connection.",
   "passwordDoesNotMatch": "The inserted password does not match!",
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
-  "nameClubHeader": "Name"
+  "nameHeader": "Name"
 }
 
 

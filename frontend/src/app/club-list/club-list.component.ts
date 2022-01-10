@@ -20,6 +20,7 @@ import {MessageService} from "../services/message.service";
 export class ClubListComponent implements OnInit {
 
   columns: string[] = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
+  visibleColumns: string[] = ['name', 'country', 'city'];
   selection = new SelectionModel<Club>(false, []);
   dataSource: MatTableDataSource<Club>;
   selectedClub: Club | undefined;
@@ -112,6 +113,28 @@ export class ClubListComponent implements OnInit {
   filter(event: Event) {
     const filter = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filter.trim().toLowerCase();
+  }
+
+  isColumnVisible(column: string): boolean {
+    return this.visibleColumns.includes(column);
+  }
+
+  toggleColumnVisibility(column: string) {
+    const index: number = this.visibleColumns.indexOf(column);
+    if (index !== -1) {
+      this.visibleColumns.splice(index, 1);
+    } else {
+      let oldVisibleColumns: string[];
+      oldVisibleColumns = [...this.visibleColumns];
+      oldVisibleColumns.push(column);
+      this.visibleColumns.length = 0;
+      //Maintain columns order.
+      for (let column of this.columns) {
+        if (oldVisibleColumns.includes(column)) {
+          this.visibleColumns.push(column);
+        }
+      }
+    }
   }
 
 }
