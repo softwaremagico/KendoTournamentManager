@@ -20,10 +20,11 @@ import {MessageService} from "../services/message.service";
 export class ClubListComponent implements OnInit {
 
   columns: string[] = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
+  columnsTags: string[] = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
   visibleColumns: string[] = ['name', 'country', 'city'];
   selection = new SelectionModel<Club>(false, []);
   dataSource: MatTableDataSource<Club>;
-  selectedClub: Club | undefined;
+  selectedElement: Club | undefined;
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -33,40 +34,40 @@ export class ClubListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showAllClubs();
+    this.showAllElements();
     this.dataSource = new MatTableDataSource<Club>();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  showAllClubs(): void {
+  showAllElements(): void {
     this.clubService.getAll().subscribe(clubs => {
       this.dataSource.data = clubs;
     });
   }
 
-  addClub(): void {
+  addElement(): void {
     let club = new Club();
     this.openDialog('Add a new club', Action.Add, club);
   }
 
-  editClub(): void {
-    if (this.selectedClub) {
-      this.openDialog('Edit club', Action.Update, this.selectedClub);
+  editElement(): void {
+    if (this.selectedElement) {
+      this.openDialog('Edit club', Action.Update, this.selectedElement);
     }
   }
 
-  deleteClub(): void {
-    if (this.selectedClub) {
-      this.openDialog('Delete club', Action.Delete, this.selectedClub);
+  deleteElement(): void {
+    if (this.selectedElement) {
+      this.openDialog('Delete club', Action.Delete, this.selectedElement);
     }
   }
 
   setSelectedItem(row: Club): void {
-    if (row === this.selectedClub) {
-      this.selectedClub = undefined;
+    if (row === this.selectedElement) {
+      this.selectedElement = undefined;
     } else {
-      this.selectedClub = row;
+      this.selectedElement = row;
     }
   }
 
