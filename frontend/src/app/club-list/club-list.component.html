@@ -31,44 +31,11 @@
     </div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort matSortActive="name">
 
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="id">{{columnsTags[0] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.id}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="name">{{columnsTags[1] |translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.name}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="country">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="country">{{columnsTags[2] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.country}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="city">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="city">{{columnsTags[3] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.city}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="address">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="address">{{columnsTags[4] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.address}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="emailHeader">{{columnsTags[5] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.email}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="phone">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="phone">{{columnsTags[6] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.phone}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="web">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="web">{{columnsTags[7] | translate}}</th>
-        <td mat-cell *matCellDef="let club"> {{club.web}} </td>
+      <ng-container *ngFor="let column of columns; let i = index">
+        <ng-container [matColumnDef]=column>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="id">{{columnsTags[i] | translate}}</th>
+          <td mat-cell *matCellDef="let club"> {{club[column]}} </td>
+        </ng-container>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
