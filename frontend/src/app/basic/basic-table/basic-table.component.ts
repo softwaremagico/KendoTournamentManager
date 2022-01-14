@@ -1,51 +1,30 @@
-import {Component, ViewChild, OnInit} from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatTable} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {MatDialog} from '@angular/material/dialog';
+import {Component, Input, OnInit} from '@angular/core';
 import {SelectionModel} from "@angular/cdk/collections";
-import {ClubService} from '../services/club.service';
-import {Club} from '../models/club';
-import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
-import {Action} from './club-dialog-box/club-dialog-box.component';
-import {MessageService} from "../services/message.service";
-import {BasicTableData} from "../basic/basic-table/basic-table-data";
-
+import {Club} from "../../models/club";
+import {MatTableDataSource} from "@angular/material/table";
+import {BasicTableData} from "./basic-table-data";
+import {Action, ClubDialogBoxComponent} from "../../club-list/club-dialog-box/club-dialog-box.component";
+import {MessageService} from "../../services/message.service";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-club-list',
-  templateUrl: './club-list.component.html',
-  styleUrls: ['./club-list.component.scss']
+  selector: 'basic-table',
+  templateUrl: './basic-table.component.html',
+  styleUrls: ['./basic-table.component.scss']
 })
-export class ClubListComponent implements OnInit {
+export class BasicTableComponent implements OnInit {
 
-  basicTableData: BasicTableData<Club>;
+  @Input()
+  basicTableData: BasicTableData<any>;
 
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
-
-  constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
-    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
-    this.basicTableData.columnsTags = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
-    this.basicTableData.visibleColumns = ['name', 'country', 'city'];
-    this.basicTableData.selection = new SelectionModel<Club>(false, []);
-    this.basicTableData.dataSource = new MatTableDataSource<Club>();
+  constructor(public dialog: MatDialog, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
-    this.showAllElements();
-  }
-
-  showAllElements(): void {
-    this.clubService.getAll().subscribe(clubs => {
-      this.basicTableData.dataSource.data = clubs;
-    });
   }
 
   addElement(): void {
-    let club = new Club();
+    const club = new Club();
     this.openDialog('Add a new club', Action.Add, club);
   }
 
@@ -86,6 +65,13 @@ export class ClubListComponent implements OnInit {
     });
   }
 
+
+  showAllElements(): void {
+    this.clubService.getAll().subscribe(clubs => {
+      this.basicTableData.dataSource.data = clubs;
+    });
+  }
+
   addRowData(club: Club) {
     this.clubService.add(club).subscribe(club => {
       this.basicTableData.dataSource.data.push(club);
@@ -94,16 +80,16 @@ export class ClubListComponent implements OnInit {
     });
   }
 
-  updateRowData(club: Club) {
-    this.clubService.update(club).subscribe(club => {
+  updateRowData(element: Club) {
+    this.clubService.update(element).subscribe(club => {
         this.messageService.infoMessage("clubUpdated");
       }
     );
   }
 
-  deleteRowData(club: Club) {
-    this.clubService.delete(club).subscribe(n => {
-      this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
+  deleteRowData(element: Club) {
+    this.clubService.delete(element).subscribe(n => {
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_element => existing_element !== element);
         this.messageService.infoMessage("clubDeleted");
       }
     );
@@ -135,5 +121,6 @@ export class ClubListComponent implements OnInit {
       }
     }
   }
+
 
 }
