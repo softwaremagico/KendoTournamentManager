@@ -31,6 +31,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {BasicTableModule} from "./basic/basic-table/basic-table.module";
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
         FormsModule,
         ReactiveFormsModule,
         MatExpansionModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        BasicTableModule
     ],
   providers: [CookieService],
   bootstrap: [AppComponent]
