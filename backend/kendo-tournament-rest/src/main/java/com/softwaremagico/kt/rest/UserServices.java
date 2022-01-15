@@ -83,6 +83,14 @@ public class UserServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes a user.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody UserDto user, HttpServletRequest request) {
+        userProvider.delete(modelMapper.map(user, User.class));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a user.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public User update(@RequestBody UserDto user, HttpServletRequest request) {
