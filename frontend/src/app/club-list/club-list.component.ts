@@ -20,17 +20,16 @@ import {BasicTableData} from "../basic/basic-table/basic-table-data";
 })
 export class ClubListComponent implements OnInit {
 
-  basicTableData: BasicTableData<Club> = new BasicTableData<Club>(
-    ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'],
-    ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'],
-    ['name', 'country', 'city']
-    );
+  basicTableData: BasicTableData<Club> = new BasicTableData<Club>();
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
+    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
+    this.basicTableData.columnsTags = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
+    this.basicTableData.visibleColumns = ['name', 'country', 'city'];
     this.basicTableData.selection = new SelectionModel<Club>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Club>();
   }

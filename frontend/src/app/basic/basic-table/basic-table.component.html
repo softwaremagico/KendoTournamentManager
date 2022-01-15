@@ -15,12 +15,13 @@
         </span>
 </mat-menu>
 <div class="mat-elevation-z8">
-  <div class="kendo-table">
+  <div class="basic-table">
     <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name">
 
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
         <ng-container [matColumnDef]=column>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="id">{{basicTableData.columnsTags[i] | translate}}</th>
+          <th mat-header-cell *matHeaderCellDef
+              mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}</th>
           <td mat-cell *matCellDef="let club"> {{club[column]}} </td>
         </ng-container>
       </ng-container>
