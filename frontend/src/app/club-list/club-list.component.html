@@ -12,17 +12,7 @@
           <mat-icon>clear</mat-icon>
         </button>
       </div>
-
-      <mat-menu #mainMenuButton="matMenu" class="table-settings">
-        <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns">
-          <mat-checkbox class="menu-setting-option" (change)="toggleColumnVisibility(column)"
-                        [checked]="isColumnVisible(column)"></mat-checkbox>
-          {{column + 'Header' | translate}}
-          <br>
-        </span>
-      </mat-menu>
     </div>
     <basic-table [basicTableData]="basicTableData"></basic-table>
-    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
   </div>
 </div>

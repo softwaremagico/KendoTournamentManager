@@ -8,8 +8,9 @@ import {MatMenuModule} from "@angular/material/menu";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatTableModule} from "@angular/material/table";
-
-
+import {MatInputModule} from "@angular/material/input";
+import {MatSortModule} from "@angular/material/sort";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,10 @@ import {MatTableModule} from "@angular/material/table";
     MatMenuModule,
     MatCheckboxModule,
     MatPaginatorModule,
-    MatTableModule
+    MatTableModule,
+    MatInputModule,
+    MatSortModule,
+    MatButtonModule
   ]
 })
 export class BasicTableModule { }
