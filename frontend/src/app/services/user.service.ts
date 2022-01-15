@@ -5,6 +5,7 @@ import {catchError, map, tap} from 'rxjs/operators';
 import {Observable, of} from "rxjs";
 import {User} from "../models/user";
 import {LoggerService} from "../logger.service";
+import {Club} from "../models/club";
 
 @Injectable({
   providedIn: 'root'
@@ -38,12 +39,21 @@ export class UserService {
       );
   }
 
-  delete(id: number) {
+  deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
     this.http.delete(url)
       .pipe(
         tap(_ => this.log(`deleting user id=${id}`)),
         catchError(this.handleError<User>(`delete id=${id}`))
+      );
+  }
+
+  delete(user: User): Observable<User> {
+    const url: string = `${this.baseUrl}/delete`;
+    return this.http.post<User>(url, user, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleting user ${user}`)),
+        catchError(this.handleError<User>(`delete ${user}`))
       );
   }
 
