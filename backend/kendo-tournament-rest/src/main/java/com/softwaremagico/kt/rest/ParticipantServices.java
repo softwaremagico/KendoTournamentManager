@@ -24,9 +24,9 @@ package com.softwaremagico.kt.rest;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.UserProvider;
-import com.softwaremagico.kt.persistence.entities.User;
-import com.softwaremagico.kt.rest.model.UserDto;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.rest.model.ParticipantDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
@@ -40,60 +40,60 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
-public class UserServices {
-    private final UserProvider userProvider;
+@RequestMapping("/participants")
+public class ParticipantServices {
+    private final ParticipantProvider participantProvider;
     private final ModelMapper modelMapper;
 
-    public UserServices(UserProvider userProvider, ModelMapper modelMapper) {
-        this.userProvider = userProvider;
+    public ParticipantServices(ParticipantProvider participantProvider, ModelMapper modelMapper) {
+        this.participantProvider = participantProvider;
         this.modelMapper = modelMapper;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all users.")
+    @ApiOperation(value = "Gets all participants.")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getAll(HttpServletRequest request) {
-        return userProvider.getAll();
+    public List<Participant> getAll(HttpServletRequest request) {
+        return participantProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets a user.")
+    @ApiOperation(value = "Gets a participant.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public User get(@ApiParam(value = "Id of an existing user", required = true) @PathParam("id") Integer id,
-                    HttpServletRequest request) {
-        return userProvider.get(id);
+    public Participant get(@ApiParam(value = "Id of an existing participant", required = true) @PathParam("id") Integer id,
+                           HttpServletRequest request) {
+        return participantProvider.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Creates a user.")
+    @ApiOperation(value = "Creates a participant.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public User add(@RequestBody UserDto user, HttpServletRequest request) {
-        return userProvider.add(modelMapper.map(user, User.class));
+    public Participant add(@RequestBody ParticipantDto participant, HttpServletRequest request) {
+        return participantProvider.add(modelMapper.map(participant, Participant.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a user.")
+    @ApiOperation(value = "Deletes a participant.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing user", required = true) @PathParam("id") Integer id,
+    public void delete(@ApiParam(value = "Id of an existing participant", required = true) @PathParam("id") Integer id,
                        HttpServletRequest request) {
-        userProvider.delete(id);
+        participantProvider.delete(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a user.")
+    @ApiOperation(value = "Deletes a participant.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody UserDto user, HttpServletRequest request) {
-        userProvider.delete(modelMapper.map(user, User.class));
+    public void delete(@RequestBody ParticipantDto participant, HttpServletRequest request) {
+        participantProvider.delete(modelMapper.map(participant, Participant.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Updates a user.")
+    @ApiOperation(value = "Updates a participant.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public User update(@RequestBody UserDto user, HttpServletRequest request) {
-        return userProvider.update(modelMapper.map(user, User.class));
+    public Participant update(@RequestBody ParticipantDto participant, HttpServletRequest request) {
+        return participantProvider.update(modelMapper.map(participant, Participant.class));
     }
 }

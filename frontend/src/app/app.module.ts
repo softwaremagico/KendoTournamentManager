@@ -32,7 +32,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BasicTableModule} from "./basic/basic-table/basic-table.module";
-import {UserListComponent} from './user-list/user-list/user-list.component';
+import {ParticipantListComponent} from './participant-list/participant-list.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import {UserListComponent} from './user-list/user-list/user-list.component';
     ClubListComponent,
     ClubDialogBoxComponent,
     LoginComponent,
-    UserListComponent
+    ParticipantListComponent
   ],
   imports: [
     BrowserModule,
