@@ -32,50 +32,52 @@ import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BasicTableModule} from "./basic/basic-table/basic-table.module";
+import {UserListComponent} from './user-list/user-list/user-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClubListComponent,
     ClubDialogBoxComponent,
-    LoginComponent
+    LoginComponent,
+    UserListComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FlexLayoutModule,
-        HttpClientModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSliderModule,
-        AppRoutingModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatMenuModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatDialogModule,
-        MatSortModule,
-        MatInputModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: httpTranslateLoader,
-                deps: [HttpClient]
-            }
-        }),
-        MatSelectModule,
-        MatSnackBarModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatExpansionModule,
-        MatCheckboxModule,
-        BasicTableModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    HttpClientModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSliderModule,
+    AppRoutingModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatMenuModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatSortModule,
+    MatInputModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient]
+      }
+    }),
+    MatSelectModule,
+    MatSnackBarModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    BasicTableModule
+  ],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })
