@@ -24,10 +24,14 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.User;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+import java.util.Optional;
 
+public interface ParticipantImageRepository extends JpaRepository<ParticipantImage, Integer> {
+
+    Optional<ParticipantImage> findByParticipant(Participant participant);
 
 }

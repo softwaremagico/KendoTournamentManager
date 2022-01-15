@@ -40,8 +40,8 @@ import java.util.Locale;
 @Entity
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "user")
-public class User implements Comparable<User> {
+@Table(name = "participant")
+public class Participant implements Comparable<Participant> {
 
 
     @Id
@@ -64,12 +64,12 @@ public class User implements Comparable<User> {
     @JoinColumn(name = "club")
     private Club club;
 
-    public User() {
+    public Participant() {
 
     }
 
 
-    public User(String idCard, String name, String lastname) {
+    public Participant(String idCard, String name, String lastname) {
         setName(name);
         setLastname(lastname);
         setIdCard(idCard);
@@ -123,10 +123,10 @@ public class User implements Comparable<User> {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof User)) {
+        if (!(object instanceof Participant)) {
             return false;
         }
-        final User otherParticipant = (User) object;
+        final Participant otherParticipant = (Participant) object;
         return this.idCard.equals(otherParticipant.idCard);
     }
 
@@ -144,7 +144,7 @@ public class User implements Comparable<User> {
      * @return
      */
     @Override
-    public int compareTo(User otherParticipant) {
+    public int compareTo(Participant otherParticipant) {
         final String string1 = this.lastname + " " + this.name;
         final String string2 = otherParticipant.lastname + " " + otherParticipant.name;
 

@@ -24,8 +24,8 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.UserImage;
-import com.softwaremagico.kt.persistence.entities.User;
+import com.softwaremagico.kt.persistence.entities.ParticipantImage;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.UserImageFactory;
 import com.softwaremagico.kt.utils.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +42,14 @@ import java.util.Arrays;
 
 @SpringBootTest
 @Test(groups = {"imageRepository"})
-public class UserImageRepositoryTest extends AbstractTestNGSpringContextTests {
+public class ParticipantImageRepositoryTest extends AbstractTestNGSpringContextTests {
     private final static String IMAGE_RESOURCE = "kendo.jpg";
 
     @Autowired
-    private UserImageRepository photoRepository;
+    private ParticipantImageRepository photoRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private ParticipantRepository participantRepository;
 
     @Autowired
     private UserFactory userFactory;
@@ -57,29 +57,29 @@ public class UserImageRepositoryTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private UserImageFactory userImageFactory;
 
-    private User user;
+    private Participant participant;
 
     @BeforeClass
     public void createDefaultStructure() {
-        user = userFactory.createDefaultUser();
-        user = userRepository.save(user);
+        participant = userFactory.createDefaultUser();
+        participant = participantRepository.save(participant);
     }
 
     @AfterClass
     public void clearData() {
-        userRepository.delete(user);
+        participantRepository.delete(participant);
     }
 
     @Test
     public void addUserImage() throws Exception {
-        UserImage userImage = userImageFactory.createUserImage(IMAGE_RESOURCE, user);
-        userImage = photoRepository.save(userImage);
+        ParticipantImage participantImage = userImageFactory.createUserImage(IMAGE_RESOURCE, participant);
+        participantImage = photoRepository.save(participantImage);
 
         //Check content.
-        final UserImage storedImage = photoRepository.findById(userImage.getId()).orElseThrow(() -> new Exception("Invalid image"));
+        final ParticipantImage storedImage = photoRepository.findById(participantImage.getId()).orElseThrow(() -> new Exception("Invalid image"));
         Assert.assertTrue(Arrays.equals(storedImage.getData(), Files.readAllBytes(Paths.get(getClass().getClassLoader()
                 .getResource(IMAGE_RESOURCE).toURI()))));
-        photoRepository.delete(userImage);
+        photoRepository.delete(participantImage);
     }
 
 }
