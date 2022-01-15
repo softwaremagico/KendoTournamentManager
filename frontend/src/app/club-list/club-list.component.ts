@@ -45,7 +45,7 @@ export class ClubListComponent implements OnInit {
   }
 
   addElement(): void {
-    let club = new Club();
+    const club = new Club();
     this.openDialog('Add a new club', Action.Add, club);
   }
 
@@ -95,14 +95,14 @@ export class ClubListComponent implements OnInit {
   }
 
   updateRowData(club: Club) {
-    this.clubService.update(club).subscribe(club => {
+    this.clubService.update(club).subscribe(() => {
         this.messageService.infoMessage("clubUpdated");
       }
     );
   }
 
   deleteRowData(club: Club) {
-    this.clubService.delete(club).subscribe(n => {
+    this.clubService.delete(club).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
         this.messageService.infoMessage("clubDeleted");
       }
