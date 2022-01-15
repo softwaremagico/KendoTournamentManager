@@ -24,7 +24,7 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-public class UserDto {
+public class ParticipantDto {
 
     private Integer id;
 

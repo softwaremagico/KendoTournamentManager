@@ -24,7 +24,7 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.User;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import org.springframework.stereotype.Service;
 import org.testng.Assert;
 
@@ -34,15 +34,15 @@ public class UserFactory {
     public static final String DEFAULT_USER_LASTNAME = "Griffin";
     public static final String DEFAULT_USER_ID_CARD = "11111111A";
 
-    public User createDefaultUser() {
-        final User user = new User(DEFAULT_USER_ID_CARD, DEFAULT_USER_FIRSTNAME, DEFAULT_USER_LASTNAME);
-        return user;
+    public Participant createDefaultUser() {
+        final Participant participant = new Participant(DEFAULT_USER_ID_CARD, DEFAULT_USER_FIRSTNAME, DEFAULT_USER_LASTNAME);
+        return participant;
     }
 
-    public void checkDefaultUser(User user) {
-        Assert.assertEquals(user.getIdCard(), DEFAULT_USER_ID_CARD);
-        Assert.assertEquals(user.getLastname(), DEFAULT_USER_LASTNAME);
-        Assert.assertEquals(user.getName(), DEFAULT_USER_FIRSTNAME);
+    public void checkDefaultUser(Participant participant) {
+        Assert.assertEquals(participant.getIdCard(), DEFAULT_USER_ID_CARD);
+        Assert.assertEquals(participant.getLastname(), DEFAULT_USER_LASTNAME);
+        Assert.assertEquals(participant.getName(), DEFAULT_USER_FIRSTNAME);
 
     }
 }

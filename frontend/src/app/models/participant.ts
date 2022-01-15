@@ -1,6 +1,6 @@
 import {Club} from "./club";
 
-export class User {
+export class Participant {
   public id?: number;
   public idCard: string;
   public name: string;

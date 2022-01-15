@@ -26,8 +26,8 @@ package com.softwaremagico.kt.rest;
 
 import com.softwaremagico.kt.core.exceptions.DataInputException;
 import com.softwaremagico.kt.core.providers.FileProvider;
-import com.softwaremagico.kt.core.providers.UserProvider;
-import com.softwaremagico.kt.persistence.entities.UserImage;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -43,31 +43,31 @@ import java.io.IOException;
 public class FileServices {
 
     private final FileProvider fileProvider;
-    private final UserProvider userProvider;
+    private final ParticipantProvider participantProvider;
 
     @Autowired
-    public FileServices(FileProvider fileProvider, UserProvider userProvider) {
+    public FileServices(FileProvider fileProvider, ParticipantProvider participantProvider) {
         this.fileProvider = fileProvider;
-        this.userProvider = userProvider;
+        this.participantProvider = participantProvider;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Uploads a photo to a user profile")
-    @PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Uploads a photo to a participant profile")
+    @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public void upload(@RequestParam("file") MultipartFile file,
-                       @RequestParam("user") int userId, HttpServletRequest request) {
+                       @RequestParam("participant") int participantId, HttpServletRequest request) {
         try {
-            fileProvider.add(file, userProvider.get(userId));
+            fileProvider.add(file, participantProvider.get(participantId));
         } catch (IOException e) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets an image from a user")
-    @GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserImage getUserImage(@RequestParam("user") int userId, HttpServletRequest request) {
-        // return fileProvider.get(type, userProvider.get(userId));
+    @ApiOperation(value = "Gets an image from a participant")
+    @GetMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantImage getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {
+        // return fileProvider.get(type, participantProvider.get(participantId));
         return null;
     }
 }

@@ -24,7 +24,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.User;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,10 +36,10 @@ import org.testng.annotations.Test;
 
 @SpringBootTest
 @Test(groups = {"userRepository"})
-public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
+public class ParticipantRepositoryTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private UserRepository userRepository;
+    private ParticipantRepository participantRepository;
 
     @Autowired
     private UserFactory userFactory;
@@ -56,10 +56,10 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void addUser() throws Exception {
-        User user = userFactory.createDefaultUser();
-        Assert.assertEquals(userRepository.count(), 0);
-        user = userRepository.save(user);
-        Assert.assertEquals(userRepository.count(), 1);
-        userFactory.checkDefaultUser(userRepository.findById(user.getId()).orElseThrow(() -> new Exception("Invalid user")));
+        Participant participant = userFactory.createDefaultUser();
+        Assert.assertEquals(participantRepository.count(), 0);
+        participant = participantRepository.save(participant);
+        Assert.assertEquals(participantRepository.count(), 1);
+        userFactory.checkDefaultUser(participantRepository.findById(participant.getId()).orElseThrow(() -> new Exception("Invalid user")));
     }
 }
