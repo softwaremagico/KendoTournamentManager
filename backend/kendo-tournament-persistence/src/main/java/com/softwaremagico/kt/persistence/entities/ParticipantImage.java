@@ -33,8 +33,8 @@ import javax.persistence.*;
 @Entity
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "user_image")
-public class UserImage {
+@Table(name = "participant_image")
+public class ParticipantImage {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -48,8 +48,8 @@ public class UserImage {
     private byte[] data;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user", nullable = false)
-    private User user;
+    @JoinColumn(name = "participant", nullable = false)
+    private Participant participant;
 
 
     public Integer getId() {
@@ -65,17 +65,17 @@ public class UserImage {
         this.data = (data == null) ? null : data.clone();
     }
 
-    public User getUser() {
-        return user;
+    public Participant getUser() {
+        return participant;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Participant participant) {
+        this.participant = participant;
     }
 
     @Override
     public String toString() {
-        return "UserImage{user='" + user + "', size='" + getData().length + "'}";
+        return "ParticipantImage{participant='" + participant + "', size='" + getData().length + "'}";
     }
 
 }

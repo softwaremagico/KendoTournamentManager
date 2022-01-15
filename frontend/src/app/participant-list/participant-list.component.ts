@@ -1,36 +1,35 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../../basic/basic-table/basic-table-data";
-import {Club} from "../../models/club";
+import {BasicTableData} from "../basic/basic-table/basic-table-data";
+import {Club} from "../models/club";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
-import {User} from "../../models/user";
-import {ClubService} from "../../services/club.service";
+import {Participant} from "../models/participant";
 import {MatDialog} from "@angular/material/dialog";
-import {MessageService} from "../../services/message.service";
-import {UserService} from "../../services/user.service";
+import {MessageService} from "../services/message.service";
+import {ParticipantService} from "../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
-import {Action, ClubDialogBoxComponent} from "../../club-list/club-dialog-box/club-dialog-box.component";
+import {Action, ClubDialogBoxComponent} from "../club-list/club-dialog-box/club-dialog-box.component";
 
 @Component({
-  selector: 'app-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss']
+  selector: 'app-participant-list',
+  templateUrl: './participant-list.component.html',
+  styleUrls: ['./participant-list.component.scss']
 })
-export class UserListComponent implements OnInit {
+export class ParticipantListComponent implements OnInit {
 
-  basicTableData: BasicTableData<User> = new BasicTableData<User>();
+  basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>();
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private userService: UserService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private ParticipantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService) {
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'club'];
     this.basicTableData.columnsTags = ['idHeader', 'idCardHeader', 'nameHeader', 'lastnameHeader', 'clubHeader'];
     this.basicTableData.visibleColumns = ['name', 'lastname', 'club'];
-    this.basicTableData.selection = new SelectionModel<User>(false, []);
-    this.basicTableData.dataSource = new MatTableDataSource<User>();
+    this.basicTableData.selection = new SelectionModel<Participant>(false, []);
+    this.basicTableData.dataSource = new MatTableDataSource<Participant>();
   }
 
   ngOnInit(): void {
@@ -38,14 +37,14 @@ export class UserListComponent implements OnInit {
   }
 
   showAllElements(): void {
-    this.userService.getAll().subscribe(users => {
-      this.basicTableData.dataSource.data = users;
+    this.ParticipantService.getAll().subscribe(Participants => {
+      this.basicTableData.dataSource.data = Participants;
     });
   }
 
   addElement(): void {
-    const user = new User();
-    this.openDialog('Add a new club', Action.Add, user);
+    const participant = new Participant();
+    this.openDialog('Add a new club', Action.Add, participant);
   }
 
   editElement(): void {
@@ -60,7 +59,7 @@ export class UserListComponent implements OnInit {
     }
   }
 
-  setSelectedItem(row: User): void {
+  setSelectedItem(row: Participant): void {
     if (row === this.basicTableData.selectedElement) {
       this.basicTableData.selectedElement = undefined;
     } else {
@@ -68,10 +67,10 @@ export class UserListComponent implements OnInit {
     }
   }
 
-  openDialog(title: string, action: Action, user: User) {
+  openDialog(title: string, action: Action, participant: Participant) {
     const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
       width: '250px',
-      data: {title: title, action: action, entity: user}
+      data: {title: title, action: action, entity: participant}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -85,24 +84,24 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  addRowData(user: User) {
-    this.userService.add(user).subscribe(user => {
-      this.basicTableData.dataSource.data.push(user);
+  addRowData(participant: Participant) {
+    this.ParticipantService.add(participant).subscribe(participant => {
+      this.basicTableData.dataSource.data.push(participant);
       this.basicTableData.dataSource._updateChangeSubscription();
       this.messageService.infoMessage("clubStored");
     });
   }
 
-  updateRowData(user: User) {
-    this.userService.update(user).subscribe(() => {
+  updateRowData(participant: Participant) {
+    this.ParticipantService.update(participant).subscribe(() => {
         this.messageService.infoMessage("clubUpdated");
       }
     );
   }
 
-  deleteRowData(user: User) {
-    this.userService.delete(user).subscribe(() => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_user => existing_user !== user);
+  deleteRowData(participant: Participant) {
+    this.ParticipantService.delete(participant).subscribe(() => {
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
         this.messageService.infoMessage("clubDeleted");
       }
     );
