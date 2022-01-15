@@ -20,16 +20,17 @@ import {BasicTableData} from "../basic/basic-table/basic-table-data";
 })
 export class ClubListComponent implements OnInit {
 
-  basicTableData: BasicTableData<Club>;
+  basicTableData: BasicTableData<Club> = new BasicTableData<Club>(
+    ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'],
+    ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'],
+    ['name', 'country', 'city']
+    );
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
-    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
-    this.basicTableData.columnsTags = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
-    this.basicTableData.visibleColumns = ['name', 'country', 'city'];
     this.basicTableData.selection = new SelectionModel<Club>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Club>();
   }
@@ -103,37 +104,10 @@ export class ClubListComponent implements OnInit {
 
   deleteRowData(club: Club) {
     this.clubService.delete(club).subscribe(n => {
-      this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
         this.messageService.infoMessage("clubDeleted");
       }
     );
-  }
-
-  filter(event: Event) {
-    const filter = (event.target as HTMLInputElement).value;
-    this.basicTableData.dataSource.filter = filter.trim().toLowerCase();
-  }
-
-  isColumnVisible(column: string): boolean {
-    return this.basicTableData.visibleColumns.includes(column);
-  }
-
-  toggleColumnVisibility(column: string) {
-    const index: number = this.basicTableData.visibleColumns.indexOf(column);
-    if (index !== -1) {
-      this.basicTableData.visibleColumns.splice(index, 1);
-    } else {
-      let oldVisibleColumns: string[];
-      oldVisibleColumns = [...this.basicTableData.visibleColumns];
-      oldVisibleColumns.push(column);
-      this.basicTableData.visibleColumns.length = 0;
-      //Maintain columns order.
-      for (let column of this.basicTableData.columns) {
-        if (oldVisibleColumns.includes(column)) {
-          this.basicTableData.visibleColumns.push(column);
-        }
-      }
-    }
   }
 
 }

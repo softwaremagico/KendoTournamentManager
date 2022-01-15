@@ -1,13 +1,21 @@
+<div class="filter">
+  <mat-form-field>
+    <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
+  </mat-form-field>
+</div>
+<button mat-button [matMenuTriggerFor]="mainMenuButton">
+  <mat-icon>tune</mat-icon>
+</button>
+<mat-menu #mainMenuButton="matMenu" class="table-settings">
+        <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns">
+          <mat-checkbox class="menu-setting-option" (change)="toggleColumnVisibility(column)"
+                        [checked]="isColumnVisible(column)"></mat-checkbox>
+          {{column + 'Header' | translate}}
+          <br>
+        </span>
+</mat-menu>
 <div class="mat-elevation-z8">
   <div class="kendo-table">
-    <div class="filter">
-      <mat-form-field>
-        <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
-      </mat-form-field>
-    </div>
-    <button mat-button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="mainMenuButton">
-      <mat-icon>tune</mat-icon>
-    </button>
     <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name">
 
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
