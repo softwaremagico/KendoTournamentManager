@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {BasicTableData} from "../basic/basic-table/basic-table-data";
-import {Club} from "../models/club";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
@@ -9,7 +8,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../services/message.service";
 import {ParticipantService} from "../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
-import {Action, ClubDialogBoxComponent} from "../club-list/club-dialog-box/club-dialog-box.component";
+import {Action, ParticipantDialogBoxComponent} from "./participant-dialog-box/participant-dialog-box.component";
 
 @Component({
   selector: 'app-participant-list',
@@ -68,7 +67,7 @@ export class ParticipantListComponent implements OnInit {
   }
 
   openDialog(title: string, action: Action, participant: Participant) {
-    const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
+    const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
       width: '250px',
       data: {title: title, action: action, entity: participant}
     });
