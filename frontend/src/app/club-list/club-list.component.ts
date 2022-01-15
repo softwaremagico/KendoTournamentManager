@@ -10,6 +10,7 @@ import {Club} from '../models/club';
 import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
 import {Action} from './club-dialog-box/club-dialog-box.component';
 import {MessageService} from "../services/message.service";
+import {BasicTableData} from "../basic/basic-table/basic-table-data";
 
 
 @Component({
@@ -19,30 +20,27 @@ import {MessageService} from "../services/message.service";
 })
 export class ClubListComponent implements OnInit {
 
-  columns: string[] = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
-  columnsTags: string[] = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
-  visibleColumns: string[] = ['name', 'country', 'city'];
-  selection = new SelectionModel<Club>(false, []);
-  dataSource: MatTableDataSource<Club>;
-  selectedElement: Club | undefined;
+  basicTableData: BasicTableData<Club> = new BasicTableData<Club>();
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
+    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
+    this.basicTableData.columnsTags = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
+    this.basicTableData.visibleColumns = ['name', 'country', 'city'];
+    this.basicTableData.selection = new SelectionModel<Club>(false, []);
+    this.basicTableData.dataSource = new MatTableDataSource<Club>();
   }
 
   ngOnInit(): void {
     this.showAllElements();
-    this.dataSource = new MatTableDataSource<Club>();
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   showAllElements(): void {
     this.clubService.getAll().subscribe(clubs => {
-      this.dataSource.data = clubs;
+      this.basicTableData.dataSource.data = clubs;
     });
   }
 
@@ -52,22 +50,22 @@ export class ClubListComponent implements OnInit {
   }
 
   editElement(): void {
-    if (this.selectedElement) {
-      this.openDialog('Edit club', Action.Update, this.selectedElement);
+    if (this.basicTableData.selectedElement) {
+      this.openDialog('Edit club', Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
-    if (this.selectedElement) {
-      this.openDialog('Delete club', Action.Delete, this.selectedElement);
+    if (this.basicTableData.selectedElement) {
+      this.openDialog('Delete club', Action.Delete, this.basicTableData.selectedElement);
     }
   }
 
   setSelectedItem(row: Club): void {
-    if (row === this.selectedElement) {
-      this.selectedElement = undefined;
+    if (row === this.basicTableData.selectedElement) {
+      this.basicTableData.selectedElement = undefined;
     } else {
-      this.selectedElement = row;
+      this.basicTableData.selectedElement = row;
     }
   }
 
@@ -90,8 +88,8 @@ export class ClubListComponent implements OnInit {
 
   addRowData(club: Club) {
     this.clubService.add(club).subscribe(club => {
-      this.dataSource.data.push(club);
-      this.dataSource._updateChangeSubscription();
+      this.basicTableData.dataSource.data.push(club);
+      this.basicTableData.dataSource._updateChangeSubscription();
       this.messageService.infoMessage("clubStored");
     });
   }
@@ -105,37 +103,10 @@ export class ClubListComponent implements OnInit {
 
   deleteRowData(club: Club) {
     this.clubService.delete(club).subscribe(n => {
-        this.dataSource.data = this.dataSource.data.filter(existing_club => existing_club !== club);
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
         this.messageService.infoMessage("clubDeleted");
       }
     );
-  }
-
-  filter(event: Event) {
-    const filter = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filter.trim().toLowerCase();
-  }
-
-  isColumnVisible(column: string): boolean {
-    return this.visibleColumns.includes(column);
-  }
-
-  toggleColumnVisibility(column: string) {
-    const index: number = this.visibleColumns.indexOf(column);
-    if (index !== -1) {
-      this.visibleColumns.splice(index, 1);
-    } else {
-      let oldVisibleColumns: string[];
-      oldVisibleColumns = [...this.visibleColumns];
-      oldVisibleColumns.push(column);
-      this.visibleColumns.length = 0;
-      //Maintain columns order.
-      for (let column of this.columns) {
-        if (oldVisibleColumns.includes(column)) {
-          this.visibleColumns.push(column);
-        }
-      }
-    }
   }
 
 }

@@ -1,0 +1,37 @@
+<div class="filter">
+  <mat-form-field>
+    <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
+  </mat-form-field>
+</div>
+<button mat-button [matMenuTriggerFor]="mainMenuButton">
+  <mat-icon>tune</mat-icon>
+</button>
+<mat-menu #mainMenuButton="matMenu" class="table-settings">
+        <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns">
+          <mat-checkbox class="menu-setting-option" (change)="toggleColumnVisibility(column)"
+                        [checked]="isColumnVisible(column)"></mat-checkbox>
+          {{column + 'Header' | translate}}
+          <br>
+        </span>
+</mat-menu>
+<div class="mat-elevation-z8">
+  <div class="basic-table">
+    <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name">
+
+      <ng-container *ngFor="let column of basicTableData.columns; let i = index">
+        <ng-container [matColumnDef]=column>
+          <th mat-header-cell *matHeaderCellDef
+              mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}</th>
+          <td mat-cell *matCellDef="let club"> {{club[column]}} </td>
+        </ng-container>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="basicTableData.visibleColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: basicTableData.visibleColumns;"
+          (click)="basicTableData.selection.toggle(row); setSelectedItem(row)" (mouseover)="row.hovered=true"
+          [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
+          (mouseout)="row.hovered=false"></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
