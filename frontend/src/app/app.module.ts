@@ -33,6 +33,9 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BasicTableModule} from "./basic/basic-table/basic-table.module";
 import {ParticipantListComponent} from './participant-list/participant-list.component';
+import {
+  ParticipantDialogBoxComponent
+} from './participant-list/participant-dialog-box/participant-dialog-box.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,8 @@ import {ParticipantListComponent} from './participant-list/participant-list.comp
     ClubListComponent,
     ClubDialogBoxComponent,
     LoginComponent,
-    ParticipantListComponent
+    ParticipantListComponent,
+    ParticipantDialogBoxComponent
   ],
   imports: [
     BrowserModule,

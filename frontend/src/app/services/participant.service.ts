@@ -12,7 +12,7 @@ import {Club} from "../models/club";
 })
 export class ParticipantService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/Participants';
+  private baseUrl = this.environmentService.getBackendUrl() + '/participants';
 
   httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
