@@ -10,7 +10,16 @@
     <input placeholder="{{ 'idCardHeader' | translate}}" matInput [(ngModel)]="participant.idCard">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{ 'clubHeader' | translate}}" matInput [(ngModel)]="participant.club">
+    <mat-label>{{ 'clubHeader' | translate}}</mat-label>
+    <input type="text" placeholder="{{ 'filter' | translate}}"
+           attr.aria-label="{{ 'clubHeader' | translate}}" matInput
+           [formControl]="formControl"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option.name" >
+        {{option.name}}
+      </mat-option>
+    </mat-autocomplete>
   </mat-form-field>
   <ng-template #elseTemplate>
     Are you sure to delete <b>{{participant.name}} {{ 'lastnameHeader' | translate}}</b>?

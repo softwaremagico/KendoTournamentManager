@@ -36,6 +36,7 @@ import {ParticipantListComponent} from './participant-list/participant-list.comp
 import {
   ParticipantDialogBoxComponent
 } from './participant-list/participant-dialog-box/participant-dialog-box.component';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [
@@ -46,42 +47,43 @@ import {
     ParticipantListComponent,
     ParticipantDialogBoxComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FlexLayoutModule,
-    HttpClientModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSliderModule,
-    AppRoutingModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatMenuModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    MatSortModule,
-    MatInputModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient]
-      }
-    }),
-    MatSelectModule,
-    MatSnackBarModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatExpansionModule,
-    MatCheckboxModule,
-    BasicTableModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FlexLayoutModule,
+        HttpClientModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSliderModule,
+        AppRoutingModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatMenuModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatDialogModule,
+        MatSortModule,
+        MatInputModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpTranslateLoader,
+                deps: [HttpClient]
+            }
+        }),
+        MatSelectModule,
+        MatSnackBarModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatExpansionModule,
+        MatCheckboxModule,
+        BasicTableModule,
+        MatAutocompleteModule
+    ],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })
