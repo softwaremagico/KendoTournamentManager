@@ -9,6 +9,8 @@ import {MessageService} from "../services/message.service";
 import {ParticipantService} from "../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Action, ParticipantDialogBoxComponent} from "./participant-dialog-box/participant-dialog-box.component";
+import {ClubService} from "../services/club.service";
+import {Club} from "../models/club";
 
 @Component({
   selector: 'app-participant-list',
@@ -18,12 +20,14 @@ import {Action, ParticipantDialogBoxComponent} from "./participant-dialog-box/pa
 export class ParticipantListComponent implements OnInit {
 
   basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>();
+  clubs: Club[];
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private ParticipantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
+              private clubService: ClubService) {
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'club'];
     this.basicTableData.columnsTags = ['idHeader', 'idCardHeader', 'nameHeader', 'lastnameHeader', 'clubHeader'];
     this.basicTableData.visibleColumns = ['name', 'lastname', 'club'];
@@ -32,12 +36,15 @@ export class ParticipantListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.clubService.getAll().subscribe(clubs => {
+      this.clubs = clubs
+    });
     this.showAllElements();
   }
 
   showAllElements(): void {
-    this.ParticipantService.getAll().subscribe(Participants => {
-      this.basicTableData.dataSource.data = Participants;
+    this.participantService.getAll().subscribe(participants => {
+      this.basicTableData.dataSource.data = participants;
     });
   }
 
@@ -69,7 +76,10 @@ export class ParticipantListComponent implements OnInit {
   openDialog(title: string, action: Action, participant: Participant) {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
       width: '250px',
-      data: {title: title, action: action, entity: participant}
+      data: {
+        title: title, action: action, entity: participant,
+        clubs: this.clubs
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -84,7 +94,9 @@ export class ParticipantListComponent implements OnInit {
   }
 
   addRowData(participant: Participant) {
-    this.ParticipantService.add(participant).subscribe(participant => {
+    console.log(participant);
+    console.log(participant.club);
+    this.participantService.add(participant).subscribe(participant => {
       this.basicTableData.dataSource.data.push(participant);
       this.basicTableData.dataSource._updateChangeSubscription();
       this.messageService.infoMessage("clubStored");
@@ -92,14 +104,14 @@ export class ParticipantListComponent implements OnInit {
   }
 
   updateRowData(participant: Participant) {
-    this.ParticipantService.update(participant).subscribe(() => {
+    this.participantService.update(participant).subscribe(() => {
         this.messageService.infoMessage("clubUpdated");
       }
     );
   }
 
   deleteRowData(participant: Participant) {
-    this.ParticipantService.delete(participant).subscribe(() => {
+    this.participantService.delete(participant).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
         this.messageService.infoMessage("clubDeleted");
       }
