@@ -7,5 +7,4 @@ export class Club {
   public email?: string;
   public phone?: string;
   public web?: string;
-
 }
