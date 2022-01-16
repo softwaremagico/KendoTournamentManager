@@ -94,8 +94,6 @@ export class ParticipantListComponent implements OnInit {
   }
 
   addRowData(participant: Participant) {
-    console.log(participant);
-    console.log(participant.club);
     this.participantService.add(participant).subscribe(participant => {
       this.basicTableData.dataSource.data.push(participant);
       this.basicTableData.dataSource._updateChangeSubscription();
