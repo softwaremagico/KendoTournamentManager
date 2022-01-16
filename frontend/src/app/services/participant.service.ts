@@ -6,6 +6,7 @@ import {Observable, of} from "rxjs";
 import {Participant} from "../models/participant";
 import {LoggerService} from "../logger.service";
 import {Club} from "../models/club";
+import {AuthenticatedUserService} from "./authenticated-user.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,19 @@ export class ParticipantService {
   private baseUrl = this.environmentService.getBackendUrl() + '/participants';
 
   httpOptions = {
-    headers: new HttpHeaders({'Content-Type': 'application/json'})
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+    })
   };
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService) {
+  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService,
+              public authenticatedUserService: AuthenticatedUserService) {
   }
 
   getAll(): Observable<Participant[]> {
     const url: string = `${this.baseUrl}/`;
-    return this.http.get<Participant[]>(url)
+    return this.http.get<Participant[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched all Participants`)),
         catchError(this.handleError<Participant[]>(`gets all`))
@@ -32,7 +37,7 @@ export class ParticipantService {
 
   get(id: number): Observable<Participant> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Participant>(url)
+    return this.http.get<Participant>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched participant id=${id}`)),
         catchError(this.handleError<Participant>(`get id=${id}`))
@@ -41,7 +46,7 @@ export class ParticipantService {
 
   deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url)
+    this.http.delete(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`deleting participant id=${id}`)),
         catchError(this.handleError<Participant>(`delete id=${id}`))
