@@ -48,9 +48,12 @@ export class ParticipantDialogBoxComponent implements OnInit {
     );
   }
 
-  private _filter(value: string): Club[] {
-    const filterValue = value.toLowerCase();
-    return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
+  private _filter(value: Club): Club[] {
+    if (value.name !== undefined) {
+      const filterValue = value.name.toLowerCase();
+      return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
+    }
+    return this.clubs;
   }
 
   doAction() {
