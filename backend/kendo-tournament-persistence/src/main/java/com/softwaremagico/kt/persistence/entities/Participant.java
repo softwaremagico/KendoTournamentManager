@@ -28,6 +28,7 @@ import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import javax.persistence.*;
 import java.text.Collator;
@@ -39,7 +40,7 @@ import java.util.Locale;
  */
 @Entity
 @Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participant")
 public class Participant implements Comparable<Participant> {
 
