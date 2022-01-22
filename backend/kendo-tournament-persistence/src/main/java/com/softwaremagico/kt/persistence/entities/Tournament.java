@@ -27,6 +27,7 @@ package com.softwaremagico.kt.persistence.entities;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -46,9 +47,9 @@ public class Tournament {
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
-    @Column(name = "fight_areas")
+    @Column(name = "shiaijos")
     @Convert(converter = IntegerCryptoConverter.class)
-    private Integer fightAreas;
+    private Integer shiaijos;
 
     @Column(name = "team_size")
     @Convert(converter = IntegerCryptoConverter.class)
@@ -68,14 +69,6 @@ public class Tournament {
         this.name = name;
     }
 
-    public Integer getFightAreas() {
-        return fightAreas;
-    }
-
-    public void setFightAreas(Integer fightAreas) {
-        this.fightAreas = fightAreas;
-    }
-
     public Integer getTeamSize() {
         return teamSize;
     }
@@ -90,5 +83,13 @@ public class Tournament {
 
     public void setType(TournamentType type) {
         this.type = type;
+    }
+
+    public Integer getShiaijos() {
+        return shiaijos;
+    }
+
+    public void setShiaijos(Integer shiaijos) {
+        this.shiaijos = shiaijos;
     }
 }
