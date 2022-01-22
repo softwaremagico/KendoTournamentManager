@@ -41,7 +41,7 @@ import java.util.Locale;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "participant")
+@Table(name = "participants")
 public class Participant implements Comparable<Participant> {
 
 
