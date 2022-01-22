@@ -35,7 +35,7 @@ import javax.persistence.*;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournament")
+@Table(name = "tournaments")
 public class Tournament {
 
     @Id
