@@ -1,6 +1,8 @@
 package com.softwaremagico.kt.persistence.entities;
 
 
+import com.softwaremagico.kt.persistence.encryption.RoleTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -17,11 +19,16 @@ public class Role {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "tournament")
     private Tournament tournament;
-
 
     @OneToMany
     private Participant competitor;
+
+    @Column(name = "role_type")
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = RoleTypeCryptoConverter.class)
+    private RoleType type;
 
 
     public Tournament getTournament() {
@@ -38,5 +45,13 @@ public class Role {
 
     public void setCompetitor(Participant competitor) {
         this.competitor = competitor;
+    }
+
+    public RoleType getType() {
+        return type;
+    }
+
+    public void setType(RoleType type) {
+        this.type = type;
     }
 }

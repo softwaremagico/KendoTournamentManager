@@ -22,11 +22,11 @@ public class Team {
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
-    @ManyToMany
-    @Column(name = "members")
+    @OneToMany
     private List<Participant> members;
 
     @ManyToOne
+    @JoinColumn(name = "tournament")
     private Tournament tournament;
 
     private int group = 0; // for the league

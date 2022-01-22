@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.persistence.entities;
+package com.softwaremagico.kt.persistence.values;
 
 /*
  * #%L
