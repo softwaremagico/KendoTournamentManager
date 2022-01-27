@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines basic log behavior. Uses log4j.properties.
  */
-public class KendoTournamentLogger extends BasicLogger {
+public class PoolLogger extends BasicLogger {
 
-    private static final Logger logger = LoggerFactory.getLogger(KendoTournamentLogger.class);
+    private static final Logger logger = LoggerFactory.getLogger(PoolLogger.class);
 
     /**
      * Events that have business meaning (i.e. creating category, deleting form,
