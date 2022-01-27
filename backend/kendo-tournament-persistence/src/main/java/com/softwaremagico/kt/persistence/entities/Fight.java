@@ -32,6 +32,8 @@ public class Fight {
     private Integer shiaijo;
 
     @OneToMany
+    @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
+    @OrderColumn(name = "index")
     private List<Duel> duels;
 }
 
