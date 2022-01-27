@@ -57,6 +57,9 @@ public class Group {
     @OrderColumn(name = "index")
     private List<Fight> fights;
 
+    @Column(name = "number_of_winners")
+    private int numberOfWinners;
+
     public Tournament getTournament() {
         return tournament;
     }
@@ -87,6 +90,51 @@ public class Group {
 
     public void setFights(List<Fight> fights) {
         this.fights = fights;
+    }
+
+    public void removeTeams() {
+        teams.clear();
+    }
+
+    public void removeFights() {
+        fights.clear();
+    }
+
+    public boolean isFightOfGroup(Fight fight) {
+        return fights.contains(fight);
+    }
+
+    public boolean areFightsOverOrNull() {
+        if (teams.size() < 2) {
+            return true;
+        }
+        return areFightsOverOrNull(getFights());
+    }
+
+    /**
+     * If the fightManager are over or fightManager are not needed.
+     *
+     * @param fights the fights.
+     * @return
+     */
+    public static boolean areFightsOverOrNull(List<Fight> fights) {
+        if (fights.size() > 0) {
+            for (Fight fight : fights) {
+                if (!fight.isOver()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return true;
+    }
+
+    public int getNumberOfWinners() {
+        return numberOfWinners;
+    }
+
+    public void setNumberOfWinners(int numberOfWinners) {
+        this.numberOfWinners = numberOfWinners;
     }
 }
 
