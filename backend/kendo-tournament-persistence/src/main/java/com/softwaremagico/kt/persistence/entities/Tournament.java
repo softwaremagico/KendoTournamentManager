@@ -60,7 +60,7 @@ public class Tournament {
     @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
-    @Column(name = "tournament_score")
+    @OneToOne(fetch = FetchType.EAGER)
     private TournamentScore tournamentScore;
 
 
