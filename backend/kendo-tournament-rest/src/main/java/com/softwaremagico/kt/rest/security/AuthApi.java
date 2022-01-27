@@ -80,6 +80,7 @@ public class AuthApi {
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
             final AuthenticatedUser user = (AuthenticatedUser) authenticate.getPrincipal();
+            bruteForceService.loginSucceeded(ip);
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
