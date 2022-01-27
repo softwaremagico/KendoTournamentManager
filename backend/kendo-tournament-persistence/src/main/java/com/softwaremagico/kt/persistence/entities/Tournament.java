@@ -60,6 +60,9 @@ public class Tournament {
     @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
+    @Column(name = "tournament_score")
+    private TournamentScore tournamentScore;
+
 
     public String getName() {
         return name;
@@ -91,5 +94,13 @@ public class Tournament {
 
     public void setShiaijos(Integer shiaijos) {
         this.shiaijos = shiaijos;
+    }
+
+    public TournamentScore getTournamentScore() {
+        return tournamentScore;
+    }
+
+    public void setTournamentScore(TournamentScore tournamentScore) {
+        this.tournamentScore = tournamentScore;
     }
 }
