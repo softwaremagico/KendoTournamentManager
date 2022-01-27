@@ -46,7 +46,8 @@ public class Role {
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "competitor")
     private Participant competitor;
 
     @Column(name = "role_type")
