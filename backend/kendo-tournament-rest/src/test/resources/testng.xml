@@ -3,15 +3,17 @@
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="authApi" />
-                <include name="restAccess" />
-                <include name="dtoToEntity" />
+                <include name="authApi"/>
+                <include name="restAccess"/>
+                <include name="dtoToEntity"/>
+                <include name="bruteForce"/>
             </run>
         </groups>
         <classes>
-            <class name="com.softwaremagico.kt.security.TestAuthApi" />
-            <class name="com.softwaremagico.kt.security.RestAccessTests" />
-            <class name="com.softwaremagico.kt.rest.DtoToEntity" />
+            <class name="com.softwaremagico.kt.security.TestAuthApi"/>
+            <class name="com.softwaremagico.kt.security.RestAccessTests"/>
+            <class name="com.softwaremagico.kt.security.BruteForceTests"/>
+            <class name="com.softwaremagico.kt.rest.DtoToEntity"/>
         </classes>
     </test>
 </suite>
