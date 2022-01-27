@@ -8,32 +8,40 @@ package com.softwaremagico.kt.utils;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Participant;
+
 public class NameUtils {
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
+
+    public static String getLastnameName(Participant participant) {
+        if (participant == null) {
+            return " --- --- ";
+        }
+        return getLastnameName(participant.getLastname(), participant.getName());
+    }
 
     public static String getLastnameName(String lastname, String name) {
         if (lastname.length() > 0 || name.length() > 0) {
             return lastname + ", " + name;
         } else {
             return " --- --- ";
-
         }
     }
 
