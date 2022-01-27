@@ -98,6 +98,13 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorMessage("INVALID CREDENTIALS", ex), HttpStatus.UNAUTHORIZED);
     }
 
+
+    @ExceptionHandler(UserBlockedException.class)
+    public ResponseEntity<Object> userBlockedException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage("USER BLOCKED", ex), HttpStatus.UNAUTHORIZED);
+    }
+
     private String getStacktrace(Throwable e) {
         try {
             final StringWriter sw = new StringWriter();

@@ -64,10 +64,10 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private final static String USER_FULL_NAME = "Test User";
     private final static String USER_PASSWORD = "password";
 
-    @Autowired
-    private WebApplicationContext context;
     private MockMvc mockMvc;
 
+    @Autowired
+    private WebApplicationContext context;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -78,11 +78,11 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public <T> String toJson(T object) throws JsonProcessingException {
+    private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
     }
 
-    public <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
         return objectMapper.readValue(payload, clazz);
     }
 
