@@ -27,6 +27,8 @@ package com.softwaremagico.kt.persistence.entities;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -53,11 +55,13 @@ public class Duel {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score")
+    @Fetch(value = FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score")
+    @Fetch(value = FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 

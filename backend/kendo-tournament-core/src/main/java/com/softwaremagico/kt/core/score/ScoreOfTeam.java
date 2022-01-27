@@ -1,101 +1,122 @@
 package com.softwaremagico.kt.core.score;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2022 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
 
-	private Team team;
-	private List<Fight> fights;
-	private Integer wonFights = null;
-	private Integer drawFights = null;
-	private Integer wonDuels = null;
-	private Integer drawDuels = null;
-	private Integer goldenPoint = null;
-	private Integer hits = null;
+    private Team team;
+    private List<Fight> fights;
+    private Integer wonFights = null;
+    private Integer drawFights = null;
+    private Integer wonDuels = null;
+    private Integer drawDuels = null;
+    private Integer goldenPoint = null;
+    private Integer hits = null;
 
-	public ScoreOfTeam(Team team, List<Fight> fights) {
-		this.team = team;
-		this.fights = fights;
-	}
+    public ScoreOfTeam(Team team, List<Fight> fights) {
+        this.team = team;
+        this.fights = fights;
+    }
 
-	public Team getTeam() {
-		return team;
-	}
+    public Team getTeam() {
+        return team;
+    }
 
-	public Tournament getTournament() {
-		if (team != null) {
-			return team.getTournament();
-		}
-		return null;
-	}
+    public Tournament getTournament() {
+        if (team != null) {
+            return team.getTournament();
+        }
+        return null;
+    }
 
-	public Integer getWonFights() {
-		if (wonFights == null) {
-			wonFights = 0;
-			for (Fight fight : fights) {
-				if (fight.isOver()) {
-					Team winner = fight.getWinner();
-					if (winner != null && winner.equals(team)) {
-						wonFights++;
-					}
-				}
-			}
-		}
-		return wonFights;
-	}
+    public Integer getWonFights() {
+        if (wonFights == null) {
+            wonFights = 0;
+            for (final Fight fight : fights) {
+                if (fight.isOver()) {
+                    final Team winner = fight.getWinner();
+                    if (winner != null && winner.equals(team)) {
+                        wonFights++;
+                    }
+                }
+            }
+        }
+        return wonFights;
+    }
 
-	public Integer getDrawFights() {
-		if (drawFights == null) {
-			drawFights = 0;
-			for (Fight fight : fights) {
-				if ((fight.getTeam1().equals(team) || fight.getTeam2().equals(team))) {
-					if (fight.isOver() && fight.isDrawFight()) {
-						drawFights++;
-					}
-				}
-			}
-		}
-		return drawFights;
-	}
+    public Integer getDrawFights() {
+        if (drawFights == null) {
+            drawFights = 0;
+            fights.forEach(fight -> {
+                if ((Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))) {
+                    if (fight.isOver() && fight.isDrawFight()) {
+                        drawFights++;
+                    }
+                }
+            });
+        }
+        return drawFights;
+    }
 
-	public Integer getWonDuels() {
-		if (wonDuels == null) {
-			wonDuels = 0;
-			for (Fight fight : fights) {
-				wonDuels += fight.getWonDuels(team);
-			}
-		}
-		return wonDuels;
-	}
+    public Integer getWonDuels() {
+        if (wonDuels == null) {
+            wonDuels = 0;
+            fights.forEach(fight -> wonDuels += fight.getWonDuels(team));
+        }
+        return wonDuels;
+    }
 
-	public Integer getDrawDuels() {
-		if (drawDuels == null) {
-			drawDuels = 0;
-			for (Fight fight : fights) {
-				if (fight.isOver()) {
-					drawDuels += fight.getDrawDuels(team);
-				}
-			}
-		}
-		return drawDuels;
-	}
+    public Integer getDrawDuels() {
+        if (drawDuels == null) {
+            drawDuels = 0;
+            fights.forEach(fight -> {
+                if (fight.isOver()) {
+                    drawDuels += fight.getDrawDuels(team);
+                }
+            });
+        }
+        return drawDuels;
+    }
 
-	public Integer getHits() {
-		if (hits == null) {
-			hits = 0;
-			for (Fight fight : fights) {
-				hits += fight.getScore(team);
-			}
-		}
-		return hits;
-	}
+    public Integer getHits() {
+        if (hits == null) {
+            hits = 0;
+            fights.forEach(fight -> hits += fight.getScore(team));
+        }
+        return hits;
+    }
 
-//	public Integer getGoldenPoints() {
+    public Integer getGoldenPoints() {
 //		if (goldenPoint == null) {
 //			try {
 //				goldenPoint = UndrawPool.getInstance().getUndrawsWon(fights.get(0).getTournament(),
@@ -105,18 +126,19 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
 //			}
 //		}
 //		return goldenPoint;
-//	}
+        return 0;
+    }
 
-	@Override
-	public abstract int compareTo(ScoreOfTeam o);
+    @Override
+    public abstract int compareTo(ScoreOfTeam o);
 
-	@Override
-	public String toString() {
-		String text = team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
-				+ getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits();
-//		for (int i = 0; i < getGoldenPoints(); i++) {
-//			text += "*";
-//		}
-		return text + "\n";
-	}
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder(team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
+                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits());
+        for (int i = 0; i < getGoldenPoints(); i++) {
+            text.append("*");
+        }
+        return text + "\n";
+    }
 }
