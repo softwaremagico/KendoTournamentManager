@@ -23,6 +23,8 @@ public class Team {
     private String name;
 
     @OneToMany
+    @JoinTable(name = "members_of_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
+    @OrderColumn(name = "index")
     private List<Participant> members;
 
     @ManyToOne
