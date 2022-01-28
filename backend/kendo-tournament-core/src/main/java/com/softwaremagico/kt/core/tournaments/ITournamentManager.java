@@ -7,7 +7,7 @@ package com.softwaremagico.kt.core.tournaments;
  * Copyright (C) 2008 - 2013 Softwaremagico
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> C/Quart 89, 3. Valencia CP:46008 (Spain).
+ * <softwaremagico@gmail.com> Valencia (Spain).
  *  
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -35,104 +35,82 @@ import java.util.List;
 
 public interface ITournamentManager {
 
-	/**
-	 * Generate fights of level.
-	 *
-	 * @param level
-	 * @return
-	 */
-	List<Fight> getFights(Integer level);
 
-	List<Fight> createRandomFights(boolean maximizeFights, Integer level) ;
+    List<Fight> createRandomFights(Tournament tournament, boolean maximizeFights, Integer level);
 
-	List<Fight> createSortedFights(boolean maximizeFights, Integer level) ;
+    List<Fight> createSortedFights(Tournament tournament, boolean maximizeFights, Integer level);
 
-	int getNumberOfFightsFinished();
+    List<Group> getGroups(Tournament tournament);
 
-	void fillGroups();
+    List<Group> getGroups(Tournament tournament, Integer level);
 
-	List<Group> geGroups();
+    List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo);
 
-	List<Group> geGroups(Integer level);
+    Group getGroup(Tournament tournament, Fight fight);
 
-	List<Group> geGroupsByShiaijo(Integer shiaijo);
+    void addGroup(Tournament tournament, Group group);
 
-	Group geGroup(Fight fight);
+    int getIndexOfGroup(Group group);
 
-	void addGroup(Group group);
+    void removeGroup(Tournament tournament, Integer level, Integer groupIndex);
 
-	int getIndexOfGroup(Group group);
+    void removeGroup(Group group);
 
-	void removeGroup(Integer level, Integer groupIndex);
+    void removeGroups(Tournament tournament, Integer level);
 
-	void removeGroup(Group group);
+    int getIndex(Integer level, Group group);
 
-	void removeGroups(Integer level);
+    Level getLevel(Integer level);
 
-	int getIndex(Integer level, Group group);
+    Integer getNumberOfLevels();
 
-	Level getLevel(Integer level);
+    Integer getLastLevelUsed();
 
-	Integer getNumberOfLevels();
+    boolean exist(Tournament tournament, Team team);
 
-	Integer getLastLevelUsed();
+    void removeTeams(Tournament tournament, Integer level);
 
-	boolean exist(Team team);
+    void removeTeams(Tournament tournament);
 
-	void removeTeams(Integer level);
+    /**
+     * Divide groups into fight areas.
+     */
+    void setDefaultFightAreas(Tournament tournament);
 
-	void removeTeams();
+    void setHowManyTeamsOfGroupPassToTheTree(Integer winners);
 
-	/**
-	 * Divide groups into fight areas.
-	 */
-	void setDefaultFightAreas();
+    /**
+     * We are in the final fight of the tournament.
+     *
+     * @return
+     */
+    boolean isTheLastFight(Tournament tournament);
 
-	void setHowManyTeamsOfGroupPassToTheTree(Integer winners);
+    /**
+     * Remove all fights of all groups.
+     */
+    void removeFights(Tournament tournament);
 
-	/**
-	 * We are in the final fight of the tournament.
-	 *
-	 * @return
-	 */
-	boolean isTheLastFight();
+    /**
+     * Returns the level where still are fights not finished.
+     *
+     * @return
+     */
+    Level getCurrentLevel();
 
-	/**
-	 * Remove all fights of all groups.
-	 */
-	void resetFights();
+    List<Level> getLevels();
 
-	/**
-	 * Returns the level where still are fights not finished.
-	 * 
-	 * @return
-	 */
-	Level getCurrentLevel();
+    Level getLastLevel();
 
-	Tournament getTournament();
+    boolean isNewLevelNeeded();
 
-	void setTournament(Tournament tournament);
+    void createNextLevel() throws TournamentFinishedException;
 
-	List<Level> getLevels();
-
-	/**
-	 * Unset the winners of the selected level.
-	 * 
-	 * @param level
-	 */
-	void removeWinners(Integer level);
-
-	Level getLastLevel();
-
-	boolean isNewLevelNeeded();
-
-	void createNextLevel() throws TournamentFinishedException;
-
-	/**
-	 * Defines if a fight has a draw value or not.
-	 * 
-	 * @param fight
-	 * @return
-	 */
-	boolean hasDrawScore(Group group);
+    /**
+     * Defines if a fight has a draw value or not.
+     *
+     * @param fight
+     * @return
+     */
+    boolean hasDrawScore(Group group);
 }
