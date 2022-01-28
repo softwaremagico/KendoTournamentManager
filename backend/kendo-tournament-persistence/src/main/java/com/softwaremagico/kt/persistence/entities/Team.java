@@ -29,14 +29,15 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.text.Collator;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "teams")
-public class Team {
+public class Team implements Comparable<Team> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,7 +75,7 @@ public class Team {
         this.name = name;
     }
 
-    public Collection<Participant> getMembers() {
+    public List<Participant> getMembers() {
         return members;
     }
 
@@ -100,5 +101,15 @@ public class Team {
 
     public boolean isMember(Participant member) {
         return members.contains(member);
+    }
+
+    @Override
+    public int compareTo(Team team) {
+        // Ignore accents
+        final Collator collator = Collator.getInstance(new Locale("es"));
+        collator.setStrength(Collator.SECONDARY);
+        collator.setDecomposition(Collator.FULL_DECOMPOSITION);
+
+        return collator.compare(getName(), team.getName());
     }
 }

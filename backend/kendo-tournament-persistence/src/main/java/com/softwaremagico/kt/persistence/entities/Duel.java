@@ -65,6 +65,16 @@ public class Duel {
     @Enumerated(EnumType.STRING)
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
+    public Duel() {
+
+    }
+
+    public Duel(Participant competitor1, Participant competitor2) {
+        this();
+        this.competitor1 = competitor1;
+        this.competitor2 = competitor2;
+    }
+
     private Boolean competitor1Fault = false;
 
     private Boolean competitor2Fault = false;
