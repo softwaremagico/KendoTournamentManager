@@ -47,14 +47,24 @@ public class Role {
     private Tournament tournament;
 
     @ManyToOne
-    @JoinColumn(name = "competitor")
-    private Participant competitor;
+    @JoinColumn(name = "participant")
+    private Participant participant;
 
     @Column(name = "role_type")
     @Enumerated(EnumType.STRING)
     @Convert(converter = RoleTypeCryptoConverter.class)
     private RoleType type;
 
+    public Role(){
+
+    }
+
+    public Role(Tournament tournament, Participant participant, RoleType type){
+        this();
+        setTournament(tournament);
+        setParticipant(participant);
+        setType(type);
+    }
 
     public Tournament getTournament() {
         return tournament;
@@ -64,12 +74,12 @@ public class Role {
         this.tournament = tournament;
     }
 
-    public Participant getCompetitor() {
-        return competitor;
+    public Participant getParticipant() {
+        return participant;
     }
 
-    public void setCompetitor(Participant competitor) {
-        this.competitor = competitor;
+    public void setParticipant(Participant participant) {
+        this.participant = participant;
     }
 
     public RoleType getType() {
