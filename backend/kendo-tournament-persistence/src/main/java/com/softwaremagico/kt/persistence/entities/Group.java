@@ -52,7 +52,10 @@ public class Group {
     @Column(name = "shiaijo")
     private Integer shiaijo = 0;
 
-    @OneToMany
+    @Column(name = "level")
+    private Integer level = 0;
+
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
     @OrderColumn(name = "index")
     private List<Fight> fights;
@@ -119,7 +122,7 @@ public class Group {
      */
     public static boolean areFightsOverOrNull(List<Fight> fights) {
         if (fights.size() > 0) {
-            for (Fight fight : fights) {
+            for (final Fight fight : fights) {
                 if (!fight.isOver()) {
                     return false;
                 }
@@ -135,6 +138,14 @@ public class Group {
 
     public void setNumberOfWinners(int numberOfWinners) {
         this.numberOfWinners = numberOfWinners;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }
 
