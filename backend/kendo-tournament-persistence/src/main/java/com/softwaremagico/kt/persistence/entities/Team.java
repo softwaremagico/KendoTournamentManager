@@ -61,6 +61,12 @@ public class Team implements Comparable<Team> {
     public Team() {
     }
 
+    public Team(String name, Tournament tournament) {
+        this();
+        setName(name);
+        setTournament(tournament);
+    }
+
 
     @Override
     public String toString() {
