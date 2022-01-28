@@ -28,6 +28,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,10 +58,24 @@ public class Fight {
     @Column(name = "shiaijo")
     private Integer shiaijo;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "index")
     private List<Duel> duels;
+
+    @Column(name = "finished_at")
+    private LocalDateTime finishedAt;
+
+    public Fight() {
+
+    }
+
+    public Fight(Tournament tournament, Team team1, Team team2) {
+        this();
+        setTournament(tournament);
+        setTeam1(team1);
+        setTeam2(team2);
+    }
 
     public Team getTeam1() {
         return team1;
@@ -135,7 +150,7 @@ public class Fight {
     }
 
     public boolean isOver() {
-        return getWinner() != null;
+        return getFinishedAt() != null;
     }
 
     /**
@@ -208,6 +223,14 @@ public class Fight {
             return (int) getDuels().stream().filter(duel -> duel.getWinner() == 1).count();
         }
         return 0;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }
 
