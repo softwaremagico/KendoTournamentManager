@@ -166,7 +166,7 @@ public class Ranking {
         final List<Team> teamsOfFights = group.getTeams();
         final List<ScoreOfTeam> scores = new ArrayList<>();
         for (final Team team : teamsOfFights) {
-            scores.add(ScoreOfTeam.getScoreOfTeam(team, group.getFights()));
+            scores.add(ScoreOfTeam.getScoreOfTeam(team, group.getFights(), group.getUnties()));
         }
         Collections.sort(scores);
 
@@ -188,17 +188,17 @@ public class Ranking {
 
         // If one fight is european, use european score
         if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.EUROPEAN)) {
-                return new ScoreOfCompetitorEuropean(competitor, group.getFights());
+            return new ScoreOfCompetitorEuropean(competitor, group.getFights());
         }
 
         // If one fight is european, use european score
         if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.INTERNATIONAL)) {
-                return new ScoreOfCompetitorInternational(competitor, group.getFights());
+            return new ScoreOfCompetitorInternational(competitor, group.getFights());
         }
 
         // If one fight is winOverDraw, use winOverDraw score
         if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.WIN_OVER_DRAWS)) {
-                return new ScoreOfCompetitorWinOverDraws(competitor, group.getFights());
+            return new ScoreOfCompetitorWinOverDraws(competitor, group.getFights());
         }
 
         return new ScoreOfCompetitorCustom(competitor, group.getFights());
