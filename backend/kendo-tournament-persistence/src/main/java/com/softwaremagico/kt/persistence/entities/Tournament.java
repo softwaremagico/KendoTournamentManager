@@ -56,7 +56,7 @@ public class Tournament extends Element {
     @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private TournamentScore tournamentScore;
 
     public Tournament() {
@@ -69,6 +69,7 @@ public class Tournament extends Element {
         setShiaijos(shiaijos);
         setTeamSize(teamSize);
         setType(type);
+        setTournamentScore(new TournamentScore());
     }
 
 
@@ -110,5 +111,10 @@ public class Tournament extends Element {
 
     public void setTournamentScore(TournamentScore tournamentScore) {
         this.tournamentScore = tournamentScore;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 }

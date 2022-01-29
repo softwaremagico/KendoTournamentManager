@@ -29,6 +29,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -54,10 +55,10 @@ public class Fight extends Element {
     @Column(name = "shiaijo")
     private Integer shiaijo;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "index")
-    private List<Duel> duels;
+    private List<Duel> duels = new ArrayList<>();
 
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
@@ -245,6 +246,17 @@ public class Fight extends Element {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        text.append("Tournament: ").append(tournament).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
+                append(team1.getName()).append("' vs '").append(team2.getName()).append("'\n");
+        if (isOver()) {
+            text.append(" [F]");
+        }
+        return text.toString();
     }
 }
 

@@ -42,7 +42,7 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
 
     List<Fight> findByTournamentAndFinishedAtIsNotNull(Tournament tournament);
 
-    long countByTournamentAndFinishedAtIsNotNull(Tournament tournament);
+    long countByTournamentAndFinishedAtIsNull(Tournament tournament);
 
-    Fight findFirstByTournamentAndFinishedAtIsNotNullOrderByCreatedAtAsc(Tournament tournament);
+    Fight findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(Tournament tournament);
 }
