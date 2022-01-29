@@ -42,11 +42,7 @@ import java.util.Locale;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "clubs")
-public class Club implements Comparable<Club> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Club extends Element implements Comparable<Club> {
 
     @Column(name = "name")
     @Convert(converter = StringCryptoConverter.class)
@@ -80,6 +76,7 @@ public class Club implements Comparable<Club> {
     private String web = "";
 
     public Club() {
+        super();
     }
 
     public Club(String name, String country, String city) {
@@ -102,14 +99,6 @@ public class Club implements Comparable<Club> {
 
     public void setWeb(String web) {
         this.web = web;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     /**

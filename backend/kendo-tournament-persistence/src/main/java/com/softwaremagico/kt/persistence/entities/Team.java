@@ -36,12 +36,8 @@ import java.util.Locale;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "teams")
-public class Team implements Comparable<Team> {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+@Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}))
+public class Team extends Element implements Comparable<Team> {
 
     @Column(name = "name")
     @Convert(converter = StringCryptoConverter.class)
@@ -59,6 +55,7 @@ public class Team implements Comparable<Team> {
     private int group = 0; // for the league
 
     public Team() {
+        super();
     }
 
     public Team(String name, Tournament tournament) {
@@ -87,6 +84,10 @@ public class Team implements Comparable<Team> {
 
     public void setMembers(List<Participant> members) {
         this.members = members;
+    }
+
+    public void addMember(Participant member) {
+        this.members.add(member);
     }
 
     public Tournament getTournament() {

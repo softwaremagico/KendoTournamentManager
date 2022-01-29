@@ -27,12 +27,22 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Repository
+@Transactional
 public interface FightRepository extends JpaRepository<Fight, Integer> {
 
     List<Fight> findByTournament(Tournament tournament);
 
+    List<Fight> findByTournamentAndLevel(Tournament tournament, Integer level);
+
     List<Fight> findByTournamentAndFinishedAtIsNotNull(Tournament tournament);
+
+    long countByTournamentAndFinishedAtIsNotNull(Tournament tournament);
+
+    Fight findFirstByTournamentAndFinishedAtIsNotNullOrderByCreatedAtAsc(Tournament tournament);
 }
