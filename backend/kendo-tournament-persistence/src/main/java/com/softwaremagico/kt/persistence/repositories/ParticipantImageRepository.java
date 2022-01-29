@@ -27,9 +27,13 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
+@Repository
+@Transactional
 public interface ParticipantImageRepository extends JpaRepository<ParticipantImage, Integer> {
 
     Optional<ParticipantImage> findByParticipant(Participant participant);

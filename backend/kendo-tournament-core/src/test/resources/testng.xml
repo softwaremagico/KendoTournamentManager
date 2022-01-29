@@ -3,11 +3,11 @@
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <!-- <include name="" /> -->
+                <include name="simpleChampionshipTest"/>
             </run>
         </groups>
         <classes>
-            <!-- <class name="com.softwaremagico."/> -->
+            <class name="com.softwaremagico.kt.core.tests.SimpleChampionshipTest"/>
         </classes>
     </test>
 </suite>

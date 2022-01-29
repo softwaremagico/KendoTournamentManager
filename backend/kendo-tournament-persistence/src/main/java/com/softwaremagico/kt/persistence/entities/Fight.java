@@ -37,11 +37,7 @@ import java.util.stream.Collectors;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "fights")
-public class Fight {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Fight extends Element {
 
     @ManyToOne
     @JoinColumn(name = "team1")
@@ -66,15 +62,20 @@ public class Fight {
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
-    public Fight() {
+    @Column(name = "level")
+    private Integer level;
 
+    public Fight() {
+        super();
     }
 
-    public Fight(Tournament tournament, Team team1, Team team2) {
+    public Fight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
         this();
         setTournament(tournament);
         setTeam1(team1);
         setTeam2(team2);
+        setShiaijo(shiaijo);
+        setLevel(level);
     }
 
     public Team getTeam1() {
@@ -153,16 +154,21 @@ public class Fight {
         return getFinishedAt() != null;
     }
 
+    public void setOver(boolean over) {
+        if (over) {
+            setFinishedAt(LocalDateTime.now());
+        } else {
+            setFinishedAt(null);
+        }
+    }
+
     /**
      * To win a fight, a team need to win more duels or do more points.
      *
      * @return
      */
     public boolean isDrawFight() {
-        if (getWinner() == null) {
-            return true;
-        }
-        return false;
+        return getWinner() == null;
     }
 
     public Integer getDrawDuels(Team team) {
@@ -231,6 +237,14 @@ public class Fight {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 }
 

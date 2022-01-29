@@ -38,12 +38,8 @@ import java.util.List;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "duels")
-public class Duel {
+public class Duel extends Element {
     private static final int POINTS_TO_WIN = 2;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "competitor1")
@@ -65,19 +61,26 @@ public class Duel {
     @Enumerated(EnumType.STRING)
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
-    public Duel() {
+    @Column(name = "competitor_1_fault")
+    private Boolean competitor1Fault = false;
 
+    @Column(name = "competitor_2_fault")
+    private Boolean competitor2Fault = false;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private DuelType type;
+
+    public Duel() {
+        super();
+        setType(DuelType.STANDARD);
     }
 
     public Duel(Participant competitor1, Participant competitor2) {
         this();
-        this.competitor1 = competitor1;
-        this.competitor2 = competitor2;
+        setCompetitor1(competitor1);
+        setCompetitor2(competitor2);
     }
-
-    private Boolean competitor1Fault = false;
-
-    private Boolean competitor2Fault = false;
 
     public Participant getCompetitor1() {
         return competitor1;
@@ -99,8 +102,22 @@ public class Duel {
         this.competitor1Score = competitor1Score;
     }
 
+    public void addCompetitor1Score(Score score) {
+        if (this.competitor1Score == null) {
+            this.competitor1Score = new ArrayList<>();
+        }
+        this.competitor1Score.add(score);
+    }
+
     public void setCompetitor2Score(List<Score> competitor2Score) {
         this.competitor2Score = competitor2Score;
+    }
+
+    public void addCompetitor2Score(Score score) {
+        if (this.competitor2Score == null) {
+            this.competitor2Score = new ArrayList<>();
+        }
+        this.competitor2Score.add(score);
     }
 
     public Boolean getCompetitor1Fault() {
@@ -147,4 +164,11 @@ public class Duel {
         return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
     }
 
+    public DuelType getType() {
+        return type;
+    }
+
+    public void setType(DuelType type) {
+        this.type = type;
+    }
 }

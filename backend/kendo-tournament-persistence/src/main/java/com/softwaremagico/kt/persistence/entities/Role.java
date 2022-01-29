@@ -8,17 +8,17 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -36,11 +36,7 @@ import javax.persistence.*;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "roles")
-public class Role {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Role extends Element {
 
     @ManyToOne
     @JoinColumn(name = "tournament")
@@ -55,11 +51,11 @@ public class Role {
     @Convert(converter = RoleTypeCryptoConverter.class)
     private RoleType type;
 
-    public Role(){
-
+    public Role() {
+        super();
     }
 
-    public Role(Tournament tournament, Participant participant, RoleType type){
+    public Role(Tournament tournament, Participant participant, RoleType type) {
         this();
         setTournament(tournament);
         setParticipant(participant);

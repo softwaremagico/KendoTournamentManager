@@ -37,11 +37,7 @@ import javax.persistence.*;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
-public class Tournament {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Tournament extends Element {
 
     @Column(name = "name")
     @Convert(converter = StringCryptoConverter.class)
@@ -64,7 +60,7 @@ public class Tournament {
     private TournamentScore tournamentScore;
 
     public Tournament() {
-
+        super();
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type) {
