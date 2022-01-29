@@ -82,7 +82,7 @@ public class ParticipantServices {
         }
         final Participant participant = modelMapper.map(participantDto, Participant.class);
         participant.setClub(club);
-        return participantProvider.add(participant);
+        return participantProvider.save(participant);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

@@ -44,7 +44,7 @@ import java.util.Locale;
 @Table(name = "participants")
 public class Participant extends Element implements Comparable<Participant> {
 
-    @Column(name = "id_card")
+    @Column(name = "id_card", unique = true)
     @Convert(converter = StringCryptoConverter.class)
     private String idCard;
 
