@@ -8,23 +8,24 @@ package com.softwaremagico.kt.core.score;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
 
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -34,8 +35,9 @@ import java.util.Objects;
 
 public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
 
-    private Team team;
-    private List<Fight> fights;
+    private final Team team;
+    private final List<Fight> fights;
+    private final List<Duel> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
     private Integer wonDuels = null;
@@ -43,9 +45,10 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
     private Integer goldenPoint = null;
     private Integer hits = null;
 
-    public ScoreOfTeam(Team team, List<Fight> fights) {
+    public ScoreOfTeam(Team team, List<Fight> fights, List<Duel> unties) {
         this.team = team;
         this.fights = fights;
+        this.unties = unties;
     }
 
     public Team getTeam() {
@@ -117,16 +120,17 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
     }
 
     public Integer getGoldenPoints() {
-//		if (goldenPoint == null) {
-//			try {
-//				goldenPoint = UndrawPool.getInstance().getUndrawsWon(fights.get(0).getTournament(),
-//						fights.get(0).getLevel(), fights.get(0).getGroup(), team);
-//			} catch (SQLException ex) {
-//				KendoTournamentLogger.errorMessage(this.getClass(), ex);
-//			}
-//		}
-//		return goldenPoint;
-        return 0;
+        if (goldenPoint == null) {
+            goldenPoint = 0;
+            unties.forEach(duel -> {
+                if ((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1) {
+                    goldenPoint++;
+                } else if ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1) {
+                    goldenPoint++;
+                }
+            });
+        }
+        return goldenPoint;
     }
 
     @Override
@@ -142,19 +146,19 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
         return text + "\n";
     }
 
-    public static ScoreOfTeam getScoreOfTeam(Team team, List<Fight> fights) {
+    public static ScoreOfTeam getScoreOfTeam(Team team, List<Fight> fights, List<Duel> unties) {
         switch (team.getTournament().getTournamentScore().getScoreType()) {
             case CLASSIC:
-                return new ScoreOfTeamClassic(team, fights);
+                return new ScoreOfTeamClassic(team, fights, unties);
             case CUSTOM:
-                return new ScoreOfTeamCustom(team, fights);
+                return new ScoreOfTeamCustom(team, fights, unties);
             case WIN_OVER_DRAWS:
-                return new ScoreOfTeamWinOverDraws(team, fights);
+                return new ScoreOfTeamWinOverDraws(team, fights, unties);
             case EUROPEAN:
-                return new ScoreOfTeamEuropean(team, fights);
+                return new ScoreOfTeamEuropean(team, fights, unties);
             case INTERNATIONAL:
             default:
-                return new ScoreOfTeamInternational(team, fights);
+                return new ScoreOfTeamInternational(team, fights, unties);
         }
     }
 }
