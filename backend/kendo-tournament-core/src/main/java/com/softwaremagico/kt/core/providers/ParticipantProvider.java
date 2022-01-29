@@ -56,7 +56,7 @@ public class ParticipantProvider {
         return participantRepository.count();
     }
 
-    public Participant add(Participant participant) {
+    public Participant save(Participant participant) {
         return participantRepository.save(participant);
     }
 
