@@ -61,8 +61,8 @@ public class Group extends Element {
     private int numberOfWinners;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "undraws", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
-    private List<Duel> undraws = new ArrayList<>();
+    @JoinTable(name = "unties", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
+    private List<Duel> unties = new ArrayList<>();
 
     public Group() {
         super();
@@ -153,15 +153,15 @@ public class Group extends Element {
         this.level = level;
     }
 
-    public void createUndrawDuel(Participant competitor1, Participant competitor2) {
-        final Duel undraw = new Duel(competitor1, competitor2);
-        undraw.setType(DuelType.UNDRAW);
-        undraws.add(undraw);
+    public void createUntieDuel(Participant competitor1, Participant competitor2) {
+        final Duel untie = new Duel(competitor1, competitor2);
+        untie.setType(DuelType.UNDRAW);
+        unties.add(untie);
 
     }
 
-    public List<Duel> getUndraws() {
-        return undraws;
+    public List<Duel> getUnties() {
+        return unties;
     }
 }
 
