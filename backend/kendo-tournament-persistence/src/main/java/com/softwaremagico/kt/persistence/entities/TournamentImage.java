@@ -36,7 +36,7 @@ import javax.persistence.*;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournament_image")
-public class TournamentImage {
+public class TournamentImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;
 
@@ -52,6 +52,10 @@ public class TournamentImage {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
+
+    public TournamentImage() {
+        super();
+    }
 
     private TournamentImageType imageType;
 

@@ -8,17 +8,17 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -42,12 +42,7 @@ import java.util.Locale;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participants")
-public class Participant implements Comparable<Participant> {
-
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Participant extends Element implements Comparable<Participant> {
 
     @Column(name = "id_card")
     @Convert(converter = StringCryptoConverter.class)
@@ -66,7 +61,7 @@ public class Participant implements Comparable<Participant> {
     private Club club;
 
     public Participant() {
-
+        super();
     }
 
 
@@ -74,10 +69,6 @@ public class Participant implements Comparable<Participant> {
         setName(name);
         setLastname(lastname);
         setIdCard(idCard);
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public final void setIdCard(String value) {

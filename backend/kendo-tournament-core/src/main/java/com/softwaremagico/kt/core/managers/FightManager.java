@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.managers;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -48,12 +48,12 @@ public class FightManager {
     }
 
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, boolean random) {
-        return createCompleteFightList(tournament, teams, random);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, boolean random, Integer level) {
+        return createCompleteFightList(tournament, teams, random, level);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2) {
-        final Fight fight = new Fight(tournament, team2, team1);
+    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
+        final Fight fight = new Fight(tournament, team2, team1, shiaijo, level);
         //Create duels
         for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
             final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
@@ -71,7 +71,7 @@ public class FightManager {
      * @param random
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, boolean random) {
+    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, boolean random, Integer level) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return null;
         }
@@ -89,13 +89,13 @@ public class FightManager {
             }
             // Remaining fights sometimes repeat team. Align them.
             if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-                fight = createFight(tournament, team2, team1);
+                fight = createFight(tournament, team2, team1, 0, level);
             } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-                fight = createFight(tournament, team1, team2);
+                fight = createFight(tournament, team1, team2, 0, level);
             } else if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2);
+                fight = createFight(tournament, team1, team2, 0, level);
             } else {
-                fight = createFight(tournament, team2, team1);
+                fight = createFight(tournament, team2, team1, 0, level);
             }
             fights.add(fight);
             lastFight = fight;
@@ -129,9 +129,9 @@ public class FightManager {
             final Team team2 = teams.get((i + 1) % teams.size());
 
             if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2);
+                fight = createFight(tournament, team1, team2, fightArea, level);
             } else {
-                fight = createFight(tournament, team2, team1);
+                fight = createFight(tournament, team2, team1, fightArea, level);
             }
             fights.add(fight);
         }
