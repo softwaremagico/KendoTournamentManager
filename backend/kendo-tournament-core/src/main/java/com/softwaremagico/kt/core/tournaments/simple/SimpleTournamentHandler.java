@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.tournaments.simple;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.tournaments.simple;
 
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
 import com.softwaremagico.kt.core.managers.FightManager;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
@@ -44,11 +45,13 @@ public class SimpleTournamentHandler implements ITournamentManager {
 
     private final GroupProvider groupProvider;
     private final FightManager fightManager;
+    private final FightProvider fightProvider;
 
 
-    public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager) {
+    public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider) {
         this.groupProvider = groupProvider;
         this.fightManager = fightManager;
+        this.fightProvider = fightProvider;
     }
 
     protected Group getGroup(Tournament tournament) {
@@ -143,7 +146,8 @@ public class SimpleTournamentHandler implements ITournamentManager {
             return null;
         }
 
-        return fightManager.createFights(tournament, getGroup(tournament).getTeams(), true);
+        //Automatically generates the group if needed in getGroup.
+        return fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), true, level));
     }
 
     @Override
@@ -151,7 +155,8 @@ public class SimpleTournamentHandler implements ITournamentManager {
         if (level != 0) {
             return null;
         }
-        return fightManager.createFights(tournament, getGroup(tournament).getTeams(), false);
+        //Automatically generates the group if needed in getGroup.
+        return fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), false, level));
     }
 
     @Override
@@ -235,7 +240,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
 
     @Override
     public boolean hasDrawScore(Group group) {
-        final Ranking ranking = new Ranking(group.getFights());
+        final Ranking ranking = new Ranking(group);
         final List<Team> teamsInDraw = ranking.getFirstTeamsWithDrawScore(group.getNumberOfWinners());
         return (teamsInDraw != null);
     }
