@@ -53,7 +53,7 @@ public class FightManager {
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
-        final Fight fight = new Fight(tournament, team2, team1, shiaijo, level);
+        final Fight fight = new Fight(tournament, team1, team2, shiaijo, level);
         //Create duels
         for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
             final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
@@ -76,15 +76,15 @@ public class FightManager {
             return null;
         }
         final List<Fight> fights = new ArrayList<>();
-        final TeamSelector remainingFights = new TeamSelector(teams);
+        final TeamSelector teamSelector = new TeamSelector(teams);
 
-        Team team1 = remainingFights.getTeamWithMoreAdversaries(random);
+        Team team1 = teamSelector.getTeamWithMoreAdversaries(random);
         Fight fight, lastFight = null;
-        while (remainingFights.remainFights()) {
-            final Team team2 = remainingFights.getNextAdversary(team1, random);
+        while (teamSelector.remainFights()) {
+            final Team team2 = teamSelector.getNextAdversary(team1, random);
             // Team1 has no more adversaries. Use another one.
             if (team2 == null) {
-                team1 = remainingFights.getTeamWithMoreAdversaries(random);
+                team1 = teamSelector.getTeamWithMoreAdversaries(random);
                 continue;
             }
             // Remaining fights sometimes repeat team. Align them.
@@ -99,7 +99,7 @@ public class FightManager {
             }
             fights.add(fight);
             lastFight = fight;
-            remainingFights.removeAdveresary(team1, team2);
+            teamSelector.removeAdversary(team1, team2);
             team1 = team2;
         }
         return fights;

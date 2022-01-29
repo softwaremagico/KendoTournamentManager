@@ -49,6 +49,7 @@ public class TournamentScore extends Element {
 
     public TournamentScore() {
         super();
+        scoreType = ScoreType.CLASSIC;
     }
 
     public ScoreType getScoreType() {
