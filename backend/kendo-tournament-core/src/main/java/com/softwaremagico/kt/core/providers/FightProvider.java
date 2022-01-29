@@ -50,11 +50,11 @@ public class FightProvider {
     }
 
     public boolean areOver(Tournament tournament) {
-        return fightRepository.countByTournamentAndFinishedAtIsNotNull(tournament) == 0;
+        return fightRepository.countByTournamentAndFinishedAtIsNull(tournament) == 0;
     }
 
     public Fight getCurrentFight(Tournament tournament) {
-        return fightRepository.findFirstByTournamentAndFinishedAtIsNotNullOrderByCreatedAtAsc(tournament);
+        return fightRepository.findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(tournament);
     }
 
     public List<Fight> save(List<Fight> fights) {

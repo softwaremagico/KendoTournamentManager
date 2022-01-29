@@ -63,6 +63,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private void resetFights(Tournament tournament) {
         fightProvider.getFights(tournament).forEach(fight -> {
             fight.getDuels().clear();
+            fight.setOver(false);
             fightProvider.save(fight);
         });
     }
@@ -108,7 +109,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
             // Add member.
             team.addMember(competitor);
-            teamProvider.save(team);
+            team = teamProvider.save(team);
             teamMember++;
 
             // Team fill up, create a new team.

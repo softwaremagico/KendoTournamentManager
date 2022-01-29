@@ -30,6 +30,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,7 +44,7 @@ public class Team extends Element implements Comparable<Team> {
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "members_of_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
     @OrderColumn(name = "index")
     private List<Participant> members;
@@ -52,10 +53,12 @@ public class Team extends Element implements Comparable<Team> {
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
-    private int group = 0; // for the league
+    @Column(name = "group_index")
+    private int group = 0; // for the championship
 
     public Team() {
         super();
+        members = new ArrayList<>();
     }
 
     public Team(String name, Tournament tournament) {
