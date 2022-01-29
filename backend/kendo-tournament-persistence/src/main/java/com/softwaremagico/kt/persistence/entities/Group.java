@@ -41,7 +41,7 @@ public class Group extends Element {
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "teams_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "team_id"))
     @OrderColumn(name = "index")
     private List<Team> teams;
@@ -52,7 +52,7 @@ public class Group extends Element {
     @Column(name = "level")
     private Integer level = 0;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
     @OrderColumn(name = "index")
     private List<Fight> fights;

@@ -60,7 +60,7 @@ public class AuthenticatedUser implements UserDetails {
     private String fullName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "authenticated_user"))
+    @CollectionTable(name = "authenticated_user_roles", joinColumns = @JoinColumn(name = "authenticated_user"))
     @Column(name = "roles")
     private Set<String> roles;
 

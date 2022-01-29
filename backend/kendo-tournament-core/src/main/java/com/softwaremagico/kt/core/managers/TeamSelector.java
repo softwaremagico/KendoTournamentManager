@@ -109,7 +109,7 @@ public class TeamSelector {
 		return getTeamWithMoreAdversaries(combination.get(team), random);
 	}
 
-	public void removeAdveresary(Team team, Team adversary) {
+	public void removeAdversary(Team team, Team adversary) {
 		combination.get(team).remove(adversary);
 		combination.get(adversary).remove(team);
 	}

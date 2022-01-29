@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
 import com.softwaremagico.kt.core.managers.FightManager;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.Level;
@@ -46,18 +47,25 @@ public class SimpleTournamentHandler implements ITournamentManager {
     private final GroupProvider groupProvider;
     private final FightManager fightManager;
     private final FightProvider fightProvider;
+    private final TeamProvider teamProvider;
 
 
-    public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider) {
+    public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider, TeamProvider teamProvider) {
         this.groupProvider = groupProvider;
         this.fightManager = fightManager;
         this.fightProvider = fightProvider;
+        this.teamProvider = teamProvider;
     }
 
     protected Group getGroup(Tournament tournament) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (groups.isEmpty()) {
-            addGroup(tournament, new Group());
+            final Group group = new Group();
+            group.setTournament(tournament);
+            group.setLevel(0);
+            group.setTeams(teamProvider.getAll(tournament));
+            addGroup(tournament, group);
+            groups.add(group);
         }
         return groups.get(0);
     }
