@@ -145,7 +145,7 @@
   "mailHeader": "E-Mail",
   "webHeader": "Web",
   "clubHeader": "Club",
-  "FightArea": "Shiaijo",
+  "shiaijosHeader": "Shiaijo",
   "FightAreaNoDots": "Shiaijo",
   "deleteFights": "Do you want to remove the previous generated matches?",
   "Team1Label": "Team 1st",
@@ -462,6 +462,8 @@
   "password": "Password",
   "login": "Login",
   "filter": "Filter",
-  "nameHeader": "Name"
+  "nameHeader": "Name",
+  "teamSizeHeader": "Team Size",
+  "tournamentTypeHeader": "Type"
 }
 

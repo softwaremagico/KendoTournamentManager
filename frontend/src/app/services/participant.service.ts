@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 import {Observable, of} from "rxjs";
 import {Participant} from "../models/participant";
 import {LoggerService} from "../logger.service";
-import {Club} from "../models/club";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 
 @Injectable({
