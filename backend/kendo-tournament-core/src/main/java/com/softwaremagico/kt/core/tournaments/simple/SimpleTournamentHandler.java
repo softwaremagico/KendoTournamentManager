@@ -48,7 +48,6 @@ public class SimpleTournamentHandler implements ITournamentManager {
     private final FightManager fightManager;
     private final FightProvider fightProvider;
     private final TeamProvider teamProvider;
-    private Group group;
 
 
     public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider, TeamProvider teamProvider) {
@@ -59,19 +58,15 @@ public class SimpleTournamentHandler implements ITournamentManager {
     }
 
     protected Group getGroup(Tournament tournament) {
-        if (group == null) {
-            final List<Group> groups = groupProvider.getGroups(tournament);
-            if (groups.isEmpty()) {
-                final Group group = new Group();
-                group.setTournament(tournament);
-                group.setLevel(0);
-                group.setTeams(teamProvider.getAll(tournament));
-                addGroup(tournament, group);
-                groups.add(group);
-            }
-            group = groups.get(0);
+        final List<Group> groups = groupProvider.getGroups(tournament);
+        if (groups.isEmpty()) {
+            final Group group = new Group();
+            group.setTournament(tournament);
+            group.setLevel(0);
+            group.setTeams(teamProvider.getAll(tournament));
+            return addGroup(tournament, group);
         }
-        return group;
+        return groups.get(0);
     }
 
     @Override
@@ -96,28 +91,23 @@ public class SimpleTournamentHandler implements ITournamentManager {
     }
 
     @Override
-    public void addGroup(Tournament tournament, Group group) {
+    public Group addGroup(Tournament tournament, Group group) {
         if (!groupProvider.getGroups(tournament).isEmpty()) {
             groupProvider.delete(tournament);
         }
-        this.group = group;
-        groupProvider.addGroup(tournament, group);
+        return groupProvider.addGroup(tournament, group);
     }
 
     @Override
     public void removeGroup(Tournament tournament, Integer level, Integer groupIndex) {
         if (level == 0 && groupIndex == 0) {
             groupProvider.delete(tournament);
-            this.group = null;
         }
     }
 
     @Override
     public void removeGroup(Group group) {
-        if (this.group == group) {
-            groupProvider.delete(group);
-            this.group = null;
-        }
+        groupProvider.delete(group);
     }
 
     @Override
