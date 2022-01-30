@@ -1,5 +1,4 @@
 ${AnsiColor.BRIGHT_YELLOW}${AnsiStyle.BOLD}
-
  ____  __.                 .___       ___________________
 |    |/ _|____   ____    __| _/____   \__    ___/  _____/
 |      <_/ __ \ /    \  / __ |/  _ \    |    | /   \  ___
@@ -8,8 +7,7 @@ ${AnsiColor.BRIGHT_YELLOW}${AnsiStyle.BOLD}
         \/   \/     \/      \/                         \/
 
 ${AnsiColor.CYAN}${AnsiStyle.BOLD}
-${info.app.name} (${info.app.version})
-::  Java                 ::  (${java.formatted-version})
-::  Spring Boot          ::  (${spring-boot.formatted-version})
+${application.title} ${application.version}
+::  Java                 ::  (v${java.version})
+::  Spring Boot          ::  (v${spring-boot.version})
 ${AnsiStyle.NORMAL}
-
