@@ -90,13 +90,13 @@ export class ClubListComponent implements OnInit {
     this.clubService.add(club).subscribe(club => {
       this.basicTableData.dataSource.data.push(club);
       this.basicTableData.dataSource._updateChangeSubscription();
-      this.messageService.infoMessage("clubStored");
+      this.messageService.infoMessage("Club Stored");
     });
   }
 
   updateRowData(club: Club) {
     this.clubService.update(club).subscribe(() => {
-        this.messageService.infoMessage("clubUpdated");
+        this.messageService.infoMessage("Club Updated");
       }
     );
   }
@@ -104,7 +104,7 @@ export class ClubListComponent implements OnInit {
   deleteRowData(club: Club) {
     this.clubService.delete(club).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
-        this.messageService.infoMessage("clubDeleted");
+        this.messageService.infoMessage("Club Deleted");
       }
     );
   }
