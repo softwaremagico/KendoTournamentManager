@@ -77,6 +77,7 @@ public class Fight extends Element {
         setTeam2(team2);
         setShiaijo(shiaijo);
         setLevel(level);
+        generateDuels();
     }
 
     public Team getTeam1() {
@@ -257,6 +258,17 @@ public class Fight extends Element {
             text.append(" [F]");
         }
         return text.toString();
+    }
+
+    public void generateDuels() {
+        duels.clear();
+        if (team1 != null && team2 != null) {
+            for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
+                final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
+                        i < team2.getMembers().size() ? team2.getMembers().get(i) : null);
+                duels.add(duel);
+            }
+        }
     }
 }
 

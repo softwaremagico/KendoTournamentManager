@@ -161,7 +161,7 @@ public class Duel extends Element {
     }
 
     public Integer getCompetitor2Score() {
-        return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
+        return (int) competitor2Score.stream().filter(Score::isValidPoint).count();
     }
 
     public DuelType getType() {

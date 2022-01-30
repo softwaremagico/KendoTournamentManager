@@ -157,7 +157,6 @@ public class Group extends Element {
         final Duel untie = new Duel(competitor1, competitor2);
         untie.setType(DuelType.UNDRAW);
         unties.add(untie);
-
     }
 
     public List<Duel> getUnties() {
