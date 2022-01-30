@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
 
 @Test(groups = "dtoToEntity")
 public class DtoToEntity {
-    private static final Integer CLUB_ID = 1;
     private static final String CLUB_NAME = "Club1";
     private static final String CLUB_EMAIL = "Club1@email.com";
     private static final String CLUB_WEB = "http://web.com";
@@ -46,7 +45,6 @@ public class DtoToEntity {
     @Test
     public void whenConvertClubEntityToClubDto_thenCorrect() {
         Club club = new Club();
-        club.setId(CLUB_ID);
         club.setName(CLUB_NAME);
         club.setAddress(CLUB_ADDRESS);
         club.setPhone(CLUB_PHONE);
@@ -56,7 +54,6 @@ public class DtoToEntity {
         club.setWeb(CLUB_WEB);
 
         ClubDto clubDto = modelMapper.map(club, ClubDto.class);
-        Assert.assertEquals(club.getId(), clubDto.getId());
         Assert.assertEquals(club.getName(), clubDto.getName());
         Assert.assertEquals(club.getAddress(), clubDto.getAddress());
         Assert.assertEquals(club.getPhone(), clubDto.getPhone());
@@ -69,7 +66,6 @@ public class DtoToEntity {
     @Test
     public void whenConvertClubDtoToClubEntity_thenCorrect() {
         ClubDto clubDto = new ClubDto();
-        clubDto.setId(CLUB_ID);
         clubDto.setName(CLUB_NAME);
         clubDto.setAddress(CLUB_ADDRESS);
         clubDto.setPhone(CLUB_PHONE);
@@ -79,7 +75,6 @@ public class DtoToEntity {
         clubDto.setWeb(CLUB_WEB);
 
         Club club = modelMapper.map(clubDto, Club.class);
-        Assert.assertEquals(clubDto.getId(), club.getId());
         Assert.assertEquals(clubDto.getName(), club.getName());
         Assert.assertEquals(clubDto.getAddress(), club.getAddress());
         Assert.assertEquals(clubDto.getPhone(), club.getPhone());
