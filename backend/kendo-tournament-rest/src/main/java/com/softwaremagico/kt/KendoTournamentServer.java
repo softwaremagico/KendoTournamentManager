@@ -24,8 +24,12 @@ package com.softwaremagico.kt;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 @SpringBootApplication
@@ -34,6 +38,16 @@ public class KendoTournamentServer {
 
     public static void main(String[] args) {
         SpringApplication.run(KendoTournamentServer.class, args);
+    }
+
+
+    @Bean
+    public ApplicationListener<ContextRefreshedEvent> startupLoggingListener() {
+        return new ApplicationListener<ContextRefreshedEvent>() {
+            public void onApplicationEvent(ContextRefreshedEvent event) {
+                KendoTournamentLogger.info(KendoTournamentServer.class, "### Server started ###");
+            }
+        };
     }
 
 }
