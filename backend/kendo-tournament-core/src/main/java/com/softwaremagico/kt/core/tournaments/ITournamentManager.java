@@ -48,7 +48,7 @@ public interface ITournamentManager {
 
     Group getGroup(Tournament tournament, Fight fight);
 
-    void addGroup(Tournament tournament, Group group);
+    Group addGroup(Tournament tournament, Group group);
 
     int getIndexOfGroup(Group group);
 
