@@ -24,8 +24,10 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,24 @@ public class TournamentProvider {
         this.tournamentRepository = tournamentRepository;
     }
 
-    public Tournament save(Tournament tournament) {
+    public Tournament get(Integer id) {
+        return tournamentRepository.getById(id);
+    }
+
+    public Tournament add(Tournament tournament) {
+        return tournamentRepository.save(tournament);
+    }
+
+    public Tournament add(String name, Integer shiaijos, Integer teamSize, TournamentType type) {
+        return tournamentRepository.save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : 3,
+                type != null ? type : TournamentType.LEAGUE));
+    }
+
+
+    public Tournament update(Tournament tournament) {
+        if (tournament.getId() == null) {
+            throw new TournamentNotFoundException(getClass(), "Tournament with null id does not exists.");
+        }
         return tournamentRepository.save(tournament);
     }
 
@@ -50,6 +69,19 @@ public class TournamentProvider {
 
     public long count() {
         return tournamentRepository.count();
+    }
+
+
+    public void delete(Tournament tournament) {
+        tournamentRepository.delete(tournament);
+    }
+
+    public void delete(Integer id) {
+        if (tournamentRepository.existsById(id)) {
+            tournamentRepository.deleteById(id);
+        } else {
+            throw new TournamentNotFoundException(getClass(), "Tournament with id '" + id + "' not found");
+        }
     }
 
 }
