@@ -26,7 +26,6 @@ package com.softwaremagico.kt.core.managers;
 
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
-import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -53,14 +52,7 @@ public class FightManager {
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
-        final Fight fight = new Fight(tournament, team1, team2, shiaijo, level);
-        //Create duels
-        for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
-            final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
-                    i < team2.getMembers().size() ? team2.getMembers().get(i) : null);
-            fight.getDuels().add(duel);
-        }
-        return fight;
+        return new Fight(tournament, team1, team2, shiaijo, level);
     }
 
     /**

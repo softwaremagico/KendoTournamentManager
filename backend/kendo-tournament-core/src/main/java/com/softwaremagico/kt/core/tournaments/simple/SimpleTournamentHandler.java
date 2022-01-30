@@ -48,6 +48,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
     private final FightManager fightManager;
     private final FightProvider fightProvider;
     private final TeamProvider teamProvider;
+    private Group group;
 
 
     public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider, TeamProvider teamProvider) {
@@ -58,16 +59,19 @@ public class SimpleTournamentHandler implements ITournamentManager {
     }
 
     protected Group getGroup(Tournament tournament) {
-        final List<Group> groups = groupProvider.getGroups(tournament);
-        if (groups.isEmpty()) {
-            final Group group = new Group();
-            group.setTournament(tournament);
-            group.setLevel(0);
-            group.setTeams(teamProvider.getAll(tournament));
-            addGroup(tournament, group);
-            groups.add(group);
+        if (group == null) {
+            final List<Group> groups = groupProvider.getGroups(tournament);
+            if (groups.isEmpty()) {
+                final Group group = new Group();
+                group.setTournament(tournament);
+                group.setLevel(0);
+                group.setTeams(teamProvider.getAll(tournament));
+                addGroup(tournament, group);
+                groups.add(group);
+            }
+            group = groups.get(0);
         }
-        return groups.get(0);
+        return group;
     }
 
     @Override
@@ -78,9 +82,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
     @Override
     public List<Group> getGroups(Tournament tournament, Integer level) {
         if (level == 0) {
-            final List<Group> groups = new ArrayList<>();
-            groups.add(getGroup(tournament));
-            return groups;
+            return getGroups(tournament);
         }
         return null;
     }
@@ -88,7 +90,9 @@ public class SimpleTournamentHandler implements ITournamentManager {
 
     @Override
     public List<Group> getGroups(Tournament tournament) {
-        return groupProvider.getGroups(tournament);
+        final List<Group> groups = new ArrayList<>();
+        groups.add(getGroup(tournament));
+        return groups;
     }
 
     @Override
@@ -96,6 +100,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
         if (!groupProvider.getGroups(tournament).isEmpty()) {
             groupProvider.delete(tournament);
         }
+        this.group = group;
         groupProvider.addGroup(tournament, group);
     }
 
@@ -103,12 +108,16 @@ public class SimpleTournamentHandler implements ITournamentManager {
     public void removeGroup(Tournament tournament, Integer level, Integer groupIndex) {
         if (level == 0 && groupIndex == 0) {
             groupProvider.delete(tournament);
+            this.group = null;
         }
     }
 
     @Override
     public void removeGroup(Group group) {
-        groupProvider.delete(group);
+        if (this.group == group) {
+            groupProvider.delete(group);
+            this.group = null;
+        }
     }
 
     @Override
@@ -141,11 +150,9 @@ public class SimpleTournamentHandler implements ITournamentManager {
 
     @Override
     public void setDefaultFightAreas(Tournament tournament) {
-        final List<Group> groups = groupProvider.getGroups(tournament);
-        if (!groups.isEmpty()) {
-            groups.get(0).setShiaijo(0);
-            groupProvider.save(groups.get(0));
-        }
+        final Group group = getGroup(tournament);
+        group.setShiaijo(0);
+        groupProvider.save(group);
     }
 
     @Override
@@ -155,7 +162,11 @@ public class SimpleTournamentHandler implements ITournamentManager {
         }
 
         //Automatically generates the group if needed in getGroup.
-        return fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), true, level));
+        List<Fight> fights = fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), true, level));
+        final Group group = getGroup(tournament);
+        group.setFights(fights);
+        groupProvider.save(group);
+        return fights;
     }
 
     @Override
@@ -164,7 +175,11 @@ public class SimpleTournamentHandler implements ITournamentManager {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
-        return fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), false, level));
+        List<Fight> fights = fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), false, level));
+        final Group group = getGroup(tournament);
+        group.setFights(fights);
+        groupProvider.save(group);
+        return fights;
     }
 
     @Override
