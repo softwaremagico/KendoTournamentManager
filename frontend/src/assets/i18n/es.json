@@ -144,7 +144,7 @@
   "phoneHeader": "Teléfono",
   "mailHeader": "E-Mail",
   "clubHeader": "Club",
-  "FightArea": "Shiaijo",
+  "shiaijosHeader": "Shiaijo",
   "FightAreaNoDots": "Shiaijo",
   "deleteFights": "¿Quieres eliminar los partidos previamente creados?",
   "Team1Label": "Equipo 1",
@@ -458,7 +458,9 @@
   "invalidEmail": "Por favor, introduce un email correcto.",
   "emailHeader": "emailHeader",
   "password": "Contraseña",
-  "nameHeader": "Nombre"
+  "nameHeader": "Nombre",
+  "teamSizeHeader": "Tamaño del Equipo",
+  "tournamentTypeHeader": "Tipo"
 }
 
 
