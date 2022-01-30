@@ -50,9 +50,9 @@ public class GroupProvider {
         return groupRepository.findByTournamentAndShiaijo(tournament, shiaijo);
     }
 
-    public void addGroup(Tournament tournament, Group group) {
+    public Group addGroup(Tournament tournament, Group group) {
         group.setTournament(tournament);
-        groupRepository.save(group);
+        return groupRepository.save(group);
     }
 
     public void delete(Tournament tournament) {
