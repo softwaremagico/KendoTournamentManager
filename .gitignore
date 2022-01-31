@@ -19,3 +19,4 @@ release.properties
 .project
 *.jar
 *.iml
+default_data.sql
