@@ -24,7 +24,6 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
@@ -72,7 +71,7 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                KendoTournamentLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
                 throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
             }
             //We verify the provided credentials using the authentication manager
@@ -87,7 +86,7 @@ public class AuthApi {
                     .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user))
                     .body(user);
         } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set!");
+            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from ip '" + ip + "'!");
             bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
