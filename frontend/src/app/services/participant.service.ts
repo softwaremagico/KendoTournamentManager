@@ -62,7 +62,7 @@ export class ParticipantService {
   }
 
   add(participant: Participant): Observable<Participant> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/`;
     return this.http.post<Participant>(url, participant, this.httpOptions)
       .pipe(
         tap((newParticipant: Participant) => this.log(`adding participant ${newParticipant}`)),
@@ -72,7 +72,7 @@ export class ParticipantService {
 
 
   update(participant: Participant): Observable<Participant> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/`;
     return this.http.put<Participant>(url, participant, this.httpOptions)
       .pipe(
         tap((updatedParticipant: Participant) => this.log(`updating participant ${updatedParticipant}`)),

@@ -30,9 +30,9 @@ public class ParticipantDto {
 
     private String idCard;
 
-    private String name = "";
+    private String name;
 
-    private String lastname = "";
+    private String lastname;
 
     private ClubDto club;
 
