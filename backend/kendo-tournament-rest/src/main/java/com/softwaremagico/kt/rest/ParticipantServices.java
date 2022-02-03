@@ -105,7 +105,8 @@ public class ParticipantServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a participant.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Participant update(@RequestBody ParticipantDto participantDto, HttpServletRequest request) {
+    public Participant update(
+            @RequestBody ParticipantDto participantDto, HttpServletRequest request) {
         final Club club;
         if (participantDto.getClub() != null) {
             club = clubProvider.get(participantDto.getClub().getId());
@@ -114,6 +115,6 @@ public class ParticipantServices {
         }
         final Participant participant = modelMapper.map(participantDto, Participant.class);
         participant.setClub(club);
-        return participantProvider.update(modelMapper.map(participantDto, Participant.class));
+        return participantProvider.update(participant);
     }
 }

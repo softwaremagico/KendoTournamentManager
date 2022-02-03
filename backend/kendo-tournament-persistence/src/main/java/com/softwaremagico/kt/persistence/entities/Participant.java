@@ -83,12 +83,12 @@ public class Participant extends Element implements Comparable<Participant> {
         return getName().length() > 0 && getIdCard().length() > 0;
     }
 
-    protected final void setName(String value) {
+    public final void setName(String value) {
         name = StringUtils.setCase(value);
     }
 
 
-    protected final void setLastname(String value) {
+    public final void setLastname(String value) {
         lastname = StringUtils.setCase(value);
     }
 
