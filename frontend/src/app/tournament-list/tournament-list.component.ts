@@ -33,7 +33,7 @@ export class TournamentListComponent implements OnInit {
 
   constructor(private tournamentService: TournamentService, public dialog: MatDialog, private messageService: MessageService) {
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize'];
-    this.basicTableData.columnsTags = ['idHeader', 'nameHeader', 'tournamentTypeHeader', 'shiaijosHeader', 'teamSizeHeader'];
+    this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
     this.basicTableData.selection = new SelectionModel<Tournament>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Tournament>();
