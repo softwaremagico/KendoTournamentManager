@@ -6,6 +6,7 @@ export class Participant {
   public name: string;
   public lastname: string;
   public club?: Club;
+  public createdAt: Date;
 
   public get clubName(): string {
     return this.club ? this.club.name : "";

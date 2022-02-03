@@ -61,7 +61,7 @@ export class TournamentService {
   }
 
   add(tournament: Tournament): Observable<Tournament> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/`;
     return this.http.post<Tournament>(url, tournament, this.httpOptions)
       .pipe(
         tap((newTournament: Tournament) => this.log(`adding tournament ${newTournament}`)),
@@ -71,7 +71,7 @@ export class TournamentService {
 
 
   update(tournament: Tournament): Observable<Tournament> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/`;
     return this.http.put<Tournament>(url, tournament, this.httpOptions)
       .pipe(
         tap((updatedTournament: Tournament) => this.log(`updating tournament ${updatedTournament}`)),
