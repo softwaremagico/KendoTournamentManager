@@ -134,17 +134,17 @@
   "AccreditationMenuItem": "Akkreditierungskarten",
   "HelpMenuItem": "Hilfe",
   "participantName": "Vorname",
-  "lastnameHeader": "Nachname",
-  "countryHeader": "Land",
-  "cityHeader": "Stadt",
-  "addressHeader": "Adresse",
-  "idCardHeader": "ID/Passnummer",
-  "idHeader": "ID/Passnummer",
-  "RepresentativeLabel": "Ansprechpartner",
-  "phoneHeader": "Telefon",
-  "mailHeader": "E-Mail",
-  "clubHeader": "Klub",
-  "shiaijosHeader": "Shiaijo",
+  "lastname": "Nachname",
+  "country": "Land",
+  "city": "Stadt",
+  "address": "Adresse",
+  "idCard": "ID/Passnummer",
+  "id": "ID/Passnummer",
+  "representative": "Ansprechpartner",
+  "phone": "Telefon",
+  "mail": "E-Mail",
+  "club": "Klub",
+  "shiaijos": "Shiaijos",
   "FightAreaNoDots": "Shiaijo",
   "deleteFights": "Wollen Sie die zuletzt erstellten Kämpfe löschen?",
   "Team1Label": "Team 1",
@@ -454,7 +454,7 @@
   "waitingConnection": "Waiting database response. Check the network connection.",
   "passwordDoesNotMatch": "The inserted password does not match!",
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
-  "nameHeader": "Name"
+  "name": "Name"
 }
 
 
