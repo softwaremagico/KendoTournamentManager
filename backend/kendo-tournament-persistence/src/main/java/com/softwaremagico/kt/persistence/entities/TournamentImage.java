@@ -60,11 +60,6 @@ public class TournamentImage extends Element {
     private TournamentImageType imageType;
 
 
-    public Integer getId() {
-        return id;
-    }
-
-
     public byte[] getData() {
         return (data == null) ? null : data.clone();
     }
