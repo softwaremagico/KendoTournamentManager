@@ -134,17 +134,17 @@
   "AccreditationMenuItem": "Deelnemerskaarten",
   "HelpMenuItem": "Help",
   "participantName": "Voornaam",
-  "lastnameHeader": "Achternaam",
-  "countryHeader": "Land",
-  "cityHeader": "Stad",
-  "addressHeader": "Adres",
-  "idCardHeader": "ID-nummer",
-  "idHeader": "Id",
-  "RepresentativeLabel": "Vertegenwoordigd",
-  "phoneHeader": "Telefoonnummer",
-  "mailHeader": "E-mail",
-  "clubHeader": "Vereniging",
-  "shiaijosHeader": "Wedstrijdveld",
+  "lastname": "Achternaam",
+  "country": "Land",
+  "city": "Stad",
+  "address": "Adres",
+  "idCard": "ID-nummer",
+  "id": "Id",
+  "representative": "Vertegenwoordigd",
+  "phone": "Telefoonnummer",
+  "mail": "E-mail",
+  "club": "Vereniging",
+  "shiaijos": "Wedstrijdveld",
   "FightAreaNoDots": "Wedstrijdveld",
   "deleteFights": "Wil je de eerder aangemaakte wedstrijden verwijderen?",
   "Team1Label": "Team 1",
@@ -454,7 +454,7 @@
   "waitingConnection": "Wachten op reactie van de database. Controleer netwerkconnectie.",
   "passwordDoesNotMatch": "Het ingevoerde wachtwoord is niet correct!",
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
-  "nameHeader": "Naam"
+  "name": "Naam"
 }
 
 

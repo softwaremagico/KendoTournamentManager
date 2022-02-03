@@ -10,7 +10,7 @@
         <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns">
           <mat-checkbox class="menu-setting-option" (change)="toggleColumnVisibility(column)"
                         [checked]="isColumnVisible(column)"></mat-checkbox>
-          {{column + 'Header' | translate}}
+          {{column | translate}}
           <br>
         </span>
 </mat-menu>

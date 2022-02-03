@@ -41,7 +41,7 @@ import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tournament")
+@RequestMapping("/tournaments")
 public class TournamentServices {
     private final TournamentProvider tournamentProvider;
     private final ModelMapper modelMapper;

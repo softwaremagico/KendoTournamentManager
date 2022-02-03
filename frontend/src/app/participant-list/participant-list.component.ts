@@ -29,7 +29,7 @@ export class ParticipantListComponent implements OnInit {
   constructor(private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
               private clubService: ClubService) {
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'clubName'];
-    this.basicTableData.columnsTags = ['idHeader', 'idCardHeader', 'nameHeader', 'lastnameHeader', 'clubHeader'];
+    this.basicTableData.columnsTags = ['id', 'idCard', 'name', 'lastname', 'club'];
     this.basicTableData.visibleColumns = ['name', 'lastname', 'clubName'];
     this.basicTableData.selection = new SelectionModel<Participant>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Participant>();
