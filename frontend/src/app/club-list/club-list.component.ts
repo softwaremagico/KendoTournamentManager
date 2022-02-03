@@ -28,7 +28,7 @@ export class ClubListComponent implements OnInit {
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
     this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
-    this.basicTableData.columnsTags = ['idHeader', 'nameHeader', 'countryHeader', 'cityHeader', 'addressHeader', 'emailHeader', 'phoneHeader', 'webHeader'];
+    this.basicTableData.columnsTags = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
     this.basicTableData.visibleColumns = ['name', 'country', 'city'];
     this.basicTableData.selection = new SelectionModel<Club>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Club>();
