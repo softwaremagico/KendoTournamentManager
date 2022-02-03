@@ -44,16 +44,18 @@ export class ParticipantDialogBoxComponent implements OnInit {
   ngOnInit() {
     this.filteredOptions = this.formControl.valueChanges.pipe(
       startWith(''),
-      map(value => this._filter(value)),
+      map(value => (typeof value === 'string' ? value : value.name)),
+      map(name => (name ? this._filter(name) : this.clubs.slice())),
     );
   }
 
-  private _filter(value: Club): Club[] {
-    if (value.name !== undefined) {
-      const filterValue = value.name.toLowerCase();
+  displayClub(club: Club): string {
+    return club && club.name ? club.name : '';
+  }
+
+  private _filter(name: string): Club[] {
+      const filterValue = name.toLowerCase();
       return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
-    }
-    return this.clubs;
   }
 
   doAction() {

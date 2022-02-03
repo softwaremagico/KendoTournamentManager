@@ -15,7 +15,7 @@
            attr.aria-label="{{ 'clubHeader' | translate}}" matInput [(ngModel)]="participant.club"
            [formControl]="formControl"
            [matAutocomplete]="auto">
-    <mat-autocomplete #auto="matAutocomplete">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClub">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option.name}}
       </mat-option>
