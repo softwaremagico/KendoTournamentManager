@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {ParticipantService} from "../../services/participant.service";
 import {Tournament} from "../../models/tournament";
 import {UserListData} from "../../user-list/user-list-data";
+import {Action} from "../tournament-dialog-box/tournament-dialog-box.component";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -24,6 +25,10 @@ export class TournamentRolesComponent implements OnInit {
     this.participantService.getAll().subscribe(participants => {
       this.userListData.participants = participants;
     });
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
   }
 
 }
