@@ -1,0 +1,12 @@
+<div class="user-list">
+  <div class="user-card" *ngFor="let user of userListData.participants">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{user.name}} {{user.lastname}}</mat-card-title>
+        <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

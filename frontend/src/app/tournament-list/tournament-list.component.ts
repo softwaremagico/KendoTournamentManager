@@ -10,6 +10,7 @@ import {MessageService} from "../services/message.service";
 import {ClubService} from "../services/club.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
+import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
 
 export enum Action {
   Add,
@@ -114,6 +115,16 @@ export class TournamentListComponent implements OnInit {
         this.messageService.infoMessage("Tournament Deleted");
       }
     );
+  }
+
+  addRole(): void {
+    if (this.basicTableData.selectedElement) {
+      const dialogRef = this.dialog.open(TournamentRolesComponent, {
+        data: {
+          tournament: this.basicTableData.selectedElement
+        }
+      });
+    }
   }
 
 }
