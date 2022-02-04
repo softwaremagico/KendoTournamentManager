@@ -39,6 +39,8 @@ import {
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import { TournamentListComponent } from './tournament-list/tournament-list.component';
 import { TournamentDialogBoxComponent } from './tournament-list/tournament-dialog-box/tournament-dialog-box.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { TournamentRolesComponent } from './tournament-list/tournament-roles/tournament-roles.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,9 @@ import { TournamentDialogBoxComponent } from './tournament-list/tournament-dialo
     ParticipantListComponent,
     ParticipantDialogBoxComponent,
     TournamentListComponent,
-    TournamentDialogBoxComponent
+    TournamentDialogBoxComponent,
+    UserListComponent,
+    TournamentRolesComponent
   ],
     imports: [
         BrowserModule,
