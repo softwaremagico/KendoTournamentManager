@@ -49,7 +49,7 @@ public class ParticipantProvider {
 
 
     public List<Participant> getAll() {
-        return participantRepository.findAll();
+        return participantRepository.findByOrderByLastnameAsc();
     }
 
     public long count() {
