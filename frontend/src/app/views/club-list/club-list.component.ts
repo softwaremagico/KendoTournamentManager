@@ -5,12 +5,12 @@ import {MatTable} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatDialog} from '@angular/material/dialog';
 import {SelectionModel} from "@angular/cdk/collections";
-import {ClubService} from '../services/club.service';
-import {Club} from '../models/club';
+import {ClubService} from '../../services/club.service';
+import {Club} from '../../models/club';
 import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
 import {Action} from './club-dialog-box/club-dialog-box.component';
-import {MessageService} from "../services/message.service";
-import {BasicTableData} from "../basic/basic-table/basic-table-data";
+import {MessageService} from "../../services/message.service";
+import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
 
 
 @Component({

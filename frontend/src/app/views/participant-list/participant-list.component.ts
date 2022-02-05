@@ -1,16 +1,16 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../basic/basic-table/basic-table-data";
+import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
-import {Participant} from "../models/participant";
+import {Participant} from "../../models/participant";
 import {MatDialog} from "@angular/material/dialog";
-import {MessageService} from "../services/message.service";
-import {ParticipantService} from "../services/participant.service";
+import {MessageService} from "../../services/message.service";
+import {ParticipantService} from "../../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Action, ParticipantDialogBoxComponent} from "./participant-dialog-box/participant-dialog-box.component";
-import {ClubService} from "../services/club.service";
-import {Club} from "../models/club";
+import {ClubService} from "../../services/club.service";
+import {Club} from "../../models/club";
 
 @Component({
   selector: 'app-participant-list',

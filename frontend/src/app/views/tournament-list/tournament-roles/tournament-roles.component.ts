@@ -1,9 +1,8 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {ParticipantService} from "../../services/participant.service";
-import {Tournament} from "../../models/tournament";
-import {UserListData} from "../../user-list/user-list-data";
-import {Action} from "../tournament-dialog-box/tournament-dialog-box.component";
+import {ParticipantService} from "../../../services/participant.service";
+import {Tournament} from "../../../models/tournament";
+import {UserListData} from "../../../components/basic/user-list/user-list-data";
 
 @Component({
   selector: 'app-tournament-roles',

@@ -14,33 +14,33 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {ClubListComponent} from './club-list/club-list.component';
+import {ClubListComponent} from './views/club-list/club-list.component';
 import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
-import {ClubDialogBoxComponent} from './club-list/club-dialog-box/club-dialog-box.component';
+import {ClubDialogBoxComponent} from './views/club-list/club-dialog-box/club-dialog-box.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSortModule} from '@angular/material/sort';
 import {MatInputModule} from "@angular/material/input";
-import {LoginComponent} from "./login/login.component";
+import {LoginComponent} from "./views/login/login.component";
 import {CookieService} from 'ngx-cookie-service';
 import {MatSelectModule} from "@angular/material/select";
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import {BasicTableModule} from "./basic/basic-table/basic-table.module";
-import {ParticipantListComponent} from './participant-list/participant-list.component';
+import {BasicTableModule} from "./components/basic/basic-table/basic-table.module";
+import {ParticipantListComponent} from './views/participant-list/participant-list.component';
 import {
   ParticipantDialogBoxComponent
-} from './participant-list/participant-dialog-box/participant-dialog-box.component';
+} from './views/participant-list/participant-dialog-box/participant-dialog-box.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import { TournamentListComponent } from './tournament-list/tournament-list.component';
-import { TournamentDialogBoxComponent } from './tournament-list/tournament-dialog-box/tournament-dialog-box.component';
-import { UserListComponent } from './user-list/user-list.component';
-import { TournamentRolesComponent } from './tournament-list/tournament-roles/tournament-roles.component';
+import { TournamentListComponent } from './views/tournament-list/tournament-list.component';
+import { TournamentDialogBoxComponent } from './views/tournament-list/tournament-dialog-box/tournament-dialog-box.component';
+import { UserListComponent } from './components/basic/user-list/user-list.component';
+import { TournamentRolesComponent } from './views/tournament-list/tournament-roles/tournament-roles.component';
 
 @NgModule({
   declarations: [
