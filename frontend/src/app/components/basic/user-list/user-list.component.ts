@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {UserListData} from "./user-list-data";
-import {CdkDragDrop} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'user-list',
@@ -29,9 +28,5 @@ export class UserListComponent implements OnInit {
     this.userListData = Object.assign([], this.originalUsers);
     this.userListData.participants = this.userListData.participants.filter(user => user.lastname.toLowerCase().includes(filter) ||
       user.name.toLowerCase().includes(filter) || user.idCard.toLowerCase().includes(filter));
-  }
-
-  onDrop($event: CdkDragDrop<string[]>) {
-
   }
 }

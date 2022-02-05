@@ -1,3 +1,26 @@
+.roles-container {
+  width: 800px;
+  display: flex;
+}
+
+.roles-container div {
+  flex: 1
+}
+
+.role {
+  min-height: 200px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+  overflow: auto;
+}
+
+.user-list {
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+}
+
 .mat-dialog-actions {
   display: flex;
   justify-content: center;
