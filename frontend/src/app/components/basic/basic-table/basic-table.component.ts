@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Club} from "../../models/club";
+import {Club} from "../../../models/club";
 import {BasicTableData} from "./basic-table-data";
 import {MatDialog} from "@angular/material/dialog";
 import {MatPaginator} from '@angular/material/paginator';

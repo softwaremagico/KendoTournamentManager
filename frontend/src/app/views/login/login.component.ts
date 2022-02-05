@@ -1,9 +1,9 @@
 import {Component, NgModule} from '@angular/core';
 
-import {AuthenticatedUserService} from "../services/authenticated-user.service";
+import {AuthenticatedUserService} from "../../services/authenticated-user.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MessageService} from "../services/message.service";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'app-login',

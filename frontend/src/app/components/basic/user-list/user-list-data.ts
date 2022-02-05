@@ -1,4 +1,4 @@
-import {Participant} from "../models/participant";
+import {Participant} from "../../../models/participant";
 
 export class UserListData {
   participants: Participant[];

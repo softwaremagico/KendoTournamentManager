@@ -1,13 +1,13 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {BasicTableData} from "../basic/basic-table/basic-table-data";
-import {Tournament} from "../models/tournament";
+import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
+import {Tournament} from "../../models/tournament";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
-import {TournamentService} from "../services/tournament.service";
+import {TournamentService} from "../../services/tournament.service";
 import {MatDialog} from "@angular/material/dialog";
-import {MessageService} from "../services/message.service";
-import {ClubService} from "../services/club.service";
+import {MessageService} from "../../services/message.service";
+import {ClubService} from "../../services/club.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
 import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
