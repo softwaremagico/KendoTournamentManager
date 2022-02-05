@@ -41,6 +41,7 @@ import { TournamentListComponent } from './views/tournament-list/tournament-list
 import { TournamentDialogBoxComponent } from './views/tournament-list/tournament-dialog-box/tournament-dialog-box.component';
 import { UserListComponent } from './components/basic/user-list/user-list.component';
 import { TournamentRolesComponent } from './views/tournament-list/tournament-roles/tournament-roles.component';
+import {DragDropModule} from "@angular/cdk/drag-drop";
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { TournamentRolesComponent } from './views/tournament-list/tournament-rol
         MatExpansionModule,
         MatCheckboxModule,
         BasicTableModule,
-        MatAutocompleteModule
+        MatAutocompleteModule,
+        DragDropModule
     ],
   providers: [CookieService],
   bootstrap: [AppComponent]
