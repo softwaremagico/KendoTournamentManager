@@ -4,7 +4,12 @@
 }
 
 .user-list {
-  height: 800px;
+  height: 700px;
+  width: 350px;
   overflow: auto;
 }
 
+.filter {
+  text-align: right;
+  padding-bottom: 10px;
+}
