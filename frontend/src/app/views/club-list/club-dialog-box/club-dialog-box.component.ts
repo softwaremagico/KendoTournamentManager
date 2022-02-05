@@ -1,6 +1,6 @@
 import {Component, Inject, Optional} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {Club} from "../../models/club";
+import {Club} from "../../../models/club";
 
 export enum Action {
   Add,
