@@ -3,9 +3,8 @@
     <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
   </mat-form-field>
 </div>
-<div class="user-list">
-  <div class="user-card" *ngFor="let user of userListData.participants">
-    <mat-card>
+<div class="user-list" cdkDropList cdkDropListSortingDisabled (cdkDropListDropped)="onDrop($event)">
+    <mat-card class="user-card" *ngFor="let user of userListData.participants" cdkDrag>
       <mat-card-header>
         <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
         <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
@@ -13,5 +12,4 @@
       <mat-card-content>
       </mat-card-content>
     </mat-card>
-  </div>
 </div>
