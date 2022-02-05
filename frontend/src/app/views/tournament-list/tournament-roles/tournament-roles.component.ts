@@ -15,8 +15,8 @@ export class TournamentRolesComponent implements OnInit {
 
   userListData: UserListData = new UserListData();
   tournament: Tournament;
-  competitors: Participant[];
-  referee: Participant[];
+  competitors: Participant[] = [];
+  referee: Participant[] = [];
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService,
@@ -34,11 +34,27 @@ export class TournamentRolesComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    console.log(event);
+  removeRole(event: CdkDragDrop<string[]>) {
+    console.log(event.previousContainer );
     if (event.previousContainer !== event.container) {
-      transferArrayItem(event.previousContainer.data,
-        event.container.data,
+      transferArrayItem(this.competitors,
+        this.userListData.participants,
+        event.previousIndex, event.currentIndex);
+    }
+  }
+
+  dropCompetitor(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer !== event.container) {
+      transferArrayItem(this.userListData.participants,
+        this.competitors,
+        event.previousIndex, event.currentIndex);
+    }
+  }
+
+  dropReferee(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer !== event.container) {
+      transferArrayItem(this.userListData.participants,
+        this.referee,
         event.previousIndex, event.currentIndex);
     }
   }
