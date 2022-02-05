@@ -3,6 +3,8 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {Participant} from "../../../models/participant";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -13,6 +15,8 @@ export class TournamentRolesComponent implements OnInit {
 
   userListData: UserListData = new UserListData();
   tournament: Tournament;
+  competitors: Participant[];
+  referee: Participant[];
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService,
@@ -30,4 +34,12 @@ export class TournamentRolesComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  drop(event: CdkDragDrop<string[]>) {
+    console.log(event);
+    if (event.previousContainer !== event.container) {
+      transferArrayItem(event.previousContainer.data,
+        event.container.data,
+        event.previousIndex, event.currentIndex);
+    }
+  }
 }
