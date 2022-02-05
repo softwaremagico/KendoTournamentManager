@@ -23,6 +23,7 @@ export class TournamentRolesComponent implements OnInit {
   ngOnInit(): void {
     this.participantService.getAll().subscribe(participants => {
       this.userListData.participants = participants;
+      this.userListData.participants.sort((a,b) => a.lastname.localeCompare(b.lastname));
     });
   }
 
