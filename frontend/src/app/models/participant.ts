@@ -1,19 +1,18 @@
 import {Club} from "./club";
+import {Element} from "./Element";
 
-export class Participant {
-  public id?: number;
+export class Participant extends Element {
   public idCard: string;
   public name: string;
   public lastname: string;
   public club?: Club;
-  public createdAt: Date;
 
   public get clubName(): string {
     return this.club ? this.club.name : "";
   }
 
-  public static copy(source: Participant, target: Participant): void {
-    target.id = source.id;
+  public static override copy(source: Participant, target: Participant): void {
+    Element.copy(source, target);
     target.idCard = source.idCard;
     target.name = source.name;
     target.lastname = source.lastname;

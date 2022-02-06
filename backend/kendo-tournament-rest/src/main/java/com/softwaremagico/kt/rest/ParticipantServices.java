@@ -38,7 +38,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -64,7 +63,7 @@ public class ParticipantServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets a participant.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Participant get(@ApiParam(value = "Id of an existing participant", required = true) @PathParam("id") Integer id,
+    public Participant get(@ApiParam(value = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
                            HttpServletRequest request) {
         return participantProvider.get(id);
     }
@@ -89,7 +88,7 @@ public class ParticipantServices {
     @ApiOperation(value = "Deletes a participant.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing participant", required = true) @PathParam("id") Integer id,
+    public void delete(@ApiParam(value = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         participantProvider.delete(id);
     }

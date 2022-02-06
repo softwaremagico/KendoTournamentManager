@@ -28,9 +28,11 @@ import com.softwaremagico.kt.core.exceptions.RoleNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.RoleRepository;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -68,6 +70,14 @@ public class RoleProvider {
 
     public List<Role> getAll(Tournament tournament) {
         return roleRepository.findByTournament(tournament);
+    }
+
+    public List<Role> getAll(Tournament tournament, RoleType roleType) {
+        return roleRepository.findByTournamentAndType(tournament, roleType);
+    }
+
+    public List<Role> getAll(Tournament tournament, Collection<RoleType> roleTypes) {
+        return roleRepository.findByTournamentAndTypeIn(tournament, roleTypes);
     }
 
     public long count(Tournament tournament) {

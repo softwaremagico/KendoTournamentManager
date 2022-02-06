@@ -40,7 +40,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +68,7 @@ public class TeamServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets a team.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team get(@ApiParam(value = "Id of an existing team", required = true) @PathParam("id") Integer id,
+    public Team get(@ApiParam(value = "Id of an existing team", required = true) @PathVariable("id") Integer id,
                     HttpServletRequest request) {
         return teamProvider.get(id);
     }
@@ -95,7 +94,7 @@ public class TeamServices {
     @ApiOperation(value = "Deletes a team.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing team", required = true) @PathParam("id") Integer id,
+    public void delete(@ApiParam(value = "Id of an existing team", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         teamProvider.delete(id);
     }

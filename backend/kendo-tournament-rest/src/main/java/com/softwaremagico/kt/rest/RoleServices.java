@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.model.RoleDto;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +40,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -65,9 +65,26 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all roles from a tournament.")
+    @GetMapping(value = "/tournaments/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Role> getAllFromTournament(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+                                           HttpServletRequest request) {
+        return roleProvider.getAll(tournamentProvider.get(id));
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all roles from a tournament.")
+    @GetMapping(value = "/tournaments/{id}/types/{roleTypes}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Role> getAllFromTournament(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+                                           @ApiParam(value = "Type of role") @PathVariable("roleTypes") List<RoleType> roleTypes,
+                                           HttpServletRequest request) {
+        return roleProvider.getAll(tournamentProvider.get(id), roleTypes);
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets a role.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Role get(@ApiParam(value = "Id of an existing role", required = true) @PathParam("id") Integer id,
+    public Role get(@ApiParam(value = "Id of an existing role", required = true) @PathVariable("id") Integer id,
                     HttpServletRequest request) {
         return roleProvider.get(id);
     }
@@ -92,7 +109,7 @@ public class RoleServices {
     @ApiOperation(value = "Deletes a role.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing role", required = true) @PathParam("id") Integer id,
+    public void delete(@ApiParam(value = "Id of an existing role", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         roleProvider.delete(id);
     }
