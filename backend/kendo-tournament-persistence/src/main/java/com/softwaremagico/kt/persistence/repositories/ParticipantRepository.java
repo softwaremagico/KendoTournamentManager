@@ -35,6 +35,8 @@ import java.util.List;
 @Transactional
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
+    List<Participant> findByIdIn(List<Integer> ids);
+
     List<Participant> findByOrderByLastnameAsc();
 
 }

@@ -47,6 +47,10 @@ public class ParticipantProvider {
                 .orElseThrow(() -> new UserNotFoundException(getClass(), "User with id '" + id + "' not found"));
     }
 
+    public List<Participant> get(List<Integer> ids) {
+        return participantRepository.findByIdIn(ids);
+    }
+
 
     public List<Participant> getAll() {
         return participantRepository.findByOrderByLastnameAsc();
