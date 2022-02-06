@@ -27,6 +27,8 @@ package com.softwaremagico.kt.persistence.entities;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.text.Collator;
@@ -44,12 +46,13 @@ public class Team extends Element implements Comparable<Team> {
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @Fetch(FetchMode.JOIN)
     @JoinTable(name = "members_of_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
     @OrderColumn(name = "index")
     private List<Participant> members;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 

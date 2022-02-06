@@ -25,11 +25,12 @@ package com.softwaremagico.kt.rest;
  */
 
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
-import com.softwaremagico.kt.rest.model.RoleDto;
+import com.softwaremagico.kt.rest.model.ParticipantDto;
+import com.softwaremagico.kt.rest.model.TeamDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
@@ -41,74 +42,77 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/roles")
-public class RoleServices {
+@RequestMapping("/teams")
+public class TeamServices {
     private final ParticipantProvider participantProvider;
-    private final RoleProvider roleProvider;
+    private final TeamProvider teamProvider;
     private final TournamentProvider tournamentProvider;
     private final ModelMapper modelMapper;
 
-    public RoleServices(ParticipantProvider participantProvider, RoleProvider roleProvider, TournamentProvider tournamentProvider, ModelMapper modelMapper) {
+    public TeamServices(ParticipantProvider participantProvider, TeamProvider teamProvider, TournamentProvider tournamentProvider, ModelMapper modelMapper) {
         this.participantProvider = participantProvider;
-        this.roleProvider = roleProvider;
+        this.teamProvider = teamProvider;
         this.tournamentProvider = tournamentProvider;
         this.modelMapper = modelMapper;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all roles.")
+    @ApiOperation(value = "Gets all teams.")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Role> getAll(HttpServletRequest request) {
-        return roleProvider.getAll();
+    public List<Team> getAll(HttpServletRequest request) {
+        return teamProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets a role.")
+    @ApiOperation(value = "Gets a team.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Role get(@ApiParam(value = "Id of an existing role", required = true) @PathParam("id") Integer id,
+    public Team get(@ApiParam(value = "Id of an existing team", required = true) @PathParam("id") Integer id,
                     HttpServletRequest request) {
-        return roleProvider.get(id);
+        return teamProvider.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Creates a role.")
+    @ApiOperation(value = "Creates a team.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Role add(@RequestBody RoleDto roleDto, HttpServletRequest request) {
-        if (roleDto == null || roleDto.getTournament() == null || roleDto.getParticipant() == null ||
-                roleDto.getRoleType() == null) {
-            throw new BadRequestException(getClass(), "Role data is missing");
+    public Team add(@RequestBody TeamDto teamDto, HttpServletRequest request) {
+        if (teamDto == null || teamDto.getTournament() == null || teamDto.getMembers() == null) {
+            throw new BadRequestException(getClass(), "Team data is missing");
         }
-        final Role role = new Role();
-        role.setParticipant(participantProvider.get(roleDto.getParticipant().getId()));
-        role.setTournament(tournamentProvider.get(roleDto.getTournament().getId()));
-        role.setType(roleDto.getRoleType());
-        return roleProvider.save(role);
+        final Team team = new Team();
+        team.setName(teamDto.getName());
+        team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
+                .collect(Collectors.toList())));
+        team.setTournament(tournamentProvider.get(teamDto.getTournament().getId()));
+        team.setGroup(teamDto.getGroup());
+        return teamProvider.save(team);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a role.")
+    @ApiOperation(value = "Deletes a team.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing role", required = true) @PathParam("id") Integer id,
+    public void delete(@ApiParam(value = "Id of an existing team", required = true) @PathParam("id") Integer id,
                        HttpServletRequest request) {
-        roleProvider.delete(id);
+        teamProvider.delete(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Updates a role.")
+    @ApiOperation(value = "Updates a team.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Role update(
-            @RequestBody RoleDto roleDto, HttpServletRequest request) {
-        final Role role = modelMapper.map(roleDto, Role.class);
-        if (roleDto.getTournament() != null) {
-            role.setTournament(tournamentProvider.get(roleDto.getTournament().getId()));
+    public Team update(
+            @RequestBody TeamDto teamDto, HttpServletRequest request) {
+        final Team team = modelMapper.map(teamDto, Team.class);
+        if (teamDto.getTournament() != null) {
+            team.setTournament(tournamentProvider.get(teamDto.getTournament().getId()));
         }
-        if (roleDto.getParticipant() != null) {
-            role.setParticipant(participantProvider.get(roleDto.getParticipant().getId()));
+        if (teamDto.getMembers() != null) {
+            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
+                    .collect(Collectors.toList())));
         }
-        return roleProvider.update(role);
+        return teamProvider.update(team);
     }
 }

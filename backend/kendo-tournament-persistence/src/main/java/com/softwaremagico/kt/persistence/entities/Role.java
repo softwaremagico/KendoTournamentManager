@@ -29,6 +29,8 @@ import com.softwaremagico.kt.persistence.encryption.RoleTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 
@@ -38,11 +40,12 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role extends Element {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
     @ManyToOne
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "participant")
     private Participant participant;
 
