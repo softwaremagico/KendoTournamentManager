@@ -1,9 +1,23 @@
 import {TournamentType} from "./TournamentType";
+import {Element} from "./Element";
 
-export class Tournament {
-  public id?: number;
+export class Tournament extends Element {
   public name: string;
   public shiaijos?: number;
   public teamSize?: number;
   public type?: TournamentType;
+
+  public static override copy(source: Tournament, target: Tournament): void {
+    Element.copy(source, target);
+    target.name = source.name;
+    target.shiaijos = source.shiaijos;
+    target.teamSize = source.teamSize;
+    target.type = source.type;
+  }
+
+  public static clone(data: Tournament): Tournament {
+    const instance: Tournament = new Tournament();
+    this.copy(data, instance);
+    return instance;
+  }
 }
