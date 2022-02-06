@@ -36,7 +36,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -60,7 +59,7 @@ public class ClubServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets a club.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club get(@ApiParam(value = "Id of an existing club", required = true) @PathParam("id") Integer id,
+    public Club get(@ApiParam(value = "Id of an existing club", required = true) @PathVariable("id") Integer id,
                     HttpServletRequest request) {
         return clubProvider.get(id);
     }
@@ -88,7 +87,7 @@ public class ClubServices {
     @ApiOperation(value = "Deletes a club.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing club", required = true) @PathParam("id") Integer id,
+    public void delete(@ApiParam(value = "Id of an existing club", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         clubProvider.delete(id);
     }

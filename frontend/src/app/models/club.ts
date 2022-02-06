@@ -1,5 +1,6 @@
-export class Club {
-  public id?: number;
+import {Element} from "./Element";
+
+export class Club extends Element {
   public name: string;
   public country?: string;
   public city?: string;
@@ -8,8 +9,8 @@ export class Club {
   public phone?: string;
   public web?: string;
 
-  public static copy(source: Club, target: Club): void {
-    target.id = source.id;
+  public static override copy(source: Club, target: Club): void {
+    Element.copy(source, target);
     target.name = source.name;
     target.country = source.country;
     target.city = source.city;

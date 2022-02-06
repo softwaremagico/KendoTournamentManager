@@ -26,10 +26,12 @@ package com.softwaremagico.kt.persistence.repositories;
 
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -37,6 +39,10 @@ import java.util.List;
 public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     List<Role> findByTournament(Tournament tournament);
+
+    List<Role> findByTournamentAndType(Tournament tournament, RoleType roleType);
+
+    List<Role> findByTournamentAndTypeIn(Tournament tournament, Collection<RoleType> roleTypes);
 
     long countByTournament(Tournament tournament);
 }
