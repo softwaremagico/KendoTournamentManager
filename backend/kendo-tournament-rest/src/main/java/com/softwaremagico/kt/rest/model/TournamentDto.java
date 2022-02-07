@@ -88,4 +88,12 @@ public class TournamentDto {
     public void setTournamentScore(TournamentScore tournamentScore) {
         this.tournamentScore = tournamentScore;
     }
+
+    @Override
+    public String toString() {
+        if (getName() != null) {
+            return getName();
+        }
+        return super.toString();
+    }
 }
