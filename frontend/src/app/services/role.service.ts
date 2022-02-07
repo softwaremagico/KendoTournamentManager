@@ -64,7 +64,7 @@ export class RoleService {
   }
 
   getFromTournamentAndTypes(id: number, types: RoleType[]): Observable<Role[]> {
-    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join('/');
+    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join(',');
     return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched roles from tournament id=${id}`)),
