@@ -54,12 +54,21 @@ export class RoleService {
       );
   }
 
-  getFromTournamentAndTypes(id: number, types: RoleType[]): Observable<Role> {
-    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join('/');
-    return this.http.get<Role>(url, this.httpOptions)
+  getFromTournamentAndType(id: number, type: RoleType): Observable<Role[]> {
+    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + type;
+    return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched roles from tournament id=${id}`)),
-        catchError(this.handleError<Role>(`get from tournament id=${id}`))
+        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
+      );
+  }
+
+  getFromTournamentAndTypes(id: number, types: RoleType[]): Observable<Role[]> {
+    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join('/');
+    return this.http.get<Role[]>(url, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`fetched roles from tournament id=${id}`)),
+        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
 

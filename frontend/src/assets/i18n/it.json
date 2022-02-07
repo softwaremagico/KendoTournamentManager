@@ -460,7 +460,10 @@
   "password": "Password",
   "name": "Nome",
   "teamSize": "Dimensione della squadra",
-  "tournamentType": "Tipo"
+  "tournamentType": "Tipo",
+  "competitor": "Competitore",
+  "referee": "Arbitro",
+  "volunteer": "Voluntario"
 }
 
 
