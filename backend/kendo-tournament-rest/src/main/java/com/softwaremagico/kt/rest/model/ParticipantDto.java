@@ -24,6 +24,8 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
+import com.softwaremagico.kt.utils.NameUtils;
+
 public class ParticipantDto {
 
     private Integer id;
@@ -74,5 +76,13 @@ public class ParticipantDto {
 
     public void setClub(ClubDto club) {
         this.club = club;
+    }
+
+    @Override
+    public String toString() {
+        if (getName() != null) {
+            return NameUtils.getLastnameName(getLastname(), getName());
+        }
+        return super.toString();
     }
 }
