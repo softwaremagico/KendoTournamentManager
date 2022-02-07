@@ -35,13 +35,19 @@ export class TournamentRolesComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  getRealIndex(currentIndex: number): number {
+    //If filter is used, the index of the user is incorrect. Convert it
+    return this.userListData.participants.indexOf(this.userListData.filteredParticipants[currentIndex]);
+  }
+
   transferCard(event: CdkDragDrop<Participant[], any>) {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
-      event.previousIndex,
+      this.getRealIndex(event.previousIndex),
       event.currentIndex,
     );
+    this.userListData.filteredParticipants.splice(event.previousIndex, 1);
   }
 
   removeRole(event: CdkDragDrop<Participant[], any>) {
