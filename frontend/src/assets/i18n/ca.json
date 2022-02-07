@@ -460,7 +460,10 @@
   "password": "Contrasenya",
   "name": "Nom",
   "teamSize": "Grandària del Equip",
-  "tournamentType": "Tipus"
+  "tournamentType": "Tipus",
+  "competitor": "Competidor",
+  "referee": "Àrbitro",
+  "volunteer": "Voluntario"
 }
 
 
