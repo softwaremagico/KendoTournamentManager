@@ -102,7 +102,7 @@ public class RoleServices {
         final Role role = new Role();
         role.setParticipant(participantProvider.get(roleDto.getParticipant().getId()));
         role.setTournament(tournamentProvider.get(roleDto.getTournament().getId()));
-        role.setType(roleDto.getRoleType());
+        role.setRoleType(roleDto.getRoleType());
         return roleProvider.save(role);
     }
 

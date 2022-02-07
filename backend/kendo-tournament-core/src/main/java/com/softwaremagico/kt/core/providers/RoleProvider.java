@@ -73,11 +73,11 @@ public class RoleProvider {
     }
 
     public List<Role> getAll(Tournament tournament, RoleType roleType) {
-        return roleRepository.findByTournamentAndType(tournament, roleType);
+        return roleRepository.findByTournamentAndRoleType(tournament, roleType);
     }
 
     public List<Role> getAll(Tournament tournament, Collection<RoleType> roleTypes) {
-        return roleRepository.findByTournamentAndTypeIn(tournament, roleTypes);
+        return roleRepository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
     }
 
     public long count(Tournament tournament) {
