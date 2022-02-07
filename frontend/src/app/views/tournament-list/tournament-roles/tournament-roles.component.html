@@ -5,31 +5,20 @@
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="roles">
-    <h2>Competitor</h2>
-    <div class="role" cdkDropList
-         [cdkDropListData]="competitors"
-         (cdkDropListDropped)="dropCompetitor($event)">
-      <mat-card class="user-card" *ngFor="let user of competitors" cdkDrag [cdkDragData]="user">
-        <mat-card-header>
-          <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
-          <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <h2>Referee</h2>
-    <div class="role" cdkDropList
-         [cdkDropListData]="referees"
-         (cdkDropListDropped)="dropReferee($event)">
-      <mat-card class="user-card" *ngFor="let user of referees" cdkDrag [cdkDragData]="user">
-        <mat-card-header>
-          <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
-          <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-        </mat-card-content>
-      </mat-card>
+    <div *ngFor="let role of roleTypes">
+      <h2>{{role.toLowerCase() | translate}}</h2>
+      <div class="role" cdkDropList
+           [cdkDropListData]="getParticipantsContainer(role)"
+           (cdkDropListDropped)="dropParticipant($event, role)">
+        <mat-card class="user-card" *ngFor="let user of participants.get(role)" cdkDrag [cdkDragData]="user">
+          <mat-card-header>
+            <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
+            <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
 </div>

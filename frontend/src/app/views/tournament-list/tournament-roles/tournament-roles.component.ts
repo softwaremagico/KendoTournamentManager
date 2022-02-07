@@ -5,6 +5,7 @@ import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
+import {RoleType} from "../../../models/RoleType";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -15,13 +16,23 @@ export class TournamentRolesComponent implements OnInit {
 
   userListData: UserListData = new UserListData();
   tournament: Tournament;
-  competitors: Participant[] = [];
-  referees: Participant[] = [];
+  roleTypes = RoleType.getKeys();
+  participants = new Map<string, Participant[]>();
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
+    for (let role in this.roleTypes) {
+      this.participants.set(role, []);
+    }
+  }
+
+  getParticipantsContainer(role: string): Participant[] {
+    if (this.participants.get(role) === undefined) {
+      this.participants.set(role, []);
+    }
+    return this.participants.get(role)!;
   }
 
   ngOnInit(): void {
@@ -54,11 +65,7 @@ export class TournamentRolesComponent implements OnInit {
     this.transferCard(event);
   }
 
-  dropCompetitor(event: CdkDragDrop<Participant[], any>) {
-    this.transferCard(event);
-  }
-
-  dropReferee(event: CdkDragDrop<Participant[], any>) {
+  dropParticipant(event: CdkDragDrop<Participant[], any>, role: string) {
     this.transferCard(event);
   }
 }
