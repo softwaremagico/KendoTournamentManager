@@ -3,7 +3,7 @@
     <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
   </mat-form-field>
 </div>
-<div class="user-list">
+<div class="user-list" *ngIf="userListData.filteredParticipants">
     <mat-card class="user-card" *ngFor="let user of userListData.filteredParticipants" cdkDrag>
       <mat-card-header>
         <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
