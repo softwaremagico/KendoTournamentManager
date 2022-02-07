@@ -1,14 +1,15 @@
-<div class="roles-container">
-  <div #participantList="cdkDropList" [cdkDropListConnectedTo]="[competitorList, refereeList]" cdkDropList
+<div class="roles-container" cdkDropListGroup>
+  <div cdkDropList
+       [cdkDropListData]="userListData.participants"
        cdkDropListSortingDisabled (cdkDropListDropped)="removeRole($event)">
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="roles">
     <h2>Competitor</h2>
-    <div class="role" cdkDropList #competitorList="cdkDropList"
-         [cdkDropListConnectedTo]="[participantList, refereeList]"
+    <div class="role" cdkDropList
+         [cdkDropListData]="competitors"
          (cdkDropListDropped)="dropCompetitor($event)">
-      <mat-card class="user-card" *ngFor="let user of competitors" cdkDrag>
+      <mat-card class="user-card" *ngFor="let user of competitors" cdkDrag [cdkDragData]="user">
         <mat-card-header>
           <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
           <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
@@ -18,10 +19,10 @@
       </mat-card>
     </div>
     <h2>Referee</h2>
-    <div class="role" cdkDropList #refereeList="cdkDropList"
-         [cdkDropListConnectedTo]="[participantList, competitorList]"
+    <div class="role" cdkDropList
+         [cdkDropListData]="referees"
          (cdkDropListDropped)="dropReferee($event)">
-      <mat-card class="user-card" *ngFor="let user of referee" cdkDrag>
+      <mat-card class="user-card" *ngFor="let user of referees" cdkDrag [cdkDragData]="user">
         <mat-card-header>
           <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
           <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
