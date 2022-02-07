@@ -8,7 +8,6 @@ export class UserListData {
   }
 
   initParticipants(participants: Participant[]) {
-    console.log("--> " + participants)
     this.filteredParticipants = Object.assign([], participants);
   }
 

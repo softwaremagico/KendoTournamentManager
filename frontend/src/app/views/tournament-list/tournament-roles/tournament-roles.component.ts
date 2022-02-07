@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ParticipantService} from "../../../services/participant.service";
 import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 
 @Component({
@@ -27,6 +27,7 @@ export class TournamentRolesComponent implements OnInit {
   ngOnInit(): void {
     this.participantService.getAll().subscribe(participants => {
       this.userListData.participants = participants;
+      this.userListData.filteredParticipants = participants;
     });
   }
 
