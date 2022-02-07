@@ -6,6 +6,9 @@ import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 import {RoleType} from "../../../models/RoleType";
+import {RoleService} from "../../../services/role.service";
+import {MessageService} from "../../../services/message.service";
+import {Role} from "../../../models/role";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -20,7 +23,8 @@ export class TournamentRolesComponent implements OnInit {
   participants = new Map<string, Participant[]>();
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
-              public participantService: ParticipantService,
+              public participantService: ParticipantService, public roleService: RoleService,
+              private messageService: MessageService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
     for (let role in this.roleTypes) {
@@ -40,6 +44,13 @@ export class TournamentRolesComponent implements OnInit {
       this.userListData.participants = participants;
       this.userListData.filteredParticipants = participants;
     });
+
+    this.roleService.getFromTournamentAndTypes(this.tournament.id!, RoleType.toArray()).subscribe(roles => {
+      for (let roleType in this.roleTypes) {
+        const rolesFromType: Role[] = roles.filter(role => role.roleType == roleType);
+        this.participants.set(roleType, rolesFromType.map(role => role.participant));
+      }
+    });
   }
 
   closeDialog() {
@@ -51,21 +62,33 @@ export class TournamentRolesComponent implements OnInit {
     return this.userListData.participants.indexOf(this.userListData.filteredParticipants[currentIndex]);
   }
 
-  transferCard(event: CdkDragDrop<Participant[], any>) {
+  transferCard(event: CdkDragDrop<Participant[], any>): Participant {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
       this.getRealIndex(event.previousIndex),
       event.currentIndex,
     );
-    this.userListData.filteredParticipants.splice(event.previousIndex, 1);
+    return event.container.data[event.currentIndex];
   }
 
   removeRole(event: CdkDragDrop<Participant[], any>) {
-    this.transferCard(event);
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,
+    );
   }
 
-  dropParticipant(event: CdkDragDrop<Participant[], any>, role: string) {
-    this.transferCard(event);
+  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: string) {
+    const participant: Participant = this.transferCard(event);
+    const role: Role = new Role();
+    role.tournament = this.tournament;
+    role.participant = participant;
+    role.roleType = (<any>RoleType)[roleName];
+    this.roleService.add(role).subscribe(role => {
+      this.messageService.infoMessage("Role '" + roleName + "' for '" + participant.name + " " + participant.lastname + "' stored.");
+    });
   }
 }
