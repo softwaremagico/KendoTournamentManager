@@ -40,6 +40,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -76,7 +77,7 @@ public class RoleServices {
     @ApiOperation(value = "Gets all roles from a tournament.")
     @GetMapping(value = "/tournaments/{id}/types/{roleTypes}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Role> getAllFromTournament(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
-                                           @ApiParam(value = "Type of role") @PathVariable("roleTypes") List<RoleType> roleTypes,
+                                           @ApiParam(value = "Type of role") @PathVariable("roleTypes") Collection<RoleType> roleTypes,
                                            HttpServletRequest request) {
         return roleProvider.getAll(tournamentProvider.get(id), roleTypes);
     }
