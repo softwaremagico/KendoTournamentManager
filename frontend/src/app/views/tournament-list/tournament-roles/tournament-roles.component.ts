@@ -9,6 +9,7 @@ import {RoleType} from "../../../models/RoleType";
 import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
+import {forkJoin} from "rxjs";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -37,16 +38,21 @@ export class TournamentRolesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.participantService.getAll().subscribe(participants => {
+    let participantsRequest = this.participantService.getAll();
+    let roleRequests = this.roleService.getFromTournamentAndTypes(this.tournament.id!, RoleType.toArray());
+
+    forkJoin([participantsRequest, roleRequests]).subscribe(([participants, roles]) => {
+      //Get roles
+      for (let roleType of this.roleTypes) {
+        const rolesFromType: Role[] = roles.filter(role => role.roleType === roleType);
+        this.participants.set(roleType, rolesFromType.map(role => role.participant));
+        //Get participants and subtract the ones already with roles.
+        const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
+        participants = participants.filter((participantWithoutRole) => !participantsIds
+          .includes(participantWithoutRole.id));
+      }
       this.userListData.participants = participants;
       this.userListData.filteredParticipants = participants;
-    });
-
-    this.roleService.getFromTournamentAndTypes(this.tournament.id!, RoleType.toArray()).subscribe(roles => {
-      for (let roleType of this.roleTypes) {
-        const rolesFromType: Role[] = roles.filter(role => role.roleType == roleType);
-        this.participants.set(roleType, rolesFromType.map(role => role.participant));
-      }
     });
   }
 

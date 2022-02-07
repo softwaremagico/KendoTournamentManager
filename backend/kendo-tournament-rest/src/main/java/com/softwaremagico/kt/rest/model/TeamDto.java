@@ -77,4 +77,12 @@ public class TeamDto {
     public void setGroup(Integer group) {
         this.group = group;
     }
+
+    @Override
+    public String toString() {
+        if (getName() != null) {
+            return getName();
+        }
+        return super.toString();
+    }
 }

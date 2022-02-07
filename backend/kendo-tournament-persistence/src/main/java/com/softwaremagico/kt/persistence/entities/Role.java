@@ -53,17 +53,17 @@ public class Role extends Element {
     @Column(name = "role_type")
     @Enumerated(EnumType.STRING)
     @Convert(converter = RoleTypeCryptoConverter.class)
-    private RoleType type;
+    private RoleType roleType;
 
     public Role() {
         super();
     }
 
-    public Role(Tournament tournament, Participant participant, RoleType type) {
+    public Role(Tournament tournament, Participant participant, RoleType roleType) {
         this();
         setTournament(tournament);
         setParticipant(participant);
-        setType(type);
+        setRoleType(roleType);
     }
 
     public Tournament getTournament() {
@@ -82,11 +82,19 @@ public class Role extends Element {
         this.participant = participant;
     }
 
-    public RoleType getType() {
-        return type;
+    public RoleType getRoleType() {
+        return roleType;
     }
 
-    public void setType(RoleType type) {
-        this.type = type;
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType;
+    }
+
+    @Override
+    public String toString() {
+        if (getTournament() != null) {
+            return String.format("ROLE{%s %s %s}", getTournament().getName(), getParticipant().getName(), getRoleType());
+        }
+        return super.toString();
     }
 }
