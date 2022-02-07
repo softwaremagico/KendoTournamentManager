@@ -19,20 +19,17 @@ export class TournamentRolesComponent implements OnInit {
 
   userListData: UserListData = new UserListData();
   tournament: Tournament;
-  roleTypes = RoleType.getKeys();
-  participants = new Map<string, Participant[]>();
+  roleTypes: RoleType[] = RoleType.toArray();
+  participants = new Map<RoleType, Participant[]>();
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
-    for (let role in this.roleTypes) {
-      this.participants.set(role, []);
-    }
   }
 
-  getParticipantsContainer(role: string): Participant[] {
+  getParticipantsContainer(role: RoleType): Participant[] {
     if (this.participants.get(role) === undefined) {
       this.participants.set(role, []);
     }
@@ -46,7 +43,7 @@ export class TournamentRolesComponent implements OnInit {
     });
 
     this.roleService.getFromTournamentAndTypes(this.tournament.id!, RoleType.toArray()).subscribe(roles => {
-      for (let roleType in this.roleTypes) {
+      for (let roleType of this.roleTypes) {
         const rolesFromType: Role[] = roles.filter(role => role.roleType == roleType);
         this.participants.set(roleType, rolesFromType.map(role => role.participant));
       }
@@ -81,14 +78,14 @@ export class TournamentRolesComponent implements OnInit {
     );
   }
 
-  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: string) {
+  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
     const participant: Participant = this.transferCard(event);
     const role: Role = new Role();
     role.tournament = this.tournament;
     role.participant = participant;
-    role.roleType = (<any>RoleType)[roleName];
+    role.roleType = roleName;
     this.roleService.add(role).subscribe(role => {
-      this.messageService.infoMessage("Role '" + roleName + "' for '" + participant.name + " " + participant.lastname + "' stored.");
+      this.messageService.infoMessage("Role '" + role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
     });
   }
 }
