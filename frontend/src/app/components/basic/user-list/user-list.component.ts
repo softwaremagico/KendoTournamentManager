@@ -1,32 +1,32 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {UserListData} from "./user-list-data";
+import {Participant} from "../../../models/participant";
 
 @Component({
   selector: 'user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnChanges {
 
   @Input()
   userListData: UserListData;
-  originalUsers: UserListData;
 
   constructor() {
 
   }
 
   ngOnInit(): void {
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes['userListData'].currentValue);
+    console.log(changes['userListData'].currentValue.participants);
+    this.userListData.initParticipants(changes['userListData'].currentValue.participants);
   }
 
   filter(event: Event) {
     const filter = (event.target as HTMLInputElement).value.toLowerCase();
-    if (this.originalUsers === undefined) {
-      this.originalUsers = Object.assign([], this.userListData);
-    }
-    this.userListData = Object.assign([], this.originalUsers);
-    this.userListData.participants = this.userListData.participants.filter(user => user.lastname.toLowerCase().includes(filter) ||
-      user.name.toLowerCase().includes(filter) || user.idCard.toLowerCase().includes(filter));
+    this.userListData.filter(filter);
   }
 }
