@@ -8,6 +8,8 @@ import {Observable, of} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Role} from "../models/role";
 import {RoleType} from "../models/RoleType";
+import {Participant} from "../models/participant";
+import {Tournament} from "../models/tournament";
 
 @Injectable({
   providedIn: 'root'
@@ -81,12 +83,21 @@ export class RoleService {
       );
   }
 
-  delete(Role: Role): Observable<Role> {
+  delete(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Role>(url, Role, this.httpOptions)
+    return this.http.post<Role>(url, role, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting role ${Role}`)),
-        catchError(this.handleError<Role>(`delete ${Role}`))
+        tap(_ => this.log(`deleting role ${role}`)),
+        catchError(this.handleError<Role>(`delete ${role}`))
+      );
+  }
+
+  deleteByParticipantAndTournament(participant: Participant, tournament: Tournament): Observable<Role> {
+    const url: string = `${this.baseUrl}/delete/participants`;
+    return this.http.post<Role>(url, {participant: participant, tournament: tournament}, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleting role for ${participant} on ${tournament}`)),
+        catchError(this.handleError<Role>(`delete role for ${participant} on ${tournament}`))
       );
   }
 

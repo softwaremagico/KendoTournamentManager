@@ -1,27 +1,29 @@
-<mat-card>
-  <mat-card-content>
-    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
-      <h2>{{'logIn' | translate}}</h2>
-      <div>
-        <mat-form-field class="full-width-input">
-          <input matInput placeholder="{{'email' | translate}}" formControlName="username" required>
-          <mat-error>
-            {{'invalidEmail' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field class="full-width-input">
-          <input matInput type="password" placeholder="{{'password' | translate}}" formControlName="password" required>
-          <mat-error>
-            {{'invalidPassword' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div>
-        <button mat-raised-button color="primary">{{'login' | translate}}</button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
-
+<div id="login">
+  <mat-card>
+    <mat-card-content>
+      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+        <h2>{{'logIn' | translate}}</h2>
+        <div>
+          <mat-form-field class="full-width-input">
+            <input matInput placeholder="{{'email' | translate}}" formControlName="username" required>
+            <mat-error>
+              {{'invalidEmail' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="full-width-input">
+            <input matInput type="password" placeholder="{{'password' | translate}}" formControlName="password"
+                   required>
+            <mat-error>
+              {{'invalidPassword' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <button mat-raised-button color="primary">{{'login' | translate}}</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

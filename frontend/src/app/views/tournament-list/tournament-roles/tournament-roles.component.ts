@@ -82,6 +82,10 @@ export class TournamentRolesComponent implements OnInit {
       event.previousIndex,
       event.currentIndex,
     );
+    const participant: Participant = event.container.data[event.currentIndex]
+    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(role => {
+      this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
+    });
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
