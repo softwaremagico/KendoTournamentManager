@@ -12,8 +12,7 @@ export class MessageService {
 
   private openSnackBar(message: string, cssClass: string, action?: string) {
     this.snackBar.open(this.translateService.instant(message), action, {
-      //duration: 2000,
-      duration: 0,
+      duration: 2000,
       panelClass: [cssClass, 'message-service']
     });
   }

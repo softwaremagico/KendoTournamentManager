@@ -27,9 +27,12 @@ package com.softwaremagico.kt.rest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.model.ParticipantInTournamentDto;
 import com.softwaremagico.kt.rest.model.RoleDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,6 +43,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -76,7 +80,7 @@ public class RoleServices {
     @ApiOperation(value = "Gets all roles from a tournament.")
     @GetMapping(value = "/tournaments/{id}/types/{roleTypes}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Role> getAllFromTournament(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
-                                           @ApiParam(value = "Type of role") @PathVariable("roleTypes") List<RoleType> roleTypes,
+                                           @ApiParam(value = "Type of role") @PathVariable("roleTypes") Collection<RoleType> roleTypes,
                                            HttpServletRequest request) {
         return roleProvider.getAll(tournamentProvider.get(id), roleTypes);
     }
@@ -101,7 +105,7 @@ public class RoleServices {
         final Role role = new Role();
         role.setParticipant(participantProvider.get(roleDto.getParticipant().getId()));
         role.setTournament(tournamentProvider.get(roleDto.getTournament().getId()));
-        role.setType(roleDto.getRoleType());
+        role.setRoleType(roleDto.getRoleType());
         return roleProvider.save(role);
     }
 
@@ -112,6 +116,24 @@ public class RoleServices {
     public void delete(@ApiParam(value = "Id of an existing role", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         roleProvider.delete(id);
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes a role.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody RoleDto role, HttpServletRequest request) {
+        roleProvider.delete(modelMapper.map(role, Role.class));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes a role.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete/participants", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
+        roleProvider.delete(modelMapper.map(participantInTournament.getParticipant(), Participant.class),
+                modelMapper.map(participantInTournament.getTournament(), Tournament.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
