@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.core.exceptions.RoleNotFoundException;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.RoleRepository;
@@ -86,6 +87,10 @@ public class RoleProvider {
 
     public void delete(Role role) {
         roleRepository.delete(role);
+    }
+
+    public void delete(Participant participant, Tournament tournament) {
+        roleRepository.deleteByParticipantAndTournament(participant, tournament);
     }
 
     public void delete(Integer id) {
