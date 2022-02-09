@@ -7,7 +7,7 @@ import {Observable, of} from "rxjs";
 
 import {catchError, tap} from "rxjs/operators";
 import {Role} from "../models/role";
-import {RoleType} from "../models/RoleType";
+import {RoleType} from "../models/role-type";
 import {Participant} from "../models/participant";
 import {Tournament} from "../models/tournament";
 

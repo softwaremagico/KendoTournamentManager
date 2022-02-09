@@ -1,5 +1,5 @@
-import {TournamentType} from "./TournamentType";
-import {Element} from "./Element";
+import {TournamentType} from "./tournament-type";
+import {Element} from "./element";
 
 export class Tournament extends Element {
   public name: string;

@@ -1,0 +1,27 @@
+<div class="teams-container" cdkDropListGroup>
+  <div cdkDropList
+       [cdkDropListData]="userListData.participants"
+       (cdkDropListDropped)="removeFromTeam($event)">
+    <user-list [userListData]="userListData"></user-list>
+  </div>
+  <div class="teams">
+    <div *ngFor="let team of teams">
+      <h2>{{team.name}}</h2>
+      <div class="team" cdkDropList
+           [cdkDropListData]="getMembersContainer(team)"
+           (cdkDropListDropped)="dropMember($event, team)">
+        <mat-card class="user-card" *ngFor="let user of members.get(team)" cdkDrag [cdkDragData]="user">
+          <mat-card-header>
+            <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
+            <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions class="button-container">
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div>
