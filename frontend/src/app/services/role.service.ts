@@ -8,6 +8,8 @@ import {Observable, of} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Role} from "../models/role";
 import {RoleType} from "../models/RoleType";
+import {Participant} from "../models/participant";
+import {Tournament} from "../models/tournament";
 
 @Injectable({
   providedIn: 'root'
@@ -54,12 +56,21 @@ export class RoleService {
       );
   }
 
-  getFromTournamentAndTypes(id: number, types: RoleType[]): Observable<Role> {
-    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join('/');
-    return this.http.get<Role>(url, this.httpOptions)
+  getFromTournamentAndType(id: number, type: RoleType): Observable<Role[]> {
+    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + type;
+    return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched roles from tournament id=${id}`)),
-        catchError(this.handleError<Role>(`get from tournament id=${id}`))
+        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
+      );
+  }
+
+  getFromTournamentAndTypes(id: number, types: RoleType[]): Observable<Role[]> {
+    const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join(',');
+    return this.http.get<Role[]>(url, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`fetched roles from tournament id=${id}`)),
+        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
 
@@ -72,12 +83,21 @@ export class RoleService {
       );
   }
 
-  delete(Role: Role): Observable<Role> {
+  delete(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Role>(url, Role, this.httpOptions)
+    return this.http.post<Role>(url, role, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting role ${Role}`)),
-        catchError(this.handleError<Role>(`delete ${Role}`))
+        tap(_ => this.log(`deleting role ${role}`)),
+        catchError(this.handleError<Role>(`delete ${role}`))
+      );
+  }
+
+  deleteByParticipantAndTournament(participant: Participant, tournament: Tournament): Observable<Role> {
+    const url: string = `${this.baseUrl}/delete/participants`;
+    return this.http.post<Role>(url, {participant: participant, tournament: tournament}, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleting role for ${participant} on ${tournament}`)),
+        catchError(this.handleError<Role>(`delete role for ${participant} on ${tournament}`))
       );
   }
 
