@@ -1,7 +1,7 @@
 import {Tournament} from "./tournament";
 import {Participant} from "./participant";
-import {RoleType} from "./RoleType";
-import {Element} from "./Element";
+import {RoleType} from "./role-type";
+import {Element} from "./element";
 
 export class Role extends Element {
   public tournament: Tournament;

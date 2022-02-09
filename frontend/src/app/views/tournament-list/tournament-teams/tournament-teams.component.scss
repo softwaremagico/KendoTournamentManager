@@ -1,0 +1,38 @@
+.teams-container {
+  width: 800px;
+  display: flex;
+}
+
+.teams-container div {
+  flex: 1
+}
+
+.team {
+  min-height: 200px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+  overflow: auto;
+}
+
+.teams {
+  overflow: auto;
+  height: 800px;
+  padding-left: 20px;
+}
+
+//Padding between roles
+.ng-star-inserted {
+  padding-bottom: 20px;
+}
+
+.user-list {
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}

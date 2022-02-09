@@ -42,6 +42,7 @@ import { TournamentDialogBoxComponent } from './views/tournament-list/tournament
 import { UserListComponent } from './components/basic/user-list/user-list.component';
 import { TournamentRolesComponent } from './views/tournament-list/tournament-roles/tournament-roles.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import { TournamentTeamsComponent } from './views/tournament-list/tournament-teams/tournament-teams.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     TournamentListComponent,
     TournamentDialogBoxComponent,
     UserListComponent,
-    TournamentRolesComponent
+    TournamentRolesComponent,
+    TournamentTeamsComponent
   ],
     imports: [
         BrowserModule,

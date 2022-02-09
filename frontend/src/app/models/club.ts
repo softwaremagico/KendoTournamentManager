@@ -1,4 +1,4 @@
-import {Element} from "./Element";
+import {Element} from "./element";
 
 export class Club extends Element {
   public name: string;
