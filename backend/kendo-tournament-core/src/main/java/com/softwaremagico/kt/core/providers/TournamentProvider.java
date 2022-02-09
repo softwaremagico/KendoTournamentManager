@@ -35,6 +35,7 @@ import java.util.List;
 
 @Service
 public class TournamentProvider {
+
     private final TournamentRepository tournamentRepository;
 
     @Autowired
@@ -43,7 +44,8 @@ public class TournamentProvider {
     }
 
     public Tournament get(Integer id) {
-        return tournamentRepository.getById(id);
+        return tournamentRepository.findById(id).orElseThrow(() -> new TournamentNotFoundException(getClass(),
+                "No tournament with id '" + id + "' found"));
     }
 
     public Tournament add(Tournament tournament) {

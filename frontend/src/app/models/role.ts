@@ -6,12 +6,12 @@ import {Element} from "./Element";
 export class Role extends Element {
   public tournament: Tournament;
   public participant: Participant;
-  public type: RoleType;
+  public roleType: RoleType;
 
 
   public static override copy(source: Role, target: Role): void {
     Element.copy(source, target);
-    target.type = source.type;
+    target.roleType = source.roleType;
     if (source.tournament !== undefined) {
       target.tournament = Tournament.clone(source.tournament);
     }
