@@ -454,7 +454,9 @@
   "waitingConnection": "Wachten op reactie van de database. Controleer netwerkconnectie.",
   "passwordDoesNotMatch": "Het ingevoerde wachtwoord is niet correct!",
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
-  "name": "Naam"
+  "name": "Naam",
+  "competitor": "Deelnemer",
+  "referee": "Scheidsrechters"
 }
 
 

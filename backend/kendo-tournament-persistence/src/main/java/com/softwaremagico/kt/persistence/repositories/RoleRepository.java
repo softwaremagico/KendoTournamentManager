@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -40,9 +41,11 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     List<Role> findByTournament(Tournament tournament);
 
-    List<Role> findByTournamentAndType(Tournament tournament, RoleType roleType);
+    List<Role> findByTournamentAndRoleType(Tournament tournament, RoleType roleType);
 
-    List<Role> findByTournamentAndTypeIn(Tournament tournament, Collection<RoleType> roleTypes);
+    List<Role> findByTournamentAndRoleTypeIn(Tournament tournament, Collection<RoleType> roleTypes);
 
     long countByTournament(Tournament tournament);
+
+    void deleteByParticipantAndTournament(Participant participant, Tournament tournament);
 }
