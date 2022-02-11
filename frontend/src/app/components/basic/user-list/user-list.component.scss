@@ -1,12 +1,21 @@
 .user-card {
   margin: 20px;
   border-radius: 10px;
+  height: 40px;
 }
 
 .user-list {
   height: 740px;
   width: 400px;
   overflow: auto;
+}
+
+.mat-card-header .mat-card-title {
+  font-size: 16px;
+}
+
+.mat-card-header .mat-card-subtitle {
+  font-size: 12px;
 }
 
 .filter {

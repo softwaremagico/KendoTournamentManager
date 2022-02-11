@@ -9,6 +9,7 @@ import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
+import {TeamService} from "../../../services/team.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -23,7 +24,7 @@ export class TournamentTeamsComponent implements OnInit {
   members = new Map<Team, Participant[]>();
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
-              public roleService: RoleService,
+              public teamService: TeamService, public roleService: RoleService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
@@ -36,12 +37,23 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    let teamsRequest = this.teamService.getFromTournament(this.tournament);
     let roleRequests = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
-    forkJoin([roleRequests]).subscribe(([roles]) => {
+    forkJoin([teamsRequest, roleRequests]).subscribe(([teams, roles]) => {
+      if (roles === undefined) {
+        roles = [];
+      }
       this.userListData.participants = roles.map(role => role.participant);
-      this.userListData.filteredParticipants = this.userListData.participants;
+      if (teams !== undefined) {
+        for (let team of teams) {
+          for (let member of team.members) {
+            this.userListData.participants.splice(this.userListData.participants.indexOf(member), 1)
+          }
+        }
+        this.userListData.filteredParticipants = this.userListData.participants;
+        this.teams = teams;
+      }
     });
-
   }
 
   closeDialog() {
