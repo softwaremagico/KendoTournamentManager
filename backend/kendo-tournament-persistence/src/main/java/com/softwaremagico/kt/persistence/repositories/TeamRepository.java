@@ -41,4 +41,6 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
     Team findByTournamentAndName(Tournament tournament, String name);
 
     long countByTournament(Tournament tournament);
+
+    void deleteByTournament(Tournament tournament);
 }
