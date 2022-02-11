@@ -47,12 +47,12 @@ export class RoleService {
       );
   }
 
-  getFromTournament(id: number): Observable<Role> {
+  getFromTournament(id: number): Observable<Role[]> {
     const url: string = `${this.baseUrl}/tournaments/${id}`;
-    return this.http.get<Role>(url, this.httpOptions)
+    return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.log(`fetched roles from tournament id=${id}`)),
-        catchError(this.handleError<Role>(`get from tournament id=${id}`))
+        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
 
