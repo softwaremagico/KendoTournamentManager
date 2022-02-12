@@ -125,10 +125,15 @@ public class TeamServices {
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
     public Team delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
         final Participant member = modelMapper.map(participantInTournament.getParticipant(), Participant.class);
-        final Team team = teamProvider.get(modelMapper.map(participantInTournament.getTournament(), Tournament.class), member);
+        final Tournament tournament = modelMapper.map(participantInTournament.getTournament(), Tournament.class);
+        Team team = teamProvider.get(tournament, member);
         if (team != null) {
+            //Setting tournament for updating.
+            team.setTournament(tournament);
             team.getMembers().remove(member);
-            teamProvider.update(team);
+            team = teamProvider.update(team);
+            //setting tournament for returning element.
+            team.setTournament(tournament);
         }
         return team;
     }
@@ -144,16 +149,21 @@ public class TeamServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a team.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team update(
-            @RequestBody TeamDto teamDto, HttpServletRequest request) {
+    public Team update(@RequestBody TeamDto teamDto, HttpServletRequest request) {
         final Team team = modelMapper.map(teamDto, Team.class);
+        Tournament tournament = null;
         if (teamDto.getTournament() != null) {
-            team.setTournament(tournamentProvider.get(teamDto.getTournament().getId()));
+            tournament = tournamentProvider.get(teamDto.getTournament().getId());
+            team.setTournament(tournament);
         }
         if (teamDto.getMembers() != null) {
             team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
                     .collect(Collectors.toList())));
         }
-        return teamProvider.update(team);
+        final Team storedTeam = teamProvider.update(team);
+        if (tournament != null) {
+            storedTeam.setTournament(tournament);
+        }
+        return storedTeam;
     }
 }
