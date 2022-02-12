@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
 import {catchError, tap} from 'rxjs/operators';
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {Participant} from "../models/participant";
-import {LoggerService} from "../logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
+import {MessageService} from "./message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class ParticipantService {
     })
   };
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService,
+  constructor(private http: HttpClient, private environmentService: EnvironmentService,  private messageService: MessageService,
               public authenticatedUserService: AuthenticatedUserService) {
   }
 
@@ -29,8 +29,8 @@ export class ParticipantService {
     const url: string = `${this.baseUrl}/`;
     return this.http.get<Participant[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched all Participants`)),
-        catchError(this.handleError<Participant[]>(`gets all`))
+        tap(_ => this.messageService.log(`fetched all Participants`)),
+        catchError(this.messageService.handleError<Participant[]>(`gets all`))
       );
   }
 
@@ -38,8 +38,8 @@ export class ParticipantService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Participant>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched participant id=${id}`)),
-        catchError(this.handleError<Participant>(`get id=${id}`))
+        tap(_ => this.messageService.log(`fetched participant id=${id}`)),
+        catchError(this.messageService.handleError<Participant>(`get id=${id}`))
       );
   }
 
@@ -47,8 +47,8 @@ export class ParticipantService {
     const url: string = `${this.baseUrl}/${id}`;
     this.http.delete(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting participant id=${id}`)),
-        catchError(this.handleError<Participant>(`delete id=${id}`))
+        tap(_ => this.messageService.log(`deleting participant id=${id}`)),
+        catchError(this.messageService.handleError<Participant>(`delete id=${id}`))
       );
   }
 
@@ -56,8 +56,8 @@ export class ParticipantService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Participant>(url, participant, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting participant ${participant}`)),
-        catchError(this.handleError<Participant>(`delete ${participant}`))
+        tap(_ => this.messageService.log(`deleting participant ${participant}`)),
+        catchError(this.messageService.handleError<Participant>(`delete ${participant}`))
       );
   }
 
@@ -65,8 +65,8 @@ export class ParticipantService {
     const url: string = `${this.baseUrl}/`;
     return this.http.post<Participant>(url, participant, this.httpOptions)
       .pipe(
-        tap((newParticipant: Participant) => this.log(`adding participant ${newParticipant}`)),
-        catchError(this.handleError<Participant>(`adding ${participant}`))
+        tap((newParticipant: Participant) => this.messageService.log(`adding participant ${newParticipant}`)),
+        catchError(this.messageService.handleError<Participant>(`adding ${participant}`))
       );
   }
 
@@ -75,26 +75,8 @@ export class ParticipantService {
     const url: string = `${this.baseUrl}/`;
     return this.http.put<Participant>(url, participant, this.httpOptions)
       .pipe(
-        tap((updatedParticipant: Participant) => this.log(`updating participant ${updatedParticipant}`)),
-        catchError(this.handleError<Participant>(`updating ${participant}`))
+        tap((updatedParticipant: Participant) => this.messageService.log(`updating participant ${updatedParticipant}`)),
+        catchError(this.messageService.handleError<Participant>(`updating ${participant}`))
       );
-  }
-
-  private log(message: string) {
-    this.loggerService.add(`ParticipantService: ${message}`);
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for participant consumption
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 }
