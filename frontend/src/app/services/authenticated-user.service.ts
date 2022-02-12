@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 import {CookieService} from "ngx-cookie-service";
 
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
-import {LoggerService} from "../logger.service";
 import {EnvironmentService} from "../environment.service";
+import {MessageService} from "./message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class AuthenticatedUserService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/api/public';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService,
+  constructor(private http: HttpClient, private environmentService: EnvironmentService,  private messageService: MessageService,
               private cookies: CookieService) {
   }
 
@@ -29,8 +29,7 @@ export class AuthenticatedUserService {
     })
       .pipe(
         map((response: any) => {
-          const jwt = response.headers.get('Authorization');
-          response.body.jwt = jwt;
+          response.body.jwt = response.headers.get('Authorization');
           return response.body;
         }));
   }
@@ -41,23 +40,5 @@ export class AuthenticatedUserService {
 
   getJwtValue(): string {
     return this.cookies.get("jwt");
-  }
-
-  private log(message: string) {
-    this.loggerService.add(`UserService: ${message}`);
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 }

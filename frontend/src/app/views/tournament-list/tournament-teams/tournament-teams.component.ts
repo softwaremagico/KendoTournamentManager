@@ -49,6 +49,7 @@ export class TournamentTeamsComponent implements OnInit {
           for (let member of team.members) {
             this.userListData.participants.splice(this.userListData.participants.indexOf(member), 1)
           }
+          this.members.set(team, team.members);
         }
         this.userListData.filteredParticipants = this.userListData.participants;
         this.teams = teams;
