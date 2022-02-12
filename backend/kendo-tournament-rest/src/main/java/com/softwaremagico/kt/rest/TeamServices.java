@@ -69,10 +69,10 @@ public class TeamServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @ApiOperation(value = "Gets all teams.")
-    @GetMapping(value = "/tournaments/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Team> getAll(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+    @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Team> getAll(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                              HttpServletRequest request) {
-        return teamProvider.getAll(tournamentProvider.get(id));
+        return teamProvider.getAll(tournamentProvider.get(tournamentId));
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")

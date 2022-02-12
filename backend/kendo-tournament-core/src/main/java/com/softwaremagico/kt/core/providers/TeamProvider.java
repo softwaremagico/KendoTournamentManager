@@ -67,7 +67,9 @@ public class TeamProvider {
     }
 
     public Team get(Tournament tournament, String name) {
-        return teamRepository.findByTournamentAndName(tournament, name);
+        final Team team = teamRepository.findByTournamentAndName(tournament, name);
+        team.setTournament(tournament);
+        return team;
     }
 
     public Team get(int id) {
@@ -97,6 +99,10 @@ public class TeamProvider {
                 newTeams.add(team);
             }
             teams.addAll(save(newTeams));
+        } else {
+            for (final Team team : teams) {
+                team.setTournament(tournament);
+            }
         }
         return teams;
     }
