@@ -47,7 +47,9 @@ export class TournamentTeamsComponent implements OnInit {
       if (teams !== undefined) {
         for (let team of teams) {
           for (let member of team.members) {
-            this.userListData.participants.splice(this.userListData.participants.indexOf(member), 1)
+            this.userListData.participants.splice(this.userListData.participants.map(function (p: Participant) {
+              return p.id;
+            }).indexOf(member.id), 1)
           }
           this.members.set(team, team.members);
         }
@@ -80,7 +82,7 @@ export class TournamentTeamsComponent implements OnInit {
     );
     const participant: Participant = event.container.data[event.currentIndex];
     this.teamService.deleteByMemberAndTournament(participant, this.tournament).subscribe(team => {
-      this.messageService.infoMessage("Member '" + participant + "' removed.");
+      this.messageService.infoMessage("Member '" + participant.name + " " + participant.lastname + "' removed.");
     });
   }
 
@@ -88,7 +90,7 @@ export class TournamentTeamsComponent implements OnInit {
     const participant: Participant = this.transferCard(event);
     team.members = this.getMembersContainer(team);
     this.teamService.update(team).subscribe(team => {
-      this.messageService.infoMessage("Team '" + Team + "' member '" + participant + "' updated.");
+      this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
   }
 }
