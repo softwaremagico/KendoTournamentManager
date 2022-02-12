@@ -7,7 +7,7 @@ import {RoleService} from "../../../services/role.service";
 import {forkJoin} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
-import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
 
@@ -92,5 +92,14 @@ export class TournamentTeamsComponent implements OnInit {
     this.teamService.update(team).subscribe(team => {
       this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
+    console.log(this.tournament);
+  }
+
+  checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
+    console.log("item - ", item);
+    console.log("dropList - ", dropList);
+    console.log(this.tournament);
+    //return !(this.tournament.teamSize !== undefined && dropList.data.length >= this.tournament.teamSize);
+    return true;
   }
 }
