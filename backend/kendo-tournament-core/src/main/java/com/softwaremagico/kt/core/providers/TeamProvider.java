@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.exceptions.NameAlreadyInUseException;
 import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
@@ -126,4 +127,9 @@ public class TeamProvider {
             throw new TeamNotFoundException(getClass(), "Team with id '" + id + "' not found");
         }
     }
+
+    public Team get(Tournament tournament, Participant participant) {
+        return teamRepository.findByTournamentAndMembers(tournament, participant);
+    }
+
 }

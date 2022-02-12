@@ -77,10 +77,17 @@ export class TournamentTeamsComponent implements OnInit {
       event.previousIndex,
       event.currentIndex,
     );
-    const participant: Participant = event.container.data[event.currentIndex]
+    const participant: Participant = event.container.data[event.currentIndex];
+    this.teamService.deleteByMemberAndTournament(participant, this.tournament).subscribe(team => {
+      this.messageService.infoMessage("Member '" + participant + "' removed.");
+    });
   }
 
   dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
     const participant: Participant = this.transferCard(event);
+    team.members = this.getMembersContainer(team);
+    this.teamService.update(team).subscribe(team => {
+      this.messageService.infoMessage("Team '" + Team + "' member '" + participant + "' updated.");
+    });
   }
 }
