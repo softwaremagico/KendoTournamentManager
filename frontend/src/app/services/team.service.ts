@@ -8,6 +8,7 @@ import {Team} from "../models/team";
 import {catchError, tap} from "rxjs/operators";
 import {Participant} from "../models/participant";
 import {Tournament} from "../models/tournament";
+import {Role} from "../models/role";
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +70,15 @@ export class TeamService {
       .pipe(
         tap(_ => this.log(`deleting team ${team}`)),
         catchError(this.handleError<Team>(`delete ${team}`))
+      );
+  }
+
+  deleteByMemberAndTournament(participant: Participant, tournament: Tournament): Observable<Team> {
+    const url: string = `${this.baseUrl}/delete/members`;
+    return this.http.post<Team>(url, {participant: participant, tournament: tournament}, this.httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleting member ${participant} on ${tournament}`)),
+        catchError(this.handleError<Team>(`delete member ${participant} on ${tournament}`))
       );
   }
 
