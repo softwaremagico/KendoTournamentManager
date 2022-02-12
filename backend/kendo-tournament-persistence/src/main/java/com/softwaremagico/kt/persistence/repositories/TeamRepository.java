@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,6 +40,8 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
     List<Team> findByTournament(Tournament tournament);
 
     Team findByTournamentAndName(Tournament tournament, String name);
+
+    Team findByTournamentAndMembers(Tournament tournament, Participant member);
 
     long countByTournament(Tournament tournament);
 
