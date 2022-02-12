@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
 import {catchError, tap} from 'rxjs/operators';
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {Club} from "../models/club";
-import {LoggerService} from "../logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
+import {MessageService} from "./message.service";
 
 
 @Injectable({
@@ -22,7 +22,7 @@ export class ClubService {
     })
   };
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService,
+  constructor(private http: HttpClient, private environmentService: EnvironmentService,  private messageService: MessageService,
               public authenticatedUserService: AuthenticatedUserService) {
   }
 
@@ -30,8 +30,8 @@ export class ClubService {
     const url: string = `${this.baseUrl}/`;
     return this.http.get<Club[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched all clubs`)),
-        catchError(this.handleError<Club[]>(`gets all`))
+        tap(_ => this.messageService.log(`fetched all clubs`)),
+        catchError(this.messageService.handleError<Club[]>(`gets all`))
       );
   }
 
@@ -39,8 +39,8 @@ export class ClubService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Club>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched club id=${id}`)),
-        catchError(this.handleError<Club>(`get id=${id}`))
+        tap(_ => this.messageService.log(`fetched club id=${id}`)),
+        catchError(this.messageService.handleError<Club>(`get id=${id}`))
       );
   }
 
@@ -48,8 +48,8 @@ export class ClubService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting club id=${id}`)),
-        catchError(this.handleError<number>(`delete id=${id}`))
+        tap(_ => this.messageService.log(`deleting club id=${id}`)),
+        catchError(this.messageService.handleError<number>(`delete id=${id}`))
       );
   }
 
@@ -57,8 +57,8 @@ export class ClubService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Club>(url, club, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting club ${club}`)),
-        catchError(this.handleError<Club>(`delete ${club}`))
+        tap(_ => this.messageService.log(`deleting club ${club}`)),
+        catchError(this.messageService.handleError<Club>(`delete ${club}`))
       );
   }
 
@@ -66,8 +66,8 @@ export class ClubService {
     const url: string = `${this.baseUrl}/`;
     return this.http.post<Club>(url, club, this.httpOptions)
       .pipe(
-        tap((newClub: Club) => this.log(`adding club ${newClub}`)),
-        catchError(this.handleError<Club>(`adding ${club}`))
+        tap((newClub: Club) => this.messageService.log(`adding club ${newClub}`)),
+        catchError(this.messageService.handleError<Club>(`adding ${club}`))
       );
   }
 
@@ -75,26 +75,8 @@ export class ClubService {
     const url: string = `${this.baseUrl}/`;
     return this.http.put<Club>(url, club, this.httpOptions)
       .pipe(
-        tap((updatedClub: Club) => this.log(`updating club ${updatedClub}`)),
-        catchError(this.handleError<Club>(`updating ${club}`))
+        tap((updatedClub: Club) => this.messageService.log(`updating club ${updatedClub}`)),
+        catchError(this.messageService.handleError<Club>(`updating ${club}`))
       );
-  }
-
-  private log(message: string) {
-    this.loggerService.add(`ClubService: ${message}`);
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for participant consumption
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 }
