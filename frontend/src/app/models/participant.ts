@@ -1,5 +1,5 @@
 import {Club} from "./club";
-import {Element} from "./Element";
+import {Element} from "./element";
 
 export class Participant extends Element {
   public idCard: string;
