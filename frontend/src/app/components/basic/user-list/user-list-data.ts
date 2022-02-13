@@ -16,5 +16,10 @@ export class UserListData {
       user.name.toLowerCase().includes(filter) || user.idCard.toLowerCase().includes(filter));
   }
 
+  getRealIndex(currentIndex: number): number {
+    //If filter is used, the index of the user is incorrect. Convert it
+    return this.participants.indexOf(this.filteredParticipants[currentIndex]);
+  }
+
 
 }

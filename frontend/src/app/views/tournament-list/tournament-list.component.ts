@@ -11,6 +11,7 @@ import {ClubService} from "../../services/club.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
 import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
+import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
 
 export enum Action {
   Add,
@@ -117,9 +118,19 @@ export class TournamentListComponent implements OnInit {
     );
   }
 
-  addRole(): void {
+  addRoles(): void {
     if (this.basicTableData.selectedElement) {
       const dialogRef = this.dialog.open(TournamentRolesComponent, {
+        data: {
+          tournament: this.basicTableData.selectedElement
+        }
+      });
+    }
+  }
+
+  addTeams(): void {
+    if (this.basicTableData.selectedElement) {
+      const dialogRef = this.dialog.open(TournamentTeamsComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }
