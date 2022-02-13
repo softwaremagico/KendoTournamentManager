@@ -7,7 +7,7 @@ import {RoleService} from "../../../services/role.service";
 import {forkJoin} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
-import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
 
@@ -64,12 +64,16 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   private transferCard(event: CdkDragDrop<Participant[], any>): Participant {
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      this.userListData.getRealIndex(event.previousIndex),
-      event.currentIndex,
-    );
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        this.userListData.getRealIndex(event.previousIndex),
+        event.currentIndex,
+      );
+    }
     return event.container.data[event.currentIndex];
   }
 
@@ -81,7 +85,7 @@ export class TournamentTeamsComponent implements OnInit {
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex];
-    this.teamService.deleteByMemberAndTournament(participant, this.tournament).subscribe(team => {
+    this.teamService.deleteByMemberAndTournament(participant, this.tournament).subscribe(() => {
       this.messageService.infoMessage("Member '" + participant.name + " " + participant.lastname + "' removed.");
     });
   }
@@ -89,16 +93,17 @@ export class TournamentTeamsComponent implements OnInit {
   dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
     const participant: Participant = this.transferCard(event);
     team.members = this.getMembersContainer(team);
-    this.teamService.update(team).subscribe(team => {
+    console.log("Team: " , team.members);
+    this.teamService.update(team).subscribe(() => {
       this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
     console.log(this.tournament);
   }
 
   checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
-    console.log("item - ", item);
-    console.log("dropList - ", dropList);
-    console.log(this.tournament);
+    // console.log("item - ", item);
+    // console.log("dropList - ", dropList);
+    // console.log(this.tournament);
     //return !(this.tournament.teamSize !== undefined && dropList.data.length >= this.tournament.teamSize);
     return true;
   }
