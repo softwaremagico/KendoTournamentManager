@@ -1,8 +1,8 @@
-import {Component, NgModule} from '@angular/core';
+import {Component} from '@angular/core';
 
 import {AuthenticatedUserService} from "../../services/authenticated-user.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 
 @Component({
@@ -31,7 +31,7 @@ export class LoginComponent {
         this.router.navigate([returnUrl]);
 
       },
-      err => {
+      () => {
         this.messageService.errorMessage("deniedUser");
       });
   }
