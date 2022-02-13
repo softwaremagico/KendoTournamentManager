@@ -30,7 +30,11 @@ import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ParticipantProvider {
@@ -49,6 +53,17 @@ public class ParticipantProvider {
 
     public List<Participant> get(List<Integer> ids) {
         return participantRepository.findByIdIn(ids);
+    }
+
+    public List<Participant> getOriginalOrder(List<Integer> ids) {
+        final List<Participant> databaseParticipants = participantRepository.findByIdIn(ids);
+        //JPA in does not maintain the order. We need to sort them by the source list.
+        final Map<Integer, Participant> participantsById = databaseParticipants.stream().collect(Collectors.toMap(Participant::getId, Function.identity()));
+        final List<Participant> sortedParticipants = new ArrayList<>();
+        for (final Integer id : ids) {
+            sortedParticipants.add(participantsById.get(id));
+        }
+        return sortedParticipants;
     }
 
 

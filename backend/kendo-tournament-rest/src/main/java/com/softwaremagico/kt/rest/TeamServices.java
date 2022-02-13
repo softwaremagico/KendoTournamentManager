@@ -27,10 +27,14 @@ package com.softwaremagico.kt.rest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.model.ParticipantDto;
+import com.softwaremagico.kt.rest.model.ParticipantInTournamentDto;
 import com.softwaremagico.kt.rest.model.TeamDto;
+import com.softwaremagico.kt.rest.model.TournamentDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
@@ -63,6 +67,22 @@ public class TeamServices {
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Team> getAll(HttpServletRequest request) {
         return teamProvider.getAll();
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all teams.")
+    @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Team> getAll(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                             HttpServletRequest request) {
+        return teamProvider.getAll(tournamentProvider.get(tournamentId));
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all teams.")
+    @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Team> getAll(@RequestBody TournamentDto tournamentDto,
+                             HttpServletRequest request) {
+        return teamProvider.getAll(modelMapper.map(tournamentDto, Tournament.class));
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
@@ -100,18 +120,50 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes a member from any team.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Team delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
+        final Participant member = modelMapper.map(participantInTournament.getParticipant(), Participant.class);
+        final Tournament tournament = modelMapper.map(participantInTournament.getTournament(), Tournament.class);
+        Team team = teamProvider.get(tournament, member);
+        if (team != null) {
+            //Setting tournament for updating.
+            team.setTournament(tournament);
+            team.getMembers().remove(member);
+            team = teamProvider.update(team);
+            //setting tournament for returning element.
+            team.setTournament(tournament);
+        }
+        return team;
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes all teams from a tournament.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody TournamentDto tournamentDto, HttpServletRequest request) {
+        teamProvider.delete(modelMapper.map(tournamentDto, Tournament.class));
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Updates a team.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team update(
-            @RequestBody TeamDto teamDto, HttpServletRequest request) {
+    public Team update(@RequestBody TeamDto teamDto, HttpServletRequest request) {
         final Team team = modelMapper.map(teamDto, Team.class);
+        Tournament tournament = null;
         if (teamDto.getTournament() != null) {
-            team.setTournament(tournamentProvider.get(teamDto.getTournament().getId()));
+            tournament = tournamentProvider.get(teamDto.getTournament().getId());
+            team.setTournament(tournament);
         }
         if (teamDto.getMembers() != null) {
-            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
+            team.setMembers(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDto::getId)
                     .collect(Collectors.toList())));
         }
-        return teamProvider.update(team);
+        final Team storedTeam = teamProvider.update(team);
+        if (tournament != null) {
+            storedTeam.setTournament(tournament);
+        }
+        return storedTeam;
     }
 }

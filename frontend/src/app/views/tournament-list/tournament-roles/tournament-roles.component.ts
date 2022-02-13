@@ -5,7 +5,7 @@ import {Tournament} from "../../../models/tournament";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
-import {RoleType} from "../../../models/RoleType";
+import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
@@ -60,16 +60,11 @@ export class TournamentRolesComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  getRealIndex(currentIndex: number): number {
-    //If filter is used, the index of the user is incorrect. Convert it
-    return this.userListData.participants.indexOf(this.userListData.filteredParticipants[currentIndex]);
-  }
-
-  transferCard(event: CdkDragDrop<Participant[], any>): Participant {
+  private transferCard(event: CdkDragDrop<Participant[], any>): Participant {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
-      this.getRealIndex(event.previousIndex),
+      this.userListData.getRealIndex(event.previousIndex),
       event.currentIndex,
     );
     return event.container.data[event.currentIndex];

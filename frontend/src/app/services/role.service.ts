@@ -1,15 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
-import {LoggerService} from "../logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 
 import {catchError, tap} from "rxjs/operators";
 import {Role} from "../models/role";
-import {RoleType} from "../models/RoleType";
+import {RoleType} from "../models/role-type";
 import {Participant} from "../models/participant";
 import {Tournament} from "../models/tournament";
+import {MessageService} from "./message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class RoleService {
     })
   };
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, private loggerService: LoggerService,
+  constructor(private http: HttpClient, private environmentService: EnvironmentService,  private messageService: MessageService,
               public authenticatedUserService: AuthenticatedUserService) {
   }
 
@@ -33,8 +33,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/`;
     return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched all roles`)),
-        catchError(this.handleError<Role[]>(`gets all`))
+        tap(_ => this.messageService.log(`fetched all roles`)),
+        catchError(this.messageService.handleError<Role[]>(`gets all`))
       );
   }
 
@@ -42,17 +42,17 @@ export class RoleService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Role>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched role id=${id}`)),
-        catchError(this.handleError<Role>(`get id=${id}`))
+        tap(_ => this.messageService.log(`fetched role id=${id}`)),
+        catchError(this.messageService.handleError<Role>(`get id=${id}`))
       );
   }
 
-  getFromTournament(id: number): Observable<Role> {
+  getFromTournament(id: number): Observable<Role[]> {
     const url: string = `${this.baseUrl}/tournaments/${id}`;
-    return this.http.get<Role>(url, this.httpOptions)
+    return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched roles from tournament id=${id}`)),
-        catchError(this.handleError<Role>(`get from tournament id=${id}`))
+        tap(_ => this.messageService.log(`fetched roles from tournament id=${id}`)),
+        catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
 
@@ -60,8 +60,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/tournaments/${id}/types/` + type;
     return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched roles from tournament id=${id}`)),
-        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
+        tap(_ => this.messageService.log(`fetched roles from tournament id=${id}`)),
+        catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
 
@@ -69,8 +69,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join(',');
     return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`fetched roles from tournament id=${id}`)),
-        catchError(this.handleError<Role[]>(`get from tournament id=${id}`))
+        tap(_ => this.messageService.log(`fetched roles from tournament id=${id}`)),
+        catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
 
@@ -78,8 +78,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting role id=${id}`)),
-        catchError(this.handleError<number>(`delete id=${id}`))
+        tap(_ => this.messageService.log(`deleting role id=${id}`)),
+        catchError(this.messageService.handleError<number>(`delete id=${id}`))
       );
   }
 
@@ -87,8 +87,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Role>(url, role, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting role ${role}`)),
-        catchError(this.handleError<Role>(`delete ${role}`))
+        tap(_ => this.messageService.log(`deleting role ${role}`)),
+        catchError(this.messageService.handleError<Role>(`delete ${role}`))
       );
   }
 
@@ -96,8 +96,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/delete/participants`;
     return this.http.post<Role>(url, {participant: participant, tournament: tournament}, this.httpOptions)
       .pipe(
-        tap(_ => this.log(`deleting role for ${participant} on ${tournament}`)),
-        catchError(this.handleError<Role>(`delete role for ${participant} on ${tournament}`))
+        tap(_ => this.messageService.log(`deleting role for ${participant} on ${tournament}`)),
+        catchError(this.messageService.handleError<Role>(`delete role for ${participant} on ${tournament}`))
       );
   }
 
@@ -105,8 +105,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/`;
     return this.http.post<Role>(url, Role, this.httpOptions)
       .pipe(
-        tap((newRole: Role) => this.log(`adding role ${newRole}`)),
-        catchError(this.handleError<Role>(`adding ${Role}`))
+        tap((newRole: Role) => this.messageService.log(`adding role ${newRole}`)),
+        catchError(this.messageService.handleError<Role>(`adding ${Role}`))
       );
   }
 
@@ -114,26 +114,8 @@ export class RoleService {
     const url: string = `${this.baseUrl}/`;
     return this.http.put<Role>(url, Role, this.httpOptions)
       .pipe(
-        tap((updatedRole: Role) => this.log(`updating role ${updatedRole}`)),
-        catchError(this.handleError<Role>(`updating ${Role}`))
+        tap((updatedRole: Role) => this.messageService.log(`updating role ${updatedRole}`)),
+        catchError(this.messageService.handleError<Role>(`updating ${Role}`))
       );
-  }
-
-  private log(message: string) {
-    this.loggerService.add(`RoleService: ${message}`);
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for participant consumption
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 }
