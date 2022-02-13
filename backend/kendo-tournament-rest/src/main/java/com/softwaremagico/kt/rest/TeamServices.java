@@ -157,7 +157,7 @@ public class TeamServices {
             team.setTournament(tournament);
         }
         if (teamDto.getMembers() != null) {
-            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
+            team.setMembers(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDto::getId)
                     .collect(Collectors.toList())));
         }
         final Team storedTeam = teamProvider.update(team);
