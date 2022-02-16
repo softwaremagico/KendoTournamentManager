@@ -10,6 +10,8 @@ import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
+import {catchError, tap} from "rxjs/operators";
+import {LoggerService} from "../../../services/logger.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -24,7 +26,7 @@ export class TournamentTeamsComponent implements OnInit {
   members = new Map<Team, Participant[]>();
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
-              public teamService: TeamService, public roleService: RoleService,
+              private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
@@ -85,7 +87,12 @@ export class TournamentTeamsComponent implements OnInit {
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex];
-    this.teamService.deleteByMemberAndTournament(participant, this.tournament).subscribe(() => {
+    this.teamService.deleteByMemberAndTournament(participant, this.tournament).pipe(
+      tap((newTeam: Team) => {
+        this.loggerService.info("Member '" + participant.name + " " + participant.lastname + "' removed.");
+      }),
+      catchError(this.messageService.handleError<Team>("removing '" + participant.name + " " + participant.lastname + "'"))
+    ).subscribe(() => {
       this.messageService.infoMessage("Member '" + participant.name + " " + participant.lastname + "' removed.");
     });
   }
@@ -93,7 +100,12 @@ export class TournamentTeamsComponent implements OnInit {
   dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
     const participant: Participant = this.transferCard(event);
     team.members = this.getMembersContainer(team);
-    this.teamService.update(team).subscribe(() => {
+    this.teamService.update(team).pipe(
+      tap((newTeam: Team) => {
+        this.loggerService.info("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.")
+      }),
+      catchError(this.messageService.handleError<Team>("Updating '" + participant.name + " " + participant.lastname + "'"))
+    ).subscribe(() => {
       this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
   }
