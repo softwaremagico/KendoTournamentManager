@@ -67,6 +67,17 @@ public class TeamProvider {
         return teamRepository.save(team);
     }
 
+    public Team update(Team team, List<Participant> members) {
+        if (team != null) {
+            //Remove old members
+            team.getMembers().clear();
+            team = update(team);
+            team.setMembers(members);
+            return teamRepository.save(team);
+        }
+        return null;
+    }
+
     public Team get(Tournament tournament, String name) {
         final Team team = teamRepository.findByTournamentAndName(tournament, name);
         team.setTournament(tournament);
