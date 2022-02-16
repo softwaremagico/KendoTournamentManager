@@ -6,6 +6,7 @@ import {Observable} from "rxjs";
 import {Tournament} from "../models/tournament";
 import {catchError, tap} from "rxjs/operators";
 import {MessageService} from "./message.service";
+import {LoggerService} from "./logger.service";
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +23,14 @@ export class TournamentService {
   };
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              public authenticatedUserService: AuthenticatedUserService,  private messageService: MessageService) { }
+              public authenticatedUserService: AuthenticatedUserService,  private messageService: MessageService,
+              private loggerService: LoggerService) { }
 
   getAll(): Observable<Tournament[]> {
     const url: string = `${this.baseUrl}/`;
     return this.http.get<Tournament[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.messageService.log(`fetched all Tournaments`)),
+        tap(_ => this.loggerService.info(`fetched all Tournaments`)),
         catchError(this.messageService.handleError<Tournament[]>(`gets all`))
       );
   }
@@ -37,7 +39,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Tournament>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.messageService.log(`fetched tournament id=${id}`)),
+        tap(_ => this.loggerService.info(`fetched tournament id=${id}`)),
         catchError(this.messageService.handleError<Tournament>(`get id=${id}`))
       );
   }
@@ -46,7 +48,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/${id}`;
     this.http.delete(url, this.httpOptions)
       .pipe(
-        tap(_ => this.messageService.log(`deleting tournament id=${id}`)),
+        tap(_ => this.loggerService.info(`deleting tournament id=${id}`)),
         catchError(this.messageService.handleError<Tournament>(`delete id=${id}`))
       );
   }
@@ -55,7 +57,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Tournament>(url, tournament, this.httpOptions)
       .pipe(
-        tap(_ => this.messageService.log(`deleting tournament ${tournament}`)),
+        tap(_ => this.loggerService.info(`deleting tournament ${tournament}`)),
         catchError(this.messageService.handleError<Tournament>(`delete ${tournament}`))
       );
   }
@@ -64,7 +66,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/`;
     return this.http.post<Tournament>(url, tournament, this.httpOptions)
       .pipe(
-        tap((newTournament: Tournament) => this.messageService.log(`adding tournament ${newTournament}`)),
+        tap((newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`)),
         catchError(this.messageService.handleError<Tournament>(`adding ${tournament}`))
       );
   }
@@ -74,7 +76,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/`;
     return this.http.put<Tournament>(url, tournament, this.httpOptions)
       .pipe(
-        tap((updatedTournament: Tournament) => this.messageService.log(`updating tournament ${updatedTournament}`)),
+        tap((updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`)),
         catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
       );
   }
