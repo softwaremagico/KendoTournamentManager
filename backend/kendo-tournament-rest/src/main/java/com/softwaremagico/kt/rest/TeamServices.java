@@ -44,6 +44,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -156,11 +157,13 @@ public class TeamServices {
             tournament = tournamentProvider.get(teamDto.getTournament().getId());
             team.setTournament(tournament);
         }
+        //Remove old members
+        final List<Participant> members = new ArrayList<>();
         if (teamDto.getMembers() != null) {
-            team.setMembers(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDto::getId)
+            members.addAll(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDto::getId)
                     .collect(Collectors.toList())));
         }
-        final Team storedTeam = teamProvider.update(team);
+        final Team storedTeam = teamProvider.update(team, members);
         if (tournament != null) {
             storedTeam.setTournament(tournament);
         }
