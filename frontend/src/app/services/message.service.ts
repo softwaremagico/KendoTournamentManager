@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable, of} from "rxjs";
-import {LoggerService} from "../logger.service";
+import {LoggerService} from "./logger.service";
+import {Log} from "./models/log";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import {LoggerService} from "../logger.service";
 export class MessageService {
 
   constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
-              private loggerService: LoggerService,) {
+              private loggerService: LoggerService) {
   }
 
   private openSnackBar(message: string, cssClass: string, duration: number, action?: string) {
@@ -37,12 +38,12 @@ export class MessageService {
 
   handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
+      //Log error
+      const log: Log = new Log();
+      log.message = `${operation} failed: ${error.message}`;
+      this.loggerService.sendError(log);
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for tournament consumption
-      this.log(`${operation} failed: ${error.message}`);
+      //Show error
       this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.
@@ -50,7 +51,4 @@ export class MessageService {
     };
   }
 
-  log(message: string) {
-    this.loggerService.add(`TournamentService: ${message}`);
-  }
 }

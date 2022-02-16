@@ -7,7 +7,6 @@ import {CookieService} from "ngx-cookie-service";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
-import {MessageService} from "./message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +15,7 @@ export class AuthenticatedUserService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/api/public';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService,  private messageService: MessageService,
+  constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
   }
 

@@ -1,6 +1,3 @@
-import {Tournament} from "./tournament";
-import {Participant} from "./participant";
-
 export class Element {
   public id?: number;
   public createdAt: Date;
