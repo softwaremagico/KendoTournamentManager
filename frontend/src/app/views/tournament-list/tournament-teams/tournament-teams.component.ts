@@ -1,10 +1,10 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, Inject, OnInit, Optional, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
-import {forkJoin} from "rxjs";
+import {forkJoin, ignoreElements} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
@@ -93,18 +93,16 @@ export class TournamentTeamsComponent implements OnInit {
   dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
     const participant: Participant = this.transferCard(event);
     team.members = this.getMembersContainer(team);
-    console.log("Team: " , team.members);
     this.teamService.update(team).subscribe(() => {
       this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
-    console.log(this.tournament);
   }
 
   checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
-    // console.log("item - ", item);
-    // console.log("dropList - ", dropList);
-    // console.log(this.tournament);
-    //return !(this.tournament.teamSize !== undefined && dropList.data.length >= this.tournament.teamSize);
+    const size = dropList.element.nativeElement.getAttribute('data-tournament-size');
+    if (!!size) {
+      return !(dropList.data.length >= +size);
+    }
     return true;
   }
 }
