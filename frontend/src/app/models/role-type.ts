@@ -22,7 +22,6 @@ export namespace RoleType {
 }
 
 export namespace RoleType {
-
   export function toArray(): RoleType[] {
     return RoleType.getKeys().map(key => {
       return <RoleType>(<any>RoleType)[key];
