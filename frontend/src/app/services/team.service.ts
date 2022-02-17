@@ -50,7 +50,7 @@ export class TeamService {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
     return this.http.get<Team[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched teams from tournament ${tournament}`)),
+        tap(_ => this.loggerService.info(`fetched teams from tournament ${tournament.name}`)),
         catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
       );
   }
