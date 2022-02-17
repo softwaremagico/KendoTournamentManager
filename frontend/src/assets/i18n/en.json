@@ -174,7 +174,7 @@
   "LeagueTag": "League",
   "ChampionshipLabel": "Championship",
   "TreeRadioButton": "Tree",
-  "SimpleRadioButton": "Simple",
+  "SimpleRadioButton": "league",
   "ArenaString": "Shiaijo",
   "CleanLinks": "Clean winners",
   "StatisticsCheckBox": "Add statistics",
@@ -277,14 +277,8 @@
   "ConfirmLabel": "Confirm",
   "ClearCacheLabel": "Clear Cache",
   "titleBlogStatistics": "Blogger code",
-  "championship": "Championship",
-  "simple": "League",
   "tree": "Championship",
-  "customized": "Custom",
-  "custom_championship": "Custom",
-  "loop": "Loop",
   "maxFightsCheckBox": "Create all possible fights.",
-  "kingOfTheMountainTournament": "King of the Mountain",
   "redTeamButton": "Red Team",
   "whiteTeamButton": "White Team",
   "kingEliminateOldest": "Eliminate oldest",
@@ -467,6 +461,12 @@
   "shiaijos": "Shiaijos",
   "competitor": "Competitor",
   "referee": "Referee",
-  "volunteer": "Volunteer"
+  "volunteer": "Volunteer",
+  "king_of_the_mountain": "King of the Mountain",
+  "custom_championship": "Custom Championship",
+  "loop": "Loop",
+  "championship": "Championship",
+  "league": "League",
+  "customized": "Custom"
 }
 
