@@ -13,7 +13,8 @@ export class IconModule {
       .addSvgIcon("men", this.setPath(`${this.path}/men.svg`))
       .addSvgIcon("shinai", this.setPath(`${this.path}/shinai.svg`))
       .addSvgIcon("team", this.setPath(`${this.path}/team.svg`))
-      .addSvgIcon("fight", this.setPath(`${this.path}/fight.svg`));
+      .addSvgIcon("fight", this.setPath(`${this.path}/fight.svg`))
+      .addSvgIcon("card", this.setPath(`${this.path}/card.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {
