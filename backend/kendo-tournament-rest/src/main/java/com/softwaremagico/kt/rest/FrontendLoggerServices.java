@@ -39,24 +39,21 @@ public class FrontendLoggerServices {
     @ApiOperation(value = "Register an action that must be logged.")
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
-    public String info(@RequestBody LogDto log, HttpServletRequest request) {
+    public void info(@RequestBody LogDto log, HttpServletRequest request) {
         FrontendLogger.info(this.getClass(), log.getMessage());
-        return log.getMessage();
     }
 
     @ApiOperation(value = "Register a warning that must be logged.")
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
-    public String warning(@RequestBody LogDto log, HttpServletRequest request) {
+    public void warning(@RequestBody LogDto log, HttpServletRequest request) {
         FrontendLogger.warning(this.getClass(), log.getMessage());
-        return log.getMessage();
     }
 
     @ApiOperation(value = "Register an error that must be logged.")
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)
-    public String error(@RequestBody LogDto log, HttpServletRequest request) {
+    public void error(@RequestBody LogDto log, HttpServletRequest request) {
         FrontendLogger.severe(this.getClass(), log.getMessage());
-        return log.getMessage();
     }
 }
