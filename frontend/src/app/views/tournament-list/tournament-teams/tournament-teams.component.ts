@@ -1,20 +1,16 @@
 import {
-  AfterViewInit,
   Component,
-  ElementRef, HostListener,
+  HostListener,
   Inject,
   OnInit,
-  Optional, QueryList,
-  Renderer2,
-  ViewChild,
-  ViewChildren
+  Optional,
 } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
-import {forkJoin, ignoreElements} from "rxjs";
+import {forkJoin} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
@@ -37,7 +33,6 @@ export class TournamentTeamsComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
-              private renderer: Renderer2,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
@@ -111,7 +106,7 @@ export class TournamentTeamsComponent implements OnInit {
     );
     const participant: Participant = event.container.data[event.currentIndex];
     this.teamService.deleteByMemberAndTournament(participant, this.tournament).pipe(
-      tap((newTeam: Team) => {
+      tap(() => {
         this.loggerService.info("Member '" + participant.name + " " + participant.lastname + "' removed.");
       }),
       catchError(this.messageService.handleError<Team>("removing '" + participant.name + " " + participant.lastname + "'"))
@@ -125,12 +120,15 @@ export class TournamentTeamsComponent implements OnInit {
     team.members = this.getMembersContainer(team);
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
-        this.loggerService.info("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.")
+        this.loggerService.info("Team '" + newTeam.name + "' member '" + participant.name + " " + participant.lastname + "' updated.")
       }),
       catchError(this.messageService.handleError<Team>("Updating '" + participant.name + " " + participant.lastname + "'"))
     ).subscribe(() => {
       this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
+    if(this.tournament.teamSize===1){
+      team.name=participant.lastname + ", " + participant.name
+    }
   }
 
   checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
