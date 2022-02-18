@@ -5,7 +5,7 @@
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="roles">
-    <div *ngFor="let role of roleTypes">
+    <div class="roles-location" *ngFor="let role of roleTypes">
       <h2>{{role.toLowerCase() | translate}}</h2>
       <div class="role" cdkDropList
            [cdkDropListData]="getParticipantsContainer(role)"
