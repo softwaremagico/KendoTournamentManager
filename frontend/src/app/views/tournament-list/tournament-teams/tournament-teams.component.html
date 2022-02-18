@@ -5,9 +5,9 @@
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="teams">
-    <div *ngFor="let team of teams">
-      <h2 #teamTitle class="team-header" *ngIf="!team.editing" (click)="setEditable(team, true)">{{team.name}}</h2>
-      <input #inputTeamTitle class="team-title-editable" *ngIf="team.editing"
+    <div class="teams-location" *ngFor="let team of teams">
+      <h2 class="team-header" *ngIf="!team.editing" (click)="setEditable(team, true)">{{team.name}}</h2>
+      <input class="team-title-editable" *ngIf="team.editing"
              (keyup.enter)="setEditable(team, false); updateTeamName(team)"
              [(ngModel)]="team.name" type="text"/>
       <div class="input-padding" *ngIf="team.editing"></div>
