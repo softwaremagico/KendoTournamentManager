@@ -1,4 +1,14 @@
-import {Component, Inject, OnInit, Optional, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef, HostListener,
+  Inject,
+  OnInit,
+  Optional, QueryList,
+  Renderer2,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
@@ -27,6 +37,7 @@ export class TournamentTeamsComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
+              private renderer: Renderer2,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
@@ -59,6 +70,18 @@ export class TournamentTeamsComponent implements OnInit {
         this.teams = teams;
       }
     });
+  }
+
+  @HostListener('document:click', ['$event.target'])
+  onClick(element: HTMLElement) {
+    if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
+      for (let team of this.teams) {
+        if (team.editing) {
+          team.editing = false;
+          this.updateTeamName(team);
+        }
+      }
+    }
   }
 
   closeDialog() {
@@ -116,5 +139,20 @@ export class TournamentTeamsComponent implements OnInit {
       return !(dropList.data.length >= +size);
     }
     return true;
+  }
+
+  setEditable(team: Team, editable: boolean) {
+    team.editing = editable;
+  }
+
+  updateTeamName(team: Team) {
+    this.teamService.update(team).pipe(
+      tap((newTeam: Team) => {
+        this.loggerService.info("Team name updated to '" + newTeam.name + "'.")
+      }),
+      catchError(this.messageService.handleError<Team>("Updating team name to '" + team.name + "'."))
+    ).subscribe(() => {
+      this.messageService.infoMessage("Team name updated to '" + team.name + "'.");
+    });
   }
 }
