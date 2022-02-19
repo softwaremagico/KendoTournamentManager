@@ -123,19 +123,40 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
+    const sourceTeam: Team | undefined = this.searchTeam(event);
     const participant: Participant = this.transferCard(event);
     team.members = this.getMembersContainer(team);
-    this.teamService.update(team).pipe(
-      tap((newTeam: Team) => {
-        this.loggerService.info("Team '" + newTeam.name + "' member '" + participant.name + " " + participant.lastname + "' updated.")
-      }),
-      catchError(this.messageService.handleError<Team>("Updating '" + participant.name + " " + participant.lastname + "'"))
-    ).subscribe(() => {
-      this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
-    });
+    // Update origin team.
+    if (sourceTeam) {
+      this.updateTeam(sourceTeam, undefined);
+    }
+    //Updated destination team.
+    this.updateTeam(team, participant);
+    //Set default name as the member.
     if (this.tournament.teamSize === 1) {
       team.name = participant.lastname + ", " + participant.name
     }
+  }
+
+  updateTeam(team: Team, member: Participant | undefined) {
+    this.teamService.update(team).pipe(
+      tap((newTeam: Team) => {
+        member ? this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.") :
+          this.loggerService.info("Team '" + newTeam.name + "' updated.");
+      }),
+      catchError(member ? this.messageService.handleError<Team>("Updating '" + member.name + " " + member.lastname + "'") :
+        this.messageService.handleError<Team>("Updating '" + team.name + "'"))
+    ).subscribe(() => member ? this.messageService.infoMessage("Team '" + Team.name + "' member '" + member.name + " " + member.lastname + "' updated.") : "");
+  }
+
+  searchTeam(event: CdkDragDrop<Participant[], any>) {
+    const participant: Participant = event.previousContainer.data[event.previousIndex];
+    for (let team of [...this.members.keys()]) {
+      if (this.getMembersContainer(team).indexOf(participant) !== -1) {
+        return team;
+      }
+    }
+    return undefined;
   }
 
   checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
