@@ -18,6 +18,7 @@ import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
 import {catchError, tap} from "rxjs/operators";
 import {LoggerService} from "../../../services/logger.service";
+import {Action} from "../tournament-list.component";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -70,10 +71,12 @@ export class TournamentTeamsComponent implements OnInit {
   @HostListener('document:click', ['$event.target'])
   onClick(element: HTMLElement) {
     if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
-      for (let team of this.teams) {
-        if (team.editing) {
-          team.editing = false;
-          this.updateTeamName(team);
+      if (this.teams) {
+        for (let team of this.teams) {
+          if (team.editing) {
+            team.editing = false;
+            this.updateTeamName(team);
+          }
         }
       }
     }
@@ -105,6 +108,10 @@ export class TournamentTeamsComponent implements OnInit {
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex];
+    this.deleteMemberFromTeam(participant);
+  }
+
+  deleteMemberFromTeam(participant: Participant) {
     this.teamService.deleteByMemberAndTournament(participant, this.tournament).pipe(
       tap(() => {
         this.loggerService.info("Member '" + participant.name + " " + participant.lastname + "' removed.");
@@ -126,8 +133,8 @@ export class TournamentTeamsComponent implements OnInit {
     ).subscribe(() => {
       this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
     });
-    if(this.tournament.teamSize===1){
-      team.name=participant.lastname + ", " + participant.name
+    if (this.tournament.teamSize === 1) {
+      team.name = participant.lastname + ", " + participant.name
     }
   }
 
@@ -151,6 +158,24 @@ export class TournamentTeamsComponent implements OnInit {
       catchError(this.messageService.handleError<Team>("Updating team name to '" + team.name + "'."))
     ).subscribe(() => {
       this.messageService.infoMessage("Team name updated to '" + team.name + "'.");
+    });
+  }
+
+  addTeam(): void {
+  }
+
+  deleteTeam(team: Team): void {
+    for (let participant of team.members) {
+      this.userListData.participants.push(participant);
+    }
+    this.teamService.delete(team).pipe(
+      tap(() => {
+        this.loggerService.info("Team '" + team.name + "' removed.");
+      }),
+      catchError(this.messageService.handleError<Team>("removing team '" + team.name + "'."))
+    ).subscribe(() => {
+      this.messageService.infoMessage("Team '" + team.name + "' removed.");
+      this.teams.splice(this.teams.indexOf(team), 1);
     });
   }
 }

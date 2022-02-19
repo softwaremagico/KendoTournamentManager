@@ -6,7 +6,12 @@
   </div>
   <div class="teams">
     <div class="teams-location" *ngFor="let team of teams">
-      <h2 class="team-header" *ngIf="!team.editing" (click)="setEditable(team, true)">{{team.name}}</h2>
+      <div>
+        <h2 class="team-header" *ngIf="!team.editing" (click)="setEditable(team, true)">{{team.name}}</h2>
+        <button mat-button color="warn" *ngIf="!team.editing" (click)="deleteTeam(team)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
       <input class="team-title-editable" *ngIf="team.editing"
              (keyup.enter)="setEditable(team, false); updateTeamName(team)"
              [(ngModel)]="team.name" type="text"/>
