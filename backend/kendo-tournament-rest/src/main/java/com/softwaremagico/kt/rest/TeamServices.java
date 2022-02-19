@@ -31,10 +31,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
-import com.softwaremagico.kt.rest.model.ParticipantDto;
-import com.softwaremagico.kt.rest.model.ParticipantInTournamentDto;
-import com.softwaremagico.kt.rest.model.TeamDto;
-import com.softwaremagico.kt.rest.model.TournamentDto;
+import com.softwaremagico.kt.rest.model.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
@@ -120,6 +117,13 @@ public class TeamServices {
         teamProvider.delete(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @ApiOperation(value = "Gets all teams.")
+    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody TeamDto teamDto, HttpServletRequest request) {
+        teamProvider.delete(modelMapper.map(teamDto, Team.class));
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiOperation(value = "Deletes a member from any team.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -127,16 +131,19 @@ public class TeamServices {
     public Team delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
         final Participant member = modelMapper.map(participantInTournament.getParticipant(), Participant.class);
         final Tournament tournament = modelMapper.map(participantInTournament.getTournament(), Tournament.class);
-        Team team = teamProvider.get(tournament, member);
-        if (team != null) {
-            //Setting tournament for updating.
-            team.setTournament(tournament);
-            team.getMembers().remove(member);
-            team = teamProvider.update(team);
-            //setting tournament for returning element.
-            team.setTournament(tournament);
+        return teamProvider.delete(tournament, member);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiOperation(value = "Deletes multiples member from any team.")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/delete/members/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody ParticipantsInTournamentDto participantsInTournaments, HttpServletRequest request) {
+        for (final ParticipantDto participantInTournament : participantsInTournaments.getParticipant()) {
+            final Participant member = modelMapper.map(participantInTournament, Participant.class);
+            final Tournament tournament = modelMapper.map(participantsInTournaments.getTournament(), Tournament.class);
+            teamProvider.delete(tournament, member);
         }
-        return team;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
