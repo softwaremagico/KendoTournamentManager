@@ -63,7 +63,6 @@
   "Clean": "Clean",
   "CleanButton": "Clean Teams",
   "CleanAllButton": "Delete All",
-  "AddTeamButton": "Add Team",
   "GenerateMatchButton": "Generate Match",
   "AddGroupButton": "Add Pool",
   "DeleteGroupButton": "Delete Pool",
@@ -95,7 +94,6 @@
   "RoleMenuItem": "Define a participant's role",
   "TournamentMenuItem": "Add new league",
   "ClubMenuItem": "Add new club",
-  "TeamMenuItem": "Add new team to the league",
   "DatabaseMenu": "Database",
   "DatabaseConnectMenuItem": "Connect",
   "DatabaseDisconnectMenuItem": "Disconnect",
@@ -467,6 +465,8 @@
   "loop": "Loop",
   "championship": "Championship",
   "league": "League",
-  "customized": "Custom"
+  "customized": "Custom",
+  "addTeamsText": "Add Team",
+  "addTeamToTournament": "Add new team to the league"
 }
 

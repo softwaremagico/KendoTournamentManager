@@ -96,15 +96,29 @@ public class TeamServices {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Team add(@RequestBody TeamDto teamDto, HttpServletRequest request) {
-        if (teamDto == null || teamDto.getTournament() == null || teamDto.getMembers() == null) {
+        if (teamDto == null || teamDto.getTournament() == null) {
             throw new BadRequestException(getClass(), "Team data is missing");
         }
+        final Tournament tournament = tournamentProvider.get(teamDto.getTournament().getId());
+        if (tournament == null) {
+            throw new BadRequestException(getClass(), "Selected tournament is wrong");
+        }
         final Team team = new Team();
-        team.setName(teamDto.getName());
-        team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
-                .collect(Collectors.toList())));
-        team.setTournament(tournamentProvider.get(teamDto.getTournament().getId()));
-        team.setGroup(teamDto.getGroup());
+        if (teamDto.getName() != null) {
+            team.setName(teamDto.getName());
+        } else {
+            team.setName(teamProvider.getNextDefaultName(tournament));
+        }
+        if (teamDto.getMembers() != null) {
+            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
+                    .collect(Collectors.toList())));
+        }
+        team.setTournament(tournament);
+        if (teamDto.getGroup() != null) {
+            team.setGroup(teamDto.getGroup());
+        } else {
+            team.setGroup(1);
+        }
         return teamProvider.save(team);
     }
 

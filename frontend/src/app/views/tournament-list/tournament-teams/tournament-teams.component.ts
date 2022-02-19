@@ -162,6 +162,18 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   addTeam(): void {
+    const team: Team = new Team();
+    team.tournament = this.tournament;
+
+    this.teamService.add(team).pipe(
+      tap(() => {
+        this.loggerService.info("Team '" + team.name + "' added.");
+      }),
+      catchError(this.messageService.handleError<Team>("Adding team '" + team.name + "'."))
+    ).subscribe(team => {
+      this.messageService.infoMessage("Team '" + team.name + "' added.");
+      this.teams.push(team);
+    });
   }
 
   deleteTeam(team: Team): void {
