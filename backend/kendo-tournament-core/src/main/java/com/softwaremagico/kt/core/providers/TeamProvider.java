@@ -80,6 +80,9 @@ public class TeamProvider {
 
     public Team get(Tournament tournament, String name) {
         final Team team = teamRepository.findByTournamentAndName(tournament, name);
+        if (team == null) {
+            return null;
+        }
         team.setTournament(tournament);
         return team;
     }
@@ -154,6 +157,16 @@ public class TeamProvider {
             team.setTournament(tournament);
         }
         return team;
+    }
+
+    public String getNextDefaultName(Tournament tournament) {
+        long i = 0;
+        String teamName;
+        do {
+            i++;
+            teamName = String.format("Team %d", i);
+        } while (get(tournament, teamName) != null);
+        return teamName;
     }
 
 }
