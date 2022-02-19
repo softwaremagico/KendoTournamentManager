@@ -82,6 +82,15 @@ export class TeamService {
       );
   }
 
+  deleteByMembersAndTournament(participants: Participant[], tournament: Tournament): Observable<Team> {
+    const url: string = `${this.baseUrl}/delete/members/all`;
+    return this.http.post<Team>(url, {participants: participants, tournament: tournament}, this.httpOptions)
+      .pipe(
+        tap(_ => this.loggerService.info(`deleting members ${participants} on ${tournament}`)),
+        catchError(this.messageService.handleError<Team>(`delete members ${participants} on ${tournament}`))
+      );
+  }
+
   deleteByTournament(tournament: Tournament): Observable<Team> {
     const url: string = `${this.baseUrl}/delete/tournaments`;
     return this.http.post<Team>(url, {tournament: tournament}, this.httpOptions)

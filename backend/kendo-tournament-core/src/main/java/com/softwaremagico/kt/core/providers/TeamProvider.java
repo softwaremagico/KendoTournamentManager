@@ -143,4 +143,17 @@ public class TeamProvider {
         return teamRepository.findByTournamentAndMembers(tournament, participant);
     }
 
+    public Team delete(Tournament tournament, Participant member) {
+        Team team = get(tournament, member);
+        if (team != null) {
+            //Setting tournament for updating.
+            team.setTournament(tournament);
+            team.getMembers().remove(member);
+            team = update(team);
+            //setting tournament for returning element.
+            team.setTournament(tournament);
+        }
+        return team;
+    }
+
 }
