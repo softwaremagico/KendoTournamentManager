@@ -104,8 +104,8 @@ export class TeamService {
     const url: string = `${this.baseUrl}/`;
     return this.http.post<Team>(url, team, this.httpOptions)
       .pipe(
-        tap((newTeam: Team) => this.loggerService.info(`adding team ${newTeam}`)),
-        catchError(this.messageService.handleError<Team>(`adding ${team}`))
+        tap((newTeam: Team) => this.loggerService.info(`adding team ${newTeam.name}`)),
+        catchError(this.messageService.handleError<Team>(`adding ${team.name}`))
       );
   }
 
