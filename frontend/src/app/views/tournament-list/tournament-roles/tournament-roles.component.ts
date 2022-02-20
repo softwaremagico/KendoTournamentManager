@@ -81,6 +81,8 @@ export class TournamentRolesComponent implements OnInit {
     this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(role => {
       this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
     });
+    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
@@ -92,5 +94,7 @@ export class TournamentRolesComponent implements OnInit {
     this.roleService.add(role).subscribe(role => {
       this.messageService.infoMessage("Role '" + role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
     });
+    this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
   }
 }
+

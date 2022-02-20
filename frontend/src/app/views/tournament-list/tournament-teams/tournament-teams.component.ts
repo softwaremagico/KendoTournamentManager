@@ -18,7 +18,6 @@ import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
 import {catchError, tap} from "rxjs/operators";
 import {LoggerService} from "../../../services/logger.service";
-import {Action} from "../tournament-list.component";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -109,6 +108,8 @@ export class TournamentTeamsComponent implements OnInit {
     );
     const participant: Participant = event.container.data[event.currentIndex];
     this.deleteMemberFromTeam(participant);
+    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
   }
 
   deleteMemberFromTeam(participant: Participant) {
@@ -136,6 +137,7 @@ export class TournamentTeamsComponent implements OnInit {
     if (this.tournament.teamSize === 1) {
       team.name = participant.lastname + ", " + participant.name
     }
+    //this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
   }
 
   updateTeam(team: Team, member: Participant | undefined) {
