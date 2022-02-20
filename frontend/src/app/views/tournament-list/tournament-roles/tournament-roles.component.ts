@@ -64,7 +64,7 @@ export class TournamentRolesComponent implements OnInit {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
-      this.userListData.getRealIndex(event.previousIndex),
+      event.previousIndex,
       event.currentIndex,
     );
     return event.container.data[event.currentIndex];
@@ -81,6 +81,7 @@ export class TournamentRolesComponent implements OnInit {
     this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(role => {
       this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
     });
+    this.userListData.participants.push(participant);
     this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
   }
@@ -94,7 +95,14 @@ export class TournamentRolesComponent implements OnInit {
     this.roleService.add(role).subscribe(role => {
       this.messageService.infoMessage("Role '" + role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
     });
-    this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    console.log('participants', this.userListData.participants.indexOf(participant))
+    console.log('filteredParticipants', this.userListData.filteredParticipants.indexOf(participant))
+    if (this.userListData.participants.indexOf(participant) > 0) {
+      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
+    }
+    if (this.userListData.filteredParticipants.indexOf(participant) > 0) {
+      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    }
   }
 }
 

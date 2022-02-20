@@ -178,6 +178,9 @@ public class TeamServices {
             tournament = tournamentProvider.get(teamDto.getTournament().getId());
             team.setTournament(tournament);
         }
+        if (teamDto.getGroup() != null) {
+            team.setGroup(teamDto.getGroup());
+        }
         //Remove old members
         final List<Participant> members = new ArrayList<>();
         if (teamDto.getMembers() != null) {

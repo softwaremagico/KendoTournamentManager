@@ -4,7 +4,7 @@
            placeholder="{{'filter' | translate}}">
   </mat-form-field>
 </div>
-<button class="reset" mat-button color="warn" (click)="reset()">
+<button #resetButton class="reset" mat-button color="warn" (click)="reset()">
   <mat-icon>clear</mat-icon>
 </button>
 <div class="user-list" *ngIf="userListData.filteredParticipants">
