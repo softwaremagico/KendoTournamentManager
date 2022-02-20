@@ -1,6 +1,6 @@
 <div class="teams-container" cdkDropListGroup>
   <div cdkDropList [attr.data-tournament-size]="tournament.teamSize"
-       [cdkDropListData]="userListData.participants"
+       [cdkDropListData]="userListData.filteredParticipants"
        (cdkDropListDropped)="removeFromTeam($event)">
     <user-list [userListData]="userListData"></user-list>
   </div>

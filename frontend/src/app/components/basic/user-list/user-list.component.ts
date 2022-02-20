@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {UserListData} from "./user-list-data";
 
 @Component({
@@ -20,7 +20,7 @@ export class UserListComponent implements OnInit {
   }
 
   filter(event: Event) {
-    const filter = (event.target as HTMLInputElement).value.toLowerCase();
+    const filter: string = (event.target as HTMLInputElement).value.toLowerCase();
     this.userListData.filter(filter);
   }
 

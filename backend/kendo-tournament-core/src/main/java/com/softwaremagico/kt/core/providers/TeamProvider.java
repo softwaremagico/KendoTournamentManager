@@ -69,9 +69,6 @@ public class TeamProvider {
 
     public Team update(Team team, List<Participant> members) {
         if (team != null) {
-            //Remove old members
-            team.getMembers().clear();
-            team = update(team);
             team.setMembers(members);
             return teamRepository.save(team);
         }
