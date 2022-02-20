@@ -92,7 +92,7 @@ export class TournamentTeamsComponent implements OnInit {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
-        this.userListData.getRealIndex(event.previousIndex),
+        event.previousIndex,
         event.currentIndex,
       );
     }
@@ -137,10 +137,16 @@ export class TournamentTeamsComponent implements OnInit {
     if (this.tournament.teamSize === 1) {
       team.name = participant.lastname + ", " + participant.name
     }
-    //this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    if (this.userListData.filteredParticipants.indexOf(participant) > 0) {
+      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    }
+    if (this.userListData.participants.indexOf(participant) > 0) {
+      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
+    }
   }
 
   updateTeam(team: Team, member: Participant | undefined) {
+    console.log("team id ", team.id);
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
         member ? this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.") :
@@ -190,18 +196,23 @@ export class TournamentTeamsComponent implements OnInit {
 
     this.teamService.add(team).pipe(
       tap(() => {
-        this.loggerService.info("Team '" + team.name + "' added.");
+        this.loggerService.info("Adding new team.");
       }),
-      catchError(this.messageService.handleError<Team>("Adding team '" + team.name + "'."))
+      catchError(this.messageService.handleError<Team>("Adding new team."))
     ).subscribe(team => {
-      this.messageService.infoMessage("Team '" + team.name + "' added.");
+      this.messageService.infoMessage("New team '" + team.name + "' added.");
       this.teams.push(team);
     });
   }
 
   deleteTeam(team: Team): void {
     for (let participant of team.members) {
-      this.userListData.participants.push(participant);
+      if (this.userListData.participants.indexOf(participant) < 0) {
+        this.userListData.participants.push(participant);
+      }
+      if (this.userListData.filteredParticipants.indexOf(participant) < 0) {
+        this.userListData.filteredParticipants.push(participant);
+      }
     }
     this.teamService.delete(team).pipe(
       tap(() => {
