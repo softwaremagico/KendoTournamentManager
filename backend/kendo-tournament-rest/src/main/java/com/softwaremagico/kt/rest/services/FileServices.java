@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest;
+package com.softwaremagico.kt.rest.services;
 
 /*-
  * #%L
