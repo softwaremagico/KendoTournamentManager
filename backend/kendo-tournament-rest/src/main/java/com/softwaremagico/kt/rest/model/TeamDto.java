@@ -26,9 +26,7 @@ package com.softwaremagico.kt.rest.model;
 
 import java.util.List;
 
-public class TeamDto {
-
-    private Integer id;
+public class TeamDto extends ElementDto {
 
     private String name;
 
@@ -37,14 +35,6 @@ public class TeamDto {
     private List<ParticipantDto> members;
 
     private Integer group;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public TournamentDto getTournament() {
         return tournament;
