@@ -22,7 +22,7 @@
         <ng-container [matColumnDef]=column>
           <th mat-header-cell *matHeaderCellDef
               mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}</th>
-          <td mat-cell *matCellDef="let data"> {{data[column]}} </td>
+          <td mat-cell *matCellDef="let data"> {{data[column] | translate}} </td>
         </ng-container>
       </ng-container>
 

@@ -1,10 +1,17 @@
 .teams-container {
   width: 800px;
   display: flex;
+  height: 80%;
+  max-height: 80%;
 }
 
 .teams-container div {
   flex: 1
+}
+
+.teams-location.ng-star-inserted {
+  padding-bottom: 30px;
+  overflow: auto;
 }
 
 .team {
@@ -17,13 +24,26 @@
 
 .teams {
   overflow: auto;
-  height: 800px;
   padding-left: 20px;
+  height: 85vh;
+}
+
+.team-title-editable {
+  font-size: 20px;
+  width: 98%;
+  height: 25px;
+  line-height: 0px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.input-padding {
+  height: 5px;
 }
 
 //Padding between roles
 .ng-star-inserted {
-  padding-bottom: 20px;
+  padding-bottom: 10px;
 }
 
 .user-list {
@@ -35,4 +55,27 @@
 .mat-dialog-actions {
   display: flex;
   justify-content: center;
+}
+
+h2 {
+  display: inline-block;
+}
+
+.new-team {
+  height: 60px;
+  background-color: antiquewhite;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.new-team:hover {
+  background-color: cornsilk;
+}
+
+.new-team .row {
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
