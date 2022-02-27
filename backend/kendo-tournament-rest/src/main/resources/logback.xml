@@ -46,6 +46,10 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
+    <logger name="com.softwaremagico.kt.logger.RestAccessLogging" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DAILY"/>
+    </logger>
     <logger name="com.softwaremagico.kt.logger.RestServerLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
