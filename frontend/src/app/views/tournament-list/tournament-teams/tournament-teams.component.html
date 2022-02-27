@@ -1,12 +1,21 @@
 <div class="teams-container" cdkDropListGroup>
   <div cdkDropList [attr.data-tournament-size]="tournament.teamSize"
-       [cdkDropListData]="userListData.participants"
+       [cdkDropListData]="userListData.filteredParticipants"
        (cdkDropListDropped)="removeFromTeam($event)">
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="teams">
-    <div *ngFor="let team of teams">
-      <h2>{{team.name}}</h2>
+    <div class="teams-location" *ngFor="let team of teams">
+      <div>
+        <h2 class="team-header" *ngIf="!team.editing" (click)="setEditable(team, true)">{{team.name}}</h2>
+        <button mat-button color="warn" *ngIf="!team.editing" (click)="deleteTeam(team)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <input class="team-title-editable" *ngIf="team.editing"
+             (keyup.enter)="setEditable(team, false); updateTeamName(team)"
+             [(ngModel)]="team.name" type="text"/>
+      <div class="input-padding" *ngIf="team.editing"></div>
       <div class="team" cdkDropList [attr.data-tournament-size]="tournament.teamSize"
            [cdkDropListData]="getMembersContainer(team)"
            (cdkDropListDropped)="dropMember($event, team)"
@@ -20,6 +29,9 @@
           </mat-card-content>
         </mat-card>
       </div>
+    </div>
+    <div class="new-team" (click)="addTeam()">
+      <div class="row">{{'addTeamToTournament' | translate}} </div>
     </div>
   </div>
 </div>

@@ -37,12 +37,15 @@ import {
   ParticipantDialogBoxComponent
 } from './views/participant-list/participant-dialog-box/participant-dialog-box.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import { TournamentListComponent } from './views/tournament-list/tournament-list.component';
-import { TournamentDialogBoxComponent } from './views/tournament-list/tournament-dialog-box/tournament-dialog-box.component';
-import { UserListComponent } from './components/basic/user-list/user-list.component';
-import { TournamentRolesComponent } from './views/tournament-list/tournament-roles/tournament-roles.component';
+import {TournamentListComponent} from './views/tournament-list/tournament-list.component';
+import {
+  TournamentDialogBoxComponent
+} from './views/tournament-list/tournament-dialog-box/tournament-dialog-box.component';
+import {UserListComponent} from './components/basic/user-list/user-list.component';
+import {TournamentRolesComponent} from './views/tournament-list/tournament-roles/tournament-roles.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
-import { TournamentTeamsComponent } from './views/tournament-list/tournament-teams/tournament-teams.component';
+import {TournamentTeamsComponent} from './views/tournament-list/tournament-teams/tournament-teams.component';
+import {IconModule} from "./components/icons";
 
 @NgModule({
   declarations: [
@@ -58,44 +61,45 @@ import { TournamentTeamsComponent } from './views/tournament-list/tournament-tea
     TournamentRolesComponent,
     TournamentTeamsComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FlexLayoutModule,
-        HttpClientModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSliderModule,
-        AppRoutingModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatMenuModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatDialogModule,
-        MatSortModule,
-        MatInputModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: httpTranslateLoader,
-                deps: [HttpClient]
-            }
-        }),
-        MatSelectModule,
-        MatSnackBarModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatExpansionModule,
-        MatCheckboxModule,
-        BasicTableModule,
-        MatAutocompleteModule,
-        DragDropModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    HttpClientModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSliderModule,
+    AppRoutingModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatMenuModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatSortModule,
+    MatInputModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient]
+      }
+    }),
+    MatSelectModule,
+    MatSnackBarModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    BasicTableModule,
+    MatAutocompleteModule,
+    DragDropModule,
+    IconModule
+  ],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })

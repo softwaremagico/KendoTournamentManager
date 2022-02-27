@@ -2,6 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {Tournament} from "../../../models/tournament";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {TournamentType} from "../../../models/tournament-type";
 
 export enum Action {
   Add,
@@ -21,6 +22,7 @@ export class TournamentDialogBoxComponent {
   title: string;
   action: Action;
   actionName: string;
+  tournamentType: TournamentType[];
 
   constructor(
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>,
@@ -30,6 +32,7 @@ export class TournamentDialogBoxComponent {
     this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
+    this.tournamentType = TournamentType.toArray();
   }
 
   doAction() {

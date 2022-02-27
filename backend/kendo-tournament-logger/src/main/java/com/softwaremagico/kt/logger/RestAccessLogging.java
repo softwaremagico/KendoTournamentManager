@@ -35,13 +35,13 @@ import org.springframework.util.StopWatch;
  */
 @Aspect
 @Component
-public class BasicLogging extends AbstractLogging {
+public class RestAccessLogging extends AbstractLogging {
 
     /**
      * Following is the definition for a pointcut to select all the methods
      * available. So advice will be called for all the methods.
      */
-    @Pointcut("execution(* com.softwaremagico.kt.persistence.repositories..*(..))")
+    @Pointcut("execution(* com.softwaremagico.kt.rest.services..*(..))")
     private void selectAll() {
     }
 
