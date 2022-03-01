@@ -25,7 +25,6 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 
-import com.softwaremagico.kt.persistence.encryption.RoleTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,7 +51,6 @@ public class Role extends Element {
 
     @Column(name = "role_type")
     @Enumerated(EnumType.STRING)
-    @Convert(converter = RoleTypeCryptoConverter.class)
     private RoleType roleType;
 
     public Role() {

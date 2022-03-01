@@ -29,7 +29,7 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter
+@Converter(autoApply = true)
 public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> implements AttributeConverter<Double, String> {
 
 	public DoubleCryptoConverter() {
