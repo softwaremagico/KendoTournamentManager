@@ -69,9 +69,6 @@ public class TeamProvider {
 
     public Team update(Team team, List<Participant> members) {
         if (team != null) {
-            //Remove old members
-            team.getMembers().clear();
-            team = update(team);
             team.setMembers(members);
             return teamRepository.save(team);
         }
@@ -80,6 +77,9 @@ public class TeamProvider {
 
     public Team get(Tournament tournament, String name) {
         final Team team = teamRepository.findByTournamentAndName(tournament, name);
+        if (team == null) {
+            return null;
+        }
         team.setTournament(tournament);
         return team;
     }
@@ -141,6 +141,29 @@ public class TeamProvider {
 
     public Team get(Tournament tournament, Participant participant) {
         return teamRepository.findByTournamentAndMembers(tournament, participant);
+    }
+
+    public Team delete(Tournament tournament, Participant member) {
+        Team team = get(tournament, member);
+        if (team != null) {
+            //Setting tournament for updating.
+            team.setTournament(tournament);
+            team.getMembers().remove(member);
+            team = update(team);
+            //setting tournament for returning element.
+            team.setTournament(tournament);
+        }
+        return team;
+    }
+
+    public String getNextDefaultName(Tournament tournament) {
+        long i = 0;
+        String teamName;
+        do {
+            i++;
+            teamName = String.format("Team %d", i);
+        } while (get(tournament, teamName) != null);
+        return teamName;
     }
 
 }
