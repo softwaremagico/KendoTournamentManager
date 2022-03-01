@@ -31,7 +31,7 @@ import javax.persistence.Converter;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-@Converter
+@Converter(autoApply = true)
 public class ByteArrayCryptoConverter extends AbstractCryptoConverter<byte[]>
         implements AttributeConverter<byte[], String> {
 
