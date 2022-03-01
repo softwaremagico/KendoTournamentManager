@@ -1,10 +1,16 @@
-import {Component, Inject, OnInit, Optional, ViewChild} from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Inject,
+  OnInit,
+  Optional,
+} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
-import {forkJoin, ignoreElements} from "rxjs";
+import {forkJoin} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
@@ -61,6 +67,20 @@ export class TournamentTeamsComponent implements OnInit {
     });
   }
 
+  @HostListener('document:click', ['$event.target'])
+  onClick(element: HTMLElement) {
+    if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
+      if (this.teams) {
+        for (let team of this.teams) {
+          if (team.editing) {
+            team.editing = false;
+            this.updateTeamName(team);
+          }
+        }
+      }
+    }
+  }
+
   closeDialog() {
     this.dialogRef.close();
   }
@@ -72,7 +92,7 @@ export class TournamentTeamsComponent implements OnInit {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
-        this.userListData.getRealIndex(event.previousIndex),
+        event.previousIndex,
         event.currentIndex,
       );
     }
@@ -87,8 +107,14 @@ export class TournamentTeamsComponent implements OnInit {
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex];
+    this.deleteMemberFromTeam(participant);
+    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+  }
+
+  deleteMemberFromTeam(participant: Participant) {
     this.teamService.deleteByMemberAndTournament(participant, this.tournament).pipe(
-      tap((newTeam: Team) => {
+      tap(() => {
         this.loggerService.info("Member '" + participant.name + " " + participant.lastname + "' removed.");
       }),
       catchError(this.messageService.handleError<Team>("removing '" + participant.name + " " + participant.lastname + "'"))
@@ -98,16 +124,47 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
+    const sourceTeam: Team | undefined = this.searchTeam(event);
     const participant: Participant = this.transferCard(event);
     team.members = this.getMembersContainer(team);
+    // Update origin team.
+    if (sourceTeam) {
+      this.updateTeam(sourceTeam, undefined);
+    }
+    //Updated destination team.
+    this.updateTeam(team, participant);
+    //Set default name as the member.
+    if (this.tournament.teamSize === 1) {
+      team.name = participant.lastname + ", " + participant.name
+    }
+    if (this.userListData.filteredParticipants.indexOf(participant) > 0) {
+      this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    }
+    if (this.userListData.participants.indexOf(participant) > 0) {
+      this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
+    }
+  }
+
+  updateTeam(team: Team, member: Participant | undefined) {
+    console.log("team id ", team.id);
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
-        this.loggerService.info("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.")
+        member ? this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.") :
+          this.loggerService.info("Team '" + newTeam.name + "' updated.");
       }),
-      catchError(this.messageService.handleError<Team>("Updating '" + participant.name + " " + participant.lastname + "'"))
-    ).subscribe(() => {
-      this.messageService.infoMessage("Team '" + Team.name + "' member '" + participant.name + " " + participant.lastname + "' updated.");
-    });
+      catchError(member ? this.messageService.handleError<Team>("Updating '" + member.name + " " + member.lastname + "'") :
+        this.messageService.handleError<Team>("Updating '" + team.name + "'"))
+    ).subscribe(() => member ? this.messageService.infoMessage("Team '" + Team.name + "' member '" + member.name + " " + member.lastname + "' updated.") : "");
+  }
+
+  searchTeam(event: CdkDragDrop<Participant[], any>) {
+    const participant: Participant = event.previousContainer.data[event.previousIndex];
+    for (let team of [...this.members.keys()]) {
+      if (this.getMembersContainer(team).indexOf(participant) !== -1) {
+        return team;
+      }
+    }
+    return undefined;
   }
 
   checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
@@ -116,5 +173,55 @@ export class TournamentTeamsComponent implements OnInit {
       return !(dropList.data.length >= +size);
     }
     return true;
+  }
+
+  setEditable(team: Team, editable: boolean) {
+    team.editing = editable;
+  }
+
+  updateTeamName(team: Team) {
+    this.teamService.update(team).pipe(
+      tap((newTeam: Team) => {
+        this.loggerService.info("Team name updated to '" + newTeam.name + "'.")
+      }),
+      catchError(this.messageService.handleError<Team>("Updating team name to '" + team.name + "'."))
+    ).subscribe(() => {
+      this.messageService.infoMessage("Team name updated to '" + team.name + "'.");
+    });
+  }
+
+  addTeam(): void {
+    const team: Team = new Team();
+    team.tournament = this.tournament;
+
+    this.teamService.add(team).pipe(
+      tap(() => {
+        this.loggerService.info("Adding new team.");
+      }),
+      catchError(this.messageService.handleError<Team>("Adding new team."))
+    ).subscribe(team => {
+      this.messageService.infoMessage("New team '" + team.name + "' added.");
+      this.teams.push(team);
+    });
+  }
+
+  deleteTeam(team: Team): void {
+    for (let participant of team.members) {
+      if (this.userListData.participants.indexOf(participant) < 0) {
+        this.userListData.participants.push(participant);
+      }
+      if (this.userListData.filteredParticipants.indexOf(participant) < 0) {
+        this.userListData.filteredParticipants.push(participant);
+      }
+    }
+    this.teamService.delete(team).pipe(
+      tap(() => {
+        this.loggerService.info("Team '" + team.name + "' removed.");
+      }),
+      catchError(this.messageService.handleError<Team>("removing team '" + team.name + "'."))
+    ).subscribe(() => {
+      this.messageService.infoMessage("Team '" + team.name + "' removed.");
+      this.teams.splice(this.teams.indexOf(team), 1);
+    });
   }
 }

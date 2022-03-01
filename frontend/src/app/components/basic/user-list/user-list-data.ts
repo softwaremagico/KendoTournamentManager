@@ -13,7 +13,8 @@ export class UserListData {
 
   filter(filter: string) {
     this.filteredParticipants = this.participants.filter(user => user.lastname.toLowerCase().includes(filter) ||
-      user.name.toLowerCase().includes(filter) || user.idCard.toLowerCase().includes(filter));
+      user.name.toLowerCase().includes(filter) || user.idCard.toLowerCase().includes(filter) ||
+      (user.club ? user.club.name.toLowerCase().includes(filter) : ""));
   }
 
   getRealIndex(currentIndex: number): number {

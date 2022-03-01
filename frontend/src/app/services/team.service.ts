@@ -50,7 +50,7 @@ export class TeamService {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
     return this.http.get<Team[]>(url, this.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched teams from tournament ${tournament}`)),
+        tap(_ => this.loggerService.info(`fetched teams from tournament ${tournament.name}`)),
         catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
       );
   }
@@ -82,6 +82,15 @@ export class TeamService {
       );
   }
 
+  deleteByMembersAndTournament(participants: Participant[], tournament: Tournament): Observable<Team> {
+    const url: string = `${this.baseUrl}/delete/members/all`;
+    return this.http.post<Team>(url, {participants: participants, tournament: tournament}, this.httpOptions)
+      .pipe(
+        tap(_ => this.loggerService.info(`deleting members ${participants} on ${tournament}`)),
+        catchError(this.messageService.handleError<Team>(`delete members ${participants} on ${tournament}`))
+      );
+  }
+
   deleteByTournament(tournament: Tournament): Observable<Team> {
     const url: string = `${this.baseUrl}/delete/tournaments`;
     return this.http.post<Team>(url, {tournament: tournament}, this.httpOptions)
@@ -95,8 +104,8 @@ export class TeamService {
     const url: string = `${this.baseUrl}/`;
     return this.http.post<Team>(url, team, this.httpOptions)
       .pipe(
-        tap((newTeam: Team) => this.loggerService.info(`adding team ${newTeam}`)),
-        catchError(this.messageService.handleError<Team>(`adding ${team}`))
+        tap((newTeam: Team) => this.loggerService.info(`adding team ${newTeam.name}`)),
+        catchError(this.messageService.handleError<Team>(`adding ${team.name}`))
       );
   }
 
