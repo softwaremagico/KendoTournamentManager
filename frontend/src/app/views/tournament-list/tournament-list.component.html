@@ -5,14 +5,14 @@
         <button mat-button color="primary" (click)="addElement()">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button [disabled]="!basicTableData.selectedElement" (click)="editElement()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="editElement()">
           <mat-icon>create</mat-icon>
         </button>
         <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addRoles()">
-          <mat-icon>assignment_ind</mat-icon>
+          <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
         </button>
         <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addTeams()">
-          <mat-icon>group_add</mat-icon>
+          <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
         </button>
 <!***REMOVED***       <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
 <!***REMOVED***         <mat-icon>emoji_events</mat-icon>-->
@@ -29,6 +29,9 @@
 <!***REMOVED***       <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
 <!***REMOVED***         <mat-icon>integration_instructions</mat-icon>-->
 <!***REMOVED***       </button>-->
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">
+          <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
+        </button>
         <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()">
           <mat-icon>clear</mat-icon>
         </button>

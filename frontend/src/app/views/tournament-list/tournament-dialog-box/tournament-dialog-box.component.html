@@ -4,7 +4,12 @@
     <input placeholder="Tournament Name" matInput [(ngModel)]="tournament.name">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Tournament Type" matInput [(ngModel)]="tournament.type">
+    <mat-label>Tournament Type</mat-label>
+    <mat-select [(value)]="tournament.type">
+      <mat-option *ngFor="let type of tournamentType" [value]="type" >
+        {{type.toLowerCase() | translate}}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <input placeholder="Number of Shiaijos" matInput [(ngModel)]="tournament.shiaijos">
