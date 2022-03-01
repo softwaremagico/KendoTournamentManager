@@ -24,7 +24,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -38,7 +37,6 @@ public class TournamentScore extends Element {
 
     @Column(name = "tournament_type")
     @Enumerated(EnumType.STRING)
-    @Convert(converter = TournamentTypeCryptoConverter.class)
     private ScoreType scoreType;
 
     @Column(name = "points_by_victory")

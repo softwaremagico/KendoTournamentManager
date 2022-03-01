@@ -24,11 +24,10 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.StringUtils;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.text.Collator;
@@ -45,15 +44,12 @@ import java.util.Locale;
 public class Participant extends Element implements Comparable<Participant> {
 
     @Column(name = "id_card", unique = true)
-    @Convert(converter = StringCryptoConverter.class)
     private String idCard;
 
     @Column(name = "name")
-    @Convert(converter = StringCryptoConverter.class)
     private String name = "";
 
     @Column(name = "lastname")
-    @Convert(converter = StringCryptoConverter.class)
     private String lastname = "";
 
     @ManyToOne(fetch = FetchType.EAGER)
