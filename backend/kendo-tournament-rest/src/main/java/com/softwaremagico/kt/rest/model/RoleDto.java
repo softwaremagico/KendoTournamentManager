@@ -26,23 +26,13 @@ package com.softwaremagico.kt.rest.model;
 
 import com.softwaremagico.kt.persistence.values.RoleType;
 
-public class RoleDto {
-
-    private Integer id;
+public class RoleDto extends ElementDto {
 
     private TournamentDto tournament;
 
     private ParticipantDto participant;
 
     private RoleType roleType;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public TournamentDto getTournament() {
         return tournament;

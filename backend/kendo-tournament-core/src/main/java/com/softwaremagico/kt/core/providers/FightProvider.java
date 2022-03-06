@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
@@ -45,8 +46,29 @@ public class FightProvider {
         return fightRepository.findByTournamentAndLevel(tournament, level);
     }
 
+    public List<Fight> getFights() {
+        return fightRepository.findAll();
+    }
+
     public List<Fight> getFights(Tournament tournament) {
         return fightRepository.findByTournament(tournament);
+    }
+
+    public Fight getFight(Integer id) {
+        return fightRepository.findById(id)
+                .orElseThrow(() -> new FightNotFoundException(getClass(), "Fight with id '" + id + "' not found"));
+    }
+
+    public void delete(Integer id) {
+        fightRepository.deleteById(id);
+    }
+
+    public void delete(Fight fight) {
+        fightRepository.delete(fight);
+    }
+
+    public void delete(Tournament tournament) {
+        fightRepository.deleteByTournament(tournament);
     }
 
     public boolean areOver(Tournament tournament) {
