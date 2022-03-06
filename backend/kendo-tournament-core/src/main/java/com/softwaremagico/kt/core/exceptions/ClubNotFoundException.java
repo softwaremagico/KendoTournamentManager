@@ -41,7 +41,7 @@ public class ClubNotFoundException extends NotFoundException {
     }
 
     public ClubNotFoundException(Class<?> clazz) {
-        this(clazz, "User not found");
+        this(clazz, "Club not found");
     }
 
     public ClubNotFoundException(Class<?> clazz, Throwable e) {
