@@ -41,7 +41,7 @@ public class RoleNotFoundException extends NotFoundException {
     }
 
     public RoleNotFoundException(Class<?> clazz) {
-        this(clazz, "User not found");
+        this(clazz, "Role not found");
     }
 
     public RoleNotFoundException(Class<?> clazz, Throwable e) {

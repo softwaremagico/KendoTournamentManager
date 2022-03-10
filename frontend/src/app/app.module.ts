@@ -46,6 +46,7 @@ import {TournamentRolesComponent} from './views/tournament-list/tournament-roles
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TournamentTeamsComponent} from './views/tournament-list/tournament-teams/tournament-teams.component';
 import {IconModule} from "./components/icons";
+import { FightListComponent } from './views/fight-list/fight-list.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {IconModule} from "./components/icons";
     TournamentDialogBoxComponent,
     UserListComponent,
     TournamentRolesComponent,
-    TournamentTeamsComponent
+    TournamentTeamsComponent,
+    FightListComponent
   ],
   imports: [
     BrowserModule,

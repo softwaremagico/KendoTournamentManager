@@ -26,9 +26,7 @@ package com.softwaremagico.kt.rest.model;
 
 import com.softwaremagico.kt.utils.NameUtils;
 
-public class ParticipantDto {
-
-    private Integer id;
+public class ParticipantDto extends ElementDto {
 
     private String idCard;
 
@@ -37,14 +35,6 @@ public class ParticipantDto {
     private String lastname;
 
     private ClubDto club;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getIdCard() {
         return idCard;

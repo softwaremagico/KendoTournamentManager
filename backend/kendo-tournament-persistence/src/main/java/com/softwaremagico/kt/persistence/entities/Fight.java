@@ -53,7 +53,7 @@ public class Fight extends Element {
     private Tournament tournament;
 
     @Column(name = "shiaijo")
-    private Integer shiaijo;
+    private Integer shiaijo = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
@@ -64,7 +64,7 @@ public class Fight extends Element {
     private LocalDateTime finishedAt;
 
     @Column(name = "level")
-    private Integer level;
+    private Integer level = 0;
 
     public Fight() {
         super();
