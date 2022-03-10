@@ -41,7 +41,7 @@ public class TeamNotFoundException extends NotFoundException {
     }
 
     public TeamNotFoundException(Class<?> clazz) {
-        this(clazz, "User not found");
+        this(clazz, "Team not found");
     }
 
     public TeamNotFoundException(Class<?> clazz, Throwable e) {

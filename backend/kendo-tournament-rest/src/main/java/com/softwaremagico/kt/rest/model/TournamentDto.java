@@ -27,9 +27,7 @@ package com.softwaremagico.kt.rest.model;
 import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 
-public class TournamentDto {
-
-    private Integer id;
+public class TournamentDto extends ElementDto {
 
     private String name;
 
@@ -40,14 +38,6 @@ public class TournamentDto {
     private TournamentType type;
 
     private TournamentScore tournamentScore;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
