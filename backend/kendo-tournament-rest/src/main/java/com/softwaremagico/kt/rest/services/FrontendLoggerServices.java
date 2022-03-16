@@ -26,7 +26,7 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.logger.FrontendLogger;
 import com.softwaremagico.kt.rest.model.LogDto;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,21 +36,21 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/logger")
 public class FrontendLoggerServices {
 
-    @ApiOperation(value = "Register an action that must be logged.")
+    @Operation(summary = "Register an action that must be logged.")
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
     public void info(@RequestBody LogDto log, HttpServletRequest request) {
         FrontendLogger.info(this.getClass(), log.getMessage());
     }
 
-    @ApiOperation(value = "Register a warning that must be logged.")
+    @Operation(summary = "Register a warning that must be logged.")
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
     public void warning(@RequestBody LogDto log, HttpServletRequest request) {
         FrontendLogger.warning(this.getClass(), log.getMessage());
     }
 
-    @ApiOperation(value = "Register an error that must be logged.")
+    @Operation(summary = "Register an error that must be logged.")
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)
     public void error(@RequestBody LogDto log, HttpServletRequest request) {
