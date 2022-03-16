@@ -30,6 +30,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.model.TournamentDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,14 +52,14 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all tournament.")
+    @Operation(summary = "Gets all tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Tournament> getAll(HttpServletRequest request) {
         return tournamentProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets a tournament.")
+    @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
                           HttpServletRequest request) {
@@ -66,7 +67,7 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a tournament with some basic information.")
+    @Operation(summary = "Creates a tournament with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament add(@Parameter(description = "Name of the new tournament", required = true) @RequestParam(name = "name") String name,
@@ -78,7 +79,7 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a tournament with full information.")
+    @Operation(summary = "Creates a tournament with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament add(@RequestBody TournamentDto tournament, HttpServletRequest request) {
@@ -86,7 +87,7 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a tournament.")
+    @Operation(summary = "Deletes a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
@@ -95,7 +96,7 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a tournament.")
+    @Operation(summary = "Deletes a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TournamentDto tournament, HttpServletRequest request) {
@@ -103,7 +104,7 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Updates a tournament.")
+    @Operation(summary = "Updates a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament update(@RequestBody TournamentDto tournament, HttpServletRequest request) {
         return tournamentProvider.update(modelMapper.map(tournament, Tournament.class));

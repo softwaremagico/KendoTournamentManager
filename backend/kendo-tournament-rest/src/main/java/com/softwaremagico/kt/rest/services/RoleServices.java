@@ -36,6 +36,7 @@ import com.softwaremagico.kt.rest.model.ParticipantInTournamentDto;
 import com.softwaremagico.kt.rest.model.RoleDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -62,14 +63,14 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all roles.")
+    @Operation(summary = "Gets all roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Role> getAll(HttpServletRequest request) {
         return roleProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all roles from a tournament.")
+    @Operation(summary = "Gets all roles from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Role> getAllFromTournament(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
                                            HttpServletRequest request) {
@@ -77,7 +78,7 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all roles from a tournament.")
+    @Operation(summary = "Gets all roles from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{id}/types/{roleTypes}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Role> getAllFromTournament(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
                                            @Parameter(description = "Type of role") @PathVariable("roleTypes") Collection<RoleType> roleTypes,
@@ -86,7 +87,7 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets a role.")
+    @Operation(summary = "Gets a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Role get(@Parameter(description = "Id of an existing role", required = true) @PathVariable("id") Integer id,
                     HttpServletRequest request) {
@@ -94,7 +95,7 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a role.")
+    @Operation(summary = "Creates a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Role add(@RequestBody RoleDto roleDto, HttpServletRequest request) {
@@ -110,7 +111,7 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a role.")
+    @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing role", required = true) @PathVariable("id") Integer id,
@@ -120,7 +121,7 @@ public class RoleServices {
 
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a role.")
+    @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody RoleDto role, HttpServletRequest request) {
@@ -128,7 +129,7 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a role.")
+    @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
@@ -137,7 +138,7 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Updates a role.")
+    @Operation(summary = "Updates a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Role update(
             @RequestBody RoleDto roleDto, HttpServletRequest request) {

@@ -29,6 +29,7 @@ import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.rest.model.ClubDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,14 +51,14 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all clubs.")
+    @Operation(summary = "Gets all clubs.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Club> getAll(HttpServletRequest request) {
         return clubProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets a club.")
+    @Operation(summary = "Gets a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club get(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
                     HttpServletRequest request) {
@@ -65,7 +66,7 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a club with some basic information.")
+    @Operation(summary = "Creates a club with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club add(@Parameter(description = "Name of the new club", required = true) @RequestParam(name = "name") String name,
@@ -76,7 +77,7 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a club with full information.")
+    @Operation(summary = "Creates a club with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club add(@RequestBody ClubDto club, HttpServletRequest request) {
@@ -84,7 +85,7 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a club.")
+    @Operation(summary = "Deletes a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
@@ -93,7 +94,7 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a club.")
+    @Operation(summary = "Deletes a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ClubDto club, HttpServletRequest request) {
@@ -101,7 +102,7 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Updates a club.")
+    @Operation(summary = "Updates a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Club update(@RequestBody ClubDto club, HttpServletRequest request) {
         return clubProvider.update(modelMapper.map(club, Club.class));
