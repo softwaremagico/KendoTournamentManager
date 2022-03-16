@@ -34,6 +34,7 @@ import com.softwaremagico.kt.rest.model.TournamentDto;
 import com.softwaremagico.kt.rest.parsers.FightParser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,14 +60,14 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all fights.")
+    @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Fight> getAll(HttpServletRequest request) {
         return fightProvider.getFights();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all fights on tournament.")
+    @Operation(summary = "Gets all fights on tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Fight> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                               HttpServletRequest request) {
@@ -74,7 +75,7 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all fights.")
+    @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Fight> getAll(@RequestBody TournamentDto tournamentDto,
                               HttpServletRequest request) {
@@ -82,7 +83,7 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets a fight.")
+    @Operation(summary = "Gets a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Fight get(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
                      HttpServletRequest request) {
@@ -90,7 +91,7 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a fight.")
+    @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Fight add(@RequestBody FightDto fightDto, HttpServletRequest request) {
@@ -101,7 +102,7 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a fight.")
+    @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
@@ -110,14 +111,14 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all fights.")
+    @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody FightDto fightDto, HttpServletRequest request) {
         fightProvider.delete(modelMapper.map(fightDto, Fight.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes all fights from a tournament.")
+    @Operation(summary = "Deletes all fights from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TournamentDto tournamentDto, HttpServletRequest request) {
@@ -125,7 +126,7 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Updates a fight.")
+    @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Fight update(@RequestBody FightDto fightDto, HttpServletRequest request) {
         if (fightDto == null) {
