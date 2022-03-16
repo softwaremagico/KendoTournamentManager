@@ -29,8 +29,8 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.rest.model.ParticipantDto;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,22 +54,22 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all participants.")
+    @Operation(summary = "Gets all participants.")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Participant> getAll(HttpServletRequest request) {
         return participantProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets a participant.")
+    @Operation(summary = "Gets a participant.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Participant get(@ApiParam(value = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
+    public Participant get(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
                            HttpServletRequest request) {
         return participantProvider.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Creates a participant.")
+    @Operation(summary = "Creates a participant.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Participant add(@RequestBody ParticipantDto participantDto, HttpServletRequest request) {
@@ -85,16 +85,16 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a participant.")
+    @Operation(summary = "Deletes a participant.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
+    public void delete(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         participantProvider.delete(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a participant.")
+    @Operation(summary = "Deletes a participant.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ParticipantDto participant, HttpServletRequest request) {
@@ -102,7 +102,7 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Updates a participant.")
+    @Operation(summary = "Updates a participant.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Participant update(
             @RequestBody ParticipantDto participantDto, HttpServletRequest request) {
