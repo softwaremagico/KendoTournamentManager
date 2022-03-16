@@ -28,8 +28,8 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.model.TournamentDto;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,34 +51,34 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all tournament.")
+    @Operation(summary = "Gets all tournament.")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Tournament> getAll(HttpServletRequest request) {
         return tournamentProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets a tournament.")
+    @Operation(summary = "Gets a tournament.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Tournament get(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+    public Tournament get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
                           HttpServletRequest request) {
         return tournamentProvider.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Creates a tournament with some basic information.")
+    @Operation(summary = "Creates a tournament with some basic information.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Tournament add(@ApiParam(value = "Name of the new tournament", required = true) @RequestParam(name = "name") String name,
-                          @ApiParam(value = "Number of available shiaijos") @RequestParam(name = "shiaijos") Integer shiaijos,
-                          @ApiParam(value = "Members by team") @RequestParam(name = "teamSize") Integer teamSize,
-                          @ApiParam(value = "Type of tournament") @RequestParam(name = "type") TournamentType type,
+    public Tournament add(@Parameter(description = "Name of the new tournament", required = true) @RequestParam(name = "name") String name,
+                          @Parameter(description = "Number of available shiaijos") @RequestParam(name = "shiaijos") Integer shiaijos,
+                          @Parameter(description = "Members by team") @RequestParam(name = "teamSize") Integer teamSize,
+                          @Parameter(description = "Type of tournament") @RequestParam(name = "type") TournamentType type,
                           HttpServletRequest request) {
         return tournamentProvider.add(name, shiaijos, teamSize, type);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Creates a tournament with full information.")
+    @Operation(summary = "Creates a tournament with full information.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament add(@RequestBody TournamentDto tournament, HttpServletRequest request) {
@@ -86,16 +86,16 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a tournament.")
+    @Operation(summary = "Deletes a tournament.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+    public void delete(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         tournamentProvider.delete(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a tournament.")
+    @Operation(summary = "Deletes a tournament.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TournamentDto tournament, HttpServletRequest request) {
@@ -103,7 +103,7 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Updates a tournament.")
+    @Operation(summary = "Updates a tournament.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament update(@RequestBody TournamentDto tournament, HttpServletRequest request) {
         return tournamentProvider.update(modelMapper.map(tournament, Tournament.class));

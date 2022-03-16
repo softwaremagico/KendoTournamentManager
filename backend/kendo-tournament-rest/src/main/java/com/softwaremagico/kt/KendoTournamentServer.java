@@ -43,11 +43,7 @@ public class KendoTournamentServer {
 
     @Bean
     public ApplicationListener<ContextRefreshedEvent> startupLoggingListener() {
-        return new ApplicationListener<ContextRefreshedEvent>() {
-            public void onApplicationEvent(ContextRefreshedEvent event) {
-                KendoTournamentLogger.info(KendoTournamentServer.class, "### Server started ###");
-            }
-        };
+        return event -> KendoTournamentLogger.info(KendoTournamentServer.class, "### Server started ###");
     }
 
 }
