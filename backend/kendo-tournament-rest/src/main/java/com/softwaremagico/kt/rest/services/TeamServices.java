@@ -32,8 +32,8 @@ import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.model.*;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -61,22 +61,22 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all teams.")
+    @Operation(summary = "Gets all teams.")
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Team> getAll(HttpServletRequest request) {
         return teamProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all teams.")
+    @Operation(summary = "Gets all teams.")
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Team> getAll(@ApiParam(value = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+    public List<Team> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                              HttpServletRequest request) {
         return teamProvider.getAll(tournamentProvider.get(tournamentId));
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all teams.")
+    @Operation(summary = "Gets all teams.")
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Team> getAll(@RequestBody TournamentDto tournamentDto,
                              HttpServletRequest request) {
@@ -84,15 +84,15 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets a team.")
+    @Operation(summary = "Gets a team.")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team get(@ApiParam(value = "Id of an existing team", required = true) @PathVariable("id") Integer id,
+    public Team get(@Parameter(description = "Id of an existing team", required = true) @PathVariable("id") Integer id,
                     HttpServletRequest request) {
         return teamProvider.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Creates a team.")
+    @Operation(summary = "Creates a team.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Team add(@RequestBody TeamDto teamDto, HttpServletRequest request) {
@@ -123,23 +123,23 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a team.")
+    @Operation(summary = "Deletes a team.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@ApiParam(value = "Id of an existing team", required = true) @PathVariable("id") Integer id,
+    public void delete(@Parameter(description = "Id of an existing team", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
         teamProvider.delete(id);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @ApiOperation(value = "Gets all teams.")
+    @Operation(summary = "Gets all teams.")
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TeamDto teamDto, HttpServletRequest request) {
         teamProvider.delete(modelMapper.map(teamDto, Team.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes a member from any team.")
+    @Operation(summary = "Deletes a member from any team.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
     public Team delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
@@ -149,7 +149,7 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes multiples member from any team.")
+    @Operation(summary = "Deletes multiples member from any team.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ParticipantsInTournamentDto participantsInTournaments, HttpServletRequest request) {
@@ -161,7 +161,7 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes all teams from a tournament.")
+    @Operation(summary = "Deletes all teams from a tournament.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TournamentDto tournamentDto, HttpServletRequest request) {
@@ -169,7 +169,7 @@ public class TeamServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Updates a team.")
+    @Operation(summary = "Updates a team.")
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Team update(@RequestBody TeamDto teamDto, HttpServletRequest request) {
         final Team team = modelMapper.map(teamDto, Team.class);
