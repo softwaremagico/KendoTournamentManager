@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.providers.FileProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,7 +53,7 @@ public class FileServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Uploads a photo to a participant profile")
+    @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public void upload(@RequestParam("file") MultipartFile file,
                        @RequestParam("participant") int participantId, HttpServletRequest request) {
@@ -64,7 +65,7 @@ public class FileServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets an image from a participant")
+    @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantImage getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {
         // return fileProvider.get(type, participantProvider.get(participantId));
