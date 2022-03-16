@@ -31,6 +31,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.rest.model.ParticipantDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,14 +55,14 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all participants.")
+    @Operation(summary = "Gets all participants.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Participant> getAll(HttpServletRequest request) {
         return participantProvider.getAll();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets a participant.")
+    @Operation(summary = "Gets a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Participant get(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
                            HttpServletRequest request) {
@@ -69,7 +70,7 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Creates a participant.")
+    @Operation(summary = "Creates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Participant add(@RequestBody ParticipantDto participantDto, HttpServletRequest request) {
@@ -85,7 +86,7 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a participant.")
+    @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
@@ -94,7 +95,7 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes a participant.")
+    @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ParticipantDto participant, HttpServletRequest request) {
@@ -102,7 +103,7 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Updates a participant.")
+    @Operation(summary = "Updates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Participant update(
             @RequestBody ParticipantDto participantDto, HttpServletRequest request) {
