@@ -37,7 +37,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 @SecurityScheme(
@@ -47,13 +46,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
         scheme = "bearer"
 )
 public class SwaggerConfiguration {
+    private static final String SWAGGER_GROUP = "kendo-tournament-public";
     private static final String SWAGGER_TITLE = "Kendo Tournament Manager";
     private static final String SWAGGER_DESCRIPTION = "Kendo Tournament Manager";
+    private static final String SWAGGER_README = SWAGGER_TITLE + " Documentation";
+    private static final String SWAGGER_URL = "https://softwaremagico.github.io/KendoTournament/";
+    private static final String SWAGGER_DEFAULT_VERSION = "Dev";
+    private static final String[] PACKAGES_TO_SCAN = new String[]{"com.softwaremagico.kt"};
 
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group("kendo-tournament-public")
+                .group(SWAGGER_GROUP)
+                .packagesToScan(PACKAGES_TO_SCAN)
                 .pathsToMatch("/**")
                 .build();
     }
@@ -63,16 +68,17 @@ public class SwaggerConfiguration {
         return new OpenAPI()
                 .info(new Info().title(SWAGGER_TITLE)
                         .description(SWAGGER_DESCRIPTION)
-                        .version("v1.0.0")
+                        .version(SwaggerConfiguration.class.getPackage().getImplementationVersion() != null ?
+                                SwaggerConfiguration.class.getPackage().getImplementationVersion() : SWAGGER_DEFAULT_VERSION)
                         .license(new License().name("GNU General Public License v3").url("https://www.gnu.org/licenses/gpl-3.0.html")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("Kendo Tournament Documentation")
-                        .url("https://softwaremagico.github.io/KendoTournament/"));
+                        .description(SWAGGER_README)
+                        .url(SWAGGER_URL));
     }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
+        return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**").allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
@@ -89,20 +95,4 @@ public class SwaggerConfiguration {
         executor.setThreadNamePrefix("Rest_Async-");
         return executor;
     }
-
-//    private ApiKey apiKey() {
-//        return new ApiKey("JWT", "Authorization", "header");
-//    }
-//
-//    private SecurityContext securityContext() {
-//        return SecurityContext.builder().securityReferences(defaultAuth()).build();
-//    }
-//
-//    private List<SecurityReference> defaultAuth() {
-//        final AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-//        final AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-//        authorizationScopes[0] = authorizationScope;
-//        return Collections.singletonList(new SecurityReference("JWT", authorizationScopes));
-//    }
-
 }
