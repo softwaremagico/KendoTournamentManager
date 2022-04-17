@@ -1,0 +1,7 @@
+<div class="user-score">
+  <score *ngIf="!leftToRight" [index]="0"></score>
+  <score *ngIf="!leftToRight" [index]="1"></score>
+  <user-name></user-name>
+  <score *ngIf="leftToRight" [index]="1"></score>
+  <score *ngIf="leftToRight" [index]="0"></score>
+</div>
