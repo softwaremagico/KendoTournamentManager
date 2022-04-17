@@ -16,7 +16,7 @@ export class ScoreComponent implements OnInit {
   duel: Duel;
 
   @Input()
-  leftSize: boolean;
+  left: boolean;
 
   constructor(private fightService: FightService) {
   }
