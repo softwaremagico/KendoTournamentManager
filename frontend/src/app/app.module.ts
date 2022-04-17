@@ -52,6 +52,7 @@ import { DuelComponent } from './fight/duel/duel.component';
 import { UserScoreComponent } from './fight/duel/user-score/user-score.component';
 import { ScoreComponent } from './fight/duel/user-score/score/score.component';
 import { UserNameComponent } from './fight/duel/user-score/user-name/user-name.component';
+import { FaultComponent } from './fight/duel/user-score/fault/fault.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { UserNameComponent } from './fight/duel/user-score/user-name/user-name.c
     DuelComponent,
     UserScoreComponent,
     ScoreComponent,
-    UserNameComponent
+    UserNameComponent,
+    FaultComponent
   ],
   imports: [
     BrowserModule,
