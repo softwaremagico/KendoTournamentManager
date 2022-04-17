@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Duel} from "../../../models/Duel";
 
 @Component({
   selector: 'user-score',
@@ -7,10 +8,13 @@ import {Component, OnInit} from '@angular/core';
 })
 export class UserScoreComponent implements OnInit {
 
+  @Input()
+  duel: Duel;
+
+  left: boolean;
+
   constructor() {
   }
-
-  leftToRight: boolean;
 
   ngOnInit(): void {
   }

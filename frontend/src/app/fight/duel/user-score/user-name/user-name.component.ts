@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Participant} from "../../../../models/participant";
 
 @Component({
   selector: 'user-name',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserNameComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  participant: Participant;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
