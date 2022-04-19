@@ -5,7 +5,6 @@ import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
-import {Team} from "../models/team";
 import {catchError, tap} from "rxjs/operators";
 import {Fight} from "../models/Fight";
 import {Tournament} from "../models/tournament";
