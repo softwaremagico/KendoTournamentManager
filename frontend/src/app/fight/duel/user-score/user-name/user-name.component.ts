@@ -18,11 +18,18 @@ export class UserNameComponent implements OnInit {
   }
 
   getShortName(): string {
-    return this.participant ? this.participant.name : "";
+    if (!this.participant) return "";
+    return this.participant.name.slice(0, 1).toUpperCase() + ".";
   }
 
   getLastname(): string {
-    return this.participant ? this.participant.lastname : "";
+    if (!this.participant) return "";
+    let lastnames: string[] = this.participant.lastname.split(" ");
+    let finalResult: string[] = [];
+    for (let lastname of lastnames) {
+      finalResult.push(lastname.length < 3 ? lastname : (lastname[0].toUpperCase() + lastname.substring(1).toLowerCase()));
+    }
+    return finalResult.join(" ");
   }
 
 }

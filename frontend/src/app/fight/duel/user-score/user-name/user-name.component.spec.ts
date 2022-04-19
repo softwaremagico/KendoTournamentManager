@@ -27,11 +27,11 @@ describe('UserNameComponent', () => {
 
   it('participant name', () => {
     let participant: Participant = new Participant();
-    participant.name = "Name";
-    participant.lastname = "Familyname";
+    participant.name = "name";
+    participant.lastname = "of family";
     userNameHostComponent.userNameComponent.participant = participant;
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('div').innerText).toEqual('N. Familyname');
+    expect(fixture.nativeElement.querySelector('div').innerText).toEqual('of Family, N.');
   });
 
   @Component({
