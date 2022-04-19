@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Participant} from "../../../../models/participant";
 
 @Component({
@@ -15,6 +15,14 @@ export class UserNameComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  getShortName(): string {
+    return this.participant ? this.participant.name : "";
+  }
+
+  getLastname(): string {
+    return this.participant ? this.participant.lastname : "";
   }
 
 }

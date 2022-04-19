@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {UserNameComponent} from './user-name.component';
-import {ViewChild} from "@angular/core";
+import {Component, ViewChild} from "@angular/core";
 import {Participant} from "../../../../models/participant";
 
 describe('UserNameComponent', () => {
@@ -30,11 +30,16 @@ describe('UserNameComponent', () => {
     participant.name = "Name";
     participant.lastname = "Familyname";
     userNameHostComponent.userNameComponent.participant = participant;
+    fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('div').innerText).toEqual('N. Familyname');
   });
-});
 
-class UserNameHostComponent {
-  @ViewChild(UserNameComponent)
-  public userNameComponent: UserNameComponent;
-}
+  @Component({
+    selector: `user-name-host-component`,
+    template: `<user-name></user-name>`
+  })
+  class UserNameHostComponent {
+    @ViewChild(UserNameComponent)
+    public userNameComponent: UserNameComponent;
+  }
+});
