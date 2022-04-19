@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";

@@ -7,7 +7,6 @@ import {MatSort} from "@angular/material/sort";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {ClubService} from "../../services/club.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
 import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";

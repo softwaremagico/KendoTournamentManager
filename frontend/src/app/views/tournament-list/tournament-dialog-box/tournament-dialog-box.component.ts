@@ -1,5 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {FormControl} from "@angular/forms";
+import {Component, Inject, Optional} from '@angular/core';
 import {Tournament} from "../../../models/tournament";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {TournamentType} from "../../../models/tournament-type";

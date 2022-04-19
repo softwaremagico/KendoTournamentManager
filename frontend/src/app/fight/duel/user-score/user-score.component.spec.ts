@@ -1,20 +1,20 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {FightListComponent} from './fight-list.component';
+import {UserScoreComponent} from './user-score.component';
 
-describe('FightListComponent', () => {
-  let component: FightListComponent;
-  let fixture: ComponentFixture<FightListComponent>;
+describe('UserScoreComponent', () => {
+  let component: UserScoreComponent;
+  let fixture: ComponentFixture<UserScoreComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FightListComponent ]
+      declarations: [UserScoreComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FightListComponent);
+    fixture = TestBed.createComponent(UserScoreComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
