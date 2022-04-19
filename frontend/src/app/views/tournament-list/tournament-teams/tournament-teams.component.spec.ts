@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { TournamentTeamsComponent } from './tournament-teams.component';
+import {TournamentTeamsComponent} from './tournament-teams.component';
 
 describe('TournamentTeamsComponent', () => {
   let component: TournamentTeamsComponent;
