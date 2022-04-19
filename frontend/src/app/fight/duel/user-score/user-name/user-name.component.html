@@ -1,1 +1,2 @@
-<div>{{getShortName()}} {{getLastname()}}</div>
+<div *ngIf="participant">{{getLastname()}}, {{getShortName()}}</div>
+<div *ngIf="!participant"> --- --- </div>
