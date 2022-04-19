@@ -46,13 +46,13 @@ import {TournamentRolesComponent} from './views/tournament-list/tournament-roles
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TournamentTeamsComponent} from './views/tournament-list/tournament-teams/tournament-teams.component';
 import {IconModule} from "./components/icons";
-import { FightListComponent } from './views/fight-list/fight-list.component';
-import { FightComponent } from './fight/fight.component';
-import { DuelComponent } from './fight/duel/duel.component';
-import { UserScoreComponent } from './fight/duel/user-score/user-score.component';
-import { ScoreComponent } from './fight/duel/user-score/score/score.component';
-import { UserNameComponent } from './fight/duel/user-score/user-name/user-name.component';
-import { FaultComponent } from './fight/duel/user-score/fault/fault.component';
+import {FightListComponent} from './views/fight-list/fight-list.component';
+import {FightComponent} from './fight/fight.component';
+import {DuelComponent} from './fight/duel/duel.component';
+import {UserScoreComponent} from './fight/duel/user-score/user-score.component';
+import {ScoreComponent} from './fight/duel/user-score/score/score.component';
+import {UserNameComponent} from './fight/duel/user-score/user-name/user-name.component';
+import {FaultComponent} from './fight/duel/user-score/fault/fault.component';
 
 @NgModule({
   declarations: [
