@@ -57,13 +57,13 @@ public class Fight extends Element {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
 
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
-    @Column(name = "level")
+    @Column(name = "fight_level")
     private Integer level = 0;
 
     public Fight() {
