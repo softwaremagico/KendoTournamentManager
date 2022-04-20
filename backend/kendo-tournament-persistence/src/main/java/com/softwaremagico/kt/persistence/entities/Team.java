@@ -47,8 +47,7 @@ public class Team extends Element implements Comparable<Team> {
     @OneToMany
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "members_of_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
-    //https://stackoverflow.com/questions/71370370/jointable-not-generated-with-ordercolumn-annotation
-    //@OrderColumn(name = "index")
+    @OrderColumn(name = "member_index")
     private List<Participant> members;
 
     @ManyToOne(fetch = FetchType.LAZY)
