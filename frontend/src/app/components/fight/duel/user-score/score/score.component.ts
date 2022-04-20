@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FightService} from "../../../../services/fight.service";
-import {Duel} from "../../../../models/Duel";
+import {FightService} from "../../../../../services/fight.service";
+import {Duel} from "../../../../../models/Duel";
 
 @Component({
   selector: 'score',

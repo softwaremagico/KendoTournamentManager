@@ -4,9 +4,10 @@ import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/Fight";
 import {Tournament} from "../../models/tournament";
-import {Action, ClubDialogBoxComponent} from "../club-list/club-dialog-box/club-dialog-box.component";
+import {ClubDialogBoxComponent} from "../club-list/club-dialog-box/club-dialog-box.component";
 import {ActivatedRoute} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
+import {Action} from "../../action";
 
 @Component({
   selector: 'app-fight-list',
@@ -34,6 +35,10 @@ export class FightListComponent implements OnInit {
         })
       }
     })
+  }
+
+  generateElements() {
+
   }
 
   addElement() {

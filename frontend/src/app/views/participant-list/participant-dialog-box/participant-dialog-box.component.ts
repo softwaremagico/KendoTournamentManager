@@ -5,13 +5,7 @@ import {Club} from "../../../models/club";
 import {FormControl} from "@angular/forms";
 import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
-
-export enum Action {
-  Add,
-  Update,
-  Delete,
-  Cancel
-}
+import {Action} from "../../../action";
 
 @Component({
   selector: 'app-participant-dialog-box',

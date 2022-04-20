@@ -5,10 +5,24 @@
         <button mat-button color="primary" (click)="addElement()">
           <mat-icon>add</mat-icon>
         </button>
+        <button mat-button color="primary" (click)="generateElements()">
+          <mat-icon>auto_fix_high</mat-icon>
+          <!-- <mat-icon>build</mat-icon> -->
+        </button>
+        <button mat-button color="warn" [disabled]="!selectedFight" (click)="deleteElement()">
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
     </div>
-    <div class="fight-list">
-      <fight *ngFor="let fight of fights" [fight]="fight"></fight>
+    <div class="filter">
+      <mat-form-field>
+        <input matInput type="text"  placeholder="{{'filter' | translate}}">
+      </mat-form-field>
+    </div>
+    <div class="mat-elevation-z8">
+      <div class="fight-list">
+        <fight *ngFor="let fight of fights" [fight]="fight"></fight>
+      </div>
     </div>
   </div>
 </div>

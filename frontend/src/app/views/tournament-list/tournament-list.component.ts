@@ -14,13 +14,7 @@ import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.comp
 
 import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
-
-export enum Action {
-  Add,
-  Update,
-  Delete,
-  Cancel
-}
+import {Action} from "../../action";
 
 @Component({
   selector: 'app-tournament-list',
