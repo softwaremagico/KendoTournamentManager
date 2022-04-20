@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {UserNameComponent} from './user-name.component';
 import {Component, ViewChild} from "@angular/core";
-import {Participant} from "../../../../models/participant";
+import {Participant} from "../../../../../models/participant";
 
 describe('UserNameComponent', () => {
   let userNameHostComponent: UserNameHostComponent;

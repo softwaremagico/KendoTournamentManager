@@ -1,13 +1,7 @@
 import {Component, Inject, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Club} from "../../../models/club";
-
-export enum Action {
-  Add,
-  Update,
-  Delete,
-  Cancel
-}
+import {Action} from "../../../action";
 
 @Component({
   selector: 'app-club-dialog-box',

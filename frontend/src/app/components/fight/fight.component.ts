@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Fight} from "../models/Fight";
+import {Fight} from "../../models/Fight";
 
 @Component({
   selector: 'fight',
