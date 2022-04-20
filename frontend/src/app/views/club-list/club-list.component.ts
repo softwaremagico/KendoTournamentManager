@@ -6,9 +6,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {SelectionModel} from "@angular/cdk/collections";
 import {ClubService} from '../../services/club.service';
 import {Club} from '../../models/club';
-import {Action, ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
+import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.component';
 import {MessageService} from "../../services/message.service";
 import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
+import {Action} from "../../action";
 
 
 @Component({
