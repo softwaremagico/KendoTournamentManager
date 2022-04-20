@@ -1,1 +1,6 @@
-<div class="fault"></div>
+<div class="fault" [matMenuTriggerFor]="menu">
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>{{'fault' | translate}}</button>
+    <button mat-menu-item>{{'clear' | translate}}</button>
+  </mat-menu>
+</div>
