@@ -11,6 +11,7 @@ export class UserScoreComponent implements OnInit {
   @Input()
   duel: Duel;
 
+  @Input()
   left: boolean;
 
   constructor() {

@@ -53,6 +53,8 @@ import {UserScoreComponent} from './fight/duel/user-score/user-score.component';
 import {ScoreComponent} from './fight/duel/user-score/score/score.component';
 import {UserNameComponent} from './fight/duel/user-score/user-name/user-name.component';
 import {FaultComponent} from './fight/duel/user-score/fault/fault.component';
+import { DrawComponent } from './fight/duel/draw/draw.component';
+import { FightDialogBoxComponent } from './fight/fight-dialog-box/fight-dialog-box.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +75,9 @@ import {FaultComponent} from './fight/duel/user-score/fault/fault.component';
     UserScoreComponent,
     ScoreComponent,
     UserNameComponent,
-    FaultComponent
+    FaultComponent,
+    DrawComponent,
+    FightDialogBoxComponent
   ],
   imports: [
     BrowserModule,

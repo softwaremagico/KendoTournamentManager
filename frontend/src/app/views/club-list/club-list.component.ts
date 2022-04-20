@@ -43,8 +43,7 @@ export class ClubListComponent implements OnInit {
   }
 
   addElement(): void {
-    const club = new Club();
-    this.openDialog('Add a new club', Action.Add, club);
+    this.openDialog('Add a new club', Action.Add, new Club());
   }
 
   editElement(): void {
