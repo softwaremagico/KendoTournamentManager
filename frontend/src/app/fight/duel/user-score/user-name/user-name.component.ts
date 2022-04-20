@@ -9,7 +9,7 @@ import {Participant} from "../../../../models/participant";
 export class UserNameComponent implements OnInit {
 
   @Input()
-  participant: Participant;
+  participant: Participant | undefined;
 
   constructor() {
   }

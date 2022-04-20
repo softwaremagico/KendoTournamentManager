@@ -16,4 +16,12 @@ export class UserSessionService {
   getLanguage(): string {
     return this.cookies.get("selectedLanguage");
   }
+
+  setTournament(tournamentId: string) {
+    this.cookies.set("lastSelectedTournament", tournamentId);
+  }
+
+  getTournament() {
+    return this.cookies.get("lastSelectedTournament");
+  }
 }

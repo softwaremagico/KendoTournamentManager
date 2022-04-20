@@ -1,15 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Fight} from "../models/Fight";
 
 @Component({
-  selector: 'app-fight',
+  selector: 'fight',
   templateUrl: './fight.component.html',
   styleUrls: ['./fight.component.scss']
 })
 export class FightComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  fight: Fight;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
+
   }
 
 }
