@@ -40,15 +40,15 @@ import java.util.stream.Collectors;
 @Table(name = "fights")
 public class Fight extends Element {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team1")
     private Team team1;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team2")
     private Team team2;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
@@ -252,7 +252,7 @@ public class Fight extends Element {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append("Tournament: ").append(tournament).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
+        text.append("Tournament: ").append(tournament.getId()).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
                 append(team1.getName()).append("' vs '").append(team2.getName()).append("'\n");
         if (isOver()) {
             text.append(" [F]");
