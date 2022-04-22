@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,55 +24,19 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-import com.softwaremagico.kt.utils.NameUtils;
+public class LogDTO {
+    private String message;
 
-public class ParticipantDto extends ElementDto {
-
-    private String idCard;
-
-    private String name;
-
-    private String lastname;
-
-    private ClubDto club;
-
-    public String getIdCard() {
-        return idCard;
+    public String getMessage() {
+        return message;
     }
 
-    public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public ClubDto getClub() {
-        return club;
-    }
-
-    public void setClub(ClubDto club) {
-        this.club = club;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
     public String toString() {
-        if (getName() != null) {
-            return NameUtils.getLastnameName(getLastname(), getName());
-        }
-        return super.toString();
+        return message;
     }
 }

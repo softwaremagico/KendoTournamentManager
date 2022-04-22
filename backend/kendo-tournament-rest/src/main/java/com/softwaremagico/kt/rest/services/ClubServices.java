@@ -26,7 +26,7 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
-import com.softwaremagico.kt.rest.model.ClubDto;
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -80,7 +80,7 @@ public class ClubServices {
     @Operation(summary = "Creates a club with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club add(@RequestBody ClubDto club, HttpServletRequest request) {
+    public Club add(@RequestBody ClubDTO club, HttpServletRequest request) {
         return clubProvider.add(modelMapper.map(club, Club.class));
     }
 
@@ -97,14 +97,14 @@ public class ClubServices {
     @Operation(summary = "Deletes a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody ClubDto club, HttpServletRequest request) {
+    public void delete(@RequestBody ClubDTO club, HttpServletRequest request) {
         clubProvider.delete(modelMapper.map(club, Club.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club update(@RequestBody ClubDto club, HttpServletRequest request) {
+    public Club update(@RequestBody ClubDTO club, HttpServletRequest request) {
         return clubProvider.update(modelMapper.map(club, Club.class));
     }
 }

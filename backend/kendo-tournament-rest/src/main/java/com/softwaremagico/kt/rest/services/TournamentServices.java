@@ -27,7 +27,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.TournamentType;
-import com.softwaremagico.kt.rest.model.TournamentDto;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -75,15 +75,15 @@ public class TournamentServices {
                           @Parameter(description = "Members by team") @RequestParam(name = "teamSize") Integer teamSize,
                           @Parameter(description = "Type of tournament") @RequestParam(name = "type") TournamentType type,
                           HttpServletRequest request) {
-        return tournamentProvider.add(name, shiaijos, teamSize, type);
+        return tournamentProvider.save(name, shiaijos, teamSize, type);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a tournament with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Tournament add(@RequestBody TournamentDto tournament, HttpServletRequest request) {
-        return tournamentProvider.add(modelMapper.map(tournament, Tournament.class));
+    public Tournament add(@RequestBody TournamentDTO tournament, HttpServletRequest request) {
+        return tournamentProvider.save(modelMapper.map(tournament, Tournament.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -99,14 +99,14 @@ public class TournamentServices {
     @Operation(summary = "Deletes a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TournamentDto tournament, HttpServletRequest request) {
+    public void delete(@RequestBody TournamentDTO tournament, HttpServletRequest request) {
         tournamentProvider.delete(modelMapper.map(tournament, Tournament.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Tournament update(@RequestBody TournamentDto tournament, HttpServletRequest request) {
+    public Tournament update(@RequestBody TournamentDTO tournament, HttpServletRequest request) {
         return tournamentProvider.update(modelMapper.map(tournament, Tournament.class));
     }
 }

@@ -28,7 +28,7 @@ import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.rest.model.ParticipantDto;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -73,7 +73,7 @@ public class ParticipantServices {
     @Operation(summary = "Creates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Participant add(@RequestBody ParticipantDto participantDto, HttpServletRequest request) {
+    public Participant add(@RequestBody ParticipantDTO participantDto, HttpServletRequest request) {
         final Club club;
         if (participantDto.getClub() != null) {
             club = clubProvider.get(participantDto.getClub().getId());
@@ -98,7 +98,7 @@ public class ParticipantServices {
     @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody ParticipantDto participant, HttpServletRequest request) {
+    public void delete(@RequestBody ParticipantDTO participant, HttpServletRequest request) {
         participantProvider.delete(modelMapper.map(participant, Participant.class));
     }
 
@@ -106,7 +106,7 @@ public class ParticipantServices {
     @Operation(summary = "Updates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Participant update(
-            @RequestBody ParticipantDto participantDto, HttpServletRequest request) {
+            @RequestBody ParticipantDTO participantDto, HttpServletRequest request) {
         final Club club;
         if (participantDto.getClub() != null) {
             club = clubProvider.get(participantDto.getClub().getId());

@@ -33,7 +33,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
-import com.softwaremagico.kt.rest.model.FightDto;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,7 @@ public class FightParser {
         this.duelParser = duelParser;
     }
 
-    public Fight parse(FightDto fightDto) {
+    public Fight parse(FightDTO fightDto) {
         if (fightDto.getId() == null) {
             return parse(fightDto, new Fight());
         } else {
@@ -62,7 +62,7 @@ public class FightParser {
         }
     }
 
-    public Fight parse(FightDto fightDto, Fight fight) {
+    public Fight parse(FightDTO fightDto, Fight fight) {
         if (fightDto.getTournament() == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
