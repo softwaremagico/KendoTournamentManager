@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -30,28 +30,28 @@ import com.softwaremagico.kt.persistence.values.Score;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DuelDto extends ElementDto {
-    private ParticipantDto competitor1;
-    private ParticipantDto competitor2;
+public class DuelDTO extends ElementDTO {
+    private ParticipantDTO competitor1;
+    private ParticipantDTO competitor2;
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
     private Boolean competitor1Fault = false;
     private Boolean competitor2Fault = false;
     private DuelType type;
 
-    public ParticipantDto getCompetitor1() {
+    public ParticipantDTO getCompetitor1() {
         return competitor1;
     }
 
-    public void setCompetitor1(ParticipantDto competitor1) {
+    public void setCompetitor1(ParticipantDTO competitor1) {
         this.competitor1 = competitor1;
     }
 
-    public ParticipantDto getCompetitor2() {
+    public ParticipantDTO getCompetitor2() {
         return competitor2;
     }
 
-    public void setCompetitor2(ParticipantDto competitor2) {
+    public void setCompetitor2(ParticipantDTO competitor2) {
         this.competitor2 = competitor2;
     }
 

@@ -24,24 +24,17 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.DuelNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DuelProvider {
-    private final DuelRepository duelRepository;
+public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
 
     @Autowired
     public DuelProvider(DuelRepository duelRepository) {
-        this.duelRepository = duelRepository;
-    }
-
-    public Duel get(Integer id) {
-        return duelRepository.findById(id)
-                .orElseThrow(() -> new DuelNotFoundException(getClass(), "Duel with id '" + id + "' not found"));
+        super(duelRepository);
     }
 
 }

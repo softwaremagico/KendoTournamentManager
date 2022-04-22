@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
@@ -34,26 +33,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class FightProvider {
-    private final FightRepository fightRepository;
+public class FightProvider extends CrudProvider<Fight, Integer, FightRepository> {
 
     @Autowired
     public FightProvider(FightRepository fightRepository) {
-        this.fightRepository = fightRepository;
+        super(fightRepository);
     }
 
     public List<Fight> getFights(Tournament tournament, Integer level) {
-        final List<Fight> fights = fightRepository.findByTournamentAndLevel(tournament, level);
+        final List<Fight> fights = repository.findByTournamentAndLevel(tournament, level);
         fights.forEach(f -> f.setTournament(tournament));
         return fights;
     }
 
-    public List<Fight> getFights() {
-        return fightRepository.findAll();
-    }
-
     public List<Fight> getFights(Tournament tournament) {
-        final List<Fight> fights = fightRepository.findByTournament(tournament);
+        final List<Fight> fights = repository.findByTournament(tournament);
         fights.forEach(f -> {
             f.setTournament(tournament);
             f.getTeam1().setTournament(tournament);
@@ -63,37 +57,11 @@ public class FightProvider {
         return fights;
     }
 
-    public Fight getFight(Integer id) {
-        return fightRepository.findById(id)
-                .orElseThrow(() -> new FightNotFoundException(getClass(), "Fight with id '" + id + "' not found"));
-    }
-
-    public void delete(Integer id) {
-        fightRepository.deleteById(id);
-    }
-
-    public void delete(Fight fight) {
-        fightRepository.delete(fight);
-    }
-
-    public void delete(Tournament tournament) {
-        fightRepository.deleteByTournament(tournament);
-    }
-
     public boolean areOver(Tournament tournament) {
-        return fightRepository.countByTournamentAndFinishedAtIsNull(tournament) == 0;
+        return repository.countByTournamentAndFinishedAtIsNull(tournament) == 0;
     }
 
     public Fight getCurrentFight(Tournament tournament) {
-        return fightRepository.findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(tournament);
+        return repository.findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(tournament);
     }
-
-    public List<Fight> save(List<Fight> fights) {
-        return fightRepository.saveAll(fights);
-    }
-
-    public Fight save(Fight fight) {
-        return fightRepository.save(fight);
-    }
-
 }

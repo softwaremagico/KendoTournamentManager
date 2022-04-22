@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -27,7 +27,7 @@ package com.softwaremagico.kt.rest.model;
 import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 
-public class TournamentDto extends ElementDto {
+public class TournamentDTO extends ElementDTO {
 
     private String name;
 

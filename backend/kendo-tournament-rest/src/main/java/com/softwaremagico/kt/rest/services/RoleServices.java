@@ -32,8 +32,8 @@ import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
-import com.softwaremagico.kt.rest.model.ParticipantInTournamentDto;
-import com.softwaremagico.kt.rest.model.RoleDto;
+import com.softwaremagico.kt.core.controller.models.ParticipantInTournamentDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -98,7 +98,7 @@ public class RoleServices {
     @Operation(summary = "Creates a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Role add(@RequestBody RoleDto roleDto, HttpServletRequest request) {
+    public Role add(@RequestBody RoleDTO roleDto, HttpServletRequest request) {
         if (roleDto == null || roleDto.getTournament() == null || roleDto.getParticipant() == null ||
                 roleDto.getRoleType() == null) {
             throw new BadRequestException(getClass(), "Role data is missing");
@@ -124,7 +124,7 @@ public class RoleServices {
     @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody RoleDto role, HttpServletRequest request) {
+    public void delete(@RequestBody RoleDTO role, HttpServletRequest request) {
         roleProvider.delete(modelMapper.map(role, Role.class));
     }
 
@@ -132,7 +132,7 @@ public class RoleServices {
     @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/participants", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
+    public void delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
         roleProvider.delete(modelMapper.map(participantInTournament.getParticipant(), Participant.class),
                 modelMapper.map(participantInTournament.getTournament(), Tournament.class));
     }
@@ -141,7 +141,7 @@ public class RoleServices {
     @Operation(summary = "Updates a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Role update(
-            @RequestBody RoleDto roleDto, HttpServletRequest request) {
+            @RequestBody RoleDTO roleDto, HttpServletRequest request) {
         final Role role = modelMapper.map(roleDto, Role.class);
         if (roleDto.getTournament() != null) {
             role.setTournament(tournamentProvider.get(roleDto.getTournament().getId()));

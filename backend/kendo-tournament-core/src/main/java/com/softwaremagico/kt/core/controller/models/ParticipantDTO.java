@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,24 +24,24 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-import java.util.List;
+import com.softwaremagico.kt.utils.NameUtils;
 
-public class TeamDto extends ElementDto {
+public class ParticipantDTO extends ElementDTO {
+
+    private String idCard;
 
     private String name;
 
-    private TournamentDto tournament;
+    private String lastname;
 
-    private List<ParticipantDto> members;
+    private ClubDTO club;
 
-    private Integer group;
-
-    public TournamentDto getTournament() {
-        return tournament;
+    public String getIdCard() {
+        return idCard;
     }
 
-    public void setTournament(TournamentDto tournament) {
-        this.tournament = tournament;
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
     }
 
     public String getName() {
@@ -52,26 +52,26 @@ public class TeamDto extends ElementDto {
         this.name = name;
     }
 
-    public List<ParticipantDto> getMembers() {
-        return members;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setMembers(List<ParticipantDto> members) {
-        this.members = members;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
-    public Integer getGroup() {
-        return group;
+    public ClubDTO getClub() {
+        return club;
     }
 
-    public void setGroup(Integer group) {
-        this.group = group;
+    public void setClub(ClubDTO club) {
+        this.club = club;
     }
 
     @Override
     public String toString() {
         if (getName() != null) {
-            return getName();
+            return NameUtils.getLastnameName(getLastname(), getName());
         }
         return super.toString();
     }
