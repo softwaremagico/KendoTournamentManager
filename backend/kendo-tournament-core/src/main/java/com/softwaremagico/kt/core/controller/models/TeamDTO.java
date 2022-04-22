@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,44 +24,54 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.values.RoleType;
+import java.util.List;
 
-public class RoleDto extends ElementDto {
+public class TeamDTO extends ElementDTO {
 
-    private TournamentDto tournament;
+    private String name;
 
-    private ParticipantDto participant;
+    private TournamentDTO tournament;
 
-    private RoleType roleType;
+    private List<ParticipantDTO> members;
 
-    public TournamentDto getTournament() {
+    private Integer group;
+
+    public TournamentDTO getTournament() {
         return tournament;
     }
 
-    public void setTournament(TournamentDto tournament) {
+    public void setTournament(TournamentDTO tournament) {
         this.tournament = tournament;
     }
 
-    public ParticipantDto getParticipant() {
-        return participant;
+    public String getName() {
+        return name;
     }
 
-    public void setParticipant(ParticipantDto participant) {
-        this.participant = participant;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public RoleType getRoleType() {
-        return roleType;
+    public List<ParticipantDTO> getMembers() {
+        return members;
     }
 
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType;
+    public void setMembers(List<ParticipantDTO> members) {
+        this.members = members;
+    }
+
+    public Integer getGroup() {
+        return group;
+    }
+
+    public void setGroup(Integer group) {
+        this.group = group;
     }
 
     @Override
     public String toString() {
-        if (getTournament() != null) {
-            return String.format("ROLE{%s %s %s}", getTournament().getName(), getParticipant().getName(), getRoleType());
+        if (getName() != null) {
+            return getName();
         }
         return super.toString();
     }

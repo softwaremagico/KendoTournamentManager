@@ -29,8 +29,8 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
-import com.softwaremagico.kt.rest.model.FightDto;
-import com.softwaremagico.kt.rest.model.TournamentDto;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.rest.parsers.FightParser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -77,7 +77,7 @@ public class FightServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Fight> getAll(@RequestBody TournamentDto tournamentDto,
+    public List<Fight> getAll(@RequestBody TournamentDTO tournamentDto,
                               HttpServletRequest request) {
         return fightProvider.getFights(modelMapper.map(tournamentDto, Tournament.class));
     }
@@ -94,7 +94,7 @@ public class FightServices {
     @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Fight add(@RequestBody FightDto fightDto, HttpServletRequest request) {
+    public Fight add(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
@@ -113,7 +113,7 @@ public class FightServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody FightDto fightDto, HttpServletRequest request) {
+    public void delete(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         fightProvider.delete(modelMapper.map(fightDto, Fight.class));
     }
 
@@ -121,14 +121,14 @@ public class FightServices {
     @Operation(summary = "Deletes all fights from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TournamentDto tournamentDto, HttpServletRequest request) {
+    public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
         fightProvider.delete(modelMapper.map(tournamentDto, Tournament.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Fight update(@RequestBody FightDto fightDto, HttpServletRequest request) {
+    public Fight update(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }

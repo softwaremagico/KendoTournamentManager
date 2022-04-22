@@ -26,7 +26,7 @@ package com.softwaremagico.kt.rest.parsers;
 
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.rest.model.DuelDto;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,7 +37,7 @@ public class DuelParser {
         this.duelProvider = duelProvider;
     }
 
-    public Duel parse(DuelDto duelDto) {
+    public Duel parse(DuelDTO duelDto) {
         if (duelDto.getId() == null) {
             return parse(duelDto, new Duel());
         } else {
@@ -45,7 +45,7 @@ public class DuelParser {
         }
     }
 
-    public Duel parse(DuelDto duelDto, Duel duel) {
+    public Duel parse(DuelDTO duelDto, Duel duel) {
         return null;
     }
 }

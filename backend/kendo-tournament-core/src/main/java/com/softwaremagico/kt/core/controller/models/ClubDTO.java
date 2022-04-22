@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,7 +24,7 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-public class ClubDto extends ElementDto {
+public class ClubDTO extends ElementDTO {
 
     private String name = "";
 
