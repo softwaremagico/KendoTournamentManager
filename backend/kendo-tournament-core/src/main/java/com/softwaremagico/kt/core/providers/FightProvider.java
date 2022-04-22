@@ -43,7 +43,9 @@ public class FightProvider {
     }
 
     public List<Fight> getFights(Tournament tournament, Integer level) {
-        return fightRepository.findByTournamentAndLevel(tournament, level);
+        final List<Fight> fights = fightRepository.findByTournamentAndLevel(tournament, level);
+        fights.forEach(f -> f.setTournament(tournament));
+        return fights;
     }
 
     public List<Fight> getFights() {
@@ -51,7 +53,14 @@ public class FightProvider {
     }
 
     public List<Fight> getFights(Tournament tournament) {
-        return fightRepository.findByTournament(tournament);
+        final List<Fight> fights = fightRepository.findByTournament(tournament);
+        fights.forEach(f -> {
+            f.setTournament(tournament);
+            f.getTeam1().setTournament(tournament);
+            f.getTeam2().setTournament(tournament);
+            f.getTeam2().setTournament(tournament);
+        });
+        return fights;
     }
 
     public Fight getFight(Integer id) {
