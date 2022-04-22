@@ -4,7 +4,9 @@ import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.persistence.entities.Club;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClubConverter extends ElementConverter<Club, ClubDTO, ClubConverterRequest> {
 
     @Override
