@@ -32,8 +32,8 @@ public class ParticipantConverter extends ElementConverter<Participant, Particip
             return null;
         }
         final Participant participant = new Participant();
-        participant.setClub(clubConverter.reverse(to.getClub()));
         BeanUtils.copyProperties(to, participant);
+        participant.setClub(clubConverter.reverse(to.getClub()));
         return participant;
     }
 }
