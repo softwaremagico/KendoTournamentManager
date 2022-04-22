@@ -19,4 +19,8 @@ public class ClubController extends BasicInsertableController<Club, ClubDTO, Clu
     protected ClubConverterRequest createConverterRequest(Club club) {
         return new ClubConverterRequest(club);
     }
+
+    public ClubDTO create(String name, String country, String city) {
+        return converter.convert(new ClubConverterRequest(provider.add(name, country, city)));
+    }
 }
