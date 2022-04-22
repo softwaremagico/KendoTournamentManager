@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 
 public class TournamentDTO extends ElementDTO {
@@ -37,7 +36,7 @@ public class TournamentDTO extends ElementDTO {
 
     private TournamentType type;
 
-    private TournamentScore tournamentScore;
+    private TournamentScoreDTO tournamentScoreDTO;
 
     public String getName() {
         return name;
@@ -71,12 +70,12 @@ public class TournamentDTO extends ElementDTO {
         this.type = type;
     }
 
-    public TournamentScore getTournamentScore() {
-        return tournamentScore;
+    public TournamentScoreDTO getTournamentScoreDTO() {
+        return tournamentScoreDTO;
     }
 
-    public void setTournamentScore(TournamentScore tournamentScore) {
-        this.tournamentScore = tournamentScore;
+    public void setTournamentScoreDTO(TournamentScoreDTO tournamentScoreDTO) {
+        this.tournamentScoreDTO = tournamentScoreDTO;
     }
 
     @Override
