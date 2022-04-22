@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
@@ -31,7 +32,6 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
-import com.softwaremagico.kt.rest.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -79,7 +79,7 @@ public class TeamServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Team> getAll(@RequestBody TournamentDto tournamentDto,
+    public List<Team> getAll(@RequestBody TournamentDTO tournamentDto,
                              HttpServletRequest request) {
         return teamProvider.getAll(modelMapper.map(tournamentDto, Tournament.class));
     }
@@ -96,7 +96,7 @@ public class TeamServices {
     @Operation(summary = "Creates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team add(@RequestBody TeamDto teamDto, HttpServletRequest request) {
+    public Team add(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
         if (teamDto == null || teamDto.getTournament() == null) {
             throw new BadRequestException(getClass(), "Team data is missing");
         }
@@ -111,7 +111,7 @@ public class TeamServices {
             team.setName(teamProvider.getNextDefaultName(tournament));
         }
         if (teamDto.getMembers() != null) {
-            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDto::getId)
+            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDTO::getId)
                     .collect(Collectors.toList())));
         }
         team.setTournament(tournament);
@@ -135,7 +135,7 @@ public class TeamServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TeamDto teamDto, HttpServletRequest request) {
+    public void delete(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
         teamProvider.delete(modelMapper.map(teamDto, Team.class));
     }
 
@@ -143,7 +143,7 @@ public class TeamServices {
     @Operation(summary = "Deletes a member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team delete(@RequestBody ParticipantInTournamentDto participantInTournament, HttpServletRequest request) {
+    public Team delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
         final Participant member = modelMapper.map(participantInTournament.getParticipant(), Participant.class);
         final Tournament tournament = modelMapper.map(participantInTournament.getTournament(), Tournament.class);
         return teamProvider.delete(tournament, member);
@@ -153,8 +153,8 @@ public class TeamServices {
     @Operation(summary = "Deletes multiples member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody ParticipantsInTournamentDto participantsInTournaments, HttpServletRequest request) {
-        for (final ParticipantDto participantInTournament : participantsInTournaments.getParticipant()) {
+    public void delete(@RequestBody ParticipantsInTournamentDTO participantsInTournaments, HttpServletRequest request) {
+        for (final ParticipantDTO participantInTournament : participantsInTournaments.getParticipant()) {
             final Participant member = modelMapper.map(participantInTournament, Participant.class);
             final Tournament tournament = modelMapper.map(participantsInTournaments.getTournament(), Tournament.class);
             teamProvider.delete(tournament, member);
@@ -165,14 +165,14 @@ public class TeamServices {
     @Operation(summary = "Deletes all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TournamentDto tournamentDto, HttpServletRequest request) {
+    public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
         teamProvider.delete(modelMapper.map(tournamentDto, Tournament.class));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team update(@RequestBody TeamDto teamDto, HttpServletRequest request) {
+    public Team update(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
         final Team team = modelMapper.map(teamDto, Team.class);
         Tournament tournament = null;
         if (teamDto.getTournament() != null) {
@@ -185,7 +185,7 @@ public class TeamServices {
         //Remove old members
         final List<Participant> members = new ArrayList<>();
         if (teamDto.getMembers() != null) {
-            members.addAll(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDto::getId)
+            members.addAll(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDTO::getId)
                     .collect(Collectors.toList())));
         }
         final Team storedTeam = teamProvider.update(team, members);

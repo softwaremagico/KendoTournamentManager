@@ -25,7 +25,7 @@ package com.softwaremagico.kt.rest;
  */
 
 import com.softwaremagico.kt.persistence.entities.Club;
-import com.softwaremagico.kt.rest.model.ClubDto;
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import org.modelmapper.ModelMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -53,7 +53,7 @@ public class DtoToEntity {
         club.setEmail(CLUB_EMAIL);
         club.setWeb(CLUB_WEB);
 
-        ClubDto clubDto = modelMapper.map(club, ClubDto.class);
+        ClubDTO clubDto = modelMapper.map(club, ClubDTO.class);
         Assert.assertEquals(club.getName(), clubDto.getName());
         Assert.assertEquals(club.getAddress(), clubDto.getAddress());
         Assert.assertEquals(club.getPhone(), clubDto.getPhone());
@@ -65,7 +65,7 @@ public class DtoToEntity {
 
     @Test
     public void whenConvertClubDtoToClubEntity_thenCorrect() {
-        ClubDto clubDto = new ClubDto();
+        ClubDTO clubDto = new ClubDTO();
         clubDto.setName(CLUB_NAME);
         clubDto.setAddress(CLUB_ADDRESS);
         clubDto.setPhone(CLUB_PHONE);

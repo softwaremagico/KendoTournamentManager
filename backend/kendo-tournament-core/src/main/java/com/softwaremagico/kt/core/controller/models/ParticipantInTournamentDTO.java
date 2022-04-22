@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -8,44 +8,42 @@ package com.softwaremagico.kt.rest.model;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *
+ *  
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ *  
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
 
-import java.util.Collection;
+public class ParticipantInTournamentDTO {
 
-public class ParticipantsInTournamentDto {
+    private ParticipantDTO participant;
 
-    private Collection<ParticipantDto> participants;
+    private TournamentDTO tournament;
 
-    private TournamentDto tournament;
-
-    public Collection<ParticipantDto> getParticipant() {
-        return participants;
+    public ParticipantDTO getParticipant() {
+        return participant;
     }
 
-    public void setParticipant(Collection<ParticipantDto> participants) {
-        this.participants = participants;
+    public void setParticipant(ParticipantDTO participant) {
+        this.participant = participant;
     }
 
-    public TournamentDto getTournament() {
+    public TournamentDTO getTournament() {
         return tournament;
     }
 
-    public void setTournament(TournamentDto tournament) {
+    public void setTournament(TournamentDTO tournament) {
         this.tournament = tournament;
     }
 }
