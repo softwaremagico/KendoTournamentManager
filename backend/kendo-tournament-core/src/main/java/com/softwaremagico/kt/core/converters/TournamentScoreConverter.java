@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class TournamentScoreConverter extends ElementConverter<TournamentScore, TournamentScoreDTO, TournamentScoreConverterRequest> {
 
-
     @Override
     public TournamentScoreDTO convert(TournamentScoreConverterRequest from) {
         final TournamentScoreDTO tournamentScoreDTO = new TournamentScoreDTO();

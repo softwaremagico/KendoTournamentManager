@@ -5,12 +5,14 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentScoreConverterRequest;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TournamentConverter extends ElementConverter<Tournament, TournamentDTO, TournamentConverterRequest> {
     private final TournamentScoreConverter tournamentScoreConverter;
 
+    @Autowired
     public TournamentConverter(TournamentScoreConverter tournamentScoreConverter) {
         this.tournamentScoreConverter = tournamentScoreConverter;
     }
