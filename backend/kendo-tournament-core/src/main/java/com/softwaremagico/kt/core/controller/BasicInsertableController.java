@@ -36,17 +36,22 @@ public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends 
     }
 
     @Transactional
-    protected DTO update(DTO dto) {
+    public DTO update(DTO dto) {
         validate(dto);
         return converter.convert(createConverterRequest(super.provider.save(converter.
                 reverse(dto))));
     }
 
     @Transactional
-    protected DTO create(DTO dto) {
+    public DTO create(DTO dto) {
         validate(dto);
         return converter.convert(createConverterRequest(super.provider.save(converter.
                 reverse(dto))));
+    }
+
+
+    public void delete(DTO entity) {
+        provider.delete(converter.reverse(entity));
     }
 
     protected abstract CONVERTER_REQUEST createConverterRequest(ENTITY entity);

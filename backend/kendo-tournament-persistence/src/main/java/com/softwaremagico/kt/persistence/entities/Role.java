@@ -39,7 +39,7 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role extends Element {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "tournament")
     private Tournament tournament;
