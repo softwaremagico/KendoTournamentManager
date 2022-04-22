@@ -8,80 +8,76 @@ package com.softwaremagico.kt.rest.services;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.ClubProvider;
-import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/clubs")
 public class ClubServices {
-    private final ClubProvider clubProvider;
-    private final ModelMapper modelMapper;
+    private final ClubController clubController;
 
-    public ClubServices(ClubProvider clubProvider, ModelMapper modelMapper) {
-        this.clubProvider = clubProvider;
-        this.modelMapper = modelMapper;
+    public ClubServices(ClubController clubController) {
+        this.clubController = clubController;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all clubs.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Club> getAll(HttpServletRequest request) {
-        return clubProvider.getAll();
+    public Collection<ClubDTO> getAll(HttpServletRequest request) {
+        return clubController.get();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club get(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
-                    HttpServletRequest request) {
-        return clubProvider.get(id);
+    public ClubDTO get(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
+                       HttpServletRequest request) {
+        return clubController.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a club with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club add(@Parameter(description = "Name of the new club", required = true) @RequestParam(name = "name") String name,
-                    @Parameter(description = "Country where the club is located", required = true) @RequestParam(name = "country") String country,
-                    @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
-                    HttpServletRequest request) {
-        return clubProvider.add(name, country, city);
+    public ClubDTO add(@Parameter(description = "Name of the new club", required = true) @RequestParam(name = "name") String name,
+                       @Parameter(description = "Country where the club is located", required = true) @RequestParam(name = "country") String country,
+                       @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
+                       HttpServletRequest request) {
+        return clubController.create(name, country, city);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a club with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club add(@RequestBody ClubDTO club, HttpServletRequest request) {
-        return clubProvider.add(modelMapper.map(club, Club.class));
+    public ClubDTO add(@RequestBody ClubDTO club, HttpServletRequest request) {
+        return clubController.create(club);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -90,7 +86,7 @@ public class ClubServices {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
-        clubProvider.delete(id);
+        clubController.deleteById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -98,13 +94,13 @@ public class ClubServices {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ClubDTO club, HttpServletRequest request) {
-        clubProvider.delete(modelMapper.map(club, Club.class));
+        clubController.delete(club);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Club update(@RequestBody ClubDTO club, HttpServletRequest request) {
-        return clubProvider.update(modelMapper.map(club, Club.class));
+    public ClubDTO update(@RequestBody ClubDTO club, HttpServletRequest request) {
+        return clubController.update(club);
     }
 }

@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.tests;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -200,14 +200,14 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         while (!fightProvider.areOver(tournament)) {
             Fight currentFight = fightProvider.getCurrentFight(tournament);
             // First duel
-            if (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team01"))
-                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team02"))) {
+            if (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team01").get())
+                    && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team02").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             } else if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team03"))
+                    .equals(teamProvider.get(tournament, "Team03").get())
                     && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team04"))) {
+                    .equals(teamProvider.get(tournament, "Team04").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
@@ -219,16 +219,16 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         // Team1 is first one because the name.
         List<Team> drawTeams = ranking.getFirstTeamsWithDrawScore(1);
         Assert.assertEquals(drawTeams.size(), 2);
-        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01")));
-        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03")));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01"), ranking.getTeam(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03"), ranking.getTeam(1));
+        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01").get()));
+        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03").get()));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), ranking.getTeam(0));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(1));
 
         // Finally wins Team3 at an untie duel
         Group group = simpleTournamentHandler.getGroups(tournament).get(0);
         group.createUntieDuel(
-                teamProvider.get(tournament, "Team01").getMembers().get(0),
-                teamProvider.get(tournament, "Team03").getMembers().get(0));
+                teamProvider.get(tournament, "Team01").get().getMembers().get(0),
+                teamProvider.get(tournament, "Team03").get().getMembers().get(0));
         group.getUnties().get(0).addCompetitor2Score(Score.MEN);
         groupProvider.save(group);
 
@@ -237,7 +237,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         simpleTournamentHandler.getGroups(tournament).get(0).getUnties().get(0).addCompetitor2Score(Score.MEN);
 
         ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03"), ranking.getTeam(0));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(0));
 
         resetGroup(groupProvider.getGroups(tournament).get(0));
     }
@@ -253,19 +253,19 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             Fight currentFight = fightProvider.getCurrentFight(tournament);
             // First duel
             if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team01"))
+                    .equals(teamProvider.get(tournament, "Team01").get())
                     && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team02"))) {
+                    .equals(teamProvider.get(tournament, "Team02").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             } else if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team03"))
+                    .equals(teamProvider.get(tournament, "Team03").get())
                     && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team04"))) {
+                    .equals(teamProvider.get(tournament, "Team04").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             } else if (currentFight.getTeam1()
-                    .equals(teamProvider.get(tournament, "Team05"))
+                    .equals(teamProvider.get(tournament, "Team05").get())
                     && currentFight.getTeam2()
-                    .equals(teamProvider.get(tournament, "Team06"))) {
+                    .equals(teamProvider.get(tournament, "Team06").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
             currentFight.setOver(true);
@@ -276,38 +276,38 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         // Team1 is first one because the name.
         List<Team> drawTeams = ranking.getFirstTeamsWithDrawScore(1);
         Assert.assertEquals(drawTeams.size(), 3);
-        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01")));
-        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03")));
-        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team05")));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01"), ranking.getTeam(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03"), ranking.getTeam(1));
-        Assert.assertEquals(teamProvider.get(tournament, "Team05"), ranking.getTeam(2));
+        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01").get()));
+        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03").get()));
+        Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team05").get()));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), ranking.getTeam(0));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(1));
+        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), ranking.getTeam(2));
 
         // Finally wins Team3, Team5, Team1
         Group group = simpleTournamentHandler.getGroups(tournament).get(0);
         group.createUntieDuel(
-                teamProvider.get(tournament, "Team05").getMembers().get(0),
-                teamProvider.get(tournament, "Team03").getMembers().get(0));
+                teamProvider.get(tournament, "Team05").get().getMembers().get(0),
+                teamProvider.get(tournament, "Team03").get().getMembers().get(0));
 
         group.getUnties().get(0).addCompetitor2Score(Score.MEN);
 
         group.createUntieDuel(
-                teamProvider.get(tournament, "Team05").getMembers().get(0),
-                teamProvider.get(tournament, "Team01").getMembers().get(0));
+                teamProvider.get(tournament, "Team05").get().getMembers().get(0),
+                teamProvider.get(tournament, "Team01").get().getMembers().get(0));
 
         group.getUnties().get(1).addCompetitor1Score(Score.MEN);
 
         group.createUntieDuel(
-                teamProvider.get(tournament, "Team03").getMembers().get(0),
-                teamProvider.get(tournament, "Team01").getMembers().get(0));
+                teamProvider.get(tournament, "Team03").get().getMembers().get(0),
+                teamProvider.get(tournament, "Team01").get().getMembers().get(0));
 
         group.getUnties().get(2).addCompetitor1Score(Score.MEN);
 
         groupProvider.save(group);
 
         ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03"), ranking.getTeam(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team05"), ranking.getTeam(1));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01"), ranking.getTeam(2));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(0));
+        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), ranking.getTeam(1));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), ranking.getTeam(2));
     }
 }
