@@ -24,81 +24,71 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.FightProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.rest.parsers.FightParser;
+import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
 @RequestMapping("/fights")
 public class FightServices {
-    private final TournamentProvider tournamentProvider;
-    private final FightProvider fightProvider;
-    private final FightParser fightParser;
-    private final ModelMapper modelMapper;
+    private final FightController fightController;
 
-    public FightServices(TournamentProvider tournamentProvider, FightProvider fightProvider, FightParser fightParser, ModelMapper modelMapper) {
-        this.tournamentProvider = tournamentProvider;
-        this.fightProvider = fightProvider;
-        this.fightParser = fightParser;
-        this.modelMapper = modelMapper;
+    public FightServices(FightController fightProvider) {
+        this.fightController = fightProvider;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Fight> getAll(HttpServletRequest request) {
-        return fightProvider.getFights();
+    public Collection<FightDTO> getAll(HttpServletRequest request) {
+        return fightController.get();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights on tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Fight> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                              HttpServletRequest request) {
-        return fightProvider.getFights(tournamentProvider.get(tournamentId));
+    public List<FightDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                                 HttpServletRequest request) {
+        return fightController.getByTournamentId(tournamentId);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Fight> getAll(@RequestBody TournamentDTO tournamentDto,
-                              HttpServletRequest request) {
-        return fightProvider.getFights(modelMapper.map(tournamentDto, Tournament.class));
+    public List<FightDTO> getAll(@RequestBody TournamentDTO tournamentDto,
+                                 HttpServletRequest request) {
+        return fightController.get(tournamentDto);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Fight get(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
-                     HttpServletRequest request) {
-        return fightProvider.getFight(id);
+    public FightDTO get(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
+                        HttpServletRequest request) {
+        return fightController.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Fight add(@RequestBody FightDTO fightDto, HttpServletRequest request) {
+    public FightDTO add(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        return fightProvider.save(fightParser.parse(fightDto));
+        return fightController.create(fightDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -107,14 +97,14 @@ public class FightServices {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
-        fightProvider.delete(id);
+        fightController.deleteById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody FightDTO fightDto, HttpServletRequest request) {
-        fightProvider.delete(modelMapper.map(fightDto, Fight.class));
+        fightController.delete(fightDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -122,17 +112,17 @@ public class FightServices {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
-        fightProvider.delete(modelMapper.map(tournamentDto, Tournament.class));
+        fightController.delete(tournamentDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Fight update(@RequestBody FightDTO fightDto, HttpServletRequest request) {
+    public FightDTO update(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        return fightProvider.save(fightParser.parse(fightDto));
+        return fightController.update(fightDto);
     }
 
 
