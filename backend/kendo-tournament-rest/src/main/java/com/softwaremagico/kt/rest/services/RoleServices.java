@@ -116,7 +116,7 @@ public class RoleServices {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing role", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
-        roleProvider.delete(id);
+        roleProvider.deleteById(id);
     }
 
 
