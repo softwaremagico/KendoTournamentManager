@@ -9,7 +9,7 @@ import com.softwaremagico.kt.logger.ExceptionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
@@ -31,7 +31,7 @@ public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends 
     }
 
     @Override
-    public Collection<DTO> get() {
+    public List<DTO> get() {
         return provider.getAll().parallelStream().map(this::createConverterRequest).map(converter::convert).collect(Collectors.toList());
     }
 
