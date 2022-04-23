@@ -24,103 +24,69 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.TeamProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/teams")
 public class TeamServices {
-    private final ParticipantProvider participantProvider;
-    private final TeamProvider teamProvider;
-    private final TournamentProvider tournamentProvider;
-    private final ModelMapper modelMapper;
+    private final TeamController teamController;
 
-    public TeamServices(ParticipantProvider participantProvider, TeamProvider teamProvider, TournamentProvider tournamentProvider, ModelMapper modelMapper) {
-        this.participantProvider = participantProvider;
-        this.teamProvider = teamProvider;
-        this.tournamentProvider = tournamentProvider;
-        this.modelMapper = modelMapper;
+    public TeamServices(TeamController teamController) {
+        this.teamController = teamController;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Team> getAll(HttpServletRequest request) {
-        return teamProvider.getAll();
+    public List<TeamDTO> getAll(HttpServletRequest request) {
+        return teamController.get();
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Team> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                             HttpServletRequest request) {
-        return teamProvider.getAll(tournamentProvider.get(tournamentId));
+    public List<TeamDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                                HttpServletRequest request) {
+        return teamController.getAllByTournament(tournamentId);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Team> getAll(@RequestBody TournamentDTO tournamentDto,
-                             HttpServletRequest request) {
-        return teamProvider.getAll(modelMapper.map(tournamentDto, Tournament.class));
+    public List<TeamDTO> getAll(@RequestBody TournamentDTO tournamentDto,
+                                HttpServletRequest request) {
+        return teamController.getAllByTournament(tournamentDto);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team get(@Parameter(description = "Id of an existing team", required = true) @PathVariable("id") Integer id,
-                    HttpServletRequest request) {
-        return teamProvider.get(id);
+    public TeamDTO get(@Parameter(description = "Id of an existing team", required = true) @PathVariable("id") Integer id,
+                       HttpServletRequest request) {
+        return teamController.get(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team add(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
+    public TeamDTO add(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
         if (teamDto == null || teamDto.getTournament() == null) {
             throw new BadRequestException(getClass(), "Team data is missing");
         }
-        final Tournament tournament = tournamentProvider.get(teamDto.getTournament().getId());
-        if (tournament == null) {
-            throw new BadRequestException(getClass(), "Selected tournament is wrong");
-        }
-        final Team team = new Team();
-        if (teamDto.getName() != null) {
-            team.setName(teamDto.getName());
-        } else {
-            team.setName(teamProvider.getNextDefaultName(tournament));
-        }
-        if (teamDto.getMembers() != null) {
-            team.setMembers(participantProvider.get(teamDto.getMembers().stream().map(ParticipantDTO::getId)
-                    .collect(Collectors.toList())));
-        }
-        team.setTournament(tournament);
-        if (teamDto.getGroup() != null) {
-            team.setGroup(teamDto.getGroup());
-        } else {
-            team.setGroup(1);
-        }
-        return teamProvider.save(team);
+        return teamController.create(teamDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -129,24 +95,22 @@ public class TeamServices {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing team", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
-        teamProvider.delete(id);
+        teamController.deleteById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
-        teamProvider.delete(modelMapper.map(teamDto, Team.class));
+        teamController.delete(teamDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Deletes a member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
-        final Participant member = modelMapper.map(participantInTournament.getParticipant(), Participant.class);
-        final Tournament tournament = modelMapper.map(participantInTournament.getTournament(), Tournament.class);
-        return teamProvider.delete(tournament, member);
+    public TeamDTO delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
+        return teamController.delete(participantInTournament.getTournament(), participantInTournament.getParticipant());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -155,9 +119,7 @@ public class TeamServices {
     @PostMapping(value = "/delete/members/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ParticipantsInTournamentDTO participantsInTournaments, HttpServletRequest request) {
         for (final ParticipantDTO participantInTournament : participantsInTournaments.getParticipant()) {
-            final Participant member = modelMapper.map(participantInTournament, Participant.class);
-            final Tournament tournament = modelMapper.map(participantsInTournaments.getTournament(), Tournament.class);
-            teamProvider.delete(tournament, member);
+            teamController.delete(participantsInTournaments.getTournament(), participantInTournament);
         }
     }
 
@@ -166,32 +128,13 @@ public class TeamServices {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
-        teamProvider.delete(modelMapper.map(tournamentDto, Tournament.class));
+        teamController.delete(tournamentDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Team update(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
-        final Team team = modelMapper.map(teamDto, Team.class);
-        Tournament tournament = null;
-        if (teamDto.getTournament() != null) {
-            tournament = tournamentProvider.get(teamDto.getTournament().getId());
-            team.setTournament(tournament);
-        }
-        if (teamDto.getGroup() != null) {
-            team.setGroup(teamDto.getGroup());
-        }
-        //Remove old members
-        final List<Participant> members = new ArrayList<>();
-        if (teamDto.getMembers() != null) {
-            members.addAll(participantProvider.getOriginalOrder(teamDto.getMembers().stream().map(ParticipantDTO::getId)
-                    .collect(Collectors.toList())));
-        }
-        final Team storedTeam = teamProvider.update(team, members);
-        if (tournament != null) {
-            storedTeam.setTournament(tournament);
-        }
-        return storedTeam;
+    public TeamDTO update(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
+        return teamController.update(teamDto);
     }
 }

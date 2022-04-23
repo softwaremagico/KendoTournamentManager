@@ -44,7 +44,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public List<FightDTO> get(TournamentDTO tournamentDTO) {
         return converter.convertAll(provider.getFights(tournamentConverter.reverse(tournamentDTO)).stream()
-                .map(FightConverterRequest::new).collect(Collectors.toList()));
+                .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
     public void delete(TournamentDTO tournamentDTO) {
