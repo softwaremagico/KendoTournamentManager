@@ -86,6 +86,10 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
         return repository.countByTournament(tournament);
     }
 
+    public void delete(Tournament tournament) {
+        repository.deleteByTournament(tournament);
+    }
+
     public void delete(Integer id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
