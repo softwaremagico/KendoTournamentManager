@@ -7,18 +7,14 @@ import {MatSort} from "@angular/material/sort";
 import {TournamentService} from "../../services/tournament.service";
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
-import {ClubService} from "../../services/club.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
 import {TournamentRolesComponent} from "./tournament-roles/tournament-roles.component";
 import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.component";
 
-export enum Action {
-  Add,
-  Update,
-  Delete,
-  Cancel
-}
+import {Router} from '@angular/router';
+import {UserSessionService} from "../../services/user-session.service";
+import {Action} from "../../action";
 
 @Component({
   selector: 'app-tournament-list',
@@ -33,7 +29,8 @@ export class TournamentListComponent implements OnInit {
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private tournamentService: TournamentService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
+              public dialog: MatDialog, private messageService: MessageService) {
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
@@ -135,6 +132,13 @@ export class TournamentListComponent implements OnInit {
           tournament: this.basicTableData.selectedElement
         }
       });
+    }
+  }
+
+  openFights(): void {
+    if (this.basicTableData.selectedElement) {
+      this.userSessionService.setTournament(this.basicTableData.selectedElement.id + "");
+      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }
 
