@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.converters;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Rest)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,26 +24,16 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
+import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 
-public class ParticipantInTournamentDto {
+import java.util.Collection;
 
-    private ParticipantDto participant;
+public interface IElementConverter<F, T, R extends ConverterRequest<F>> {
+    T convert(R from);
 
-    private TournamentDto tournament;
+    Collection<T> convertAll(Collection<R> from);
 
-    public ParticipantDto getParticipant() {
-        return participant;
-    }
+    F reverse(T to);
 
-    public void setParticipant(ParticipantDto participant) {
-        this.participant = participant;
-    }
-
-    public TournamentDto getTournament() {
-        return tournament;
-    }
-
-    public void setTournament(TournamentDto tournament) {
-        this.tournament = tournament;
-    }
+    Collection<F> reverseAll(Collection<T> to);
 }

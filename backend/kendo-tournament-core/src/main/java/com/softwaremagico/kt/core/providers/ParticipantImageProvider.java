@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.providers;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Rest)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,37 +24,24 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.ScoreType;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.ParticipantImage;
+import com.softwaremagico.kt.persistence.repositories.ParticipantImageRepository;
+import org.hibernate.type.ImageType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class TournamentScoreDto extends ElementDto {
+import java.util.Optional;
 
-    private ScoreType scoreType;
+@Component
+public class ParticipantImageProvider extends CrudProvider<ParticipantImage, Integer, ParticipantImageRepository> {
 
-    private int pointsByVictory = 1;
-
-    private int pointsByDraw = 0;
-
-    public ScoreType getScoreType() {
-        return scoreType;
+    @Autowired
+    public ParticipantImageProvider(ParticipantImageRepository repository) {
+        super(repository);
     }
 
-    public void setScoreType(ScoreType scoreType) {
-        this.scoreType = scoreType;
-    }
-
-    public int getPointsByVictory() {
-        return pointsByVictory;
-    }
-
-    public void setPointsByVictory(int pointsByVictory) {
-        this.pointsByVictory = pointsByVictory;
-    }
-
-    public int getPointsByDraw() {
-        return pointsByDraw;
-    }
-
-    public void setPointsByDraw(int pointsByDraw) {
-        this.pointsByDraw = pointsByDraw;
+    public Optional<ParticipantImage> get(ImageType imageType, Participant participant) {
+        return repository.findByParticipant(participant);
     }
 }

@@ -138,7 +138,7 @@ export class TournamentListComponent implements OnInit {
   openFights(): void {
     if (this.basicTableData.selectedElement) {
       this.userSessionService.setTournament(this.basicTableData.selectedElement.id + "");
-      this.router.navigateByUrl('/tournaments/fights', {state: {tournamentId: this.basicTableData.selectedElement.id}});
+      this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }
 
