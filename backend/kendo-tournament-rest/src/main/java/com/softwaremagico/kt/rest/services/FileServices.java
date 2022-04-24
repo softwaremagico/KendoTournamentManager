@@ -25,7 +25,7 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.ParticipantImageController;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
+import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class FileServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantImage getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {
+    public ParticipantImageDTO getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {
         // return fileProvider.get(type, participantProvider.get(participantId));
         return null;
     }
