@@ -33,6 +33,39 @@ $md-kendo: (
   )
 );
 
+$md-kendo-secondary: (
+  50: #eff4f5,
+  100: #d6e4e7,
+  200: #bbd2d7,
+  300: #9fc0c7,
+  400: #8bb3bb,
+  500: #76a5af,
+  600: #6e9da8,
+  700: #63939f,
+  800: #598a96,
+  900: #467986,
+  A100: #e0f9ff,
+  A200: #adeeff,
+  A400: 37ae3ff,
+  A700: #61ddff,
+  contrast: (
+    50 : #000000,
+    100 : #000000,
+    200 : #000000,
+    300 : #ffffff,
+    400 : #ffffff,
+    500 : #ffffff,
+    600 : #ffffff,
+    700 : #ffffff,
+    800 : #ffffff,
+    900 : #ffffff,
+    A100 : #000000,
+    A200 : #ffffff,
+    A400 : #ffffff,
+    A700 : #ffffff,
+  )
+);
+
 
 $md-accent: (
   50 : #ffe5e5,

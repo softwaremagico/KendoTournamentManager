@@ -1,17 +1,11 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Participant} from "../../../models/participant";
 import {Club} from "../../../models/club";
 import {FormControl} from "@angular/forms";
 import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
-
-export enum Action {
-  Add,
-  Update,
-  Delete,
-  Cancel
-}
+import {Action} from "../../../action";
 
 @Component({
   selector: 'app-participant-dialog-box',

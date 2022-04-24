@@ -65,7 +65,7 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
     @Test
     public void checkPublicRestService() throws Exception {
         //Info services are opened in rest-server library
-        mockMvc.perform(get("/info/healthcheck"))
+        mockMvc.perform(get("/info/health-check"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }

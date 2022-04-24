@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.RoleNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -37,67 +36,36 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class RoleProvider {
-    private final RoleRepository roleRepository;
+public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
 
     @Autowired
-    public RoleProvider(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    public Role save(Role role) {
-        return roleRepository.save(role);
-    }
-
-    public Role update(Role role) {
-        if (role.getId() == null) {
-            throw new RoleNotFoundException(getClass(), "Role with null id does not exists.");
-        }
-        return roleRepository.save(role);
-    }
-
-    public List<Role> getAll() {
-        return roleRepository.findAll();
-    }
-
-    public Role get(int id) {
-        return roleRepository.findById(id)
-                .orElseThrow(() -> new RoleNotFoundException(getClass(), "Role with id '" + id + "' not found"));
-    }
-
-    public long count() {
-        return roleRepository.count();
+    public RoleProvider(RoleRepository repository) {
+        super(repository);
     }
 
     public List<Role> getAll(Tournament tournament) {
-        return roleRepository.findByTournament(tournament);
+        final List<Role> roles = repository.findByTournament(tournament);
+        roles.forEach(role -> role.setTournament(tournament));
+        return roles;
     }
 
     public List<Role> getAll(Tournament tournament, RoleType roleType) {
-        return roleRepository.findByTournamentAndRoleType(tournament, roleType);
+        final List<Role> roles = repository.findByTournamentAndRoleType(tournament, roleType);
+        roles.forEach(role -> role.setTournament(tournament));
+        return roles;
     }
 
     public List<Role> getAll(Tournament tournament, Collection<RoleType> roleTypes) {
-        return roleRepository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+        final List<Role> roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+        roles.forEach(role -> role.setTournament(tournament));
+        return roles;
     }
 
     public long count(Tournament tournament) {
-        return roleRepository.countByTournament(tournament);
-    }
-
-    public void delete(Role role) {
-        roleRepository.delete(role);
+        return repository.countByTournament(tournament);
     }
 
     public void delete(Participant participant, Tournament tournament) {
-        roleRepository.deleteByParticipantAndTournament(participant, tournament);
-    }
-
-    public void delete(Integer id) {
-        if (roleRepository.existsById(id)) {
-            roleRepository.deleteById(id);
-        } else {
-            throw new RoleNotFoundException(getClass(), "Role with id '" + id + "' not found");
-        }
+        repository.deleteByParticipantAndTournament(participant, tournament);
     }
 }
