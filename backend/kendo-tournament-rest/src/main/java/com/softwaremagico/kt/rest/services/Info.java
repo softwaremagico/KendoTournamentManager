@@ -41,7 +41,7 @@ import java.io.IOException;
 public class Info {
 
     @Operation(summary = "Basic method to check if the server is online.")
-    @GetMapping(value = "/healthcheck")
+    @GetMapping(value = "/health-check")
     @ResponseStatus(HttpStatus.OK)
     public void healthCheck(HttpServletRequest httpRequest) {
 

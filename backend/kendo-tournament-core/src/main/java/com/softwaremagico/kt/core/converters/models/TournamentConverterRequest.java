@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.converters.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Rest)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,25 +24,10 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-import java.time.LocalDateTime;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 
-public class ElementDto {
-    private Integer id;
-    private LocalDateTime createdAt;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+public class TournamentConverterRequest extends ConverterRequest<Tournament> {
+    public TournamentConverterRequest(Tournament entity) {
+        super(entity);
     }
 }
