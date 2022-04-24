@@ -50,7 +50,7 @@ public class SwaggerConfiguration {
     private static final String SWAGGER_TITLE = "Kendo Tournament Manager";
     private static final String SWAGGER_DESCRIPTION = "Kendo Tournament Manager";
     private static final String SWAGGER_README = SWAGGER_TITLE + " Documentation";
-    private static final String SWAGGER_URL = "https://softwaremagico.github.io/KendoTournament/";
+    private static final String SWAGGER_URL = "https://softwaremagico.github.io/KendoTournamentManager/";
     private static final String SWAGGER_DEFAULT_VERSION = "Dev";
     private static final String[] PACKAGES_TO_SCAN = new String[]{"com.softwaremagico.kt"};
 
