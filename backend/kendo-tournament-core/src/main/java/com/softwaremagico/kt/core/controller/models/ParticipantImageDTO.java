@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.converters.models;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,10 +24,7 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.TournamentScore;
-
-public class TournamentScoreConverterRequest extends ConverterRequest<TournamentScore> {
-    public TournamentScoreConverterRequest(TournamentScore entity) {
-        super(entity);
-    }
+public class ParticipantImageDTO {
+    private Integer participantId;
+    private byte[] data;
 }
