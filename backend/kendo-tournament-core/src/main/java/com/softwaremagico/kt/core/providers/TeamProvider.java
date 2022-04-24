@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.NameAlreadyInUseException;
 import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -35,71 +34,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class TeamProvider {
-    private final TeamRepository teamRepository;
+public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
     private final RoleProvider roleProvider;
 
     @Autowired
-    public TeamProvider(TeamRepository teamRepository, RoleProvider roleProvider) {
-        this.teamRepository = teamRepository;
+    public TeamProvider(TeamRepository repository, RoleProvider roleProvider) {
+        super(repository);
         this.roleProvider = roleProvider;
-    }
-
-    public Team save(Team team) {
-        if (team.getId() == null && get(team.getTournament(), team.getName()) != null) {
-            throw new NameAlreadyInUseException(TeamProvider.class, "Already exists a team with name '" + team.getName() + "'.");
-        }
-        return teamRepository.save(team);
-    }
-
-    public List<Team> save(Collection<Team> teams) {
-        return teamRepository.saveAll(teams);
-    }
-
-    public Team update(Team team) {
-        if (team.getId() == null) {
-            throw new TeamNotFoundException(getClass(), "Team with null id does not exists.");
-        }
-        return teamRepository.save(team);
     }
 
     public Team update(Team team, List<Participant> members) {
         if (team != null) {
             team.setMembers(members);
-            return teamRepository.save(team);
+            return repository.save(team);
         }
         return null;
     }
 
-    public Team get(Tournament tournament, String name) {
-        final Team team = teamRepository.findByTournamentAndName(tournament, name);
-        if (team == null) {
-            return null;
-        }
-        team.setTournament(tournament);
+    public Optional<Team> get(Tournament tournament, String name) {
+        final Optional<Team> team = repository.findByTournamentAndName(tournament, name);
+        team.ifPresent(value -> value.setTournament(tournament));
         return team;
     }
 
-    public Team get(int id) {
-        return teamRepository.findById(id)
-                .orElseThrow(() -> new TeamNotFoundException(getClass(), "Team with id '" + id + "' not found"));
-    }
-
-
-    public List<Team> getAll() {
-        return teamRepository.findAll();
-    }
-
-    public long count() {
-        return teamRepository.count();
-    }
-
     public List<Team> getAll(Tournament tournament) {
-        final List<Team> teams = teamRepository.findByTournament(tournament);
+        final List<Team> teams = repository.findByTournament(tournament);
         if (teams.isEmpty() && tournament.getType() == TournamentType.LEAGUE) {
             final List<Team> newTeams = new ArrayList<>();
             final long competitors = roleProvider.count(tournament);
@@ -110,7 +73,7 @@ public class TeamProvider {
                 team.setGroup(0);
                 newTeams.add(team);
             }
-            teams.addAll(save(newTeams));
+            teams.addAll(saveAll(newTeams));
         } else {
             for (final Team team : teams) {
                 team.setTournament(tournament);
@@ -120,40 +83,36 @@ public class TeamProvider {
     }
 
     public long count(Tournament tournament) {
-        return teamRepository.countByTournament(tournament);
-    }
-
-    public void delete(Team team) {
-        teamRepository.delete(team);
+        return repository.countByTournament(tournament);
     }
 
     public void delete(Tournament tournament) {
-        teamRepository.deleteByTournament(tournament);
+        repository.deleteByTournament(tournament);
     }
 
     public void delete(Integer id) {
-        if (teamRepository.existsById(id)) {
-            teamRepository.deleteById(id);
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
         } else {
             throw new TeamNotFoundException(getClass(), "Team with id '" + id + "' not found");
         }
     }
 
-    public Team get(Tournament tournament, Participant participant) {
-        return teamRepository.findByTournamentAndMembers(tournament, participant);
+    public Optional<Team> get(Tournament tournament, Participant participant) {
+        return repository.findByTournamentAndMembers(tournament, participant);
     }
 
-    public Team delete(Tournament tournament, Participant member) {
-        Team team = get(tournament, member);
-        if (team != null) {
+    public Optional<Team> delete(Tournament tournament, Participant member) {
+        Optional<Team> optionalTeam = get(tournament, member);
+        if (optionalTeam.isPresent()) {
             //Setting tournament for updating.
-            team.setTournament(tournament);
-            team.getMembers().remove(member);
-            team = update(team);
+            optionalTeam.get().setTournament(tournament);
+            optionalTeam.get().getMembers().remove(member);
+            optionalTeam = Optional.of(update(optionalTeam.get()));
             //setting tournament for returning element.
-            team.setTournament(tournament);
+            optionalTeam.get().setTournament(tournament);
         }
-        return team;
+        return optionalTeam;
     }
 
     public String getNextDefaultName(Tournament tournament) {
@@ -162,7 +121,7 @@ public class TeamProvider {
         do {
             i++;
             teamName = String.format("Team %d", i);
-        } while (get(tournament, teamName) != null);
+        } while (get(tournament, teamName).isPresent());
         return teamName;
     }
 

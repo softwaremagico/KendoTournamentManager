@@ -32,6 +32,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -39,9 +40,9 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
 
     List<Team> findByTournament(Tournament tournament);
 
-    Team findByTournamentAndName(Tournament tournament, String name);
+    Optional<Team> findByTournamentAndName(Tournament tournament, String name);
 
-    Team findByTournamentAndMembers(Tournament tournament, Participant member);
+    Optional<Team> findByTournamentAndMembers(Tournament tournament, Participant member);
 
     long countByTournament(Tournament tournament);
 

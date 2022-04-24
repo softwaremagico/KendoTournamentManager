@@ -152,7 +152,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
         }
 
         //Automatically generates the group if needed in getGroup.
-        final List<Fight> fights = fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), true, level));
+        final List<Fight> fights = fightProvider.saveAll(fightManager.createFights(tournament, getGroup(tournament).getTeams(), true, level));
         final Group group = getGroup(tournament);
         group.setFights(fights);
         groupProvider.save(group);
@@ -165,7 +165,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
-        final List<Fight> fights = fightProvider.save(fightManager.createFights(tournament, getGroup(tournament).getTeams(), false, level));
+        final List<Fight> fights = fightProvider.saveAll(fightManager.createFights(tournament, getGroup(tournament).getTeams(), false, level));
         final Group group = getGroup(tournament);
         group.setFights(fights);
         groupProvider.save(group);

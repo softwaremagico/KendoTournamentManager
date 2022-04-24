@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -28,36 +28,36 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FightDto extends ElementDto {
-    private TeamDto team1;
-    private TeamDto team2;
-    private TournamentDto tournament;
+public class FightDTO extends ElementDTO {
+    private TeamDTO team1;
+    private TeamDTO team2;
+    private TournamentDTO tournament;
     private Integer shiaijo;
-    private List<DuelDto> duels = new ArrayList<>();
+    private List<DuelDTO> duels = new ArrayList<>();
     private LocalDateTime finishedAt;
     private Integer level;
 
-    public TeamDto getTeam1() {
+    public TeamDTO getTeam1() {
         return team1;
     }
 
-    public void setTeam1(TeamDto team1) {
+    public void setTeam1(TeamDTO team1) {
         this.team1 = team1;
     }
 
-    public TeamDto getTeam2() {
+    public TeamDTO getTeam2() {
         return team2;
     }
 
-    public void setTeam2(TeamDto team2) {
+    public void setTeam2(TeamDTO team2) {
         this.team2 = team2;
     }
 
-    public TournamentDto getTournament() {
+    public TournamentDTO getTournament() {
         return tournament;
     }
 
-    public void setTournament(TournamentDto tournament) {
+    public void setTournament(TournamentDTO tournament) {
         this.tournament = tournament;
     }
 
@@ -69,11 +69,11 @@ public class FightDto extends ElementDto {
         this.shiaijo = shiaijo;
     }
 
-    public List<DuelDto> getDuels() {
+    public List<DuelDTO> getDuels() {
         return duels;
     }
 
-    public void setDuels(List<DuelDto> duels) {
+    public void setDuels(List<DuelDTO> duels) {
         this.duels = duels;
     }
 

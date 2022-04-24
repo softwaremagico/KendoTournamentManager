@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.rest.parsers;
+package com.softwaremagico.kt.core.converters.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Rest)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,28 +24,10 @@ package com.softwaremagico.kt.rest.parsers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.rest.model.DuelDto;
-import org.springframework.stereotype.Component;
 
-@Component
-public class DuelParser {
-    private final DuelProvider duelProvider;
-
-    public DuelParser(DuelProvider duelProvider) {
-        this.duelProvider = duelProvider;
-    }
-
-    public Duel parse(DuelDto duelDto) {
-        if (duelDto.getId() == null) {
-            return parse(duelDto, new Duel());
-        } else {
-            return parse(duelDto, duelProvider.get(duelDto.getId()));
-        }
-    }
-
-    public Duel parse(DuelDto duelDto, Duel duel) {
-        return null;
+public class DuelConverterRequest extends ConverterRequest<Duel> {
+    public DuelConverterRequest(Duel entity) {
+        super(entity);
     }
 }
