@@ -46,7 +46,15 @@ import {TournamentRolesComponent} from './views/tournament-list/tournament-roles
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TournamentTeamsComponent} from './views/tournament-list/tournament-teams/tournament-teams.component';
 import {IconModule} from "./components/icons";
-import { FightListComponent } from './views/fight-list/fight-list.component';
+import {FightListComponent} from './views/fight-list/fight-list.component';
+import {FightComponent} from './components/fight/fight.component';
+import {DuelComponent} from './components/fight/duel/duel.component';
+import {UserScoreComponent} from './components/fight/duel/user-score/user-score.component';
+import {ScoreComponent} from './components/fight/duel/user-score/score/score.component';
+import {UserNameComponent} from './components/fight/duel/user-score/user-name/user-name.component';
+import {FaultComponent} from './components/fight/duel/user-score/fault/fault.component';
+import { DrawComponent } from './components/fight/duel/draw/draw.component';
+import { FightDialogBoxComponent } from './views/fight-list/fight-dialog-box/fight-dialog-box.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +69,15 @@ import { FightListComponent } from './views/fight-list/fight-list.component';
     UserListComponent,
     TournamentRolesComponent,
     TournamentTeamsComponent,
-    FightListComponent
+    FightListComponent,
+    FightComponent,
+    DuelComponent,
+    UserScoreComponent,
+    ScoreComponent,
+    UserNameComponent,
+    FaultComponent,
+    DrawComponent,
+    FightDialogBoxComponent
   ],
   imports: [
     BrowserModule,

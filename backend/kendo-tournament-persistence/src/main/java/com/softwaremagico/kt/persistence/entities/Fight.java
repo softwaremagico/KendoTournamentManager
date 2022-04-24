@@ -40,15 +40,15 @@ import java.util.stream.Collectors;
 @Table(name = "fights")
 public class Fight extends Element {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team1")
     private Team team1;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team2")
     private Team team2;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
@@ -57,13 +57,13 @@ public class Fight extends Element {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
 
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
 
-    @Column(name = "level")
+    @Column(name = "fight_level")
     private Integer level = 0;
 
     public Fight() {
@@ -252,7 +252,7 @@ public class Fight extends Element {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append("Tournament: ").append(tournament).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
+        text.append("Tournament: ").append(tournament.getId()).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
                 append(team1.getName()).append("' vs '").append(team2.getName()).append("'\n");
         if (isOver()) {
             text.append(" [F]");
