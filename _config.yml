@@ -1,0 +1,15 @@
+theme: jekyll-theme-slate
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+logo: blob/main/frontend/src/assets/img/kote.svg
+title: Kendo Tournament Manager
+description: Tool for managing kendo tournaments based on Java and Angular.
+author:
+  name: Jorge Hortelano
+  email: softwaremagico@gmail.com
+
+image:
+  path: blob/main/frontend/src/assets/img/kote.svg
