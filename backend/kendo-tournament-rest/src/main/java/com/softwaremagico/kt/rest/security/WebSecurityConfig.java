@@ -64,6 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             // ***REMOVED***Swagger
             "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**",
             // Others
+            "/",
             "/info/**",
             "/api/public/**"
     };
