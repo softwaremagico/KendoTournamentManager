@@ -24,10 +24,10 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.TournamentScore;
+import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 
-public class TournamentScoreConverterRequest extends ConverterRequest<TournamentScore> {
-    public TournamentScoreConverterRequest(TournamentScore entity) {
+public class ParticipantImageConverterRequest extends ConverterRequest<ParticipantImage> {
+    public ParticipantImageConverterRequest(ParticipantImage entity) {
         super(entity);
     }
 }

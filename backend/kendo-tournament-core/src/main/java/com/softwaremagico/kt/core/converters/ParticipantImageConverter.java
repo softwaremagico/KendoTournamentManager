@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.providers;
+package com.softwaremagico.kt.core.converters;
 
 /*-
  * #%L
@@ -24,35 +24,37 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
+import com.softwaremagico.kt.core.converters.models.ParticipantImageConverterRequest;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.repositories.ParticipantImageRepository;
-import org.hibernate.type.ImageType;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.Optional;
 
 @Component
-public class FileProvider {
-
-    private final ParticipantImageRepository photoRepository;
+public class ParticipantImageConverter extends ElementConverter<ParticipantImage, ParticipantImageDTO, ParticipantImageConverterRequest> {
+    private final ClubConverter clubConverter;
 
     @Autowired
-    public FileProvider(ParticipantImageRepository photoRepository) {
-        this.photoRepository = photoRepository;
+    public ParticipantImageConverter(ClubConverter clubConverter) {
+        this.clubConverter = clubConverter;
     }
 
-    public void add(MultipartFile file, Participant participant) throws IOException {
+
+    @Override
+    public ParticipantImageDTO convert(ParticipantImageConverterRequest from) {
+        final ParticipantImageDTO participantImageDTO = new ParticipantImageDTO();
+        BeanUtils.copyProperties(from.getEntity(), participantImageDTO);
+        return participantImageDTO;
+    }
+
+    @Override
+    public ParticipantImage reverse(ParticipantImageDTO to) {
+        if (to == null) {
+            return null;
+        }
         final ParticipantImage participantImage = new ParticipantImage();
-        participantImage.setUser(participant);
-        participantImage.setData(file.getBytes());
-        photoRepository.save(participantImage);
-    }
-
-    public Optional<ParticipantImage> get(ImageType imageType, Participant participant) {
-        return photoRepository.findByParticipant(participant);
+        BeanUtils.copyProperties(to, participantImage);
+        return participantImage;
     }
 }

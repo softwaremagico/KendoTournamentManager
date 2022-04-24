@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.converters.models;
+package com.softwaremagico.kt.core.exceptions;
 
 /*-
  * #%L
@@ -24,10 +24,27 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.TournamentScore;
+import com.softwaremagico.kt.logger.ExceptionType;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class TournamentScoreConverterRequest extends ConverterRequest<TournamentScore> {
-    public TournamentScoreConverterRequest(TournamentScore entity) {
-        super(entity);
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ParticipantNotFoundException extends NotFoundException {
+    private static final long serialVersionUID = 3091553835925575861L;
+
+    public ParticipantNotFoundException(Class<?> clazz, String message, ExceptionType type) {
+        super(clazz, message, type);
+    }
+
+    public ParticipantNotFoundException(Class<?> clazz, String message) {
+        super(clazz, message, ExceptionType.WARNING);
+    }
+
+    public ParticipantNotFoundException(Class<?> clazz) {
+        this(clazz, "Participant not found");
+    }
+
+    public ParticipantNotFoundException(Class<?> clazz, Throwable e) {
+        super(clazz, e);
     }
 }
