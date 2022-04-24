@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.rest.model;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,10 +24,9 @@ package com.softwaremagico.kt.rest.model;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 
-public class TournamentDto extends ElementDto {
+public class TournamentDTO extends ElementDTO {
 
     private String name;
 
@@ -37,7 +36,7 @@ public class TournamentDto extends ElementDto {
 
     private TournamentType type;
 
-    private TournamentScore tournamentScore;
+    private TournamentScoreDTO tournamentScoreDTO;
 
     public String getName() {
         return name;
@@ -71,12 +70,12 @@ public class TournamentDto extends ElementDto {
         this.type = type;
     }
 
-    public TournamentScore getTournamentScore() {
-        return tournamentScore;
+    public TournamentScoreDTO getTournamentScoreDTO() {
+        return tournamentScoreDTO;
     }
 
-    public void setTournamentScore(TournamentScore tournamentScore) {
-        this.tournamentScore = tournamentScore;
+    public void setTournamentScoreDTO(TournamentScoreDTO tournamentScoreDTO) {
+        this.tournamentScoreDTO = tournamentScoreDTO;
     }
 
     @Override
