@@ -1,8 +1,8 @@
-<div class="user-score">
+<div class="user-score" [class.left]="left" [class.right]="!left" fxFlex="grow">
   <score *ngIf="!left" [index]="0" [duel]="duel" [left]="left"></score>
   <score *ngIf="!left" [index]="1" [duel]="duel" [left]="left"></score>
   <fault *ngIf="!left" [duel]="duel" [left]="left"></fault>
-  <user-name [participant]="left?duel.competitor1:duel.competitor2"></user-name>
+  <user-name [participant]="left?duel.competitor1:duel.competitor2" [left]="left"></user-name>
   <fault *ngIf="left" [duel]="duel" [left]="left"></fault>
   <score *ngIf="left" [index]="1" [duel]="duel" [left]="left"></score>
   <score *ngIf="left" [index]="0" [duel]="duel" [left]="left"></score>
