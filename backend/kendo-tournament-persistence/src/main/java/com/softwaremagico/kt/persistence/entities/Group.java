@@ -162,5 +162,9 @@ public class Group extends Element {
     public List<Duel> getUnties() {
         return unties;
     }
+
+    public void setUnties(List<Duel> unties) {
+        this.unties = unties;
+    }
 }
 

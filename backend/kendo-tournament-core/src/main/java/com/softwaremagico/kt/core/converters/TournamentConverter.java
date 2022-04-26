@@ -48,10 +48,10 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
         final TournamentDTO tournamentDTO = new TournamentDTO();
         BeanUtils.copyProperties(from.getEntity(), tournamentDTO);
         try {
-            tournamentDTO.setTournamentScoreDTO(tournamentScoreConverter.convert(
+            tournamentDTO.setTournamentScore(tournamentScoreConverter.convert(
                     new TournamentScoreConverterRequest(from.getEntity().getTournamentScore())));
         } catch (UnexpectedValueException e) {
-            tournamentDTO.setTournamentScoreDTO(null);
+            tournamentDTO.setTournamentScore(null);
         }
         return tournamentDTO;
     }
@@ -62,7 +62,7 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
             return null;
         }
         final Tournament tournament = new Tournament();
-        tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScoreDTO()));
+        tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScore()));
         BeanUtils.copyProperties(to, tournament);
         return tournament;
     }

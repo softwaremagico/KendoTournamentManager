@@ -34,6 +34,17 @@ public class RoleDTO extends ElementDTO {
 
     private RoleType roleType;
 
+    public RoleDTO() {
+        super();
+    }
+
+    public RoleDTO(TournamentDTO tournament, ParticipantDTO participant, RoleType roleType) {
+        this();
+        setTournament(tournament);
+        setParticipant(participant);
+        setRoleType(roleType);
+    }
+
     public TournamentDTO getTournament() {
         return tournament;
     }

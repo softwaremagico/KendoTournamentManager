@@ -68,7 +68,6 @@ public class Team extends Element implements Comparable<Team> {
         setTournament(tournament);
     }
 
-
     @Override
     public String toString() {
         return this.getName();
