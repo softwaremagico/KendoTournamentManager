@@ -48,7 +48,7 @@ public class Fight extends Element {
     @JoinColumn(name = "team2")
     private Team team2;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament")
     private Tournament tournament;
 
