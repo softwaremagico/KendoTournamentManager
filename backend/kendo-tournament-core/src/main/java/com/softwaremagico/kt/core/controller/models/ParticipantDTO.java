@@ -36,6 +36,12 @@ public class ParticipantDTO extends ElementDTO {
 
     private ClubDTO club;
 
+    public ParticipantDTO(String idCard, String name, String lastname) {
+        setName(name);
+        setLastname(lastname);
+        setIdCard(idCard);
+    }
+
     public String getIdCard() {
         return idCard;
     }
