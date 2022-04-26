@@ -36,6 +36,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
     private final TeamProvider teamProvider;
 
 
+    @Autowired
     public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider, TeamProvider teamProvider) {
         this.groupProvider = groupProvider;
         this.fightManager = fightManager;

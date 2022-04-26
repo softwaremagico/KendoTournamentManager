@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TeamDTO extends ElementDTO {
@@ -35,6 +36,17 @@ public class TeamDTO extends ElementDTO {
     private List<ParticipantDTO> members;
 
     private Integer group;
+
+    public TeamDTO() {
+        super();
+        members = new ArrayList<>();
+    }
+
+    public TeamDTO(String name, TournamentDTO tournament) {
+        this();
+        setName(name);
+        setTournament(tournament);
+    }
 
     public TournamentDTO getTournament() {
         return tournament;
