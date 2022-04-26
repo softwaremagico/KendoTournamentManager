@@ -36,7 +36,20 @@ public class TournamentDTO extends ElementDTO {
 
     private TournamentType type;
 
-    private TournamentScoreDTO tournamentScoreDTO;
+    private TournamentScoreDTO tournamentScore;
+
+    public TournamentDTO() {
+        super();
+    }
+
+    public TournamentDTO(String name, int shiaijos, int teamSize, TournamentType type) {
+        this();
+        setName(name);
+        setShiaijos(shiaijos);
+        setTeamSize(teamSize);
+        setType(type);
+        setTournamentScore(new TournamentScoreDTO());
+    }
 
     public String getName() {
         return name;
@@ -70,12 +83,12 @@ public class TournamentDTO extends ElementDTO {
         this.type = type;
     }
 
-    public TournamentScoreDTO getTournamentScoreDTO() {
-        return tournamentScoreDTO;
+    public TournamentScoreDTO getTournamentScore() {
+        return tournamentScore;
     }
 
-    public void setTournamentScoreDTO(TournamentScoreDTO tournamentScoreDTO) {
-        this.tournamentScoreDTO = tournamentScoreDTO;
+    public void setTournamentScore(TournamentScoreDTO tournamentScore) {
+        this.tournamentScore = tournamentScore;
     }
 
     @Override
