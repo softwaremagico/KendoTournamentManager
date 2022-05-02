@@ -6,7 +6,7 @@ import {LoggerService} from "./logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
-import {Fight} from "../models/Fight";
+import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
 
 @Injectable({

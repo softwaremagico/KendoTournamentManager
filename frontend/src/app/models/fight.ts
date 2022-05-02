@@ -1,7 +1,7 @@
 import {Element} from "./element";
 import {Tournament} from "./tournament";
 import {Team} from "./team";
-import {Duel} from "./Duel";
+import {Duel} from "./duel";
 
 export class Fight extends Element {
   public team1: Team;

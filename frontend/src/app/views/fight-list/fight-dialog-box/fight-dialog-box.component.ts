@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {Fight} from "../../../models/Fight";
+import {Fight} from "../../../models/fight";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Action} from "../../../action";
 
