@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Duel} from "../../../../../models/Duel";
+import {Duel} from "../../../../../models/duel";
 
 @Component({
   selector: 'fault',

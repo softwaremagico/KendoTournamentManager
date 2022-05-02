@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
-import {Fight} from "../../models/Fight";
+import {Fight} from "../../models/fight";
 import {Tournament} from "../../models/tournament";
 import {ClubDialogBoxComponent} from "../club-list/club-dialog-box/club-dialog-box.component";
 import {Router} from "@angular/router";
