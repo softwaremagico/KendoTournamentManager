@@ -40,3 +40,25 @@ export namespace Score {
   }
 }
 
+export namespace Score {
+  export function tag(score: Score): string {
+    if (score) {
+      switch (score) {
+        case Score.MEN:
+          return "M";
+        case Score.KOTE:
+          return "K";
+        case Score.DO:
+          return "D";
+        case Score.TSUKI:
+          return "T";
+        case Score.HANSOKU:
+          return "H";
+        case Score.IPPON:
+          return "I";
+      }
+    }
+    return "";
+  }
+}
+
