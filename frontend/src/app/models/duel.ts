@@ -1,7 +1,7 @@
 import {Element} from "./element";
 import {Participant} from "./participant";
 import {TournamentType} from "./tournament-type";
-import {Score} from "./Score";
+import {Score} from "./score";
 
 export class Duel extends Element {
   public competitor1?: Participant;
