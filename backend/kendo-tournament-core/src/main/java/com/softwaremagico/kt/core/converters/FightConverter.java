@@ -73,7 +73,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
             return null;
         }
         final Fight fight = new Fight();
-        BeanUtils.copyProperties(fight, fight);
+        BeanUtils.copyProperties(to, fight);
         fight.setTeam1(teamConverter.reverse(to.getTeam1()));
         fight.setTeam2(teamConverter.reverse(to.getTeam2()));
         fight.setTournament(tournamentConverter.reverse(to.getTournament()));

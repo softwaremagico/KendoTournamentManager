@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.controller.models;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.utils.DTONameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,5 +94,39 @@ public class DuelDTO extends ElementDTO {
 
     public void setType(DuelType type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder text = new StringBuilder();
+        if (competitor1 != null) {
+            text.append(DTONameUtils.getShortLastnameName(competitor1, 10)).append(" ");
+            if (competitor1Fault != null && competitor1Fault) {
+                text.append("^");
+            }
+            text.append("[");
+            for (final Score hitsFromCompetitorA1 : competitor1Score) {
+                text.append(hitsFromCompetitorA1.getAbbreviation());
+            }
+            text.append("] ");
+        } else {
+            text.append("  <<Empty>>  []  ");
+        }
+        if (competitor2 != null) {
+            text.append("[");
+            for (final Score hitsFromCompetitorB1 : competitor2Score) {
+                text.append(hitsFromCompetitorB1.getAbbreviation());
+            }
+            text.append("]");
+            if (competitor2Fault != null && competitor2Fault) {
+                text.append("^");
+            }
+            text.append(" ");
+            text.append(DTONameUtils.getShortLastnameName(competitor2, 10));
+        } else {
+            text.append("[]  <<Empty>>  ");
+        }
+
+        return text.toString();
     }
 }
