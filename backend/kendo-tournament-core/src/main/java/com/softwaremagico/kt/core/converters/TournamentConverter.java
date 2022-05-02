@@ -62,8 +62,8 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
             return null;
         }
         final Tournament tournament = new Tournament();
-        tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScore()));
         BeanUtils.copyProperties(to, tournament);
+        tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScore()));
         return tournament;
     }
 }
