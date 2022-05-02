@@ -106,7 +106,9 @@ public class DuelDTO extends ElementDTO {
             }
             text.append("[");
             for (final Score hitsFromCompetitorA1 : competitor1Score) {
-                text.append(hitsFromCompetitorA1.getAbbreviation());
+                if (hitsFromCompetitorA1 != null) {
+                    text.append(hitsFromCompetitorA1.getAbbreviation());
+                }
             }
             text.append("] ");
         } else {
@@ -115,7 +117,9 @@ public class DuelDTO extends ElementDTO {
         if (competitor2 != null) {
             text.append("[");
             for (final Score hitsFromCompetitorB1 : competitor2Score) {
-                text.append(hitsFromCompetitorB1.getAbbreviation());
+                if (hitsFromCompetitorB1 != null) {
+                    text.append(hitsFromCompetitorB1.getAbbreviation());
+                }
             }
             text.append("]");
             if (competitor2Fault != null && competitor2Fault) {
