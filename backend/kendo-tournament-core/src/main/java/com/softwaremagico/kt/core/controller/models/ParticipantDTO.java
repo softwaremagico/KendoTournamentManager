@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.utils.NameUtils;
+import com.softwaremagico.kt.utils.DTONameUtils;
 
 public class ParticipantDTO extends ElementDTO {
 
@@ -80,7 +80,7 @@ public class ParticipantDTO extends ElementDTO {
     @Override
     public String toString() {
         if (getName() != null) {
-            return NameUtils.getLastnameName(getLastname(), getName());
+            return DTONameUtils.getLastnameName(getLastname(), getName());
         }
         return super.toString();
     }

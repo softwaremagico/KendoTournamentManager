@@ -140,8 +140,8 @@ public class Fight extends Element {
         int pointLeft = 0;
         int pointRight = 0;
         for (int i = 0; i < getDuels().size(); i++) {
-            pointLeft += getDuels().get(i).getCompetitor1Score();
-            pointRight += getDuels().get(i).getCompetitor2Score();
+            pointLeft += getDuels().get(i).getCompetitor1ScoreValue();
+            pointRight += getDuels().get(i).getCompetitor2ScoreValue();
         }
         if (pointLeft > pointRight) {
             return team1;

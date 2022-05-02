@@ -109,6 +109,14 @@ public class Duel extends Element {
         this.competitor1Score.add(score);
     }
 
+    public List<Score> getCompetitor1Score() {
+        return competitor1Score;
+    }
+
+    public List<Score> getCompetitor2Score() {
+        return competitor2Score;
+    }
+
     public void setCompetitor2Score(List<Score> competitor2Score) {
         this.competitor2Score = competitor2Score;
     }
@@ -143,7 +151,7 @@ public class Duel extends Element {
      * @return true if the round is over.
      */
     public boolean isOver() {
-        return getCompetitor1Score() >= POINTS_TO_WIN || getCompetitor2Score() >= POINTS_TO_WIN;
+        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN;
     }
 
     /**
@@ -153,14 +161,14 @@ public class Duel extends Element {
      * tiem.
      */
     public int getWinner() {
-        return Integer.compare(getCompetitor2Score(), getCompetitor1Score());
+        return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
     }
 
-    public Integer getCompetitor1Score() {
+    public Integer getCompetitor1ScoreValue() {
         return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
     }
 
-    public Integer getCompetitor2Score() {
+    public Integer getCompetitor2ScoreValue() {
         return (int) competitor2Score.stream().filter(Score::isValidPoint).count();
     }
 

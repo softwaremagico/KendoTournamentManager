@@ -24,13 +24,13 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 
-public class NameUtils {
+public class DTONameUtils {
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
 
-    public static String getLastnameName(Participant participant) {
+    public static String getLastnameName(ParticipantDTO participant) {
         if (participant == null) {
             return " --- --- ";
         }
@@ -45,7 +45,7 @@ public class NameUtils {
         }
     }
 
-    public static String getLastnameNameIni(Participant participant) {
+    public static String getLastnameNameIni(ParticipantDTO participant) {
         if (participant == null) {
             return " --- --- ";
         }
@@ -62,7 +62,7 @@ public class NameUtils {
         return getLastnameNameIni(lastname, name, MAX_NAME_LENGTH);
     }
 
-    public static String getLastnameNameIni(Participant participant, int maxLength) {
+    public static String getLastnameNameIni(ParticipantDTO participant, int maxLength) {
         if (participant == null) {
             return " --- --- ";
         }
@@ -104,7 +104,7 @@ public class NameUtils {
         }
     }
 
-    public static String getShortLastname(Participant participant, int length) {
+    public static String getShortLastname(ParticipantDTO participant, int length) {
         if (participant == null) {
             return " --- --- ";
         }
@@ -126,7 +126,7 @@ public class NameUtils {
         }
     }
 
-    public static String getShortLastname(Participant participant) {
+    public static String getShortLastname(ParticipantDTO participant) {
         if (participant == null) {
             return " --- --- ";
         }
@@ -142,7 +142,7 @@ public class NameUtils {
         return getShortLastname(lastname, MAX_SHORT_NAME_LENGTH);
     }
 
-    public static String getShortLastnameName(Participant participant, int maxLength) {
+    public static String getShortLastnameName(ParticipantDTO participant, int maxLength) {
         if (participant == null) {
             return " --- --- ";
         }
@@ -165,7 +165,7 @@ public class NameUtils {
         return ret.trim();
     }
 
-    public static String getShortName(Participant participant, int length) {
+    public static String getShortName(ParticipantDTO participant, int length) {
         if (participant == null) {
             return " --- ";
         }
@@ -183,7 +183,7 @@ public class NameUtils {
         return name.substring(0, Math.min(length, name.length()));
     }
 
-    public static String getShortName(Participant participant) {
+    public static String getShortName(ParticipantDTO participant) {
         if (participant == null) {
             return " --- ";
         }
@@ -199,7 +199,7 @@ public class NameUtils {
         return getShortName(name, MAX_SHORT_NAME_LENGTH);
     }
 
-    public static String getAcronym(Participant participant) {
+    public static String getAcronym(ParticipantDTO participant) {
         if (participant == null) {
             return "";
         }
