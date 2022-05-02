@@ -23,9 +23,11 @@ export class ScoreComponent implements OnInit {
 
   public scores = Score;
 
-  scoreEnum: Score;
+  get ScoreEnum(): typeof Score {
+    return Score;
+  }
 
-  unsorted = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
+  unsorted = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
     return 0;
   }
 
