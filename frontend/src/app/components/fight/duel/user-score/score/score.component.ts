@@ -57,4 +57,12 @@ export class ScoreComponent implements OnInit {
     this.duel = originalDuel;
   }
 
+  scoreRepresentation(): string {
+    if (this.left) {
+      return Score.tag(this.duel.competitor1Score[this.index]);
+    } else {
+      return Score.tag(this.duel.competitor2Score[this.index]);
+    }
+  }
+
 }
