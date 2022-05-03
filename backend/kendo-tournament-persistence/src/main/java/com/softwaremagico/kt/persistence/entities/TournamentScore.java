@@ -40,10 +40,10 @@ public class TournamentScore extends Element {
     private ScoreType scoreType;
 
     @Column(name = "points_by_victory")
-    private int pointsByVictory = 1;
+    private Integer pointsByVictory = 1;
 
     @Column(name = "points_by_draw")
-    private int pointsByDraw = 0;
+    private Integer pointsByDraw = 0;
 
     public TournamentScore() {
         super();
@@ -58,19 +58,19 @@ public class TournamentScore extends Element {
         this.scoreType = scoreType;
     }
 
-    public int getPointsByVictory() {
+    public Integer getPointsByVictory() {
         return pointsByVictory;
     }
 
-    public void setPointsByVictory(int pointsByVictory) {
+    public void setPointsByVictory(Integer pointsByVictory) {
         this.pointsByVictory = pointsByVictory;
     }
 
-    public int getPointsByDraw() {
+    public Integer getPointsByDraw() {
         return pointsByDraw;
     }
 
-    public void setPointsByDraw(int pointsByDraw) {
+    public void setPointsByDraw(Integer pointsByDraw) {
         this.pointsByDraw = pointsByDraw;
     }
 }
