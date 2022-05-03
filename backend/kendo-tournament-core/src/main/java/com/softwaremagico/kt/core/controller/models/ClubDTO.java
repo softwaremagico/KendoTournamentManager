@@ -42,6 +42,15 @@ public class ClubDTO extends ElementDTO {
 
     private String web = "";
 
+    public ClubDTO() {
+        super();
+    }
+
+    public ClubDTO(String name) {
+        this();
+        setName(name);
+    }
+
     public String getName() {
         return name;
     }

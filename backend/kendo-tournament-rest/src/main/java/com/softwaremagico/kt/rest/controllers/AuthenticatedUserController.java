@@ -8,17 +8,17 @@ package com.softwaremagico.kt.rest.controllers;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -48,9 +48,9 @@ public class AuthenticatedUserController {
         return createUser(createUserRequest.getUsername(), createUserRequest.getFullName(), createUserRequest.getPassword());
     }
 
-    public AuthenticatedUser createUser(String username, String fullName, String password) {
+    public AuthenticatedUser createUser(String username, String fullName, String password, String... roles) {
         try {
-            return authenticatedUserProvider.createUser(username, fullName, password);
+            return authenticatedUserProvider.createUser(username, fullName, password, roles);
         } catch (DuplicatedUserException e) {
             throw new BadRequestException(this.getClass(), "Username exists!");
         }
