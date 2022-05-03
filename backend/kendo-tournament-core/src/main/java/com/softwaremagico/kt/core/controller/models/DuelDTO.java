@@ -40,6 +40,17 @@ public class DuelDTO extends ElementDTO {
     private Boolean competitor2Fault = false;
     private DuelType type;
 
+    public DuelDTO() {
+        super();
+        setType(DuelType.STANDARD);
+    }
+
+    public DuelDTO(ParticipantDTO competitor1, ParticipantDTO competitor2) {
+        this();
+        setCompetitor1(competitor1);
+        setCompetitor2(competitor2);
+    }
+
     public ParticipantDTO getCompetitor1() {
         return competitor1;
     }

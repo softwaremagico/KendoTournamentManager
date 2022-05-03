@@ -54,6 +54,13 @@ public class ParticipantServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Counts all participants.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long count(HttpServletRequest request) {
+        return participantController.count();
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantDTO get(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,

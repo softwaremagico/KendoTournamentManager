@@ -11,6 +11,7 @@
                 <include name="restAccess"/>
                 <include name="dtoToEntity"/>
                 <include name="bruteForce"/>
+                <include name="simpleChampionshipTest"/>
             </run>
         </groups>
         <classes>
@@ -18,6 +19,7 @@
             <class name="com.softwaremagico.kt.security.RestAccessTests"/>
             <class name="com.softwaremagico.kt.security.BruteForceTests"/>
             <class name="com.softwaremagico.kt.rest.DtoToEntity"/>
+            <class name="com.softwaremagico.kt.rest.SimpleChampionshipTest"/>
         </classes>
     </test>
 </suite>

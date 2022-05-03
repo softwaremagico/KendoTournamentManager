@@ -54,6 +54,13 @@ public class ClubServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Count all clubs.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long count(HttpServletRequest request) {
+        return clubController.count();
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ClubDTO get(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
