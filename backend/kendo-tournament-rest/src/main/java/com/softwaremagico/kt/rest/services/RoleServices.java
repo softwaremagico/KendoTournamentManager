@@ -58,6 +58,13 @@ public class RoleServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Counts all roles.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long count(HttpServletRequest request) {
+        return roleController.count();
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all roles from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RoleDTO> getAllFromTournament(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,

@@ -39,10 +39,11 @@ public class ParticipantDTO extends ElementDTO {
     public ParticipantDTO() {
     }
 
-    public ParticipantDTO(String idCard, String name, String lastname) {
+    public ParticipantDTO(String idCard, String name, String lastname, ClubDTO club) {
         setName(name);
         setLastname(lastname);
         setIdCard(idCard);
+        setClub(club);
     }
 
     public String getIdCard() {
