@@ -60,9 +60,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 @Test(groups = "authApi")
 public class TestAuthApi extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String USER_FULL_NAME = "Test User";
-    private final static String USER_PASSWORD = "password";
+    private static final String USER_NAME = "user";
+    private static final String USER_FULL_NAME = "Test User";
+    private static final String USER_PASSWORD = "password";
 
     private MockMvc mockMvc;
 

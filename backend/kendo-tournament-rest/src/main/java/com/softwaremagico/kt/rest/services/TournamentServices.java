@@ -55,6 +55,13 @@ public class TournamentServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets all tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long count(HttpServletRequest request) {
+        return tournamentController.count();
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
