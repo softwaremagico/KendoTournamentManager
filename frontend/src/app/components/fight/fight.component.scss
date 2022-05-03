@@ -4,4 +4,10 @@
   border-style: solid;
   padding: 5px;
   width: 100%;
+  display: table;
+}
+
+duel {
+  display: table-row;
+  vertical-align: middle;
 }
