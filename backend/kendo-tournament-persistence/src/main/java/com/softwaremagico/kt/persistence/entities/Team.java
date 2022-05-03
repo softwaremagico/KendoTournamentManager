@@ -55,7 +55,7 @@ public class Team extends Element implements Comparable<Team> {
     private Tournament tournament;
 
     @Column(name = "group_index")
-    private int group = 0; // for the championship
+    private Integer group = 0; // for the championship
 
     public Team() {
         super();
@@ -101,11 +101,11 @@ public class Team extends Element implements Comparable<Team> {
         this.tournament = tournament;
     }
 
-    public int getGroup() {
+    public Integer getGroup() {
         return group;
     }
 
-    public void setGroup(int group) {
+    public void setGroup(Integer group) {
         this.group = group;
     }
 
