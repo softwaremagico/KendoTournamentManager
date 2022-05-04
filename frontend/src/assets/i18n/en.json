@@ -472,6 +472,7 @@
   "ippon" : "Ippon",
   "hansoku" : "Hansoku",
   "clear": "Clear",
+  "empty": "Clear",
   "draw": "Draw",
   "fault": "Fault"
 }
