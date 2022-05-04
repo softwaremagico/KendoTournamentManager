@@ -2,13 +2,9 @@
   padding: 5px;
   display: flex;
   align-items: center;
+}
+
+user-name {
   width: 100%;
-}
-
-.user-score.left {
-  align-items: end;
-}
-
-.user-score.right {
-  align-items: start;
+  padding-right: 20px;
 }
