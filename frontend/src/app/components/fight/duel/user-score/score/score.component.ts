@@ -48,13 +48,13 @@ export class ScoreComponent implements OnInit {
   }
 
   updateScore(score: Score) {
-    let originalDuel: Duel = {...this.duel}
+    //let originalDuel: Duel = Duel.clone(this.duel);
     this.updateDuel(score);
     this.duelService.update(this.duel).subscribe(duel => {
       this.messageService.infoMessage("Score Updated");
       return duel;
     });
-    this.duel = originalDuel;
+    //this.duel = Duel.clone(originalDuel);
   }
 
   scoreRepresentation(): string {
