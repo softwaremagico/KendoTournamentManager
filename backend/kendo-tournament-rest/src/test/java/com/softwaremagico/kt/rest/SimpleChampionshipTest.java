@@ -31,7 +31,6 @@ import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
@@ -62,9 +61,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = {"simpleChampionshipTest"})
 public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
-    private static final String USER_NAME = "user";
+    private static final String USER_NAME = "admin";
     private static final String USER_FULL_NAME = "Test User";
-    private static final String USER_PASSWORD = "password";
+    private static final String USER_PASSWORD = "asd123";
     private static final String USER_ROLE = "admin";
 
     private static final Integer MEMBERS = 3;
@@ -143,10 +142,10 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @BeforeClass(dependsOnMethods = "setUp")
     public void setAuthentication() throws Exception {
         //Create the admin user
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD, USER_ROLE);
+        authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD, USER_ROLE);
 
         AuthRequest request = new AuthRequest();
-        request.setUsername(authenticatedUser.getUsername());
+        request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc

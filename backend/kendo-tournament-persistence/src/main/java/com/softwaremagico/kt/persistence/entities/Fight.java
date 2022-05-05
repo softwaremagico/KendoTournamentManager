@@ -24,6 +24,8 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeAttributeConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -53,6 +55,7 @@ public class Fight extends Element {
     private Tournament tournament;
 
     @Column(name = "shiaijo")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -61,9 +64,11 @@ public class Fight extends Element {
     private List<Duel> duels = new ArrayList<>();
 
     @Column(name = "finished_at")
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime finishedAt;
 
     @Column(name = "fight_level")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     public Fight() {

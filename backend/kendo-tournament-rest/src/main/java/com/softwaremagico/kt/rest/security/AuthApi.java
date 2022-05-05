@@ -30,6 +30,8 @@ import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.UserBlockedException;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -47,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(value = "api/public", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class AuthApi {
 
     private final AuthenticationManager authenticationManager;
@@ -65,7 +67,8 @@ public class AuthApi {
     }
 
 
-    @PostMapping(path = "login")
+    @Operation(summary = "Gets the JWT Token into the headers.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/public/login")
     public ResponseEntity<AuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         try {
@@ -93,7 +96,8 @@ public class AuthApi {
     }
 
 
-    @PostMapping(path = "register")
+    @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/private/register")
     public AuthenticatedUser register(@RequestBody CreateUserRequest request) {
         return authenticatedUserController.createUser(request);
     }
