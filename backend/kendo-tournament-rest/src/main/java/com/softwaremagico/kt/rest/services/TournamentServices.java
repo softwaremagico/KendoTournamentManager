@@ -49,7 +49,7 @@ public class TournamentServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentDTO> getAll(HttpServletRequest request) {
         return tournamentController.get();
     }
@@ -108,7 +108,7 @@ public class TournamentServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentDTO update(@RequestBody TournamentDTO tournament, HttpServletRequest request) {
         return tournamentController.update(tournament);
     }
