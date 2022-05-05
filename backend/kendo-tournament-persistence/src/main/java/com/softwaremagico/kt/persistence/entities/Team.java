@@ -43,7 +43,7 @@ import java.util.Locale;
 @Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}))
 public class Team extends Element implements Comparable<Team> {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
@@ -54,10 +54,10 @@ public class Team extends Element implements Comparable<Team> {
     private List<Participant> members;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tournament")
+    @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
-    @Column(name = "group_index")
+    @Column(name = "group_index", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer group = 0; // for the championship
 

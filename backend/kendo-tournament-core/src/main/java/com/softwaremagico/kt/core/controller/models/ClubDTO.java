@@ -24,6 +24,8 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.util.Objects;
+
 public class ClubDTO extends ElementDTO {
 
     private String name = "";
@@ -121,5 +123,25 @@ public class ClubDTO extends ElementDTO {
             return getName();
         }
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ClubDTO)) {
+            return false;
+        }
+        final ClubDTO clubDTO = (ClubDTO) o;
+        return getName().equals(clubDTO.getName()) && getCountry().equals(clubDTO.getCountry()) && getCity().equals(clubDTO.getCity())
+                && Objects.equals(getAddress(), clubDTO.getAddress()) && Objects.equals(getRepresentativeId(), clubDTO.getRepresentativeId())
+                && Objects.equals(getEmail(), clubDTO.getEmail()) && Objects.equals(getPhone(), clubDTO.getPhone()) &&
+                Objects.equals(getWeb(), clubDTO.getWeb());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getCountry(), getCity(), getAddress(), getRepresentativeId(), getEmail(), getPhone(), getWeb());
     }
 }
