@@ -37,7 +37,7 @@ import javax.persistence.*;
 @Table(name = "tournament_scores")
 public class TournamentScore extends Element {
 
-    @Column(name = "tournament_type")
+    @Column(name = "tournament_type", nullable = false)
     @Enumerated(EnumType.STRING)
     @Convert(converter = StringCryptoConverter.class)
     private ScoreType scoreType;

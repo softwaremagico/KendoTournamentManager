@@ -26,6 +26,8 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.utils.DTONameUtils;
 
+import java.util.Objects;
+
 public class ParticipantDTO extends ElementDTO {
 
     private String idCard;
@@ -84,5 +86,24 @@ public class ParticipantDTO extends ElementDTO {
             return DTONameUtils.getLastnameName(getLastname(), getName());
         }
         return super.toString();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ParticipantDTO)) {
+            return false;
+        }
+        final ParticipantDTO that = (ParticipantDTO) o;
+        return getIdCard().equals(that.getIdCard()) && getName().equals(that.getName()) && getLastname().equals(that.getLastname())
+                && getClub().equals(that.getClub());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdCard(), getName(), getLastname(), getClub());
     }
 }

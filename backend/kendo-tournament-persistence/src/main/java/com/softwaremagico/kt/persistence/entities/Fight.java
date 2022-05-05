@@ -43,18 +43,18 @@ import java.util.stream.Collectors;
 public class Fight extends Element {
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "team1")
+    @JoinColumn(name = "team1", nullable = false)
     private Team team1;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "team2")
+    @JoinColumn(name = "team2", nullable = false)
     private Team team2;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tournament")
+    @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
-    @Column(name = "shiaijo")
+    @Column(name = "shiaijo", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
@@ -67,7 +67,7 @@ public class Fight extends Element {
     @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime finishedAt;
 
-    @Column(name = "fight_level")
+    @Column(name = "fight_level", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
