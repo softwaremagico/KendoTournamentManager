@@ -48,16 +48,16 @@ public class Participant extends Element implements Comparable<Participant> {
     @Convert(converter = StringCryptoConverter.class)
     private String idCard;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name = "";
 
-    @Column(name = "lastname")
+    @Column(name = "lastname", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String lastname = "";
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "club")
+    @JoinColumn(name = "club", nullable = false)
     private Club club;
 
     public Participant() {
@@ -65,10 +65,11 @@ public class Participant extends Element implements Comparable<Participant> {
     }
 
 
-    public Participant(String idCard, String name, String lastname) {
+    public Participant(String idCard, String name, String lastname, Club club) {
         setName(name);
         setLastname(lastname);
         setIdCard(idCard);
+        setClub(club);
     }
 
     public final void setIdCard(String value) {

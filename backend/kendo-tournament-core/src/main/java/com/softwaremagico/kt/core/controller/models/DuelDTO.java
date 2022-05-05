@@ -30,6 +30,7 @@ import com.softwaremagico.kt.utils.DTONameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DuelDTO extends ElementDTO {
     private ParticipantDTO competitor1;
@@ -143,5 +144,26 @@ public class DuelDTO extends ElementDTO {
         }
 
         return text.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DuelDTO)) {
+            return false;
+        }
+        final DuelDTO duelDTO = (DuelDTO) o;
+        return Objects.equals(getCompetitor1(), duelDTO.getCompetitor1()) && Objects.equals(getCompetitor2(), duelDTO.getCompetitor2())
+                && Objects.equals(getCompetitor1Score(), duelDTO.getCompetitor1Score()) && Objects.equals(getCompetitor2Score(),
+                duelDTO.getCompetitor2Score()) && Objects.equals(getCompetitor1Fault(), duelDTO.getCompetitor1Fault()) &&
+                Objects.equals(getCompetitor2Fault(), duelDTO.getCompetitor2Fault()) && getType() == duelDTO.getType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCompetitor1(), getCompetitor2(), getCompetitor1Score(), getCompetitor2Score(), getCompetitor1Fault(),
+                getCompetitor2Fault(), getType());
     }
 }

@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.controller.models;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -27,6 +27,7 @@ package com.softwaremagico.kt.core.controller.models;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FightDTO extends ElementDTO {
     private TeamDTO team1;
@@ -91,5 +92,27 @@ public class FightDTO extends ElementDTO {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof FightDTO)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final FightDTO fightDTO = (FightDTO) o;
+        return getTeam1().equals(fightDTO.getTeam1()) && getTeam2().equals(fightDTO.getTeam2()) && getTournament().equals(fightDTO.getTournament())
+                && getShiaijo().equals(fightDTO.getShiaijo()) && Objects.equals(getDuels(), fightDTO.getDuels()) && Objects.equals(getFinishedAt(),
+                fightDTO.getFinishedAt()) && getLevel().equals(fightDTO.getLevel());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getTeam1(), getTeam2(), getTournament(), getShiaijo(), getDuels(), getFinishedAt(), getLevel());
     }
 }
