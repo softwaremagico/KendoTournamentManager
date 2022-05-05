@@ -66,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             // Others
             "/",
             "/info/**",
-            "/api/public/**"
+            "/auth/public/**"
     };
 
     private final AuthenticatedUserProvider authenticatedUserProvider;

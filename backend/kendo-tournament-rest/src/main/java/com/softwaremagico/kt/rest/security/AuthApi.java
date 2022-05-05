@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(value = "api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class AuthApi {
 
     private final AuthenticationManager authenticationManager;
@@ -97,7 +97,7 @@ public class AuthApi {
 
 
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(path = "/private/register")
+    @PostMapping(path = "/register")
     public AuthenticatedUser register(@RequestBody CreateUserRequest request) {
         return authenticatedUserController.createUser(request);
     }
