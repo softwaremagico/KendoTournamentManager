@@ -107,7 +107,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         // 3 attempts to block the user.
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
@@ -115,7 +115,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
 
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
@@ -123,7 +123,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
 
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
@@ -133,7 +133,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         //Correct password, user blocked.
         request.setPassword(USER_PASSWORD);
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
@@ -151,7 +151,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         // 3 attempts to block the user.
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
@@ -159,7 +159,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .andReturn();
 
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
@@ -171,7 +171,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         //Correct password, attempts reset.
         request.setPassword(USER_PASSWORD);
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())

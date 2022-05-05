@@ -58,13 +58,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 
 @SpringBootTest
-@Test(groups = {"simpleChampionshipTest"})
-public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
+@Test(groups = {"restSimpleChampionshipTest"})
+public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = "admin";
     private static final String USER_FULL_NAME = "Test User";
     private static final String USER_PASSWORD = "asd123";
-    private static final String USER_ROLE = "admin";
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;
@@ -96,7 +96,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     private MockMvc mockMvc;
 
-    private String jwtHeader;
+    private String jwtToken;
 
     private ClubDTO clubDTO;
     private TournamentDTO tournamentDTO;
@@ -142,22 +142,22 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @BeforeClass(dependsOnMethods = "setUp")
     public void setAuthentication() throws Exception {
         //Create the admin user
-        authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD, USER_ROLE);
+        authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        jwtHeader = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertNotNull(jwtHeader);
+        jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+        Assert.assertNotNull(jwtToken);
     }
 
     @Test
@@ -165,8 +165,8 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(new ClubDTO(CLUB_NAME)))
-                        .header("Authorization", "Bearer " + jwtHeader))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(new ClubDTO(CLUB_NAME))))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
@@ -176,7 +176,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         MvcResult countResult = this.mockMvc
                 .perform(get("/clubs/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtHeader))
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -189,22 +189,22 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             MvcResult createResult = this.mockMvc
                     .perform(post("/participants")
                             .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + jwtToken)
                             .content(toJson(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i),
-                                    String.format("lastname%s", i), clubDTO)))
-                            .header("Authorization", "Bearer " + jwtHeader))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
+                                    String.format("lastname%s", i), clubDTO))))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
             ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
-            Assert.assertEquals(participantDTO.getName(), String.format("name%s", i));
-            Assert.assertEquals(participantDTO.getLastname(), String.format("lastname%s", i));
+            Assert.assertEquals(participantDTO.getName(), String.format("Name%s", i));
+            Assert.assertEquals(participantDTO.getLastname(), String.format("Lastname%s", i));
             Assert.assertEquals(participantDTO.getIdCard(), String.format("0000%s", i));
         }
 
         MvcResult createResult = this.mockMvc
                 .perform(get("/participants/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtHeader))
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -216,9 +216,9 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/tournaments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE)))
-                        .header("Authorization", "Bearer " + jwtHeader))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE))))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
         tournamentDTO = fromJson(createResult.getResponse().getContentAsString(), TournamentDTO.class);
@@ -230,7 +230,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         MvcResult countResult = this.mockMvc
                 .perform(get("/tournaments/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtHeader))
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -243,9 +243,9 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             MvcResult createResult = this.mockMvc
                     .perform(post("/roles")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(toJson(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR)))
-                            .header("Authorization", "Bearer " + jwtHeader))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
+                            .header("Authorization", "Bearer " + jwtToken)
+                            .content(toJson(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR))))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
             RoleDTO roleDTO = fromJson(createResult.getResponse().getContentAsString(), RoleDTO.class);
@@ -257,7 +257,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(get("/roles/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtHeader))
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 

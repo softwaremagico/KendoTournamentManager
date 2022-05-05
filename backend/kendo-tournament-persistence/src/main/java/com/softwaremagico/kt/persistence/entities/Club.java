@@ -44,15 +44,15 @@ import java.util.Locale;
 @Table(name = "clubs")
 public class Club extends Element implements Comparable<Club> {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name = "";
 
-    @Column(name = "country")
+    @Column(name = "country", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String country = "";
 
-    @Column(name = "city")
+    @Column(name = "city", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String city = "";
 

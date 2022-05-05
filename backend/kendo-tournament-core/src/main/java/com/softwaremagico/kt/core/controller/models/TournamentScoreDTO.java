@@ -26,6 +26,8 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.entities.ScoreType;
 
+import java.util.Objects;
+
 public class TournamentScoreDTO extends ElementDTO {
 
     private ScoreType scoreType;
@@ -33,6 +35,10 @@ public class TournamentScoreDTO extends ElementDTO {
     private int pointsByVictory = 1;
 
     private int pointsByDraw = 0;
+
+    public TournamentScoreDTO() {
+        setScoreType(ScoreType.CLASSIC);
+    }
 
     public ScoreType getScoreType() {
         return scoreType;
@@ -56,5 +62,25 @@ public class TournamentScoreDTO extends ElementDTO {
 
     public void setPointsByDraw(int pointsByDraw) {
         this.pointsByDraw = pointsByDraw;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TournamentScoreDTO)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final TournamentScoreDTO that = (TournamentScoreDTO) o;
+        return getPointsByVictory() == that.getPointsByVictory() && getPointsByDraw() == that.getPointsByDraw() && getScoreType() == that.getScoreType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getScoreType(), getPointsByVictory(), getPointsByDraw());
     }
 }
