@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -47,9 +48,11 @@ public class Group extends Element {
     private List<Team> teams;
 
     @Column(name = "shiaijo")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
     @Column(name = "level")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -58,6 +61,7 @@ public class Group extends Element {
     private List<Fight> fights;
 
     @Column(name = "number_of_winners")
+    @Convert(converter = IntegerCryptoConverter.class)
     private int numberOfWinners;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

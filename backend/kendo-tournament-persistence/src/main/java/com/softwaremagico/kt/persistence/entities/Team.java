@@ -24,6 +24,8 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -42,6 +44,7 @@ import java.util.Locale;
 public class Team extends Element implements Comparable<Team> {
 
     @Column(name = "name")
+    @Convert(converter = StringCryptoConverter.class)
     private String name;
 
     @OneToMany
@@ -55,6 +58,7 @@ public class Team extends Element implements Comparable<Team> {
     private Tournament tournament;
 
     @Column(name = "group_index")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer group = 0; // for the championship
 
     public Team() {

@@ -25,6 +25,8 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 
+import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -41,10 +43,12 @@ public class TournamentImage extends Element {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer id;
 
     @Lob
     @Column(length = MAX_FILE_SIZE, nullable = false)
+    @Convert(converter = ByteArrayCryptoConverter.class)
     private byte[] data;
 
     @ManyToOne(fetch = FetchType.EAGER)
