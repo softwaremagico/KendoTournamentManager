@@ -48,7 +48,7 @@ public class ClubServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all clubs.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<ClubDTO> getAll(HttpServletRequest request) {
         return clubController.get();
     }
@@ -106,7 +106,7 @@ public class ClubServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a club.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ClubDTO update(@RequestBody ClubDTO club, HttpServletRequest request) {
         return clubController.update(club);
     }
