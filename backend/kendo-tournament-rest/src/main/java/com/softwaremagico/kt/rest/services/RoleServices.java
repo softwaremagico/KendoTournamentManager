@@ -52,7 +52,7 @@ public class RoleServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all roles.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RoleDTO> getAll(HttpServletRequest request) {
         return roleController.get();
     }
@@ -129,7 +129,7 @@ public class RoleServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a role.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public RoleDTO update(@RequestBody RoleDTO roleDto, HttpServletRequest request) {
         return roleController.update(roleDto);
     }
