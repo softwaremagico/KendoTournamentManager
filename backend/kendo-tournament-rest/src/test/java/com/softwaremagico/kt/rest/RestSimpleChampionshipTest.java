@@ -26,6 +26,7 @@ package com.softwaremagico.kt.rest;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
@@ -52,9 +53,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 
 @SpringBootTest
@@ -262,5 +266,57 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andReturn();
 
         Assert.assertEquals(fromJson(createResult.getResponse().getContentAsString(), Integer.class), Integer.valueOf(MEMBERS * TEAMS));
+    }
+
+    @Test(dependsOnMethods = {"addRoles"})
+    public void addTeams() throws Exception {
+        int teamIndex = 0;
+        TeamDTO team = null;
+        int teamMember = 0;
+
+        MvcResult createResult = this.mockMvc
+                .perform(get("/participants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+
+        Collection<ParticipantDTO> participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(),
+                new TypeReference<List<ParticipantDTO>>() {
+                });
+
+        for (ParticipantDTO competitor : participantController.get()) {
+            // Create a new team.
+            if (team == null) {
+                teamIndex++;
+                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                teamMember = 0;
+            }
+
+            // Add member.
+            team.getMembers().add(competitor);
+
+            createResult = this.mockMvc
+                    .perform(put("/teams")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + jwtToken)
+                            .content(toJson(team)))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                    .andReturn();
+
+            team = fromJson(createResult.getResponse().getContentAsString(), TeamDTO.class);
+            Assert.assertEquals(team.getTournament(), tournamentDTO);
+            Assert.assertEquals(team.getName(), team.getName());
+
+            teamMember++;
+
+            // Team filled up, create a new team.
+            if (teamMember >= MEMBERS) {
+                team = null;
+            }
+        }
+
+        //Assert.assertEquals((int) TEAMS, teamProvider.count(tournament));
     }
 }
