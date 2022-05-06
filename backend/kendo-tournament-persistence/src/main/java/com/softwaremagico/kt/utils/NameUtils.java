@@ -24,13 +24,11 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-
 public class NameUtils {
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
 
-    public static String getLastnameName(Participant participant) {
+    public static String getLastnameName(IParticipantName participant) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -45,7 +43,7 @@ public class NameUtils {
         }
     }
 
-    public static String getLastnameNameIni(Participant participant) {
+    public static String getLastnameNameIni(IParticipantName participant) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -62,7 +60,7 @@ public class NameUtils {
         return getLastnameNameIni(lastname, name, MAX_NAME_LENGTH);
     }
 
-    public static String getLastnameNameIni(Participant participant, int maxLength) {
+    public static String getLastnameNameIni(IParticipantName participant, int maxLength) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -104,7 +102,7 @@ public class NameUtils {
         }
     }
 
-    public static String getShortLastname(Participant participant, int length) {
+    public static String getShortLastname(IParticipantName participant, int length) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -126,7 +124,7 @@ public class NameUtils {
         }
     }
 
-    public static String getShortLastname(Participant participant) {
+    public static String getShortLastname(IParticipantName participant) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -142,7 +140,7 @@ public class NameUtils {
         return getShortLastname(lastname, MAX_SHORT_NAME_LENGTH);
     }
 
-    public static String getShortLastnameName(Participant participant, int maxLength) {
+    public static String getShortLastnameName(IParticipantName participant, int maxLength) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -165,7 +163,7 @@ public class NameUtils {
         return ret.trim();
     }
 
-    public static String getShortName(Participant participant, int length) {
+    public static String getShortName(IParticipantName participant, int length) {
         if (participant == null) {
             return " ***REMOVED*** ";
         }
@@ -183,7 +181,7 @@ public class NameUtils {
         return name.substring(0, Math.min(length, name.length()));
     }
 
-    public static String getShortName(Participant participant) {
+    public static String getShortName(IParticipantName participant) {
         if (participant == null) {
             return " ***REMOVED*** ";
         }
@@ -199,7 +197,7 @@ public class NameUtils {
         return getShortName(name, MAX_SHORT_NAME_LENGTH);
     }
 
-    public static String getAcronym(Participant participant) {
+    public static String getAcronym(IParticipantName participant) {
         if (participant == null) {
             return "";
         }

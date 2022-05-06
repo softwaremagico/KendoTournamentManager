@@ -26,7 +26,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.values.Score;
-import com.softwaremagico.kt.utils.DTONameUtils;
+import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +112,7 @@ public class DuelDTO extends ElementDTO {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         if (competitor1 != null) {
-            text.append(DTONameUtils.getShortLastnameName(competitor1, 10)).append(" ");
+            text.append(NameUtils.getShortLastnameName(competitor1, 10)).append(" ");
             if (competitor1Fault != null && competitor1Fault) {
                 text.append("^");
             }
@@ -138,12 +138,30 @@ public class DuelDTO extends ElementDTO {
                 text.append("^");
             }
             text.append(" ");
-            text.append(DTONameUtils.getShortLastnameName(competitor2, 10));
+            text.append(NameUtils.getShortLastnameName(competitor2, 10));
         } else {
             text.append("[]  <<Empty>>  ");
         }
 
         return text.toString();
+    }
+
+    /**
+     * Gets the winner of the duel.
+     *
+     * @return -1 if player of first team, 0 if draw, 1 if player of second
+     * tiem.
+     */
+    public int getWinner() {
+        return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
+    }
+
+    public Integer getCompetitor1ScoreValue() {
+        return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
+    }
+
+    public Integer getCompetitor2ScoreValue() {
+        return (int) competitor2Score.stream().filter(Score::isValidPoint).count();
     }
 
     @Override
