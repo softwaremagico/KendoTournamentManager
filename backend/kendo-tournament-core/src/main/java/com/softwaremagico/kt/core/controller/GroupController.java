@@ -75,4 +75,9 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return new Ranking(group);
     }
 
+    public List<GroupDTO> getGroups(TournamentDTO tournamentDTO) {
+        return converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournamentDTO)).stream().map(this::createConverterRequest)
+                .collect(Collectors.toList()));
+    }
+
 }
