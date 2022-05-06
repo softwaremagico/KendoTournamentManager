@@ -50,7 +50,7 @@ public class DuelServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a duel.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DuelDTO update(@RequestBody DuelDTO duelDTO, HttpServletRequest request) {
         if (duelDTO == null) {
             throw new BadRequestException(getClass(), "Duel data is missing");

@@ -49,7 +49,7 @@ public class TeamServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(HttpServletRequest request) {
         return teamController.get();
     }
@@ -133,7 +133,7 @@ public class TeamServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a team.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TeamDTO update(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
         return teamController.update(teamDto);
     }
