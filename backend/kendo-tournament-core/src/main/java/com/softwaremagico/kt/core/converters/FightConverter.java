@@ -54,6 +54,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
     public FightDTO convert(FightConverterRequest from) {
         final FightDTO fightDTO = new FightDTO();
         BeanUtils.copyProperties(from.getEntity(), fightDTO);
+        fightDTO.setFinishedAt(from.getEntity().getFinishedAt());
         fightDTO.setTeam1(teamConverter.convert(
                 new TeamConverterRequest(from.getEntity().getTeam1())));
         fightDTO.setTeam2(teamConverter.convert(
@@ -77,6 +78,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
         fight.setTeam1(teamConverter.reverse(to.getTeam1()));
         fight.setTeam2(teamConverter.reverse(to.getTeam2()));
         fight.setTournament(tournamentConverter.reverse(to.getTournament()));
+        fight.setFinishedAt(to.getFinishedAt());
         fight.setDuels(new ArrayList<>());
         to.getDuels().forEach(duelDTO -> fight.getDuels().add(duelConverter.reverse(duelDTO)));
         return fight;

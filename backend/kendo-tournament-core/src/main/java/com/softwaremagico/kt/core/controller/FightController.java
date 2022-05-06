@@ -34,12 +34,17 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.ITournamentManager;
+import com.softwaremagico.kt.core.tournaments.simple.SimpleTournamentHandler;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,12 +53,15 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         FightProvider, FightConverterRequest, FightConverter> {
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
+    private final SimpleTournamentHandler simpleTournamentHandler;
 
     @Autowired
-    public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider) {
+    public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
+                           SimpleTournamentHandler simpleTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
+        this.simpleTournamentHandler = simpleTournamentHandler;
     }
 
     @Override
@@ -85,6 +93,59 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                 fightDTO.getDuels().add(duelDTO);
             }
         }
+    }
+
+    public boolean areOver(TournamentDTO tournament) {
+        return provider.areOver(tournamentConverter.reverse(tournament));
+    }
+
+    public FightDTO getCurrent(TournamentDTO tournament) {
+        return converter.convert(new FightConverterRequest(provider.getCurrent(tournamentConverter.reverse(tournament))));
+    }
+
+    public FightDTO getCurrent(Integer tournamentId) {
+        return converter.convert(new FightConverterRequest(provider.getCurrent((tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO))))));
+    }
+
+    public List<FightDTO> createFights(Integer tournamentId, boolean maximizeFights, Integer level) {
+        final Tournament tournament = (tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO)));
+        if (selectManager(tournament.getType()) != null) {
+            final List<Fight> createdFights = selectManager(tournament.getType()).createSortedFights(tournament, maximizeFights, level);
+            provider.saveAll(createdFights);
+            return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
+
+        }
+        return new ArrayList<>();
+    }
+
+    private ITournamentManager selectManager(TournamentType type) {
+        switch (type) {
+            case LOOP:
+                //manager = new LoopTournamentManager(tournament);
+                break;
+            case TREE:
+            case CHAMPIONSHIP:
+                //manager = new Championship(tournament);
+                //manager.fillGroups();
+                break;
+            case CUSTOM_CHAMPIONSHIP:
+                //manager = new CustomChampionship(tournament);
+                //manager.fillGroups();
+                break;
+            case CUSTOMIZED:
+                //manager = new PersonalizedTournament(tournament);
+                break;
+            case KING_OF_THE_MOUNTAIN:
+                //manager = new KingOfTheMountainTournament(tournament);
+                break;
+            case LEAGUE:
+                return simpleTournamentHandler;
+        }
+        return null;
     }
 
 }

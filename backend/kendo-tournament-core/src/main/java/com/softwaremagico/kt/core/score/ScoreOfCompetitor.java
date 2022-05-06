@@ -25,16 +25,16 @@ package com.softwaremagico.kt.core.score;
  */
 
 
-import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
 
 public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor> {
 
-    private final Participant competitor;
-    protected List<Fight> fights;
+    private final ParticipantDTO competitor;
+    protected List<FightDTO> fights;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
     private Integer hits = null;
@@ -42,12 +42,12 @@ public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor>
     private Integer fightsWon = null;
     private Integer fightsDraw = null;
 
-    public ScoreOfCompetitor(Participant competitor, List<Fight> fights) {
+    public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights) {
         this.competitor = competitor;
         this.fights = fights;
     }
 
-    public Participant getCompetitor() {
+    public ParticipantDTO getCompetitor() {
         return competitor;
     }
 
@@ -70,7 +70,7 @@ public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor>
     public Integer getFightsWon() {
         if (fightsWon == null) {
             fightsWon = 0;
-            for (final Fight fight : fights) {
+            for (final FightDTO fight : fights) {
                 if (fight.isWon(competitor)) {
                     fightsWon++;
                 }
@@ -82,7 +82,7 @@ public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor>
     public Integer getFightsDraw() {
         if (fightsDraw == null) {
             fightsDraw = 0;
-            for (final Fight fight : fights) {
+            for (final FightDTO fight : fights) {
                 if (fight.isOver()) {
                     if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
                             || fight.getTeam2().isMember(competitor))) {
@@ -98,7 +98,7 @@ public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor>
     public Integer getDuelsDraw() {
         if (drawDuels == null) {
             drawDuels = 0;
-            for (final Fight fight : fights) {
+            for (final FightDTO fight : fights) {
                 if (fight.isOver()) {
                     drawDuels += fight.getDrawDuels(competitor);
                 }
@@ -110,7 +110,7 @@ public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor>
     public Integer getHits() {
         if (hits == null) {
             hits = 0;
-            for (final Fight fight : fights) {
+            for (final FightDTO fight : fights) {
                 hits += fight.getScore(competitor);
             }
         }

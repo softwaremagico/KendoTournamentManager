@@ -25,6 +25,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.StringUtils;
 import org.hibernate.annotations.Cache;
@@ -42,7 +43,7 @@ import java.util.Locale;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participants")
-public class Participant extends Element implements Comparable<Participant> {
+public class Participant extends Element implements Comparable<Participant>, IParticipantName {
 
     @Column(name = "id_card", unique = true)
     @Convert(converter = StringCryptoConverter.class)
@@ -93,10 +94,12 @@ public class Participant extends Element implements Comparable<Participant> {
         lastname = StringUtils.setCase(value);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getLastname() {
         return lastname;
     }
