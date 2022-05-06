@@ -28,7 +28,7 @@ export class ClubService {
   }
 
   getAll(): Observable<Club[]> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.get<Club[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all clubs`)),
@@ -64,7 +64,7 @@ export class ClubService {
   }
 
   add(club: Club): Observable<Club> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.post<Club>(url, club, this.httpOptions)
       .pipe(
         tap((newClub: Club) => this.loggerService.info(`adding club ${newClub}`)),
@@ -73,7 +73,7 @@ export class ClubService {
   }
 
   update(club: Club): Observable<Club> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Club>(url, club, this.httpOptions)
       .pipe(
         tap((updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub}`)),
