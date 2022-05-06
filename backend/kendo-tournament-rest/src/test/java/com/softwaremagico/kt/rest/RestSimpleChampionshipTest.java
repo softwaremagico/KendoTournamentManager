@@ -128,6 +128,10 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         groupController.update(group);
     }
 
+    private void resetGroup(TournamentDTO tournamentDTO) {
+        resetGroup(groupController.getGroups(tournamentDTO).get(0));
+    }
+
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
     }
@@ -414,6 +418,6 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .get(i + 1).getHits());
         }
 
-        //resetGroup(groupProvider.getGroups(tournament).get(0));
+        resetGroup(tournamentDTO);
     }
 }
