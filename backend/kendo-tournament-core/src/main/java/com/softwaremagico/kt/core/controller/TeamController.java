@@ -75,6 +75,11 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
                 .stream().map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
+    public long countByTournament(Integer tournamentId) {
+        return provider.count(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournamnet found with id '" + tournamentId + "'.")));
+    }
+
     @Override
     public TeamDTO create(TeamDTO teamDTO) {
         if (teamDTO.getGroup() == null) {
@@ -104,10 +109,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
             teamDTO.setGroup(1);
         }
         validate(teamDTO);
-        Team dbTeam = super.provider.save(converter.reverse(teamDTO));
+        final Team dbTeam = super.provider.save(converter.reverse(teamDTO));
         dbTeam.setTournament(tournamentConverter.reverse(teamDTO.getTournament()));
         return converter.convert(createConverterRequest(dbTeam));
     }
-
 
 }

@@ -25,23 +25,54 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.score.Ranking;
+import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class GroupController extends BasicInsertableController<Group, GroupDTO, GroupRepository, GroupProvider, GroupConverterRequest, GroupConverter> {
+    private final TournamentConverter tournamentConverter;
+    private final TournamentProvider tournamentProvider;
 
-    public GroupController(GroupProvider provider, GroupConverter converter) {
+    @Autowired
+    public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider) {
         super(provider, converter);
+        this.tournamentConverter = tournamentConverter;
+        this.tournamentProvider = tournamentProvider;
     }
 
     @Override
     protected GroupConverterRequest createConverterRequest(Group group) {
         return new GroupConverterRequest(group);
+    }
+
+    public List<GroupDTO> getFromTournament(Integer tournamentId) {
+        return get(tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO)))));
+    }
+
+    public List<GroupDTO> get(TournamentDTO tournament) {
+        return converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournament)).stream().map(this::createConverterRequest)
+                .collect(Collectors.toList()));
+    }
+
+    public Ranking getRanking(GroupDTO group) {
+        return new Ranking(group);
     }
 
 }

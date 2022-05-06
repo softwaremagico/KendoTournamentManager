@@ -81,6 +81,10 @@ public class TeamDTO extends ElementDTO {
         this.group = group;
     }
 
+    public boolean isMember(ParticipantDTO member) {
+        return members.contains(member);
+    }
+
     @Override
     public String toString() {
         if (getName() != null) {

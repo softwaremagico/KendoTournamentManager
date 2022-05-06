@@ -24,11 +24,12 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.utils.DTONameUtils;
+import com.softwaremagico.kt.utils.IParticipantName;
+import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.Objects;
 
-public class ParticipantDTO extends ElementDTO {
+public class ParticipantDTO extends ElementDTO implements IParticipantName {
 
     private String idCard;
 
@@ -56,6 +57,7 @@ public class ParticipantDTO extends ElementDTO {
         this.idCard = idCard;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -64,6 +66,7 @@ public class ParticipantDTO extends ElementDTO {
         this.name = name;
     }
 
+    @Override
     public String getLastname() {
         return lastname;
     }
@@ -83,7 +86,7 @@ public class ParticipantDTO extends ElementDTO {
     @Override
     public String toString() {
         if (getName() != null) {
-            return DTONameUtils.getLastnameName(getLastname(), getName());
+            return NameUtils.getLastnameName(getLastname(), getName());
         }
         return super.toString();
     }
