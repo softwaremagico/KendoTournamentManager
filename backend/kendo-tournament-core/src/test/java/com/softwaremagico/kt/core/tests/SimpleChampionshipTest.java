@@ -138,8 +138,6 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         int teamMember = 0;
 
         for (Participant competitor : participantProvider.getAll()) {
-            roleProvider.save(new Role(tournament, competitor, RoleType.COMPETITOR));
-
             // Create a new team.
             if (team == null) {
                 teamIndex++;
@@ -152,7 +150,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             team = teamProvider.save(team);
             teamMember++;
 
-            // Team fill up, create a new team.
+            // Team filled up, create a new team.
             if (teamMember >= MEMBERS) {
                 team = null;
             }
