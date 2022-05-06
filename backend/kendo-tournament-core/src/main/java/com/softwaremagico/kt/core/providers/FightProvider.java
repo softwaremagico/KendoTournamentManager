@@ -53,7 +53,6 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
             f.setTournament(tournament);
             f.getTeam1().setTournament(tournament);
             f.getTeam2().setTournament(tournament);
-            f.getTeam2().setTournament(tournament);
         });
         return fights;
     }
@@ -62,8 +61,12 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return repository.countByTournamentAndFinishedAtIsNull(tournament) == 0;
     }
 
-    public Fight getCurrentFight(Tournament tournament) {
-        return repository.findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(tournament);
+    public Fight getCurrent(Tournament tournament) {
+        final Fight fight = repository.findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(tournament);
+        fight.setTournament(tournament);
+        fight.getTeam1().setTournament(tournament);
+        fight.getTeam2().setTournament(tournament);
+        return fight;
     }
 
     public void delete(Tournament tournament) {

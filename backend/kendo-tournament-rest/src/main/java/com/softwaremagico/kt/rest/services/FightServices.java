@@ -80,6 +80,14 @@ public class FightServices {
         return fightController.get(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets current fight.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/current", produces = MediaType.APPLICATION_JSON_VALUE)
+    public FightDTO getCurrent(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                               HttpServletRequest request) {
+        return fightController.getCurrent(tournamentId);
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
@@ -123,6 +131,16 @@ public class FightServices {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
         return fightController.update(fightDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}/{maximizeFights}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                                 @Parameter(description = "Create as much fights as possible", required = true) @PathVariable("maximizeFights") boolean maximizeFights,
+                                 @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
+                                 HttpServletRequest request) {
+        return fightController.createFights(tournamentId, maximizeFights, levelId);
     }
 
 

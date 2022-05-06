@@ -32,7 +32,9 @@ import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
@@ -56,9 +58,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
 @SpringBootTest
@@ -286,7 +286,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 new TypeReference<List<ParticipantDTO>>() {
                 });
 
-        for (ParticipantDTO competitor : participantController.get()) {
+        for (ParticipantDTO competitor : participantDTOs) {
             // Create a new team.
             if (team == null) {
                 teamIndex++;
@@ -317,6 +317,103 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             }
         }
 
-        //Assert.assertEquals((int) TEAMS, teamProvider.count(tournament));
+        createResult = this.mockMvc
+                .perform(get("/teams/tournaments/{tournamentId}/count", tournamentDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(team)))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+
+        Assert.assertEquals((int) TEAMS, Integer.parseInt(createResult.getResponse().getContentAsString()));
+    }
+
+    @Test(dependsOnMethods = {"addTeams"})
+    public void createFights() throws Exception {
+
+        MvcResult createResult = this.mockMvc
+                .perform(put("/fights/create/tournaments/{tournamentId}/levels/{levelId}/{maximizeFights}", tournamentDTO.getId(), 0, true)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        List<FightDTO> tournamentFights = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<List<FightDTO>>() {
+        });
+
+        createResult = this.mockMvc
+                .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<List<GroupDTO>>() {
+        });
+
+        //Check group has been created.
+        Assert.assertEquals(tournamentGroups.size(), 1);
+        Assert.assertEquals(tournamentGroups.get(0).getFights().size(), tournamentFights.size());
+
+        Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
+
+        // Check than teams have not crossed colors.
+        for (int i = 0; i < tournamentFights.size() - 1; i++) {
+            Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam2(), tournamentFights.get(i).getTeam1());
+            Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam1(), tournamentFights.get(i).getTeam2());
+        }
+    }
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void testSimpleWinner() throws Exception {
+
+        while (!fightController.areOver(tournamentDTO)) {
+
+            MvcResult createResult = this.mockMvc
+                    .perform(get("/fights/tournaments/{tournamentId}/current", tournamentDTO.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + jwtToken))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                    .andReturn();
+            FightDTO currentFight = fromJson(createResult.getResponse().getContentAsString(), FightDTO.class);
+
+            // First duel won
+            currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
+            currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
+            currentFight.setOver(true);
+
+            //Update the fight.
+            this.mockMvc
+                    .perform(put("/fights")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + jwtToken)
+                            .content(toJson(currentFight)))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                    .andReturn();
+        }
+
+        MvcResult createResult = this.mockMvc
+                .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<List<GroupDTO>>() {
+        });
+
+        Ranking ranking = new Ranking(tournamentGroups.get(0));
+
+        for (int i = 0; i < ranking.getTeamsScoreRanking().size() - 1; i++) {
+            Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getWonFights() >= ranking.getTeamsScoreRanking()
+                    .get(i + 1).getWonFights());
+            Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getWonDuels() >= ranking.getTeamsScoreRanking()
+                    .get(i + 1).getWonDuels());
+            Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getHits() >= ranking.getTeamsScoreRanking()
+                    .get(i + 1).getHits());
+        }
+
+        //resetGroup(groupProvider.getGroups(tournament).get(0));
     }
 }
