@@ -18,4 +18,11 @@ export class FightComponent implements OnInit {
 
   }
 
+  showTeamTitle(): boolean {
+    if (this.fight?.tournament?.teamSize) {
+      return this.fight.tournament.teamSize > 1;
+    }
+    return true;
+  }
+
 }
