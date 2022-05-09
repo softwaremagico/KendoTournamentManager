@@ -1,7 +1,6 @@
 version: '3.9'
 
 
-
 volumes:
   kendo-tournament-database:
   ssl-certificates:
@@ -10,15 +9,14 @@ volumes:
 
 networks:
   containers:
-    internal: true     
+    internal: true
   external:
     internal: false
-    
-    
-    
+
+
 services:
 
-  rproxy:
+  kendo-tournament-rproxy:
     build:
       context: ./rproxy
       args:
@@ -34,14 +32,16 @@ services:
     volumes:
       - ssl-certificates:/etc/letsencrypt
       - ssl-certificates-data:/data/letsencrypt
-    container_name: rproxy
-    hostname: rproxy
+    container_name: kendo-tournament-rproxy
+    hostname: kendo-tournament-rproxy
     links:
       - "kendo-tournament-frontend"
       - "kendo-tournament-backend"
     depends_on:
-      - "kendo-tournament-frontend"
-      - "kendo-tournament-backend"
+      kendo-tournament-frontend:
+        condition: service_healthy
+      kendo-tournament-backend:
+        condition: service_healthy
     healthcheck:
       test: curl -k --fail https://localhost/backend || exit 1
       interval: 30s
@@ -51,6 +51,8 @@ services:
       options:
         max-size: "2m"
         max-file: "5"
+  #    profiles:
+  #      - donotstart
 
 
   kendo-tournament-frontend:
