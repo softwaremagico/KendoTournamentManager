@@ -1,0 +1,131 @@
+version: '3.9'
+
+
+
+volumes:
+  kendo-tournament-database:
+  ssl-certificates:
+  ssl-certificates-data:
+
+
+networks:
+  containers:
+    internal: true     
+  external:
+    internal: false
+    
+    
+    
+services:
+
+  rproxy:
+    build:
+      context: ./rproxy
+      args:
+        - machine_domain
+    image: rproxy
+    restart: always
+    networks:
+      - containers
+      - external
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ssl-certificates:/etc/letsencrypt
+      - ssl-certificates-data:/data/letsencrypt
+    container_name: rproxy
+    hostname: rproxy
+    links:
+      - "kendo-tournament-frontend"
+      - "kendo-tournament-backend"
+    depends_on:
+      - "kendo-tournament-frontend"
+      - "kendo-tournament-backend"
+    healthcheck:
+      test: curl -k --fail https://localhost/backend || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+
+  kendo-tournament-frontend:
+    build:
+      context: ./frontend
+      args:
+        - frontend_path
+    image: kendo-tournament-frontend
+    restart: always
+    networks:
+      - containers
+    volumes:
+      - /dev/urandom:/dev/random
+    container_name: kendo-tournament-frontend
+    hostname: kendo-tournament-frontend
+    working_dir: /usr/src/frontend/
+    environment:
+      - NODE_PATH=/usr/local/lib/node_modules/
+    healthcheck:
+      test: curl --fail --request GET --silent http://localhost/health-check || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    links:
+      - "kendo-tournament-backend"
+    depends_on:
+      - "kendo-tournament-backend"
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+
+  kendo-tournament-backend:
+    build:
+      context: ./backend
+    image: kendo-tournament-backend
+    restart: always
+    networks:
+      - containers
+    volumes:
+      - /dev/urandom:/dev/random
+    container_name: kendo-tournament-backend
+    hostname: kendo-tournament-backend
+    working_dir: /opt/kendo-tournament-backend/
+    links:
+      - "kendo-tournament-database"
+    depends_on:
+      - "kendo-tournament-database"
+    healthcheck:
+      test: curl -k --fail --request GET --silent http://localhost:8080/kendo-tournament-backend/health-check || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+
+  kendo-tournament-database:
+    image: postgres
+    restart: always
+    networks:
+      - containers
+      - external
+    ports:
+      - "5432:5432"
+    volumes:
+      - kendo-tournament-database:/var/lib/postgresql/data
+    container_name: kendo-tournament-database
+    hostname: kendo-tournament-database
+    environment:
+      - POSTGRES_PASSWORD=${database_password}
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
