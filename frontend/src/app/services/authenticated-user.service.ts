@@ -13,7 +13,7 @@ import {EnvironmentService} from "../environment.service";
 })
 export class AuthenticatedUserService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/api/public';
+  private baseUrl = this.environmentService.getBackendUrl() + '/auth/public';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
