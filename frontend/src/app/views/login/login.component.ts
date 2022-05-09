@@ -4,6 +4,7 @@ import {AuthenticatedUserService} from "../../services/authenticated-user.servic
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
+import {LoggerService} from "../../services/logger.service";
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   loginForm: FormGroup;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, public authenticatedUserService: AuthenticatedUserService,
-              private formBuilder: FormBuilder, private messageService : MessageService) {
+              private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
       password: ['', Validators.required]
@@ -31,7 +32,8 @@ export class LoginComponent {
         this.router.navigate([returnUrl]);
 
       },
-      () => {
+      error => {
+        this.loggerService.info(`Error logging: ` + error);
         this.messageService.errorMessage("deniedUser");
       });
   }
