@@ -89,7 +89,7 @@
     </dependencies>
 
     <build>
-        <finalName>kendo-tournament-rest</finalName>
+        <finalName>kendo-tournament-backend</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
