@@ -1,5 +1,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="1" name="KendoTournament">
+    <listeners>
+        <listener class-name="com.softwaremagico.kt.TestListener"></listener>
+    </listeners>
+
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
@@ -7,6 +11,7 @@
                 <include name="restAccess"/>
                 <include name="dtoToEntity"/>
                 <include name="bruteForce"/>
+                <include name="restSimpleChampionshipTest"/>
             </run>
         </groups>
         <classes>
@@ -14,6 +19,7 @@
             <class name="com.softwaremagico.kt.security.RestAccessTests"/>
             <class name="com.softwaremagico.kt.security.BruteForceTests"/>
             <class name="com.softwaremagico.kt.rest.DtoToEntity"/>
+            <class name="com.softwaremagico.kt.rest.RestSimpleChampionshipTest"/>
         </classes>
     </test>
 </suite>

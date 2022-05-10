@@ -25,10 +25,11 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.StringUtils;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.text.Collator;
@@ -42,22 +43,22 @@ import java.util.Locale;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participants")
-public class Participant extends Element implements Comparable<Participant> {
+public class Participant extends Element implements Comparable<Participant>, IParticipantName {
 
     @Column(name = "id_card", unique = true)
     @Convert(converter = StringCryptoConverter.class)
     private String idCard;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name = "";
 
-    @Column(name = "lastname")
+    @Column(name = "lastname", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String lastname = "";
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "club")
+    @JoinColumn(name = "club", nullable = false)
     private Club club;
 
     public Participant() {
@@ -65,10 +66,11 @@ public class Participant extends Element implements Comparable<Participant> {
     }
 
 
-    public Participant(String idCard, String name, String lastname) {
+    public Participant(String idCard, String name, String lastname, Club club) {
         setName(name);
         setLastname(lastname);
         setIdCard(idCard);
+        setClub(club);
     }
 
     public final void setIdCard(String value) {
@@ -92,10 +94,12 @@ public class Participant extends Element implements Comparable<Participant> {
         lastname = StringUtils.setCase(value);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getLastname() {
         return lastname;
     }

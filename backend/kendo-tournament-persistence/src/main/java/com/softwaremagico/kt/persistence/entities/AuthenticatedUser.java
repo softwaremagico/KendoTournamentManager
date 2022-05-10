@@ -24,7 +24,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,15 +47,12 @@ public class AuthenticatedUser implements UserDetails {
     private Integer id;
 
     @Column(name = "password")
-    //@Convert(converter = StringCryptoConverter.class)
     private String password;
 
     @Column(name = "username")
-    @Convert(converter = StringCryptoConverter.class)
     private String username;
 
     @Column(name = "full_name")
-    @Convert(converter = StringCryptoConverter.class)
     private String fullName;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -70,6 +66,7 @@ public class AuthenticatedUser implements UserDetails {
         return id;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -82,6 +79,7 @@ public class AuthenticatedUser implements UserDetails {
         this.password = new BCryptPasswordEncoder().encode(password);
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -103,18 +101,22 @@ public class AuthenticatedUser implements UserDetails {
         this.fullName = fullName;
     }
 
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @Override
     public boolean isEnabled() {
         return true;
     }

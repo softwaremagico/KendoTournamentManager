@@ -30,7 +30,7 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter
+@Converter(autoApply = true)
 public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType> implements AttributeConverter<RoleType, String> {
 
     public RoleTypeCryptoConverter() {

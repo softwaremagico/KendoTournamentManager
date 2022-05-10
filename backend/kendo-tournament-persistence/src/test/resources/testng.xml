@@ -1,15 +1,22 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="1" name="KendoTournament">
+    <listeners>
+        <listener class-name="com.softwaremagico.kt.TestListener"></listener>
+    </listeners>
+
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="participantRepository" />
-                <include name="imageRepository" />
+                <include name="participantRepository"/>
+                <include name="imageRepository"/>
+                <include name="imageRepository"/>
+                <include name="encryptedData"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.persistence.repositories.ParticipantRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.ParticipantImageRepositoryTest"/>
+            <class name="com.softwaremagico.kt.encryption.CheckEncryptedDataStorage"/>
         </classes>
     </test>
 </suite>
