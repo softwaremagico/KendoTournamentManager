@@ -16,6 +16,7 @@ RUN mkdir -p /usr/src/
 WORKDIR /usr/src/
 
 # Download code
+RUN apk --no-cache add supervisor
 
 #Working in the app directory
 WORKDIR /usr/src/${project_name}/

@@ -7,6 +7,7 @@ ENV TZ=Europe/Madrid
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #Download project and install it
+RUN apk --no-cache add supervisor
 
 #Copy configuration files.
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
