@@ -31,7 +31,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.Timestamp;
 
-@Converter
+@Converter(autoApply = true)
 public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp> implements AttributeConverter<Timestamp, String> {
 
     public TimestampCryptoConverter() {

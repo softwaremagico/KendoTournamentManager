@@ -8,17 +8,17 @@ package com.softwaremagico.kt.persistence.encryption;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -45,6 +45,9 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     private CipherInitializer cipherInitializer;
 
+    private static Cipher cipherEncryptor;
+    private static Cipher cipherDecryptor;
+
     public AbstractCryptoConverter() {
         this(new CipherInitializer());
     }
@@ -57,8 +60,7 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     public String convertToDatabaseColumn(T attribute) {
         if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && isNotNullOrEmpty(attribute)) {
             try {
-                final Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, databaseEncryptionKey);
-                return encrypt(cipher, attribute);
+                return encrypt(getCipherEncryptor(), attribute);
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
                     | IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
@@ -71,8 +73,7 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     public T convertToEntityAttribute(String dbData) {
         if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && dbData != null && !dbData.isEmpty()) {
             try {
-                final Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, databaseEncryptionKey);
-                return decrypt(cipher, dbData);
+                return decrypt(getCipherDecryptor(), dbData);
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
                     | IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
@@ -89,6 +90,24 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     private byte[] callCipherDoFinal(Cipher cipher, byte[] bytes) throws IllegalBlockSizeException, BadPaddingException {
         return cipher.doFinal(bytes);
+    }
+
+    private static Cipher getCipherEncryptor() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+            NoSuchPaddingException, InvalidKeyException {
+        if (cipherEncryptor == null) {
+            final CipherInitializer cipherInitializer = new CipherInitializer();
+            cipherEncryptor = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, databaseEncryptionKey);
+        }
+        return cipherEncryptor;
+    }
+
+    private static Cipher getCipherDecryptor() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+            NoSuchPaddingException, InvalidKeyException {
+        if (cipherDecryptor == null) {
+            final CipherInitializer cipherInitializer = new CipherInitializer();
+            cipherDecryptor = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, databaseEncryptionKey);
+        }
+        return cipherDecryptor;
     }
 
     private String encrypt(Cipher cipher, T attribute) throws IllegalBlockSizeException, BadPaddingException {

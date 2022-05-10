@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
+import {environment} from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentService {
 
-  private backendUrl: string = "http://localhost:8080/kendo-tournament-backend";
+  private backendUrl: string = environment.backendUrl;
 
   constructor() {
   }

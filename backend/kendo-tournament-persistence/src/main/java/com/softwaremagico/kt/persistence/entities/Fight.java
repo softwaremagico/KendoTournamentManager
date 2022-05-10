@@ -24,6 +24,8 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeAttributeConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -40,31 +42,34 @@ import java.util.stream.Collectors;
 @Table(name = "fights")
 public class Fight extends Element {
 
-    @ManyToOne
-    @JoinColumn(name = "team1")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "team1", nullable = false)
     private Team team1;
 
-    @ManyToOne
-    @JoinColumn(name = "team2")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "team2", nullable = false)
     private Team team2;
 
-    @ManyToOne
-    @JoinColumn(name = "tournament")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
-    @Column(name = "shiaijo")
-    private Integer shiaijo;
+    @Column(name = "shiaijo", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer shiaijo = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
 
     @Column(name = "finished_at")
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime finishedAt;
 
-    @Column(name = "level")
-    private Integer level;
+    @Column(name = "fight_level", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer level = 0;
 
     public Fight() {
         super();
@@ -140,8 +145,8 @@ public class Fight extends Element {
         int pointLeft = 0;
         int pointRight = 0;
         for (int i = 0; i < getDuels().size(); i++) {
-            pointLeft += getDuels().get(i).getCompetitor1Score();
-            pointRight += getDuels().get(i).getCompetitor2Score();
+            pointLeft += getDuels().get(i).getCompetitor1ScoreValue();
+            pointRight += getDuels().get(i).getCompetitor2ScoreValue();
         }
         if (pointLeft > pointRight) {
             return team1;
@@ -164,75 +169,6 @@ public class Fight extends Element {
         }
     }
 
-    /**
-     * To win a fight, a team need to win more duels or do more points.
-     *
-     * @return
-     */
-    public boolean isDrawFight() {
-        return getWinner() == null;
-    }
-
-    public Integer getDrawDuels(Team team) {
-        int drawDuels = 0;
-        if ((getTeam1().equals(team) || getTeam2().equals(team))) {
-            drawDuels = (int) getDuels().stream().filter(duel -> duel.getWinner() == 0).count();
-        }
-        return drawDuels;
-    }
-
-    public Integer getDrawDuels(Participant competitor) {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0 &&
-                (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
-    }
-
-    public Integer getScore(Team team) {
-        if (Objects.equals(team1, team)) {
-            return getScoreTeam1();
-        }
-        if (Objects.equals(team2, team)) {
-            return getScoreTeam2();
-        }
-        return 0;
-    }
-
-    public Integer getScoreTeam1() {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == -1).count();
-    }
-
-    public Integer getScoreTeam2() {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 1).count();
-    }
-
-    public Integer getScore(Participant competitor) {
-        int drawDuels = 0;
-        drawDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1 &&
-                (Objects.equals(duel.getCompetitor1(), competitor))).count();
-        drawDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1 &&
-                (Objects.equals(duel.getCompetitor2(), competitor))).count();
-        return drawDuels;
-    }
-
-    public boolean isWon(Participant competitor) {
-        if (competitor != null) {
-            if (team1.isMember(competitor) && Objects.equals(getWinner(), team1)) {
-                return true;
-            }
-            return team2.isMember(competitor) && Objects.equals(getWinner(), team2);
-        }
-        return false;
-    }
-
-    public int getWonDuels(Team team) {
-        if (Objects.equals(team1, team)) {
-            return (int) getDuels().stream().filter(duel -> duel.getWinner() == -1).count();
-        }
-        if (Objects.equals(team2, team)) {
-            return (int) getDuels().stream().filter(duel -> duel.getWinner() == 1).count();
-        }
-        return 0;
-    }
-
     public LocalDateTime getFinishedAt() {
         return finishedAt;
     }
@@ -252,7 +188,7 @@ public class Fight extends Element {
     @Override
     public String toString() {
         final StringBuilder text = new StringBuilder();
-        text.append("Tournament: ").append(tournament).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
+        text.append("Tournament: ").append(tournament.getId()).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
                 append(team1.getName()).append("' vs '").append(team2.getName()).append("'\n");
         if (isOver()) {
             text.append(" [F]");

@@ -141,9 +141,6 @@
   "NumberLabel": "Num Competitors",
   "BannerLabel": "Banner",
   "PhotoLabel": "Photo",
-  "ClearMenuItem": "Clear",
-  "DrawMenuItem": "Draw",
-  "FaultMenuItem": "Fault",
   "DrawGame": "There is a draw match.",
   "fightsWon": "Won matches",
   "duelsWon": "Won fights",
@@ -467,6 +464,16 @@
   "league": "League",
   "customized": "Custom",
   "addTeamsText": "Add Team",
-  "addTeamToTournament": "Add new team to the league"
+  "addTeamToTournament": "Add new team to the league",
+  "men" : "Men",
+  "kote" : "Kote",
+  "do" : "Do",
+  "tsuki" : "Tsuki",
+  "ippon" : "Ippon",
+  "hansoku" : "Hansoku",
+  "clear": "Clear",
+  "empty": "Clear",
+  "draw": "Draw",
+  "fault": "Fault"
 }
 

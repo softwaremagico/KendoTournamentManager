@@ -25,23 +25,26 @@ package com.softwaremagico.kt.core.score;
  */
 
 
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.persistence.entities.ScoreType;
 
 import java.util.*;
 
 public class Ranking {
 
-    private final Group group;
-    private List<Team> teamRanking = null;
-    private List<Participant> participants = null;
+    private final GroupDTO group;
+    private List<TeamDTO> teamRanking = null;
+    private List<ParticipantDTO> participants = null;
     private List<ScoreOfTeam> teamScoreRanking = null;
     private List<ScoreOfCompetitor> competitorsScoreRanking = null;
 
-    public Ranking(Group group) {
+    public Ranking(GroupDTO group) {
         this.group = group;
     }
 
-    public List<Team> getTeamsRanking() {
+    public List<TeamDTO> getTeamsRanking() {
         if (teamRanking == null) {
             teamRanking = getTeamsRanking(group);
         }
@@ -60,8 +63,8 @@ public class Ranking {
      *
      * @return classification of the teams
      */
-    private HashMap<Integer, List<Team>> getTeamsByPosition() {
-        final HashMap<Integer, List<Team>> teamsByPosition = new HashMap<>();
+    private HashMap<Integer, List<TeamDTO>> getTeamsByPosition() {
+        final HashMap<Integer, List<TeamDTO>> teamsByPosition = new HashMap<>();
         final List<ScoreOfTeam> scores = getTeamsScoreRanking();
 
         Integer position = 0;
@@ -78,10 +81,10 @@ public class Ranking {
         return teamsByPosition;
     }
 
-    public List<Team> getFirstTeamsWithDrawScore(Integer maxWinners) {
-        final HashMap<Integer, List<Team>> teamsByPosition = getTeamsByPosition();
+    public List<TeamDTO> getFirstTeamsWithDrawScore(Integer maxWinners) {
+        final HashMap<Integer, List<TeamDTO>> teamsByPosition = getTeamsByPosition();
         for (int i = 0; i < maxWinners; i++) {
-            final List<Team> teamsInDraw = teamsByPosition.get(i);
+            final List<TeamDTO> teamsInDraw = teamsByPosition.get(i);
             if (teamsInDraw.size() > 1) {
                 return teamsInDraw;
             }
@@ -89,8 +92,8 @@ public class Ranking {
         return null;
     }
 
-    public Team getTeam(Integer order) {
-        final List<Team> teamsOrder = getTeamsRanking();
+    public TeamDTO getTeam(Integer order) {
+        final List<TeamDTO> teamsOrder = getTeamsRanking();
         if (order >= 0 && order < teamsOrder.size()) {
             return teamsOrder.get(order);
         }
@@ -105,7 +108,7 @@ public class Ranking {
         return null;
     }
 
-    public List<Participant> getParticipants() {
+    public List<ParticipantDTO> getParticipants() {
         if (participants == null) {
             participants = getCompetitorsRanking(group);
         }
@@ -119,7 +122,7 @@ public class Ranking {
         return competitorsScoreRanking;
     }
 
-    public ScoreOfCompetitor getScoreRanking(Participant competitor) {
+    public ScoreOfCompetitor getScoreRanking(ParticipantDTO competitor) {
         final List<ScoreOfCompetitor> scoreRanking = getCompetitorsScoreRanking();
         for (final ScoreOfCompetitor score : scoreRanking) {
             if (score.getCompetitor().equals(competitor)) {
@@ -129,8 +132,8 @@ public class Ranking {
         return null;
     }
 
-    public Participant getCompetitor(Integer order) {
-        final List<Participant> competitorOrder = getParticipants();
+    public ParticipantDTO getCompetitor(Integer order) {
+        final List<ParticipantDTO> competitorOrder = getParticipants();
         if (order >= 0 && order < competitorOrder.size()) {
             return competitorOrder.get(order);
         }
@@ -145,27 +148,27 @@ public class Ranking {
         return null;
     }
 
-    private static Set<Participant> getParticipants(List<Team> teams) {
-        final Set<Participant> allCompetitors = new HashSet<>();
-        for (final Team team : teams) {
+    private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
+        final Set<ParticipantDTO> allCompetitors = new HashSet<>();
+        for (final TeamDTO team : teams) {
             allCompetitors.addAll(team.getMembers());
         }
         return allCompetitors;
     }
 
-    public static List<Team> getTeamsRanking(Group group) {
+    public static List<TeamDTO> getTeamsRanking(GroupDTO group) {
         final List<ScoreOfTeam> scores = getTeamsScoreRanking(group);
-        final List<Team> teamRanking = new ArrayList<>();
+        final List<TeamDTO> teamRanking = new ArrayList<>();
         for (final ScoreOfTeam score : scores) {
             teamRanking.add(score.getTeam());
         }
         return teamRanking;
     }
 
-    public static List<ScoreOfTeam> getTeamsScoreRanking(Group group) {
-        final List<Team> teamsOfFights = group.getTeams();
+    public static List<ScoreOfTeam> getTeamsScoreRanking(GroupDTO group) {
+        final List<TeamDTO> teamsOfFights = group.getTeams();
         final List<ScoreOfTeam> scores = new ArrayList<>();
-        for (final Team team : teamsOfFights) {
+        for (final TeamDTO team : teamsOfFights) {
             scores.add(ScoreOfTeam.getScoreOfTeam(team, group.getFights(), group.getUnties()));
         }
         Collections.sort(scores);
@@ -180,7 +183,7 @@ public class Ranking {
      * @param group
      * @return
      */
-    private static ScoreOfCompetitor getScoreOfCompetitor(Participant competitor, Group group) {
+    private static ScoreOfCompetitor getScoreOfCompetitor(ParticipantDTO competitor, GroupDTO group) {
         // If one fight is classic, use classic score.
         if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.CLASSIC)) {
             return new ScoreOfCompetitorClassic(competitor, group.getFights());
@@ -204,22 +207,22 @@ public class Ranking {
         return new ScoreOfCompetitorCustom(competitor, group.getFights());
     }
 
-    public static ScoreOfCompetitor getScoreRanking(Participant competitor, Group group) {
+    public static ScoreOfCompetitor getScoreRanking(ParticipantDTO competitor, GroupDTO group) {
         return getScoreOfCompetitor(competitor, group);
     }
 
-    public static List<ScoreOfCompetitor> getCompetitorsScoreRanking(Group group) {
-        final Set<Participant> competitors = getParticipants(group.getTeams());
+    public static List<ScoreOfCompetitor> getCompetitorsScoreRanking(GroupDTO group) {
+        final Set<ParticipantDTO> competitors = getParticipants(group.getTeams());
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
-        for (final Participant competitor : competitors) {
+        for (final ParticipantDTO competitor : competitors) {
             scores.add(getScoreOfCompetitor(competitor, group));
         }
         Collections.sort(scores);
         return scores;
     }
 
-    public static Integer getOrder(Group group, Team team) {
-        final List<Team> ranking = getTeamsRanking(group);
+    public static Integer getOrder(GroupDTO group, TeamDTO team) {
+        final List<TeamDTO> ranking = getTeamsRanking(group);
 
         for (int i = 0; i < ranking.size(); i++) {
             if (ranking.get(i).equals(team)) {
@@ -229,7 +232,7 @@ public class Ranking {
         return null;
     }
 
-    public static Integer getOrderFromRanking(List<ScoreOfTeam> ranking, Team team) {
+    public static Integer getOrderFromRanking(List<ScoreOfTeam> ranking, TeamDTO team) {
         for (int i = 0; i < ranking.size(); i++) {
             if (ranking.get(i).getTeam().equals(team)) {
                 return i;
@@ -238,22 +241,22 @@ public class Ranking {
         return null;
     }
 
-    public static Team getTeam(Group group, Integer order) {
-        final List<Team> ranking = getTeamsRanking(group);
+    public static TeamDTO getTeam(GroupDTO group, Integer order) {
+        final List<TeamDTO> ranking = getTeamsRanking(group);
         if (order < ranking.size() && order >= 0) {
             return ranking.get(order);
         }
         return null;
     }
 
-    public static List<Participant> getCompetitorsRanking(Group group) {
-        final Set<Participant> competitors = getParticipants(group.getTeams());
+    public static List<ParticipantDTO> getCompetitorsRanking(GroupDTO group) {
+        final Set<ParticipantDTO> competitors = getParticipants(group.getTeams());
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
-        for (final Participant competitor : competitors) {
+        for (final ParticipantDTO competitor : competitors) {
             scores.add(getScoreOfCompetitor(competitor, group));
         }
         Collections.sort(scores);
-        final List<Participant> competitorsRanking = new ArrayList<>();
+        final List<ParticipantDTO> competitorsRanking = new ArrayList<>();
         for (final ScoreOfCompetitor score : scores) {
             competitorsRanking.add(score.getCompetitor());
         }
