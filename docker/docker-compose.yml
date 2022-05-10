@@ -21,7 +21,8 @@ services:
       context: ./rproxy
       args:
         - machine_domain
-    image: rproxy
+        - frontend_path
+    image: kendo-tournament-rproxy
     restart: always
     networks:
       - containers
