@@ -38,7 +38,8 @@ RUN  sed -i "s|PROJECT_FOLDER|/opt/${project_name}|g" /etc/supervisor/conf.d/sup
      sed -i "s|PROJECT_NAME|${project_name}|g" /etc/supervisor/conf.d/supervisord.conf
 
 # Compile
-RUN npm install -timeout=240000 &&  \
+RUN npm install -g @angular/cli && \
+    npm install -timeout=240000 && \
     ng build --configuration=docker --base-href ${frontend_path}
 
 # EXEC
