@@ -7,7 +7,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 On the [environment folder](src/environments) there are multiple files to store the configuration variables for the
 server. As it is serving multiples environments, edit the ones you need (probably `environment.prod.ts`).
 
-Set the backend server url if needed. You probably must update it if the frontend and the backend are running on
+Set the backend server url if needed. You probably must update it, if the frontend and the backend are running on
 different hosts.
 
 ```
