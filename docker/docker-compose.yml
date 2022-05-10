@@ -60,6 +60,7 @@ services:
       context: ./frontend
       args:
         - frontend_path
+        - release
     image: kendo-tournament-frontend
     restart: always
     networks:
@@ -68,7 +69,7 @@ services:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-frontend
     hostname: kendo-tournament-frontend
-    working_dir: /usr/src/frontend/
+    working_dir: /opt/kendo-tournament-frontend/
     environment:
       - NODE_PATH=/usr/local/lib/node_modules/
     healthcheck:
@@ -89,6 +90,17 @@ services:
   kendo-tournament-backend:
     build:
       context: ./backend
+      args:
+        - release
+        - machine_domain
+        - database_password
+        - database_user
+        - database_name
+        - database_type
+        - database_dialect
+        - database_port
+        - database_encryption_key
+        - jwt_secret
     image: kendo-tournament-backend
     restart: always
     networks:
@@ -127,6 +139,8 @@ services:
     hostname: kendo-tournament-database
     environment:
       - POSTGRES_PASSWORD=${database_password}
+      - POSTGRES_USER=${database_user}
+      - POSTGRES_DB=${database_name}
     logging:
       options:
         max-size: "2m"
