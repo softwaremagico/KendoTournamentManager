@@ -3,12 +3,14 @@
 @include mat.core();
 
 $kendo-primary: mat.define-palette($md-kendo);
+$kendo-secondary: mat.define-palette($md-kendo-secondary);
 $kendo-accent: mat.define-palette($md-accent);
 $kendo-warn: mat.define-palette(mat.$red-palette);
 
 $kendo-theme: mat.define-light-theme((
   color: (
     primary: $kendo-primary,
+    seconday: $kendo-secondary,
     accent: $kendo-accent,
     warn: $kendo-warn,
   )

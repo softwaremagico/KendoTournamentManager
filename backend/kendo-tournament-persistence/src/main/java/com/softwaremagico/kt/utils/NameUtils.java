@@ -24,13 +24,11 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-
 public class NameUtils {
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
 
-    public static String getLastnameName(Participant participant) {
+    public static String getLastnameName(IParticipantName participant) {
         if (participant == null) {
             return " ***REMOVED*** ***REMOVED*** ";
         }
@@ -45,14 +43,28 @@ public class NameUtils {
         }
     }
 
+    public static String getLastnameNameIni(IParticipantName participant) {
+        if (participant == null) {
+            return " ***REMOVED*** ***REMOVED*** ";
+        }
+        return getLastnameNameIni(participant.getLastname(), participant.getName());
+    }
+
     /**
      * Get an automatic abbreviation of the lastname with the initial letter of
      * the name.
      *
      * @return
      */
-    public String getLastnameNameIni(String lastname, String name) {
+    public static String getLastnameNameIni(String lastname, String name) {
         return getLastnameNameIni(lastname, name, MAX_NAME_LENGTH);
+    }
+
+    public static String getLastnameNameIni(IParticipantName participant, int maxLength) {
+        if (participant == null) {
+            return " ***REMOVED*** ***REMOVED*** ";
+        }
+        return getLastnameNameIni(participant.getLastname(), participant.getName(), maxLength);
     }
 
 
@@ -90,6 +102,13 @@ public class NameUtils {
         }
     }
 
+    public static String getShortLastname(IParticipantName participant, int length) {
+        if (participant == null) {
+            return " ***REMOVED*** ***REMOVED*** ";
+        }
+        return getShortLastname(participant.getLastname(), length);
+    }
+
     /**
      * Get an automatic abbreviation of the lastname of the person.
      *
@@ -105,6 +124,13 @@ public class NameUtils {
         }
     }
 
+    public static String getShortLastname(IParticipantName participant) {
+        if (participant == null) {
+            return " ***REMOVED*** ***REMOVED*** ";
+        }
+        return getShortLastname(participant.getLastname());
+    }
+
     /**
      * Get an automatic abbreviation of the lastname of the person.
      *
@@ -112,6 +138,13 @@ public class NameUtils {
      */
     public static String getShortLastname(String lastname) {
         return getShortLastname(lastname, MAX_SHORT_NAME_LENGTH);
+    }
+
+    public static String getShortLastnameName(IParticipantName participant, int maxLength) {
+        if (participant == null) {
+            return " ***REMOVED*** ***REMOVED*** ";
+        }
+        return getShortLastnameName(participant.getLastname(), participant.getName(), maxLength);
     }
 
     /**
@@ -130,6 +163,13 @@ public class NameUtils {
         return ret.trim();
     }
 
+    public static String getShortName(IParticipantName participant, int length) {
+        if (participant == null) {
+            return " ***REMOVED*** ";
+        }
+        return getShortName(participant.getName(), length);
+    }
+
 
     /**
      * Get an automatic abbreviation of the name of the person.
@@ -141,6 +181,13 @@ public class NameUtils {
         return name.substring(0, Math.min(length, name.length()));
     }
 
+    public static String getShortName(IParticipantName participant) {
+        if (participant == null) {
+            return " ***REMOVED*** ";
+        }
+        return getShortName(participant.getName());
+    }
+
     /**
      * Get an automatic abbreviation of the name of the person.
      *
@@ -150,8 +197,15 @@ public class NameUtils {
         return getShortName(name, MAX_SHORT_NAME_LENGTH);
     }
 
+    public static String getAcronym(IParticipantName participant) {
+        if (participant == null) {
+            return "";
+        }
+        return getAcronym(participant.getLastname(), participant.getName());
+    }
 
-    public String getAcronym(String lastname, String name) {
+
+    public static String getAcronym(String lastname, String name) {
         String acronym = "";
         acronym += name.trim().substring(0, 1).toUpperCase();
         final String[] shortLastname = lastname.trim().split(" ");

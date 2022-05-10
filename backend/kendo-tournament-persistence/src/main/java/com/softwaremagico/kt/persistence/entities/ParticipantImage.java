@@ -26,13 +26,14 @@ package com.softwaremagico.kt.persistence.entities;
 
 
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
 @Entity
 @Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "participant_image")
 public class ParticipantImage extends Element {
     // 2mb

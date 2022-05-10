@@ -8,17 +8,17 @@ package com.softwaremagico.kt.security;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -60,9 +60,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 @Test(groups = "authApi")
 public class TestAuthApi extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String USER_FULL_NAME = "Test User";
-    private final static String USER_PASSWORD = "password";
+    private static final String USER_NAME = "user";
+    private static final String USER_FULL_NAME = "Test User";
+    private static final String USER_PASSWORD = "password";
 
     private MockMvc mockMvc;
 
@@ -77,6 +77,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    private String jwtToken;
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -117,7 +119,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -137,52 +139,12 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         request.setPassword("zxc");
 
         this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
-    }
-
-    @Test
-    public void testRegisterSuccess() throws Exception {
-        CreateUserRequest goodRequest = new CreateUserRequest();
-        goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
-        goodRequest.setFullName(USER_FULL_NAME);
-        goodRequest.setPassword(USER_PASSWORD);
-        goodRequest.setRePassword(USER_PASSWORD);
-
-        MvcResult createResult = this.mockMvc
-                .perform(post("/api/public/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(goodRequest)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
-        Assert.assertNotNull(authenticatedUser.getId());
-        Assert.assertEquals(goodRequest.getFullName(), authenticatedUser.getFullName());
-    }
-
-    @Test
-    public void testRegisterFail() throws Exception {
-        CreateUserRequest badRequest = new CreateUserRequest();
-        badRequest.setUsername("invalid.username");
-
-        // Adding two times same user.
-        this.mockMvc
-                .perform(post("/api/public/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(badRequest)));
-
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
-        this.mockMvc
-                .perform(post("/api/public/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(badRequest)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
     }
 
     @Test
@@ -195,15 +157,15 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/public/login")
+                .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        String headerValue = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
-        Assert.assertNotNull(headerValue);
+        jwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+        Assert.assertNotNull(jwtToken);
 
         //Check without header returns 401.
         this.mockMvc
@@ -214,8 +176,68 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         //With JWT header, must return 200.
         MvcResult jwtResult = this.mockMvc
                 .perform(get("/dummy/test").contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + headerValue))
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+    }
+
+    @Test
+    public void testRegisterNotAuthorized() throws Exception {
+        CreateUserRequest goodRequest = new CreateUserRequest();
+        goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
+        goodRequest.setFullName(USER_FULL_NAME);
+        goodRequest.setPassword(USER_PASSWORD);
+        goodRequest.setRePassword(USER_PASSWORD);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(goodRequest)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "testJwt")
+    public void testRegisterSuccess() throws Exception {
+        CreateUserRequest goodRequest = new CreateUserRequest();
+        goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
+        goodRequest.setFullName(USER_FULL_NAME);
+        goodRequest.setPassword(USER_PASSWORD);
+        goodRequest.setRePassword(USER_PASSWORD);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(goodRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
+        Assert.assertNotNull(authenticatedUser.getId());
+        Assert.assertEquals(goodRequest.getFullName(), authenticatedUser.getFullName());
+    }
+
+    @Test(dependsOnMethods = "testJwt")
+    public void testRegisterFail() throws Exception {
+        CreateUserRequest badRequest = new CreateUserRequest();
+        badRequest.setUsername("invalid.username");
+
+        // Adding two times same user.
+        this.mockMvc
+                .perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(badRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        this.mockMvc
+                .perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(badRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
     }
 }

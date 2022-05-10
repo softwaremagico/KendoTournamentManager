@@ -27,7 +27,7 @@ package com.softwaremagico.kt.persistence.encryption;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter
+@Converter(autoApply = true)
 public class StringCryptoConverter extends AbstractCryptoConverter<String> implements AttributeConverter<String, String> {
 
 	public StringCryptoConverter() {

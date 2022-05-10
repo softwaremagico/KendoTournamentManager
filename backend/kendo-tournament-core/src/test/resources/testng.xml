@@ -4,10 +4,12 @@
         <groups>
             <run>
                 <include name="simpleChampionshipTest"/>
+                <include name="converterTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.core.tests.SimpleChampionshipTest"/>
+            <class name="com.softwaremagico.kt.core.tests.ConverterTests"/>
         </classes>
     </test>
 </suite>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
@@ -27,7 +27,7 @@ export class TournamentService {
               private loggerService: LoggerService) { }
 
   getAll(): Observable<Tournament[]> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.get<Tournament[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all Tournaments`)),
@@ -63,7 +63,7 @@ export class TournamentService {
   }
 
   add(tournament: Tournament): Observable<Tournament> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.post<Tournament>(url, tournament, this.httpOptions)
       .pipe(
         tap((newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`)),
@@ -73,7 +73,7 @@ export class TournamentService {
 
 
   update(tournament: Tournament): Observable<Tournament> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Tournament>(url, tournament, this.httpOptions)
       .pipe(
         tap((updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`)),

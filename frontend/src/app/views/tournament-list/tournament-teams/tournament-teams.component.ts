@@ -1,10 +1,4 @@
-import {
-  Component,
-  HostListener,
-  Inject,
-  OnInit,
-  Optional,
-} from '@angular/core';
+import {Component, HostListener, Inject, OnInit, Optional,} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
