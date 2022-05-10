@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,22 +43,23 @@ import java.util.Locale;
 @Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}))
 public class Team extends Element implements Comparable<Team> {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
     @OneToMany
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "members_of_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "member_index")
     private List<Participant> members;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tournament")
+    @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
-    @Column(name = "group_index")
-    private int group = 0; // for the championship
+    @Column(name = "group_index", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer group = 0; // for the championship
 
     public Team() {
         super();
@@ -69,7 +71,6 @@ public class Team extends Element implements Comparable<Team> {
         setName(name);
         setTournament(tournament);
     }
-
 
     @Override
     public String toString() {
@@ -104,11 +105,11 @@ public class Team extends Element implements Comparable<Team> {
         this.tournament = tournament;
     }
 
-    public int getGroup() {
+    public Integer getGroup() {
         return group;
     }
 
-    public void setGroup(int group) {
+    public void setGroup(Integer group) {
         this.group = group;
     }
 

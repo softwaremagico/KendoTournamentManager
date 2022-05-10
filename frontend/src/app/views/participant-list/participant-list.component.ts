@@ -8,9 +8,10 @@ import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {ParticipantService} from "../../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
-import {Action, ParticipantDialogBoxComponent} from "./participant-dialog-box/participant-dialog-box.component";
+import {ParticipantDialogBoxComponent} from "./participant-dialog-box/participant-dialog-box.component";
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
+import {Action} from "../../action";
 
 @Component({
   selector: 'app-participant-list',

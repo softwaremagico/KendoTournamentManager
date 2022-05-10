@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.http.HttpHeaders;
@@ -96,6 +97,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> accessDeniedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage("INVALID CREDENTIALS", ex), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> notFoundException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
     }
 
 

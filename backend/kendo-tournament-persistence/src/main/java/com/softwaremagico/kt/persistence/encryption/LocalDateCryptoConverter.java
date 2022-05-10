@@ -31,7 +31,7 @@ import javax.persistence.Converter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-@Converter
+@Converter(autoApply = true)
 public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate> implements AttributeConverter<LocalDate, String> {
 
     public LocalDateCryptoConverter() {

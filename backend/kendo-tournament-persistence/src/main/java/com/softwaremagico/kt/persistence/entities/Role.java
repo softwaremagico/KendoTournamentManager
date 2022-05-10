@@ -25,7 +25,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 
-import com.softwaremagico.kt.persistence.encryption.RoleTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -40,19 +40,19 @@ import javax.persistence.*;
 @Table(name = "roles")
 public class Role extends Element {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "tournament")
+    @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "participant")
+    @JoinColumn(name = "participant", nullable = false)
     private Participant participant;
 
-    @Column(name = "role_type")
+    @Column(name = "role_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = RoleTypeCryptoConverter.class)
+    @Convert(converter = StringCryptoConverter.class)
     private RoleType roleType;
 
     public Role() {

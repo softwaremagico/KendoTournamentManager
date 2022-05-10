@@ -30,7 +30,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter
+@Converter(autoApply = true)
 public class TournamentTypeCryptoConverter extends AbstractCryptoConverter<TournamentType> implements AttributeConverter<TournamentType, String> {
 
 	public TournamentTypeCryptoConverter() {

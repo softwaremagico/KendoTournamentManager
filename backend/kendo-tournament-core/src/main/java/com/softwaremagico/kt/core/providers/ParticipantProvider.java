@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.UserNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,64 +36,25 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class ParticipantProvider {
-
-    private final ParticipantRepository participantRepository;
+public class ParticipantProvider extends CrudProvider<Participant, Integer, ParticipantRepository> {
 
     @Autowired
-    public ParticipantProvider(ParticipantRepository participantRepository) {
-        this.participantRepository = participantRepository;
-    }
-
-    public Participant get(int id) {
-        return participantRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(getClass(), "User with id '" + id + "' not found"));
+    public ParticipantProvider(ParticipantRepository repository) {
+        super(repository);
     }
 
     public List<Participant> get(List<Integer> ids) {
-        return participantRepository.findByIdIn(ids);
+        return repository.findByIdIn(ids);
     }
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
-        final List<Participant> databaseParticipants = participantRepository.findByIdIn(ids);
-        //JPA in does not maintain the order. We need to sort them by the source list.
+        final List<Participant> databaseParticipants = repository.findByIdIn(ids);
+        //JPA 'in' does not maintain the order. We need to sort them by the source list.
         final Map<Integer, Participant> participantsById = databaseParticipants.stream().collect(Collectors.toMap(Participant::getId, Function.identity()));
         final List<Participant> sortedParticipants = new ArrayList<>();
         for (final Integer id : ids) {
             sortedParticipants.add(participantsById.get(id));
         }
         return sortedParticipants;
-    }
-
-
-    public List<Participant> getAll() {
-        return participantRepository.findByOrderByLastnameAsc();
-    }
-
-    public long count() {
-        return participantRepository.count();
-    }
-
-    public Participant save(Participant participant) {
-        return participantRepository.save(participant);
-    }
-
-    public Participant update(Participant participant) {
-        if (participant.getId() == null) {
-            throw new UserNotFoundException(getClass(), "User with null id does not exists.");
-        }
-        return participantRepository.save(participant);
-    }
-
-    public void delete(Participant participant) {
-        participantRepository.delete(participant);
-    }
-
-    public void delete(Integer id) {
-        if (participantRepository.existsById(id)) {
-            participantRepository.deleteById(id);
-        } else {
-            throw new UserNotFoundException(getClass(), "User with id '" + id + "' not found");
-        }
     }
 }

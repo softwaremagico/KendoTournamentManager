@@ -24,6 +24,10 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeAttributeConverter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -37,12 +41,15 @@ public abstract class Element {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @CreationTimestamp
     @Column(name = "created_at")
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime createdAt;
 
-    protected Element() {
-        setCreatedAt(LocalDateTime.now());
-    }
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    private LocalDateTime updatedAt;
 
     public void setId(Integer id) {
         this.id = id;
@@ -52,12 +59,20 @@ public abstract class Element {
         return id;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     @Override

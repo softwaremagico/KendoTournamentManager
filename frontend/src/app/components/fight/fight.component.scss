@@ -1,0 +1,41 @@
+.fight{
+  border-width: 2px;
+  border-color: #011d4a;
+  border-style: solid;
+  padding: 5px;
+  width: 100%;
+  display: table;
+}
+
+duel {
+  display: table-row;
+  vertical-align: middle;
+}
+
+.left-team {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  padding: 20px;
+  border-width: 2px;
+  border-color: white;
+  border-style: solid;
+  color: red;
+  background-color: #011d4a;
+}
+
+.right-team {
+  writing-mode: vertical-rl;
+  text-align: center;
+  padding: 20px;
+  border-width: 2px;
+  border-color: white;
+  border-style: solid;
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: #011d4a;
+}
+
+.fight-container{
+  display: flex;
+}

@@ -1,0 +1,11 @@
+<div class="fight-container">
+  <div class="left-team" *ngIf="showTeamTitle">
+    {{fight.team1.name}}
+  </div>
+  <div class="fight" *ngIf="fight">
+    <duel *ngFor="let duel of fight.duels" [duel]="duel"></duel>
+  </div>
+  <div class="right-team" *ngIf="showTeamTitle">
+    {{fight.team2.name}}
+  </div>
+</div>
