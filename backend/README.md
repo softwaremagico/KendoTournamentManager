@@ -53,7 +53,7 @@ file [application.properties](kendo-tournament-rest/src/main/resources/applicati
 
 ```
 spring.kendo.datasource.driver-class-name=com.mysql.jdbc.Driver
-spring.kendo.datasource.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
 spring.kendo.datasource.platform=mysql
 spring.kendo.datasource.jdbc-url=jdbc:mysql://localhost:3306/kendotournament?useSSL=false
 spring.kendo.datasource.username=user
