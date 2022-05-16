@@ -59,7 +59,7 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
             return null;
         }
         final Duel duel = new Duel();
-        BeanUtils.copyProperties(duel, duel);
+        BeanUtils.copyProperties(to, duel);
         duel.setCompetitor1(participantConverter.reverse(to.getCompetitor1()));
         duel.setCompetitor2(participantConverter.reverse(to.getCompetitor2()));
         return duel;

@@ -62,7 +62,7 @@ public class RoleConverter extends ElementConverter<Role, RoleDTO, RoleConverter
             return null;
         }
         final Role role = new Role();
-        BeanUtils.copyProperties(role, role);
+        BeanUtils.copyProperties(to, role);
         role.setTournament(tournamentConverter.reverse(to.getTournament()));
         role.setParticipant(participantConverter.reverse(to.getParticipant()));
         return role;

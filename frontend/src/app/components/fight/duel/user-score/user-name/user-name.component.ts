@@ -11,6 +11,9 @@ export class UserNameComponent implements OnInit {
   @Input()
   participant: Participant | undefined;
 
+  @Input()
+  left: boolean;
+
   constructor() {
   }
 

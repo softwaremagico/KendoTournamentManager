@@ -24,14 +24,12 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.text.Collator;
 import java.util.Locale;
 
@@ -46,28 +44,36 @@ import java.util.Locale;
 @Table(name = "clubs")
 public class Club extends Element implements Comparable<Club> {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
     private String name = "";
 
-    @Column(name = "country")
+    @Column(name = "country", nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
     private String country = "";
 
-    @Column(name = "city")
+    @Column(name = "city", nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
     private String city = "";
 
     @Column(name = "address")
+    @Convert(converter = StringCryptoConverter.class)
     private String address = "";
 
     @Column(name = "representative")
+    @Convert(converter = StringCryptoConverter.class)
     private String representativeId = "";
 
     @Column(name = "email")
+    @Convert(converter = StringCryptoConverter.class)
     private String email = "";
 
     @Column(name = "phone")
+    @Convert(converter = StringCryptoConverter.class)
     private String phone = null;
 
     @Column(name = "web")
+    @Convert(converter = StringCryptoConverter.class)
     private String web = "";
 
     public Club() {

@@ -1,11 +1,9 @@
 <div class="score-area" [matMenuTriggerFor]="menu">
   <mat-menu #menu="matMenu">
-    <button mat-menu-item>{{'men' | translate}}</button>
-    <button mat-menu-item>{{'kote' | translate}}</button>
-    <button mat-menu-item>{{'do' | translate}}</button>
-    <button mat-menu-item>{{'tsuki' | translate}}</button>
-    <button mat-menu-item>{{'ippon' | translate}}</button>
-    <button mat-menu-item>{{'hansoku' | translate}}</button>
-    <button mat-menu-item>{{'clear' | translate}}</button>
+    <button *ngFor="let score of ScoreEnum.toArray()" mat-menu-item
+            (click)="updateScore(score)">{{score.toLowerCase() | translate}}</button>
   </mat-menu>
+  <div class="point" *ngIf="scoreRepresentation()!==''">
+    {{scoreRepresentation()}}
+  </div>
 </div>

@@ -24,9 +24,12 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 
-public class ParticipantDTO extends ElementDTO {
+import java.util.Objects;
+
+public class ParticipantDTO extends ElementDTO implements IParticipantName {
 
     private String idCard;
 
@@ -36,6 +39,16 @@ public class ParticipantDTO extends ElementDTO {
 
     private ClubDTO club;
 
+    public ParticipantDTO() {
+    }
+
+    public ParticipantDTO(String idCard, String name, String lastname, ClubDTO club) {
+        setName(name);
+        setLastname(lastname);
+        setIdCard(idCard);
+        setClub(club);
+    }
+
     public String getIdCard() {
         return idCard;
     }
@@ -44,6 +57,7 @@ public class ParticipantDTO extends ElementDTO {
         this.idCard = idCard;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -52,6 +66,7 @@ public class ParticipantDTO extends ElementDTO {
         this.name = name;
     }
 
+    @Override
     public String getLastname() {
         return lastname;
     }
@@ -74,5 +89,24 @@ public class ParticipantDTO extends ElementDTO {
             return NameUtils.getLastnameName(getLastname(), getName());
         }
         return super.toString();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ParticipantDTO)) {
+            return false;
+        }
+        final ParticipantDTO that = (ParticipantDTO) o;
+        return getIdCard().equals(that.getIdCard()) && getName().equals(that.getName()) && getLastname().equals(that.getLastname())
+                && getClub().equals(that.getClub());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdCard(), getName(), getLastname(), getClub());
     }
 }

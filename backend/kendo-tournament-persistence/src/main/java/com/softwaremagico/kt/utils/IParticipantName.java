@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.persistence.entities;
+package com.softwaremagico.kt.utils;
 
 /*-
  * #%L
@@ -8,46 +8,24 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *
+ *  
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ *  
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+public interface IParticipantName {
+    String getLastname();
 
-import javax.persistence.*;
-
-@Entity
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "hits")
-public class Hit extends Element {
-
-    @ManyToOne
-    @JoinColumn(name = "competitor")
-    private Participant competitor;
-
-    public Hit() {
-        super();
-    }
-
-    public Participant getCompetitor() {
-        return competitor;
-    }
-
-    public void setCompetitor(Participant competitor) {
-        this.competitor = competitor;
-    }
+    String getName();
 }

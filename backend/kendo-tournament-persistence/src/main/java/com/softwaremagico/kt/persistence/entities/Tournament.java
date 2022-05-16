@@ -24,6 +24,8 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -36,17 +38,21 @@ import javax.persistence.*;
 @Table(name = "tournaments")
 public class Tournament extends Element {
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
     private String name;
 
-    @Column(name = "shiaijos")
+    @Column(name = "shiaijos", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijos;
 
-    @Column(name = "team_size")
+    @Column(name = "team_size", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer teamSize;
 
-    @Column(name = "tournament_type")
+    @Column(name = "tournament_type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Convert(converter = StringCryptoConverter.class)
     private TournamentType type;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

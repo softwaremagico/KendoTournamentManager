@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeAttributeConverter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -42,10 +43,12 @@ public abstract class Element {
 
     @CreationTimestamp
     @Column(name = "created_at")
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
+    @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime updatedAt;
 
     public void setId(Integer id) {
@@ -54,6 +57,14 @@ public abstract class Element {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public LocalDateTime getCreatedAt() {

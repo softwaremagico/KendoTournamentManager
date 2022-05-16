@@ -51,7 +51,7 @@ public class FightServices {
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<FightDTO> getAll(HttpServletRequest request) {
         return fightController.get();
     }
@@ -78,6 +78,14 @@ public class FightServices {
     public FightDTO get(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
                         HttpServletRequest request) {
         return fightController.get(id);
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets current fight.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/current", produces = MediaType.APPLICATION_JSON_VALUE)
+    public FightDTO getCurrent(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                               HttpServletRequest request) {
+        return fightController.getCurrent(tournamentId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -117,12 +125,22 @@ public class FightServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public FightDTO update(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
         return fightController.update(fightDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}/{maximizeFights}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                                 @Parameter(description = "Create as much fights as possible", required = true) @PathVariable("maximizeFights") boolean maximizeFights,
+                                 @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
+                                 HttpServletRequest request) {
+        return fightController.createFights(tournamentId, maximizeFights, levelId);
     }
 
 
