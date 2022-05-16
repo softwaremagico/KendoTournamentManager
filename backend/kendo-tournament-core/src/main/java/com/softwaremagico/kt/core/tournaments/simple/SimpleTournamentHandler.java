@@ -24,6 +24,9 @@ package com.softwaremagico.kt.core.tournaments.simple;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
 import com.softwaremagico.kt.core.managers.FightManager;
 import com.softwaremagico.kt.core.providers.FightProvider;
@@ -36,6 +39,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,13 +52,17 @@ public class SimpleTournamentHandler implements ITournamentManager {
     private final FightManager fightManager;
     private final FightProvider fightProvider;
     private final TeamProvider teamProvider;
+    private final GroupConverter groupConverter;
 
 
-    public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider, TeamProvider teamProvider) {
+    @Autowired
+    public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider,
+                                   TeamProvider teamProvider, GroupConverter groupConverter) {
         this.groupProvider = groupProvider;
         this.fightManager = fightManager;
         this.fightProvider = fightProvider;
         this.teamProvider = teamProvider;
+        this.groupConverter = groupConverter;
     }
 
     protected Group getGroup(Tournament tournament) {
@@ -253,8 +261,8 @@ public class SimpleTournamentHandler implements ITournamentManager {
 
     @Override
     public boolean hasDrawScore(Group group) {
-        final Ranking ranking = new Ranking(group);
-        final List<Team> teamsInDraw = ranking.getFirstTeamsWithDrawScore(group.getNumberOfWinners());
+        final Ranking ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(group)));
+        final List<TeamDTO> teamsInDraw = ranking.getFirstTeamsWithDrawScore(group.getNumberOfWinners());
         return (teamsInDraw != null);
     }
 }

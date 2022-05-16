@@ -26,6 +26,8 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.RoleType;
 
+import java.util.Objects;
+
 public class RoleDTO extends ElementDTO {
 
     private TournamentDTO tournament;
@@ -33,6 +35,17 @@ public class RoleDTO extends ElementDTO {
     private ParticipantDTO participant;
 
     private RoleType roleType;
+
+    public RoleDTO() {
+        super();
+    }
+
+    public RoleDTO(TournamentDTO tournament, ParticipantDTO participant, RoleType roleType) {
+        this();
+        setTournament(tournament);
+        setParticipant(participant);
+        setRoleType(roleType);
+    }
 
     public TournamentDTO getTournament() {
         return tournament;
@@ -64,5 +77,26 @@ public class RoleDTO extends ElementDTO {
             return String.format("ROLE{%s %s %s}", getTournament().getName(), getParticipant().getName(), getRoleType());
         }
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RoleDTO)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final RoleDTO roleDTO = (RoleDTO) o;
+        return getTournament().equals(roleDTO.getTournament()) && getParticipant().equals(roleDTO.getParticipant())
+                && getRoleType() == roleDTO.getRoleType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getTournament(), getParticipant(), getRoleType());
     }
 }

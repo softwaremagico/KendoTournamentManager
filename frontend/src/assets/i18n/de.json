@@ -156,6 +156,7 @@
   "BannerLabel": "Banner",
   "PhotoLabel": "Foto",
   "clear": "Löschen",
+  "empty": "Löschen",
   "draw": "Unentschieden",
   "fault": "Hansoku",
   "DrawGame": "Es gibt Kämpfe, die unentschieden sind.",
