@@ -31,7 +31,7 @@ export class RoleService {
   }
 
   getAll(): Observable<Role[]> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.get<Role[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all roles`)),
@@ -103,7 +103,7 @@ export class RoleService {
   }
 
   add(Role: Role): Observable<Role> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.post<Role>(url, Role, this.httpOptions)
       .pipe(
         tap((newRole: Role) => this.loggerService.info(`adding role ${newRole}`)),
@@ -112,7 +112,7 @@ export class RoleService {
   }
 
   update(Role: Role): Observable<Role> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Role>(url, Role, this.httpOptions)
       .pipe(
         tap((updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`)),

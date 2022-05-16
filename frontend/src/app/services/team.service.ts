@@ -29,7 +29,7 @@ export class TeamService {
   }
 
   getAll(): Observable<Team[]> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.get<Team[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all teams`)),
@@ -101,7 +101,7 @@ export class TeamService {
   }
 
   add(team: Team): Observable<Team> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.post<Team>(url, team, this.httpOptions)
       .pipe(
         tap((newTeam: Team) => this.loggerService.info(`adding team ${newTeam.name}`)),
@@ -110,7 +110,7 @@ export class TeamService {
   }
 
   update(team: Team): Observable<Team> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Team>(url, team, this.httpOptions)
       .pipe(
         tap((updatedTeam: Team) => this.loggerService.info(`updating team ${updatedTeam}`)),

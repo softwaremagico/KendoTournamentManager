@@ -24,15 +24,15 @@ package com.softwaremagico.kt.core.score;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 
 import java.util.List;
 
 public class ScoreOfTeamInternational extends ScoreOfTeam {
 
-    public ScoreOfTeamInternational(Team team, List<Fight> fights, List<Duel> unties) {
+    public ScoreOfTeamInternational(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
         super(team, fights, unties);
     }
 

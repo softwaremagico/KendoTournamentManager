@@ -27,7 +27,7 @@ export class ParticipantService {
   }
 
   getAll(): Observable<Participant[]> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.get<Participant[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all Participants`)),
@@ -63,7 +63,7 @@ export class ParticipantService {
   }
 
   add(participant: Participant): Observable<Participant> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.post<Participant>(url, participant, this.httpOptions)
       .pipe(
         tap((newParticipant: Participant) => this.loggerService.info(`adding participant ${newParticipant}`)),
@@ -73,7 +73,7 @@ export class ParticipantService {
 
 
   update(participant: Participant): Observable<Participant> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Participant>(url, participant, this.httpOptions)
       .pipe(
         tap((updatedParticipant: Participant) => this.loggerService.info(`updating participant ${updatedParticipant}`)),

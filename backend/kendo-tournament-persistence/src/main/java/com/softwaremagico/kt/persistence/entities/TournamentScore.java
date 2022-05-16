@@ -24,6 +24,8 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -35,15 +37,18 @@ import javax.persistence.*;
 @Table(name = "tournament_scores")
 public class TournamentScore extends Element {
 
-    @Column(name = "tournament_type")
+    @Column(name = "tournament_type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Convert(converter = StringCryptoConverter.class)
     private ScoreType scoreType;
 
     @Column(name = "points_by_victory")
-    private int pointsByVictory = 1;
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer pointsByVictory = 1;
 
     @Column(name = "points_by_draw")
-    private int pointsByDraw = 0;
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer pointsByDraw = 0;
 
     public TournamentScore() {
         super();
@@ -58,19 +63,19 @@ public class TournamentScore extends Element {
         this.scoreType = scoreType;
     }
 
-    public int getPointsByVictory() {
+    public Integer getPointsByVictory() {
         return pointsByVictory;
     }
 
-    public void setPointsByVictory(int pointsByVictory) {
+    public void setPointsByVictory(Integer pointsByVictory) {
         this.pointsByVictory = pointsByVictory;
     }
 
-    public int getPointsByDraw() {
+    public Integer getPointsByDraw() {
         return pointsByDraw;
     }
 
-    public void setPointsByDraw(int pointsByDraw) {
+    public void setPointsByDraw(Integer pointsByDraw) {
         this.pointsByDraw = pointsByDraw;
     }
 }
