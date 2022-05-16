@@ -1,5 +1,20 @@
 .fault {
   height: 50px;
   width: 25px;
-  background-color: #555;
+  border-width: 1px;
+  border-color: #011d4a;
+  border-style: solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fault-content {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 25px solid #011d4a;
 }

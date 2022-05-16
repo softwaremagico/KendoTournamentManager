@@ -1,5 +1,25 @@
 .score-area {
   height: 50px;
   width: 50px;
-  background-color: #555;
+  border-width: 1px;
+  border-color: #011d4a;
+  border-style: solid;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.point {
+  width: 1vw;
+  height: 1vw;
+  border-radius: 50%;
+  border: 3px solid #011d4a;
+  color: #011d4a;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
 }

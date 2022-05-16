@@ -26,6 +26,8 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.TournamentType;
 
+import java.util.Objects;
+
 public class TournamentDTO extends ElementDTO {
 
     private String name;
@@ -36,7 +38,20 @@ public class TournamentDTO extends ElementDTO {
 
     private TournamentType type;
 
-    private TournamentScoreDTO tournamentScoreDTO;
+    private TournamentScoreDTO tournamentScore;
+
+    public TournamentDTO() {
+        super();
+    }
+
+    public TournamentDTO(String name, int shiaijos, int teamSize, TournamentType type) {
+        this();
+        setName(name);
+        setShiaijos(shiaijos);
+        setTeamSize(teamSize);
+        setType(type);
+        setTournamentScore(new TournamentScoreDTO());
+    }
 
     public String getName() {
         return name;
@@ -70,12 +85,12 @@ public class TournamentDTO extends ElementDTO {
         this.type = type;
     }
 
-    public TournamentScoreDTO getTournamentScoreDTO() {
-        return tournamentScoreDTO;
+    public TournamentScoreDTO getTournamentScore() {
+        return tournamentScore;
     }
 
-    public void setTournamentScoreDTO(TournamentScoreDTO tournamentScoreDTO) {
-        this.tournamentScoreDTO = tournamentScoreDTO;
+    public void setTournamentScore(TournamentScoreDTO tournamentScore) {
+        this.tournamentScore = tournamentScore;
     }
 
     @Override
@@ -84,5 +99,26 @@ public class TournamentDTO extends ElementDTO {
             return getName();
         }
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TournamentDTO)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final TournamentDTO that = (TournamentDTO) o;
+        return getName().equals(that.getName()) && getShiaijos().equals(that.getShiaijos()) && getTeamSize().equals(that.getTeamSize())
+                && getType() == that.getType() && Objects.equals(getTournamentScore(), that.getTournamentScore());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getName(), getShiaijos(), getTeamSize(), getType(), getTournamentScore());
     }
 }

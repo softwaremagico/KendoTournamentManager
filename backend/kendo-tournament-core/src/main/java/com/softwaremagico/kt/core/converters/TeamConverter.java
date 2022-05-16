@@ -65,7 +65,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
             return null;
         }
         final Team team = new Team();
-        BeanUtils.copyProperties(team, team);
+        BeanUtils.copyProperties(to, team);
         team.setTournament(tournamentConverter.reverse(to.getTournament()));
         team.setMembers(new ArrayList<>());
         to.getMembers().forEach(member -> team.getMembers().add(participantConverter.reverse(member)));

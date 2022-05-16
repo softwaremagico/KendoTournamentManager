@@ -6,7 +6,7 @@ import {LoggerService} from "./logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
-import {Fight} from "../models/Fight";
+import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
 
 @Injectable({
@@ -29,7 +29,7 @@ export class FightService {
   }
 
   getAll(): Observable<Fight[]> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.get<Fight[]>(url, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all fights`)),
@@ -74,7 +74,7 @@ export class FightService {
   }
 
   add(fight: Fight): Observable<Fight> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.post<Fight>(url, fight, this.httpOptions)
       .pipe(
         tap((newFight: Fight) => this.loggerService.info(`adding fight`)),
@@ -83,7 +83,7 @@ export class FightService {
   }
 
   update(fight: Fight): Observable<Fight> {
-    const url: string = `${this.baseUrl}/`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Fight>(url, fight, this.httpOptions)
       .pipe(
         tap((updatedFight: Fight) => this.loggerService.info(`updating fight`)),

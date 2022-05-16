@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -38,7 +39,7 @@ import java.util.List;
 public class Group extends Element {
 
     @ManyToOne
-    @JoinColumn(name = "tournament")
+    @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -46,10 +47,12 @@ public class Group extends Element {
     @OrderColumn(name = "index")
     private List<Team> teams;
 
-    @Column(name = "shiaijo")
+    @Column(name = "shiaijo", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
-    @Column(name = "level")
+    @Column(name = "level", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -57,7 +60,8 @@ public class Group extends Element {
     @OrderColumn(name = "index")
     private List<Fight> fights;
 
-    @Column(name = "number_of_winners")
+    @Column(name = "number_of_winners", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
     private int numberOfWinners;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -161,6 +165,10 @@ public class Group extends Element {
 
     public List<Duel> getUnties() {
         return unties;
+    }
+
+    public void setUnties(List<Duel> unties) {
+        this.unties = unties;
     }
 }
 

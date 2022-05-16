@@ -25,6 +25,9 @@ package com.softwaremagico.kt.core.tests;
  */
 
 
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.TeamConverter;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.core.tournaments.simple.SimpleTournamentHandler;
@@ -44,6 +47,10 @@ import java.util.List;
 @SpringBootTest
 @Test(groups = {"simpleChampionshipTest"})
 public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
+
+    private static final String CLUB_NAME = "ClubName";
+    private static final String CLUB_COUNTRY = "ClubCountry";
+    private static final String CLUB_CITY = "ClubCity";
 
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;
@@ -71,6 +78,17 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private GroupProvider groupProvider;
 
+    @Autowired
+    private ClubProvider clubProvider;
+
+    @Autowired
+    private GroupConverter groupConverter;
+
+    @Autowired
+    private TeamConverter teamConverter;
+
+    private Club club;
+
     public static int getNumberOfCombats(Integer numberOfTeams) {
         return factorial(numberOfTeams) / (2 * factorial(numberOfTeams - 2));
     }
@@ -95,9 +113,14 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
+    public void addClub() {
+        club = clubProvider.save(new Club(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY));
+    }
+
+    @Test(dependsOnMethods = "addClub")
     public void addParticipants() {
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            participantProvider.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i)));
+            participantProvider.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club));
         }
     }
 
@@ -124,8 +147,6 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         int teamMember = 0;
 
         for (Participant competitor : participantProvider.getAll()) {
-            roleProvider.save(new Role(tournament, competitor, RoleType.COMPETITOR));
-
             // Create a new team.
             if (team == null) {
                 teamIndex++;
@@ -138,7 +159,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             team = teamProvider.save(team);
             teamMember++;
 
-            // Team fill up, create a new team.
+            // Team filled up, create a new team.
             if (teamMember >= MEMBERS) {
                 team = null;
             }
@@ -166,7 +187,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights"})
     public void testSimpleWinner() {
         while (!fightProvider.areOver(tournament)) {
-            Fight currentFight = fightProvider.getCurrentFight(tournament);
+            Fight currentFight = fightProvider.getCurrent(tournament);
 
             // First duel won
             currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
@@ -176,7 +197,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             fightProvider.save(currentFight);
         }
 
-        Ranking ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
+        Ranking ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))));
 
         for (int i = 0; i < ranking.getTeamsScoreRanking().size() - 1; i++) {
             Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getWonFights() >= ranking.getTeamsScoreRanking()
@@ -198,7 +219,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights", "testSimpleWinner"})
     public void testDrawWinner() {
         while (!fightProvider.areOver(tournament)) {
-            Fight currentFight = fightProvider.getCurrentFight(tournament);
+            Fight currentFight = fightProvider.getCurrent(tournament);
             // First duel
             if (currentFight.getTeam1().equals(teamProvider.get(tournament, "Team01").get())
                     && currentFight.getTeam2().equals(teamProvider.get(tournament, "Team02").get())) {
@@ -214,15 +235,15 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             currentFight.setOver(true);
             fightProvider.save(currentFight);
         }
-        Ranking ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
+        Ranking ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))));
 
         // Team1 is first one because the name.
-        List<Team> drawTeams = ranking.getFirstTeamsWithDrawScore(1);
+        List<Team> drawTeams = teamConverter.reverseAll(ranking.getFirstTeamsWithDrawScore(1));
         Assert.assertEquals(drawTeams.size(), 2);
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01").get()));
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03").get()));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), ranking.getTeam(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(1));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), teamConverter.reverse(ranking.getTeam(0)));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(ranking.getTeam(1)));
 
         // Finally wins Team3 at an untie duel
         Group group = simpleTournamentHandler.getGroups(tournament).get(0);
@@ -236,8 +257,8 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
         simpleTournamentHandler.getGroups(tournament).get(0).getUnties().get(0).addCompetitor2Score(Score.MEN);
 
-        ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(0));
+        ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(ranking.getTeam(0)));
 
         resetGroup(groupProvider.getGroups(tournament).get(0));
     }
@@ -250,7 +271,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights", "testDrawWinner"})
     public void testDrawVariousWinner() {
         while (!fightProvider.areOver(tournament)) {
-            Fight currentFight = fightProvider.getCurrentFight(tournament);
+            Fight currentFight = fightProvider.getCurrent(tournament);
             // First duel
             if (currentFight.getTeam1()
                     .equals(teamProvider.get(tournament, "Team01").get())
@@ -271,17 +292,17 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             currentFight.setOver(true);
             fightProvider.save(currentFight);
         }
-        Ranking ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
+        Ranking ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))));
 
         // Team1 is first one because the name.
-        List<Team> drawTeams = ranking.getFirstTeamsWithDrawScore(1);
+        List<Team> drawTeams = teamConverter.reverseAll(ranking.getFirstTeamsWithDrawScore(1));
         Assert.assertEquals(drawTeams.size(), 3);
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01").get()));
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03").get()));
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team05").get()));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), ranking.getTeam(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(1));
-        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), ranking.getTeam(2));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), teamConverter.reverse(ranking.getTeam(0)));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(ranking.getTeam(1)));
+        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), teamConverter.reverse(ranking.getTeam(2)));
 
         // Finally wins Team3, Team5, Team1
         Group group = simpleTournamentHandler.getGroups(tournament).get(0);
@@ -305,9 +326,9 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
         groupProvider.save(group);
 
-        ranking = new Ranking(groupProvider.getGroups(tournament).get(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), ranking.getTeam(0));
-        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), ranking.getTeam(1));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), ranking.getTeam(2));
+        ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(ranking.getTeam(0)));
+        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), teamConverter.reverse(ranking.getTeam(1)));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), teamConverter.reverse(ranking.getTeam(2)));
     }
 }

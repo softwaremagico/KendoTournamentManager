@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Fight} from "../../models/Fight";
+import {Fight} from "../../models/fight";
 
 @Component({
   selector: 'fight',
@@ -16,6 +16,13 @@ export class FightComponent implements OnInit {
 
   ngOnInit(): void {
 
+  }
+
+  showTeamTitle(): boolean {
+    if (this.fight?.tournament?.teamSize) {
+      return this.fight.tournament.teamSize > 1;
+    }
+    return true;
   }
 
 }

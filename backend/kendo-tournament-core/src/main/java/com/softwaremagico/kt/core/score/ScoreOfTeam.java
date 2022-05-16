@@ -2,7 +2,7 @@ package com.softwaremagico.kt.core.score;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Core)
+ * Kendo TournamentDTO Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -25,19 +25,19 @@ package com.softwaremagico.kt.core.score;
  */
 
 
-import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 
 import java.util.List;
 import java.util.Objects;
 
 public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
 
-    private final Team team;
-    private final List<Fight> fights;
-    private final List<Duel> unties;
+    private final TeamDTO team;
+    private final List<FightDTO> fights;
+    private final List<DuelDTO> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
     private Integer wonDuels = null;
@@ -45,17 +45,17 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
     private Integer goldenPoint = null;
     private Integer hits = null;
 
-    public ScoreOfTeam(Team team, List<Fight> fights, List<Duel> unties) {
+    public ScoreOfTeam(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
         this.team = team;
         this.fights = fights;
         this.unties = unties;
     }
 
-    public Team getTeam() {
+    public TeamDTO getTeam() {
         return team;
     }
 
-    public Tournament getTournament() {
+    public TournamentDTO getTournament() {
         if (team != null) {
             return team.getTournament();
         }
@@ -65,9 +65,9 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
     public Integer getWonFights() {
         if (wonFights == null) {
             wonFights = 0;
-            for (final Fight fight : fights) {
+            for (final FightDTO fight : fights) {
                 if (fight.isOver()) {
-                    final Team winner = fight.getWinner();
+                    final TeamDTO winner = fight.getWinner();
                     if (winner != null && winner.equals(team)) {
                         wonFights++;
                     }
@@ -146,7 +146,7 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
         return text + "\n";
     }
 
-    public static ScoreOfTeam getScoreOfTeam(Team team, List<Fight> fights, List<Duel> unties) {
+    public static ScoreOfTeam getScoreOfTeam(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
         switch (team.getTournament().getTournamentScore().getScoreType()) {
             case CLASSIC:
                 return new ScoreOfTeamClassic(team, fights, unties);

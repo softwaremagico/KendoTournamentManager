@@ -24,7 +24,9 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TeamDTO extends ElementDTO {
 
@@ -35,6 +37,17 @@ public class TeamDTO extends ElementDTO {
     private List<ParticipantDTO> members;
 
     private Integer group;
+
+    public TeamDTO() {
+        super();
+        members = new ArrayList<>();
+    }
+
+    public TeamDTO(String name, TournamentDTO tournament) {
+        this();
+        setName(name);
+        setTournament(tournament);
+    }
 
     public TournamentDTO getTournament() {
         return tournament;
@@ -68,11 +81,36 @@ public class TeamDTO extends ElementDTO {
         this.group = group;
     }
 
+    public boolean isMember(ParticipantDTO member) {
+        return members.contains(member);
+    }
+
     @Override
     public String toString() {
         if (getName() != null) {
             return getName();
         }
         return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TeamDTO)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final TeamDTO teamDTO = (TeamDTO) o;
+        return getName().equals(teamDTO.getName()) && Objects.equals(getTournament(), teamDTO.getTournament()) &&
+                Objects.equals(getMembers(), teamDTO.getMembers()) && getGroup().equals(teamDTO.getGroup());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getName(), getTournament(), getMembers(), getGroup());
     }
 }
