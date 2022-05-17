@@ -37,7 +37,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -62,8 +61,8 @@ import java.util.List;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
     private static final String[] AUTH_WHITELIST = {
             // ***REMOVED***Swagger
-            "/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**",
-            // Others
+            "/v3/api-docs/**", "/swagger-ui/**",
+            // Own
             "/",
             "/info/**",
             "/auth/public/**"
@@ -138,18 +137,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     }
 
     @Bean
-    public WebSecurityCustomizer ignoreInfo() {
-        return (webSecurity) -> webSecurity
-                .ignoring().antMatchers(AUTH_WHITELIST);
-    }
-
-    @Bean
     public AuthenticationManager customAuthenticationManager() throws Exception {
         return authenticationManager();
     }
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/swagger-ui/**", "/v3/api-docs/**");
+        web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 }
