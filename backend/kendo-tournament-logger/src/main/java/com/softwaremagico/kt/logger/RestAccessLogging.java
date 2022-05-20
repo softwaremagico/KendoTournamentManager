@@ -45,13 +45,6 @@ public class RestAccessLogging extends AbstractLogging {
     private void selectAll() {
     }
 
-    /**
-     * Using an existing annotation.
-     */
-    @Pointcut("@annotation(org.springframework.transaction.annotation.Transactional)")
-    public void isAnnotated() {
-    }
-
     @Pointcut("within(org.springframework.web.filter.GenericFilterBean+)")
     public void avoidClasses() {
 
@@ -72,12 +65,12 @@ public class RestAccessLogging extends AbstractLogging {
      *
      * @param joinPoint the joinPoint
      */
-    @Before(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
+    @Before(value = "selectAll() && !avoidClasses()")
     public void beforeAdvice(JoinPoint joinPoint) {
 
     }
 
-    @Around(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
+    @Around(value = "selectAll() && !avoidClasses()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         if (logger.isDebugEnabled()) {
             final StopWatch stopWatch = new StopWatch();
@@ -94,7 +87,7 @@ public class RestAccessLogging extends AbstractLogging {
      * This is the method which I would like to execute after a selected method
      * execution.
      */
-    @After(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
+    @After(value = "selectAll() && !avoidClasses()")
     public void afterAdvice() {
     }
 
@@ -103,7 +96,7 @@ public class RestAccessLogging extends AbstractLogging {
      *
      * @param retVal the returning value.
      */
-    @AfterReturning(pointcut = "(selectAll() || isAnnotated()) && !avoidClasses()", returning = "retVal")
+    @AfterReturning(pointcut = "selectAll() && !avoidClasses()", returning = "retVal")
     public void afterReturningAdvice(Object retVal) {
         if (retVal != null) {
             log("Returning: '{}' ", retVal.toString());
@@ -118,7 +111,7 @@ public class RestAccessLogging extends AbstractLogging {
      *
      * @param ex the exception
      */
-    @AfterThrowing(pointcut = "(selectAll() || isAnnotated()) && !avoidClasses()", throwing = "ex")
+    @AfterThrowing(pointcut = "selectAll() && !avoidClasses()", throwing = "ex")
     public void afterThrowingAdvice(IllegalArgumentException ex) {
         log("There has been an exception: '{}' ", ex.getMessage());
     }
