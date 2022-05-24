@@ -26,7 +26,7 @@ package com.softwaremagico.kt.core.controller;
 
 import com.softwaremagico.kt.core.converters.ElementConverter;
 import com.softwaremagico.kt.core.converters.models.ConverterRequest;
-import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
+import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.CrudProvider;
 import com.softwaremagico.kt.logger.ExceptionType;
@@ -49,7 +49,7 @@ public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends 
     }
 
     public DTO get(Integer id) {
-        final ENTITY entity = provider.get(id).orElseThrow(() -> new ClubNotFoundException(getClass(), "Entity with id '" + id + "' not found.",
+        final ENTITY entity = provider.get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
                 ExceptionType.INFO));
         return converter.convert(createConverterRequest(entity));
     }
