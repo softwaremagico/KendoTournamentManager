@@ -45,12 +45,13 @@ public class AuthenticatedUserController {
     }
 
     public AuthenticatedUser createUser(CreateUserRequest createUserRequest) {
-        return createUser(createUserRequest.getUsername(), createUserRequest.getFullName(), createUserRequest.getPassword());
+        return createUser(createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastName(),
+                createUserRequest.getPassword());
     }
 
-    public AuthenticatedUser createUser(String username, String fullName, String password, String... roles) {
+    public AuthenticatedUser createUser(String username, String firstName, String lastName, String password, String... roles) {
         try {
-            return authenticatedUserProvider.createUser(username, fullName, password, roles);
+            return authenticatedUserProvider.createUser(username, firstName, lastName, password, roles);
         } catch (DuplicatedUserException e) {
             throw new BadRequestException(this.getClass(), "Username exists!");
         }

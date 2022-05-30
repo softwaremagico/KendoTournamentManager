@@ -8,28 +8,29 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -47,13 +48,20 @@ public class AuthenticatedUser implements UserDetails {
     private Integer id;
 
     @Column(name = "password")
+    @Convert(converter = BCryptPasswordConverter.class)
     private String password;
 
     @Column(name = "username")
+    @Convert(converter = StringCryptoConverter.class)
     private String username;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "name", nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
+    private String name = "";
+
+    @Column(name = "lastname", nullable = false)
+    @Convert(converter = StringCryptoConverter.class)
+    private String lastname = "";
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "authenticated_user_roles", joinColumns = @JoinColumn(name = "authenticated_user"))
@@ -72,11 +80,7 @@ public class AuthenticatedUser implements UserDetails {
     }
 
     public void setPassword(String password) {
-        if (password == null) {
-            password = "";
-        }
-        //We use Bcrypt for Spring Web Security
-        this.password = new BCryptPasswordEncoder().encode(password);
+        this.password = password;
     }
 
     @Override
@@ -88,18 +92,26 @@ public class AuthenticatedUser implements UserDetails {
         this.username = username;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
 
     public String getMobilePhone() {
         return null;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
     @Override
     public boolean isAccountNonExpired() {
