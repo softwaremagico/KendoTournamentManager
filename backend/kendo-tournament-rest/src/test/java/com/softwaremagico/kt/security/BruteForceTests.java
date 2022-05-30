@@ -57,7 +57,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "bruteForce")
 public class BruteForceTests extends AbstractTestNGSpringContextTests {
     private final static String USER_NAME = "user";
-    private final static String USER_FULL_NAME = "Test User";
+    private final static String USER_FIRST_NAME = "Test";
+    private final static String USER_LAST_NAME = "User";
     private final static String USER_PASSWORD = "password";
 
     private MockMvc mockMvc;
@@ -99,7 +100,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginBlocked() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -143,7 +144,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginCountReset() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
