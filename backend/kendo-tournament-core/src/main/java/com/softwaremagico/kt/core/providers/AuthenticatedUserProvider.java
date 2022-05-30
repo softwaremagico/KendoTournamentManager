@@ -54,14 +54,15 @@ public class AuthenticatedUserProvider {
         return findByUsername(uniqueId);
     }
 
-    public AuthenticatedUser createUser(String username, String fullName, String password, String... roles) {
+    public AuthenticatedUser createUser(String username, String firstName, String lastName, String password, String... roles) {
         if (findByUsername(username).isPresent()) {
             throw new DuplicatedUserException(this.getClass(), "Username exists!");
         }
 
         final AuthenticatedUser authenticatedUser = new AuthenticatedUser();
         authenticatedUser.setUsername(username);
-        authenticatedUser.setFullName(fullName);
+        authenticatedUser.setName(firstName);
+        authenticatedUser.setLastname(lastName);
         authenticatedUser.setPassword(password);
         authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
 
