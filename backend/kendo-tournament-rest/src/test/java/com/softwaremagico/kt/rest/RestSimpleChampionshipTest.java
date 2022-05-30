@@ -66,7 +66,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = "admin";
-    private static final String USER_FULL_NAME = "Test User";
+    private final static String USER_FIRST_NAME = "Test";
+    private final static String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "asd123";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
@@ -150,7 +151,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     @BeforeClass(dependsOnMethods = "setUp")
     public void setAuthentication() throws Exception {
         //Create the admin user
-        authenticatedUserController.createUser(USER_NAME, USER_FULL_NAME, USER_PASSWORD, USER_ROLES);
+        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
