@@ -8,17 +8,17 @@ package com.softwaremagico.kt.security;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -50,6 +50,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -153,7 +155,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         request.setName(USER_FIRST_NAME_2);
         request.setLastName(USER_LAST_NAME_2);
         request.setPassword(USER_PASSWORD);
-        request.setAuthorities(USER_ROLES);
+        request.setAuthorities(new HashSet<>(Arrays.asList(USER_ROLES)));
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/register")
