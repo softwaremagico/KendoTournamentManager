@@ -47,7 +47,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -95,29 +94,20 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
-    }
 
-    @BeforeMethod
-    public void clearDatabase() {
-        authenticatedUserController.findAll().forEach(authenticatedUser -> {
-            authenticatedUserController.delete(authenticatedUser);
-        });
+        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
     }
 
     @Test
     public void testAuthenticationToken() {
-        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
-
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(USER_NAME, USER_PASSWORD));
     }
 
     @Test
     public void testLoginSuccess() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
-
         AuthRequest request = new AuthRequest();
-        request.setUsername(authenticatedUser.getUsername());
+        request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
@@ -129,16 +119,13 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .andReturn();
 
         AuthenticatedUser authUserView = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
-        Assert.assertEquals(authenticatedUser.getId(), authUserView.getId());
+        Assert.assertEquals(USER_NAME, authUserView.getUsername());
     }
 
     @Test
     public void testLoginFail() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(String.format("%s_%d", USER_NAME, System.currentTimeMillis()),
-                USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
-
         AuthRequest request = new AuthRequest();
-        request.setUsername(authenticatedUser.getUsername());
+        request.setUsername(USER_NAME);
         request.setPassword("zxc");
 
         this.mockMvc
@@ -152,9 +139,6 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testJwt() throws Exception {
-        //Login as user
-        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
-
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
         request.setPassword(USER_PASSWORD);
