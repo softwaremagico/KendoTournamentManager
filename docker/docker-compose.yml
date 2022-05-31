@@ -21,7 +21,6 @@ services:
       context: ./rproxy
       args:
         - machine_domain
-        - frontend_path
     image: kendo-tournament-rproxy
     restart: always
     networks:
@@ -60,12 +59,12 @@ services:
     build:
       context: ./frontend
       args:
-        - frontend_path
-        - release
+        - version
     image: kendo-tournament-frontend
     restart: always
     networks:
       - containers
+      - external
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-frontend
