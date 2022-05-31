@@ -151,7 +151,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     @BeforeClass(dependsOnMethods = "setUp")
     public void setAuthentication() throws Exception {
         //Create the admin user
-        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
+        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
@@ -171,6 +171,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     @Test
     public void addClub() throws Exception {
+        Assert.assertNotNull(jwtToken);
+
         MvcResult createResult = this.mockMvc
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
