@@ -67,7 +67,7 @@ public class AuthApi {
     }
 
 
-    @Operation(summary = "Gets the JWT Token into the headers.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login")
     public ResponseEntity<AuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
