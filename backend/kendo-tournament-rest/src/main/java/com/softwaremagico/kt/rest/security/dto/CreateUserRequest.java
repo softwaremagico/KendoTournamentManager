@@ -24,6 +24,8 @@ package com.softwaremagico.kt.rest.security.dto;
  * #L%
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 public class CreateUserRequest {
@@ -71,5 +73,9 @@ public class CreateUserRequest {
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    public void setAuthorities(String... authorities) {
+        this.authorities = new HashSet<>(Arrays.asList(authorities));
     }
 }
