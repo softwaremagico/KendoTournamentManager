@@ -64,6 +64,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private final static String USER_FIRST_NAME = "Test";
     private final static String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "password";
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
     private MockMvc mockMvc;
 
@@ -105,7 +106,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testAuthenticationToken() {
-        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
+        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(USER_NAME, USER_PASSWORD));
@@ -113,7 +114,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -133,8 +134,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginFail() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(String.format(USER_NAME, System.currentTimeMillis()),
-                USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(String.format("%s_%d", USER_NAME, System.currentTimeMillis()),
+                USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -152,7 +153,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     @Test
     public void testJwt() throws Exception {
         //Login as user
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD);
+        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(USER_NAME);
@@ -190,7 +191,6 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         goodRequest.setName(USER_NAME);
         goodRequest.setLastName(USER_LAST_NAME);
         goodRequest.setPassword(USER_PASSWORD);
-        goodRequest.setRePassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/register")
@@ -203,11 +203,10 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "testJwt")
     public void testRegisterSuccess() throws Exception {
         CreateUserRequest goodRequest = new CreateUserRequest();
-        goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
+        goodRequest.setUsername(String.format("%s_%d", USER_NAME, System.currentTimeMillis()));
         goodRequest.setName(USER_NAME);
         goodRequest.setLastName(USER_LAST_NAME);
         goodRequest.setPassword(USER_PASSWORD);
-        goodRequest.setRePassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/register")
@@ -225,17 +224,17 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "testJwt")
     public void testRegisterFail() throws Exception {
-        CreateUserRequest badRequest = new CreateUserRequest();
-        badRequest.setUsername("invalid.username");
-        badRequest.setName(USER_NAME);
-        badRequest.setLastName(USER_LAST_NAME);
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername("invalid.username");
+        request.setName(USER_NAME);
+        request.setLastName(USER_LAST_NAME);
 
         // Adding two times same user.
         this.mockMvc
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(badRequest)))
+                        .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
@@ -243,7 +242,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(badRequest)))
+                        .content(toJson(request)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
