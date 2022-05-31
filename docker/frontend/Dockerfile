@@ -20,11 +20,11 @@ WORKDIR /usr/src/
 RUN apk --no-cache add supervisor openssl unzip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
-    wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-frontend.zip && \
-    unzip kendo-tournament-frontend.zip && \
-    mv frontend/* . && \
-    rm -r frontend && \
-    rm kendo-tournament-frontend.zip && \
+    wget https://github.com/softwaremagico/KendoTournamentManager/archive/refs/tags/kendo-tournament-${release}.zip && \
+    unzip KendoTournamentManager-kendo-tournament-${release}.zip && \
+    mv KendoTournamentManager-kendo-tournament-${release}/frontend/* . && \
+    rm -r KendoTournamentManager-kendo-tournament-${release} && \
+    rm KendoTournamentManager-kendo-tournament-${release}.zip && \
     apk del openssl
 
 #Working in the app directory
