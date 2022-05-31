@@ -39,8 +39,8 @@ services:
       - "kendo-tournament-frontend"
       - "kendo-tournament-backend"
     depends_on:
-      kendo-tournament-frontend:
-        condition: service_healthy
+            #      kendo-tournament-frontend:
+            #        condition: service_healthy
       kendo-tournament-backend:
         condition: service_healthy
     healthcheck:
