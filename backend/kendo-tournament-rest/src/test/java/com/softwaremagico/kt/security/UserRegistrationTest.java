@@ -1,0 +1,184 @@
+package com.softwaremagico.kt.security;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (Rest)
+ * %%
+ * Copyright (C) 2021 - 2022 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
+import com.softwaremagico.kt.rest.security.dto.AuthRequest;
+import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@ExtendWith(MockitoExtension.class)
+@Test(groups = "userRegistration")
+public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
+    private final static String USER_NAME = "user";
+    private final static String USER_FIRST_NAME = "Test";
+    private final static String USER_LAST_NAME = "User";
+
+    public static final String USER_NAME_2 = "Goku";
+    public static final String USER_FIRST_NAME_2 = "Goku";
+    public static final String USER_LAST_NAME_2 = "Son";
+
+    private final static String USER_PASSWORD = "password";
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+
+    @Autowired
+    private WebApplicationContext context;
+    private MockMvc mockMvc;
+
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private AuthenticatedUserProvider authenticatedUserProvider;
+
+    @Autowired
+    private AuthenticatedUserController authenticatedUserController;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    private String jwt;
+
+    private <T> String toJson(T object) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(object);
+    }
+
+    private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
+        return objectMapper.readValue(payload, clazz);
+    }
+
+    @BeforeClass
+    public void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .build();
+
+        authenticatedUserController.findAll().forEach(authenticatedUser -> {
+            authenticatedUserController.delete(authenticatedUser);
+        });
+    }
+
+    @Test
+    public void testLoginSuccess() throws Exception {
+        AuthenticatedUser authenticatedUser = authenticatedUserProvider.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+
+        AuthRequest request = new AuthRequest();
+        request.setUsername(authenticatedUser.getUsername());
+        request.setPassword(USER_PASSWORD);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/public/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        AuthenticatedUser authUserView = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
+        Assert.assertEquals(authenticatedUser.getUsername(), authUserView.getUsername());
+
+        jwt = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+        Assert.assertNotNull(jwt);
+    }
+
+    @Test(dependsOnMethods = "testLoginSuccess")
+    public void testRegisterFailed() throws Exception {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername(USER_NAME);
+        request.setName(USER_FIRST_NAME);
+        request.setLastName(USER_LAST_NAME);
+        request.setPassword(USER_PASSWORD);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(request)))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "testLoginSuccess")
+    public void testRegisterSuccess() throws Exception {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setUsername(USER_NAME_2);
+        request.setName(USER_FIRST_NAME_2);
+        request.setLastName(USER_LAST_NAME_2);
+        request.setPassword(USER_PASSWORD);
+        request.setAuthorities(USER_ROLES);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwt)
+                        .content(toJson(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "testRegisterSuccess")
+    public void testLoginSuccessWithNewUser() throws Exception {
+        AuthRequest request = new AuthRequest();
+        request.setUsername(USER_NAME_2);
+        request.setPassword(USER_PASSWORD);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/public/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(request)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        AuthenticatedUser authUserView = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
+        Assert.assertEquals(authUserView.getUsername(), USER_NAME_2);
+    }
+}
