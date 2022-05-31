@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
@@ -68,7 +69,8 @@ public class AuthenticatedUser implements UserDetails {
     @Column(name = "roles")
     private Set<String> roles;
 
-    private transient Set<SimpleGrantedAuthority> grantedAuthorities;
+    @JsonIgnore
+    private transient Set<SimpleGrantedAuthority> authorities;
 
     public Integer getId() {
         return id;
@@ -138,18 +140,19 @@ public class AuthenticatedUser implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (grantedAuthorities == null) {
-            grantedAuthorities = new HashSet<>();
+        if (authorities == null) {
+            authorities = new HashSet<>();
             if (roles != null) {
                 roles.forEach(authority -> {
                     final AvailableRole availableRole = AvailableRole.get(authority);
                     if (availableRole != null) {
-                        grantedAuthorities.add(new SimpleGrantedAuthority(availableRole.name()));
+                        authorities.add(new SimpleGrantedAuthority(availableRole.name()));
                     }
                 });
             }
         }
-        return grantedAuthorities;
+        return authorities;
     }
 }
