@@ -6,7 +6,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-120.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-121h-blueviolet.svg)]()
 [![Powered by](https://img.shields.io/badge/powered%20by%20angular-red.svg?logo=angular&logoColor=white)]()
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=java&logoColor=white)]()
 
