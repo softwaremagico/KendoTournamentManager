@@ -20,6 +20,7 @@ export class BasicTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // This is intentional
   }
 
   ngAfterViewInit() {
@@ -53,9 +54,9 @@ export class BasicTableComponent implements OnInit {
       oldVisibleColumns.push(column);
       this.basicTableData.visibleColumns.length = 0;
       //Maintain columns order.
-      for (let column of this.basicTableData.columns) {
-        if (oldVisibleColumns.includes(column)) {
-          this.basicTableData.visibleColumns.push(column);
+      for (let tableColumn of this.basicTableData.columns) {
+        if (oldVisibleColumns.includes(tableColumn)) {
+          this.basicTableData.visibleColumns.push(tableColumn);
         }
       }
     }

@@ -131,10 +131,10 @@ export class TournamentTeamsComponent implements OnInit {
     if (this.tournament.teamSize === 1) {
       team.name = participant.lastname + ", " + participant.name
     }
-    if (this.userListData.filteredParticipants.indexOf(participant) > 0) {
+    if (this.userListData.filteredParticipants.includes(participant)) {
       this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
     }
-    if (this.userListData.participants.indexOf(participant) > 0) {
+    if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
     }
   }
@@ -164,7 +164,7 @@ export class TournamentTeamsComponent implements OnInit {
   checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
     const size = dropList.element.nativeElement.getAttribute('data-tournament-size');
     if (!!size) {
-      return !(dropList.data.length >= +size);
+      return (dropList.data.length < +size);
     }
     return true;
   }
@@ -193,9 +193,9 @@ export class TournamentTeamsComponent implements OnInit {
         this.loggerService.info("Adding new team.");
       }),
       catchError(this.messageService.handleError<Team>("Adding new team."))
-    ).subscribe(team => {
-      this.messageService.infoMessage("New team '" + team.name + "' added.");
-      this.teams.push(team);
+    ).subscribe(_team => {
+      this.messageService.infoMessage("New team '" + _team.name + "' added.");
+      this.teams.push(_team);
     });
   }
 

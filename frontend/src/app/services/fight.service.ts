@@ -77,7 +77,7 @@ export class FightService {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Fight>(url, fight, this.httpOptions)
       .pipe(
-        tap((newFight: Fight) => this.loggerService.info(`adding fight`)),
+        tap((_newFight: Fight) => this.loggerService.info(`adding fight`)),
         catchError(this.messageService.handleError<Fight>(`adding fight`))
       );
   }
@@ -86,7 +86,7 @@ export class FightService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Fight>(url, fight, this.httpOptions)
       .pipe(
-        tap((updatedFight: Fight) => this.loggerService.info(`updating fight`)),
+        tap((_updatedFight: Fight) => this.loggerService.info(`updating fight`)),
         catchError(this.messageService.handleError<Fight>(`updating fight`))
       );
   }

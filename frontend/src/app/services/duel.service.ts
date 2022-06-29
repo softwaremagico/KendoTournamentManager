@@ -31,7 +31,7 @@ export class DuelService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Duel>(url, duel, this.httpOptions)
       .pipe(
-        tap((updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
+        tap((_updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
         catchError(this.messageService.handleError<Duel>(`updating duel`))
       );
   }

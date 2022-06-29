@@ -78,7 +78,7 @@ export class TournamentRolesComponent implements OnInit {
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex]
-    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(role => {
+    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
       this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
     });
     this.userListData.participants.push(participant);
@@ -92,15 +92,15 @@ export class TournamentRolesComponent implements OnInit {
     role.tournament = this.tournament;
     role.participant = participant;
     role.roleType = roleName;
-    this.roleService.add(role).subscribe(role => {
-      this.messageService.infoMessage("Role '" + role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
+    this.roleService.add(role).subscribe(_role => {
+      this.messageService.infoMessage("Role '" + _role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
     });
     console.log('participants', this.userListData.participants.indexOf(participant))
     console.log('filteredParticipants', this.userListData.filteredParticipants.indexOf(participant))
-    if (this.userListData.participants.indexOf(participant) > 0) {
+    if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
     }
-    if (this.userListData.filteredParticipants.indexOf(participant) > 0) {
+    if (this.userListData.filteredParticipants.includes(participant)) {
       this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
     }
   }

@@ -93,8 +93,8 @@ export class TournamentListComponent implements OnInit {
   }
 
   addRowData(tournament: Tournament) {
-    this.tournamentService.add(tournament).subscribe(tournament => {
-      this.basicTableData.dataSource.data.push(tournament);
+    this.tournamentService.add(tournament).subscribe(_tournament => {
+      this.basicTableData.dataSource.data.push(_tournament);
       this.basicTableData.dataSource._updateChangeSubscription();
       this.messageService.infoMessage("Tournament Stored");
     });
@@ -117,7 +117,7 @@ export class TournamentListComponent implements OnInit {
 
   addRoles(): void {
     if (this.basicTableData.selectedElement) {
-      const dialogRef = this.dialog.open(TournamentRolesComponent, {
+      this.dialog.open(TournamentRolesComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -127,7 +127,7 @@ export class TournamentListComponent implements OnInit {
 
   addTeams(): void {
     if (this.basicTableData.selectedElement) {
-      const dialogRef = this.dialog.open(TournamentTeamsComponent, {
+      this.dialog.open(TournamentTeamsComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }

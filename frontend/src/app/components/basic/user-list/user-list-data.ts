@@ -4,9 +4,6 @@ export class UserListData {
   participants: Participant[];
   filteredParticipants: Participant[];
 
-  constructor() {
-  }
-
   initParticipants(participants: Participant[]) {
     this.filteredParticipants = Object.assign([], participants);
   }

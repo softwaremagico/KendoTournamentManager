@@ -16,7 +16,7 @@ export namespace DuelType {
 
 export namespace DuelType {
   export function getKeys(): string[] {
-    return Object.keys(DuelType).filter(enumValue => !(typeof (DuelType[enumValue as DuelType]) === 'function'))
+    return Object.keys(DuelType).filter(enumValue => (typeof (DuelType[enumValue as DuelType]) !== 'function'))
   }
 }
 
