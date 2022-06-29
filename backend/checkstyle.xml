@@ -12,15 +12,12 @@
     <module name="SuppressionFilter">
     </module>
 
-    <!--<module name="NewlineAtEndOfFile">
-        <property name="lineSeparator" value="lf_cr_crlf"/>
-    </module>-->
 
     <module name="RegexpSingleline">
-        <!***REMOVED***Checks that FIXME is not used in comments. TODO is preferred. -->
+        <!***REMOVED***Checks that FIX ME is not used in comments. TO DO is preferred. -->
         <property name="format" value="((//.*)|(\*.*))FIXME"/>
         <property name="message"
-                  value='TODO is preferred to FIXME.  e.g. "TODO(johndoe): Refactor when v2 is released."'/>
+                  value='TO DO is preferred to FIXME.  e.g. "TO DO(johndoe): Refactor when v2 is released."'/>
     </module>
 
     <module name="RegexpSingleline">
