@@ -16,7 +16,7 @@
 </mat-menu>
 <div class="mat-elevation-z8">
   <div class="basic-table">
-    <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name">
+    <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name" aria-describedby="List of items on a table view">
 
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
         <ng-container [matColumnDef]=column>

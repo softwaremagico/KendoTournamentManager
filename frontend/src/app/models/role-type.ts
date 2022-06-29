@@ -17,7 +17,7 @@ export namespace RoleType {
 
 export namespace RoleType {
   export function getKeys(): string[] {
-    return Object.keys(RoleType).filter(enumValue => !(typeof (RoleType[enumValue as RoleType]) === 'function'))
+    return Object.keys(RoleType).filter(enumValue => (typeof (RoleType[enumValue as RoleType]) !== 'function'))
   }
 }
 

@@ -8,9 +8,6 @@ export class EnvironmentService {
 
   private backendUrl: string = environment.backendUrl;
 
-  constructor() {
-  }
-
   getBackendUrl(): string {
     return this.backendUrl;
   }

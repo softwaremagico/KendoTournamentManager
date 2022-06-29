@@ -11,9 +11,8 @@ export class DrawComponent implements OnInit {
   @Input()
   duel: Duel;
 
-  constructor() { }
-
   ngOnInit(): void {
+    // This is intentional
   }
 
 }

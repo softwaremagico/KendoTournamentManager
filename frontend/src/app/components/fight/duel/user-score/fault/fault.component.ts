@@ -21,6 +21,7 @@ export class FaultComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // This is intentional
   }
 
   private setFault(fault: boolean) {
@@ -46,13 +47,11 @@ export class FaultComponent implements OnInit {
   }
 
   updateFault(fault: boolean) {
-    //let originalDuel: Duel = Duel.clone(this.duel);
     this.setFault(fault);
     this.duelService.update(this.duel).subscribe(duel => {
       this.messageService.infoMessage("Fault Updated");
       return duel;
     });
-    //this.duel=Duel.clone(originalDuel);
   }
 
   hasFault(): boolean {

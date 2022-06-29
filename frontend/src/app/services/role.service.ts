@@ -102,21 +102,21 @@ export class RoleService {
       );
   }
 
-  add(Role: Role): Observable<Role> {
+  add(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Role>(url, Role, this.httpOptions)
+    return this.http.post<Role>(url, role, this.httpOptions)
       .pipe(
         tap((newRole: Role) => this.loggerService.info(`adding role ${newRole}`)),
-        catchError(this.messageService.handleError<Role>(`adding ${Role}`))
+        catchError(this.messageService.handleError<Role>(`adding ${role}`))
       );
   }
 
-  update(Role: Role): Observable<Role> {
+  update(role: Role): Observable<Role> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Role>(url, Role, this.httpOptions)
+    return this.http.put<Role>(url, role, this.httpOptions)
       .pipe(
         tap((updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`)),
-        catchError(this.messageService.handleError<Role>(`updating ${Role}`))
+        catchError(this.messageService.handleError<Role>(`updating ${role}`))
       );
   }
 }
