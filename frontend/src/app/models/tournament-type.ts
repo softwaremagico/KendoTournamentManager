@@ -20,7 +20,7 @@ export namespace TournamentType {
 
 export namespace TournamentType {
   export function getKeys(): string[] {
-    return Object.keys(TournamentType).filter(enumValue => !(typeof (TournamentType[enumValue as TournamentType]) === 'function'))
+    return Object.keys(TournamentType).filter(enumValue => (typeof (TournamentType[enumValue as TournamentType]) !== 'function'))
   }
 }
 

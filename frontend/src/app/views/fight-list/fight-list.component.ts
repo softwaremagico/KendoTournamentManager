@@ -48,7 +48,7 @@ export class FightListComponent implements OnInit {
   }
 
   generateElements() {
-
+    // This is intentional
   }
 
   addElement() {
@@ -85,8 +85,8 @@ export class FightListComponent implements OnInit {
   }
 
   addRowData(fight: Fight) {
-    this.fightService.add(fight).subscribe(fight => {
-      this.fights.push(fight)
+    this.fightService.add(fight).subscribe(_fight => {
+      this.fights.push(_fight)
       this.messageService.infoMessage("Fight Stored");
     });
   }
@@ -100,8 +100,8 @@ export class FightListComponent implements OnInit {
 
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
-        this.fights.filter(existing_fight => existing_fight !== fight);
-        this.messageService.infoMessage("Fight Deleted");
+        let currentFights: Fight[] = this.fights.filter(existing_fight => existing_fight !== fight);
+        this.messageService.infoMessage("Fight Deleted. Current fights: " + currentFights.length);
       }
     );
   }

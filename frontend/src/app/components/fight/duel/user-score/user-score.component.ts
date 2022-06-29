@@ -14,10 +14,8 @@ export class UserScoreComponent implements OnInit {
   @Input()
   left: boolean;
 
-  constructor() {
-  }
-
   ngOnInit(): void {
+    // This is intentional
   }
 
 }

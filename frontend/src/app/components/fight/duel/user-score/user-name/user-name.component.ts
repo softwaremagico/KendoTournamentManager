@@ -14,10 +14,8 @@ export class UserNameComponent implements OnInit {
   @Input()
   left: boolean;
 
-  constructor() {
-  }
-
   ngOnInit(): void {
+    // This is intentional
   }
 
   getShortName(): string {

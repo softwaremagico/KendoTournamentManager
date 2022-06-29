@@ -27,6 +27,7 @@ export class FightDialogBoxComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // This is intentional
   }
 
 }
