@@ -3,7 +3,7 @@
     {{fight.team1.name}}
   </div>
   <div class="fight" *ngIf="fight">
-    <duel *ngFor="let duel of fight.duels" [duel]="duel"></duel>
+    <duel class="duel" *ngFor="let duel of fight.duels" [duel]="duel"></duel>
   </div>
   <div class="right-team" *ngIf="showTeamTitle">
     {{fight.team2.name}}

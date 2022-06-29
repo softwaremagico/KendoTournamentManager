@@ -27,7 +27,7 @@ export class ScoreComponent implements OnInit {
     return Score;
   }
 
-  unsorted = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
+  unsorted = (_a: KeyValue<number, string>, _b: KeyValue<number, string>): number => {
     return 0;
   }
 
@@ -35,6 +35,7 @@ export class ScoreComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // This is intentional
   }
 
   private updateDuel(score: Score) {
@@ -48,13 +49,11 @@ export class ScoreComponent implements OnInit {
   }
 
   updateScore(score: Score) {
-    //let originalDuel: Duel = Duel.clone(this.duel);
     this.updateDuel(score);
     this.duelService.update(this.duel).subscribe(duel => {
       this.messageService.infoMessage("Score Updated");
       return duel;
     });
-    //this.duel = Duel.clone(originalDuel);
   }
 
   scoreRepresentation(): string {
