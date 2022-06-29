@@ -21,7 +21,7 @@ export namespace Score {
 
 export namespace Score {
   export function getKeys(): string[] {
-    return Object.keys(Score).filter(enumValue => !(typeof (Score[enumValue as Score]) === 'function'))
+    return Object.keys(Score).filter(enumValue => (typeof (Score[enumValue as Score]) !== 'function'))
   }
 }
 

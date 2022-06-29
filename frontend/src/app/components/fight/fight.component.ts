@@ -11,11 +11,8 @@ export class FightComponent implements OnInit {
   @Input()
   fight: Fight;
 
-  constructor() {
-  }
-
   ngOnInit(): void {
-
+    // This is intentional
   }
 
   showTeamTitle(): boolean {

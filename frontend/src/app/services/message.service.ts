@@ -25,15 +25,15 @@ export class MessageService {
 
 
   infoMessage(message: string) {
-    this.openSnackBar(message, 'info-snackbar', 2000, undefined);
+    this.openSnackBar(message, 'info-snackbar', 2000);
   }
 
   warningMessage(message: string) {
-    this.openSnackBar(message, 'warning-snackbar', 2000, undefined);
+    this.openSnackBar(message, 'warning-snackbar', 2000);
   }
 
   errorMessage(message: string) {
-    this.openSnackBar(message, 'error-snackbar', 5000, undefined);
+    this.openSnackBar(message, 'error-snackbar', 5000);
   }
 
   handleError<T>(operation = 'operation', result?: T) {

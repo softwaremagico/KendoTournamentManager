@@ -12,11 +12,8 @@ export class UserListComponent implements OnInit {
   userListData: UserListData;
   filterString: string;
 
-  constructor() {
-
-  }
-
   ngOnInit(): void {
+    // This is intentional
   }
 
   filter(event: Event) {

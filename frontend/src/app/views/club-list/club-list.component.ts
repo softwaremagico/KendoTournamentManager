@@ -85,8 +85,8 @@ export class ClubListComponent implements OnInit {
   }
 
   addRowData(club: Club) {
-    this.clubService.add(club).subscribe(club => {
-      this.basicTableData.dataSource.data.push(club);
+    this.clubService.add(club).subscribe(_club => {
+      this.basicTableData.dataSource.data.push(_club);
       this.basicTableData.dataSource._updateChangeSubscription();
       this.messageService.infoMessage("Club Stored");
     });
