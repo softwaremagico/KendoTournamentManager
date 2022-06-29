@@ -161,7 +161,7 @@ export class TournamentTeamsComponent implements OnInit {
     return undefined;
   }
 
-  checkTeamSize(item: CdkDrag, dropList: CdkDropList): boolean {
+  checkTeamSize(_item: CdkDrag, dropList: CdkDropList): boolean {
     const size = dropList.element.nativeElement.getAttribute('data-tournament-size');
     if (!!size) {
       return (dropList.data.length < +size);

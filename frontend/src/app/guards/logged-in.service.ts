@@ -13,7 +13,7 @@ export class LoggedInService implements CanActivate {
   constructor(private router: Router, public authenticatedUserService: AuthenticatedUserService) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.authenticatedUserService.getJwtValue()) {
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
