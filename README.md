@@ -6,7 +6,11 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-121h-blueviolet.svg)]()
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=softwaremagico_KendoTournamentManager&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=softwaremagico_KendoTournamentManager)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=softwaremagico_KendoTournamentManager&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=softwaremagico_KendoTournamentManager)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=softwaremagico_KendoTournamentManager&metric=bugs)](https://sonarcloud.io/summary/new_code?id=softwaremagico_KendoTournamentManager)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=softwaremagico_KendoTournamentManager&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=softwaremagico_KendoTournamentManager)
+[![Time](https://img.shields.io/badge/development-122h-blueviolet.svg)]()
 [![Powered by](https://img.shields.io/badge/powered%20by%20angular-red.svg?logo=angular&logoColor=white)]()
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=java&logoColor=white)]()
 
