@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -120,7 +121,8 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
@@ -143,7 +145,8 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andReturn();
     }
@@ -161,7 +164,8 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwt)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
@@ -175,7 +179,8 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();

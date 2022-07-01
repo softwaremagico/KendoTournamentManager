@@ -38,6 +38,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,7 +77,8 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
         requestParams.add("user", "1");
 
         mockMvc.perform(get("/files/users")
-                .params(requestParams))
+                .params(requestParams)
+                .with(csrf()))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -86,7 +88,8 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
         requestParams.add("user", "1");
 
         mockMvc.perform(get("/files/users")
-                .params(requestParams))
+                .params(requestParams)
+                .with(csrf()))
                 .andExpect(status().isUnauthorized());
     }
 }

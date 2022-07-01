@@ -50,6 +50,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -110,7 +111,8 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
