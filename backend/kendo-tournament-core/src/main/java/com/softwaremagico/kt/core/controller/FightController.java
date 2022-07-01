@@ -113,8 +113,9 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final Tournament tournament = (tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
-        if (selectManager(tournament.getType()) != null) {
-            final List<Fight> createdFights = selectManager(tournament.getType()).createSortedFights(tournament, maximizeFights, level);
+        final ITournamentManager selectedManager = selectManager(tournament.getType());
+        if (selectedManager != null) {
+            final List<Fight> createdFights = selectedManager.createSortedFights(tournament, maximizeFights, level);
             provider.saveAll(createdFights);
             return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
 
