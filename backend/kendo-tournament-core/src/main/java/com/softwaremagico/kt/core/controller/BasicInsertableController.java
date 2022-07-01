@@ -61,9 +61,7 @@ public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends 
 
     @Transactional
     public DTO update(DTO dto) {
-        validate(dto);
-        return converter.convert(createConverterRequest(super.provider.save(converter.
-                reverse(dto))));
+        return create(dto);
     }
 
     @Transactional
