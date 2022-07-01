@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
@@ -160,7 +161,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
@@ -177,7 +179,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(new ClubDTO(CLUB_NAME))))
+                        .content(toJson(new ClubDTO(CLUB_NAME)))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
@@ -187,7 +190,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult countResult = this.mockMvc
                 .perform(get("/clubs/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -202,7 +206,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", "Bearer " + jwtToken)
                             .content(toJson(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i),
-                                    String.format("lastname%s", i), clubDTO))))
+                                    String.format("lastname%s", i), clubDTO)))
+                            .with(csrf()))
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
@@ -215,7 +220,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult createResult = this.mockMvc
                 .perform(get("/participants/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -228,7 +234,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .perform(post("/tournaments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE))))
+                        .content(toJson(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE)))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
@@ -241,7 +248,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult countResult = this.mockMvc
                 .perform(get("/tournaments/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -255,7 +263,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .perform(post("/roles")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", "Bearer " + jwtToken)
-                            .content(toJson(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR))))
+                            .content(toJson(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR)))
+                            .with(csrf()))
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
@@ -268,7 +277,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult createResult = this.mockMvc
                 .perform(get("/roles/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -284,7 +294,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult createResult = this.mockMvc
                 .perform(get("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
@@ -308,7 +319,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .perform(put("/teams")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", "Bearer " + jwtToken)
-                            .content(toJson(team)))
+                            .content(toJson(team))
+                            .with(csrf()))
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
@@ -342,7 +354,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult createResult = this.mockMvc
                 .perform(put("/fights/create/tournaments/{tournamentId}/levels/{levelId}/{maximizeFights}", tournamentDTO.getId(), 0, true)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
@@ -352,7 +365,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         createResult = this.mockMvc
                 .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
@@ -380,7 +394,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             MvcResult createResult = this.mockMvc
                     .perform(get("/fights/tournaments/{tournamentId}/current", tournamentDTO.getId())
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + jwtToken))
+                            .header("Authorization", "Bearer " + jwtToken)
+                            .with(csrf()))
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
             FightDTO currentFight = fromJson(createResult.getResponse().getContentAsString(), FightDTO.class);
@@ -395,7 +410,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .perform(put("/fights")
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", "Bearer " + jwtToken)
-                            .content(toJson(currentFight)))
+                            .content(toJson(currentFight))
+                            .with(csrf()))
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
         }
@@ -403,7 +419,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         MvcResult createResult = this.mockMvc
                 .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + jwtToken))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 

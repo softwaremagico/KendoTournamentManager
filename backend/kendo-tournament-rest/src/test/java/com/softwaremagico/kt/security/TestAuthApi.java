@@ -52,6 +52,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -113,7 +114,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
@@ -131,7 +133,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
@@ -146,7 +149,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
@@ -179,7 +183,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(goodRequest)))
+                        .content(toJson(goodRequest))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andReturn();
     }
@@ -196,7 +201,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(goodRequest)))
+                        .content(toJson(goodRequest))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
@@ -218,7 +224,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
@@ -226,7 +233,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(request)))
+                        .content(toJson(request))
+                        .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
     }
