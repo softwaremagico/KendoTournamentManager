@@ -98,8 +98,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Enable CORS and disable CSRF
-        http = http.cors().and().csrf().disable();
+        // Enable CORS
+        http.cors();
 
         // Set session management to stateless
         http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
