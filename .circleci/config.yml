@@ -6,7 +6,8 @@ jobs:
       - image: 'circleci/openjdk:11-jdk'
     working_directory: ~/KendoTournamentManager/backend
     steps:
-      - checkout
+      - checkout:
+          path: ~/KendoTournamentManager
       - run:
           name: Analyze on SonarCloud
           command: mvn verify sonar:sonar -Dsonar.projectKey=kendo-tournament-backend
