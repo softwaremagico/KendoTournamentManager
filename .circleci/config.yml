@@ -20,19 +20,6 @@ jobs:
       # Checkout the code as the first step.
       - checkout:
           path: ~/KendoTournamentManager
-      #Caching
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2          
       # Use mvn clean and package as the standard maven build phase
       - run:
           name: Build
