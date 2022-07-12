@@ -5,10 +5,11 @@
   padding: 5px;
   width: 100%;
   display: table;
+  min-width: 800px;
 }
 
 .duel {
-  display: table-row;
+  display: flex;
   vertical-align: middle;
 }
 
