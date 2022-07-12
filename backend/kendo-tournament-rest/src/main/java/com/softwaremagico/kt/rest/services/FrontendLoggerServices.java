@@ -41,20 +41,24 @@ public class FrontendLoggerServices {
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
     public void info(@RequestBody LogDTO log, HttpServletRequest request) {
-        FrontendLogger.info(this.getClass(), log.getMessage());
+        FrontendLogger.info(this.getClass(), sanitize(log.getMessage()));
     }
 
     @Operation(summary = "Register a warning that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
     public void warning(@RequestBody LogDTO log, HttpServletRequest request) {
-        FrontendLogger.warning(this.getClass(), log.getMessage());
+        FrontendLogger.warning(this.getClass(), sanitize(log.getMessage()));
     }
 
     @Operation(summary = "Register an error that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)
     public void error(@RequestBody LogDTO log, HttpServletRequest request) {
-        FrontendLogger.severe(this.getClass(), log.getMessage());
+        FrontendLogger.severe(this.getClass(), sanitize(log.getMessage()));
+    }
+
+    private static String sanitize(Object parameter) {
+        return parameter.toString().replaceAll("[\n\r\t]", "_");
     }
 }
