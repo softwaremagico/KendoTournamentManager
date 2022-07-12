@@ -44,7 +44,7 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(Logger logger, String messageTemplate, Object... arguments) {
-        logger.warn(sanitize(messageTemplate), sanitize(arguments));
+        logger.warn(messageTemplate, arguments);
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(Logger logger, String className, String messageTemplate, Object... arguments) {
-        logger.warn(className + ": " + sanitize(messageTemplate), sanitize(arguments));
+        logger.warn(className + ": " + messageTemplate, arguments);
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String messageTemplate, Object... arguments) {
-        logger.info(sanitize(messageTemplate), sanitize(arguments));
+        logger.info(messageTemplate, arguments);
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String className, String messageTemplate, Object... arguments) {
-        info(logger, className + ": " + sanitize(messageTemplate), sanitize(arguments));
+        info(logger, className + ": " + messageTemplate, arguments);
     }
 
     /**
@@ -94,7 +94,7 @@ public abstract class BasicLogger {
      */
     public static void debug(Logger logger, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled()) {
-            logger.debug(sanitize(messageTemplate), sanitize(arguments));
+            logger.debug(messageTemplate, arguments);
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class BasicLogger {
      */
     public static void debug(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled()) {
-            logger.debug(className + ": " + sanitize(messageTemplate), sanitize(arguments));
+            logger.debug(className + ": " + messageTemplate, arguments);
         }
     }
 
@@ -121,7 +121,7 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     protected static void severe(Logger logger, String messageTemplate, Object... arguments) {
-        logger.error(sanitize(messageTemplate), sanitize(arguments));
+        logger.error(messageTemplate, arguments);
     }
 
     /**
@@ -133,7 +133,7 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void severe(Logger logger, String className, String messageTemplate, Object... arguments) {
-        severe(logger, className + ": " + sanitize(messageTemplate), sanitize(arguments));
+        severe(logger, className + ": " + messageTemplate, arguments);
     }
 
     /**
@@ -146,11 +146,11 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void errorMessageNotification(Logger logger, String className, String messageTemplate, Object... arguments) {
-        severe(logger, className, sanitize(messageTemplate), sanitize(arguments));
+        severe(logger, className, messageTemplate, arguments);
     }
 
     public static void errorMessageNotification(Logger logger, String messageTemplate, Object... arguments) {
-        severe(logger, sanitize(messageTemplate), sanitize(arguments));
+        severe(logger, messageTemplate, arguments);
     }
 
     public static void errorMessageNotification(Logger logger, String className, Throwable throwable) {
@@ -163,17 +163,6 @@ public abstract class BasicLogger {
         final PrintWriter printWriter = new PrintWriter(writer);
         throwable.printStackTrace(printWriter);
         return writer.toString();
-    }
-
-    private static String sanitize(Object parameter) {
-        return parameter.toString().replaceAll("[\n\r\t]", "_");
-    }
-
-    private static Object[] sanitize(Object[] parameters) {
-        for (int i = 0; i < parameters.length; i++) {
-            parameters[0] = sanitize(parameters[0]);
-        }
-        return parameters;
     }
 
 }
