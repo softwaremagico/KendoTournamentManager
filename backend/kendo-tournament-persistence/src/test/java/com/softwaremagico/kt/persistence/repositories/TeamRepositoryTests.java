@@ -33,6 +33,7 @@ import com.softwaremagico.kt.utils.ClubFactory;
 import com.softwaremagico.kt.utils.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -40,6 +41,7 @@ import org.testng.annotations.Test;
 
 @SpringBootTest
 @Test(groups = {"teamRepository"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TeamRepositoryTests extends AbstractTestNGSpringContextTests {
     private static final Integer NUMBER_OF_MEMBERS = 3;
     private static final String TOURNAMENT_NAME = "XXX";

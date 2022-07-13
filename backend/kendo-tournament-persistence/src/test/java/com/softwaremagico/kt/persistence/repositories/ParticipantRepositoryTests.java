@@ -30,6 +30,7 @@ import com.softwaremagico.kt.utils.ClubFactory;
 import com.softwaremagico.kt.utils.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -38,6 +39,7 @@ import org.testng.annotations.Test;
 
 @SpringBootTest
 @Test(groups = {"userRepository"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ParticipantRepositoryTests extends AbstractTestNGSpringContextTests {
 
     @Autowired

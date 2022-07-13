@@ -32,6 +32,7 @@ import com.softwaremagico.kt.utils.UserFactory;
 import com.softwaremagico.kt.utils.UserImageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -44,6 +45,7 @@ import java.util.Arrays;
 
 @SpringBootTest
 @Test(groups = {"imageRepository"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ParticipantImageRepositoryTest extends AbstractTestNGSpringContextTests {
     private final static String IMAGE_RESOURCE = "kendo.jpg";
 
