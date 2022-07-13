@@ -31,12 +31,9 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.persistence.AttributeConverter;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
 
@@ -60,9 +57,9 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     public String convertToDatabaseColumn(T attribute) {
         if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && isNotNullOrEmpty(attribute)) {
             try {
-                return encrypt(getCipherEncryptor(), attribute);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
-                    | IllegalBlockSizeException e) {
+                return encrypt(attribute);
+            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
+                    IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -73,9 +70,8 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     public T convertToEntityAttribute(String dbData) {
         if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && dbData != null && !dbData.isEmpty()) {
             try {
-                return decrypt(getCipherDecryptor(), dbData);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | NoSuchPaddingException
-                    | IllegalBlockSizeException e) {
+                return decrypt(dbData);
+            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -88,41 +84,15 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     protected abstract String entityAttributeToString(T attribute);
 
-    private byte[] callCipherDoFinal(Cipher cipher, byte[] bytes) throws IllegalBlockSizeException, BadPaddingException {
-        return cipher.doFinal(bytes);
+    private String encrypt(T attribute) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException,
+            NoSuchAlgorithmException, InvalidKeyException {
+        return cipherInitializer.encrypt(entityAttributeToString(attribute));
     }
 
-    private static Cipher getCipherEncryptor() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            NoSuchPaddingException, InvalidKeyException {
-        if (cipherEncryptor == null) {
-            final CipherInitializer cipherInitializer = new CipherInitializer();
-            cipherEncryptor = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, databaseEncryptionKey);
-        }
-        return cipherEncryptor;
-    }
-
-    private static Cipher getCipherDecryptor() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            NoSuchPaddingException, InvalidKeyException {
-        if (cipherDecryptor == null) {
-            final CipherInitializer cipherInitializer = new CipherInitializer();
-            cipherDecryptor = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, databaseEncryptionKey);
-        }
-        return cipherDecryptor;
-    }
-
-    private String encrypt(Cipher cipher, T attribute) throws IllegalBlockSizeException, BadPaddingException {
-        final byte[] bytesToEncrypt = entityAttributeToString(attribute).getBytes(StandardCharsets.UTF_8);
-        final byte[] encryptedBytes = callCipherDoFinal(cipher, bytesToEncrypt);
-        final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
-        EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", attribute, encodedValue);
-        return encodedValue;
-    }
-
-    private T decrypt(Cipher cipher, String dbData) throws IllegalBlockSizeException, BadPaddingException {
-        final byte[] encryptedBytes = Base64.getDecoder().decode(dbData.getBytes(StandardCharsets.UTF_8));
-        final byte[] decryptedBytes = callCipherDoFinal(cipher, encryptedBytes);
-        final T entity = stringToEntityAttribute(new String(decryptedBytes, Charset.defaultCharset()));
+    private T decrypt(String dbData) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
+        final T entity = stringToEntityAttribute(cipherInitializer.decrypt(dbData));
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
     }
+
 }
