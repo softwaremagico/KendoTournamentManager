@@ -26,16 +26,18 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Converter(autoApply = true)
 public class ByteArrayCryptoConverter extends AbstractCryptoConverter<byte[]>
         implements AttributeConverter<byte[], String> {
 
-    public ByteArrayCryptoConverter() {
+    public ByteArrayCryptoConverter() throws NoSuchAlgorithmException, NoSuchPaddingException {
         this(new CipherInitializer());
     }
 
