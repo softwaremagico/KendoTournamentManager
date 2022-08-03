@@ -2,8 +2,9 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Club} from "../../../models/club";
 import {BasicTableData} from "./basic-table-data";
 import {MatDialog} from "@angular/material/dialog";
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort} from "@angular/material/sort";
+import {UserSessionService} from "../../../services/user-session.service";
 
 @Component({
   selector: 'basic-table',
@@ -18,7 +19,7 @@ export class BasicTableComponent implements OnInit {
   @Input()
   basicTableData: BasicTableData<any>;
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private userSession: UserSessionService) {
   }
 
   ngOnInit(): void {
@@ -65,5 +66,13 @@ export class BasicTableComponent implements OnInit {
     }
   }
 
+  getDefaultPageSize(): number {
+    return this.userSession.getItemsPerPage();
+  }
 
+
+  onPaginateChange($event: PageEvent) {
+    this.userSession.setItemsPerPage($event.pageSize);
+
+  }
 }

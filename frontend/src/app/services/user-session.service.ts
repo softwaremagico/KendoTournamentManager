@@ -24,4 +24,14 @@ export class UserSessionService {
   getTournament() {
     return this.cookies.get("lastSelectedTournament");
   }
+
+  setItemsPerPage(pageSize: number) {
+    if (pageSize) {
+      this.cookies.set("itemsPerPage", pageSize.toString());
+    }
+  }
+
+  getItemsPerPage(): number {
+    return Number(this.cookies.get("itemsPerPage"));
+  }
 }
