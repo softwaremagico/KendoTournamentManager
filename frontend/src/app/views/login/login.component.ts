@@ -30,11 +30,17 @@ export class LoginComponent {
 
         let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         this.router.navigate([returnUrl]);
+        this.messageService.infoMessage("userCorrectMessage");
 
       },
       error => {
-        this.loggerService.info(`Error logging: ` + error);
-        this.messageService.errorMessage("deniedUser");
+        if (error.status === 401) {
+          this.loggerService.info(`Error logging: ` + error);
+          this.messageService.errorMessage("deniedUserError");
+        } else {
+          console.error(error);
+          this.messageService.errorMessage("backendError");
+        }
       });
   }
 }
