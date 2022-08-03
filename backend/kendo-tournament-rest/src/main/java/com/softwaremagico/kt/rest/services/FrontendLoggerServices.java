@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.LogDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/logger")
 public class FrontendLoggerServices {
 
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Register an action that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
@@ -44,6 +46,7 @@ public class FrontendLoggerServices {
         FrontendLogger.info(this.getClass(), sanitize(log.getMessage()));
     }
 
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Register a warning that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
@@ -51,6 +54,7 @@ public class FrontendLoggerServices {
         FrontendLogger.warning(this.getClass(), sanitize(log.getMessage()));
     }
 
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Register an error that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)
