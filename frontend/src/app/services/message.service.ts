@@ -25,15 +25,19 @@ export class MessageService {
 
 
   infoMessage(message: string) {
-    this.openSnackBar(message, 'info-snackbar', 2000);
+    this.openSnackBar(message, 'info-snackbar', this.getDuration(message, 2));
   }
 
   warningMessage(message: string) {
-    this.openSnackBar(message, 'warning-snackbar', 2000);
+    this.openSnackBar(message, 'warning-snackbar', this.getDuration(message, 2));
+  }
+
+  private getDuration(message: string, minDuration: number): number {
+    return Math.max((message.length / 15), minDuration);
   }
 
   errorMessage(message: string) {
-    this.openSnackBar(message, 'error-snackbar', 5000);
+    this.openSnackBar(message, 'error-snackbar', this.getDuration(message, 5));
   }
 
   handleError<T>(operation = 'operation', result?: T) {
