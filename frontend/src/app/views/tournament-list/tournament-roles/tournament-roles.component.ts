@@ -93,10 +93,8 @@ export class TournamentRolesComponent implements OnInit {
     role.participant = participant;
     role.roleType = roleName;
     this.roleService.add(role).subscribe(_role => {
-      this.messageService.infoMessage("Role '" + _role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
+      this.messageService.infoMessage("Role '" + role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
     });
-    console.log('participants', this.userListData.participants.indexOf(participant))
-    console.log('filteredParticipants', this.userListData.filteredParticipants.indexOf(participant))
     if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
     }
