@@ -464,7 +464,10 @@
   "tournamentType": "Tipus",
   "competitor": "Competidor",
   "referee": "Àrbitro",
-  "volunteer": "Voluntario"
+  "volunteer": "Voluntario",
+  "deniedUserError": "Usuari o contrasenya invàlids",
+  "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
+  "userCorrectMessage": "Usuari registrat correctament."
 }
 
 

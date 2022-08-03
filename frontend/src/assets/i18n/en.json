@@ -465,15 +465,18 @@
   "customized": "Custom",
   "addTeamsText": "Add Team",
   "addTeamToTournament": "Add new team to the league",
-  "men" : "Men",
-  "kote" : "Kote",
-  "do" : "Do",
-  "tsuki" : "Tsuki",
-  "ippon" : "Ippon",
-  "hansoku" : "Hansoku",
+  "men": "Men",
+  "kote": "Kote",
+  "do": "Do",
+  "tsuki": "Tsuki",
+  "ippon": "Ippon",
+  "hansoku": "Hansoku",
   "clear": "Clear",
   "empty": "Clear",
   "draw": "Draw",
-  "fault": "Fault"
+  "fault": "Fault",
+  "deniedUserError": "Invalid user or password.",
+  "backendError": "Cannot connect with the backend! Please, check your deployment.",
+  "userCorrectMessage": "User logged in successfully"
 }
 

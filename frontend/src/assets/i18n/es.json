@@ -464,7 +464,10 @@
   "tournamentType": "Tipo",
   "competitor": "Competidor",
   "referee": "Árbitro",
-  "volunteer": "Voluntario"
+  "volunteer": "Voluntario",
+  "deniedUserError": "Usuario o contraseña inválidos.",
+  "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
+  "userCorrectMessage": "Usuario registrado correctamente."
 }
 
 
