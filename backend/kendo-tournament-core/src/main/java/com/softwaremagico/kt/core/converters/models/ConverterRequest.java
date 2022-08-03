@@ -36,7 +36,7 @@ public class ConverterRequest<T> {
 
     public T getEntity() {
         if (entity == null) {
-            throw new UnexpectedValueException(this.getClass(), "Entity could not be converted into a proper object.\n ", ExceptionType.WARNING);
+            throw new UnexpectedValueException(this.getClass(), "Entity could not be converted into a proper object.", ExceptionType.WARNING);
         }
         return entity;
     }
