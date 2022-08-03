@@ -48,8 +48,10 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
         final TournamentDTO tournamentDTO = new TournamentDTO();
         BeanUtils.copyProperties(from.getEntity(), tournamentDTO);
         try {
-            tournamentDTO.setTournamentScore(tournamentScoreConverter.convert(
-                    new TournamentScoreConverterRequest(from.getEntity().getTournamentScore())));
+            if (from.getEntity().getTournamentScore() != null) {
+                tournamentDTO.setTournamentScore(tournamentScoreConverter.convert(
+                        new TournamentScoreConverterRequest(from.getEntity().getTournamentScore())));
+            }
         } catch (UnexpectedValueException e) {
             tournamentDTO.setTournamentScore(null);
         }
