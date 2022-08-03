@@ -3,6 +3,7 @@ import {Club} from "../../../models/club";
 import {BasicTableData} from "./basic-table-data";
 import {MatDialog} from "@angular/material/dialog";
 import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from "@angular/material/sort";
 
 @Component({
   selector: 'basic-table',
@@ -12,6 +13,7 @@ import {MatPaginator} from '@angular/material/paginator';
 export class BasicTableComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   @Input()
   basicTableData: BasicTableData<any>;
@@ -25,6 +27,7 @@ export class BasicTableComponent implements OnInit {
 
   ngAfterViewInit() {
     this.basicTableData.dataSource.paginator = this.paginator;
+    this.basicTableData.dataSource.sort = this.sort;
   }
 
   setSelectedItem(row: Club): void {
