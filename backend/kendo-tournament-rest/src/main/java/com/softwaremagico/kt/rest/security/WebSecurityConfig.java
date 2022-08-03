@@ -98,8 +98,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Enable CORS
-        http.cors();
+        // Enable CORS and disable CSRF
+        // https://stackoverflow.com/questions/67258120/why-do-i-get-a-401-error-when-i-enable-csrf
+        http = http.cors().and().csrf().disable();
 
         // Set session management to stateless
         http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
