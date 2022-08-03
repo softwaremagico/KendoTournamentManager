@@ -11,6 +11,7 @@
 
 .teams-location.ng-star-inserted {
   padding-bottom: 30px;
+  padding-right: 20px;
   overflow: auto;
 }
 
@@ -71,6 +72,7 @@ h2 {
 
 .new-team:hover {
   background-color: cornsilk;
+  cursor: pointer;
 }
 
 .new-team .row {

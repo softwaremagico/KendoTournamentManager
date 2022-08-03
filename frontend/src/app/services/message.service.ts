@@ -33,7 +33,7 @@ export class MessageService {
   }
 
   private getDuration(message: string, minDuration: number): number {
-    return Math.max((message.length / 15), minDuration);
+    return Math.max((message.length / 15), minDuration) * 1000;
   }
 
   errorMessage(message: string) {
