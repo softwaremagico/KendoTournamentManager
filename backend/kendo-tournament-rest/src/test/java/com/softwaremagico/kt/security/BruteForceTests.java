@@ -135,6 +135,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         //Correct password, user blocked.
         request.setPassword(USER_PASSWORD);
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,6 +143,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test
