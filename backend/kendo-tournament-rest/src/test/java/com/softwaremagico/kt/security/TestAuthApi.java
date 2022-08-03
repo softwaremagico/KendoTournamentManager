@@ -120,8 +120,9 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                 .andReturn();
 
-        AuthenticatedUser authUserView = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
-        Assert.assertEquals(USER_NAME, authUserView.getUsername());
+        AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
+        Assert.assertEquals(USER_ROLES.length, authenticatedUser.getAuthorities().size());
+        Assert.assertEquals(USER_NAME, authenticatedUser.getUsername());
     }
 
     @Test

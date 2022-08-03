@@ -139,6 +139,10 @@ public class AuthenticatedUser implements UserDetails {
         this.roles = roles;
     }
 
+    public Set<String> getRoles() {
+        return roles;
+    }
+
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -154,5 +158,16 @@ public class AuthenticatedUser implements UserDetails {
             }
         }
         return authorities;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthenticatedUser{" +
+                "username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", roles=" + roles +
+                ", authorities=" + authorities +
+                '}';
     }
 }
