@@ -45,12 +45,17 @@ export class TournamentRolesComponent implements OnInit {
       //Get roles
       for (let roleType of this.roleTypes) {
         const rolesFromType: Role[] = roles.filter(role => role.roleType === roleType);
-        this.participants.set(roleType, rolesFromType.map(role => role.participant));
+        this.participants.set(roleType, rolesFromType.map(role => role.participant).sort(function (a, b) {
+          return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
+        }));
         //Get participants and subtract the ones already with roles.
         const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
         participants = participants.filter((participantWithoutRole) => !participantsIds
           .includes(participantWithoutRole.id));
       }
+      participants.sort(function (a, b) {
+        return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
+      });
       this.userListData.participants = participants;
       this.userListData.filteredParticipants = participants;
     });
