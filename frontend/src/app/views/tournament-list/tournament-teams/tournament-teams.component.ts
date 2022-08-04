@@ -218,4 +218,29 @@ export class TournamentTeamsComponent implements OnInit {
       this.teams.splice(this.teams.indexOf(team), 1);
     });
   }
+
+  randomTeams(): void {
+    let participants: Participant[];
+    console.log('111_', this.userListData.participants);
+    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    console.log('222_', participants);
+    for (let team of this.teams) {
+      team.members = [];
+      for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
+        team.members[i] = this.getRandomMember(participants);
+      }
+      this.members.set(team, team.members);
+      this.teamService.update(team);
+    }
+    //Remaining one on left column.
+    this.userListData.participants = participants;
+    this.userListData.filteredParticipants = this.userListData.participants;
+  }
+
+  getRandomMember(participants: Participant[]): Participant {
+    const selected: number = Math.floor(Math.random() * participants.length);
+    const participant: Participant = participants[selected];
+    participants.splice(selected, 1);
+    return participant;
+  }
 }

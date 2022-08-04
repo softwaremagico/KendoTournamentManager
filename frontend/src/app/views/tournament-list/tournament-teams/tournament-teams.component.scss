@@ -1,8 +1,7 @@
 .teams-container {
   width: 800px;
   display: flex;
-  height: 80%;
-  max-height: 80%;
+  height: 80vh;
 }
 
 .teams-container div {
@@ -26,14 +25,14 @@
 .teams {
   overflow: auto;
   padding-left: 20px;
-  height: 85vh;
+  height: 100%;
 }
 
 .team-title-editable {
   font-size: 20px;
   width: 98%;
   height: 25px;
-  line-height: 0px;
+  line-height: 0;
   padding-top: 5px;
   padding-bottom: 5px;
 }

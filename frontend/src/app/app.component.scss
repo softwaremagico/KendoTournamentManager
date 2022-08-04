@@ -15,6 +15,10 @@ div {
   min-height: 93vh !important;
 }
 
+.mat-dialog-container {
+  overflow: clip;
+}
+
 a {
   text-decoration: none;
   font-size: 110%;
