@@ -1,6 +1,7 @@
 .roles-container {
   width: 800px;
   display: flex;
+  height: 80vh;
 }
 
 .roles-container div {
@@ -22,7 +23,6 @@
 
 .roles {
   overflow: auto;
-  height: 800px;
   padding-left: 20px;
 }
 
