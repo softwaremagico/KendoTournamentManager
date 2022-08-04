@@ -1,5 +1,4 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Club} from "../../../models/club";
 import {BasicTableData} from "./basic-table-data";
 import {MatDialog} from "@angular/material/dialog";
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -31,7 +30,7 @@ export class BasicTableComponent implements OnInit {
     this.basicTableData.dataSource.sort = this.sort;
   }
 
-  setSelectedItem(row: Club): void {
+  setSelectedItem(row: any): void {
     if (row === this.basicTableData.selectedElement) {
       this.basicTableData.selectedElement = undefined;
     } else {
@@ -73,6 +72,5 @@ export class BasicTableComponent implements OnInit {
 
   onPaginateChange($event: PageEvent) {
     this.userSession.setItemsPerPage($event.pageSize);
-
   }
 }
