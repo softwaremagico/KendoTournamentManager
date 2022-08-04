@@ -46,10 +46,15 @@
   padding-bottom: 10px;
 }
 
+.users-container {
+  overflow: auto;
+}
+
 .user-list {
   border-color: #c3d1e1;
   border-radius: 15px;
   border-style: dotted;
+  padding-right: 10px;
 }
 
 .mat-dialog-actions {

@@ -1,5 +1,5 @@
 <div class="roles-container" cdkDropListGroup>
-  <div cdkDropList
+  <div cdkDropList class="users-container"
        [cdkDropListData]="userListData.filteredParticipants"
        (cdkDropListDropped)="removeRole($event)">
     <user-list [userListData]="userListData"></user-list>

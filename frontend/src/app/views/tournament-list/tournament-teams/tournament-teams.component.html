@@ -1,5 +1,5 @@
 <div class="teams-container" cdkDropListGroup>
-  <div cdkDropList [attr.data-tournament-size]="tournament.teamSize"
+  <div cdkDropList [attr.data-tournament-size]="tournament.teamSize" class="users-container"
        [cdkDropListData]="userListData.filteredParticipants"
        (cdkDropListDropped)="removeFromTeam($event)">
     <user-list [userListData]="userListData"></user-list>
@@ -36,6 +36,9 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-button (click)="randomTeams()" mat-flat-button><mat-icon>auto_fix_high</mat-icon>Random</button>
+  <button mat-button (click)="randomTeams()" mat-flat-button>
+    <mat-icon>auto_fix_high</mat-icon>
+    Random
+  </button>
   <button mat-button (click)="closeDialog()" mat-flat-button color="primary">Close</button>
 </div>
