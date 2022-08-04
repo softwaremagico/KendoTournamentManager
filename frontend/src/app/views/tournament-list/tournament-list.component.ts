@@ -34,7 +34,6 @@ export class TournamentListComponent implements OnInit {
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
-    this.basicTableData.selection = new SelectionModel<Tournament>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Tournament>();
   }
 
@@ -45,6 +44,12 @@ export class TournamentListComponent implements OnInit {
   showAllElements(): void {
     this.tournamentService.getAll().subscribe(tournaments => {
       this.basicTableData.dataSource.data = tournaments;
+      //Select session tournament.
+      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter(x => x.id == Number(this.userSessionService.getTournament()))[0];
+      const selectedElements: Tournament[] = [];
+      selectedElements.push(selectedTournament);
+      this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
+      this.basicTableData.selectedElement = selectedTournament;
     });
   }
 
@@ -62,14 +67,6 @@ export class TournamentListComponent implements OnInit {
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
       this.openDialog('Delete tournament', Action.Delete, this.basicTableData.selectedElement);
-    }
-  }
-
-  setSelectedItem(row: Tournament): void {
-    if (row === this.basicTableData.selectedElement) {
-      this.basicTableData.selectedElement = undefined;
-    } else {
-      this.basicTableData.selectedElement = row;
     }
   }
 

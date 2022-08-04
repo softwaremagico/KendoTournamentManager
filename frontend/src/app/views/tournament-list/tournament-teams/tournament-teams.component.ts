@@ -227,10 +227,18 @@ export class TournamentTeamsComponent implements OnInit {
     for (let team of this.teams) {
       team.members = [];
       for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
-        team.members[i] = this.getRandomMember(participants);
+        const participant: Participant = this.getRandomMember(participants);
+        if (participant) {
+          team.members[i] = participant;
+        }
       }
       this.members.set(team, team.members);
-      this.teamService.update(team);
+      this.teamService.update(team).pipe(
+        tap((newTeam: Team) => {
+          this.loggerService.info("Team '" + newTeam.name + "' updated.");
+        }),
+        catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
+      ).subscribe();
     }
     //Remaining one on left column.
     this.userListData.participants = participants;
