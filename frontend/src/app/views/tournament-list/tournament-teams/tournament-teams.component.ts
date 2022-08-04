@@ -47,6 +47,9 @@ export class TournamentTeamsComponent implements OnInit {
       }
       this.userListData.participants = roles.map(role => role.participant);
       if (teams !== undefined) {
+        teams.sort(function (a, b) {
+          return a.name.localeCompare(b.name);
+        });
         for (let team of teams) {
           for (let member of team.members) {
             this.userListData.participants.splice(this.userListData.participants.map(function (p: Participant) {
