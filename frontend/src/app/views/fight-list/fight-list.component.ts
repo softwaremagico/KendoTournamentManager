@@ -105,4 +105,8 @@ export class FightListComponent implements OnInit {
       }
     );
   }
+
+  goBackToTournament(): void {
+    this.router.navigate(['/tournaments'], {});
+  }
 }
