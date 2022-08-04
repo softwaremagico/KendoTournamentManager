@@ -71,7 +71,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     public List<TeamDTO> getAllByTournament(Integer tournamentId) {
         return converter.convertAll(provider.getAll(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournamnet found with id '" + tournamentId + "'.")))
+                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournamnet found with id '" + tournamentId + "'.")))
                 .stream().map(this::createConverterRequest).collect(Collectors.toList()));
     }
 

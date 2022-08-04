@@ -47,7 +47,7 @@ public class Team extends Element implements Comparable<Team> {
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
-    @OneToMany
+    @ManyToMany
     @Fetch(FetchMode.JOIN)
     @JoinTable(name = "members_of_team", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
     @OrderColumn(name = "member_index")
