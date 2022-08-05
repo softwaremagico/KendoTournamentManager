@@ -1,2 +1,2 @@
-<div class="user-name" [class.left]="left" [class.right]="!left" *ngIf="participant">{{getLastname()}}, {{getShortName()}}</div>
-<div class="user-name" *ngIf="!participant"> --- --- </div>
+<div class="user-name" [class.left]="left" [class.right]="!left" *ngIf="participant">{{displayName}}</div>
+<div class="user-name" *ngIf="!participant"> --- ---</div>

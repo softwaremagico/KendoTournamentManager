@@ -34,9 +34,24 @@ describe('UserNameComponent', () => {
     expect(fixture.nativeElement.querySelector('div').innerText).toEqual('of Family, N.');
   });
 
+  it('participant shortLastname', () => {
+    let participant: Participant = new Participant();
+    participant.name = "name";
+    participant.lastname = "of Royal Family";
+
+    // Resolution <900
+    spyOnProperty(window, 'innerWidth').and.returnValue(1199);
+    window.dispatchEvent(new Event('resize'));
+
+    userNameHostComponent.userNameComponent.participant = participant;
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('div').innerText).toEqual('of Royal');
+  });
+
   @Component({
     selector: `user-name-host-component`,
-    template: `<user-name></user-name>`
+    template: `
+      <user-name></user-name>`
   })
   class UserNameHostComponent {
     @ViewChild(UserNameComponent)
