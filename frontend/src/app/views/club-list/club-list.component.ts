@@ -26,8 +26,10 @@ export class ClubListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
-    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
-    this.basicTableData.columnsTags = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web'];
+    this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
+      'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+    this.basicTableData.columnsTags = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
+      'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'country', 'city'];
     this.basicTableData.selection = new SelectionModel<Club>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<Club>();

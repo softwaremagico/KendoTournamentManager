@@ -414,7 +414,7 @@
   "manualChampionshipHelp": "Select a source teams group and the address teams group for creating the winners cross.",
   "storeDataError": "Error when trying to store some data in the database.",
   "deleteDataError": "Error when trying to remove some data in the database.",
-  "NameTeamLabel": "An unknown error has occurred when accessing to the database.",
+  "NameTeamError": "An unknown error has occurred when accessing to the database.",
   "genericError": "An unknown error has occurred when trying to do the operation.",
   "emptyPdfError": "The generated document is empty. Please, review the selected options.",
   "importSuccess": "Data has been imported successfully.",
@@ -477,6 +477,10 @@
   "acceptButton": "Accept",
   "cancelButton": "Cancel",
   "deleteButton": "Delete",
-  "closeButton": "Close"
+  "closeButton": "Close",
+  "createdAt": "Created At",
+  "createdBy": "Created By",
+  "updatedAt": "Updated At",
+  "updatedBy": "Updated By"
 }
 

@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -72,8 +73,8 @@ public class ParticipantServices {
     @Operation(summary = "Creates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantDTO add(@RequestBody ParticipantDTO participantDTO, HttpServletRequest request) {
-        return participantController.create(participantDTO);
+    public ParticipantDTO add(@RequestBody ParticipantDTO participantDTO, Authentication authentication, HttpServletRequest request) {
+        return participantController.create(participantDTO, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -96,7 +97,7 @@ public class ParticipantServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantDTO update(@RequestBody ParticipantDTO participantDTO, HttpServletRequest request) {
-        return participantController.update(participantDTO);
+    public ParticipantDTO update(@RequestBody ParticipantDTO participantDTO, Authentication authentication, HttpServletRequest request) {
+        return participantController.update(participantDTO, authentication.getName());
     }
 }

@@ -25,6 +25,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeAttributeConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -46,10 +47,18 @@ public abstract class Element {
     @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime createdAt;
 
+    @Column(name = "created_by")
+    @Convert(converter = StringCryptoConverter.class)
+    private String createdBy;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     @Convert(converter = LocalDateTimeAttributeConverter.class)
     private LocalDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    @Convert(converter = StringCryptoConverter.class)
+    private String updatedBy;
 
     public void setId(Integer id) {
         this.id = id;
@@ -73,6 +82,22 @@ public abstract class Element {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 
     @Override
