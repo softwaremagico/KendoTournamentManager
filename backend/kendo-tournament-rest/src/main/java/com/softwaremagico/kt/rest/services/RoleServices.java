@@ -35,6 +35,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -93,12 +94,12 @@ public class RoleServices {
     @Operation(summary = "Creates a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RoleDTO add(@RequestBody RoleDTO roleDto, HttpServletRequest request) {
+    public RoleDTO add(@RequestBody RoleDTO roleDto, Authentication authentication, HttpServletRequest request) {
         if (roleDto == null || roleDto.getTournament() == null || roleDto.getParticipant() == null ||
                 roleDto.getRoleType() == null) {
             throw new BadRequestException(getClass(), "Role data is missing");
         }
-        return roleController.create(roleDto);
+        return roleController.create(roleDto, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -130,7 +131,7 @@ public class RoleServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a role.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RoleDTO update(@RequestBody RoleDTO roleDto, HttpServletRequest request) {
-        return roleController.update(roleDto);
+    public RoleDTO update(@RequestBody RoleDTO roleDto, Authentication authentication, HttpServletRequest request) {
+        return roleController.update(roleDto, authentication.getName());
     }
 }

@@ -34,6 +34,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,11 +93,11 @@ public class FightServices {
     @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO add(@RequestBody FightDTO fightDto, HttpServletRequest request) {
+    public FightDTO add(@RequestBody FightDTO fightDto, Authentication authentication, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        return fightController.create(fightDto);
+        return fightController.create(fightDto, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -126,11 +127,11 @@ public class FightServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO update(@RequestBody FightDTO fightDto, HttpServletRequest request) {
+    public FightDTO update(@RequestBody FightDTO fightDto, Authentication authentication, HttpServletRequest request) {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        return fightController.update(fightDto);
+        return fightController.update(fightDto, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
