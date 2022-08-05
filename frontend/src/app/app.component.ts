@@ -11,7 +11,6 @@ import {UserSessionService} from "./services/user-session.service";
 })
 
 export class AppComponent {
-  title = 'Kendo Tournament Manager v2';
   selectedLanguage = 'en';
   loggedIn = false;
   selectedRow: string = '';
