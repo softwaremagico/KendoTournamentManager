@@ -85,6 +85,7 @@ export class TournamentListComponent implements OnInit {
         this.updateRowData(result.data);
       } else if (result.action == Action.Delete) {
         this.deleteRowData(result.data);
+        this.userSessionService.setTournament(undefined);
       }
     });
   }
