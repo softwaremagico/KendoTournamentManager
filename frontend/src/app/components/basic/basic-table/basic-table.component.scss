@@ -1,5 +1,6 @@
 .filter {
   display: inline-block;
+  height: 30px;
 }
 
 .separator {
@@ -8,6 +9,7 @@
 
 table {
   width: 100%;
+  min-width: 600px;
 }
 
 .mat-header-cell {
@@ -21,7 +23,13 @@ table {
 }
 
 @media screen and (max-width: 1000px) {
-  .filter {
+  .filter-field {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .tune-button {
     display: none !important;
   }
 }
