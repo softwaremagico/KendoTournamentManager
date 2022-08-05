@@ -55,6 +55,8 @@ import {UserNameComponent} from './components/fight/duel/user-score/user-name/us
 import {FaultComponent} from './components/fight/duel/user-score/fault/fault.component';
 import { DrawComponent } from './components/fight/duel/draw/draw.component';
 import { FightDialogBoxComponent } from './views/fight-list/fight-dialog-box/fight-dialog-box.component';
+import { UserCardComponent } from './components/user-card/user-card.component';
+import { TeamCardComponent } from './components/team-card/team-card.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +79,9 @@ import { FightDialogBoxComponent } from './views/fight-list/fight-dialog-box/fig
     UserNameComponent,
     FaultComponent,
     DrawComponent,
-    FightDialogBoxComponent
+    FightDialogBoxComponent,
+    UserCardComponent,
+    TeamCardComponent
   ],
   imports: [
     BrowserModule,
