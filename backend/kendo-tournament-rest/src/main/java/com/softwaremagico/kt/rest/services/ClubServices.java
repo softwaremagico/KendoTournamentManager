@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,16 +76,16 @@ public class ClubServices {
     public ClubDTO add(@Parameter(description = "Name of the new club", required = true) @RequestParam(name = "name") String name,
                        @Parameter(description = "Country where the club is located", required = true) @RequestParam(name = "country") String country,
                        @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
-                       HttpServletRequest request) {
-        return clubController.create(name, country, city);
+                       Authentication authentication, HttpServletRequest request) {
+        return clubController.create(name, country, city, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Creates a club with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ClubDTO add(@RequestBody ClubDTO club, HttpServletRequest request) {
-        return clubController.create(club);
+    public ClubDTO add(@RequestBody ClubDTO club, Authentication authentication, HttpServletRequest request) {
+        return clubController.create(club, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -107,7 +108,7 @@ public class ClubServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a club.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ClubDTO update(@RequestBody ClubDTO club, HttpServletRequest request) {
-        return clubController.update(club);
+    public ClubDTO update(@RequestBody ClubDTO club, Authentication authentication, HttpServletRequest request) {
+        return clubController.update(club, authentication.getName());
     }
 }

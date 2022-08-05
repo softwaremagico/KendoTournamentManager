@@ -48,9 +48,10 @@ public class ClubDTO extends ElementDTO {
         super();
     }
 
-    public ClubDTO(String name) {
+    public ClubDTO(String name, String city) {
         this();
         setName(name);
+        setCity(city);
     }
 
     public String getName() {

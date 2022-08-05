@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.converters.ElementConverter;
 import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
@@ -36,7 +37,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
+public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,
         CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>>
         extends StandardController<ENTITY, DTO, REPOSITORY, PROVIDER> {
@@ -60,12 +61,16 @@ public abstract class BasicInsertableController<ENTITY, DTO, REPOSITORY extends 
     }
 
     @Transactional
-    public DTO update(DTO dto) {
-        return create(dto);
+    public DTO update(DTO dto, String username) {
+        dto.setUpdatedBy(username);
+        return create(dto, null);
     }
 
     @Transactional
-    public DTO create(DTO dto) {
+    public DTO create(DTO dto, String username) {
+        if (dto.getCreatedBy() == null && username != null) {
+            dto.setCreatedBy(username);
+        }
         validate(dto);
         return converter.convert(createConverterRequest(super.provider.save(converter.
                 reverse(dto))));

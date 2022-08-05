@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,11 +52,11 @@ public class DuelServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DuelDTO update(@RequestBody DuelDTO duelDTO, HttpServletRequest request) {
+    public DuelDTO update(@RequestBody DuelDTO duelDTO, Authentication authentication, HttpServletRequest request) {
         if (duelDTO == null) {
             throw new BadRequestException(getClass(), "Duel data is missing");
         }
-        return duelController.update(duelDTO);
+        return duelController.update(duelDTO, authentication.getName());
     }
 
 
