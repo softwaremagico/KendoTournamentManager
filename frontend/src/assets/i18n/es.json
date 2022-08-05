@@ -38,10 +38,6 @@
   "titleDesignGroupWindow": "Cambiar las opciones del grupo",
   "titleOrderTeam": "Cambiar el orden de los miembros de un equipo",
   "ConnectButton": "Conectar",
-  "acceptButton": "Aceptar",
-  "cancelButton": "Cancelar",
-  "deleteButton": "Borrar",
-  "closeButton": "Cerrar",
   "SearchButton": "Buscar",
   "UpButton": "Subir",
   "DownButton": "Bajar",
@@ -467,7 +463,15 @@
   "volunteer": "Voluntario",
   "deniedUserError": "Usuario o contraseña inválidos.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
-  "userCorrectMessage": "Usuario registrado correctamente."
+  "userCorrectMessage": "Usuario registrado correctamente.",
+  "acceptButton": "Aceptar",
+  "cancelButton": "Cancelar",
+  "deleteButton": "Borrar",
+  "closeButton": "Cerrar",
+  "createdAt": "Fecha de Creación",
+  "createdBy": "Creado por",
+  "updatedAt": "Fecha de Actualización",
+  "updatedBy": "Actualizado por"
 }
 
 

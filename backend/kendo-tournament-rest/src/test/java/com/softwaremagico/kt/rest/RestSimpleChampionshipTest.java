@@ -78,6 +78,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     private static final String CLUB_NAME = "The Club";
 
+    private static final String CLUB_CITY = "Valencia";
+
     @Autowired
     private WebApplicationContext context;
 
@@ -127,7 +129,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             fightController.generateDuels(fight);
         });
         group.getUnties().clear();
-        groupController.update(group);
+        groupController.update(group, null);
     }
 
     private void resetGroup(TournamentDTO tournamentDTO) {
@@ -179,7 +181,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(new ClubDTO(CLUB_NAME)))
+                        .content(toJson(new ClubDTO(CLUB_NAME, CLUB_CITY)))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();

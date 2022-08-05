@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,7 +78,7 @@ public class TournamentServices {
                              @Parameter(description = "Number of available shiaijos") @RequestParam(name = "shiaijos") Integer shiaijos,
                              @Parameter(description = "Members by team") @RequestParam(name = "teamSize") Integer teamSize,
                              @Parameter(description = "Type of tournament") @RequestParam(name = "type") TournamentType type,
-                             HttpServletRequest request) {
+                             Authentication authentication, HttpServletRequest request) {
         return tournamentController.create(name, shiaijos, teamSize, type);
     }
 
@@ -85,8 +86,8 @@ public class TournamentServices {
     @Operation(summary = "Creates a tournament with full information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentDTO add(@RequestBody TournamentDTO tournamentDTO, HttpServletRequest request) {
-        return tournamentController.create(tournamentDTO);
+    public TournamentDTO add(@RequestBody TournamentDTO tournamentDTO, Authentication authentication, HttpServletRequest request) {
+        return tournamentController.create(tournamentDTO, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -109,7 +110,7 @@ public class TournamentServices {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentDTO update(@RequestBody TournamentDTO tournament, HttpServletRequest request) {
-        return tournamentController.update(tournament);
+    public TournamentDTO update(@RequestBody TournamentDTO tournament, Authentication authentication, HttpServletRequest request) {
+        return tournamentController.update(tournament, authentication.getName());
     }
 }
