@@ -38,10 +38,6 @@
   "titleDesignGroupWindow": "Change options of the pool",
   "titleOrderTeam": "Change the order of the members of a team",
   "ConnectButton": "Connect",
-  "AcceptButton": "Accept",
-  "CancelButton": "Cancel",
-  "DeleteButton": "Delete",
-  "CloseButton": "Close",
   "SearchButton": "Search",
   "UpButton": "Up",
   "DownButton": "Down",
@@ -477,6 +473,10 @@
   "fault": "Fault",
   "deniedUserError": "Invalid user or password.",
   "backendError": "Cannot connect with the backend! Please, check your deployment.",
-  "userCorrectMessage": "User logged in successfully"
+  "userCorrectMessage": "User logged in successfully",
+  "acceptButton": "Accept",
+  "cancelButton": "Cancel",
+  "deleteButton": "Delete",
+  "closeButton": "Close"
 }
 
