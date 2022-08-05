@@ -9,25 +9,35 @@ export class UserSessionService {
   constructor(private cookies: CookieService) {
   }
 
-  setLanguage(language: string) {
-    this.cookies.set("selectedLanguage", language);
+  setLanguage(language: string | undefined) {
+    if (language) {
+      this.cookies.set("selectedLanguage", language);
+    } else {
+      this.cookies.delete("selectedLanguage");
+    }
   }
 
   getLanguage(): string {
     return this.cookies.get("selectedLanguage");
   }
 
-  setTournament(tournamentId: string) {
-    this.cookies.set("lastSelectedTournament", tournamentId);
+  setTournament(tournamentId: string | undefined) {
+    if (tournamentId) {
+      this.cookies.set("lastSelectedTournament", tournamentId);
+    } else {
+      this.cookies.delete("lastSelectedTournament");
+    }
   }
 
   getTournament() {
     return this.cookies.get("lastSelectedTournament");
   }
 
-  setItemsPerPage(pageSize: number) {
+  setItemsPerPage(pageSize: number | undefined) {
     if (pageSize) {
       this.cookies.set("itemsPerPage", pageSize.toString());
+    } else {
+      this.cookies.delete("itemsPerPage");
     }
   }
 
