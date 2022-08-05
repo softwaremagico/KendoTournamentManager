@@ -19,3 +19,9 @@ table {
   border-right: 1px solid currentColor;
   font-size: medium;
 }
+
+@media screen and (max-width: 1000px) {
+  .filter {
+    display: none !important;
+  }
+}
