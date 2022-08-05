@@ -1,9 +1,9 @@
 <div class="filter">
-  <mat-form-field>
+  <mat-form-field class="filter-field">
     <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
   </mat-form-field>
 </div>
-<button mat-button [matMenuTriggerFor]="mainMenuButton">
+<button class="tune-button" mat-button [matMenuTriggerFor]="mainMenuButton">
   <mat-icon>tune</mat-icon>
 </button>
 <mat-menu #mainMenuButton="matMenu" class="table-settings">
@@ -16,7 +16,8 @@
 </mat-menu>
 <div class="mat-elevation-z8">
   <div class="basic-table">
-    <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name" matSortDirection="asc" aria-describedby="List of items on a table view">
+    <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="name"
+           matSortDirection="asc" aria-describedby="List of items on a table view">
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
         <ng-container [matColumnDef]=column>
           <th mat-header-cell *matHeaderCellDef
@@ -31,6 +32,7 @@
           [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
           (mouseout)="row.hovered=false"></tr>
     </table>
-    <mat-paginator [pageSize]="getDefaultPageSize()" [pageSizeOptions]="[10, 20, 50]" (page)="onPaginateChange($event)" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSize]="getDefaultPageSize()" [pageSizeOptions]="[10, 20, 50]" (page)="onPaginateChange($event)"
+                   showFirstLastButtons></mat-paginator>
   </div>
 </div>
