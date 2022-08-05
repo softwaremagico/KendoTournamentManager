@@ -1,3 +1,5 @@
+@import '~@angular/material/theming';
+
 .softwaremagico {
   font-size: 150%;
 }
@@ -8,11 +10,6 @@
 
 div {
   overflow: inherit;
-}
-
-.mat-sidenav-container {
-  background-color: white;
-  min-height: 93vh !important;
 }
 
 .mat-dialog-container {
@@ -64,4 +61,25 @@ a {
 
 .mat-toolbar-row.toolbar-submenu {
   font-size: 80%;
+}
+
+// Side menu
+.mat-sidenav-container {
+  min-height: 93vh;
+}
+
+.side-menu {
+  width: 240px;
+}
+
+@media screen and (max-width: 1200px) {
+  .app-title {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .app-title-red {
+    display: none !important;
+  }
 }
