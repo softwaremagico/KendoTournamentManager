@@ -29,10 +29,13 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 @Converter(autoApply = true)
 public class LocalDateTimeAttributeConverter extends AbstractCryptoConverter<LocalDateTime> implements AttributeConverter<LocalDateTime, String> {
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     public LocalDateTimeAttributeConverter() {
         this(new CipherInitializer());
@@ -52,8 +55,13 @@ public class LocalDateTimeAttributeConverter extends AbstractCryptoConverter<Loc
         try {
             return (dbData == null || dbData.isEmpty()) ? null : LocalDateTime.parse(dbData);
         } catch (DateTimeParseException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid long value in database.");
-            return null;
+            try {
+                // From SQL Script.
+                return LocalDateTime.parse(dbData, formatter);
+            } catch (DateTimeParseException dte) {
+                EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid long value in database.");
+                return null;
+            }
         }
     }
 
