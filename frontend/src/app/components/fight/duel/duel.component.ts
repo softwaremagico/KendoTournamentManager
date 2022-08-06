@@ -11,6 +11,9 @@ export class DuelComponent implements OnInit {
   @Input()
   duel: Duel;
 
+  @Input()
+  selected: boolean;
+
   ngOnInit(): void {
     // This is intentional
   }

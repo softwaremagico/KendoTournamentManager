@@ -6,6 +6,7 @@
   width: 100%;
   display: table;
   min-width: 600px;
+  background: #b3c1d1;
 }
 
 .duel {
@@ -40,4 +41,18 @@
 .fight-container {
   display: flex;
   padding-bottom: 2vh
+}
+
+.selected {
+  background: white;
+}
+
+.duel.duelSelected {
+  border-width: 1px;
+  border-color: #777;
+  border-style: solid;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
+  transition: transform .2s; /* Animation */
+  transform: scale(1.02);
+  background: white;
 }
