@@ -6,7 +6,7 @@
   width: 100%;
   display: table;
   min-width: 600px;
-  background: #b3c1d1;
+  background: #e1e6ed;
 }
 
 .duel {
@@ -45,6 +45,14 @@
 
 .selected {
   background: #e1e6ed;
+}
+
+.over {
+  background: #b3c1d1;
+}
+
+.duel.over{
+  background: #b3c1d1;
 }
 
 .duel.duelSelected {

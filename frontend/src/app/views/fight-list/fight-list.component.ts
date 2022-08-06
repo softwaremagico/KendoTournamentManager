@@ -113,4 +113,11 @@ export class FightListComponent implements OnInit {
   selectFight(fight: Fight) {
     this.selectedFight = fight;
   }
+
+  isFightOver(fight: Fight): boolean {
+    if (this.selectedFight) {
+      return this.fights.indexOf(fight) < this.fights.indexOf(this.selectedFight);
+    }
+    return false;
+  }
 }
