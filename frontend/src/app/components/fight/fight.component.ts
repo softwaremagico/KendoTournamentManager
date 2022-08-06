@@ -15,6 +15,9 @@ export class FightComponent implements OnInit {
   @Input()
   selected: boolean;
 
+  @Input()
+  over: boolean;
+
   selectedDuel: Duel | undefined;
 
   ngOnInit(): void {
@@ -30,6 +33,16 @@ export class FightComponent implements OnInit {
 
   selectDuel(duel: Duel) {
     this.selectedDuel = duel;
+  }
+
+  isOver(duel: Duel): boolean {
+    if (this.over) {
+      return true;
+    }
+    if (this.selectedDuel && this.selected) {
+      return this.fight.duels.indexOf(duel) < this.fight.duels.indexOf(this.selectedDuel);
+    }
+    return false;
   }
 
 }
