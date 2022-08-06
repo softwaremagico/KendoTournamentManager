@@ -53,10 +53,22 @@ import {UserScoreComponent} from './components/fight/duel/user-score/user-score.
 import {ScoreComponent} from './components/fight/duel/user-score/score/score.component';
 import {UserNameComponent} from './components/fight/duel/user-score/user-name/user-name.component';
 import {FaultComponent} from './components/fight/duel/user-score/fault/fault.component';
-import { DrawComponent } from './components/fight/duel/draw/draw.component';
-import { FightDialogBoxComponent } from './views/fight-list/fight-dialog-box/fight-dialog-box.component';
-import { UserCardComponent } from './components/user-card/user-card.component';
-import { TeamCardComponent } from './components/team-card/team-card.component';
+import {DrawComponent} from './components/fight/duel/draw/draw.component';
+import {FightDialogBoxComponent} from './views/fight-list/fight-dialog-box/fight-dialog-box.component';
+import {UserCardComponent} from './components/user-card/user-card.component';
+import {TeamCardComponent} from './components/team-card/team-card.component';
+import {registerLocaleData} from "@angular/common";
+import localeES from "@angular/common/locales/es";
+import localeIT from "@angular/common/locales/it";
+import localeDE from "@angular/common/locales/de";
+import localeNL from "@angular/common/locales/nds-NL";
+
+
+registerLocaleData(localeES, "es");
+registerLocaleData(localeIT, "it");
+registerLocaleData(localeDE, "de");
+registerLocaleData(localeDE, "de");
+registerLocaleData(localeNL, "nl");
 
 @NgModule({
   declarations: [
