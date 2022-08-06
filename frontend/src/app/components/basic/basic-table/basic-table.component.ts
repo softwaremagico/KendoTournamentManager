@@ -4,6 +4,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {MatSort} from "@angular/material/sort";
 import {UserSessionService} from "../../../services/user-session.service";
+import {TranslateService} from "@ngx-translate/core";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'basic-table',
@@ -18,7 +20,11 @@ export class BasicTableComponent implements OnInit {
   @Input()
   basicTableData: BasicTableData<any>;
 
-  constructor(public dialog: MatDialog, private userSession: UserSessionService) {
+  pipe: DatePipe;
+
+  constructor(public dialog: MatDialog, private userSession: UserSessionService, private translateService: TranslateService,
+              private userSessionService: UserSessionService) {
+    this.setLocale();
   }
 
   ngOnInit(): void {
@@ -28,6 +34,20 @@ export class BasicTableComponent implements OnInit {
   ngAfterViewInit() {
     this.basicTableData.dataSource.paginator = this.paginator;
     this.basicTableData.dataSource.sort = this.sort;
+  }
+
+  private setLocale() {
+    if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
+      this.pipe = new DatePipe('es');
+    } else if (this.userSessionService.getLanguage() === 'it') {
+      this.pipe = new DatePipe('it');
+    } else if (this.userSessionService.getLanguage() === 'de') {
+      this.pipe = new DatePipe('de');
+    } else if (this.userSessionService.getLanguage() === 'nl') {
+      this.pipe = new DatePipe('nl');
+    } else {
+      this.pipe = new DatePipe('en-US');
+    }
   }
 
   setSelectedItem(row: any): void {
@@ -72,5 +92,19 @@ export class BasicTableComponent implements OnInit {
 
   onPaginateChange($event: PageEvent) {
     this.userSession.setItemsPerPage($event.pageSize);
+  }
+
+  getColumnData(column: any): any {
+    if (typeof column === 'number') {
+      return column;
+    } else if (!isNaN(Date.parse(column))) {
+      return this.pipe.transform(column, 'short');
+    } else {
+      if (column) {
+        return this.translateService.instant(column);
+      } else {
+        return "";
+      }
+    }
   }
 }
