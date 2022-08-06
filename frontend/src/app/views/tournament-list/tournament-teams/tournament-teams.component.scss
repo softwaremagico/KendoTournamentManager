@@ -68,7 +68,8 @@ h2 {
 
 .new-team {
   height: 60px;
-  background-color: antiquewhite;
+  background-color: #001239;
+  color: white;
   border-radius: 15px;
   display: flex;
   justify-content: center;
@@ -76,7 +77,8 @@ h2 {
 }
 
 .new-team:hover {
-  background-color: cornsilk;
+  background-color: #8097b3;
+  color: black;
   cursor: pointer;
 }
 
