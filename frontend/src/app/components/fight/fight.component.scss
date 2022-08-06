@@ -44,15 +44,15 @@
 }
 
 .selected {
-  background: white;
+  background: #e1e6ed;
 }
 
 .duel.duelSelected {
   border-width: 1px;
   border-color: #777;
   border-style: solid;
-  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 10px 0 rgba(0, 18, 57, 0.5);
   transition: transform .2s; /* Animation */
-  transform: scale(1.02);
+  transform: scale(1.03);
   background: white;
 }
