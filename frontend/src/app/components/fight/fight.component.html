@@ -4,7 +4,8 @@
   </div>
   <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}">
     <duel class="duel" *ngFor="let duel of fight.duels" [duel]="duel" (click)="selectDuel(duel)"
-          [selected]="duel === selectedDuel" [ngClass]="{duelSelected: duel === selectedDuel && selected}"></duel>
+          [selected]="duel === selectedDuel"
+          [ngClass]="{duelSelected: duel === selectedDuel && selected, over: isOver(duel)}"></duel>
   </div>
   <div class="right-team" *ngIf="showTeamTitle">
     {{fight.team2.name}}

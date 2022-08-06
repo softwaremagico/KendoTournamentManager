@@ -24,7 +24,7 @@
     <div class="mat-elevation-z8">
       <div class="fight-list">
         <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
-               (click)="selectFight(fight)"></fight>
+               [over]="isFightOver(fight)" (click)="selectFight(fight)"></fight>
       </div>
     </div>
   </div>
