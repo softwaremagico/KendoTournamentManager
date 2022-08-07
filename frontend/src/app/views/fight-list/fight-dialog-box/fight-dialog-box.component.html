@@ -1,1 +1,13 @@
-<p>fight-dialog-box works!</p>
+<div class="fights-creator" cdkDropListGroup>
+  <div cdkDropList class="teams-container"
+       [cdkDropListData]="teamListData.filteredTeams"
+       (cdkDropListDropped)="removeTeam($event)">
+    <team-list [teamListData]="teamListData"></team-list>
+  </div>
+  <div class="new-fight">
+
+  </div>
+</div>
+<div mat-dialog-actions class="button-container">
+  <button mat-button (click)="closeDialog()" mat-flat-button color="primary">{{'closeButton' | translate}}</button>
+</div>

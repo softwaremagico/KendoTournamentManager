@@ -62,6 +62,7 @@ import localeES from "@angular/common/locales/es";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
+import { TeamListComponent } from './components/basic/team-list/team-list.component';
 
 
 registerLocaleData(localeES, "es");
@@ -93,7 +94,8 @@ registerLocaleData(localeNL, "nl");
     DrawComponent,
     FightDialogBoxComponent,
     UserCardComponent,
-    TeamCardComponent
+    TeamCardComponent,
+    TeamListComponent
   ],
   imports: [
     BrowserModule,
