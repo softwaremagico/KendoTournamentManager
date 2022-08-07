@@ -4,10 +4,10 @@ import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
 import {Tournament} from "../../models/tournament";
-import {ClubDialogBoxComponent} from "../club-list/club-dialog-box/club-dialog-box.component";
 import {Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
+import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.component";
 
 @Component({
   selector: 'app-fight-list',
@@ -68,9 +68,9 @@ export class FightListComponent implements OnInit {
   }
 
   openDialog(title: string, action: Action, fight: Fight) {
-    const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
-      width: '250px',
-      data: {title: title, action: action, entity: fight}
+    const dialogRef = this.dialog.open(FightDialogBoxComponent, {
+      width: '85vw',
+      data: {title: title, action: action, entity: fight, tournament: this.tournament}
     });
 
     dialogRef.afterClosed().subscribe(result => {

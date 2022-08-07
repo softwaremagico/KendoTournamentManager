@@ -86,7 +86,6 @@ export class TournamentRolesComponent implements OnInit {
     this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
       this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
     });
-    this.userListData.participants.push(participant);
     this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
   }
