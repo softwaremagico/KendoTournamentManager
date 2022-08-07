@@ -1,1 +1,37 @@
+.fights-creator {
+  width: 800px;
+  display: flex;
+  height: 80vh;
+}
+
+.teams-container {
+  overflow: auto;
+}
+
+.fights-creator div {
+  flex: 1
+}
+
+.roles-location.ng-star-inserted {
+  padding-bottom: 30px;
+  padding-right: 20px;
+}
+
+.team {
+  min-height: 200px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+  overflow: auto;
+}
+
+.teams {
+  overflow: auto;
+  padding-left: 10px;
+}
+
+.team-list {
+  padding-right: 10px;
+}
+
 
