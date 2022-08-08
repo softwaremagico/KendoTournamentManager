@@ -76,7 +76,7 @@ export class ParticipantListComponent implements OnInit {
 
   openDialog(title: string, action: Action, participant: Participant) {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
-      width: '250px',
+      width: '400px',
       data: {
         title: title, action: action, entity: participant,
         clubs: this.clubs

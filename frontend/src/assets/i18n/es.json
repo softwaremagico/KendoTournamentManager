@@ -42,7 +42,7 @@
   "UpButton": "Subir",
   "DownButton": "Bajar",
   "AddButton": "Añadir",
-  "RandomButton": "Aleatorio",
+  "random": "Aleatorio",
   "SortedButton": "Ordenados",
   "ExploreButton": "Explorar",
   "SelectButton": "Seleccionar",
@@ -464,15 +464,18 @@
   "deniedUserError": "Usuario o contraseña inválidos.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
   "userCorrectMessage": "Usuario registrado correctamente.",
-  "acceptButton": "Aceptar",
-  "cancelButton": "Cancelar",
-  "deleteButton": "Borrar",
-  "closeButton": "Cerrar",
+  "accept": "Aceptar",
+  "cancel": "Cancelar",
+  "delete": "Borrar",
+  "close": "Cerrar",
+  "add": "Añadir",
+  "update": "Actualizar",
   "createdAt": "Fecha de Creación",
   "createdBy": "Creado por",
   "updatedAt": "Fecha de Actualización",
   "updatedBy": "Actualizado por",
-  "teamsOrder": "Orden de Equipos:"
+  "teamsOrder": "Orden de Equipos:",
+  "wizard": "Asistente"
 }
 
 
