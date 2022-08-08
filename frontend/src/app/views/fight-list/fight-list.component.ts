@@ -8,6 +8,9 @@ import {Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
 import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.component";
+import {TournamentType} from "../../models/tournament-type";
+import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
+import {TeamService} from "../../services/team.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -21,7 +24,8 @@ export class FightListComponent implements OnInit {
   tournament: Tournament;
   private readonly tournamentId: number | undefined;
 
-  constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
+              private teamService: TeamService, public dialog: MatDialog, private messageService: MessageService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
@@ -48,7 +52,25 @@ export class FightListComponent implements OnInit {
   }
 
   generateElements() {
-    // This is intentional
+    let dialogRef;
+    if (this.tournament.type === TournamentType.LEAGUE) {
+      dialogRef = this.dialog.open(LeagueGeneratorComponent, {
+        width: '85vw',
+        data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
+      });
+    }
+
+    if (dialogRef) {
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.action === Action.Add) {
+          this.addRowData(result.data);
+        } else if (result.action === Action.Update) {
+          this.updateRowData(result.data);
+        } else if (result.action === Action.Delete) {
+          this.deleteRowData(result.data);
+        }
+      });
+    }
   }
 
   addElement() {
@@ -70,15 +92,14 @@ export class FightListComponent implements OnInit {
   openDialog(title: string, action: Action, fight: Fight) {
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '85vw',
-      data: {title: title, action: action, entity: fight, tournament: this.tournament}
+      data: {title: 'Add a new Fight', action: Action.Add, entity: new Fight(), tournament: this.tournament}
     });
-
     dialogRef.afterClosed().subscribe(result => {
-      if (result.action == Action.Add) {
+      if (result.action === Action.Add) {
         this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
+      } else if (result.action === Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
+      } else if (result.action === Action.Delete) {
         this.deleteRowData(result.data);
       }
     });

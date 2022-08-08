@@ -1,6 +1,6 @@
 import {Team} from "../../../models/team";
 
-export class TeamListData {
+export class teamListData {
   teams: Team[];
   filteredTeams: Team[];
 
