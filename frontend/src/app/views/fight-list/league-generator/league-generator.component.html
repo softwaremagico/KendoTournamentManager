@@ -7,12 +7,21 @@
   <div class="sorted-teams">
     <h2>{{'teamsOrder' | translate}}</h2>
     <div class="final-team-list" cdkDropList
-         [cdkDropListData]="teamsSorted"
+         [cdkDropListData]="teamsOrder"
          (cdkDropListDropped)="dropTeam($event)">
-      <app-team-card *ngFor="let team of teamsSorted" [team]="team"></app-team-card>
+      <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-button (click)="closeDialog()" mat-flat-button color="primary">{{'closeButton' | translate}}</button>
+  <button mat-button (click)="sortedTeams()" mat-flat-button>
+    <mat-icon>auto_fix_high</mat-icon>
+    Wizard
+  </button>
+  <button mat-button (click)="randomTeams()" mat-flat-button>
+    <mat-icon>casino</mat-icon>
+    Random
+  </button>
+  <button mat-button (click)="acceptAction()" mat-flat-button color="primary">{{'acceptButton' | translate}}</button>
+  <button mat-button (click)="cancelDialog()" mat-flat-button color="accent">{{'cancelButton' | translate}}</button>
 </div>
