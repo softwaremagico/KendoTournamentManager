@@ -63,7 +63,7 @@ export class FightListComponent implements OnInit {
     if (dialogRef) {
       dialogRef.afterClosed().subscribe(result => {
         if (result.action === Action.Add) {
-          this.addRowData(result.data);
+          this.createGroupFight();
         } else if (result.action === Action.Update) {
           this.updateRowData(result.data);
         } else if (result.action === Action.Delete) {
@@ -96,7 +96,7 @@ export class FightListComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result.action === Action.Add) {
-        this.addRowData(result.data);
+        this.createGroupFight();
       } else if (result.action === Action.Update) {
         this.updateRowData(result.data);
       } else if (result.action === Action.Delete) {
@@ -105,10 +105,23 @@ export class FightListComponent implements OnInit {
     });
   }
 
-  addRowData(fight: Fight) {
-    this.fightService.add(fight).subscribe(_fight => {
-      this.fights.push(_fight)
-      this.messageService.infoMessage("Fight Stored");
+  createGroupFight() {
+    this.fightService.deleteCollection(this.fights).subscribe(() => {
+      this.fights = [];
+      this.messageService.infoMessage("Fights Deleted");
+      if (this.tournamentId) {
+        this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
+          this.fights.push(...fights)
+          this.messageService.infoMessage("Fights " + fights + " Created!");
+        });
+      }
+    });
+  }
+
+  addRowData(fights: Fight[]) {
+    this.fightService.addCollection(fights).subscribe(_fights => {
+      this.fights.push(..._fights)
+      this.messageService.infoMessage("Fights Stored");
     });
   }
 

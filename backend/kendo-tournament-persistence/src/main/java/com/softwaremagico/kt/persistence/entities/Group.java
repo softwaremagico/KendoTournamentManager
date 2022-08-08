@@ -35,7 +35,7 @@ import java.util.List;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "groups")
+@Table(name = "tournament_groups")
 public class Group extends Element {
 
     @ManyToOne
@@ -44,7 +44,7 @@ public class Group extends Element {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "teams_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "team_id"))
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "group_index")
     private List<Team> teams;
 
     @Column(name = "shiaijo", nullable = false)
@@ -55,16 +55,16 @@ public class Group extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "group_index")
     private List<Fight> fights;
 
     @Column(name = "number_of_winners", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private int numberOfWinners;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "unties", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     private List<Duel> unties = new ArrayList<>();
 

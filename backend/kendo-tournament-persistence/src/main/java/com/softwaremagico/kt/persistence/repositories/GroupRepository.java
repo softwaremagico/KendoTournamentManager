@@ -42,6 +42,8 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findByTournamentAndShiaijo(Tournament tournament, Integer shiaijo);
 
+    Group findByFightsId(Integer fightId);
+
     void deleteByTournament(Tournament tournament);
 
     void deleteByTournamentAndLevel(Tournament tournament, Integer level);
