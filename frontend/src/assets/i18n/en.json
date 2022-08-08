@@ -42,7 +42,7 @@
   "UpButton": "Up",
   "DownButton": "Down",
   "AddButton": "Add",
-  "RandomButton": "Random",
+  "random": "Random",
   "SortedButton": "Sorted",
   "ExploreButton": "Explore",
   "SelectButton": "Select",
@@ -474,14 +474,17 @@
   "deniedUserError": "Invalid user or password.",
   "backendError": "Cannot connect with the backend! Please, check your deployment.",
   "userCorrectMessage": "User logged in successfully",
-  "acceptButton": "Accept",
-  "cancelButton": "Cancel",
-  "deleteButton": "Delete",
-  "closeButton": "Close",
+  "accept": "Accept",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "close": "Close",
+  "add": "Add",
+  "update": "Update",
   "createdAt": "Created At",
   "createdBy": "Created By",
   "updatedAt": "Updated At",
   "updatedBy": "Updated By",
-  "teamsOrder": "Teams Order:"
+  "teamsOrder": "Teams Order:",
+  "wizard": "Wizard"
 }
 
