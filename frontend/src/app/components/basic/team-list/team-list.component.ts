@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {TeamListData} from "./team-list-data";
+import {teamListData} from "./team-list-data";
 
 @Component({
   selector: 'team-list',
@@ -9,7 +9,7 @@ import {TeamListData} from "./team-list-data";
 export class TeamListComponent implements OnInit {
 
   @Input()
-  teamListData: TeamListData;
+  teamListData: teamListData;
   filterString: string;
 
   ngOnInit(): void {

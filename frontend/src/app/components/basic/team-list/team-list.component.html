@@ -7,6 +7,6 @@
 <button #resetButton class="reset" mat-button color="warn" (click)="reset()">
   <mat-icon>clear</mat-icon>
 </button>
-<div class="user-list" *ngIf="teamListData.filteredTeams">
+<div class="team-list" *ngIf="teamListData.filteredTeams">
   <app-team-card *ngFor="let team of teamListData.filteredTeams" [team]="team"></app-team-card>
 </div>
