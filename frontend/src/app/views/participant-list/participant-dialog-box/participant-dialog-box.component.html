@@ -26,6 +26,6 @@
   </ng-template>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-button (click)="doAction()" mat-flat-button color="primary">{{actionName}}</button>
-  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+  <button mat-raised-button (click)="doAction()" mat-flat-button color="primary"><mat-icon>done</mat-icon>{{actionName.toLowerCase() | translate}}</button>
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn"><mat-icon>cancel</mat-icon>{{'cancel' | translate}}</button>
 </div>

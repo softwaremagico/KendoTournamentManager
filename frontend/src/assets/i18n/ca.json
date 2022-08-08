@@ -38,15 +38,17 @@
   "titleDesignGroupWindow": "Canviar les opcions del grup",
   "titleOrderTeam": "Canviar l'ordre dels membres d'un equip",
   "ConnectButton": "Connectar",
-  "acceptButton": "Acceptar",
-  "cancelButton": "Cancel·lar",
-  "deleteButton": "Esborrar",
-  "closeButton": "Tancar",
-  "SearchButton": "Buscar",
+  "accept": "Acceptar",
+  "cancel": "Cancel·lar",
+  "delete": "Esborrar",
+  "close": "Tancar",
+  "add": "Afegir",
+  "update": "Actualitzar",
+  "SearchButton": "Cerca",
   "UpButton": "Pujar",
   "DownButton": "Baixar",
   "AddButton": "Afegir",
-  "RandomButton": "Aleatori",
+  "random": "Aleatori",
   "SortedButton": "Ordenats",
   "ExploreButton": "Explorar",
   "SelectButton": "Seleccionar",
@@ -467,7 +469,8 @@
   "volunteer": "Voluntario",
   "deniedUserError": "Usuari o contrasenya invàlids",
   "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
-  "userCorrectMessage": "Usuari registrat correctament."
+  "userCorrectMessage": "Usuari registrat correctament.",
+  "wizard": "Assistent"
 }
 
 
