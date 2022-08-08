@@ -1,0 +1,18 @@
+<div class="league-creator" cdkDropListGroup>
+  <div cdkDropList class="teams-container"
+       [cdkDropListData]="teamListData.filteredTeams"
+       (cdkDropListDropped)="removeTeam($event)">
+    <team-list [teamListData]="teamListData"></team-list>
+  </div>
+  <div class="sorted-teams">
+    <h2>{{'teamsOrder' | translate}}</h2>
+    <div class="final-team-list" cdkDropList
+         [cdkDropListData]="teamsSorted"
+         (cdkDropListDropped)="dropTeam($event)">
+      <app-team-card *ngFor="let team of teamsSorted" [team]="team"></app-team-card>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions class="button-container">
+  <button mat-button (click)="closeDialog()" mat-flat-button color="primary">{{'closeButton' | translate}}</button>
+</div>
