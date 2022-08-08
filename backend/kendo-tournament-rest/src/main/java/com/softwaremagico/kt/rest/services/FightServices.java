@@ -101,6 +101,17 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Creates a set of fights.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FightDTO> add(@RequestBody Collection<FightDTO> fightDtos, Authentication authentication, HttpServletRequest request) {
+        if (fightDtos == null || fightDtos.isEmpty()) {
+            throw new BadRequestException(getClass(), "Fight data is missing");
+        }
+        return fightController.create(fightDtos, authentication.getName());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -110,10 +121,17 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
-    @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody FightDTO fightDto, HttpServletRequest request) {
         fightController.delete(fightDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Deletes a collection of fights.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/delete/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody Collection<FightDTO> fightDtos, HttpServletRequest request) {
+        fightController.delete(fightDtos);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -136,7 +154,7 @@ public class FightServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}/{maximizeFights}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}/maximize/{maximizeFights}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  @Parameter(description = "Create as much fights as possible", required = true) @PathVariable("maximizeFights") boolean maximizeFights,
                                  @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,

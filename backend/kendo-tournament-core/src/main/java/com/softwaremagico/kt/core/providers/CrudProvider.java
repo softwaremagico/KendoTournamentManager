@@ -42,6 +42,10 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         return repository.save(entity);
     }
 
+    public List<ENTITY> save(Collection<ENTITY> entities) {
+        return repository.saveAll(entities);
+    }
+
     public List<ENTITY> saveAll(Collection<ENTITY> entity) {
         return repository.saveAll(entity);
     }
@@ -60,6 +64,10 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
 
     public void delete(ENTITY entity) {
         repository.delete(entity);
+    }
+
+    public void delete(Collection<ENTITY> entities) {
+        repository.deleteAll(entities);
     }
 
     public void deleteById(KEY id) {

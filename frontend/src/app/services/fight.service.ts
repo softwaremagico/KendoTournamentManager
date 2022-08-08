@@ -64,6 +64,15 @@ export class FightService {
       );
   }
 
+  deleteCollection(fights: Fight[]): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}/delete/list`;
+    return this.http.post<Fight[]>(url, fights, this.httpOptions)
+      .pipe(
+        tap(_ => this.loggerService.info(`deleting fights ${fights}`)),
+        catchError(this.messageService.handleError<Fight[]>(`delete ${fights}`))
+      );
+  }
+
   deleteByTournament(tournament: Tournament): Observable<Fight> {
     const url: string = `${this.baseUrl}/delete/tournaments`;
     return this.http.post<Fight>(url, {tournament: tournament}, this.httpOptions)
@@ -82,12 +91,30 @@ export class FightService {
       );
   }
 
+  addCollection(fights: Fight[]): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}` + '/list';
+    return this.http.post<Fight[]>(url, fights, this.httpOptions)
+      .pipe(
+        tap((_newFight: Fight[]) => this.loggerService.info(`adding fight`)),
+        catchError(this.messageService.handleError<Fight[]>(`adding fight`))
+      );
+  }
+
   update(fight: Fight): Observable<Fight> {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Fight>(url, fight, this.httpOptions)
       .pipe(
         tap((_updatedFight: Fight) => this.loggerService.info(`updating fight`)),
         catchError(this.messageService.handleError<Fight>(`updating fight`))
+      );
+  }
+
+  create(tournamentId: number, level: number, maximizeFights: boolean): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level + '/maximize/' + maximizeFights;
+    return this.http.put<Fight[]>(url, undefined, this.httpOptions)
+      .pipe(
+        tap((_newFight: Fight[]) => this.loggerService.info(`adding fight`)),
+        catchError(this.messageService.handleError<Fight[]>(`adding fight`))
       );
   }
 }
