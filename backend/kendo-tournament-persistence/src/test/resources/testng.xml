@@ -11,12 +11,14 @@
                 <include name="imageRepository"/>
                 <include name="encryptedData"/>
                 <include name="teamRepository"/>
+                <include name="groupRepository"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.persistence.repositories.ParticipantRepositoryTests"/>
-            <class name="com.softwaremagico.kt.persistence.repositories.ParticipantImageRepositoryTest"/>
+            <class name="com.softwaremagico.kt.persistence.repositories.ParticipantImageRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.TeamRepositoryTests"/>
+            <class name="com.softwaremagico.kt.persistence.repositories.GroupRepositoryTests"/>
             <class name="com.softwaremagico.kt.encryption.CheckEncryptedDataStorage"/>
         </classes>
     </test>

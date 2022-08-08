@@ -51,7 +51,6 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
-
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
