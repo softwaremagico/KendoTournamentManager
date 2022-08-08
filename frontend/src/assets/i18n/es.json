@@ -471,7 +471,8 @@
   "createdAt": "Fecha de Creación",
   "createdBy": "Creado por",
   "updatedAt": "Fecha de Actualización",
-  "updatedBy": "Actualizado por"
+  "updatedBy": "Actualizado por",
+  "teamsOrder": "Orden de Equipos:"
 }
 
 
