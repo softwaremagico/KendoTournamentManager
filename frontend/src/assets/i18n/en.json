@@ -481,6 +481,7 @@
   "createdAt": "Created At",
   "createdBy": "Created By",
   "updatedAt": "Updated At",
-  "updatedBy": "Updated By"
+  "updatedBy": "Updated By",
+  "teamsOrder": "Teams Order:"
 }
 

@@ -4,12 +4,12 @@
   height: 80vh;
 }
 
-.users-container {
-  overflow: auto;
-}
-
 .roles-container div {
   flex: 1
+}
+
+.users-container {
+  overflow: auto;
 }
 
 .roles-location.ng-star-inserted {
@@ -30,10 +30,6 @@
   padding-left: 10px;
 }
 
-.user-list {
-  padding-right: 10px;
-}
-
 //Padding between roles
 .ng-star-inserted {
   padding-bottom: 20px;
@@ -43,6 +39,7 @@
   border-color: #c3d1e1;
   border-radius: 15px;
   border-style: dotted;
+  padding-right: 10px;
 }
 
 .mat-dialog-actions {
