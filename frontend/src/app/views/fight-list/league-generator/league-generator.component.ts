@@ -18,7 +18,7 @@ export class LeagueGeneratorComponent implements OnInit {
   title: string;
   action: Action;
   actionName: string;
-  teamsSorted: Team[] = [];
+  teamsOrder: Team[] = [];
 
   tournament: Tournament;
 
@@ -42,11 +42,11 @@ export class LeagueGeneratorComponent implements OnInit {
     });
   }
 
-  doAction() {
-    this.dialogRef.close({data: this.teamsSorted, action: this.action});
+  acceptAction() {
+    this.dialogRef.close({data: this.teamsOrder, action: this.action});
   }
 
-  closeDialog() {
+  cancelDialog() {
     this.dialogRef.close({action: Action.Cancel});
   }
 
@@ -80,6 +80,31 @@ export class LeagueGeneratorComponent implements OnInit {
     if (this.teamListData.filteredTeams.includes(team)) {
       this.teamListData.filteredTeams.splice(this.teamListData.filteredTeams.indexOf(team), 1);
     }
+  }
+
+  sortedTeams() {
+    this.teamsOrder.push(...this.teamListData.teams);
+    this.teamsOrder.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
+    this.teamListData.filteredTeams.splice(0, this.teamListData.filteredTeams.length);
+    this.teamListData.teams.splice(0, this.teamListData.teams.length);
+  }
+
+  randomTeams() {
+    this.teamListData.teams.push(...this.teamsOrder);
+    this.teamsOrder = [];
+    while (this.teamListData.teams.length > 0) {
+      const team: Team = this.getRandomTeam(this.teamListData.teams);
+      this.teamsOrder.push(team);
+    }
+  }
+
+  getRandomTeam(teams: Team[]): Team {
+    const selected: number = Math.floor(Math.random() * teams.length);
+    const team: Team = teams[selected];
+    teams.splice(selected, 1);
+    return team;
   }
 
 }
