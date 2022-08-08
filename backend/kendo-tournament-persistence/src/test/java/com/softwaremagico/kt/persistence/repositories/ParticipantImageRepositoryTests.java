@@ -46,7 +46,7 @@ import java.util.Arrays;
 @SpringBootTest
 @Test(groups = {"imageRepository"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class ParticipantImageRepositoryTest extends AbstractTestNGSpringContextTests {
+public class ParticipantImageRepositoryTests extends AbstractTestNGSpringContextTests {
     private final static String IMAGE_RESOURCE = "kendo.jpg";
 
     @Autowired

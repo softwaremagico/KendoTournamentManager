@@ -34,6 +34,8 @@ import com.softwaremagico.kt.logger.ExceptionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,15 +78,42 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
                 reverse(dto))));
     }
 
+    @Transactional
+    public List<DTO> create(Collection<DTO> dtos, String username) {
+        dtos.forEach(dto -> {
+            if (dto.getCreatedBy() == null && username != null) {
+                dto.setCreatedBy(username);
+            }
+        });
+        validate(dtos);
+        return converter.convertAll(createConverterRequest(super.provider.save(converter.
+                reverseAll(dtos))));
+    }
+
 
     public void delete(DTO entity) {
         provider.delete(converter.reverse(entity));
     }
 
+    public void delete(Collection<DTO> entities) {
+        provider.delete(converter.reverseAll(entities));
+    }
+
     protected abstract CONVERTER_REQUEST createConverterRequest(ENTITY entity);
+
+    protected List<CONVERTER_REQUEST> createConverterRequest(Collection<ENTITY> entities) {
+        final List<CONVERTER_REQUEST> requests = new ArrayList<>();
+        entities.forEach(entity -> requests.add(createConverterRequest(entity)));
+        return requests;
+    }
 
     @Override
     public void validate(DTO dto) throws ValidateBadRequestException {
 
+    }
+
+    @Override
+    public void validate(Collection<DTO> dtos) throws ValidateBadRequestException {
+        dtos.forEach(this::validate);
     }
 }
