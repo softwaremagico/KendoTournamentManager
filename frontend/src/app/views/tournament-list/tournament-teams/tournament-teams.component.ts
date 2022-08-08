@@ -224,9 +224,7 @@ export class TournamentTeamsComponent implements OnInit {
 
   randomTeams(): void {
     let participants: Participant[];
-    console.log('111_', this.userListData.participants);
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
-    console.log('222_', participants);
     for (let team of this.teams) {
       team.members = [];
       for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
