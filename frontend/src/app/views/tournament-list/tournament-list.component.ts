@@ -72,7 +72,7 @@ export class TournamentListComponent implements OnInit {
 
   openDialog(title: string, action: Action, tournament: Tournament) {
     const dialogRef = this.dialog.open(TournamentDialogBoxComponent, {
-      width: '250px',
+      width: '400px',
       data: {
         title: title, action: action, entity: tournament
       }

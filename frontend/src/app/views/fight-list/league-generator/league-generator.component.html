@@ -14,14 +14,14 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-button (click)="sortedTeams()" mat-flat-button>
+  <button mat-raised-button (click)="sortedTeams()" mat-flat-button>
     <mat-icon>auto_fix_high</mat-icon>
-    Wizard
+    {{'wizard' | translate}}
   </button>
-  <button mat-button (click)="randomTeams()" mat-flat-button>
+  <button mat-raised-button (click)="randomTeams()" mat-flat-button>
     <mat-icon>casino</mat-icon>
-    Random
+    {{'random' | translate}}
   </button>
-  <button mat-button (click)="acceptAction()" mat-flat-button color="primary">{{'acceptButton' | translate}}</button>
-  <button mat-button (click)="cancelDialog()" mat-flat-button color="accent">{{'cancelButton' | translate}}</button>
+  <button mat-raised-button (click)="acceptAction()" mat-flat-button color="primary"><mat-icon>done</mat-icon>{{'accept' | translate}}</button>
+  <button mat-raised-button (click)="cancelDialog()" mat-flat-button color="accent"><mat-icon>cancel</mat-icon>{{'cancel' | translate}}</button>
 </div>

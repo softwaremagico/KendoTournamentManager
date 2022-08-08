@@ -71,7 +71,7 @@ export class ClubListComponent implements OnInit {
 
   openDialog(title: string, action: Action, club: Club) {
     const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
-      width: '250px',
+      width: '400px',
       data: {title: title, action: action, entity: club}
     });
 
