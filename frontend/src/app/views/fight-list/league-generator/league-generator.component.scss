@@ -1,0 +1,40 @@
+.league-creator {
+  display: flex;
+  height: 80vh;
+}
+
+.teams-container {
+  overflow: auto;
+}
+
+.league-creator div {
+  flex: 1
+}
+
+.roles-location.ng-star-inserted {
+  padding-bottom: 30px;
+  padding-right: 20px;
+}
+
+.sorted-teams {
+  overflow: auto;
+  padding-left: 10px;
+}
+
+//Padding between roles
+.ng-star-inserted {
+  padding-bottom: 20px;
+}
+
+.final-team-list{
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+  padding-right: 10px;
+  min-height: 50vh;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}
