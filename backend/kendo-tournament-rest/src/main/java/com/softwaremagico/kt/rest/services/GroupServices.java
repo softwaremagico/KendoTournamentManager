@@ -64,7 +64,7 @@ public class GroupServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{groupId}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{groupId}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                                @RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
@@ -74,7 +74,7 @@ public class GroupServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Set teams on the first group.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
                                HttpServletRequest request) {

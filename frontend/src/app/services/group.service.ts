@@ -49,7 +49,7 @@ export class GroupService {
 
   setTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + '/teams';
-    return this.http.post<Group>(url, teams, this.httpOptions)
+    return this.http.put<Group>(url, teams, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`Updating teams for group ${groupId}`)),
         catchError(this.messageService.handleError<Group>(`updates ${groupId}`))
@@ -58,7 +58,7 @@ export class GroupService {
 
   setTeams(teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/teams`;
-    return this.http.post<Group>(url, teams, this.httpOptions)
+    return this.http.put<Group>(url, teams, this.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`Updating teams for default group`)),
         catchError(this.messageService.handleError<Group>(`updates teams for default group`))

@@ -287,7 +287,7 @@
   "DisabledRadioButton": "Uitgeschakeld",
   "ByTimeRadioButton": "Op Tijd",
   "ByActionRadioButton": "Op Aktie",
-  "ConfirmLabel": "Bevestigen",
+  "confirm": "Bevestigen",
   "ClearCacheLabel": "Clear Cache",
   "titleBlogStatistics": "Blogger code",
   "championship": "Poule",
