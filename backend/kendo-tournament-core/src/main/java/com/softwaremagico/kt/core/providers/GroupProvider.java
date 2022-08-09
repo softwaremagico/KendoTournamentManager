@@ -24,14 +24,17 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository> {
@@ -43,6 +46,14 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
 
     public List<Group> getGroups(Tournament tournament) {
         return repository.findByTournament(tournament);
+    }
+
+    public Group getGroup(Fight fight) {
+        return repository.findByFightsId(fight.getId());
+    }
+
+    public List<Group> getGroups(Collection<Fight> fights) {
+        return repository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toList()));
     }
 
     public List<Group> getGroups(Tournament tournament, Integer shiaijo) {
