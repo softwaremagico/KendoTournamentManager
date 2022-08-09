@@ -13,6 +13,7 @@ import {LeagueGeneratorComponent} from "./league-generator/league-generator.comp
 import {TeamService} from "../../services/team.service";
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
+import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-fight-list',
@@ -51,6 +52,23 @@ export class FightListComponent implements OnInit {
           this.fights = fights;
         });
       })
+    }
+  }
+
+  openConfirmationGenerateElementsDialog() {
+    if (this.fights.length > 0) {
+      let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        disableClose: false
+      });
+      dialogRef.componentInstance.messageTag = "deleteFightsWarning"
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.generateElements();
+        }
+      });
+    } else {
+      this.generateElements();
     }
   }
 
@@ -110,16 +128,14 @@ export class FightListComponent implements OnInit {
 
   createGroupFight(teams: Team[]) {
     if (this.tournamentId) {
-      this.fightService.deleteCollection(this.fights).subscribe(() => {
+      this.groupService.setTeams(teams).subscribe(() => {
         this.fights = [];
-        this.groupService.setTeams(teams).subscribe(() => {
-          if (this.tournamentId) {
-            this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
-              this.fights.push(...fights)
-              this.messageService.infoMessage("Fights Created!");
-            });
-          }
-        });
+        if (this.tournamentId) {
+          this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
+            this.fights.push(...fights)
+            this.messageService.infoMessage("Fights Created!");
+          });
+        }
       });
     }
   }

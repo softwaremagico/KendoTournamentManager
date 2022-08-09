@@ -287,7 +287,7 @@
   "DisabledRadioButton": "Desabilitato",
   "ByTimeRadioButton": "Per Tempo",
   "ByActionRadioButton": "Per Azzione",
-  "ConfirmLabel": "Confermare",
+  "confirm": "Confermare",
   "ClearCacheLabel": "Pulire la Cache",
   "titleBlogStatistics": "Blogger code",
   "championship": "Campionato",
