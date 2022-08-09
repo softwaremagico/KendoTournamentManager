@@ -25,11 +25,14 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
@@ -78,6 +81,24 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     public List<GroupDTO> getGroups(TournamentDTO tournamentDTO) {
         return converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournamentDTO)).stream().map(this::createConverterRequest)
                 .collect(Collectors.toList()));
+    }
+
+    public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
+        final GroupDTO groupDTO = get(groupId);
+        groupDTO.setTeams(teams);
+        groupDTO.setUpdatedBy(username);
+        return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
+    }
+
+    public GroupDTO setTeams(List<TeamDTO> teams, String username) {
+        if (teams.isEmpty()) {
+            throw new TeamNotFoundException(this.getClass(), "No teams found!");
+        }
+        final GroupDTO groupDTO = getGroups(teams.get(0).getTournament()).stream().findAny().orElseThrow(() ->
+                new GroupNotFoundException(this.getClass(), "No groups found!"));
+        groupDTO.setTeams(teams);
+        groupDTO.setUpdatedBy(username);
+        return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
     }
 
 }

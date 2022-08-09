@@ -11,6 +11,8 @@ import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.compo
 import {TournamentType} from "../../models/tournament-type";
 import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
 import {TeamService} from "../../services/team.service";
+import {GroupService} from "../../services/group.service";
+import {Team} from "../../models/team";
 
 @Component({
   selector: 'app-fight-list',
@@ -25,7 +27,8 @@ export class FightListComponent implements OnInit {
   private readonly tournamentId: number | undefined;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
-              private teamService: TeamService, public dialog: MatDialog, private messageService: MessageService) {
+              private teamService: TeamService, private groupService: GroupService, public dialog: MatDialog,
+              private messageService: MessageService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
@@ -63,7 +66,7 @@ export class FightListComponent implements OnInit {
     if (dialogRef) {
       dialogRef.afterClosed().subscribe(result => {
         if (result.action === Action.Add) {
-          this.createGroupFight();
+          this.createGroupFight(result.data);
         } else if (result.action === Action.Update) {
           this.updateRowData(result.data);
         } else if (result.action === Action.Delete) {
@@ -96,7 +99,7 @@ export class FightListComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result.action === Action.Add) {
-        this.createGroupFight();
+        //this.createGroupFight();
       } else if (result.action === Action.Update) {
         this.updateRowData(result.data);
       } else if (result.action === Action.Delete) {
@@ -105,17 +108,20 @@ export class FightListComponent implements OnInit {
     });
   }
 
-  createGroupFight() {
-    this.fightService.deleteCollection(this.fights).subscribe(() => {
-      this.fights = [];
-      this.messageService.infoMessage("Fights Deleted");
-      if (this.tournamentId) {
-        this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
-          this.fights.push(...fights)
-          this.messageService.infoMessage("Fights " + fights + " Created!");
+  createGroupFight(teams: Team[]) {
+    if (this.tournamentId) {
+      this.fightService.deleteCollection(this.fights).subscribe(() => {
+        this.fights = [];
+        this.groupService.setTeams(teams).subscribe(() => {
+          if (this.tournamentId) {
+            this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
+              this.fights.push(...fights)
+              this.messageService.infoMessage("Fights Created!");
+            });
+          }
         });
-      }
-    });
+      });
+    }
   }
 
   addRowData(fights: Fight[]) {
