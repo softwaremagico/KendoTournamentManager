@@ -64,6 +64,7 @@ import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
 import { TeamListComponent } from './components/basic/team-list/team-list.component';
 import { LeagueGeneratorComponent } from './views/fight-list/league-generator/league-generator.component';
+import { ConfirmationDialogComponent } from './components/basic/confirmation-dialog/confirmation-dialog.component';
 
 
 registerLocaleData(localeES, "es");
@@ -97,7 +98,8 @@ registerLocaleData(localeNL, "nl");
     UserCardComponent,
     TeamCardComponent,
     TeamListComponent,
-    LeagueGeneratorComponent
+    LeagueGeneratorComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,

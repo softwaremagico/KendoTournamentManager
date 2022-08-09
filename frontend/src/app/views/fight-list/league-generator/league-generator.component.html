@@ -22,6 +22,11 @@
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
-  <button mat-raised-button (click)="acceptAction()" mat-flat-button color="primary"><mat-icon>done</mat-icon>{{'accept' | translate}}</button>
-  <button mat-raised-button (click)="cancelDialog()" mat-flat-button color="accent"><mat-icon>cancel</mat-icon>{{'cancel' | translate}}</button>
+  <button mat-raised-button (click)="acceptAction()" mat-flat-button color="primary"
+          [disabled]="teamsOrder.length===0 || teamListData.teams.length>0">
+    <mat-icon>done</mat-icon>
+    {{'accept' | translate}}</button>
+  <button mat-raised-button (click)="cancelDialog()" mat-flat-button color="accent">
+    <mat-icon>cancel</mat-icon>
+    {{'cancel' | translate}}</button>
 </div>

@@ -265,7 +265,6 @@
   "DisabledRadioButton": "Disabled",
   "ByTimeRadioButton": "By Time",
   "ByActionRadioButton": "By Action",
-  "ConfirmLabel": "Confirm",
   "ClearCacheLabel": "Clear Cache",
   "titleBlogStatistics": "Blogger code",
   "tree": "Championship",
@@ -319,7 +318,6 @@
   "clubUpdated": "The club has been updated into the database.",
   "tournamentUpdated": "The tournament has been updated.",
   "fillFields": "You must fill one of the fields to start a search.",
-  "deleteFightsWarning": "This action will erase all previous matches stored for this tournament. Are you sure you want to continue?",
   "deleteOneFight": "This action will erase the selected match. Are you sure you want to continue?",
   "questionDeleteCompetitor": "This action will erase the selected competitor. Are you sure you want to continue?",
   "questionUpdateCompetitor": "Do you want to update an existing competitor?",
@@ -335,7 +333,6 @@
   "leagueFinished": "All matches are over. The league has finished and the winner is",
   "deleteFightError": "Error when deleting a match.",
   "fightDeleted": "Match has been deleted!",
-  "fightsDeleted": "The matches have been deleted!",
   "competitorDeleted": "Competitor has been deleted!",
   "teamDeleted": "Team has been deleted!",
   "teamNotDeleted": "Team does not exist!",
@@ -485,6 +482,9 @@
   "updatedAt": "Updated At",
   "updatedBy": "Updated By",
   "teamsOrder": "Teams Order:",
-  "wizard": "Wizard"
+  "wizard": "Wizard",
+  "confirm": "Confirm",
+  "deleteFightsWarning": "This action will erase all previous matches stored for this tournament. Are you sure you want to continue?",
+  "fightsDeleted": "The matches have been deleted!"
 }
 

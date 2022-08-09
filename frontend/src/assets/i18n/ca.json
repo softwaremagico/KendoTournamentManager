@@ -289,7 +289,7 @@
   "DisabledRadioButton": [],
   "ByTimeRadioButton": "Per Temps",
   "ByActionRadioButton": "Per Acció",
-  "ConfirmLabel": "Confirmar",
+  "confirm": "Confirmar",
   "ClearCacheLabel": "Pulix la Cache",
   "titleBlogStatistics": "Blogger code",
   "championship": "Campeonat",
