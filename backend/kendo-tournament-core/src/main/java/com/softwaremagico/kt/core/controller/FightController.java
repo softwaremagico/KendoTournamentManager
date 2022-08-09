@@ -107,7 +107,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             group.getFights().removeAll(fights);
             groupProvider.save(group);
         });
-        provider.delete(converter.reverseAll(entities));
+        provider.delete(fights);
     }
 
     public void generateDuels(FightDTO fightDTO) {

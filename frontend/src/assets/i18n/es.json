@@ -283,7 +283,7 @@
   "DisabledRadioButton": "Deshabilitado",
   "ByTimeRadioButton": "Por Tiempo",
   "ByActionRadioButton": "Por Acción",
-  "ConfirmLabel": "Confirmar",
+  "confirm": "Confirmar",
   "ClearCacheLabel": "Limpar Cache",
   "titleBlogStatistics": "Código Blogger",
   "championship": "Campeonato",
