@@ -51,7 +51,7 @@ public class Group extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
-    @Column(name = "level", nullable = false)
+    @Column(name = "group_level", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 

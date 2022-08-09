@@ -33,11 +33,13 @@ import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.simple.SimpleTournamentHandler;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -45,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,14 +56,16 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         FightProvider, FightConverterRequest, FightConverter> {
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
+    private final GroupProvider groupProvider;
     private final SimpleTournamentHandler simpleTournamentHandler;
 
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                           SimpleTournamentHandler simpleTournamentHandler) {
+                           GroupProvider groupProvider, SimpleTournamentHandler simpleTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
+        this.groupProvider = groupProvider;
         this.simpleTournamentHandler = simpleTournamentHandler;
     }
 
@@ -80,8 +85,29 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                 .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
+    public void delete(FightDTO entity) {
+        final Fight fight = converter.reverse(entity);
+        final Group group = groupProvider.getGroup(fight);
+        group.getFights().remove(fight);
+        groupProvider.save(group);
+        provider.delete(fight);
+    }
+
     public void delete(TournamentDTO tournamentDTO) {
+        groupProvider.getGroups(tournamentConverter.reverse(tournamentDTO)).forEach(group -> {
+            group.setFights(new ArrayList<>());
+            groupProvider.save(group);
+        });
         provider.delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
+    public void delete(Collection<FightDTO> entities) {
+        final List<Fight> fights = converter.reverseAll(entities);
+        groupProvider.getGroups(fights).forEach(group -> {
+            group.getFights().removeAll(fights);
+            groupProvider.save(group);
+        });
+        provider.delete(converter.reverseAll(entities));
     }
 
     public void generateDuels(FightDTO fightDTO) {

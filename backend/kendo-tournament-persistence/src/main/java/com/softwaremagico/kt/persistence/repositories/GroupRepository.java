@@ -30,6 +30,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -43,6 +44,8 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
     List<Group> findByTournamentAndShiaijo(Tournament tournament, Integer shiaijo);
 
     Group findByFightsId(Integer fightId);
+
+    List<Group> findDistinctByFightsIdIn(Collection<Integer> fightId);
 
     void deleteByTournament(Tournament tournament);
 
