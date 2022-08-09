@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {Action} from "../../../action";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
-import {teamListData} from "../../../components/basic/team-list/team-list-data";
+import {TeamListData} from "../../../components/basic/team-list/team-list-data";
 import {TeamService} from "../../../services/team.service";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
@@ -14,7 +14,7 @@ import {Team} from "../../../models/team";
 })
 export class LeagueGeneratorComponent implements OnInit {
 
-  teamListData: teamListData = new teamListData();
+  teamListData: TeamListData = new TeamListData();
   title: string;
   action: Action;
   actionName: string;

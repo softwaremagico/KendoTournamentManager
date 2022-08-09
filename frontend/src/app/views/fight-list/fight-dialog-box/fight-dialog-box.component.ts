@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {Fight} from "../../../models/fight";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Action} from "../../../action";
-import {teamListData} from "../../../components/basic/team-list/team-list-data";
+import {TeamListData} from "../../../components/basic/team-list/team-list-data";
 import {TeamService} from "../../../services/team.service";
 import {Tournament} from "../../../models/tournament";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
@@ -15,7 +15,7 @@ import {Team} from "../../../models/team";
 })
 export class FightDialogBoxComponent implements OnInit {
 
-  teamListData: teamListData = new teamListData();
+  teamListData: TeamListData = new TeamListData();
   tournament: Tournament;
   fight: Fight;
   title: string;
