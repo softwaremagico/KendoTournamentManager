@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {EnvironmentService} from "../environment.service";
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from "rxjs";
@@ -15,20 +15,13 @@ export class ParticipantService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/participants';
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
-    })
-  };
-
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
   }
 
   getAll(): Observable<Participant[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Participant[]>(url, this.httpOptions)
+    return this.http.get<Participant[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all Participants`)),
         catchError(this.messageService.handleError<Participant[]>(`gets all`))
@@ -37,7 +30,7 @@ export class ParticipantService {
 
   get(id: number): Observable<Participant> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Participant>(url, this.httpOptions)
+    return this.http.get<Participant>(url, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched participant id=${id}`)),
         catchError(this.messageService.handleError<Participant>(`get id=${id}`))
@@ -46,7 +39,7 @@ export class ParticipantService {
 
   deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url, this.httpOptions)
+    this.http.delete(url, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`deleting participant id=${id}`)),
         catchError(this.messageService.handleError<Participant>(`delete id=${id}`))
@@ -55,7 +48,7 @@ export class ParticipantService {
 
   delete(participant: Participant): Observable<Participant> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Participant>(url, participant, this.httpOptions)
+    return this.http.post<Participant>(url, participant, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`deleting participant ${participant}`)),
         catchError(this.messageService.handleError<Participant>(`delete ${participant}`))
@@ -64,7 +57,7 @@ export class ParticipantService {
 
   add(participant: Participant): Observable<Participant> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Participant>(url, participant, this.httpOptions)
+    return this.http.post<Participant>(url, participant, this.authenticatedUserService.httpOptions)
       .pipe(
         tap((newParticipant: Participant) => this.loggerService.info(`adding participant ${newParticipant}`)),
         catchError(this.messageService.handleError<Participant>(`adding ${participant}`))
@@ -74,7 +67,7 @@ export class ParticipantService {
 
   update(participant: Participant): Observable<Participant> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Participant>(url, participant, this.httpOptions)
+    return this.http.put<Participant>(url, participant, this.authenticatedUserService.httpOptions)
       .pipe(
         tap((updatedParticipant: Participant) => this.loggerService.info(`updating participant ${updatedParticipant}`)),
         catchError(this.messageService.handleError<Participant>(`updating ${participant}`))

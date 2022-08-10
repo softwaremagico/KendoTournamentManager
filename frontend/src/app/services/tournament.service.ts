@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
@@ -15,20 +15,14 @@ export class TournamentService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/tournaments';
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
-    })
-  };
-
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              public authenticatedUserService: AuthenticatedUserService,  private messageService: MessageService,
-              private loggerService: LoggerService) { }
+              public authenticatedUserService: AuthenticatedUserService, private messageService: MessageService,
+              private loggerService: LoggerService) {
+  }
 
   getAll(): Observable<Tournament[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Tournament[]>(url, this.httpOptions)
+    return this.http.get<Tournament[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all Tournaments`)),
         catchError(this.messageService.handleError<Tournament[]>(`gets all`))
@@ -37,7 +31,7 @@ export class TournamentService {
 
   get(id: number): Observable<Tournament> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Tournament>(url, this.httpOptions)
+    return this.http.get<Tournament>(url, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched tournament id=${id}`)),
         catchError(this.messageService.handleError<Tournament>(`get id=${id}`))
@@ -46,7 +40,7 @@ export class TournamentService {
 
   deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url, this.httpOptions)
+    this.http.delete(url, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`deleting tournament id=${id}`)),
         catchError(this.messageService.handleError<Tournament>(`delete id=${id}`))
@@ -55,7 +49,7 @@ export class TournamentService {
 
   delete(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Tournament>(url, tournament, this.httpOptions)
+    return this.http.post<Tournament>(url, tournament, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`deleting tournament ${tournament}`)),
         catchError(this.messageService.handleError<Tournament>(`delete ${tournament}`))
@@ -64,7 +58,7 @@ export class TournamentService {
 
   add(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Tournament>(url, tournament, this.httpOptions)
+    return this.http.post<Tournament>(url, tournament, this.authenticatedUserService.httpOptions)
       .pipe(
         tap((newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`)),
         catchError(this.messageService.handleError<Tournament>(`adding ${tournament}`))
@@ -74,7 +68,7 @@ export class TournamentService {
 
   update(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Tournament>(url, tournament, this.httpOptions)
+    return this.http.put<Tournament>(url, tournament, this.authenticatedUserService.httpOptions)
       .pipe(
         tap((updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`)),
         catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))

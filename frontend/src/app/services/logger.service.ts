@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Log} from "./models/log";
@@ -12,13 +12,6 @@ import {Observable, of} from "rxjs";
 export class LoggerService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/logger';
-
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
-    })
-  };
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, public authenticatedUserService: AuthenticatedUserService) {
   }
@@ -33,7 +26,7 @@ export class LoggerService {
     const url: string = `${this.baseUrl}/info`;
 
     console.log(log.message);
-    return this.http.post(url, log, this.httpOptions).pipe(
+    return this.http.post(url, log, this.authenticatedUserService.httpOptions).pipe(
       catchError(this.handleErrorConsole('sendInfo'))
     ).subscribe();
   }
@@ -46,7 +39,7 @@ export class LoggerService {
 
   sendWarning(log: Log) {
     const url: string = `${this.baseUrl}/warning`;
-    return this.http.post(url, log, this.httpOptions).pipe(
+    return this.http.post(url, log, this.authenticatedUserService.httpOptions).pipe(
       catchError(this.handleErrorConsole('sendWarning'))
     ).subscribe();
   }
@@ -59,7 +52,7 @@ export class LoggerService {
 
   sendError(log: Log) {
     const url: string = `${this.baseUrl}/error`;
-    return this.http.post(url, log, this.httpOptions).pipe(
+    return this.http.post(url, log, this.authenticatedUserService.httpOptions).pipe(
       catchError(this.handleErrorConsole('sendError'))
     ).subscribe();
   }
