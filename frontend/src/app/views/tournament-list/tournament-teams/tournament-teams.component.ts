@@ -143,7 +143,6 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   updateTeam(team: Team, member: Participant | undefined) {
-    console.log("team id ", team.id);
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
         member ? this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.") :

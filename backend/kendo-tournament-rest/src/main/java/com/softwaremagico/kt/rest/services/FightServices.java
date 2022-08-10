@@ -27,6 +27,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -159,7 +160,7 @@ public class FightServices {
                                  @Parameter(description = "Create as much fights as possible", required = true) @PathVariable("maximizeFights") boolean maximizeFights,
                                  @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
                                  HttpServletRequest request) {
-        return fightController.createFights(tournamentId, maximizeFights, levelId);
+        return fightController.createFights(tournamentId, TeamsOrder.NONE, maximizeFights, levelId);
     }
 
 

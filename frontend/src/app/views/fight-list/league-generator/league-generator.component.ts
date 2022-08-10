@@ -36,7 +36,6 @@ export class LeagueGeneratorComponent implements OnInit {
       teams.sort(function (a, b) {
         return a.name.localeCompare(b.name);
       });
-      console.log(teams)
       this.teamListData.teams = teams;
       this.teamListData.filteredTeams = teams;
     });
