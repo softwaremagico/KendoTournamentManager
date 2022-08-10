@@ -15,6 +15,13 @@ export class AuthenticatedUserService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/auth/public';
 
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.getJwtValue()
+    })
+  };
+
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
   }
