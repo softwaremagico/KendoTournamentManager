@@ -14,7 +14,9 @@ export class IconModule {
       .addSvgIcon("shinai", this.setPath(`${this.path}/shinai.svg`))
       .addSvgIcon("team", this.setPath(`${this.path}/team.svg`))
       .addSvgIcon("fight", this.setPath(`${this.path}/fight.svg`))
-      .addSvgIcon("card", this.setPath(`${this.path}/card.svg`));
+      .addSvgIcon("card", this.setPath(`${this.path}/card.svg`))
+      .addSvgIcon("teams-classification", this.setPath(`${this.path}/teams-classification.svg`))
+      .addSvgIcon("competitors-classification", this.setPath(`${this.path}/competitors-classification.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {
