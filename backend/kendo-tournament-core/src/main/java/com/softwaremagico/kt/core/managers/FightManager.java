@@ -47,8 +47,8 @@ public class FightManager {
     }
 
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, boolean random, Integer level) {
-        return createCompleteFightList(tournament, teams, random, level);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level) {
+        return createCompleteFightList(tournament, teams, teamsOrder, level);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
@@ -60,23 +60,23 @@ public class FightManager {
      *
      * @param tournament
      * @param teams
-     * @param random
+     * @param teamsOrder
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, boolean random, Integer level) {
+    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return null;
         }
         final List<Fight> fights = new ArrayList<>();
-        final TeamSelector teamSelector = new TeamSelector(teams);
+        final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
 
-        Team team1 = teamSelector.getTeamWithMoreAdversaries(random);
+        Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
         Fight fight, lastFight = null;
         while (teamSelector.remainFights()) {
-            final Team team2 = teamSelector.getNextAdversary(team1, random);
+            final Team team2 = teamSelector.getNextAdversary(team1, teamsOrder);
             // Team1 has no more adversaries. Use another one.
             if (team2 == null) {
-                team1 = teamSelector.getTeamWithMoreAdversaries(random);
+                team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
                 continue;
             }
             // Remaining fights sometimes repeat team. Align them.

@@ -28,6 +28,7 @@ package com.softwaremagico.kt.core.tests;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.core.tournaments.simple.SimpleTournamentHandler;
@@ -169,14 +170,14 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = simpleTournamentHandler.createSortedFights(tournament, true, 0);
+        List<Fight> tournamentFights = simpleTournamentHandler.createFights(tournament, TeamsOrder.SORTED, true, 0);
         //Check group has been created.
         Assert.assertEquals(simpleTournamentHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
 
         Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
 
-        // Check than teams have not crossed colors.
+        // Checker than teams have not crossed colors.
         for (int i = 0; i < tournamentFights.size() - 1; i++) {
             Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam2(), tournamentFights.get(i).getTeam1());
             Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam1(), tournamentFights.get(i).getTeam2());
