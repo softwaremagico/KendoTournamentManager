@@ -35,12 +35,10 @@ export class FightListComponent implements OnInit {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
       } else {
-        //Return to tournaments for selecting one.
-        this.router.navigate(['/tournaments']);
+        this.goBackToTournament();
       }
     } else {
-      //Return to tournaments for selecting one.
-      this.router.navigate(['/tournaments']);
+      this.goBackToTournament();
     }
   }
 
@@ -132,7 +130,7 @@ export class FightListComponent implements OnInit {
         this.fights = [];
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
-            this.fights.push(...fights)
+            this.fights = fights;
             this.messageService.infoMessage("Fights Created!");
           });
         }

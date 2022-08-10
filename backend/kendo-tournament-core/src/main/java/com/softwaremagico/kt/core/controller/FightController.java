@@ -32,6 +32,7 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
@@ -135,13 +136,13 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO))))));
     }
 
-    public List<FightDTO> createFights(Integer tournamentId, boolean maximizeFights, Integer level) {
+    public List<FightDTO> createFights(Integer tournamentId, TeamsOrder teamsOrder, boolean maximizeFights, Integer level) {
         final Tournament tournament = (tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = selectedManager.createSortedFights(tournament, maximizeFights, level);
+            final List<Fight> createdFights = selectedManager.createFights(tournament, teamsOrder, maximizeFights, level);
             provider.saveAll(createdFights);
             return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
 
