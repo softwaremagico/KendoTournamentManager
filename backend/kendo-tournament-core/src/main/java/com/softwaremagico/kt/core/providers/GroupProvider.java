@@ -52,6 +52,10 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return repository.findByFightsId(fight.getId());
     }
 
+    public Group getGroup(Integer groupId) {
+        return repository.getById(groupId);
+    }
+
     public List<Group> getGroups(Collection<Fight> fights) {
         return repository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toList()));
     }
