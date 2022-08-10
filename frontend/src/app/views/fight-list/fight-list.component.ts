@@ -174,4 +174,12 @@ export class FightListComponent implements OnInit {
     }
     return false;
   }
+
+  showTeamsClassification() {
+
+  }
+
+  showCompetitorsClassification() {
+
+  }
 }
