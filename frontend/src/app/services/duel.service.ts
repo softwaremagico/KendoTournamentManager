@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -15,13 +15,6 @@ export class DuelService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/fights/duels';
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
-    })
-  };
-
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
 
@@ -29,7 +22,7 @@ export class DuelService {
 
   update(duel: Duel): Observable<Duel> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Duel>(url, duel, this.httpOptions)
+    return this.http.put<Duel>(url, duel, this.authenticatedUserService.httpOptions)
       .pipe(
         tap((_updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
         catchError(this.messageService.handleError<Duel>(`updating duel`))

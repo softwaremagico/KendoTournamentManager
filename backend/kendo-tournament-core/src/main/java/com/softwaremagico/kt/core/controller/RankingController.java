@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -27,7 +27,12 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.score.*;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.ScoreType;
 import org.springframework.stereotype.Controller;
 
@@ -36,6 +41,23 @@ import java.util.*;
 @Controller
 public class RankingController {
 
+    private final GroupProvider groupProvider;
+
+    private final GroupConverter groupConverter;
+
+    public RankingController(GroupProvider groupProvider, GroupConverter groupConverter) {
+        this.groupProvider = groupProvider;
+        this.groupConverter = groupConverter;
+    }
+
+    public List<TeamDTO> getTeamsRanking(Integer groupId) {
+        final Group group = groupProvider.getGroup(groupId);
+        if (group == null) {
+            throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
+        }
+        return getTeamsRanking(groupConverter.convert(new GroupConverterRequest(group)));
+    }
+
     public List<TeamDTO> getTeamsRanking(GroupDTO groupDTO) {
         final List<ScoreOfTeam> scores = getTeamsScoreRanking(groupDTO);
         final List<TeamDTO> teamRanking = new ArrayList<>();
@@ -43,6 +65,14 @@ public class RankingController {
             teamRanking.add(score.getTeam());
         }
         return teamRanking;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRanking(Integer groupId) {
+        final Group group = groupProvider.getGroup(groupId);
+        if (group == null) {
+            throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
+        }
+        return getTeamsScoreRanking(groupConverter.convert(new GroupConverterRequest(group)));
     }
 
     public List<ScoreOfTeam> getTeamsScoreRanking(GroupDTO groupDTO) {
@@ -118,6 +148,14 @@ public class RankingController {
             competitorsRanking.add(score.getCompetitor());
         }
         return competitorsRanking;
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Integer groupId) {
+        final Group group = groupProvider.getGroup(groupId);
+        if (group == null) {
+            throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
+        }
+        return getCompetitorsScoreRanking(groupConverter.convert(new GroupConverterRequest(group)));
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRanking(GroupDTO groupDTO) {
