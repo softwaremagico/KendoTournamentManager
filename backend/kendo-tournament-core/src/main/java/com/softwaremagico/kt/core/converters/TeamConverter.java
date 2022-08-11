@@ -50,7 +50,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
     @Override
     public TeamDTO convert(TeamConverterRequest from) {
         final TeamDTO teamDTO = new TeamDTO();
-        BeanUtils.copyProperties(from.getEntity(), teamDTO);
+        BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
         teamDTO.setTournament(tournamentConverter.convert(
                 new TournamentConverterRequest(from.getEntity().getTournament())));
@@ -65,7 +65,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
             return null;
         }
         final Team team = new Team();
-        BeanUtils.copyProperties(to, team);
+        BeanUtils.copyProperties(to, team, ConverterUtils.getNullPropertyNames(to));
         team.setTournament(tournamentConverter.reverse(to.getTournament()));
         team.setMembers(new ArrayList<>());
         to.getMembers().forEach(member -> team.getMembers().add(participantConverter.reverse(member)));

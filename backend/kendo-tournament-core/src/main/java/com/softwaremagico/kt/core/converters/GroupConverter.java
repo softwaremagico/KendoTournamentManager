@@ -52,7 +52,7 @@ public class GroupConverter extends ElementConverter<Group, GroupDTO, GroupConve
     @Override
     public GroupDTO convert(GroupConverterRequest from) {
         final GroupDTO groupDTO = new GroupDTO();
-        BeanUtils.copyProperties(from.getEntity(), groupDTO);
+        BeanUtils.copyProperties(from.getEntity(), groupDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         groupDTO.setTournament(tournamentConverter.convert(
                 new TournamentConverterRequest(from.getEntity().getTournament())));
         groupDTO.setFights(new ArrayList<>());
@@ -73,7 +73,7 @@ public class GroupConverter extends ElementConverter<Group, GroupDTO, GroupConve
             return null;
         }
         final Group group = new Group();
-        BeanUtils.copyProperties(to, group);
+        BeanUtils.copyProperties(to, group, ConverterUtils.getNullPropertyNames(to));
         group.setTournament(tournamentConverter.reverse(to.getTournament()));
         group.setFights(new ArrayList<>());
         to.getFights().forEach(fight -> group.getFights().add(fightConverter.reverse(fight)));
