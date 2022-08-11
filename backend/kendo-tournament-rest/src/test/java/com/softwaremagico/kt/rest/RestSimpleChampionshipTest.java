@@ -33,7 +33,6 @@ import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.score.ScoreOfTeamClassic;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -143,11 +142,6 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
         return objectMapper.readValue(payload, clazz);
-    }
-
-    private <T> List<T> fromJsonList(String payload, Class<T> clazz) throws IOException {
-        return objectMapper.readValue(payload, new TypeReference<>() {
-        });
     }
 
     @BeforeClass
@@ -432,7 +426,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = fromJsonList(createResult.getResponse().getContentAsString(), GroupDTO.class);
+        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
+        });
 
         Assert.assertEquals(tournamentGroups.size(), 1);
 
@@ -444,7 +439,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<ScoreOfTeam> scores = fromJsonList(rankingResult.getResponse().getContentAsString(), ScoreOfTeam.class);
+        List<ScoreOfTeam> scores = objectMapper.readValue(rankingResult.getResponse().getContentAsString(), new TypeReference<>() {
+        });
 
 
         for (int i = 0; i < scores.size() - 1; i++) {
