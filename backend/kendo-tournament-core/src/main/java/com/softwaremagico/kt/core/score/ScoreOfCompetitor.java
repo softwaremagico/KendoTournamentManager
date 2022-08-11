@@ -25,15 +25,18 @@ package com.softwaremagico.kt.core.score;
  */
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
 
-public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor> {
+public class ScoreOfCompetitor {
 
-    private final ParticipantDTO competitor;
+    private ParticipantDTO competitor;
+
+    @JsonIgnore
     protected List<FightDTO> fights;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
@@ -41,6 +44,10 @@ public abstract class ScoreOfCompetitor implements Comparable<ScoreOfCompetitor>
     private Integer duelsDone = null;
     private Integer fightsWon = null;
     private Integer fightsDraw = null;
+
+    public ScoreOfCompetitor() {
+
+    }
 
     public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights) {
         this.competitor = competitor;

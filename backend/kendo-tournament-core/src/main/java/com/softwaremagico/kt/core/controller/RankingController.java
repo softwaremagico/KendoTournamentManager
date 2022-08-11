@@ -24,19 +24,23 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.converters.*;
+import com.softwaremagico.kt.core.converters.models.*;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.*;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.ScoreType;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class RankingController {
@@ -45,9 +49,33 @@ public class RankingController {
 
     private final GroupConverter groupConverter;
 
-    public RankingController(GroupProvider groupProvider, GroupConverter groupConverter) {
+    private final FightProvider fightProvider;
+
+    private final TournamentConverter tournamentConverter;
+
+    private final FightConverter fightConverter;
+
+    private final TeamProvider teamProvider;
+
+    private final TeamConverter teamConverter;
+
+    private final TournamentProvider tournamentProvider;
+
+    private final DuelConverter duelConverter;
+
+    public RankingController(GroupProvider groupProvider, GroupConverter groupConverter, FightProvider fightProvider,
+                             TournamentConverter tournamentConverter, FightConverter fightConverter,
+                             TeamProvider teamProvider, TeamConverter teamConverter, TournamentProvider tournamentProvider,
+                             DuelConverter duelConverter) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
+        this.fightProvider = fightProvider;
+        this.tournamentConverter = tournamentConverter;
+        this.fightConverter = fightConverter;
+        this.teamProvider = teamProvider;
+        this.teamConverter = teamConverter;
+        this.tournamentProvider = tournamentProvider;
+        this.duelConverter = duelConverter;
     }
 
     public List<TeamDTO> getTeamsRanking(Integer groupId) {
@@ -67,7 +95,7 @@ public class RankingController {
         return teamRanking;
     }
 
-    public List<ScoreOfTeam> getTeamsScoreRanking(Integer groupId) {
+    public List<ScoreOfTeam> getTeamsScoreRankingFromGroup(Integer groupId) {
         final Group group = groupProvider.getGroup(groupId);
         if (group == null) {
             throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
@@ -75,15 +103,36 @@ public class RankingController {
         return getTeamsScoreRanking(groupConverter.convert(new GroupConverterRequest(group)));
     }
 
-    public List<ScoreOfTeam> getTeamsScoreRanking(GroupDTO groupDTO) {
-        final List<TeamDTO> teamsOfFights = groupDTO.getTeams();
-        final List<ScoreOfTeam> scores = new ArrayList<>();
-        for (final TeamDTO team : teamsOfFights) {
-            scores.add(ScoreOfTeam.getScoreOfTeam(team, groupDTO.getFights(), groupDTO.getUnties()));
-        }
-        Collections.sort(scores);
+    public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(Integer tournamentId) {
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+                new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
+        return getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+    }
 
+    public List<ScoreOfTeam> getTeamsScoreRanking(GroupDTO groupDTO) {
+        return getTeamsScoreRanking(groupDTO.getTournament().getTournamentScore().getScoreType(),
+                groupDTO.getTeams(), groupDTO.getFights(), groupDTO.getUnties());
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<TeamDTO> teams, List<FightDTO> fights, List<DuelDTO> unties) {
+        final List<ScoreOfTeam> scores = new ArrayList<>();
+        for (final TeamDTO team : teams) {
+            scores.add(new ScoreOfTeam(team, fights, unties));
+        }
+        sortTeamsScores(type, scores);
         return scores;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRanking(TournamentDTO tournamentDTO) {
+        final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
+        return getTeamsScoreRanking(tournamentDTO.getTournamentScore().getScoreType(),
+                teamConverter.convertAll(teamProvider.getAll(tournament).stream()
+                        .map(TeamConverterRequest::new).collect(Collectors.toList())),
+                fightConverter.convertAll(fightProvider.getFights(tournament).stream()
+                        .map(FightConverterRequest::new).collect(Collectors.toList())),
+                duelConverter.convertAll(groupProvider.getGroups(tournament).stream()
+                        .flatMap(group -> group.getUnties().stream())
+                        .collect(Collectors.toList()).stream().map(DuelConverterRequest::new).collect(Collectors.toList())));
     }
 
     /**
@@ -101,7 +150,8 @@ public class RankingController {
             // Put team in position.
             teamsByPosition.get(position).add(scores.get(i).getTeam());
             // Different score with next team.
-            if ((i < scores.size() - 1) && scores.get(i).compareTo(scores.get(i + 1)) != 0) {
+            if ((i < scores.size() - 1) && getTeamsSorter(groupDTO.getTournament().getTournamentScore().getScoreType())
+                    .compare(scores.get(i), scores.get(i + 1)) != 0) {
                 position++;
             }
         }
@@ -140,9 +190,9 @@ public class RankingController {
         final Set<ParticipantDTO> competitors = getParticipants(groupDTO.getTeams());
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final ParticipantDTO competitor : competitors) {
-            scores.add(getScoreOfCompetitor(competitor, groupDTO));
+            scores.add(new ScoreOfCompetitor(competitor, groupDTO.getFights()));
         }
-        Collections.sort(scores);
+        sortCompetitorsScores(groupDTO.getTournament().getTournamentScore().getScoreType(), scores);
         final List<ParticipantDTO> competitorsRanking = new ArrayList<>();
         for (final ScoreOfCompetitor score : scores) {
             competitorsRanking.add(score.getCompetitor());
@@ -150,7 +200,7 @@ public class RankingController {
         return competitorsRanking;
     }
 
-    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Integer groupId) {
+    public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromGroup(Integer groupId) {
         final Group group = groupProvider.getGroup(groupId);
         if (group == null) {
             throw new GroupNotFoundException(this.getClass(), "Group with id" + groupId + " not found!");
@@ -159,12 +209,29 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRanking(GroupDTO groupDTO) {
-        final Set<ParticipantDTO> competitors = getParticipants(groupDTO.getTeams());
+        return getCompetitorsScoreRanking(getParticipants(groupDTO.getTeams()), groupDTO.getFights(), groupDTO.getTournament());
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+                new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
+        return getCompetitorsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(TournamentDTO tournamentDTO) {
+        return getCompetitorsScoreRanking(getParticipants(teamConverter.convertAll(teamProvider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
+                        .map(TeamConverterRequest::new).collect(Collectors.toList()))),
+                fightConverter.convertAll(fightProvider.getFights(tournamentConverter.reverse(tournamentDTO)).stream()
+                        .map(FightConverterRequest::new).collect(Collectors.toList())),
+                tournamentDTO);
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Set<ParticipantDTO> competitors, List<FightDTO> fights, TournamentDTO tournamentDTO) {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final ParticipantDTO competitor : competitors) {
-            scores.add(getScoreOfCompetitor(competitor, groupDTO));
+            scores.add(new ScoreOfCompetitor(competitor, fights));
         }
-        Collections.sort(scores);
+        sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
         return scores;
     }
 
@@ -202,41 +269,6 @@ public class RankingController {
         return allCompetitors;
     }
 
-    /**
-     * Gets the more restrictive score for obtaining the ranking.
-     *
-     * @param competitor
-     * @param group
-     * @return
-     */
-    private static ScoreOfCompetitor getScoreOfCompetitor(ParticipantDTO competitor, GroupDTO group) {
-        // If one fight is classic, use classic score.
-        if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.CLASSIC)) {
-            return new ScoreOfCompetitorClassic(competitor, group.getFights());
-        }
-
-        // If one fight is european, use european score
-        if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.EUROPEAN)) {
-            return new ScoreOfCompetitorEuropean(competitor, group.getFights());
-        }
-
-        // If one fight is european, use european score
-        if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.INTERNATIONAL)) {
-            return new ScoreOfCompetitorInternational(competitor, group.getFights());
-        }
-
-        // If one fight is winOverDraw, use winOverDraw score
-        if (group.getTournament().getTournamentScore().getScoreType().equals(ScoreType.WIN_OVER_DRAWS)) {
-            return new ScoreOfCompetitorWinOverDraws(competitor, group.getFights());
-        }
-
-        return new ScoreOfCompetitorCustom(competitor, group.getFights());
-    }
-
-    public static ScoreOfCompetitor getScoreRanking(ParticipantDTO competitor, GroupDTO group) {
-        return getScoreOfCompetitor(competitor, group);
-    }
-
     public Integer getOrder(GroupDTO group, TeamDTO team) {
         final List<TeamDTO> ranking = getTeamsRanking(group);
 
@@ -255,5 +287,51 @@ public class RankingController {
             }
         }
         return null;
+    }
+
+    private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores) {
+        if (scores == null) {
+            return;
+        }
+        scores.sort(getTeamsSorter(type));
+    }
+
+    private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type) {
+        switch (type) {
+            case CUSTOM:
+                return new ScoreOfTeamCustom();
+            case EUROPEAN:
+                return new ScoreOfTeamEuropean();
+            case INTERNATIONAL:
+                return new ScoreOfTeamInternational();
+            case WIN_OVER_DRAWS:
+                return new ScoreOfTeamWinOverDraws();
+            case CLASSIC:
+            default:
+                return new ScoreOfTeamClassic();
+        }
+    }
+
+    private static void sortCompetitorsScores(ScoreType type, List<ScoreOfCompetitor> scores) {
+        if (scores == null) {
+            return;
+        }
+        scores.sort(getCompetitorsSorter(type));
+    }
+
+    private static Comparator<ScoreOfCompetitor> getCompetitorsSorter(ScoreType type) {
+        switch (type) {
+            case CUSTOM:
+                return new ScoreOfCompetitorCustom();
+            case EUROPEAN:
+                return new ScoreOfCompetitorEuropean();
+            case INTERNATIONAL:
+                return new ScoreOfCompetitorInternational();
+            case WIN_OVER_DRAWS:
+                return new ScoreOfCompetitorWinOverDraws();
+            case CLASSIC:
+            default:
+                return new ScoreOfCompetitorClassic();
+        }
     }
 }

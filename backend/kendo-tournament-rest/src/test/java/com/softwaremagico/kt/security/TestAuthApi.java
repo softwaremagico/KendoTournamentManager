@@ -166,7 +166,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .andReturn();
 
         //With JWT header, must return 200.
-        MvcResult jwtResult = this.mockMvc
+        this.mockMvc
                 .perform(get("/dummy/test").contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -181,7 +181,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         goodRequest.setLastName(USER_LAST_NAME);
         goodRequest.setPassword(USER_PASSWORD);
 
-        MvcResult createResult = this.mockMvc
+        this.mockMvc
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(goodRequest))
