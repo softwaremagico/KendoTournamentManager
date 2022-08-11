@@ -25,52 +25,32 @@ package com.softwaremagico.kt.core.score;
  */
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class ScoreOfTeamInternational implements Comparator<ScoreOfTeam> {
 
     @Override
     public int compare(ScoreOfTeam scoreOfTeam1, ScoreOfTeam scoreOfTeam2) {
-        if (scoreOfTeam1.getLevel() > scoreOfTeam2.getLevel()) {
-            return -1;
+        if (!Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
+            return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
         }
 
-        if (scoreOfTeam1.getLevel() < scoreOfTeam2.getLevel()) {
-            return 1;
+        if (!Objects.equals(scoreOfTeam1.getWonFights(), scoreOfTeam2.getWonFights())) {
+            return scoreOfTeam2.getWonFights().compareTo(scoreOfTeam1.getWonFights());
         }
 
-        if (scoreOfTeam1.getWonFights() > scoreOfTeam2.getWonFights()) {
-            return -1;
+        if (!Objects.equals(scoreOfTeam1.getDrawFights(), scoreOfTeam2.getDrawFights())) {
+            return scoreOfTeam2.getDrawFights().compareTo(scoreOfTeam1.getDrawFights());
         }
 
-        if (scoreOfTeam1.getWonFights() < scoreOfTeam2.getWonFights()) {
-            return 1;
+        if (!Objects.equals(scoreOfTeam1.getWonDuels(), scoreOfTeam2.getWonDuels())) {
+            return scoreOfTeam2.getWonDuels().compareTo(scoreOfTeam1.getWonDuels());
         }
 
-        if (scoreOfTeam1.getDrawFights() > scoreOfTeam2.getDrawFights()) {
-            return -1;
-        }
-
-        if (scoreOfTeam1.getDrawFights() < scoreOfTeam2.getDrawFights()) {
-            return 1;
-        }
-
-        if (scoreOfTeam1.getWonDuels() > scoreOfTeam2.getWonDuels()) {
-            return -1;
-        }
-
-        if (scoreOfTeam1.getWonDuels() < scoreOfTeam2.getWonDuels()) {
-            return 1;
-        }
-
-        if (scoreOfTeam1.getHits() > scoreOfTeam2.getHits()) {
-            return -1;
-        }
-
-        if (scoreOfTeam1.getHits() < scoreOfTeam2.getHits()) {
-            return 1;
+        if (!Objects.equals(scoreOfTeam1.getHits(), scoreOfTeam2.getHits())) {
+            return scoreOfTeam2.getHits().compareTo(scoreOfTeam1.getHits());
         }
 
         return scoreOfTeam2.getGoldenPoints().compareTo(scoreOfTeam1.getGoldenPoints());
-
     }
 }

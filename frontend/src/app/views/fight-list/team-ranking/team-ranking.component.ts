@@ -32,4 +32,7 @@ export class TeamRankingComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  downloadPDF() {
+
+  }
 }

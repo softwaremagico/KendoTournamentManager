@@ -1,3 +1,7 @@
+.table-container {
+  overflow: auto;
+}
+
 .team-ranking-table {
   margin: 2vw;
 }
@@ -26,4 +30,9 @@
 
 .mat-raised-button {
   width: 150px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
 }
