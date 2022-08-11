@@ -36,7 +36,7 @@ public class ClubConverter extends ElementConverter<Club, ClubDTO, ClubConverter
     @Override
     public ClubDTO convert(ClubConverterRequest from) {
         final ClubDTO clubDTO = new ClubDTO();
-        BeanUtils.copyProperties(from.getEntity(), clubDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
+        BeanUtils.copyProperties(from.getEntity(), clubDTO);
         return clubDTO;
     }
 
@@ -46,7 +46,7 @@ public class ClubConverter extends ElementConverter<Club, ClubDTO, ClubConverter
             return null;
         }
         final Club club = new Club();
-        BeanUtils.copyProperties(to, club, ConverterUtils.getNullPropertyNames(to));
+        BeanUtils.copyProperties(to, club);
         return club;
     }
 }

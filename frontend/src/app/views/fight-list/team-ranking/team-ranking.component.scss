@@ -1,0 +1,29 @@
+.team-ranking-table {
+  margin: 2vw;
+}
+
+.team-ranking-header {
+  max-width: 20vw;
+  min-width: 100px;
+  width: 20vw;
+  text-align: center;
+  font-size: 130%;
+  padding-bottom: 10px;
+  color: #001239;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-ranking-value {
+  text-align: center;
+  padding: 10px;
+  color: #001239;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
