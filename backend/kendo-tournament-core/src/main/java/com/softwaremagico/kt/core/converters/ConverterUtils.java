@@ -8,45 +8,35 @@ package com.softwaremagico.kt.core.converters;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *
+ *  
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ *  
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.ClubDTO;
-import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
-import com.softwaremagico.kt.persistence.entities.Club;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
-@Component
-public class ClubConverter extends ElementConverter<Club, ClubDTO, ClubConverterRequest> {
+import java.beans.FeatureDescriptor;
+import java.util.stream.Stream;
 
-    @Override
-    public ClubDTO convert(ClubConverterRequest from) {
-        final ClubDTO clubDTO = new ClubDTO();
-        BeanUtils.copyProperties(from.getEntity(), clubDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        return clubDTO;
-    }
+public class ConverterUtils {
 
-    @Override
-    public Club reverse(ClubDTO to) {
-        if (to == null) {
-            return null;
-        }
-        final Club club = new Club();
-        BeanUtils.copyProperties(to, club, ConverterUtils.getNullPropertyNames(to));
-        return club;
+    public static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper wrappedSource = new BeanWrapperImpl(source);
+        return Stream.of(wrappedSource.getPropertyDescriptors())
+                .map(FeatureDescriptor::getName)
+                .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
+                .toArray(String[]::new);
     }
 }

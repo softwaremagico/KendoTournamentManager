@@ -36,7 +36,7 @@ public class TournamentScoreConverter extends ElementConverter<TournamentScore, 
     @Override
     public TournamentScoreDTO convert(TournamentScoreConverterRequest from) {
         final TournamentScoreDTO tournamentScoreDTO = new TournamentScoreDTO();
-        BeanUtils.copyProperties(from.getEntity(), tournamentScoreDTO);
+        BeanUtils.copyProperties(from.getEntity(), tournamentScoreDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         return tournamentScoreDTO;
     }
 
@@ -46,7 +46,7 @@ public class TournamentScoreConverter extends ElementConverter<TournamentScore, 
             return null;
         }
         final TournamentScore tournamentScore = new TournamentScore();
-        BeanUtils.copyProperties(to, tournamentScore);
+        BeanUtils.copyProperties(to, tournamentScore, ConverterUtils.getNullPropertyNames(to));
         return tournamentScore;
     }
 }
