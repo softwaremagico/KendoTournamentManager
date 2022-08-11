@@ -28,42 +28,36 @@ package com.softwaremagico.kt.core.score;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
 
     @Override
     public int compare(ScoreOfCompetitor scoreOfCompetitor1, ScoreOfCompetitor scoreOfCompetitor2) {
         if (scoreOfCompetitor1.fights.size() > 0) {
-            if (scoreOfCompetitor1.getDuelsWon() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
-                    + scoreOfCompetitor1.getDuelsDraw()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getDuelsWon()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDuelsDraw()
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+                    + scoreOfCompetitor1.getDrawDuels()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
                     * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return -1;
             }
 
-            if (scoreOfCompetitor1.getDuelsWon() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() +
-                    scoreOfCompetitor1.getDuelsDraw()
-                            * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getDuelsWon()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDuelsDraw()
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() +
+                    scoreOfCompetitor1.getDrawDuels()
+                            * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
                     * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return 1;
             }
 
-            if (scoreOfCompetitor1.getHits() > scoreOfCompetitor2.getHits()) {
-                return -1;
-            }
-            if (scoreOfCompetitor1.getHits() < scoreOfCompetitor2.getHits()) {
-                return 1;
+            if (!Objects.equals(scoreOfCompetitor1.getHits(), scoreOfCompetitor2.getHits())) {
+                return scoreOfCompetitor2.getHits().compareTo(scoreOfCompetitor1.getHits());
             }
 
-            // More duels done with same scoreOfCompetitor is negative.
-            if (scoreOfCompetitor1.getDuelsDone() > scoreOfCompetitor2.getDuelsDone()) {
-                return 1;
-            }
-
-            if (scoreOfCompetitor1.getDuelsDone() < scoreOfCompetitor2.getDuelsDone()) {
-                return -1;
+            // More duels done with same score is negative.
+            if (!Objects.equals(scoreOfCompetitor1.getDuelsDone(), scoreOfCompetitor2.getDuelsDone())) {
+                return scoreOfCompetitor2.getDuelsDone().compareTo(scoreOfCompetitor1.getDuelsDone());
             }
         }
 
