@@ -1,22 +1,27 @@
-<table class="team-ranking-table">
-  <tr>
-    <th class="team-ranking-header">{{'team' | translate}}</th>
-    <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
-    <th class="team-ranking-header">{{'fightsDraw' | translate}}</th>
-    <th class="team-ranking-header">{{'duelsWon' | translate}}</th>
-    <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
-    <th class="team-ranking-header">{{'histsWon' | translate}}</th>
-  </tr>
-  <tr *ngFor="let teamScore of teamScores">
-    <td class="team-ranking-value">{{teamScore.team.name}}</td>
-    <td class="team-ranking-value">{{teamScore.wonFights}}</td>
-    <td class="team-ranking-value">{{teamScore.drawFights}}</td>
-    <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
-    <td class="team-ranking-value">{{teamScore.drawDuels}}</td>
-    <td class="team-ranking-value">{{teamScore.hits}}</td>
-  </tr>
-</table>
+<div class="table-container">
+  <table class="team-ranking-table">
+    <tr>
+      <th class="team-ranking-header">{{'team' | translate}}</th>
+      <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
+      <th class="team-ranking-header">{{'fightsDraw' | translate}}</th>
+      <th class="team-ranking-header">{{'duelsWon' | translate}}</th>
+      <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
+      <th class="team-ranking-header">{{'histsWon' | translate}}</th>
+    </tr>
+    <tr *ngFor="let teamScore of teamScores">
+      <td class="team-ranking-value">{{teamScore.team.name}}</td>
+      <td class="team-ranking-value">{{teamScore.wonFights}}</td>
+      <td class="team-ranking-value">{{teamScore.drawFights}}</td>
+      <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
+      <td class="team-ranking-value">{{teamScore.drawDuels}}</td>
+      <td class="team-ranking-value">{{teamScore.hits}}</td>
+    </tr>
+  </table>
+</div>
 <div mat-dialog-actions class="button-container">
+  <button mat-raised-button (click)="downloadPDF()" mat-flat-button>
+    <mat-icon>file_download</mat-icon>
+    {{'download' | translate}}
+  </button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
 </div>
-

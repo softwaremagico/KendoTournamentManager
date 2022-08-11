@@ -45,7 +45,7 @@ public class ScoreOfTeam {
     private Integer drawFights = null;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
-    private Integer goldenPoint = null;
+    private Integer goldenPoints = null;
     private Integer hits = null;
     private Integer level = null;
 
@@ -57,6 +57,7 @@ public class ScoreOfTeam {
         this.team = team;
         this.fights = fights;
         this.unties = unties;
+        update();
     }
 
     public TeamDTO getTeam() {
@@ -70,83 +71,115 @@ public class ScoreOfTeam {
         return null;
     }
 
-    public Integer getLevel() {
-        if (level == null) {
-            level = fights.stream().filter(fightDTO -> fightDTO.getTeam1().equals(team) || fightDTO.getTeam2().equals(team))
-                    .map(FightDTO::getLevel).max(Integer::compareTo).orElse(0);
+    public void update() {
+        wonFights = null;
+        drawFights = null;
+        wonDuels = null;
+        drawDuels = null;
+        goldenPoints = null;
+        hits = null;
+        level = null;
+        setLevel();
+        setWonDuels();
+        setDrawDuels();
+        setWonFights();
+        setDrawFights();
+        setGoldenPoints();
+        setHits();
+    }
+
+    public void setLevel() {
+        level = fights.stream().filter(fightDTO -> fightDTO.getTeam1().equals(team) || fightDTO.getTeam2().equals(team))
+                .map(FightDTO::getLevel).max(Integer::compareTo).orElse(0);
+    }
+
+    public void setWonFights() {
+        wonFights = 0;
+        for (final FightDTO fight : fights) {
+            // if (fight.isOver()) {
+            final TeamDTO winner = fight.getWinner();
+            if (winner != null && winner.equals(team)) {
+                wonFights++;
+            }
+            //}
         }
-        return level;
+    }
+
+    public void setDrawFights() {
+        drawFights = 0;
+        fights.forEach(fight -> {
+            if ((Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))) {
+                if (fight.isOver() && fight.isDrawFight()) {
+                    drawFights++;
+                }
+            }
+        });
+    }
+
+    public void setWonDuels() {
+        wonDuels = 0;
+        fights.forEach(fight -> wonDuels += fight.getWonDuels(team));
+    }
+
+    public void setDrawDuels() {
+        drawDuels = 0;
+        fights.forEach(fight -> {
+            //  if (fight.isOver()) {
+            drawDuels += fight.getDrawDuels(team);
+            // }
+        });
+    }
+
+    public void setHits() {
+        hits = 0;
+        fights.forEach(fight -> hits += fight.getScore(team));
+    }
+
+    public void setGoldenPoints() {
+        goldenPoints = 0;
+        unties.forEach(duel -> {
+            if ((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1) {
+                goldenPoints++;
+            } else if ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1) {
+                goldenPoints++;
+            }
+        });
+    }
+
+    public List<FightDTO> getFights() {
+        return fights;
+    }
+
+    public List<DuelDTO> getUnties() {
+        return unties;
     }
 
     public Integer getWonFights() {
-        if (wonFights == null) {
-            wonFights = 0;
-            for (final FightDTO fight : fights) {
-                if (fight.isOver()) {
-                    final TeamDTO winner = fight.getWinner();
-                    if (winner != null && winner.equals(team)) {
-                        wonFights++;
-                    }
-                }
-            }
-        }
         return wonFights;
     }
 
     public Integer getDrawFights() {
-        if (drawFights == null) {
-            drawFights = 0;
-            fights.forEach(fight -> {
-                if ((Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))) {
-                    if (fight.isOver() && fight.isDrawFight()) {
-                        drawFights++;
-                    }
-                }
-            });
-        }
         return drawFights;
     }
 
     public Integer getWonDuels() {
-        if (wonDuels == null) {
-            wonDuels = 0;
-            fights.forEach(fight -> wonDuels += fight.getWonDuels(team));
-        }
         return wonDuels;
     }
 
     public Integer getDrawDuels() {
-        if (drawDuels == null) {
-            drawDuels = 0;
-            fights.forEach(fight -> {
-                if (fight.isOver()) {
-                    drawDuels += fight.getDrawDuels(team);
-                }
-            });
-        }
         return drawDuels;
     }
 
+    public Integer getGoldenPoints() {
+        return goldenPoints;
+    }
+
     public Integer getHits() {
-        if (hits == null) {
-            hits = 0;
-            fights.forEach(fight -> hits += fight.getScore(team));
-        }
         return hits;
     }
 
-    public Integer getGoldenPoints() {
-        if (goldenPoint == null) {
-            goldenPoint = 0;
-            unties.forEach(duel -> {
-                if ((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1) {
-                    goldenPoint++;
-                } else if ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1) {
-                    goldenPoint++;
-                }
-            });
-        }
-        return goldenPoint;
+    public Integer getLevel() {
+        return level;
     }
 
     @Override
