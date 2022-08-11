@@ -77,7 +77,7 @@
   "PasswordLabel": "Contrasenya",
   "DatabaseLabel": "base de dades",
   "TournamentLabel": "Lliga",
-  "CompetitorLabel": "Competidor",
+  "competitor": "Competidor",
   "CompetitorMenu": "Competidor",
   "RoleLabel": "Rol",
   "AccreditationPDFButton": "Acreditació",
