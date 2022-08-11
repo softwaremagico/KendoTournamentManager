@@ -42,8 +42,8 @@ public class ScoreOfCompetitor {
     private Integer drawDuels = null;
     private Integer hits = null;
     private Integer duelsDone = null;
-    private Integer fightsWon = null;
-    private Integer fightsDraw = null;
+    private Integer wonFights = null;
+    private Integer drawFights = null;
 
     public ScoreOfCompetitor() {
 
@@ -52,81 +52,101 @@ public class ScoreOfCompetitor {
     public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights) {
         this.competitor = competitor;
         this.fights = fights;
+        update();
+    }
+
+    public void update() {
+        wonFights = null;
+        drawFights = null;
+        wonDuels = null;
+        drawDuels = null;
+        hits = null;
+        setDuelsWon();
+        setDuelsDraw();
+        setDuelsDone();
+        setFightsWon();
+        setFightsDraw();
+        setHits();
     }
 
     public ParticipantDTO getCompetitor() {
         return competitor;
     }
 
-    public Integer getDuelsDone() {
-        if (duelsDone == null) {
-            duelsDone = 0;
-            fights.forEach(fight -> duelsDone += fight.getDuels(competitor).size());
-        }
-        return duelsDone;
+    public void setDuelsDone() {
+        duelsDone = 0;
+        fights.forEach(fight -> duelsDone += fight.getDuels(competitor).size());
     }
 
-    public Integer getDuelsWon() {
-        if (wonDuels == null) {
-            wonDuels = 0;
-            fights.forEach(fight -> wonDuels += fight.getScore(competitor));
+    public void setDuelsWon() {
+        wonDuels = 0;
+        fights.forEach(fight -> wonDuels += fight.getScore(competitor));
+    }
+
+    public void setFightsWon() {
+        wonFights = 0;
+        for (final FightDTO fight : fights) {
+            if (fight.isWon(competitor)) {
+                wonFights++;
+            }
         }
+    }
+
+    public void setFightsDraw() {
+        drawFights = 0;
+        for (final FightDTO fight : fights) {
+            if (fight.isOver()) {
+                if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
+                        || fight.getTeam2().isMember(competitor))) {
+                    drawFights++;
+                }
+            }
+        }
+    }
+
+    public void setDuelsDraw() {
+        drawDuels = 0;
+        for (final FightDTO fight : fights) {
+            if (fight.isOver()) {
+                drawDuels += fight.getDrawDuels(competitor);
+            }
+        }
+    }
+
+    public void setHits() {
+        hits = 0;
+        for (final FightDTO fight : fights) {
+            hits += fight.getScore(competitor);
+        }
+    }
+
+    public Integer getWonDuels() {
         return wonDuels;
     }
 
-    public Integer getFightsWon() {
-        if (fightsWon == null) {
-            fightsWon = 0;
-            for (final FightDTO fight : fights) {
-                if (fight.isWon(competitor)) {
-                    fightsWon++;
-                }
-            }
-        }
-        return fightsWon;
-    }
-
-    public Integer getFightsDraw() {
-        if (fightsDraw == null) {
-            fightsDraw = 0;
-            for (final FightDTO fight : fights) {
-                if (fight.isOver()) {
-                    if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
-                            || fight.getTeam2().isMember(competitor))) {
-                        fightsDraw++;
-                    }
-                }
-            }
-        }
-        return fightsDraw;
-
-    }
-
-    public Integer getDuelsDraw() {
-        if (drawDuels == null) {
-            drawDuels = 0;
-            for (final FightDTO fight : fights) {
-                if (fight.isOver()) {
-                    drawDuels += fight.getDrawDuels(competitor);
-                }
-            }
-        }
+    public Integer getDrawDuels() {
         return drawDuels;
     }
 
     public Integer getHits() {
-        if (hits == null) {
-            hits = 0;
-            for (final FightDTO fight : fights) {
-                hits += fight.getScore(competitor);
-            }
-        }
         return hits;
+    }
+
+    public Integer getDuelsDone() {
+        return duelsDone;
+    }
+
+    public Integer getWonFights() {
+        return wonFights;
+    }
+
+    public Integer getDrawFights() {
+        return drawFights;
     }
 
     @Override
     public String toString() {
-        return NameUtils.getLastnameName(competitor) + " D:" + getDuelsWon() + "/" + getDuelsDraw() + ", H:" + getHits();
+        return NameUtils.getLastnameName(competitor) + " D:" + getWonDuels() + "/" + getDrawDuels() + ", H:" + getHits();
     }
 
 }

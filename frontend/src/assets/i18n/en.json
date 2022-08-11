@@ -70,7 +70,6 @@
   "PasswordLabel": "Password",
   "DatabaseLabel": "Database",
   "TournamentLabel": "League",
-  "CompetitorLabel": "Competitor",
   "CompetitorMenu": "Competitor",
   "RoleLabel": "Role",
   "AccreditationPDFButton": "Accreditation",
@@ -488,6 +487,7 @@
   "hits": "Score",
   "fights": "Matches",
   "team": "Team",
-  "download": "Download"
+  "download": "Download",
+  "competitor": "Competitor"
 }
 

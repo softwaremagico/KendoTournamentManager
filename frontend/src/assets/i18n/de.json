@@ -75,7 +75,7 @@
   "PasswordLabel": "Passwort",
   "DatabaseLabel": "Datenbank",
   "TournamentLabel": "Wettbewerb",
-  "CompetitorLabel": "Teilnehmer",
+  "competitor": "Teilnehmer",
   "CompetitorMenu": "Teilnehmer",
   "RoleLabel": "Rolle",
   "AccreditationPDFButton": "Akkreditierung",

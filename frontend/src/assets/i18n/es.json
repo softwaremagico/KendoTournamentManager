@@ -71,7 +71,7 @@
   "PasswordLabel": "Contraseña",
   "DatabaseLabel": "Base de Datos",
   "TournamentLabel": "Liga",
-  "CompetitorLabel": "Competidor",
+  "competitor": "Competidor",
   "CompetitorMenu": "Competidor",
   "RoleLabel": "Rol",
   "AccreditationPDFButton": "Acreditación",

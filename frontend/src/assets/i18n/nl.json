@@ -75,7 +75,7 @@
   "PasswordLabel": "Wachtwoord",
   "DatabaseLabel": "Database",
   "TournamentLabel": "Poule",
-  "CompetitorLabel": "Deelnemer",
+  "competitor": "Deelnemer",
   "CompetitorMenu": "Deelnemer",
   "RoleLabel": "Rol",
   "AccreditationPDFButton": "Bewijs van deelname",
