@@ -48,7 +48,7 @@ public class RoleConverter extends ElementConverter<Role, RoleDTO, RoleConverter
     @Override
     public RoleDTO convert(RoleConverterRequest from) {
         final RoleDTO roleDTO = new RoleDTO();
-        BeanUtils.copyProperties(from.getEntity(), roleDTO);
+        BeanUtils.copyProperties(from.getEntity(), roleDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         roleDTO.setTournament(tournamentConverter.convert(
                 new TournamentConverterRequest(from.getEntity().getTournament())));
         roleDTO.setParticipant(participantConverter.convert(
@@ -62,7 +62,7 @@ public class RoleConverter extends ElementConverter<Role, RoleDTO, RoleConverter
             return null;
         }
         final Role role = new Role();
-        BeanUtils.copyProperties(to, role);
+        BeanUtils.copyProperties(to, role, ConverterUtils.getNullPropertyNames(to));
         role.setTournament(tournamentConverter.reverse(to.getTournament()));
         role.setParticipant(participantConverter.reverse(to.getParticipant()));
         return role;

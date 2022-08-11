@@ -46,7 +46,7 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
     @Override
     public TournamentDTO convert(TournamentConverterRequest from) {
         final TournamentDTO tournamentDTO = new TournamentDTO();
-        BeanUtils.copyProperties(from.getEntity(), tournamentDTO);
+        BeanUtils.copyProperties(from.getEntity(), tournamentDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         try {
             if (from.getEntity().getTournamentScore() != null) {
                 tournamentDTO.setTournamentScore(tournamentScoreConverter.convert(
@@ -64,7 +64,7 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
             return null;
         }
         final Tournament tournament = new Tournament();
-        BeanUtils.copyProperties(to, tournament);
+        BeanUtils.copyProperties(to, tournament, ConverterUtils.getNullPropertyNames(to));
         tournament.setTournamentScore(tournamentScoreConverter.reverse(to.getTournamentScore()));
         return tournament;
     }
