@@ -472,7 +472,8 @@
   "deniedUserError": "Usuari o contrasenya invàlids",
   "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
   "userCorrectMessage": "Usuari registrat correctament.",
-  "wizard": "Assistent"
+  "wizard": "Assistent",
+  "download": "Descarregar"
 }
 
 
