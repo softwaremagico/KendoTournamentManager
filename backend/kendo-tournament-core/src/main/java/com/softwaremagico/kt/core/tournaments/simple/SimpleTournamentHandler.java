@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.tournaments.simple;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
@@ -33,7 +34,6 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
-import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.Level;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -55,15 +55,18 @@ public class SimpleTournamentHandler implements ITournamentManager {
     private final TeamProvider teamProvider;
     private final GroupConverter groupConverter;
 
+    private final RankingController rankingController;
+
 
     @Autowired
     public SimpleTournamentHandler(GroupProvider groupProvider, FightManager fightManager, FightProvider fightProvider,
-                                   TeamProvider teamProvider, GroupConverter groupConverter) {
+                                   TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
         this.groupProvider = groupProvider;
         this.fightManager = fightManager;
         this.fightProvider = fightProvider;
         this.teamProvider = teamProvider;
         this.groupConverter = groupConverter;
+        this.rankingController = rankingController;
     }
 
     protected Group getGroup(Tournament tournament) {
@@ -248,8 +251,8 @@ public class SimpleTournamentHandler implements ITournamentManager {
 
     @Override
     public boolean hasDrawScore(Group group) {
-        final Ranking ranking = new Ranking(groupConverter.convert(new GroupConverterRequest(group)));
-        final List<TeamDTO> teamsInDraw = ranking.getFirstTeamsWithDrawScore(group.getNumberOfWinners());
+        final List<TeamDTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
+                groupConverter.convert(new GroupConverterRequest(group)), group.getNumberOfWinners());
         return (teamsInDraw != null);
     }
 }

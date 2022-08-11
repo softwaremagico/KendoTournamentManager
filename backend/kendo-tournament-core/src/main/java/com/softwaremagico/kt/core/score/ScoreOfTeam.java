@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.score;
  */
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
@@ -33,17 +34,24 @@ import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
+public class ScoreOfTeam {
 
-    private final TeamDTO team;
-    private final List<FightDTO> fights;
-    private final List<DuelDTO> unties;
+    private TeamDTO team;
+    @JsonIgnore
+    private List<FightDTO> fights;
+    @JsonIgnore
+    private List<DuelDTO> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
     private Integer goldenPoint = null;
     private Integer hits = null;
+    private Integer level = null;
+
+    public ScoreOfTeam() {
+
+    }
 
     public ScoreOfTeam(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
         this.team = team;
@@ -60,6 +68,14 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
             return team.getTournament();
         }
         return null;
+    }
+
+    public Integer getLevel() {
+        if (level == null) {
+            level = fights.stream().filter(fightDTO -> fightDTO.getTeam1().equals(team) || fightDTO.getTeam2().equals(team))
+                    .map(FightDTO::getLevel).max(Integer::compareTo).orElse(0);
+        }
+        return level;
     }
 
     public Integer getWonFights() {
@@ -134,31 +150,10 @@ public abstract class ScoreOfTeam implements Comparable<ScoreOfTeam> {
     }
 
     @Override
-    public abstract int compareTo(ScoreOfTeam o);
-
-    @Override
     public String toString() {
         final StringBuilder text = new StringBuilder(team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
                 + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits());
-        for (int i = 0; i < getGoldenPoints(); i++) {
-            text.append("*");
-        }
+        text.append("*".repeat(Math.max(0, getGoldenPoints())));
         return text + "\n";
-    }
-
-    public static ScoreOfTeam getScoreOfTeam(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
-        switch (team.getTournament().getTournamentScore().getScoreType()) {
-            case CLASSIC:
-                return new ScoreOfTeamClassic(team, fights, unties);
-            case CUSTOM:
-                return new ScoreOfTeamCustom(team, fights, unties);
-            case WIN_OVER_DRAWS:
-                return new ScoreOfTeamWinOverDraws(team, fights, unties);
-            case EUROPEAN:
-                return new ScoreOfTeamEuropean(team, fights, unties);
-            case INTERNATIONAL:
-            default:
-                return new ScoreOfTeamInternational(team, fights, unties);
-        }
     }
 }
