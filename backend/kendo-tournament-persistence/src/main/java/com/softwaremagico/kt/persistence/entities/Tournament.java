@@ -56,6 +56,7 @@ public class Tournament extends Element {
     private TournamentType type;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "tournament_score")
     private TournamentScore tournamentScore;
 
     public Tournament() {

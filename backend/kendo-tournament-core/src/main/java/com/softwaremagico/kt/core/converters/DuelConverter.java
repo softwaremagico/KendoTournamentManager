@@ -45,7 +45,7 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
     @Override
     public DuelDTO convert(DuelConverterRequest from) {
         final DuelDTO duelDTO = new DuelDTO();
-        BeanUtils.copyProperties(from.getEntity(), duelDTO);
+        BeanUtils.copyProperties(from.getEntity(), duelDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         duelDTO.setCompetitor1(participantConverter.convert(
                 new ParticipantConverterRequest(from.getEntity().getCompetitor1())));
         duelDTO.setCompetitor2(participantConverter.convert(
@@ -59,7 +59,7 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
             return null;
         }
         final Duel duel = new Duel();
-        BeanUtils.copyProperties(to, duel);
+        BeanUtils.copyProperties(to, duel, ConverterUtils.getNullPropertyNames(to));
         duel.setCompetitor1(participantConverter.reverse(to.getCompetitor1()));
         duel.setCompetitor2(participantConverter.reverse(to.getCompetitor2()));
         return duel;
