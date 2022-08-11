@@ -29,16 +29,36 @@ public class RankingServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/group/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(@Parameter(description = "Id of an existing group", required = true) @PathVariable("groupId") Integer groupId,
-                                                              HttpServletRequest request) {
-        return rankingController.getCompetitorsScoreRanking(groupId);
+    public List<ScoreOfCompetitor> getCompetitorsScoreRankingGroup(@Parameter(description = "Id of an existing group", required = true)
+                                                                   @PathVariable("groupId") Integer groupId,
+                                                                   HttpServletRequest request) {
+        return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitors/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ScoreOfCompetitor> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                        @PathVariable("tournamentId") Integer tournamentId,
+                                                                        HttpServletRequest request) {
+        return rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/group/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfTeam> getTeamsScoreRanking(@Parameter(description = "Id of an existing group", required = true) @PathVariable("groupId") Integer groupId,
-                                                  HttpServletRequest request) {
-        return rankingController.getTeamsScoreRanking(groupId);
+    public List<ScoreOfTeam> getTeamsScoreRankingFromGroup(@Parameter(description = "Id of an existing group", required = true)
+                                                           @PathVariable("groupId") Integer groupId,
+                                                           HttpServletRequest request) {
+        return rankingController.getTeamsScoreRankingFromGroup(groupId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/teams/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                @PathVariable("tournamentId") Integer tournamentId,
+                                                                HttpServletRequest request) {
+        return rankingController.getTeamsScoreRankingFromTournament(tournamentId);
     }
 }

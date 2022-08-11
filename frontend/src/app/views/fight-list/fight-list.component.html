@@ -15,7 +15,8 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="fights.length===0" (click)="showTeamsClassification()">
+        <button mat-button color="primary" [disabled]="fights.length===0" [hidden]="tournament.teamSize===1"
+                (click)="showTeamsClassification()">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
         <button mat-button color="primary" [disabled]="fights.length===0" (click)="showCompetitorsClassification()">
