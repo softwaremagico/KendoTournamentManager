@@ -14,6 +14,7 @@ import {TeamService} from "../../services/team.service";
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
+import {TeamRankingComponent} from "./team-ranking/team-ranking.component";
 
 @Component({
   selector: 'app-fight-list',
@@ -176,7 +177,10 @@ export class FightListComponent implements OnInit {
   }
 
   showTeamsClassification() {
-
+    this.dialog.open(TeamRankingComponent, {
+      width: '85vw',
+      data: {tournament: this.tournament}
+    });
   }
 
   showCompetitorsClassification() {

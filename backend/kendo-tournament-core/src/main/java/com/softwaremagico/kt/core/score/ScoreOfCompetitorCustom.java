@@ -25,53 +25,49 @@ package com.softwaremagico.kt.core.score;
  */
 
 
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.utils.NameUtils;
 
-import java.util.List;
+import java.util.Comparator;
 
-public class ScoreOfCompetitorCustom extends ScoreOfCompetitor {
-
-    public ScoreOfCompetitorCustom(ParticipantDTO competitor, List<FightDTO> fights) {
-        super(competitor, fights);
-    }
+public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
 
     @Override
-    public int compareTo(ScoreOfCompetitor scoreOfCompetitor) {
-        if (fights.size() > 0) {
-            if (getDuelsWon() * fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + getDuelsDraw()
-                    * fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor.getDuelsWon()
-                    * fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor.getDuelsDraw()
-                    * fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+    public int compare(ScoreOfCompetitor scoreOfCompetitor1, ScoreOfCompetitor scoreOfCompetitor2) {
+        if (scoreOfCompetitor1.fights.size() > 0) {
+            if (scoreOfCompetitor1.getDuelsWon() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+                    + scoreOfCompetitor1.getDuelsDraw()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getDuelsWon()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDuelsDraw()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return -1;
             }
 
-            if (getDuelsWon() * fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + getDuelsDraw()
-                    * fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor.getDuelsWon()
-                    * fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor.getDuelsDraw()
-                    * fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+            if (scoreOfCompetitor1.getDuelsWon() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() +
+                    scoreOfCompetitor1.getDuelsDraw()
+                            * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getDuelsWon()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDuelsDraw()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return 1;
             }
 
-            if (getHits() > scoreOfCompetitor.getHits()) {
+            if (scoreOfCompetitor1.getHits() > scoreOfCompetitor2.getHits()) {
                 return -1;
             }
-            if (getHits() < scoreOfCompetitor.getHits()) {
+            if (scoreOfCompetitor1.getHits() < scoreOfCompetitor2.getHits()) {
                 return 1;
             }
 
             // More duels done with same scoreOfCompetitor is negative.
-            if (getDuelsDone() > scoreOfCompetitor.getDuelsDone()) {
+            if (scoreOfCompetitor1.getDuelsDone() > scoreOfCompetitor2.getDuelsDone()) {
                 return 1;
             }
 
-            if (getDuelsDone() < scoreOfCompetitor.getDuelsDone()) {
+            if (scoreOfCompetitor1.getDuelsDone() < scoreOfCompetitor2.getDuelsDone()) {
                 return -1;
             }
         }
 
         // Draw scoreOfCompetitor, order by name;
-        return NameUtils.getLastnameName(getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()));
+        return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
     }
 }

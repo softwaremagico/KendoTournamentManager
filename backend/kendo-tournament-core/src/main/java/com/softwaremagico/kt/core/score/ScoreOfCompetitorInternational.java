@@ -25,18 +25,9 @@ package com.softwaremagico.kt.core.score;
  */
 
 
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
-
-import java.util.List;
-
 /**
  * Same as european
  */
 public class ScoreOfCompetitorInternational extends ScoreOfCompetitorEuropean {
-
-    public ScoreOfCompetitorInternational(ParticipantDTO competitor, List<FightDTO> fights) {
-        super(competitor, fights);
-    }
 
 }

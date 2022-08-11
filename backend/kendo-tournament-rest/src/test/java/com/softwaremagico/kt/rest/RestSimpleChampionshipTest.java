@@ -32,7 +32,8 @@ import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.score.Ranking;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.core.score.ScoreOfTeamClassic;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -142,6 +143,11 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
         return objectMapper.readValue(payload, clazz);
+    }
+
+    private <T> List<T> fromJsonList(String payload, Class<T> clazz) throws IOException {
+        return objectMapper.readValue(payload, new TypeReference<>() {
+        });
     }
 
     @BeforeClass
@@ -426,18 +432,25 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<List<GroupDTO>>() {
-        });
+        List<GroupDTO> tournamentGroups = fromJsonList(createResult.getResponse().getContentAsString(), GroupDTO.class);
 
-        Ranking ranking = new Ranking(tournamentGroups.get(0));
+        Assert.assertEquals(tournamentGroups.size(), 1);
 
-        for (int i = 0; i < ranking.getTeamsScoreRanking().size() - 1; i++) {
-            Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getWonFights() >= ranking.getTeamsScoreRanking()
-                    .get(i + 1).getWonFights());
-            Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getWonDuels() >= ranking.getTeamsScoreRanking()
-                    .get(i + 1).getWonDuels());
-            Assert.assertTrue(ranking.getTeamsScoreRanking().get(i).getHits() >= ranking.getTeamsScoreRanking()
-                    .get(i + 1).getHits());
+        MvcResult rankingResult = this.mockMvc
+                .perform(get("/rankings/teams/tournament/{tournamentId}", tournamentDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        List<ScoreOfTeam> scores = fromJsonList(rankingResult.getResponse().getContentAsString(), ScoreOfTeam.class);
+
+
+        for (int i = 0; i < scores.size() - 1; i++) {
+            Assert.assertTrue(scores.get(i).getWonFights() >= scores.get(i + 1).getWonFights());
+            Assert.assertTrue(scores.get(i).getWonDuels() >= scores.get(i + 1).getWonDuels());
+            Assert.assertTrue(scores.get(i).getHits() >= scores.get(i + 1).getHits());
         }
 
         resetGroup(tournamentDTO);

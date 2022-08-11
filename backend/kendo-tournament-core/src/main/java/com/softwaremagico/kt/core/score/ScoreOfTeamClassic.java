@@ -25,45 +25,45 @@ package com.softwaremagico.kt.core.score;
  */
 
 
-import com.softwaremagico.kt.core.controller.models.DuelDTO;
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import java.util.Comparator;
 
-import java.util.List;
-
-public class ScoreOfTeamClassic extends ScoreOfTeam {
-
-    public ScoreOfTeamClassic(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
-        super(team, fights, unties);
-    }
+public class ScoreOfTeamClassic implements Comparator<ScoreOfTeam> {
 
     @Override
-    public int compareTo(ScoreOfTeam o) {
-        if (getWonFights() > o.getWonFights()) {
+    public int compare(ScoreOfTeam scoreOfTeam1, ScoreOfTeam scoreOfTeam2) {
+        if (scoreOfTeam1.getLevel() > scoreOfTeam2.getLevel()) {
             return -1;
         }
 
-        if (getWonFights() < o.getWonFights()) {
+        if (scoreOfTeam1.getLevel() < scoreOfTeam2.getLevel()) {
             return 1;
         }
 
-        if (getWonDuels() > o.getWonDuels()) {
+        if (scoreOfTeam1.getWonFights() > scoreOfTeam2.getWonFights()) {
             return -1;
         }
 
-        if (getWonDuels() < o.getWonDuels()) {
+        if (scoreOfTeam1.getWonFights() < scoreOfTeam2.getWonFights()) {
             return 1;
         }
 
-        if (getHits() > o.getHits()) {
+        if (scoreOfTeam1.getWonDuels() > scoreOfTeam2.getWonDuels()) {
             return -1;
         }
 
-        if (getHits() < o.getHits()) {
+        if (scoreOfTeam1.getWonDuels() < scoreOfTeam2.getWonDuels()) {
             return 1;
         }
 
-        return o.getGoldenPoints().compareTo(getGoldenPoints());
+        if (scoreOfTeam1.getHits() > scoreOfTeam2.getHits()) {
+            return -1;
+        }
+
+        if (scoreOfTeam1.getHits() < scoreOfTeam2.getHits()) {
+            return 1;
+        }
+
+        return scoreOfTeam2.getGoldenPoints().compareTo(scoreOfTeam1.getGoldenPoints());
 
     }
 }

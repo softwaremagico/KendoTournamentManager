@@ -40,7 +40,6 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.core.score.Ranking;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
@@ -83,10 +82,6 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     public List<GroupDTO> get(TournamentDTO tournament) {
         return converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournament)).stream().map(this::createConverterRequest)
                 .collect(Collectors.toList()));
-    }
-
-    public Ranking getRanking(GroupDTO group) {
-        return new Ranking(group);
     }
 
     public List<GroupDTO> getGroups(TournamentDTO tournamentDTO) {
