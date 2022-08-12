@@ -39,6 +39,20 @@ public class FightDTO extends ElementDTO {
     private LocalDateTime finishedAt;
     private Integer level;
 
+    public FightDTO() {
+        super();
+    }
+
+    public FightDTO(TournamentDTO tournament, TeamDTO team1, TeamDTO team2, Integer shiaijo, Integer level) {
+        this();
+        setTournament(tournament);
+        setTeam1(team1);
+        setTeam2(team2);
+        setShiaijo(shiaijo);
+        setLevel(level);
+    }
+
+
     public TeamDTO getTeam1() {
         return team1;
     }

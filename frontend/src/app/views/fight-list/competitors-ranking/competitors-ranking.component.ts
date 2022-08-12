@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, Optional} from '@angular/core';
 import {Tournament} from "../../../models/tournament";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {RankingService} from "../../../services/ranking.service";
@@ -33,6 +33,11 @@ export class CompetitorsRankingComponent implements OnInit {
   }
 
   downloadPDF() {
-
+    if (this.tournament && this.tournament.id) {
+      this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
+        // this.ref.nativeElement.href = window.URL.createObjectURL(pdf);
+        // this.ref.nativeElement.click();
+      });
+    }
   }
 }

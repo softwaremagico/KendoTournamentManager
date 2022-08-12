@@ -24,6 +24,8 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Participant;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,6 +73,10 @@ public class TeamDTO extends ElementDTO {
 
     public void setMembers(List<ParticipantDTO> members) {
         this.members = members;
+    }
+
+    public void addMember(ParticipantDTO member) {
+        this.members.add(member);
     }
 
     public Integer getGroup() {

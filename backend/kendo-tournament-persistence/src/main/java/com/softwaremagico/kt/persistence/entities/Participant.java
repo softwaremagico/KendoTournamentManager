@@ -73,7 +73,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         setClub(club);
     }
 
-    public final void setIdCard(String value) {
+    public void setIdCard(String value) {
         idCard = value.replaceAll("-", "").replaceAll(" ", "").trim().toUpperCase();
     }
 
@@ -85,12 +85,12 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         return getName().length() > 0 && getIdCard().length() > 0;
     }
 
-    public final void setName(String value) {
+    public void setName(String value) {
         name = StringUtils.setCase(value);
     }
 
 
-    public final void setLastname(String value) {
+    public void setLastname(String value) {
         lastname = StringUtils.setCase(value);
     }
 

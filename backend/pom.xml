@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.softwaremagico</groupId>
@@ -18,6 +19,7 @@
         <module>kendo-tournament-logger</module>
         <module>kendo-tournament-persistence</module>
         <module>kendo-tournament-core</module>
+        <module>kendo-tournament-pdf</module>
         <module>kendo-tournament-rest</module>
     </modules>
 
@@ -63,7 +65,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.6.4</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <distributionManagement>
@@ -90,7 +92,7 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <javax-interceptor.version>1.2.2</javax-interceptor.version>
         <jjwt.version>0.9.1</jjwt.version>
-        <openpdf.version>1.3.26</openpdf.version>
+        <openpdf.version>1.3.29</openpdf.version>
         <mysql.version>5.1.49</mysql.version>
     </properties>
 
