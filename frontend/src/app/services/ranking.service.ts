@@ -5,7 +5,7 @@ import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
-import {catchError, tap} from "rxjs/operators";
+import {catchError, map, tap} from "rxjs/operators";
 import {ScoreOfTeam} from "../models/score-of-team";
 import {ScoreOfCompetitor} from "../models/score-of-competitor";
 
@@ -38,6 +38,16 @@ export class RankingService {
       );
   }
 
+  getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId + '/pdf';
+    return this.http.get<Blob>(url, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap(() => this.loggerService.info(`getting competitors ranking`), map(response => new Blob([response as BlobPart],
+          {type: 'application/pdf'}))),
+        catchError(this.messageService.handleError<Blob>(`getting competitors ranking`))
+      );
+  }
+
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
     const url: string = `${this.baseUrl}` + '/teams/group/' + groupId;
     return this.http.get<ScoreOfTeam[]>(url, this.authenticatedUserService.httpOptions)
@@ -53,6 +63,15 @@ export class RankingService {
       .pipe(
         tap(() => this.loggerService.info(`getting teams ranking`)),
         catchError(this.messageService.handleError<ScoreOfTeam[]>(`getting teams ranking`))
+      );
+  }
+
+  getTeamsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId + '/pdf';
+    return this.http.get<Blob>(url, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap(() => this.loggerService.info(`getting teams ranking as pdf`)),
+        catchError(this.messageService.handleError<Blob>(`getting teams ranking as pdf`))
       );
   }
 
