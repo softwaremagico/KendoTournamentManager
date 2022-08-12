@@ -76,11 +76,17 @@ public class GroupConverter extends ElementConverter<Group, GroupDTO, GroupConve
         BeanUtils.copyProperties(to, group, ConverterUtils.getNullPropertyNames(to));
         group.setTournament(tournamentConverter.reverse(to.getTournament()));
         group.setFights(new ArrayList<>());
-        to.getFights().forEach(fight -> group.getFights().add(fightConverter.reverse(fight)));
+        if (to.getFights() != null) {
+            to.getFights().forEach(fight -> group.getFights().add(fightConverter.reverse(fight)));
+        }
         group.setUnties(new ArrayList<>());
-        to.getUnties().forEach(duel -> group.getUnties().add(duelConverter.reverse(duel)));
+        if (to.getUnties() != null) {
+            to.getUnties().forEach(duel -> group.getUnties().add(duelConverter.reverse(duel)));
+        }
         group.setTeams(new ArrayList<>());
-        to.getTeams().forEach(team -> group.getTeams().add(teamConverter.reverse(team)));
+        if (to.getTeams() != null) {
+            to.getTeams().forEach(team -> group.getTeams().add(teamConverter.reverse(team)));
+        }
         return group;
     }
 }

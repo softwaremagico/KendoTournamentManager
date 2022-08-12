@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.softwaremagico</groupId>
-            <artifactId>kendo-tournament-core</artifactId>
+            <artifactId>kendo-tournament-pdf</artifactId>
             <version>${project.version}</version>
         </dependency>
 
