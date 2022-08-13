@@ -43,6 +43,8 @@ public class ScoreOfTeam {
     private List<DuelDTO> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
+
+    private Integer fightsDone = null;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
     private Integer goldenPoints = null;
@@ -79,11 +81,13 @@ public class ScoreOfTeam {
         goldenPoints = null;
         hits = null;
         level = null;
+        fightsDone = null;
         setLevel();
         setWonDuels();
         setDrawDuels();
         setWonFights();
         setDrawFights();
+        setFightsDone();
         setGoldenPoints();
         setHits();
     }
@@ -112,6 +116,15 @@ public class ScoreOfTeam {
                 if (fight.isOver() && fight.isDrawFight()) {
                     drawFights++;
                 }
+            }
+        });
+    }
+
+    public void setFightsDone() {
+        fightsDone = 0;
+        fights.forEach(fight -> {
+            if ((Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))) {
+                drawFights++;
             }
         });
     }
@@ -160,6 +173,10 @@ public class ScoreOfTeam {
 
     public Integer getDrawFights() {
         return drawFights;
+    }
+
+    public Integer getFightsDone() {
+        return fightsDone;
     }
 
     public Integer getWonDuels() {

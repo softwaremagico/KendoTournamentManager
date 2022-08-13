@@ -8,17 +8,17 @@ package com.softwaremagico.kt.pdf.controller;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -26,9 +26,9 @@ package com.softwaremagico.kt.pdf.controller;
 
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.CompetitorsScoreList;
-import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
-import com.softwaremagico.kt.pdf.InvalidXmlElementException;
+import com.softwaremagico.kt.pdf.TeamsScoreList;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
@@ -45,5 +45,9 @@ public class PdfController {
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
         return new CompetitorsScoreList(messageSource, Locale.getDefault(), tournament, competitorTopTen);
+    }
+
+    public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamsTopTen) {
+        return new TeamsScoreList(messageSource, Locale.getDefault(), tournament, teamsTopTen);
     }
 }
