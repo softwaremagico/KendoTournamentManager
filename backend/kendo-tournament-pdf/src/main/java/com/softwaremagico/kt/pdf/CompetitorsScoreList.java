@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CompetitorsScoreList extends ParentList {
+    private static final int TABLE_BORDER = 0;
     private final List<ScoreOfCompetitor> competitorTopTen;
     private final TournamentDTO tournament;
     private final MessageSource messageSource;
@@ -34,40 +35,40 @@ public class CompetitorsScoreList extends ParentList {
 
         // Tournament name.
         if (tournament != null) {
-            final Paragraph p1 = new Paragraph(tournament.getName(), new Font(font, fontSize));
-            cell = new PdfPCell(p1);
+            cell = new PdfPCell(new Paragraph(tournament.getName(), new Font(font, fontSize)));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         } else {
             // List name.
-            final Paragraph p2 = new Paragraph(
-                    messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, fontSize));
-            cell = new PdfPCell(p2);
+            cell = new PdfPCell(new Paragraph(
+                    messageSource.getMessage("classification.competitors.title", null, locale), new Font(font, fontSize)));
         }
 
         cell.setColspan(getTableWidths().length);
-        cell.setBorderWidth(headerBorder);
+        cell.setBorderWidth(HEADER_BORDER);
         // cell.setBackgroundColor(new Color(255, 255, 255));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.addCell(cell);
-
     }
 
     @Override
     public void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                BaseFont font, int fontSize) {
 
-        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.competitor.name", null, locale), 0, Element.ALIGN_CENTER));
-        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.duels.won", null, locale), 0, Element.ALIGN_CENTER));
-        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.duels.draw", null, locale), 0, Element.ALIGN_CENTER));
-        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.fights", null, locale), 0, Element.ALIGN_CENTER));
+        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.competitor.name", null, locale),
+                PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
+        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.duels.won", null, locale),
+                PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
+        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.hits", null, locale),
+                PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
+        mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.fights", null, locale),
+                PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
 
         for (final ScoreOfCompetitor scoreOfCompetitor : competitorTopTen) {
-            mainTable.addCell(getCell(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfCompetitor.getWonDuels() + "/"
-                    + scoreOfCompetitor.getDrawDuels(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfCompetitor.getHits(), 1, Element.ALIGN_CENTER));
-
-            mainTable.addCell(getCell("" + scoreOfCompetitor.getDuelsDone(), 1, Element.ALIGN_CENTER));
+                    + scoreOfCompetitor.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell("" + scoreOfCompetitor.getHits(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell("" + scoreOfCompetitor.getDuelsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }
 
@@ -85,6 +86,9 @@ public class CompetitorsScoreList extends ParentList {
     @Override
     public void setTableProperties(PdfPTable mainTable) {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+        mainTable.getDefaultCell().setBorder(TABLE_BORDER);
+        mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
+        mainTable.setWidthPercentage(100);
     }
 
     @Override
