@@ -35,6 +35,6 @@ public class CompetitorsListTest extends BasicDataTest {
     public void generateCompetitorsListPdf() {
         List<ScoreOfCompetitor> competitorTopTen = rankingController.getCompetitorsScoreRankingFromTournament(tournament.getId());
         Assert.assertEquals(pdfController.generateCompetitorsScoreList(Locale.getDefault(), tournament, competitorTopTen)
-                .createFile(PDF_PATH_OUTPUT + "CompetitorsList.pdf"), 2); // No clue why is 2 pages and not 1.
+                .createFile(PDF_PATH_OUTPUT + "CompetitorsList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
 }
