@@ -69,7 +69,6 @@ public class CompetitorsScoreList extends ParentList {
 
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
-        // cell.setBackgroundColor(new Color(255, 255, 255));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.addCell(cell);
     }
