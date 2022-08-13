@@ -37,10 +37,9 @@ import java.util.List;
 
 public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
-    private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
     private static final Integer MEMBERS = 3;
-    private static final Integer TEAMS = 5;
+    private static final Integer TEAMS = 2;
     private static final String TOURNAMENT_NAME = "basicTournamentTest";
 
     private static final Integer SHIAIJO = 0;
