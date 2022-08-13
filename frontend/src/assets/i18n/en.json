@@ -110,7 +110,6 @@
   "WonLostMenuItem": "Won matches (Total)",
   "TournamentStatisticsMenu": "By tournament",
   "TeamTopTenMenuItem": "Ranking",
-  "TournamentTopTenMenuItem": "Ranking by competitors",
   "DefineFightsMenu": "Define league as",
   "FightMenuItem": "Simple league",
   "LeagueTreeMenuItem": "League tree",
@@ -178,7 +177,6 @@
   "InformationDiplomaLabel": "Position of the name",
   "TopTenCompetitorTitle": "Competitor Ranking",
   "TopTenCompetitorNumber": "Ranking",
-  "TopTenTeamTitle": "Ranking of teams",
   "InverseCheckBox": "Inverse Teams",
   "ColourCheckBox": "Inverse Colours",
   "RefereeTitle": "List of referees",
@@ -488,6 +486,8 @@
   "fights": "Matches",
   "team": "Team",
   "download": "Download",
-  "competitor": "Competitor"
+  "competitor": "Competitor",
+  "competitorsRanking": "Ranking by competitors",
+  "teamsRanking": "Ranking of teams"
 }
 
