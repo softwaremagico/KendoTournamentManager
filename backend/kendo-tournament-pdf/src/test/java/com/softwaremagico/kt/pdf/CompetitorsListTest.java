@@ -1,5 +1,29 @@
 package com.softwaremagico.kt.pdf;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (PDF)
+ * %%
+ * Copyright (C) 2021 - 2022 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.pdf.controller.PdfController;
@@ -32,7 +56,7 @@ public class CompetitorsListTest extends BasicDataTest {
     }
 
     @Test
-    public void generateCompetitorsListPdf() {
+    public void generateCompetitorsListPdf() throws InvalidXmlElementException, EmptyPdfBodyException {
         List<ScoreOfCompetitor> competitorTopTen = rankingController.getCompetitorsScoreRankingFromTournament(tournament.getId());
         Assert.assertEquals(pdfController.generateCompetitorsScoreList(Locale.getDefault(), tournament, competitorTopTen)
                 .createFile(PDF_PATH_OUTPUT + "CompetitorsList.pdf"), 2); // No clue why are 2 pages and not 1.
