@@ -114,6 +114,7 @@ public abstract class ParentList extends PdfDocument {
         cell.setBorderWidth(border);
         cell.setHorizontalAlignment(align);
         cell.setBackgroundColor(color);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
         return cell;
     }

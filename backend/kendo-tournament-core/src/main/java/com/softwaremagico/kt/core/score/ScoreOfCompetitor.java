@@ -80,7 +80,7 @@ public class ScoreOfCompetitor {
 
     public void setDuelsWon() {
         wonDuels = 0;
-        fights.forEach(fight -> wonDuels += fight.getScore(competitor));
+        fights.forEach(fight -> wonDuels += fight.getDuelsWon(competitor));
     }
 
     public void setFightsWon() {
