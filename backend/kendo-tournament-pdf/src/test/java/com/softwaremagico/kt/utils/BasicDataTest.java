@@ -27,6 +27,7 @@ package com.softwaremagico.kt.utils;
 import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -38,8 +39,8 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
-    private static final Integer MEMBERS = 1;
-    private static final Integer TEAMS = 3;
+    private static final Integer MEMBERS = 3;
+    private static final Integer TEAMS = 5;
     private static final String TOURNAMENT_NAME = "basicTournamentTest";
 
     private static final Integer SHIAIJO = 0;
@@ -118,6 +119,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
             // Add member.
             team.addMember(competitor);
             team = teamController.update(team, null);
+            teams.set(teams.size() - 1, team);
             teamMember++;
 
             // Team filled up, create a new team.
@@ -139,11 +141,32 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected List<FightDTO> createFights(TournamentDTO tournament, List<TeamDTO> teams, GroupDTO group) {
         List<FightDTO> fights = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
-            fights.add(fightController.create(new FightDTO(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL), null));
+            FightDTO fightDTO = new FightDTO(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL);
+            List<DuelDTO> duels = new ArrayList<>();
+            for (int j = 0; j < tournament.getTeamSize(); j++) {
+                duels.add(new DuelDTO(teams.get((i) % teams.size()).getMembers().get(j), teams.get((i + 1) % teams.size()).getMembers().get(j)));
+            }
+            fightDTO.setDuels(duels);
+            fights.add(fightController.create(fightDTO, null));
         }
         group.setFights(fights);
         groupController.create(group, null);
         return fights;
+    }
+
+    protected void resolveFights() {
+        int counter = 0;
+        for (final FightDTO fight : fights) {
+            for (final DuelDTO duel : fight.getDuels()) {
+                List<Score> scores = new ArrayList<>();
+                for (int i = 0; i < (counter % 3); i++) {
+                    scores.add(Score.MEN);
+                }
+                duel.setCompetitor1Score(scores);
+                counter++;
+            }
+            fightController.update(fight, null);
+        }
     }
 
     protected void populateData() {

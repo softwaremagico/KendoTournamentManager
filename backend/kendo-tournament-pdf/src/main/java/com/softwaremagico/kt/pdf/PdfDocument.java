@@ -18,10 +18,10 @@ public abstract class PdfDocument {
 
     protected Document addMetaData(Document document) {
         document.addTitle("List Report");
-        document.addAuthor("Software Magico");
+        document.addAuthor("Software Mágico");
         document.addCreator("Kendo Tournament Generator v2");
         document.addSubject("Kendo");
-        document.addKeywords("Kendo");
+        document.addKeywords("Kendo, League");
         document.addCreationDate();
         return document;
     }

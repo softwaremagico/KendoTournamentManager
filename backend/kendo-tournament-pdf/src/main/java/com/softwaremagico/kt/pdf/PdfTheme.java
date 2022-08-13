@@ -102,7 +102,7 @@ public abstract class PdfTheme {
         return basicFont;
     }
 
-    public static int getHandWrittingFontSize(int originalSize) {
+    public static int getHandWrittenFontSize(int originalSize) {
         return originalSize - 1;
     }
 

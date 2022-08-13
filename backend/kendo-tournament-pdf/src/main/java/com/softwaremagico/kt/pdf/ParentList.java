@@ -12,8 +12,12 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.awt.*;
 
 public abstract class ParentList extends PdfDocument {
-    protected int footerBorder = 0;
-    protected int headerBorder = 0;
+    protected final static int FOOTER_BORDER = 0;
+    protected final static int HEADER_BORDER = 0;
+
+    protected final static int CELL_BORDER = 0;
+
+    private final static float HEADER_SEPARATOR = 20f;
 
 
     /**
@@ -27,7 +31,15 @@ public abstract class ParentList extends PdfDocument {
      * @param font
      * @param fontSize
      */
-    public abstract void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
+    protected abstract void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
+
+    protected void createRowSeparator(PdfPTable mainTable) {
+        PdfPCell cell = new PdfPCell();
+        cell.setFixedHeight(HEADER_SEPARATOR);
+        cell.setBorder(0);
+        cell.setColspan(getTableWidths().length);
+        mainTable.addCell(cell);
+    }
 
     /**
      * Creates the body of the document.
@@ -40,7 +52,7 @@ public abstract class ParentList extends PdfDocument {
      * @param font
      * @param fontSize
      */
-    public abstract void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize)
+    protected abstract void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize)
             throws EmptyPdfBodyException;
 
     /**
@@ -54,7 +66,7 @@ public abstract class ParentList extends PdfDocument {
      * @param font
      * @param fontSize
      */
-    public abstract void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
+    protected abstract void createFooterRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer, BaseFont font, int fontSize);
 
     /**
      * Obtain the width of the main table of the document.
@@ -69,11 +81,11 @@ public abstract class ParentList extends PdfDocument {
      *
      * @return
      */
-    public PdfPCell getEmptyRow() {
+    protected PdfPCell getEmptyRow() {
         return getEmptyCell(getTableWidths().length);
     }
 
-    public PdfPCell getEmptyCell(int colspan) {
+    protected PdfPCell getEmptyCell(int colspan) {
         final Paragraph p = new Paragraph(" ", new Font(PdfTheme.getBasicFont(), PdfTheme.FONT_SIZE));
         final PdfPCell cell = new PdfPCell(p);
         cell.setColspan(colspan);
@@ -83,7 +95,15 @@ public abstract class ParentList extends PdfDocument {
     }
 
     public PdfPCell getCell(String text, int colspan, int align) {
-        return getCell(text, 0, colspan, align, BaseColor.WHITE, PdfTheme.getBasicFont(), PdfTheme.FONT_SIZE, PdfTheme.getBasicFont().getFontType());
+        return getCell(text, PdfTheme.getBasicFont(), colspan, align);
+    }
+
+    public PdfPCell getCell(String text, BaseFont font, int colspan, int align) {
+        return getCell(text, CELL_BORDER, colspan, align, BaseColor.WHITE, font, PdfTheme.FONT_SIZE, Font.NORMAL);
+    }
+
+    public PdfPCell getCell(String text, BaseFont font, int colspan, int align, int fontType) {
+        return getCell(text, CELL_BORDER, colspan, align, BaseColor.WHITE, font, PdfTheme.FONT_SIZE, fontType);
     }
 
     public PdfPCell getCell(String text, int border, int colspan, int align, Color color,
@@ -205,14 +225,17 @@ public abstract class ParentList extends PdfDocument {
         mainTable.setHeaderRows(2);
         mainTable.setFooterRows(1);
 
-        mainTable.setWidthPercentage(100);
 
         createHeaderRow(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.HEADER_FONT_SIZE);
         createFooterRow(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.FOOTER_FONT_SIZE);
+        createRowSeparator(mainTable);
         createBodyRows(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.FONT_SIZE);
+        createRowSeparator(mainTable);
+
+        document.add(mainTable);
     }
 
 }
