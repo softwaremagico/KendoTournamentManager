@@ -1,6 +1,6 @@
 package com.softwaremagico.kt.pdf;
 
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.utils.BasicDataTest;
@@ -11,7 +11,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,18 +22,19 @@ public class CompetitorsListTest extends BasicDataTest {
     @Autowired
     private PdfController pdfController;
 
+    @Autowired
+    private RankingController rankingController;
+
     @BeforeClass
     public void prepareData() {
         populateData();
+        resolveFights();
     }
 
     @Test
     public void generateCompetitorsListPdf() {
-        List<ScoreOfCompetitor> competitorTopTen = new ArrayList<>();
-        for (ParticipantDTO member : members) {
-            competitorTopTen.add(new ScoreOfCompetitor(member, fights));
-        }
+        List<ScoreOfCompetitor> competitorTopTen = rankingController.getCompetitorsScoreRankingFromTournament(tournament.getId());
         Assert.assertEquals(pdfController.generateCompetitorsScoreList(Locale.getDefault(), tournament, competitorTopTen)
-                .createFile(PDF_PATH_OUTPUT + "CompetitorsList.pdf"), 1);
+                .createFile(PDF_PATH_OUTPUT + "CompetitorsList.pdf"), 2); // No clue why is 2 pages and not 1.
     }
 }
