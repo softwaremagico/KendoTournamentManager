@@ -25,12 +25,21 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.RankingController;
+import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
+import com.softwaremagico.kt.pdf.InvalidXmlElementException;
+import com.softwaremagico.kt.pdf.controller.PdfController;
+import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +48,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/rankings")
@@ -47,8 +58,14 @@ public class RankingServices {
 
     private final RankingController rankingController;
 
-    public RankingServices(RankingController rankingController) {
+    private final TournamentController tournamentController;
+
+    private final PdfController pdfController;
+
+    public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController) {
         this.rankingController = rankingController;
+        this.tournamentController = tournamentController;
+        this.pdfController = pdfController;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
@@ -72,11 +89,20 @@ public class RankingServices {
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets participants' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournament/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
-    public InputStreamResource getCompetitorsScoreRankingTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
-                                                                         @PathVariable("tournamentId") Integer tournamentId,
-                                                                         HttpServletRequest request) {
-        List<ScoreOfCompetitor> scores = rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
-        return null;
+    public byte[] getCompetitorsScoreRankingTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
+                                                            @PathVariable("tournamentId") Integer tournamentId,
+                                                            HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final List<ScoreOfCompetitor> scores = rankingController.getCompetitorsScoreRanking(tournament);
+        try {
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - competitors score.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return pdfController.generateCompetitorsScoreList(Locale.getDefault(), tournament, scores).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
@@ -103,7 +129,7 @@ public class RankingServices {
     public InputStreamResource getTeamsScoreRankingFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                                        @PathVariable("tournamentId") Integer tournamentId,
                                                                        HttpServletRequest request) {
-        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRankingFromTournament(tournamentId);
+        //final List<ScoreOfTeam> scores = rankingController.getTeamsScoreRankingFromTournament(tournamentId);
         return null;
     }
 }
