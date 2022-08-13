@@ -7,11 +7,11 @@
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="competitorListPdf"/>
+                <include name="scoreListPdf"/>
             </run>
         </groups>
         <classes>
-            <class name="com.softwaremagico.kt.pdf.CompetitorsListTest"/>
+            <class name="com.softwaremagico.kt.pdf.ScoreListTest"/>
         </classes>
     </test>
 </suite>
