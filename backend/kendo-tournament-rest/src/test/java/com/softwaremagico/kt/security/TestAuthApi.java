@@ -121,8 +121,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .andReturn();
 
         AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
-        Assert.assertEquals(USER_ROLES.length, authenticatedUser.getAuthorities().size());
-        Assert.assertEquals(USER_NAME, authenticatedUser.getUsername());
+        Assert.assertEquals(authenticatedUser.getAuthorities().size(), USER_ROLES.length);
+        Assert.assertEquals(authenticatedUser.getUsername(), USER_NAME);
     }
 
     @Test
