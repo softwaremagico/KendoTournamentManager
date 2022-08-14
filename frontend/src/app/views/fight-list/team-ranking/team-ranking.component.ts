@@ -4,6 +4,7 @@ import {RankingService} from "../../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
 import {Subject} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-team-ranking',
@@ -20,7 +21,7 @@ export class TeamRankingComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
-              private rankingService: RankingService) {
+              private rankingService: RankingService, public translateService: TranslateService) {
     this.tournament = data.tournament;
   }
 
@@ -37,6 +38,15 @@ export class TeamRankingComponent implements OnInit {
   }
 
   downloadPDF() {
-
+    if (this.tournament && this.tournament.id) {
+      this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
+        const blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL = window.URL.createObjectURL(blob);
+        let pwa = window.open(downloadURL);
+        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
+          alert(this.translateService.instant('disablePopUpBlocker'));
+        }
+      });
+    }
   }
 }
