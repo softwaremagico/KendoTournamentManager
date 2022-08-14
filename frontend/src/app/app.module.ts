@@ -62,11 +62,11 @@ import localeES from "@angular/common/locales/es";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
-import { TeamListComponent } from './components/basic/team-list/team-list.component';
-import { LeagueGeneratorComponent } from './views/fight-list/league-generator/league-generator.component';
-import { ConfirmationDialogComponent } from './components/basic/confirmation-dialog/confirmation-dialog.component';
-import { TeamRankingComponent } from './views/fight-list/team-ranking/team-ranking.component';
-import { CompetitorsRankingComponent } from './views/fight-list/competitors-ranking/competitors-ranking.component';
+import {TeamListComponent} from './components/basic/team-list/team-list.component';
+import {LeagueGeneratorComponent} from './views/fight-list/league-generator/league-generator.component';
+import {ConfirmationDialogComponent} from './components/basic/confirmation-dialog/confirmation-dialog.component';
+import {TeamRankingComponent} from './views/fight-list/team-ranking/team-ranking.component';
+import {CompetitorsRankingComponent} from './views/fight-list/competitors-ranking/competitors-ranking.component';
 
 
 registerLocaleData(localeES, "es");
