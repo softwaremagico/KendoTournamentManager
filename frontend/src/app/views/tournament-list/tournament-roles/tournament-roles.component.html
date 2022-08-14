@@ -16,5 +16,9 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
+  <button mat-raised-button (click)="downloadPDF()" mat-flat-button>
+    <mat-icon>file_download</mat-icon>
+    {{'download' | translate}}
+  </button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
 </div>

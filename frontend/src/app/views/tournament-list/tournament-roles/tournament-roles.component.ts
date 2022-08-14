@@ -10,6 +10,7 @@ import {RoleService} from "../../../services/role.service";
 import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
 import {forkJoin} from "rxjs";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -25,7 +26,7 @@ export class TournamentRolesComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService, public roleService: RoleService,
-              private messageService: MessageService,
+              private messageService: MessageService, public translateService: TranslateService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
@@ -104,6 +105,19 @@ export class TournamentRolesComponent implements OnInit {
     }
     if (this.userListData.filteredParticipants.includes(participant)) {
       this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
+    }
+  }
+
+  downloadPDF() {
+    if (this.tournament && this.tournament.id) {
+      this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob) => {
+        const blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL = window.URL.createObjectURL(blob);
+        let pwa = window.open(downloadURL);
+        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
+          alert(this.translateService.instant('disablePopUpBlocker'));
+        }
+      });
     }
   }
 }
