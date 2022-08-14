@@ -443,7 +443,6 @@
   "web": "Web",
   "club": "Club",
   "shiaijos": "Shiaijos",
-  "competitor": "Competitor",
   "referee": "Referee",
   "volunteer": "Volunteer",
   "king_of_the_mountain": "King of the Mountain",
@@ -488,6 +487,7 @@
   "download": "Download",
   "competitor": "Competitor",
   "competitorsRanking": "Ranking by competitors",
-  "teamsRanking": "Ranking of teams"
+  "teamsRanking": "Ranking of teams",
+  "disablePopUpBlocker": "Please disable your Pop-up blocker and try again."
 }
 

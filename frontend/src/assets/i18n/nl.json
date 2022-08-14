@@ -456,7 +456,8 @@
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
   "name": "Naam",
   "competitor": "Deelnemer",
-  "referee": "Scheidsrechters"
+  "referee": "Scheidsrechters",
+  "disablePopUpBlocker": "Schakel uw pop-upblokkering uit en probeer het opnieuw."
 }
 
 
