@@ -24,8 +24,6 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
