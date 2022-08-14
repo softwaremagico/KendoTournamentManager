@@ -8,17 +8,17 @@ package com.softwaremagico.kt.pdf;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -70,12 +70,12 @@ public class TeamsScoreList extends ParentList {
 
         for (final ScoreOfTeam scoreOfTeam : teamTopTen) {
             mainTable.addCell(getCell(scoreOfTeam.getTeam().getName(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights(), 1,
+            mainTable.addCell(getCell(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));
-            mainTable.addCell(getCell(scoreOfTeam.getWonDuels() + "/" + scoreOfTeam.getDrawDuels(), 1,
+            mainTable.addCell(getCell(scoreOfTeam.getWonDuels() + "/" + scoreOfTeam.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getHits(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getFightsDone(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell("" + scoreOfTeam.getHits(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell("" + scoreOfTeam.getFightsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }
 

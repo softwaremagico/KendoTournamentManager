@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
-import {catchError, map, tap} from "rxjs/operators";
+import {catchError, tap} from "rxjs/operators";
 import {ScoreOfTeam} from "../models/score-of-team";
 import {ScoreOfCompetitor} from "../models/score-of-competitor";
 
@@ -40,12 +40,12 @@ export class RankingService {
 
   getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
     const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId + '/pdf';
-    return this.http.get<Blob>(url, this.authenticatedUserService.httpOptions)
-      .pipe(
-        tap(() => this.loggerService.info(`getting competitors ranking`), map(response => new Blob([response as BlobPart],
-          {type: 'application/pdf'}))),
-        catchError(this.messageService.handleError<Blob>(`getting competitors ranking`))
-      );
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+      })
+    });
   }
 
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
@@ -68,11 +68,12 @@ export class RankingService {
 
   getTeamsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
     const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId + '/pdf';
-    return this.http.get<Blob>(url, this.authenticatedUserService.httpOptions)
-      .pipe(
-        tap(() => this.loggerService.info(`getting teams ranking as pdf`)),
-        catchError(this.messageService.handleError<Blob>(`getting teams ranking as pdf`))
-      );
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+      })
+    });
   }
 
 }

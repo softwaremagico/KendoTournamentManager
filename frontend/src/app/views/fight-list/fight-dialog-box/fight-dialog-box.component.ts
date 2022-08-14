@@ -55,7 +55,7 @@ export class FightDialogBoxComponent implements OnInit {
       event.previousIndex,
       event.currentIndex,
     );
-    const team: Team = event.container.data[event.currentIndex]
+    // const team: Team = event.container.data[event.currentIndex]
     // this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
     //   this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
     // });

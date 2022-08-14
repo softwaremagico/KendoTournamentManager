@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Team} from "../../models/team";
 
 @Component({
@@ -6,15 +6,9 @@ import {Team} from "../../models/team";
   templateUrl: './team-card.component.html',
   styleUrls: ['./team-card.component.scss']
 })
-export class TeamCardComponent implements OnInit {
+export class TeamCardComponent {
 
   @Input()
   team: Team;
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-  }
 
 }
