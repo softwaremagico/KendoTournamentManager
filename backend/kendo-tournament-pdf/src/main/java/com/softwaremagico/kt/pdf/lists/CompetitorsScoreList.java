@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.pdf;
+package com.softwaremagico.kt.pdf.lists;
 
 /*-
  * #%L
@@ -32,6 +32,9 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
+import com.softwaremagico.kt.pdf.BaseColor;
+import com.softwaremagico.kt.pdf.ParentList;
+import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 

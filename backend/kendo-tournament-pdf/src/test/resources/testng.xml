@@ -11,7 +11,7 @@
             </run>
         </groups>
         <classes>
-            <class name="com.softwaremagico.kt.pdf.ScoreListTest"/>
+            <class name="com.softwaremagico.kt.pdf.ListTests"/>
         </classes>
     </test>
 </suite>
