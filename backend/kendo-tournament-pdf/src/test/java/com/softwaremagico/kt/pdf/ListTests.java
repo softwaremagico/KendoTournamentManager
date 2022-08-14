@@ -41,7 +41,7 @@ import java.util.Locale;
 
 @SpringBootTest
 @Test(groups = {"scoreListPdf"})
-public class ScoreListTest extends BasicDataTest {
+public class ListTests extends BasicDataTest {
     private static final String PDF_PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
 
     @Autowired
@@ -68,5 +68,11 @@ public class ScoreListTest extends BasicDataTest {
         List<ScoreOfTeam> teamsTopTen = rankingController.getTeamsScoreRanking(tournament);
         Assert.assertEquals(pdfController.generateTeamsScoreList(Locale.getDefault(), tournament, teamsTopTen)
                 .createFile(PDF_PATH_OUTPUT + "TeamsList.pdf"), 2); // No clue why are 2 pages and not 1.
+    }
+
+    @Test
+    public void generateClubListPdf() {
+        Assert.assertEquals(pdfController.generateClubList(Locale.getDefault(), tournament)
+                .createFile(PDF_PATH_OUTPUT + "ClubList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
 }

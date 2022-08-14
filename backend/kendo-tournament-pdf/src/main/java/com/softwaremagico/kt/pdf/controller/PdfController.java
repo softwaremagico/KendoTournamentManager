@@ -24,23 +24,32 @@ package com.softwaremagico.kt.pdf.controller;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.RoleController;
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.pdf.CompetitorsScoreList;
-import com.softwaremagico.kt.pdf.TeamsScoreList;
+import com.softwaremagico.kt.pdf.lists.ClubList;
+import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
+import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class PdfController {
     private final MessageSource messageSource;
 
-    public PdfController(MessageSource messageSource) {
+    private final RoleController roleController;
+
+    public PdfController(MessageSource messageSource, RoleController roleController) {
         this.messageSource = messageSource;
+        this.roleController = roleController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
@@ -49,5 +58,13 @@ public class PdfController {
 
     public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamsTopTen) {
         return new TeamsScoreList(messageSource, locale, tournament, teamsTopTen);
+    }
+
+    public ClubList generateClubList(Locale locale, TournamentDTO tournamentDTO) {
+        final List<RoleDTO> roles = roleController.get(tournamentDTO);
+        final Map<ClubDTO, List<RoleDTO>> rolesByClub = roles.stream().collect(
+                Collectors.groupingBy(roleDTO -> roleDTO.getParticipant().getClub())
+        );
+        return new ClubList(messageSource, locale, tournamentDTO, rolesByClub);
     }
 }
