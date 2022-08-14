@@ -24,8 +24,8 @@ package com.softwaremagico.kt.rest;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.persistence.entities.Club;
 import org.modelmapper.ModelMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;

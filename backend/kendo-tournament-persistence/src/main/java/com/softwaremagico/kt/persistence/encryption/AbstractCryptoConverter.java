@@ -27,9 +27,7 @@ package com.softwaremagico.kt.persistence.encryption;
 import com.softwaremagico.kt.logger.EncryptorLogger;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.persistence.AttributeConverter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -41,9 +39,6 @@ import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseE
 public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
     private CipherInitializer cipherInitializer;
-
-    private static Cipher cipherEncryptor;
-    private static Cipher cipherDecryptor;
 
     public AbstractCryptoConverter() {
         this(new CipherInitializer());
@@ -58,8 +53,9 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
         if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && isNotNullOrEmpty(attribute)) {
             try {
                 return encrypt(attribute);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
-                    IllegalBlockSizeException e) {
+            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
+                     BadPaddingException |
+                     IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -71,7 +67,8 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
         if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && dbData != null && !dbData.isEmpty()) {
             try {
                 return decrypt(dbData);
-            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
+            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
+                     IllegalBlockSizeException e) {
                 throw new RuntimeException(e);
             }
         }

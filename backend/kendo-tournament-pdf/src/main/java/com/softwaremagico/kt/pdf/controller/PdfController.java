@@ -44,10 +44,10 @@ public class PdfController {
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
-        return new CompetitorsScoreList(messageSource, Locale.getDefault(), tournament, competitorTopTen);
+        return new CompetitorsScoreList(messageSource, locale, tournament, competitorTopTen);
     }
 
     public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamsTopTen) {
-        return new TeamsScoreList(messageSource, Locale.getDefault(), tournament, teamsTopTen);
+        return new TeamsScoreList(messageSource, locale, tournament, teamsTopTen);
     }
 }

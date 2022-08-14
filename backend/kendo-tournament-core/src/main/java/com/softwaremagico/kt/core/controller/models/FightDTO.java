@@ -209,12 +209,12 @@ public class FightDTO extends ElementDTO {
     }
 
     public Integer getDuelsWon(ParticipantDTO competitor) {
-        int duels = 0;
-        duels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1 &&
+        int numberOfDuels = 0;
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1 &&
                 (Objects.equals(duel.getCompetitor1(), competitor))).count();
-        duels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1 &&
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1 &&
                 (Objects.equals(duel.getCompetitor2(), competitor))).count();
-        return duels;
+        return numberOfDuels;
     }
 
     public List<DuelDTO> getDuels(ParticipantDTO competitor) {

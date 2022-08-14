@@ -24,8 +24,8 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.FrontendLogger;
 import com.softwaremagico.kt.core.controller.models.LogDTO;
+import com.softwaremagico.kt.logger.FrontendLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;

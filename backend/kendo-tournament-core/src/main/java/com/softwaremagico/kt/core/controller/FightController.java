@@ -86,6 +86,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                 .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
+    @Override
     public void delete(FightDTO entity) {
         final Fight fight = converter.reverse(entity);
         final Group group = groupProvider.getGroup(fight);
@@ -102,6 +103,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         provider.delete(tournamentConverter.reverse(tournamentDTO));
     }
 
+    @Override
     public void delete(Collection<FightDTO> entities) {
         final List<Fight> fights = converter.reverseAll(entities);
         groupProvider.getGroups(fights).forEach(group -> {
