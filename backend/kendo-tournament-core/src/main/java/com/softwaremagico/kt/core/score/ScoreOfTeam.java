@@ -100,12 +100,10 @@ public class ScoreOfTeam {
     public void setWonFights() {
         wonFights = 0;
         for (final FightDTO fight : fights) {
-            // if (fight.isOver()) {
             final TeamDTO winner = fight.getWinner();
             if (winner != null && winner.equals(team)) {
                 wonFights++;
             }
-            //}
         }
     }
 
@@ -136,11 +134,7 @@ public class ScoreOfTeam {
 
     public void setDrawDuels() {
         drawDuels = 0;
-        fights.forEach(fight -> {
-            //  if (fight.isOver()) {
-            drawDuels += fight.getDrawDuels(team);
-            // }
-        });
+        fights.forEach(fight -> drawDuels += fight.getDrawDuels(team));
     }
 
     public void setHits() {
@@ -201,9 +195,7 @@ public class ScoreOfTeam {
 
     @Override
     public String toString() {
-        final StringBuilder text = new StringBuilder(team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
-                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits());
-        text.append("*".repeat(Math.max(0, getGoldenPoints())));
-        return text + "\n";
+        return team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
+                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getGoldenPoints())) + "\n";
     }
 }

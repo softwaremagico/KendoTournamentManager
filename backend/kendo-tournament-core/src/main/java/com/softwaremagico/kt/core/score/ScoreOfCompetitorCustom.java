@@ -34,7 +34,7 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
 
     @Override
     public int compare(ScoreOfCompetitor scoreOfCompetitor1, ScoreOfCompetitor scoreOfCompetitor2) {
-        if (scoreOfCompetitor1.fights.size() > 0) {
+        if (!scoreOfCompetitor1.fights.isEmpty()) {
             if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
                     + scoreOfCompetitor1.getDrawDuels()
                     * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()

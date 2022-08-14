@@ -24,7 +24,48 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class ParticipantImageDTO extends ElementDTO {
     private Integer participantId;
     private byte[] data;
+
+    public Integer getParticipantId() {
+        return participantId;
+    }
+
+    public void setParticipantId(Integer participantId) {
+        this.participantId = participantId;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        ParticipantImageDTO that = (ParticipantImageDTO) o;
+        return participantId.equals(that.participantId) && Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(super.hashCode(), participantId);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
+    }
 }

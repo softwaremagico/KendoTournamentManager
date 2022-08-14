@@ -32,7 +32,10 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
@@ -47,7 +50,7 @@ public class CipherInitializer {
     private IvParameterSpec ivSpec;
     private SecretKeySpec keySpec;
 
-    public String encrypt(String input) throws InvalidAlgorithmParameterException, InvalidKeyException, NoSuchAlgorithmException,
+    public String encrypt(String input) throws InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException {
         getCipher().init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
         final byte[] encryptedBytes = getCipher().doFinal(input.getBytes(StandardCharsets.UTF_8));
