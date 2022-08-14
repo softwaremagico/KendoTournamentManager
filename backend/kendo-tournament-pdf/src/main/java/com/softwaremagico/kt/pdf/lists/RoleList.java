@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ClubList extends ParentList {
+public class RoleList extends ParentList {
 
     private static final int TABLE_BORDER = 0;
 
@@ -53,7 +53,7 @@ public class ClubList extends ParentList {
     private final TournamentDTO tournament;
     private final Map<ClubDTO, List<RoleDTO>> rolesByClub;
 
-    public ClubList(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ClubDTO, List<RoleDTO>> rolesByClub) {
+    public RoleList(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ClubDTO, List<RoleDTO>> rolesByClub) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;

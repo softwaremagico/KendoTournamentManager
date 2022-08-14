@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
@@ -114,5 +114,15 @@ export class RoleService {
         tap((updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`)),
         catchError(this.messageService.handleError<Role>(`updating ${role}`))
       );
+  }
+
+  getRolesByTournament(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId + '/pdf';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+      })
+    });
   }
 }

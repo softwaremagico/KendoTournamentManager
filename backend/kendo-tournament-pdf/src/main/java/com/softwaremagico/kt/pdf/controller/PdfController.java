@@ -30,7 +30,7 @@ import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.pdf.lists.ClubList;
+import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import org.springframework.context.MessageSource;
@@ -60,11 +60,11 @@ public class PdfController {
         return new TeamsScoreList(messageSource, locale, tournament, teamsTopTen);
     }
 
-    public ClubList generateClubList(Locale locale, TournamentDTO tournamentDTO) {
+    public RoleList generateClubList(Locale locale, TournamentDTO tournamentDTO) {
         final List<RoleDTO> roles = roleController.get(tournamentDTO);
         final Map<ClubDTO, List<RoleDTO>> rolesByClub = roles.stream().collect(
                 Collectors.groupingBy(roleDTO -> roleDTO.getParticipant().getClub())
         );
-        return new ClubList(messageSource, locale, tournamentDTO, rolesByClub);
+        return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
     }
 }
