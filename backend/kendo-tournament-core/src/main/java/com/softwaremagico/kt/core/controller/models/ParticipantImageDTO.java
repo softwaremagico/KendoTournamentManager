@@ -58,7 +58,7 @@ public class ParticipantImageDTO extends ElementDTO {
         if (!super.equals(o)) {
             return false;
         }
-        ParticipantImageDTO that = (ParticipantImageDTO) o;
+        final ParticipantImageDTO that = (ParticipantImageDTO) o;
         return participantId.equals(that.participantId) && Arrays.equals(data, that.data);
     }
 
