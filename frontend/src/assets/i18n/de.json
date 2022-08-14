@@ -456,7 +456,8 @@
   "invalidDatabase": "The destination database is not valid. Probably from an old version of the software.",
   "name": "Name",
   "competitor": "Teilnehmer",
-  "referee": "Kampfrichter"
+  "referee": "Kampfrichter",
+  "disablePopUpBlocker": "Bitte deaktivieren Sie Ihren Popup-Blocker und versuchen Sie es erneut."
 }
 
 
