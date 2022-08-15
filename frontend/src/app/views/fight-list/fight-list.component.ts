@@ -16,6 +16,7 @@ import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {TeamRankingComponent} from "./team-ranking/team-ranking.component";
 import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ranking.component";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-fight-list',
@@ -31,7 +32,7 @@ export class FightListComponent implements OnInit {
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, public dialog: MatDialog,
-              private messageService: MessageService) {
+              private messageService: MessageService, public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
@@ -189,5 +190,18 @@ export class FightListComponent implements OnInit {
       width: '85vw',
       data: {tournament: this.tournament}
     });
+  }
+
+  downloadPDF() {
+    if (this.tournament && this.tournament.id) {
+      this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob) => {
+        const blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL = window.URL.createObjectURL(blob);
+        let pwa = window.open(downloadURL);
+        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
+          alert(this.translateService.instant('disablePopUpBlocker'));
+        }
+      });
+    }
   }
 }
