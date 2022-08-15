@@ -154,7 +154,6 @@
   "LostFights": "Lost matches",
   "PassLabel": "Number of winners",
   "nextLevel": "All round's matches are over. Do you want to continue in the next phase of the league?",
-  "GroupString": "Pool",
   "GroupLabel": "Pool",
   "ToolTipEditable": "Double click for more options.",
   "ToolTipNotEditable": "Teams will be inserted while the combats are solved.",
@@ -488,6 +487,7 @@
   "competitor": "Competitor",
   "competitorsRanking": "Ranking by competitors",
   "teamsRanking": "Ranking of teams",
-  "disablePopUpBlocker": "Please disable your Pop-up blocker and try again."
+  "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
+  "group": "Pool"
 }
 
