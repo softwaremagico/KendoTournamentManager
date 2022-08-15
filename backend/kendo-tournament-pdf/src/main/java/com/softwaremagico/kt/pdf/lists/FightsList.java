@@ -121,7 +121,7 @@ public class FightsList extends ParentList {
         final Integer levels = groups.stream().max(Comparator.comparing(GroupDTO::getLevel)).orElseThrow(() ->
                 new GroupNotFoundException(this.getClass(), "Group not found!")).getLevel();
 
-        for (int level = 0; level < levels; level++) {
+        for (int level = 0; level <= levels; level++) {
             final Integer currentLevel = level;
             final List<GroupDTO> groupsOfLevel = groups.stream().filter(groupDTO -> Objects.equals(groupDTO.getLevel(), currentLevel))
                     .collect(Collectors.toList());
@@ -137,15 +137,17 @@ public class FightsList extends ParentList {
                             Element.ALIGN_LEFT));
                 } else if (level == levels - 2) {
                     mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.semifinal", null, locale), 0, Element.ALIGN_LEFT));
-                } else {
+                } else if (tournamentDto.getType().equals(TournamentType.CHAMPIONSHIP)) {
                     mainTable.addCell(getHeader1(messageSource.getMessage("tournament.fight.final", null, locale), 0, Element.ALIGN_LEFT));
                 }
 
                 for (int i = 0; i < groupsOfLevel.size(); i++) {
                     mainTable.addCell(getEmptyRow());
-                    mainTable.addCell(getHeader2(
-                            messageSource.getMessage("tournament.group", null, locale) + " " + (i + 1) + " ("
-                                    + messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(i), TABLE_BORDER));
+                    if (groupsOfLevel.size() > 1) {
+                        mainTable.addCell(getHeader2(
+                                messageSource.getMessage("tournament.group", null, locale) + " " + (i + 1) + " ("
+                                        + messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(i), TABLE_BORDER));
+                    }
 
                     for (final FightDTO fight : fights) {
                         if (groupsOfLevel.get(i).getFights().contains(fight)) {
