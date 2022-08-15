@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
  */
 public class FightSummaryPDF extends ParentList {
+    private static final int FIGHT_BORDER = 1;
     private final MessageSource messageSource;
     private final Locale locale;
     private final TournamentDTO tournament;
@@ -115,23 +116,23 @@ public class FightSummaryPDF extends ParentList {
             if (competitor != null) {
                 name = NameUtils.getLastnameNameIni(competitor);
             }
-            table.addCell(getCell(name, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_LEFT));
+            table.addCell(getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_LEFT));
 
             // Faults
-            table.addCell(getCell(getFaults(fightDTO, i, true), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getFaults(fightDTO, i, true), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
 
             // Points
-            table.addCell(getCell(getScore(fightDTO, i, 1, true), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            table.addCell(getCell(getScore(fightDTO, i, 0, true), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getScore(fightDTO, i, 1, true), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getScore(fightDTO, i, 0, true), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
 
-            table.addCell(getCell(getDrawFight(fightDTO, i), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getDrawFight(fightDTO, i), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
 
             // Points Team 2
-            table.addCell(getCell(getScore(fightDTO, i, 0, false), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            table.addCell(getCell(getScore(fightDTO, i, 1, false), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getScore(fightDTO, i, 0, false), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getScore(fightDTO, i, 1, false), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
 
             // Faults
-            table.addCell(getCell(getFaults(fightDTO, i, false), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getCell(getFaults(fightDTO, i, false), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
 
             // Team 2
             competitor = fightDTO.getTeam2().getMembers().get(i);
@@ -139,7 +140,7 @@ public class FightSummaryPDF extends ParentList {
             if (competitor != null) {
                 name = NameUtils.getLastnameNameIni(competitor);
             }
-            table.addCell(getCell(name, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT));
+            table.addCell(getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT));
         }
         table.addCell(getEmptyRow(50));
 
