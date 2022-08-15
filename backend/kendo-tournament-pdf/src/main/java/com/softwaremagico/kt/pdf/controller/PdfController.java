@@ -31,10 +31,7 @@ import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
-import com.softwaremagico.kt.pdf.lists.FightsList;
-import com.softwaremagico.kt.pdf.lists.RoleList;
-import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
+import com.softwaremagico.kt.pdf.lists.*;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
@@ -77,7 +74,7 @@ public class PdfController {
         return new FightsList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
     }
 
-    public FightsList generateFightsSummaryList(Locale locale, TournamentDTO tournamentDTO) {
-        return new FightsList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
+    public FightSummaryPDF generateFightsSummaryList(Locale locale, TournamentDTO tournamentDTO) {
+        return new FightSummaryPDF(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO), null);
     }
 }
