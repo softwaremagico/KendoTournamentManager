@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -109,5 +109,15 @@ export class FightService {
         tap((_newFight: Fight[]) => this.loggerService.info(`adding fight`)),
         catchError(this.messageService.handleError<Fight[]>(`adding fight`))
       );
+  }
+
+  getFightSummaryPDf(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId + '/pdf';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+      })
+    });
   }
 }
