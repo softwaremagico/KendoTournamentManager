@@ -24,6 +24,11 @@
                 (click)="showCompetitorsClassification()">
           <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
         </button>
+        <mat-divider class="download-divider" [vertical]="true"></mat-divider>
+        <button class="download-button" mat-button color="primary" [disabled]="!fights || fights.length===0"
+                (click)="downloadPDF()">
+          <mat-icon>file_download</mat-icon>
+        </button>
       </div>
     </div>
     <div class="filter">

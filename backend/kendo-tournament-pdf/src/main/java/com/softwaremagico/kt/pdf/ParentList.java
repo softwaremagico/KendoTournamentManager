@@ -111,6 +111,12 @@ public abstract class ParentList extends PdfDocument {
         return getEmptyCell(getTableWidths().length);
     }
 
+    protected PdfPCell getEmptyRow(float height) {
+        final PdfPCell cell = getEmptyCell(getTableWidths().length);
+        cell.setMinimumHeight(height);
+        return cell;
+    }
+
     protected PdfPCell getEmptyCell(int colspan) {
         final Paragraph p = new Paragraph(" ", new Font(PdfTheme.getBasicFont(), PdfTheme.FONT_SIZE));
         final PdfPCell cell = new PdfPCell(p);
