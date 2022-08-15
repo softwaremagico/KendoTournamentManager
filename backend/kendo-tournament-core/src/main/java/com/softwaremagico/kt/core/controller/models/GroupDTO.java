@@ -37,6 +37,8 @@ public class GroupDTO extends ElementDTO {
 
     private Integer level;
 
+    private Integer index;
+
     private List<FightDTO> fights;
 
     private Integer numberOfWinners;
@@ -73,6 +75,14 @@ public class GroupDTO extends ElementDTO {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public List<FightDTO> getFights() {

@@ -24,14 +24,16 @@ package com.softwaremagico.kt.pdf.controller;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
+import com.softwaremagico.kt.pdf.lists.FightsList;
+import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -47,9 +49,12 @@ public class PdfController {
 
     private final RoleController roleController;
 
-    public PdfController(MessageSource messageSource, RoleController roleController) {
+    private final GroupController groupController;
+
+    public PdfController(MessageSource messageSource, RoleController roleController, GroupController groupController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
+        this.groupController = groupController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
@@ -66,5 +71,10 @@ public class PdfController {
                 Collectors.groupingBy(roleDTO -> roleDTO.getParticipant().getClub())
         );
         return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
+    }
+
+    public FightsList generateFightsList(Locale locale, TournamentDTO tournamentDTO) {
+        return new FightsList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
+
     }
 }

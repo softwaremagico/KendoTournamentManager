@@ -75,6 +75,7 @@ public class SimpleTournamentHandler implements ITournamentManager {
             final Group group = new Group();
             group.setTournament(tournament);
             group.setLevel(0);
+            group.setIndex(0);
             group.setTeams(teamProvider.getAll(tournament));
             return addGroup(tournament, group);
         }

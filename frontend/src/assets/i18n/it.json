@@ -178,7 +178,7 @@
   "LostFights": "Incontri persi",
   "PassLabel": "Numero di vincitori",
   "nextLevel": "Gli incontri di questa ronda sono finiti. Si vuole passare alla fase successiva del campionato",
-  "GroupString": "Gruppo",
+  "group": "Gruppo",
   "GroupLabel": "Gruppo",
   "ToolTipEditable": "Fare doppio click per ottenere le opzioni extra",
   "ToolTipNotEditable": "Le squadre si completeranno automaticamente mentre si realizzano gli incontri",
