@@ -209,6 +209,8 @@ public class Level {
         if (geGroups().isEmpty()) {
             final Group group = new Group();
             group.setTournament(getTournament());
+            group.setIndex(0);
+            group.setLevel(levelIndex);
             addGroup(group);
         }
 

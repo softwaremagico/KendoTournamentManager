@@ -180,7 +180,7 @@
   "LostFights": "Partits perduts",
   "PassLabel": "Nombre de guanyadors",
   "nextLevel": "Els partits d'aquesta ronda han finalitzat. Vols passar a la següent fase del campionat?",
-  "GroupString": "Grup",
+  "group": "Grup",
   "GroupLabel": "Grup",
   "ToolTipEditable": "Feu doble clik per obtindre opcions extra.",
   "ToolTipNotEditable": "Els equips aniran completant-se automàticament segons es resolguen els partits.",

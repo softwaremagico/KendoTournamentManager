@@ -37,11 +37,11 @@ import java.util.List;
 @Transactional
 public interface GroupRepository extends JpaRepository<Group, Integer> {
 
-    List<Group> findByTournament(Tournament tournament);
+    List<Group> findByTournamentOrderByLevelAscIndexAsc(Tournament tournament);
 
-    List<Group> findByTournamentAndLevel(Tournament tournament, Integer level);
+    List<Group> findByTournamentAndLevelOrderByIndexAsc(Tournament tournament, Integer level);
 
-    List<Group> findByTournamentAndShiaijo(Tournament tournament, Integer shiaijo);
+    List<Group> findByTournamentAndShiaijoOrderByLevelAscIndexAsc(Tournament tournament, Integer shiaijo);
 
     Group findByFightsId(Integer fightId);
 
