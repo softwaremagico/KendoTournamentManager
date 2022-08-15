@@ -55,6 +55,10 @@ public class Group extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
+    @Column(name = "group_index", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer index = 0;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
     @OrderColumn(name = "group_index")
@@ -155,6 +159,14 @@ public class Group extends Element {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public void createUntieDuel(Participant competitor1, Participant competitor2) {

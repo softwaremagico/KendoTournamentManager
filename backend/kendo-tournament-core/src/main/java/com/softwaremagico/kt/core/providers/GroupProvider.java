@@ -45,7 +45,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroups(Tournament tournament) {
-        return repository.findByTournament(tournament);
+        return repository.findByTournamentOrderByLevelAscIndexAsc(tournament);
     }
 
     public Group getGroup(Fight fight) {
@@ -61,7 +61,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroups(Tournament tournament, Integer shiaijo) {
-        return repository.findByTournamentAndShiaijo(tournament, shiaijo);
+        return repository.findByTournamentAndShiaijoOrderByLevelAscIndexAsc(tournament, shiaijo);
     }
 
     public Group addGroup(Tournament tournament, Group group) {

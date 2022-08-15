@@ -129,6 +129,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         final Group group = new Group();
         group.setTournament(tournament);
         group.setLevel(0);
+        group.setIndex(0);
         group.setTeams(teams);
         return groupRepository.save(group);
     }

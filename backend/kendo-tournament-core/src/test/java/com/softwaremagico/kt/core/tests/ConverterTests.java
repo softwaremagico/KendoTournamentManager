@@ -263,6 +263,7 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
         group.setTournament(createTournament());
         group.setTeams(Arrays.asList(createTeam(), createTeam(), createTeam()));
         group.setLevel(GROUP_LEVEL);
+        group.setIndex(0);
         group.setShiaijo(GROUP_SHIAIJO);
         group.setNumberOfWinners(GROUP_NUMBER_OF_WINNERS);
         group.setFights(Arrays.asList(createFight(), createFight(), createFight()));
@@ -274,6 +275,7 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(group.getLevel(), GROUP_LEVEL);
         Assert.assertEquals(group.getShiaijo(), GROUP_SHIAIJO);
         Assert.assertEquals(group.getNumberOfWinners(), GROUP_NUMBER_OF_WINNERS);
+        Assert.assertEquals((int) group.getIndex(), 0);
         checkTournament(group.getTournament());
         checkTeam(group.getTeams().get(0));
         checkTeam(group.getTeams().get(1));

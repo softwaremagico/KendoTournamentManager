@@ -176,7 +176,7 @@
   "LostFights": "Verloren wedstrijden",
   "PassLabel": "Aantal gewonnen",
   "nextLevel": "Alle wedstrijden in de poule zijn voorbij. Wil je verder gaan met het toernooi?",
-  "GroupString": "Groep",
+  "group": "Groep",
   "GroupLabel": "Groep",
   "ToolTipEditable": "Dubbelklik voor meer opties.",
   "ToolTipNotEditable": "Teams zullen worden toegevoegd als de wedstrijden voorbij zijn.",
