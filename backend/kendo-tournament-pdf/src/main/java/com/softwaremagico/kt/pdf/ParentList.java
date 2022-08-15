@@ -39,6 +39,10 @@ public abstract class ParentList extends PdfDocument {
     protected static final int FOOTER_BORDER = 0;
     protected static final int HEADER_BORDER = 0;
     protected static final int CELL_BORDER = 0;
+
+    protected static final int BORDER_WIDTH = 0;
+
+    protected static final int TABLE_BORDER = 0;
     private static final float HEADER_SEPARATOR = 20f;
 
 

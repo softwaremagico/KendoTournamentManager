@@ -25,13 +25,20 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.FightController;
+import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
+import com.softwaremagico.kt.pdf.InvalidXmlElementException;
+import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,16 +46,24 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/fights")
 public class FightServices {
     private final FightController fightController;
 
-    public FightServices(FightController fightProvider) {
+    private final PdfController pdfController;
+
+    private final TournamentController tournamentController;
+
+    public FightServices(FightController fightProvider, PdfController pdfController, TournamentController tournamentController) {
         this.fightController = fightProvider;
+        this.pdfController = pdfController;
+        this.tournamentController = tournamentController;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
@@ -72,6 +87,24 @@ public class FightServices {
     public List<FightDTO> getAll(@RequestBody TournamentDTO tournamentDto,
                                  HttpServletRequest request) {
         return fightController.get(tournamentDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets all fights summary in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getTeamsScoreRankingFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
+                                                          @PathVariable("tournamentId") Integer tournamentId,
+                                                          Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournamentDto = tournamentController.get(tournamentId);
+        try {
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournamentDto.getName() + " - teams score.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return pdfController.generateFightsSummaryList(locale, tournamentDto).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
