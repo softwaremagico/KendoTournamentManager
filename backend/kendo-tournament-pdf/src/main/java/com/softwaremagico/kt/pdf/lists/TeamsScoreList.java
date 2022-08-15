@@ -39,9 +39,10 @@ import org.springframework.context.MessageSource;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Creates a sheet with the teams ranking depending on the performance on the tournament.
+ */
 public class TeamsScoreList extends ParentList {
-
-    private static final int TABLE_BORDER = 0;
 
     private final TournamentDTO tournament;
     private final List<ScoreOfTeam> teamTopTen;

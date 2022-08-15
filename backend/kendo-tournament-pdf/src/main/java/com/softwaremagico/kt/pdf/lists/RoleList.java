@@ -46,8 +46,6 @@ import java.util.Map;
 
 public class RoleList extends ParentList {
 
-    private static final int TABLE_BORDER = 0;
-
     private final MessageSource messageSource;
     private final Locale locale;
     private final TournamentDTO tournament;

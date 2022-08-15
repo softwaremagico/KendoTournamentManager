@@ -75,6 +75,9 @@ public class PdfController {
 
     public FightsList generateFightsList(Locale locale, TournamentDTO tournamentDTO) {
         return new FightsList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
+    }
 
+    public FightsList generateFightsSummaryList(Locale locale, TournamentDTO tournamentDTO) {
+        return new FightsList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
     }
 }
