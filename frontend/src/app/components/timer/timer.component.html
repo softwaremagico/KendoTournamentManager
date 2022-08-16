@@ -1,11 +1,11 @@
 <div id="app-timer">
   <div class="container">
-    <div class="timer">
+    <div class="timer" [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished()}">
       <div class="time"><span>{{toDoubleDigit(minutes)}} : {{toDoubleDigit(seconds)}}</span></div>
     </div>
     <div class="timer-buttons">
-      <button class="rewind">-1'</button>
-      <button class="rewind">-10"</button>
+      <button class="rewind" (click)="addTime(-60)">-1'</button>
+      <button class="rewind" (click)="addTime(-10)">-10"</button>
       <button class="play" (click)="startTimer()" [hidden]="started">
         <mat-icon>play_arrow</mat-icon>
       </button>
@@ -15,8 +15,8 @@
       <button class="stop" (click)="stopTimer()">
         <mat-icon>stop</mat-icon>
       </button>
-      <button class="forward">+10"</button>
-      <button class="forward">+1'</button>
+      <button class="forward" (click)="addTime(+10)">+10"</button>
+      <button class="forward" (click)="addTime(+60)">+1'</button>
     </div>
   </div>
 </div>
