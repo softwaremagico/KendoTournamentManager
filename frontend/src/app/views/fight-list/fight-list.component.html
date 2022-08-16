@@ -15,8 +15,17 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
+        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="timer"
+                (click)="showTimer(true)">
+          <mat-icon>timer</mat-icon>
+        </button>
+        <button class="timer-button" mat-button color="primary" *ngIf="timer"  [disabled]="!timer"
+                (click)="showTimer(false)">
+          <mat-icon>timer_off</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
-                [hidden]="!tournament || tournament.teamSize===1"
+                *ngIf="!tournament || tournament.teamSize===1"
                 (click)="showTeamsClassification()">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
@@ -36,6 +45,7 @@
         <input matInput type="text" placeholder="{{'filter' | translate}}">
       </mat-form-field>
     </div>
+    <app-timer [startingMinutes]="2" [hidden]="!timer"></app-timer>
     <div class="mat-elevation-z8">
       <div class="fight-list">
         <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
