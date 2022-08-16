@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, HostListener, Input, OnInit} from '@angular/core';
+import {AudioService} from "../../services/audio.service";
 
 @Component({
   selector: 'app-timer',
@@ -19,8 +20,10 @@ export class TimerComponent implements OnInit {
   seconds: number;
   private clockHandler: number;
   totalSeconds: number = 0;
+  private alarmOn: boolean;
 
-  constructor() {
+
+  constructor(public audioService: AudioService) {
     this.started = false;
     this.minutes = this.startingMinutes;
     this.seconds = this.startingSeconds;
@@ -31,6 +34,19 @@ export class TimerComponent implements OnInit {
     this.clockHandler = setInterval(function () {
       self.secondElapsed.apply(self);
     }, 1000);
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === ' ') {
+      if (this.started) {
+        this.pauseTimer();
+      } else {
+        this.startTimer();
+      }
+    } else if (event.key === 'Enter') {
+      this.stopTimer();
+    }
   }
 
   resetVariables(mins: number, secs: number, started: boolean) {
@@ -49,6 +65,7 @@ export class TimerComponent implements OnInit {
 
   stopTimer() {
     this.resetVariables(this.startingMinutes, this.startingSeconds, false);
+    this.alarmOn = false;
   };
 
   timerComplete() {
@@ -69,6 +86,11 @@ export class TimerComponent implements OnInit {
     } else {
       this.seconds--;
     }
+    //Here only is launched when seconds changes from 1 to 0.
+    if (this.seconds === 0 && this.minutes === 0 && !this.alarmOn) {
+      this.alarmOn = true;
+      this.audioService.playAlarm();
+    }
     this.totalSeconds++;
     return;
   };
@@ -78,7 +100,7 @@ export class TimerComponent implements OnInit {
   }
 
   isAlmostFinished(): boolean {
-    return this.minutes == 0 && this.seconds < 10;
+    return this.minutes == 0 && this.seconds <= 10;
   }
 
   toDoubleDigit(num: number): string {
@@ -99,6 +121,8 @@ export class TimerComponent implements OnInit {
     this.minutes += Math.floor(rawSeconds / 60);
     if (this.minutes < 0) {
       this.minutes = 0;
+    } else if (this.minutes > 20) {
+      this.minutes = 20;
     }
   }
 
