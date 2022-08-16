@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {Duel} from "../../models/duel";
 
@@ -18,6 +18,8 @@ export class FightComponent implements OnInit {
   @Input()
   over: boolean;
 
+  @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
+
   selectedDuel: Duel | undefined;
 
   ngOnInit(): void {
@@ -33,6 +35,7 @@ export class FightComponent implements OnInit {
 
   selectDuel(duel: Duel) {
     this.selectedDuel = duel;
+    this.onSelectedDuel.emit([duel]);
   }
 
   isOver(duel: Duel): boolean {
