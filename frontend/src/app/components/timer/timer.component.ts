@@ -18,6 +18,7 @@ export class TimerComponent implements OnInit {
   minutes: number;
   seconds: number;
   private clockHandler: number;
+  totalSeconds: number = 0;
 
   constructor() {
     this.started = false;
@@ -68,11 +69,37 @@ export class TimerComponent implements OnInit {
     } else {
       this.seconds--;
     }
+    this.totalSeconds++;
     return;
   };
+
+  isWarningTime(): boolean {
+    return this.minutes == 0 && this.seconds < 30 && this.seconds > 10;
+  }
+
+  isAlmostFinished(): boolean {
+    return this.minutes == 0 && this.seconds < 10;
+  }
 
   toDoubleDigit(num: number): string {
     return num < 10 ? '0' + num : num + '';
   };
+
+  addTime(time: number) {
+    this.seconds += time;
+    const rawSeconds: number = this.seconds;
+    this.seconds = this.seconds % 60;
+    if (this.seconds < 0) {
+      if (this.minutes > 0) {
+        this.seconds = 60 + this.seconds;
+      } else {
+        this.seconds = 0;
+      }
+    }
+    this.minutes += Math.floor(rawSeconds / 60);
+    if (this.minutes < 0) {
+      this.minutes = 0;
+    }
+  }
 
 }

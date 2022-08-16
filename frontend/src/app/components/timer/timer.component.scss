@@ -1,7 +1,7 @@
 .container {
   border: 1px solid #333;
-  border-radius: 20px;
-  width: 400px;
+  border-radius: 10px;
+  width: 300px;
   margin: 20px auto;
   padding: 20px;
   text-align: center;
@@ -9,17 +9,32 @@
 }
 
 .timer {
-  color: #ff0000;
+  color: #8097b3;
   font-size: 50px;
   margin: auto;
-  border: 8px solid red;
-  border-radius: 10%;
+  border: 8px solid #8097b3;
+  border-radius: 5%;
   width: 270px;
   height: 70px;
   overflow: hidden;
   display : flex;
   align-items : center;
   justify-content: center;
+}
+
+.timer.warning {
+  color: #ffd740;
+  border: 8px solid #ffd740;
+}
+
+.timer.almost-finished {
+  color: #ff0000;
+  border: 8px solid #ff0000;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
 }
 
 .time {
@@ -36,6 +51,20 @@
   height: 50px;
   align-items: center;
   vertical-align: top;
+  font-size: large;
+  font-weight: bold;
+}
+
+.play {
+  color: #8097b3;
+}
+
+.pause {
+  color: #8097b3;
+}
+
+.stop {
+  color: #ff0000;
 }
 
 .rewind {
