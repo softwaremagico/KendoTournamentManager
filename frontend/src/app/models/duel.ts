@@ -11,17 +11,21 @@ export class Duel extends Element {
   public competitor1Score: Score[];
   public competitor2Score: Score[];
   public type: TournamentType;
+  public duration?: number;
 
   public static override copy(source: Duel, target: Duel): void {
     Element.copy(source, target);
     target.competitor1Fault = source.competitor1Fault;
     target.competitor2Fault = source.competitor2Fault;
     target.type = source.type;
-    if (source.competitor1 !== undefined) {
+    if (source.competitor1) {
       target.competitor1 = Participant.clone(source.competitor1);
     }
-    if (source.competitor2 !== undefined) {
+    if (source.competitor2) {
       target.competitor2 = Participant.clone(source.competitor2);
+    }
+    if (source.duration) {
+      target.duration = source.duration;
     }
     target.competitor1Score = [];
     target.competitor2Score = [];

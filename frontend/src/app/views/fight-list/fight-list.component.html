@@ -8,6 +8,9 @@
         <button mat-button color="primary" (click)="addElement()">
           <mat-icon>add</mat-icon>
         </button>
+        <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(0)">
+          <mat-icon>check_circle</mat-icon>
+        </button>
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
@@ -15,17 +18,17 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="timer"
+        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="!selectedFight"
                 (click)="showTimer(true)">
           <mat-icon>timer</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="timer"  [disabled]="!timer"
+        <button class="timer-button" mat-button color="primary" *ngIf="timer" [disabled]="!selectedFight"
                 (click)="showTimer(false)">
           <mat-icon>timer_off</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
-                *ngIf="!tournament || tournament.teamSize===1"
+                *ngIf="tournament && tournament.teamSize && tournament.teamSize>1"
                 (click)="showTeamsClassification()">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
@@ -45,11 +48,12 @@
         <input matInput type="text" placeholder="{{'filter' | translate}}">
       </mat-form-field>
     </div>
-    <app-timer [startingMinutes]="2" [hidden]="!timer"></app-timer>
+    <app-timer [startingMinutes]="2" [hidden]="!timer" (onTimerFinished)="finishDuel($event[0])"></app-timer>
     <div class="mat-elevation-z8">
       <div class="fight-list">
         <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
-               [over]="isFightOver(fight)" (click)="selectFight(fight)"></fight>
+               [over]="isFightOver(fight)" (click)="selectFight(fight)"
+               (onSelectedDuel)="selectDuel($event[0])"></fight>
       </div>
     </div>
   </div>
