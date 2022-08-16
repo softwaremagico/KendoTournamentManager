@@ -1,0 +1,22 @@
+<div id="app-timer">
+  <div class="container">
+    <div class="timer">
+      <div class="time"><span>{{toDoubleDigit(minutes)}} : {{toDoubleDigit(seconds)}}</span></div>
+    </div>
+    <div class="timer-buttons">
+      <button class="rewind">-1'</button>
+      <button class="rewind">-10"</button>
+      <button class="play" (click)="startTimer()" [hidden]="started">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
+      <button class="pause" (click)="pauseTimer()" [hidden]="!started">
+        <mat-icon>pause</mat-icon>
+      </button>
+      <button class="stop" (click)="stopTimer()">
+        <mat-icon>stop</mat-icon>
+      </button>
+      <button class="forward">+10"</button>
+      <button class="forward">+1'</button>
+    </div>
+  </div>
+</div>

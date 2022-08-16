@@ -1,0 +1,48 @@
+.container {
+  border: 1px solid #333;
+  border-radius: 20px;
+  width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  text-align: center;
+  background: #333333;
+}
+
+.timer {
+  color: #ff0000;
+  font-size: 50px;
+  margin: auto;
+  border: 8px solid red;
+  border-radius: 10%;
+  width: 270px;
+  height: 70px;
+  overflow: hidden;
+  display : flex;
+  align-items : center;
+  justify-content: center;
+}
+
+.time {
+  z-index: 1;
+  position: relative;
+  font-family: "Square Sans Serif 7", sans-serif;
+}
+
+.timer-buttons button {
+  background: #333333;
+  border: none;
+  padding: 5px;
+  width: 40px;
+  height: 50px;
+  align-items: center;
+  vertical-align: top;
+}
+
+.rewind {
+  color: #ff0000;
+}
+
+.forward {
+  color: #00ff00;
+}
+
