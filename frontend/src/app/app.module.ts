@@ -67,6 +67,7 @@ import {LeagueGeneratorComponent} from './views/fight-list/league-generator/leag
 import {ConfirmationDialogComponent} from './components/basic/confirmation-dialog/confirmation-dialog.component';
 import {TeamRankingComponent} from './views/fight-list/team-ranking/team-ranking.component';
 import {CompetitorsRankingComponent} from './views/fight-list/competitors-ranking/competitors-ranking.component';
+import { TimerComponent } from './components/timer/timer.component';
 
 
 registerLocaleData(localeES, "es");
@@ -103,7 +104,8 @@ registerLocaleData(localeNL, "nl");
     LeagueGeneratorComponent,
     ConfirmationDialogComponent,
     TeamRankingComponent,
-    CompetitorsRankingComponent
+    CompetitorsRankingComponent,
+    TimerComponent
   ],
   imports: [
     BrowserModule,
