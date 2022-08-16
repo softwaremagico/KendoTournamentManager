@@ -17,6 +17,7 @@ import {ConfirmationDialogComponent} from "../../components/basic/confirmation-d
 import {TeamRankingComponent} from "./team-ranking/team-ranking.component";
 import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ranking.component";
 import {TranslateService} from "@ngx-translate/core";
+import {Duel} from "../../models/duel";
 
 @Component({
   selector: 'app-fight-list',
@@ -27,6 +28,7 @@ export class FightListComponent implements OnInit {
 
   fights: Fight[];
   selectedFight: Fight | undefined;
+  selectedDuel: Duel | undefined;
   tournament: Tournament;
   timer: boolean = false;
   private readonly tournamentId: number | undefined;
@@ -208,5 +210,16 @@ export class FightListComponent implements OnInit {
 
   showTimer(show: boolean) {
     this.timer = show;
+  }
+
+  finishDuel(durationInSeconds: number) {
+    if (this.selectedDuel) {
+      this.selectedDuel.duration = durationInSeconds;
+      console.log('--->', durationInSeconds)
+    }
+  }
+
+  selectDuel(duel: Duel) {
+    this.selectedDuel = duel;
   }
 }

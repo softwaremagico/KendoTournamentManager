@@ -41,6 +41,8 @@ public class DuelDTO extends ElementDTO {
     private Boolean competitor2Fault = false;
     private DuelType type;
 
+    private Integer duration;
+
     public DuelDTO() {
         super();
         setType(DuelType.STANDARD);
@@ -162,6 +164,14 @@ public class DuelDTO extends ElementDTO {
 
     public Integer getCompetitor2ScoreValue() {
         return (int) competitor2Score.stream().filter(Score::isValidPoint).count();
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     @Override

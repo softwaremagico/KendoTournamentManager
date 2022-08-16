@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
 
 @Component({
@@ -15,6 +15,8 @@ export class TimerComponent implements OnInit {
 
   @Input()
   startingSeconds: number = 0;
+
+  @Output() onTimerFinished: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
   seconds: number;
@@ -64,8 +66,10 @@ export class TimerComponent implements OnInit {
   };
 
   stopTimer() {
+    this.onTimerFinished.emit([this.totalSeconds]);
     this.resetVariables(this.startingMinutes, this.startingSeconds, false);
     this.alarmOn = false;
+    this.totalSeconds = 0;
   };
 
   timerComplete() {
