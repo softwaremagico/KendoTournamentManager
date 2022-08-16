@@ -73,6 +73,7 @@ export class TimerComponent implements OnInit {
   };
 
   timerComplete() {
+    this.onTimerFinished.emit([this.totalSeconds]);
     this.started = false;
   }
 

@@ -39,11 +39,8 @@ export class FightComponent implements OnInit {
   }
 
   isOver(duel: Duel): boolean {
-    if (this.over) {
+    if (duel.duration) {
       return true;
-    }
-    if (this.selectedDuel && this.selected) {
-      return this.fight.duels.indexOf(duel) < this.fight.duels.indexOf(this.selectedDuel);
     }
     return false;
   }
