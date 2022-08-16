@@ -175,8 +175,16 @@ export class FightListComponent implements OnInit {
   }
 
   isFightOver(fight: Fight): boolean {
-    if (this.selectedFight) {
-      return this.fights.indexOf(fight) < this.fights.indexOf(this.selectedFight);
+    if (fight) {
+      if (!fight.duels) {
+        return false;
+      }
+      for (const duel of fight.duels) {
+        if (!duel.duration) {
+          return false;
+        }
+      }
+      return true;
     }
     return false;
   }
@@ -215,7 +223,6 @@ export class FightListComponent implements OnInit {
   finishDuel(durationInSeconds: number) {
     if (this.selectedDuel) {
       this.selectedDuel.duration = durationInSeconds;
-      console.log('***REMOVED***>', durationInSeconds)
     }
   }
 
