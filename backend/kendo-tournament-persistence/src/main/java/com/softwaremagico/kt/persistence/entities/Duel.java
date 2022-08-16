@@ -71,6 +71,9 @@ public class Duel extends Element {
     @Enumerated(EnumType.STRING)
     private DuelType type;
 
+    @Column(name = "duration")
+    private Integer duration;
+
     public Duel() {
         super();
         setType(DuelType.STANDARD);
@@ -151,7 +154,7 @@ public class Duel extends Element {
      * @return true if the round is over.
      */
     public boolean isOver() {
-        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN;
+        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || getDuration() != null;
     }
 
     /**
@@ -178,5 +181,13 @@ public class Duel extends Element {
 
     public void setType(DuelType type) {
         this.type = type;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 }
