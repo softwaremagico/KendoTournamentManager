@@ -28,6 +28,7 @@ export class FightListComponent implements OnInit {
   fights: Fight[];
   selectedFight: Fight | undefined;
   tournament: Tournament;
+  timer: boolean = false;
   private readonly tournamentId: number | undefined;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
@@ -203,5 +204,9 @@ export class FightListComponent implements OnInit {
         }
       });
     }
+  }
+
+  showTimer(show: boolean) {
+    this.timer = show;
   }
 }
