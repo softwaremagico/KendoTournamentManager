@@ -39,7 +39,8 @@ import java.util.List;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "duels")
 public class Duel extends Element {
-    private static final int POINTS_TO_WIN = 2;
+    public static final int DEFAULT_DURATION = 1;
+    public static final int POINTS_TO_WIN = 2;
 
     @ManyToOne
     @JoinColumn(name = "competitor1")
@@ -157,7 +158,7 @@ public class Duel extends Element {
      * @return true if the round is over.
      */
     public boolean isOver() {
-        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || getDuration() != null;
+        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || (getDuration() != null && getDuration() > 0);
     }
 
     /**

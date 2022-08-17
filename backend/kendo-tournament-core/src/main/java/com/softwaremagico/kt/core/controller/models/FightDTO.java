@@ -24,6 +24,8 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Duel;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,16 +111,8 @@ public class FightDTO extends ElementDTO {
         this.level = level;
     }
 
-    public void setOver(boolean over) {
-        if (over) {
-            setFinishedAt(LocalDateTime.now());
-        } else {
-            setFinishedAt(null);
-        }
-    }
-
     public boolean isOver() {
-        return getFinishedAt() != null;
+        return duels.stream().anyMatch(DuelDTO::isOver);
     }
 
     public TeamDTO getWinner() {
