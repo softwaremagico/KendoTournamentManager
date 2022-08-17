@@ -6,6 +6,7 @@ export class Tournament extends Element {
   public shiaijos?: number;
   public teamSize?: number;
   public type?: TournamentType;
+  public duelsDuration: number;
 
   public static override copy(source: Tournament, target: Tournament): void {
     Element.copy(source, target);
@@ -13,6 +14,7 @@ export class Tournament extends Element {
     target.shiaijos = source.shiaijos;
     target.teamSize = source.teamSize;
     target.type = source.type;
+    target.duelsDuration = source.duelsDuration;
   }
 
   public static clone(data: Tournament): Tournament {

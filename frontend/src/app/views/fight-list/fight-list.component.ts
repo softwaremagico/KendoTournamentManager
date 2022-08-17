@@ -105,6 +105,20 @@ export class FightListComponent implements OnInit {
     }
   }
 
+  getDuelDefaultSecondsDuration() {
+    if (this.tournament) {
+      return this.tournament.duelsDuration % 60;
+    }
+    return 0;
+  }
+
+  getDuelDefaultMinutesDuration() {
+    if (this.tournament) {
+      return Math.floor(this.tournament.duelsDuration / 60);
+    }
+    return 0;
+  }
+
   addElement() {
     this.openDialog('Add a new Fight', Action.Add, new Fight());
   }
@@ -260,6 +274,13 @@ export class FightListComponent implements OnInit {
           }
         }
       }
+    }
+  }
+
+  updateDuelDuration(duelDuration: number) {
+    if (this.selectedDuel) {
+      this.selectedDuel.totalDuration = duelDuration;
+      this.duelService.update(this.selectedDuel).subscribe();
     }
   }
 }

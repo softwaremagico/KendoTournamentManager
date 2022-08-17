@@ -12,6 +12,7 @@ export class Duel extends Element {
   public competitor2Score: Score[];
   public type: TournamentType;
   public duration?: number;
+  public totalDuration?: number;
 
   public static override copy(source: Duel, target: Duel): void {
     Element.copy(source, target);
@@ -26,6 +27,9 @@ export class Duel extends Element {
     }
     if (source.duration) {
       target.duration = source.duration;
+    }
+    if (source.totalDuration) {
+      target.totalDuration = source.totalDuration;
     }
     target.competitor1Score = [];
     target.competitor2Score = [];
