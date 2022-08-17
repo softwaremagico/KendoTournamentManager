@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.utils.NameUtils;
@@ -182,6 +183,11 @@ public class DuelDTO extends ElementDTO {
 
     public void setTotalDuration(Integer totalDuration) {
         this.totalDuration = totalDuration;
+    }
+
+    public boolean isOver() {
+        return getCompetitor1ScoreValue() >= Duel.POINTS_TO_WIN || getCompetitor2ScoreValue() >= Duel.POINTS_TO_WIN ||
+                (getDuration() != null && getDuration() > 0);
     }
 
     @Override

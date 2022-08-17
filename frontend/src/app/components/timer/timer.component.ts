@@ -1,5 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
+import {DuelChangedService} from "../../services/duel-changed.service";
 
 @Component({
   selector: 'app-timer',
@@ -30,8 +31,16 @@ export class TimerComponent implements OnInit {
   private alarmOn: boolean;
 
 
-  constructor(public audioService: AudioService) {
+  constructor(public audioService: AudioService, private duelChangedService: DuelChangedService) {
     this.started = false;
+    this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
+      if (selectedDuel.duration) {
+        this.totalSeconds = selectedDuel.duration;
+      }
+      if (selectedDuel.totalDuration) {
+        this.resetVariablesAsSeconds(selectedDuel.totalDuration, false);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -52,6 +61,12 @@ export class TimerComponent implements OnInit {
     } else if (event.key === 'Enter') {
       this.finishTimer();
     }
+  }
+
+  resetVariablesAsSeconds(rawSeconds: number, started: boolean) {
+    this.seconds = rawSeconds % 60;
+    this.minutes = Math.floor(rawSeconds / 60);
+    this.started = started;
   }
 
   resetVariables(mins: number, secs: number, started: boolean) {

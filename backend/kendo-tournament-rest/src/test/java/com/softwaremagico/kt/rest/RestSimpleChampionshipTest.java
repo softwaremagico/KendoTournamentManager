@@ -33,6 +33,7 @@ import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -405,7 +406,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             // First duel won
             currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
             currentFight.getDuels().get(0).getCompetitor1Score().add(Score.MEN);
-            currentFight.setOver(true);
+            currentFight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
 
             //Update the fight.
             this.mockMvc
