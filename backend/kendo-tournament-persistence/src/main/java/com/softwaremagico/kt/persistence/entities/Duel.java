@@ -74,6 +74,9 @@ public class Duel extends Element {
     @Column(name = "duration")
     private Integer duration;
 
+    @Column(name = "total_duration")
+    private Integer totalDuration;
+
     public Duel() {
         super();
         setType(DuelType.STANDARD);
@@ -189,5 +192,13 @@ public class Duel extends Element {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public Integer getTotalDuration() {
+        return totalDuration;
+    }
+
+    public void setTotalDuration(Integer totalDuration) {
+        this.totalDuration = totalDuration;
     }
 }

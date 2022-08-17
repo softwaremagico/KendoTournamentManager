@@ -43,6 +43,8 @@ public class DuelDTO extends ElementDTO {
 
     private Integer duration;
 
+    private Integer totalDuration;
+
     public DuelDTO() {
         super();
         setType(DuelType.STANDARD);
@@ -172,6 +174,14 @@ public class DuelDTO extends ElementDTO {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public Integer getTotalDuration() {
+        return totalDuration;
+    }
+
+    public void setTotalDuration(Integer totalDuration) {
+        this.totalDuration = totalDuration;
     }
 
     @Override

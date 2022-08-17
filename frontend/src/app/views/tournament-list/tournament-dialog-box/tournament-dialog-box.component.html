@@ -6,7 +6,7 @@
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>Tournament Type</mat-label>
     <mat-select [(value)]="tournament.type">
-      <mat-option *ngFor="let type of tournamentType" [value]="type" >
+      <mat-option *ngFor="let type of tournamentType" [value]="type">
         {{type.toLowerCase() | translate}}
       </mat-option>
     </mat-select>
@@ -17,11 +17,20 @@
   <mat-form-field *ngIf="actionName != 'Delete'">
     <input placeholder="Tournament Team Size" matInput [(ngModel)]="tournament.teamSize">
   </mat-form-field>
+  <mat-form-field *ngIf="actionName != 'Delete'">
+    <mat-label>Duels Duration</mat-label>
+    <mat-select [(value)]="tournament.duelsDuration">
+      <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
+        {{number}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <ng-template #elseTemplate>
     Are you sure to delete <strong>{{tournament.name}}</strong>?
   </ng-template>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="doAction()" mat-flat-button color="primary">{{actionName.toLowerCase() | translate}}</button>
+  <button mat-raised-button (click)="doAction()" mat-flat-button
+          color="primary">{{actionName.toLowerCase() | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
 </div>

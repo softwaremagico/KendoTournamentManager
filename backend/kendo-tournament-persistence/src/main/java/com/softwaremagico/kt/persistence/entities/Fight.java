@@ -186,6 +186,7 @@ public class Fight extends Element {
             for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
                 final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
                         i < team2.getMembers().size() ? team2.getMembers().get(i) : null);
+                duel.setTotalDuration(tournament.getDuelsDuration());
                 duels.add(duel);
             }
         }
