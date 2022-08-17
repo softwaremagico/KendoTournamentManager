@@ -36,7 +36,6 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,6 +63,8 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
     private static final Integer TOURNAMENT_SHIAIJOS = 3;
     private static final Integer TOURNAMENT_TEAM_SIZE = 42;
     private static final TournamentType TOURNAMENT_TYPE = TournamentType.LOOP;
+
+    private static final int DUELS_DURATION = 180;
 
     private static final RoleType ROLE_TYPE = RoleType.REFEREE;
 
@@ -170,6 +171,7 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
         tournament.setTeamSize(TOURNAMENT_TEAM_SIZE);
         tournament.setType(TOURNAMENT_TYPE);
         tournament.setTournamentScore(createTournamentScore());
+        tournament.setDuelsDuration(DUELS_DURATION);
         return tournament;
     }
 
