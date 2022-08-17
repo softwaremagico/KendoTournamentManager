@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
@@ -57,12 +58,23 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return fights;
     }
 
+    public Fight getFirstNotOver(Tournament tournament) {
+        for (final Fight fight : getFights(tournament)) {
+            for (final Duel duel : fight.getDuels()) {
+                if (!duel.isOver()) {
+                    return fight;
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean areOver(Tournament tournament) {
-        return repository.countByTournamentAndFinishedAtIsNull(tournament) == 0;
+        return getFirstNotOver(tournament) == null;
     }
 
     public Fight getCurrent(Tournament tournament) {
-        final Fight fight = repository.findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(tournament);
+        final Fight fight = getFirstNotOver(tournament);
         fight.setTournament(tournament);
         fight.getTeam1().setTournament(tournament);
         fight.getTeam2().setTournament(tournament);
