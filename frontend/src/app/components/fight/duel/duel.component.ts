@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Duel} from "../../../models/duel";
+import {DuelChangedService} from "../../../services/duel-changed.service";
 
 @Component({
   selector: 'duel',
@@ -13,6 +14,14 @@ export class DuelComponent implements OnInit {
 
   @Input()
   selected: boolean;
+
+  constructor(private duelChangedService: DuelChangedService) {
+    this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
+      if (selectedDuel && this.duel) {
+        this.selected = (selectedDuel.id === this.duel.id);
+      }
+    });
+  }
 
   ngOnInit(): void {
     // This is intentional
