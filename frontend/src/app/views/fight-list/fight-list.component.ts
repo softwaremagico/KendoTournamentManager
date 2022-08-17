@@ -277,4 +277,11 @@ export class FightListComponent implements OnInit {
       this.duelService.update(this.selectedDuel).subscribe();
     }
   }
+
+  updateDuelElapsedTime(elapsedTime: number) {
+    if (this.selectedDuel) {
+      this.selectedDuel.duration = elapsedTime;
+      this.duelService.update(this.selectedDuel).subscribe();
+    }
+  }
 }
