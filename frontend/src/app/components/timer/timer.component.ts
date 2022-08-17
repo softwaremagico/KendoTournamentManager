@@ -22,12 +22,13 @@ export class TimerComponent implements OnInit {
   }
 
   @Output() onTimerFinished: EventEmitter<any> = new EventEmitter();
+  @Output() onTimerPaused: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
   seconds: number;
   private clockHandler: number;
-  totalSeconds: number = 0;
+  elapsedSeconds: number = 0;
   private alarmOn: boolean;
 
 
@@ -35,10 +36,14 @@ export class TimerComponent implements OnInit {
     this.started = false;
     this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
       if (selectedDuel.duration) {
-        this.totalSeconds = selectedDuel.duration;
-      }
-      if (selectedDuel.totalDuration) {
-        this.resetVariablesAsSeconds(selectedDuel.totalDuration, false);
+        this.elapsedSeconds = selectedDuel.duration;
+        if (selectedDuel.totalDuration) {
+          this.resetVariablesAsSeconds(selectedDuel.totalDuration - selectedDuel.duration, false);
+        }
+      } else {
+        if (selectedDuel.totalDuration) {
+          this.resetVariablesAsSeconds(selectedDuel.totalDuration, false);
+        }
       }
     });
   }
@@ -81,20 +86,21 @@ export class TimerComponent implements OnInit {
 
   pauseTimer() {
     this.started = false;
+    this.onTimerPaused.emit([this.elapsedSeconds]);
   };
 
   finishTimer() {
-    if (!this.totalSeconds) {
-      this.totalSeconds = 1;
+    if (!this.elapsedSeconds) {
+      this.elapsedSeconds = 1;
     }
-    this.onTimerFinished.emit([this.totalSeconds]);
+    this.onTimerFinished.emit([this.elapsedSeconds]);
     this.resetVariables(this.startingMinutes, this.startingSeconds, false);
     this.alarmOn = false;
-    this.totalSeconds = 0;
+    this.elapsedSeconds = 0;
   };
 
   timerComplete() {
-    this.onTimerFinished.emit([this.totalSeconds]);
+    this.onTimerFinished.emit([this.elapsedSeconds]);
     this.started = false;
   }
 
@@ -117,7 +123,7 @@ export class TimerComponent implements OnInit {
       this.alarmOn = true;
       this.audioService.playAlarm();
     }
-    this.totalSeconds++;
+    this.elapsedSeconds++;
     return;
   };
 
@@ -135,6 +141,7 @@ export class TimerComponent implements OnInit {
 
   addTime(time: number) {
     this.seconds += time;
+    this.elapsedSeconds += time;
     const rawSeconds: number = this.seconds + this.minutes * 60;
     this.seconds = rawSeconds % 60;
     this.minutes = Math.floor(rawSeconds / 60);
