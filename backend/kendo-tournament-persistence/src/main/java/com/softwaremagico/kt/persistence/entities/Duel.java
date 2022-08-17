@@ -24,6 +24,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -63,19 +66,24 @@ public class Duel extends Element {
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
     @Column(name = "competitor_1_fault")
+    @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor1Fault = false;
 
     @Column(name = "competitor_2_fault")
+    @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor2Fault = false;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
+    @Convert(converter = StringCryptoConverter.class)
     private DuelType type;
 
     @Column(name = "duration")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer duration;
 
     @Column(name = "total_duration")
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer totalDuration;
 
     public Duel() {
