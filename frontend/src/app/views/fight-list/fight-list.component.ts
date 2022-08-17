@@ -18,6 +18,8 @@ import {TeamRankingComponent} from "./team-ranking/team-ranking.component";
 import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ranking.component";
 import {TranslateService} from "@ngx-translate/core";
 import {Duel} from "../../models/duel";
+import {DuelService} from "../../services/duel.service";
+import {DuelChangedService} from "../../services/duel-changed.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -34,7 +36,8 @@ export class FightListComponent implements OnInit {
   private readonly tournamentId: number | undefined;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
-              private teamService: TeamService, private groupService: GroupService, public dialog: MatDialog,
+              private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
+              public duelChangedService: DuelChangedService, public dialog: MatDialog,
               private messageService: MessageService, public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -54,8 +57,12 @@ export class FightListComponent implements OnInit {
         this.tournament = tournament;
         this.fightService.getFromTournament(this.tournament).subscribe(fights => {
           this.fights = fights;
+          //Use a timeout or refresh before the components are drawn.
+          setTimeout(() => {
+            this.selectFirstUnfinishedDuel();
+          }, 1000);
         });
-      })
+      });
     }
   }
 
@@ -172,6 +179,12 @@ export class FightListComponent implements OnInit {
 
   selectFight(fight: Fight) {
     this.selectedFight = fight;
+    for (const duel of fight.duels) {
+      if (!duel.duration) {
+        this.selectDuel(duel);
+        return;
+      }
+    }
   }
 
   isFightOver(fight: Fight): boolean {
@@ -223,10 +236,30 @@ export class FightListComponent implements OnInit {
   finishDuel(durationInSeconds: number) {
     if (this.selectedDuel) {
       this.selectedDuel.duration = durationInSeconds;
+      this.duelService.update(this.selectedDuel).subscribe(duel => {
+        this.messageService.infoMessage("Duel Finished!");
+        this.selectFirstUnfinishedDuel();
+        return duel;
+      });
     }
   }
 
   selectDuel(duel: Duel) {
     this.selectedDuel = duel;
+    this.duelChangedService.isDuelSelected.next(duel);
+  }
+
+  selectFirstUnfinishedDuel() {
+    if (this.fights) {
+      for (const fight of this.fights) {
+        for (const duel of fight.duels) {
+          if (!duel.duration) {
+            this.selectedFight = fight;
+            this.selectDuel(duel);
+            return;
+          }
+        }
+      }
+    }
   }
 }

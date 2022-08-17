@@ -75,7 +75,6 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
     private static final DuelType DUEL_TYPE = DuelType.UNDRAW;
 
     private static final Integer FIGHT_SHIAIJO = 43;
-    private static final LocalDateTime FIGHT_FINISHED_AT = LocalDateTime.now();
     private static final Integer FIGHT_LEVEL = 33;
 
     private static final Integer GROUP_SHIAIJO = 23;
@@ -242,13 +241,11 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
         fight.setTeam2(createTeam());
         fight.setLevel(FIGHT_LEVEL);
         fight.setShiaijo(FIGHT_SHIAIJO);
-        fight.setFinishedAt(FIGHT_FINISHED_AT);
         fight.setDuels(Arrays.asList(createDuel(), createDuel()));
         return fight;
     }
 
     private void checkFight(Fight fight) {
-        Assert.assertEquals(fight.getFinishedAt(), FIGHT_FINISHED_AT);
         Assert.assertEquals(fight.getLevel(), FIGHT_LEVEL);
         Assert.assertEquals(fight.getShiaijo(), FIGHT_SHIAIJO);
         checkTeam(fight.getTeam1());
