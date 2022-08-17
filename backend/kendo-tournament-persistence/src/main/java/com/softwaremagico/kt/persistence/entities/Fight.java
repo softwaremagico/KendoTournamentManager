@@ -158,23 +158,7 @@ public class Fight extends Element {
     }
 
     public boolean isOver() {
-        return getFinishedAt() != null;
-    }
-
-    public void setOver(boolean over) {
-        if (over) {
-            setFinishedAt(LocalDateTime.now());
-        } else {
-            setFinishedAt(null);
-        }
-    }
-
-    public LocalDateTime getFinishedAt() {
-        return finishedAt;
-    }
-
-    public void setFinishedAt(LocalDateTime finishedAt) {
-        this.finishedAt = finishedAt;
+        return duels.stream().anyMatch(Duel::isOver);
     }
 
     public Integer getLevel() {

@@ -47,7 +47,7 @@ export class TimerComponent implements OnInit {
         this.startTimer();
       }
     } else if (event.key === 'Enter') {
-      this.stopTimer();
+      this.finishTimer();
     }
   }
 
@@ -65,7 +65,10 @@ export class TimerComponent implements OnInit {
     this.started = false;
   };
 
-  stopTimer() {
+  finishTimer() {
+    if (!this.totalSeconds) {
+      this.totalSeconds = 1;
+    }
     this.onTimerFinished.emit([this.totalSeconds]);
     this.resetVariables(this.startingMinutes, this.startingSeconds, false);
     this.alarmOn = false;

@@ -115,7 +115,6 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private void resetGroup(Group group) {
         group.getFights().forEach(fight -> {
             fight.getDuels().clear();
-            fight.setOver(false);
             fight.generateDuels();
         });
         group.getUnties().clear();
@@ -202,7 +201,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             // First duel won
             currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-            currentFight.setOver(true);
+            currentFight.getDuels().forEach(duel -> duel.setDuration(0));
 
             fightProvider.save(currentFight);
         }
@@ -239,7 +238,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
-            currentFight.setOver(true);
+            currentFight.getDuels().forEach(duel -> duel.setDuration(0));
             fightProvider.save(currentFight);
         }
 
@@ -295,7 +294,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
                     .equals(teamProvider.get(tournament, "Team06").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
-            currentFight.setOver(true);
+            currentFight.getDuels().forEach(duel -> duel.setDuration(0));
             fightProvider.save(currentFight);
         }
 

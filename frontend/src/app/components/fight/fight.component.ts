@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {Duel} from "../../models/duel";
+import {DuelChangedService} from "../../services/duel-changed.service";
 
 @Component({
   selector: 'fight',
@@ -21,6 +22,19 @@ export class FightComponent implements OnInit {
   @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
 
   selectedDuel: Duel | undefined;
+
+  constructor(private duelChangedService: DuelChangedService) {
+    this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
+      if (selectedDuel && this.fight && this.fight.duels) {
+        for (let duel of this.fight.duels) {
+          if (selectedDuel.id === duel.id) {
+            this.selected = true;
+            this.selectedDuel = selectedDuel;
+          }
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     // This is intentional
