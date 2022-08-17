@@ -193,12 +193,6 @@ export class FightListComponent implements OnInit {
 
   selectFight(fight: Fight) {
     this.selectedFight = fight;
-    for (const duel of fight.duels) {
-      if (!duel.duration) {
-        this.selectDuel(duel);
-        return;
-      }
-    }
   }
 
   isFightOver(fight: Fight): boolean {

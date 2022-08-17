@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.converters;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.InvalidPropertyException;
 
 import java.beans.FeatureDescriptor;
 import java.util.stream.Stream;
