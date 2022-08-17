@@ -59,6 +59,9 @@ public class Tournament extends Element {
     @JoinColumn(name = "tournament_score")
     private TournamentScore tournamentScore;
 
+    @Column(name = "duels_duration", nullable = false)
+    private Integer duelsDuration = 180;
+
     public Tournament() {
         super();
     }
@@ -111,6 +114,14 @@ public class Tournament extends Element {
 
     public void setTournamentScore(TournamentScore tournamentScore) {
         this.tournamentScore = tournamentScore;
+    }
+
+    public Integer getDuelsDuration() {
+        return duelsDuration;
+    }
+
+    public void setDuelsDuration(Integer duelsDuration) {
+        this.duelsDuration = duelsDuration;
     }
 
     @Override

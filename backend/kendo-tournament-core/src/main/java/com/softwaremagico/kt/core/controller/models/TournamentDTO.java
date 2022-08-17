@@ -40,6 +40,8 @@ public class TournamentDTO extends ElementDTO {
 
     private TournamentScoreDTO tournamentScore;
 
+    private Integer duelsDuration;
+
     public TournamentDTO() {
         super();
     }
@@ -91,6 +93,14 @@ public class TournamentDTO extends ElementDTO {
 
     public void setTournamentScore(TournamentScoreDTO tournamentScore) {
         this.tournamentScore = tournamentScore;
+    }
+
+    public Integer getDuelsDuration() {
+        return duelsDuration;
+    }
+
+    public void setDuelsDuration(Integer duelsDuration) {
+        this.duelsDuration = duelsDuration;
     }
 
     @Override

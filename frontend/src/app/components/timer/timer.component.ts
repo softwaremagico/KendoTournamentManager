@@ -11,12 +11,17 @@ export class TimerComponent implements OnInit {
   started = false;
 
   @Input()
-  startingMinutes: number = 2;
+  set startingMinutes(value: number) {
+    this.minutes = value;
+  }
 
   @Input()
-  startingSeconds: number = 0;
+  set startingSeconds(value: number) {
+    this.seconds = value;
+  }
 
   @Output() onTimerFinished: EventEmitter<any> = new EventEmitter();
+  @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
   seconds: number;
@@ -27,8 +32,6 @@ export class TimerComponent implements OnInit {
 
   constructor(public audioService: AudioService) {
     this.started = false;
-    this.minutes = this.startingMinutes;
-    this.seconds = this.startingSeconds;
   }
 
   ngOnInit(): void {
@@ -117,21 +120,15 @@ export class TimerComponent implements OnInit {
 
   addTime(time: number) {
     this.seconds += time;
-    const rawSeconds: number = this.seconds;
-    this.seconds = this.seconds % 60;
-    if (this.seconds < 0) {
-      if (this.minutes > 0) {
-        this.seconds = 60 + this.seconds;
-      } else {
-        this.seconds = 0;
-      }
-    }
-    this.minutes += Math.floor(rawSeconds / 60);
+    const rawSeconds: number = this.seconds + this.minutes * 60;
+    this.seconds = rawSeconds % 60;
+    this.minutes = Math.floor(rawSeconds / 60);
     if (this.minutes < 0) {
       this.minutes = 0;
     } else if (this.minutes > 20) {
       this.minutes = 20;
     }
+    this.timeDurationChanged.emit([(this.seconds + this.minutes * 60)]);
   }
 
 }
