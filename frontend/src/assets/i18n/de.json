@@ -457,7 +457,8 @@
   "name": "Name",
   "competitor": "Teilnehmer",
   "referee": "Kampfrichter",
-  "disablePopUpBlocker": "Bitte deaktivieren Sie Ihren Popup-Blocker und versuchen Sie es erneut."
+  "disablePopUpBlocker": "Bitte deaktivieren Sie Ihren Popup-Blocker und versuchen Sie es erneut.",
+  "undraw": "Entscheiden"
 }
 
 

@@ -50,6 +50,7 @@ public class ScoreOfTeam {
     private Integer goldenPoints = null;
     private Integer hits = null;
     private Integer level = null;
+    private Integer sortingIndex = null;
 
     public ScoreOfTeam() {
 
@@ -108,38 +109,24 @@ public class ScoreOfTeam {
     }
 
     public void setDrawFights() {
-        drawFights = 0;
-        fights.forEach(fight -> {
-            if ((Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))) {
-                if (fight.isOver() && fight.isDrawFight()) {
-                    drawFights++;
-                }
-            }
-        });
+        drawFights = (int) fights.stream().filter(fight -> (Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))
+                && (fight.isOver() && fight.isDrawFight())).count();
     }
 
     public void setFightsDone() {
-        fightsDone = 0;
-        fights.forEach(fight -> {
-            if ((Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))) {
-                drawFights++;
-            }
-        });
+        fightsDone = (int) fights.stream().filter(fight -> (Objects.equals(fight.getTeam1(), team) || Objects.equals(fight.getTeam2(), team))).count();
     }
 
     public void setWonDuels() {
-        wonDuels = 0;
-        fights.forEach(fight -> wonDuels += fight.getWonDuels(team));
+        wonDuels = fights.stream().mapToInt(fight -> fight.getWonDuels(team)).sum();
     }
 
     public void setDrawDuels() {
-        drawDuels = 0;
-        fights.forEach(fight -> drawDuels += fight.getDrawDuels(team));
+        drawDuels = fights.stream().mapToInt(fight -> fight.getDrawDuels(team)).sum();
     }
 
     public void setHits() {
-        hits = 0;
-        fights.forEach(fight -> hits += fight.getScore(team));
+        hits = fights.stream().mapToInt(fight -> fight.getScore(team)).sum();
     }
 
     public void setGoldenPoints() {
@@ -191,6 +178,14 @@ public class ScoreOfTeam {
 
     public Integer getLevel() {
         return level;
+    }
+
+    public Integer getSortingIndex() {
+        return sortingIndex;
+    }
+
+    public void setSortingIndex(Integer sortingIndex) {
+        this.sortingIndex = sortingIndex;
     }
 
     @Override
