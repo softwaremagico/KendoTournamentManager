@@ -15,15 +15,11 @@ export class AuthenticatedUserService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/auth/public';
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + this.getJwtValue()
-    })
-  };
+  httpOptions: { headers: HttpHeaders };
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
+    this.refreshHeader();
   }
 
   login(username: string, password: string): Observable<AuthenticatedUser> {
@@ -40,8 +36,18 @@ export class AuthenticatedUserService {
         }));
   }
 
+  private refreshHeader() {
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.getJwtValue()
+      })
+    };
+  }
+
   setJwtValue(token: string) {
     this.cookies.set("jwt", token);
+    this.refreshHeader();
   }
 
   getJwtValue(): string {

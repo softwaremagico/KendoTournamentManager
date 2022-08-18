@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {Observable} from "rxjs";
@@ -22,7 +22,11 @@ export class TournamentService {
 
   getAll(): Observable<Tournament[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Tournament[]>(url, this.authenticatedUserService.httpOptions)
+
+    // Why is not set yet????
+    this.authenticatedUserService.httpOptions.headers.get('Authorization');
+
+    return this.http.get<Tournament[]>(url,  this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`fetched all Tournaments`)),
         catchError(this.messageService.handleError<Tournament[]>(`gets all`))
