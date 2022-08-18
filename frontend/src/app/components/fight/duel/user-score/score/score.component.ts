@@ -41,9 +41,17 @@ export class ScoreComponent implements OnInit {
   private updateDuel(score: Score) {
     if (score) {
       if (this.left) {
-        this.duel.competitor1Score[this.index] = score;
+        if (score !== Score.EMPTY) {
+          this.duel.competitor1Score[this.index] = score;
+        } else {
+          this.duel.competitor1Score.splice(this.index, 1)
+        }
       } else {
-        this.duel.competitor2Score[this.index] = score;
+        if (score !== Score.EMPTY) {
+          this.duel.competitor2Score[this.index] = score;
+        } else {
+          this.duel.competitor2Score.splice(this.index, 1)
+        }
       }
     }
   }
