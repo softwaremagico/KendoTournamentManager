@@ -29,9 +29,43 @@
   text-align: center;
   padding: 10px;
   color: #001239;
+  //color: #4d6d95;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.team-ranking-value.team-name {
+  font-weight: bold;
+}
+
+.team-ranking-value.team-name.finished {
+  font-weight: bold;
+  color: #4d6d95;
+}
+
+.team-ranking-value.team-name.winner {
+  color: #001239;
+}
+
+.team-ranking-value.team-name.winner.draw {
+  color: #ff0000;
+}
+
+.team-ranking-value.team-name.finalist {
+  color: #274e7e;
+}
+
+.team-ranking-value.team-name.finalist.draw {
+  color: #FF9800;
+}
+
+.team-ranking-value.team-name.semifinalist {
+  color: #4d6d95;
+}
+
+.team-ranking-value.team-name.semifinalist.draw {
+  color: #ffd740;
 }
 
 .mat-raised-button {

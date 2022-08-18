@@ -186,11 +186,11 @@ public class FightDTO extends ElementDTO {
     }
 
     public Integer getScoreTeam1() {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == -1).count();
+        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
     }
 
     public Integer getScoreTeam2() {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 1).count();
+        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
     }
 
     public Integer getScore(ParticipantDTO competitor) {

@@ -120,6 +120,18 @@ public class RankingController {
             scores.add(new ScoreOfTeam(team, fights, unties));
         }
         sortTeamsScores(type, scores);
+        if (scores.isEmpty()) {
+            return scores;
+        }
+        //check draw values.
+        int sortingIndex = 0;
+        scores.get(0).setSortingIndex(sortingIndex);
+        for (int i = 1; i < scores.size(); i++) {
+            if (getTeamsSorter(type).compare(scores.get(i - 1), scores.get(i)) != 0) {
+                sortingIndex++;
+            }
+            scores.get(i).setSortingIndex(sortingIndex);
+        }
         return scores;
     }
 

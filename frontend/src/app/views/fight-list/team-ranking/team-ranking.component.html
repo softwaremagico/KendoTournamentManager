@@ -1,6 +1,6 @@
 <div class="table-container">
   <table class="team-ranking-table">
-    <caption>{{'teamsRanking' | translate}}</caption>
+    <caption class="table-caption">{{'teamsRanking' | translate}}</caption>
     <tr>
       <th class="team-ranking-header">{{'team' | translate}}</th>
       <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
@@ -10,7 +10,14 @@
       <th class="team-ranking-header">{{'histsWon' | translate}}</th>
     </tr>
     <tr *ngFor="let teamScore of teamScores">
-      <td class="team-ranking-value">{{teamScore.team.name}}</td>
+      <td class="team-ranking-value team-name"
+          [ngClass]="{'finished': fightsFinished,
+          'winner': teamScore.sortingIndex===0 && fightsFinished,
+          'finalist': teamScore.sortingIndex===1 && fightsFinished,
+          'semifinalist': teamScore.sortingIndex===2 && fightsFinished,
+          'draw': (teamScore.sortingIndex===0 && isDrawWinner(0)) ||
+          (teamScore.sortingIndex===1 && isDrawWinner(1)) ||
+          (teamScore.sortingIndex===2 && isDrawWinner(2))}">{{teamScore.team.name}}</td>
       <td class="team-ranking-value">{{teamScore.wonFights}}</td>
       <td class="team-ranking-value">{{teamScore.drawFights}}</td>
       <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
@@ -23,6 +30,11 @@
   <button mat-raised-button (click)="downloadPDF()" mat-flat-button>
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
+  </button>
+  <button mat-raised-button (click)="downloadPDF()" *ngIf="fightsFinished &&
+  (isDrawWinner(0) || isDrawWinner(1) || isDrawWinner(2))" mat-flat-button>
+    <mat-icon>undraw</mat-icon>
+    {{'undraw' | translate}}
   </button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
 </div>
