@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -40,12 +40,7 @@ export class RankingService {
 
   getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
     const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId + '/pdf';
-    return this.http.get<Blob>(url, {
-      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
-      })
-    });
+    return this.http.get<Blob>(url, this.authenticatedUserService.httpOptions);
   }
 
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
@@ -68,12 +63,7 @@ export class RankingService {
 
   getTeamsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
     const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId + '/pdf';
-    return this.http.get<Blob>(url, {
-      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
-      })
-    });
+    return this.http.get<Blob>(url, this.authenticatedUserService.httpOptions);
   }
 
 }
