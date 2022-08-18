@@ -53,10 +53,7 @@ export class FightComponent implements OnInit {
   }
 
   isOver(duel: Duel): boolean {
-    if (duel.duration) {
-      return true;
-    }
-    return false;
+    return !!duel.duration;
   }
 
 }

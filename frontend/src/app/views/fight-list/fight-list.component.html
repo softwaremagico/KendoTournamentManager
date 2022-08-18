@@ -50,7 +50,7 @@
     </div>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" (onTimerFinished)="finishDuel($event[0])"
-               (onTimerPaused)="updateDuelElapsedTime($event[0])"
+               (onTimerChanged)="updateDuelElapsedTime($event[0])"
                (timeDurationChanged)="updateDuelDuration($event[0])"></app-timer>
     <div class="mat-elevation-z8">
       <div class="fight-list">
