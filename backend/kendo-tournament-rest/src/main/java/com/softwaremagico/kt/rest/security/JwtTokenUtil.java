@@ -8,17 +8,17 @@ package com.softwaremagico.kt.rest.security;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -38,12 +38,16 @@ public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
     private static final long JWT_EXPIRATION = 604800000;
 
+    private final NetworkController networkController;
+
     private final String jwtSecret;
     private final long jwtExpiration;
 
     @Autowired
-    public JwtTokenUtil(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration) {
+    public JwtTokenUtil(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
+                        NetworkController networkController) {
         this.jwtSecret = jwtSecret;
+        this.networkController = networkController;
 
         long calculatedJwtExpiration;
         if (jwtExpiration == null) {
@@ -59,9 +63,10 @@ public class JwtTokenUtil {
         this.jwtExpiration = calculatedJwtExpiration;
     }
 
-    public String generateAccessToken(AuthenticatedUser user) {
+
+    public String generateAccessToken(AuthenticatedUser user, String userIp) {
         return Jwts.builder()
-                .setSubject(String.format("%s,%s", user.getId(), user.getUsername()))
+                .setSubject(String.format("%s,%s,%s,%s", user.getId(), user.getUsername(), userIp, networkController.getHostMac()))
                 .setIssuer(JWT_ISSUER)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // 1 week
@@ -75,7 +80,12 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject().split(",")[0];
+        try {
+            return claims.getSubject().split(",")[0];
+        } catch (Exception e) {
+            RestServerLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
+            return null;
+        }
     }
 
     public String getUsername(String token) {
@@ -84,7 +94,38 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject().split(",")[1];
+        try {
+            return claims.getSubject().split(",")[1];
+        } catch (Exception e) {
+            RestServerLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
+            return null;
+        }
+    }
+
+    public String getUserIp(String token) {
+        final Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        try {
+            return claims.getSubject().split(",")[2];
+        } catch (Exception e) {
+            RestServerLogger.warning(this.getClass().getName(), "No filed 'user IP' on JWT token!");
+            return null;
+        }
+    }
+
+    public String getHostMac(String token) {
+        final Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        try {
+            return claims.getSubject().split(",")[3];
+        } catch (Exception e) {
+            RestServerLogger.warning(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
+            return null;
+        }
     }
 
     public Date getExpirationDate(String token) {
