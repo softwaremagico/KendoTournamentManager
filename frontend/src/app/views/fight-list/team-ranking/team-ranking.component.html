@@ -33,7 +33,7 @@
   </button>
   <button mat-raised-button (click)="downloadPDF()" *ngIf="fightsFinished &&
   (isDrawWinner(0) || isDrawWinner(1) || isDrawWinner(2))" mat-flat-button>
-    <mat-icon>undraw</mat-icon>
+    <mat-icon svgIcon="undraw-score" class="kendo-icon"></mat-icon>
     {{'undraw' | translate}}
   </button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
