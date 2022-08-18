@@ -211,10 +211,10 @@ export class FightListComponent implements OnInit {
     return false;
   }
 
-  showTeamsClassification() {
+  showTeamsClassification(fightsFinished: boolean) {
     this.dialog.open(TeamRankingComponent, {
       width: '85vw',
-      data: {tournament: this.tournament}
+      data: {tournament: this.tournament, finished: fightsFinished}
     });
   }
 
@@ -272,6 +272,19 @@ export class FightListComponent implements OnInit {
     }
   }
 
+  areAllDuelsOver(): boolean {
+    if (this.fights) {
+      for (const fight of this.fights) {
+        for (const duel of fight.duels) {
+          if (!duel.duration) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   selectFirstUnfinishedDuel() {
     if (this.fights) {
       for (const fight of this.fights) {
@@ -283,6 +296,8 @@ export class FightListComponent implements OnInit {
           }
         }
       }
+      //All over. Show ranking
+      this.showTeamsClassification(true);
     }
   }
 
