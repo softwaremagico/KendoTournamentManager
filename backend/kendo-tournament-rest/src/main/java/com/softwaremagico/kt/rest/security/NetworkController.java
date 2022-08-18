@@ -21,8 +21,7 @@ public class NetworkController {
             }
             return String.join("-", hexadecimal);
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No mac server found!");
-            e.printStackTrace();
+            RestServerLogger.debug(this.getClass().getName(), "No mac server found!");
         }
         return "";
     }
