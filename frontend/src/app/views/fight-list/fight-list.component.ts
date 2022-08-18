@@ -19,6 +19,7 @@ import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ran
 import {TranslateService} from "@ngx-translate/core";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
+import {TimeChangedService} from "../../services/time-changed.service";
 import {DuelChangedService} from "../../services/duel-changed.service";
 
 @Component({
@@ -37,7 +38,7 @@ export class FightListComponent implements OnInit {
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
-              public duelChangedService: DuelChangedService, public dialog: MatDialog,
+              public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService, public dialog: MatDialog,
               private messageService: MessageService, public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -255,6 +256,20 @@ export class FightListComponent implements OnInit {
   selectDuel(duel: Duel) {
     this.selectedDuel = duel;
     this.duelChangedService.isDuelSelected.next(duel);
+    if (duel) {
+      if (duel.duration) {
+        this.timeChangedService.isElapsedTimeChanged.next(duel.duration);
+      } else {
+        this.timeChangedService.isElapsedTimeChanged.next(0);
+      }
+    }
+    if (duel) {
+      if (duel.totalDuration) {
+        this.timeChangedService.isTotalTimeChanged.next(duel.totalDuration);
+      } else {
+        this.timeChangedService.isTotalTimeChanged.next(this.tournament.duelsDuration);
+      }
+    }
   }
 
   selectFirstUnfinishedDuel() {

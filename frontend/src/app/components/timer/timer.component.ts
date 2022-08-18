@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
-import {DuelChangedService} from "../../services/duel-changed.service";
+import {TimeChangedService} from "../../services/time-changed.service";
 
 @Component({
   selector: 'app-timer',
@@ -22,7 +22,7 @@ export class TimerComponent implements OnInit {
   }
 
   @Output() onTimerFinished: EventEmitter<any> = new EventEmitter();
-  @Output() onTimerPaused: EventEmitter<any> = new EventEmitter();
+  @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
@@ -32,20 +32,8 @@ export class TimerComponent implements OnInit {
   private alarmOn: boolean;
 
 
-  constructor(public audioService: AudioService, private duelChangedService: DuelChangedService) {
+  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService) {
     this.started = false;
-    this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
-      if (selectedDuel.duration) {
-        this.elapsedSeconds = selectedDuel.duration;
-        if (selectedDuel.totalDuration) {
-          this.resetVariablesAsSeconds(selectedDuel.totalDuration - selectedDuel.duration, false);
-        }
-      } else {
-        if (selectedDuel.totalDuration) {
-          this.resetVariablesAsSeconds(selectedDuel.totalDuration, false);
-        }
-      }
-    });
   }
 
   ngOnInit(): void {
@@ -53,6 +41,12 @@ export class TimerComponent implements OnInit {
     this.clockHandler = setInterval(function () {
       self.secondElapsed.apply(self);
     }, 1000);
+    this.timeChangedService.isElapsedTimeChanged.subscribe(elapsedTime => {
+      this.elapsedSeconds = elapsedTime;
+    });
+    this.timeChangedService.isTotalTimeChanged.subscribe(totalTime => {
+      this.resetVariablesAsSeconds(totalTime, false);
+    });
   }
 
   @HostListener('document:keypress', ['$event'])
@@ -69,15 +63,17 @@ export class TimerComponent implements OnInit {
   }
 
   resetVariablesAsSeconds(rawSeconds: number, started: boolean) {
+    rawSeconds = rawSeconds - this.elapsedSeconds;
+    if (rawSeconds < 0) {
+      rawSeconds = 0;
+    }
     this.seconds = rawSeconds % 60;
     this.minutes = Math.floor(rawSeconds / 60);
     this.started = started;
   }
 
-  resetVariables(mins: number, secs: number, started: boolean) {
-    this.minutes = mins;
-    this.seconds = secs;
-    this.started = started;
+  resetVariables(minutes: number, seconds: number, started: boolean) {
+    this.resetVariablesAsSeconds(minutes * 60 + seconds, started);
   }
 
   startTimer() {
@@ -86,7 +82,7 @@ export class TimerComponent implements OnInit {
 
   pauseTimer() {
     this.started = false;
-    this.onTimerPaused.emit([this.elapsedSeconds]);
+    this.onTimerChanged.emit([this.elapsedSeconds]);
   };
 
   finishTimer() {
@@ -106,7 +102,7 @@ export class TimerComponent implements OnInit {
 
   secondElapsed() {
     if (!this.started) {
-      return false;
+      return;
     }
     if (this.seconds === 0) {
       if (this.minutes === 0) {
@@ -124,8 +120,10 @@ export class TimerComponent implements OnInit {
       this.audioService.playAlarm();
     }
     this.elapsedSeconds++;
-    return;
-  };
+    if (this.seconds % 3 == 0) {
+      this.onTimerChanged.emit([this.elapsedSeconds]);
+    }
+  }
 
   isWarningTime(): boolean {
     return this.minutes == 0 && this.seconds < 30 && this.seconds > 10;
@@ -141,16 +139,18 @@ export class TimerComponent implements OnInit {
 
   addTime(time: number) {
     this.seconds += time;
-    this.elapsedSeconds += time;
-    const rawSeconds: number = this.seconds + this.minutes * 60;
+    let rawSeconds: number = this.seconds + this.minutes * 60;
+    if (rawSeconds < 0) {
+      rawSeconds = 0;
+    }
     this.seconds = rawSeconds % 60;
     this.minutes = Math.floor(rawSeconds / 60);
-    if (this.minutes < 0) {
-      this.minutes = 0;
-    } else if (this.minutes > 20) {
+    if (this.minutes > 20) {
       this.minutes = 20;
     }
-    this.timeDurationChanged.emit([(this.seconds + this.minutes * 60)]);
+    console.log('%%%', rawSeconds, this.elapsedSeconds)
+    this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
+    this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 
 }
