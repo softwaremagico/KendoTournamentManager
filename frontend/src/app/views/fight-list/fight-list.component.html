@@ -29,7 +29,7 @@
         <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
                 *ngIf="tournament && tournament.teamSize && tournament.teamSize>1"
-                (click)="showTeamsClassification()">
+                (click)="showTeamsClassification(areAllDuelsOver())">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
