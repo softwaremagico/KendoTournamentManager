@@ -87,7 +87,7 @@ public class AuthApi {
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user))
+                    .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
                     .body(user);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from ip '" + ip + "'!");
