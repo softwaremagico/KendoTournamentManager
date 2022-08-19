@@ -31,7 +31,7 @@
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>
-  <button mat-raised-button (click)="downloadPDF()" *ngIf="fightsFinished &&
+  <button mat-raised-button (click)="undrawTeams(0)" *ngIf="fightsFinished &&
   (isDrawWinner(0) || isDrawWinner(1) || isDrawWinner(2))" mat-flat-button>
     <mat-icon svgIcon="undraw-score" class="kendo-icon"></mat-icon>
     {{'undraw' | translate}}

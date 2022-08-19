@@ -66,7 +66,7 @@ export class TournamentRolesComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  private transferCard(event: CdkDragDrop<Participant[], any>): Participant {
+  transferCard(event: CdkDragDrop<Participant[], any>): Participant {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
