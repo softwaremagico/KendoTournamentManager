@@ -58,6 +58,11 @@
                [over]="isFightOver(fight)" (click)="selectFight(fight)"
                (onSelectedDuel)="selectDuel($event[0])"></fight>
       </div>
+      <div class="unties-list">
+        <duel class="duel" *ngFor="let duel of unties" [duel]="duel" (click)="selectDuel(duel)"
+              [selected]="duel === selectedDuel"
+              [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></duel>
+      </div>
     </div>
   </div>
 </div>

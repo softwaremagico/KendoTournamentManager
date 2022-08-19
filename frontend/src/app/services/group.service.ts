@@ -8,6 +8,7 @@ import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Group} from "../models/group";
 import {Team} from "../models/team";
+import {Duel} from "../models/duel";
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +52,15 @@ export class GroupService {
   setTeams(teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/teams`;
     return this.http.put<Group>(url, teams, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap(_ => this.loggerService.info(`Updating teams for default group`)),
+        catchError(this.messageService.handleError<Group>(`updates teams for default group`))
+      );
+  }
+
+  addUntie(groupId: number, duel: Duel): Observable<Group> {
+    const url: string = `${this.baseUrl}/` + groupId + `/unties`;
+    return this.http.put<Group>(url, duel, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`Updating teams for default group`)),
         catchError(this.messageService.handleError<Group>(`updates teams for default group`))

@@ -6,7 +6,7 @@ export class ScoreOfTeam {
   public drawFights: number;
   public wonDuels: number;
   public drawDuels: number;
-  public goldenPoint: number;
+  public untieDuels: number;
   public hits: number;
   public sortingIndex: number;
 
@@ -16,7 +16,7 @@ export class ScoreOfTeam {
     target.wonDuels = source.wonDuels;
     target.drawDuels = source.drawDuels;
     target.hits = source.hits;
-    target.goldenPoint = source.goldenPoint;
+    target.untieDuels = source.untieDuels;
     if (source.team !== undefined) {
       target.team = Team.clone(source.team);
     }

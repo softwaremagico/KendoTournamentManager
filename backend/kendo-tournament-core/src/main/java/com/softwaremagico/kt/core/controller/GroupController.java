@@ -24,10 +24,7 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
@@ -55,7 +52,6 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final FightProvider fightProvider;
-
     private final FightConverter fightConverter;
 
     @Autowired
@@ -120,6 +116,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         groupDTO = converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
         groupDTO.setTeams(teams);
         groupDTO.setUpdatedBy(username);
+        return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
+    }
+
+    public GroupDTO addUntie(Integer groupId, DuelDTO duelDTO, String username) {
+        final GroupDTO groupDTO = get(groupId);
+        groupDTO.getUnties().add(duelDTO);
         return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
     }
 

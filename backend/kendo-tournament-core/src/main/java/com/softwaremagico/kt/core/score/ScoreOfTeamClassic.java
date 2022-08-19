@@ -49,6 +49,6 @@ public class ScoreOfTeamClassic implements Comparator<ScoreOfTeam> {
         }
 
 
-        return scoreOfTeam2.getGoldenPoints().compareTo(scoreOfTeam1.getGoldenPoints());
+        return scoreOfTeam2.getUntieDuels().compareTo(scoreOfTeam1.getUntieDuels());
     }
 }

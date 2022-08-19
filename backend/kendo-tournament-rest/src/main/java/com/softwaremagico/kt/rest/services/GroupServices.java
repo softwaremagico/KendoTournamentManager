@@ -25,6 +25,7 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,5 +80,15 @@ public class GroupServices {
                                Authentication authentication,
                                HttpServletRequest request) {
         return groupController.setTeams(teamsDto, authentication.getName());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Adds an untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GroupDTO addUntie(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
+                             @RequestBody DuelDTO duelDTO,
+                             Authentication authentication,
+                             HttpServletRequest request) {
+        return groupController.addUntie(groupId, duelDTO, authentication.getName());
     }
 }
