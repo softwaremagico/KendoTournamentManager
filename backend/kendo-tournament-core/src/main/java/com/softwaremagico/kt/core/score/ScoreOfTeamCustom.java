@@ -74,7 +74,7 @@ public class ScoreOfTeamCustom implements Comparator<ScoreOfTeam> {
             return 1;
         }
 
-        return scoreOfTeam2.getGoldenPoints().compareTo(scoreOfTeam1.getGoldenPoints());
+        return scoreOfTeam2.getUntieDuels().compareTo(scoreOfTeam1.getUntieDuels());
 
     }
 }

@@ -56,6 +56,6 @@ public class ScoreOfTeamWinOverDraws implements Comparator<ScoreOfTeam> {
             return scoreOfTeam2.getDrawDuels().compareTo(scoreOfTeam1.getDrawDuels());
         }
 
-        return scoreOfTeam2.getGoldenPoints().compareTo(scoreOfTeam1.getGoldenPoints());
+        return scoreOfTeam2.getUntieDuels().compareTo(scoreOfTeam1.getUntieDuels());
     }
 }
