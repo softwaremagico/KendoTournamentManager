@@ -1,24 +1,33 @@
 .team-area {
   min-width: 200px;
-  width: 20vw;
+  width: 350px;
   max-width: 500px;
+  margin: 10px;
 }
 
 .users-container {
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 400px;
+  max-height: 450px;
+  min-height: 350px;
+  height: 350px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
 }
 
 .user-card {
   margin: 20px;
   border-radius: 10px;
   height: 40px;
+  min-width: 350px;
 }
 
-.representative-user{
-  border: 1px;
-  height: 45px;
+.representative-user {
+  min-height: 100px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
 }
 
 .mat-card-header .mat-card-title {
@@ -27,4 +36,8 @@
 
 .mat-card-header .mat-card-subtitle {
   font-size: 12px;
+}
+
+.representative-title {
+  padding-top: 30px;
 }
