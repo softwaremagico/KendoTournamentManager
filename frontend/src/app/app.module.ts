@@ -69,6 +69,7 @@ import {TeamRankingComponent} from './views/fight-list/team-ranking/team-ranking
 import {CompetitorsRankingComponent} from './views/fight-list/competitors-ranking/competitors-ranking.component';
 import {TimerComponent} from './components/timer/timer.component';
 import { UndrawTeamsComponent } from './views/fight-list/undraw-teams/undraw-teams.component';
+import { MemberSelectorComponent } from './components/basic/member-selector/member-selector.component';
 
 
 registerLocaleData(localeES, "es");
@@ -107,7 +108,8 @@ registerLocaleData(localeNL, "nl");
     TeamRankingComponent,
     CompetitorsRankingComponent,
     TimerComponent,
-    UndrawTeamsComponent
+    UndrawTeamsComponent,
+    MemberSelectorComponent
   ],
   imports: [
     BrowserModule,

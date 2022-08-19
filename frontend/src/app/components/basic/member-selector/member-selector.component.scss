@@ -1,0 +1,30 @@
+.team-area {
+  min-width: 200px;
+  width: 20vw;
+  max-width: 500px;
+}
+
+.users-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 400px;
+}
+
+.user-card {
+  margin: 20px;
+  border-radius: 10px;
+  height: 40px;
+}
+
+.representative-user{
+  border: 1px;
+  height: 45px;
+}
+
+.mat-card-header .mat-card-title {
+  font-size: 16px;
+}
+
+.mat-card-header .mat-card-subtitle {
+  font-size: 12px;
+}
