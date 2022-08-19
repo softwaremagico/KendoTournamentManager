@@ -3,5 +3,6 @@
   <app-member-selector [team]="fight.team2" (selectedMember)="setCompetitor2($event)"></app-member-selector>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'accept' | translate}}</button>
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="secondary">{{'cancel' | translate}}</button>
 </div>
