@@ -13,7 +13,7 @@ import {Duel} from "../models/duel";
 })
 export class DuelService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/fights/duels';
+  private baseUrl = this.environmentService.getBackendUrl() + '/duels';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
@@ -21,11 +21,29 @@ export class DuelService {
   }
 
   update(duel: Duel): Observable<Duel> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/fights`;
     return this.http.put<Duel>(url, duel, this.authenticatedUserService.httpOptions)
       .pipe(
         tap((_updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
         catchError(this.messageService.handleError<Duel>(`updating duel`))
+      );
+  }
+
+  getUntiesFromGroup(groupId: number): Observable<Duel[]> {
+    const url: string = `${this.baseUrl}/groups/` + groupId + '/unties';
+    return this.http.get<Duel[]>(url, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from group '` + groupId + `'`)),
+        catchError(this.messageService.handleError<Duel[]>(`getting unties from group '` + groupId + `'`))
+      );
+  }
+
+  getUntiesFromTournament(tournamentId: number): Observable<Duel[]> {
+    const url: string = `${this.baseUrl}/tournaments/` + tournamentId + '/unties';
+    return this.http.get<Duel[]>(url, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from tournament '` + tournamentId + `'`)),
+        catchError(this.messageService.handleError<Duel[]>(`getting unties from tournament '` + tournamentId + `'`))
       );
   }
 }

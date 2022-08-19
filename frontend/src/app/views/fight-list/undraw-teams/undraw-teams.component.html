@@ -1,8 +1,8 @@
 <div class="undraw-generator">
-  <app-member-selector [team]="fight.team1" (selectedMember)="setCompetitor1($event)"></app-member-selector>
-  <app-member-selector [team]="fight.team2" (selectedMember)="setCompetitor2($event)"></app-member-selector>
+  <app-member-selector [team]="team1" (selectedMember)="setCompetitor1($event)"></app-member-selector>
+  <app-member-selector [team]="team2" (selectedMember)="setCompetitor2($event)"></app-member-selector>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'accept' | translate}}</button>
+  <button mat-raised-button (click)="createFight()" mat-flat-button color="primary">{{'accept' | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="secondary">{{'cancel' | translate}}</button>
 </div>

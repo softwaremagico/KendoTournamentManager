@@ -28,19 +28,18 @@ import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
-@RequestMapping("/fights/duels")
+@RequestMapping("/duels")
 public class DuelServices {
     private final DuelController duelController;
 
@@ -51,12 +50,29 @@ public class DuelServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a duel.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/fights", produces = MediaType.APPLICATION_JSON_VALUE)
     public DuelDTO update(@RequestBody DuelDTO duelDTO, Authentication authentication, HttpServletRequest request) {
         if (duelDTO == null) {
             throw new BadRequestException(getClass(), "Duel data is missing");
         }
         return duelController.update(duelDTO, authentication.getName());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/groups/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DuelDTO> getUntiesFromGroup(@Parameter(description = "Id of the group.", required = true) @PathVariable("groupId") Integer groupId,
+                                            HttpServletRequest request) {
+        return duelController.getUntiesFromGroup(groupId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DuelDTO> getUntiesFromTournament(@Parameter(description = "Id of the tournament.", required = true) @PathVariable("tournamentId")
+                                                 Integer tournamentId,
+                                                 HttpServletRequest request) {
+        return duelController.getUntiesFromTournament(tournamentId);
     }
 
 

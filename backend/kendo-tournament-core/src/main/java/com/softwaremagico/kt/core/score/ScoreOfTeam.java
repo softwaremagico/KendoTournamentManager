@@ -47,7 +47,7 @@ public class ScoreOfTeam {
     private Integer fightsDone = null;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
-    private Integer goldenPoints = null;
+    private Integer untieDuels = null;
     private Integer hits = null;
     private Integer level = null;
     private Integer sortingIndex = null;
@@ -79,7 +79,7 @@ public class ScoreOfTeam {
         drawFights = null;
         wonDuels = null;
         drawDuels = null;
-        goldenPoints = null;
+        untieDuels = null;
         hits = null;
         level = null;
         fightsDone = null;
@@ -89,7 +89,7 @@ public class ScoreOfTeam {
         setWonFights();
         setDrawFights();
         setFightsDone();
-        setGoldenPoints();
+        setUntieDuels();
         setHits();
     }
 
@@ -129,13 +129,13 @@ public class ScoreOfTeam {
         hits = fights.stream().mapToInt(fight -> fight.getScore(team)).sum();
     }
 
-    public void setGoldenPoints() {
-        goldenPoints = 0;
+    public void setUntieDuels() {
+        untieDuels = 0;
         unties.forEach(duel -> {
             if ((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1) {
-                goldenPoints++;
+                untieDuels++;
             } else if ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1) {
-                goldenPoints++;
+                untieDuels++;
             }
         });
     }
@@ -168,8 +168,8 @@ public class ScoreOfTeam {
         return drawDuels;
     }
 
-    public Integer getGoldenPoints() {
-        return goldenPoints;
+    public Integer getUntieDuels() {
+        return untieDuels;
     }
 
     public Integer getHits() {
@@ -191,6 +191,6 @@ public class ScoreOfTeam {
     @Override
     public String toString() {
         return team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
-                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getGoldenPoints())) + "\n";
+                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getUntieDuels())) + "\n";
     }
 }
