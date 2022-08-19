@@ -31,12 +31,8 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
 
   checkDroppedElement(item: CdkDrag<Participant>) {
     //TODO (softwaremagico): fitler drops.
-    // if (!this.team.members.includes(item.data)) {
-    //   return false;
-    // }
-    // return this.member === undefined;
-    return true;
     //return this.selectedMembers.length === 0;
+    return true;
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>) {
@@ -45,12 +41,15 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
   }
 
   transferCard(event: CdkDragDrop<Participant[], any>): Participant {
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex,
-    );
+    //Only one member allowed.
+    if (event.container.data.length === 0 || event.container.data !== this.selectedMembers) {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
     return event.container.data[event.currentIndex];
   }
 
