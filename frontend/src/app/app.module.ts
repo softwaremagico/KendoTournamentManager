@@ -68,6 +68,7 @@ import {ConfirmationDialogComponent} from './components/basic/confirmation-dialo
 import {TeamRankingComponent} from './views/fight-list/team-ranking/team-ranking.component';
 import {CompetitorsRankingComponent} from './views/fight-list/competitors-ranking/competitors-ranking.component';
 import {TimerComponent} from './components/timer/timer.component';
+import { UndrawTeamsComponent } from './views/fight-list/undraw-teams/undraw-teams.component';
 
 
 registerLocaleData(localeES, "es");
@@ -105,7 +106,8 @@ registerLocaleData(localeNL, "nl");
     ConfirmationDialogComponent,
     TeamRankingComponent,
     CompetitorsRankingComponent,
-    TimerComponent
+    TimerComponent,
+    UndrawTeamsComponent
   ],
   imports: [
     BrowserModule,

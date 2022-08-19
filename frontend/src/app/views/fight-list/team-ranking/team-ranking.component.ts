@@ -1,10 +1,12 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {ScoreOfTeam} from "../../../models/score-of-team";
 import {RankingService} from "../../../services/ranking.service";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
-import {Subject} from "rxjs";
+import {concatMap, from, Subject, takeWhile} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
+import {UndrawTeamsComponent} from "../undraw-teams/undraw-teams.component";
+import {Team} from "../../../models/team";
 
 @Component({
   selector: 'app-team-ranking',
@@ -22,7 +24,7 @@ export class TeamRankingComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, finished: boolean },
-              private rankingService: RankingService, public translateService: TranslateService) {
+              private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog) {
     this.tournament = data.tournament;
     this.fightsFinished = data.finished;
   }
@@ -37,6 +39,17 @@ export class TeamRankingComponent implements OnInit {
 
   isDrawWinner(index: number): boolean {
     return this.teamScores && this.fightsFinished && this.teamScores.filter((scoreOfTeam) => scoreOfTeam.sortingIndex === index).length > 1;
+  }
+
+  getDrawWinner(index: number): Team[] {
+    const teams: Team[] = [];
+    if (this.teamScores && this.fightsFinished) {
+      const scores: ScoreOfTeam[] = this.teamScores.filter((scoreOfTeam) => scoreOfTeam.sortingIndex === index);
+      for (const scoreOfTeam of scores) {
+        teams.push(scoreOfTeam.team);
+      }
+    }
+    return teams;
   }
 
   closeDialog() {
@@ -54,5 +67,22 @@ export class TeamRankingComponent implements OnInit {
         }
       });
     }
+  }
+
+  undrawTeams(index: number) {
+    const teams: Team[] = this.getDrawWinner(index);
+    let i = 1;
+    from(teams).pipe(
+      concatMap(() => {
+        const dialogRef = this.dialog.open(UndrawTeamsComponent, {
+          width: '90vw',
+          data: {tournament: this.tournament, team1: teams[i - 1], team2: teams[i]}
+        });
+        i++;
+        return dialogRef.afterClosed();
+      }),
+      takeWhile(Boolean)
+    ).subscribe();
+    this.closeDialog();
   }
 }

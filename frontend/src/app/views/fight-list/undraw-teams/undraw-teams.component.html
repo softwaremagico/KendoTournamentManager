@@ -1,0 +1,25 @@
+<div class="undraw-generator">
+  <div class="team-area" cdkDropListGroup>
+    <h2>{{fight.team1.name}}</h2>
+    <div class="users-container" cdkDropList>
+      <app-user-card *ngFor="let user of fight.team1.members" [user]="user"></app-user-card>
+    </div>
+    <div class="representative-user" cdkDropList [cdkDropListEnterPredicate]="checkDroppedElementTeam1"
+         [cdkDropListSortingDisabled]="false" (cdkDropListDropped)="dropParticipant($event, fight.team1)">
+    </div>
+  </div>
+  <div class="team-area" cdkDropListGroup>
+    <h2>{{fight.team2.name}}</h2>
+    <div class="users-container" cdkDropList>
+      <div class="users-container" cdkDropList>
+        <app-user-card *ngFor="let user of fight.team2.members" [user]="user"></app-user-card>
+      </div>
+    </div>
+    <div class="representative-user" cdkDropList [cdkDropListEnterPredicate]="checkDroppedElementTeam2"
+         [cdkDropListSortingDisabled]="false" (cdkDropListDropped)="dropParticipant($event, fight.team1)">
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions class="button-container">
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
+</div>
