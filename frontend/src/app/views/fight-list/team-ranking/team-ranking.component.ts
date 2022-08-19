@@ -75,7 +75,7 @@ export class TeamRankingComponent implements OnInit {
     from(teams).pipe(
       concatMap(() => {
         const dialogRef = this.dialog.open(UndrawTeamsComponent, {
-          data: {tournament: this.tournament, team1: teams[i - 1], team2: teams[i]}
+          data: {tournament: this.tournament, groupId: ,  team1: teams[i - 1], team2: teams[i]}
         });
         i++;
         return dialogRef.afterClosed();

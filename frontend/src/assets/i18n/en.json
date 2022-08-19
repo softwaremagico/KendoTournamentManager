@@ -385,7 +385,6 @@
   "errorLanguage": "There is a problem with the language file. Check the XML file",
   "orderChanged": "The order of the members has been changed.",
   "databaseImported": "The database has been imported correctly!",
-  "addFight": "The fight has been added correctly.",
   "waitNewLevel": "The team order can not be changed until all current fights are finished.",
   "existFile": "The file already exists. Do you want to overwrite it?",
   "ConversionCompleted": "The database has been exported successfully!",
@@ -489,6 +488,7 @@
   "teamsRanking": "Ranking of teams",
   "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
   "group": "Pool",
-  "undraw": "Undraw"
+  "undraw": "Undraw",
+  "addFight": "The fight has been added correctly."
 }
 

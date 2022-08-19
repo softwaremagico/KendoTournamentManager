@@ -5,9 +5,9 @@ import {Duel} from "../models/duel";
 @Injectable({
   providedIn: 'root'
 })
-export class DuelChangedService {
+export class UntieAddedService {
 
-  public isDuelSelected: BehaviorSubject<Duel> = new BehaviorSubject<Duel>(new Duel());
+  public isDuelAdded: BehaviorSubject<Duel> = new BehaviorSubject<Duel>(new Duel());
 
   constructor() {
   }

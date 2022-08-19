@@ -21,6 +21,7 @@ import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
 import {TimeChangedService} from "../../services/time-changed.service";
 import {DuelChangedService} from "../../services/duel-changed.service";
+import {UntieAddedService} from "../../services/untie-added.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -30,6 +31,7 @@ import {DuelChangedService} from "../../services/duel-changed.service";
 export class FightListComponent implements OnInit {
 
   fights: Fight[];
+  unties: Duel[];
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
   tournament: Tournament;
@@ -38,7 +40,8 @@ export class FightListComponent implements OnInit {
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
-              public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService, public dialog: MatDialog,
+              public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService,
+              private untieAddedService: UntieAddedService, public dialog: MatDialog,
               private messageService: MessageService, public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -53,6 +56,14 @@ export class FightListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.refreshFights();
+    this.refreshUnties();
+    this.untieAddedService.isDuelAdded.subscribe(addedDuel => {
+      this.refreshUnties();
+    });
+  }
+
+  private refreshFights() {
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe(tournament => {
         this.tournament = tournament;
@@ -63,6 +74,18 @@ export class FightListComponent implements OnInit {
             this.selectFirstUnfinishedDuel();
           }, 1000);
         });
+      });
+    }
+  }
+
+  private refreshUnties() {
+    if (this.tournamentId) {
+      this.duelService.getUntiesFromTournament(this.tournamentId).subscribe(duels => {
+        this.unties = duels;
+        //Use a timeout or refresh before the components are drawn.
+        setTimeout(() => {
+          this.selectFirstUnfinishedDuel();
+        }, 1000);
       });
     }
   }
@@ -272,6 +295,10 @@ export class FightListComponent implements OnInit {
     }
   }
 
+  isOver(duel: Duel): boolean {
+    return !!duel.duration;
+  }
+
   areAllDuelsOver(): boolean {
     if (this.fights) {
       for (const fight of this.fights) {
@@ -294,6 +321,13 @@ export class FightListComponent implements OnInit {
             this.selectDuel(duel);
             return;
           }
+        }
+      }
+      for (const duel of this.unties) {
+        if (!duel.duration) {
+          this.selectedFight = undefined;
+          this.selectDuel(duel);
+          return;
         }
       }
       //All over. Show ranking
