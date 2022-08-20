@@ -18,14 +18,16 @@ export class TeamRankingComponent implements OnInit {
   teamScores: ScoreOfTeam[];
   tournament: Tournament;
   fightsFinished: boolean;
+  groupId: number;
 
   private destroy$: Subject<void> = new Subject<void>();
   _loading = false;
 
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, finished: boolean },
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, groupId: number, finished: boolean },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog) {
     this.tournament = data.tournament;
+    this.groupId = data.groupId;
     this.fightsFinished = data.finished;
   }
 
@@ -75,7 +77,7 @@ export class TeamRankingComponent implements OnInit {
     from(teams).pipe(
       concatMap(() => {
         const dialogRef = this.dialog.open(UndrawTeamsComponent, {
-          data: {tournament: this.tournament, groupId: ,  team1: teams[i - 1], team2: teams[i]}
+          data: {tournament: this.tournament, groupId: this.groupId, team1: teams[i - 1], team2: teams[i]}
         });
         i++;
         return dialogRef.afterClosed();
