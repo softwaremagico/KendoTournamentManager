@@ -70,6 +70,7 @@ import {CompetitorsRankingComponent} from './views/fight-list/competitors-rankin
 import {TimerComponent} from './components/timer/timer.component';
 import { UndrawTeamsComponent } from './views/fight-list/undraw-teams/undraw-teams.component';
 import { MemberSelectorComponent } from './components/basic/member-selector/member-selector.component';
+import { UntieFightComponent } from './components/untie-fight/untie-fight.component';
 
 
 registerLocaleData(localeES, "es");
@@ -109,7 +110,8 @@ registerLocaleData(localeNL, "nl");
     CompetitorsRankingComponent,
     TimerComponent,
     UndrawTeamsComponent,
-    MemberSelectorComponent
+    MemberSelectorComponent,
+    UntieFightComponent
   ],
   imports: [
     BrowserModule,

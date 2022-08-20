@@ -1,0 +1,66 @@
+
+.untie-container {
+  display: flex;
+}
+
+.untie {
+  border-width: 2px;
+  border-color: #011d4a;
+  border-style: solid;
+  padding: 5px;
+  width: 100%;
+  display: table;
+  min-width: 600px;
+  background: white;
+}
+
+.left-team {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  padding: 20px;
+  border-width: 2px;
+  border-color: white;
+  border-style: solid;
+  color: red;
+  background-color: #011d4a;
+}
+
+.right-team {
+  writing-mode: vertical-rl;
+  text-align: center;
+  padding: 20px;
+  border-width: 2px;
+  border-color: white;
+  border-style: solid;
+  color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  background-color: #011d4a;
+}
+
+.duel {
+  display: flex;
+  vertical-align: middle;
+}
+
+.selected {
+  background: white;
+}
+
+.over {
+  background: #e1e6ed;
+}
+
+.duel.over {
+  background: #e1e6ed;
+}
+
+.duel.duelSelected {
+  border-width: 1px;
+  border-color: #777;
+  border-style: solid;
+  box-shadow: 0 5px 10px 0 rgba(0, 18, 57, 0.5);
+  transition: transform .2s; /* Animation */
+  transform: scale(1.03);
+  background: white;
+}

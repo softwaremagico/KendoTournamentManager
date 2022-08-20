@@ -18,11 +18,11 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="!selectedFight"
+        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="showTimerButton()"
                 (click)="showTimer(true)">
           <mat-icon>timer</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="timer" [disabled]="!selectedFight"
+        <button class="timer-button" mat-button color="primary" *ngIf="timer" [disabled]="showTimerButton()"
                 (click)="showTimer(false)">
           <mat-icon>timer_off</mat-icon>
         </button>
@@ -59,11 +59,9 @@
                (onSelectedDuel)="selectDuel($event[0])"></fight>
       </div>
       <div class="unties-list">
-        <div class="untie">
-          <duel class="duel" *ngFor="let duel of unties" [duel]="duel" (click)="selectDuel(duel)"
+          <untie-fight *ngFor="let duel of unties" [duel]="duel" (click)="selectDuel(duel)"
                 [selected]="duel === selectedDuel"
-                [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></duel>
-        </div>
+                [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></untie-fight>
       </div>
     </div>
   </div>

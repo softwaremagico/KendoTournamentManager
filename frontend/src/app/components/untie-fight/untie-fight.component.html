@@ -1,0 +1,13 @@
+<div class="untie-container">
+  <div class="left-team">
+    -
+  </div>
+  <div class="untie">
+    <duel class="duel" [duel]="duel" (click)="selectDuel(duel)"
+          [selected]="selected"
+          [ngClass]="{duelSelected: selected, over: isOver(duel)}"></duel>
+  </div>
+  <div class="right-team">
+    -
+  </div>
+</div>

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Duel} from "../../../../models/duel";
+import {DuelType} from "../../../../models/duel-type";
 
 @Component({
   selector: 'user-score',
@@ -16,6 +17,10 @@ export class UserScoreComponent implements OnInit {
 
   ngOnInit(): void {
     // This is intentional
+  }
+
+  isUntie(): boolean {
+    return this.duel !== undefined && this.duel.type === DuelType.UNDRAW;
   }
 
 }
