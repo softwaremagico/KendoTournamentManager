@@ -22,6 +22,7 @@ import {DuelService} from "../../services/duel.service";
 import {TimeChangedService} from "../../services/time-changed.service";
 import {DuelChangedService} from "../../services/duel-changed.service";
 import {UntieAddedService} from "../../services/untie-added.service";
+import {Group} from "../../models/group";
 
 @Component({
   selector: 'app-fight-list',
@@ -37,6 +38,7 @@ export class FightListComponent implements OnInit {
   tournament: Tournament;
   timer: boolean = false;
   private readonly tournamentId: number | undefined;
+  groups: Group[];
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
@@ -67,13 +69,16 @@ export class FightListComponent implements OnInit {
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe(tournament => {
         this.tournament = tournament;
-        this.fightService.getFromTournament(this.tournament).subscribe(fights => {
-          this.fights = fights;
-          //Use a timeout or refresh before the components are drawn.
-          setTimeout(() => {
-            this.selectFirstUnfinishedDuel();
-          }, 1000);
-        });
+        if (this.tournamentId) {
+          this.groupService.getAllByTournament(this.tournamentId).subscribe(groups => {
+            this.groups = groups;
+            this.fights = groups.flatMap((group) => group.fights);
+            //Use a timeout or refresh before the components are drawn.
+            setTimeout(() => {
+              this.selectFirstUnfinishedDuel();
+            }, 1000);
+          });
+        }
       });
     }
   }
@@ -237,7 +242,7 @@ export class FightListComponent implements OnInit {
   showTeamsClassification(fightsFinished: boolean) {
     this.dialog.open(TeamRankingComponent, {
       width: '85vw',
-      data: {tournament: this.tournament, finished: fightsFinished}
+      data: {tournament: this.tournament, groupId: this.groups[0].id, finished: fightsFinished}
     });
   }
 
@@ -347,5 +352,12 @@ export class FightListComponent implements OnInit {
       this.selectedDuel.duration = elapsedTime;
       this.duelService.update(this.selectedDuel).subscribe();
     }
+  }
+
+  showTeamTitle(): boolean {
+    if (this.tournament?.teamSize) {
+      return this.tournament.teamSize > 1;
+    }
+    return true;
   }
 }
