@@ -26,7 +26,7 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     //Refresh automatically the team.
-    this.members = this.team.members;
+    this.members = [...this.team.members];
   }
 
   checkDroppedElement(item: CdkDrag<Participant>) {
