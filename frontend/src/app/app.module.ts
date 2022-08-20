@@ -71,6 +71,7 @@ import {TimerComponent} from './components/timer/timer.component';
 import { UndrawTeamsComponent } from './views/fight-list/undraw-teams/undraw-teams.component';
 import { MemberSelectorComponent } from './components/basic/member-selector/member-selector.component';
 import { UntieFightComponent } from './components/untie-fight/untie-fight.component';
+import {MatTabsModule} from "@angular/material/tabs";
 
 
 registerLocaleData(localeES, "es");
@@ -150,7 +151,8 @@ registerLocaleData(localeNL, "nl");
     BasicTableModule,
     MatAutocompleteModule,
     DragDropModule,
-    IconModule
+    IconModule,
+    MatTabsModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

@@ -67,9 +67,9 @@ export class GroupService {
       );
   }
 
-  addUntie(groupId: number, duel: Duel): Observable<Group> {
+  addUnties(groupId: number, duels: Duel[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + `/unties`;
-    return this.http.put<Group>(url, duel, this.authenticatedUserService.httpOptions)
+    return this.http.put<Group>(url, duels, this.authenticatedUserService.httpOptions)
       .pipe(
         tap(_ => this.loggerService.info(`Updating teams for default group`)),
         catchError(this.messageService.handleError<Group>(`updates teams for default group`))
