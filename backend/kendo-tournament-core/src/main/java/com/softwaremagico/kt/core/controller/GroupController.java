@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
@@ -34,6 +35,7 @@ import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentInvalidException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
@@ -44,6 +46,8 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,14 +58,21 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final FightProvider fightProvider;
     private final FightConverter fightConverter;
 
+    private final DuelProvider duelProvider;
+
+    private final DuelConverter duelConverter;
+
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
-                           TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter) {
+                           TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
+                           DuelProvider duelProvider, DuelConverter duelConverter) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.fightProvider = fightProvider;
         this.fightConverter = fightConverter;
+        this.duelProvider = duelProvider;
+        this.duelConverter = duelConverter;
     }
 
     @Override
@@ -85,11 +96,36 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                 .collect(Collectors.toList()));
     }
 
+    @Transactional
+    public GroupDTO update(GroupDTO groupDTO, String username) {
+        final GroupDTO oldGroupDTO = get(groupDTO.getId());
+        final List<FightDTO> fights = new ArrayList<>(oldGroupDTO.getFights());
+        oldGroupDTO.getFights().clear();
+        fightProvider.delete(fightConverter.reverseAll(fights));
+
+        final List<DuelDTO> unties = new ArrayList<>(oldGroupDTO.getUnties());
+        oldGroupDTO.getUnties().clear();
+        duelProvider.delete(duelConverter.reverseAll(unties));
+
+        //Remove all fights and duels from the group. Will be added on the update.
+        converter.convert(createConverterRequest(provider.save(converter.reverse(oldGroupDTO))));
+
+        groupDTO.setUpdatedBy(username);
+        validate(groupDTO);
+        return create(groupDTO, null);
+    }
+
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
         GroupDTO groupDTO = get(groupId);
-        final List<FightDTO> fights = groupDTO.getFights();
+
+        final List<FightDTO> fights = new ArrayList<>(groupDTO.getFights());
         groupDTO.getFights().clear();
         fightProvider.delete(fightConverter.reverseAll(fights));
+
+        final List<DuelDTO> unties = new ArrayList<>(groupDTO.getUnties());
+        groupDTO.getUnties().clear();
+        duelProvider.delete(duelConverter.reverseAll(unties));
+
         groupDTO.getTeams().clear();
         groupDTO = converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
         groupDTO.setTeams(teams);

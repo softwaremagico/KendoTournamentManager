@@ -349,6 +349,7 @@
   "tournamentUpdated": "Il campionato è stato aggiornato.",
   "fillFields": "si deve riempiere uno dei campi per realizzare la ricerca.",
   "deleteFightsWarning": "Questa azione cancellerà tutti gli incontri salvati precedentemente per questo campionato. Si è sicuri di voler procedere?",
+  "deleteFightWarning": "Questa azione cancellerà l'incontro selezionato. Si è sicuri di voler procedere?",
   "deleteOneFight": "Questa azione cancellerà l'incontro selezionato. Si è sicuri di voler procedere?",
   "questionDeleteCompetitor": "Questa azione cancellerà il competitore selezionato. Si è sicuri di voler procedere?",
   "questionUpdateCompetitor": "Il competitore già esiste? Si vuole aggionarlo?",
