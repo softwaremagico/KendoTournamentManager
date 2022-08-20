@@ -55,6 +55,13 @@ public class GroupServices {
         return groupController.get();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Updates a group.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GroupDTO update(@RequestBody GroupDTO group, Authentication authentication, HttpServletRequest request) {
+        return groupController.update(group, authentication.getName());
+    }
+
     @PreAuthorize("hasRole('ROLE_VIEWER')")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)

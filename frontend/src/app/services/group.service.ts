@@ -31,6 +31,15 @@ export class GroupService {
       );
   }
 
+  update(group: Group): Observable<Group> {
+    const url: string = `${this.baseUrl}`;
+    return this.http.put<Group>(url, group, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap((updatedGroup: Group) => this.loggerService.info(`updating group '${updatedGroup}'`)),
+        catchError(this.messageService.handleError<Group>(`updating '${group}'`))
+      );
+  }
+
   getAllByTournament(tournamentId: number): Observable<Group[]> {
     const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId;
     return this.http.get<Group[]>(url, this.authenticatedUserService.httpOptions)
