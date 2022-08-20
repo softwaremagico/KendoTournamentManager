@@ -15,4 +15,8 @@ export class DrawComponent implements OnInit {
     // This is intentional
   }
 
+  isDrawDuel() {
+    return this.duel.duration && this.duel.duration > 0 && this.duel.competitor1Score.length === this.duel.competitor2Score.length;
+  }
+
 }
