@@ -7,6 +7,7 @@ import {concatMap, from, Subject, takeWhile} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {UndrawTeamsComponent} from "../undraw-teams/undraw-teams.component";
 import {Team} from "../../../models/team";
+import {ConfirmationDialogComponent} from "../../../components/basic/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-team-ranking',
@@ -43,7 +44,7 @@ export class TeamRankingComponent implements OnInit {
     return this.teamScores && this.fightsFinished && this.teamScores.filter((scoreOfTeam) => scoreOfTeam.sortingIndex === index).length > 1;
   }
 
-  getDrawWinner(index: number): Team[] {
+  getDrawWinners(index: number): Team[] {
     const teams: Team[] = [];
     if (this.teamScores && this.fightsFinished) {
       const scores: ScoreOfTeam[] = this.teamScores.filter((scoreOfTeam) => scoreOfTeam.sortingIndex === index);
@@ -72,18 +73,11 @@ export class TeamRankingComponent implements OnInit {
   }
 
   undrawTeams(index: number) {
-    const teams: Team[] = this.getDrawWinner(index);
-    let i = 1;
-    from(teams).pipe(
-      concatMap(() => {
-        const dialogRef = this.dialog.open(UndrawTeamsComponent, {
-          data: {tournament: this.tournament, groupId: this.groupId, team1: teams[i - 1], team2: teams[i]}
-        });
-        i++;
-        return dialogRef.afterClosed();
-      }),
-      takeWhile(Boolean)
-    ).subscribe();
+    const teams: Team[] = this.getDrawWinners(index);
+    this.dialog.open(UndrawTeamsComponent, {
+      disableClose: false,
+      data: {tournament: this.tournament, groupId: this.groupId, teams: teams}
+    });
     this.closeDialog();
   }
 }
