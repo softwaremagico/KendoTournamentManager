@@ -23,6 +23,7 @@ import {TimeChangedService} from "../../services/time-changed.service";
 import {DuelChangedService} from "../../services/duel-changed.service";
 import {UntieAddedService} from "../../services/untie-added.service";
 import {Group} from "../../models/group";
+import {DuelType} from "../../models/duel-type";
 
 @Component({
   selector: 'app-fight-list',
@@ -288,7 +289,7 @@ export class FightListComponent implements OnInit {
       if (duel.duration) {
         this.timeChangedService.isElapsedTimeChanged.next(duel.duration);
       } else {
-        this.timeChangedService.isElapsedTimeChanged.next(0);
+        this.timeChangedService.isElapsedTimeChanged.next(1);
       }
     }
     if (duel) {
@@ -311,6 +312,11 @@ export class FightListComponent implements OnInit {
           if (!duel.duration) {
             return false;
           }
+        }
+      }
+      for (const duel of this.unties) {
+        if (!duel.duration) {
+          return false;
         }
       }
     }
@@ -359,5 +365,9 @@ export class FightListComponent implements OnInit {
       return this.tournament.teamSize > 1;
     }
     return true;
+  }
+
+  showTimerButton(): boolean {
+    return !(this.selectedFight !== undefined || (this.selectedDuel !== undefined && this.selectedDuel.type === DuelType.UNDRAW));
   }
 }

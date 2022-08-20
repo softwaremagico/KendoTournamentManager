@@ -2,6 +2,9 @@
   <div class="left-team" *ngIf="showTeamTitle">
     {{fight.team1.name}}
   </div>
+  <div class="left-team" *ngIf="!showTeamTitle">
+    -
+  </div>
   <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}">
     <duel class="duel" *ngFor="let duel of fight.duels" [duel]="duel" (click)="selectDuel(duel)"
           [selected]="duel === selectedDuel"
@@ -9,5 +12,8 @@
   </div>
   <div class="right-team" *ngIf="showTeamTitle">
     {{fight.team2.name}}
+  </div>
+  <div class="right-team" *ngIf="!showTeamTitle">
+    -
   </div>
 </div>

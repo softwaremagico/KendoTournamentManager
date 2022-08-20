@@ -26,8 +26,10 @@ export class FightComponent implements OnInit {
   constructor(private duelChangedService: DuelChangedService) {
     this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
       if (selectedDuel && this.fight && this.fight.duels) {
+        this.selected = false;
+        this.selectedDuel = undefined;
         for (let duel of this.fight.duels) {
-          if (selectedDuel.id === duel.id) {
+          if (selectedDuel === duel) {
             this.selected = true;
             this.selectedDuel = selectedDuel;
           }
