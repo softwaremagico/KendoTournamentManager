@@ -7,7 +7,7 @@ import {Duel} from "../models/duel";
 })
 export class UntieAddedService {
 
-  public isDuelAdded: BehaviorSubject<Duel> = new BehaviorSubject<Duel>(new Duel());
+  public isDuelsAdded: BehaviorSubject<Duel[]> = new BehaviorSubject<Duel[]>([]);
 
   constructor() {
   }

@@ -48,6 +48,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -155,9 +156,9 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
     }
 
-    public GroupDTO addUntie(Integer groupId, DuelDTO duelDTO, String username) {
+    public GroupDTO addUnties(Integer groupId, List<DuelDTO> duelDTOS, String username) {
         final GroupDTO groupDTO = get(groupId);
-        groupDTO.getUnties().add(duelDTO);
+        groupDTO.getUnties().addAll(duelDTOS);
         return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
     }
 
