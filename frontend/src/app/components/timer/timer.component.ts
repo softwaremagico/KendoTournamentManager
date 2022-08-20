@@ -148,7 +148,6 @@ export class TimerComponent implements OnInit {
     if (this.minutes > 20) {
       this.minutes = 20;
     }
-    console.log('%%%', rawSeconds, this.elapsedSeconds)
     this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
