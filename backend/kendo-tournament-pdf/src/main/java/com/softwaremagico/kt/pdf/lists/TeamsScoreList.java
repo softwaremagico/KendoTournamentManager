@@ -78,7 +78,8 @@ public class TeamsScoreList extends ParentList {
                     Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfTeam.getWonDuels() + "/" + scoreOfTeam.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getHits(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell("" + scoreOfTeam.getHits() + (scoreOfTeam.getUntieDuels() > 0 ? "*" : ""),
+                    PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell("" + scoreOfTeam.getFightsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }
