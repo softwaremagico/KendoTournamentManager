@@ -14,15 +14,15 @@
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="!selectedFight" (click)="deleteElement()">
+        <button mat-button color="warn" [disabled]="showSelectedRelatedButton()" (click)="deleteElement()">
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="showTimerButton()"
+        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="showSelectedRelatedButton()"
                 (click)="showTimer(true)">
           <mat-icon>timer</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="timer" [disabled]="showTimerButton()"
+        <button class="timer-button" mat-button color="primary" *ngIf="timer" [disabled]="showSelectedRelatedButton()"
                 (click)="showTimer(false)">
           <mat-icon>timer_off</mat-icon>
         </button>

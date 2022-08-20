@@ -160,8 +160,31 @@ export class FightListComponent implements OnInit {
   }
 
   deleteElement(): void {
-    if (this.selectedFight) {
-      this.openDialog('Delete fight', Action.Delete, this.selectedFight);
+    if (this.selectedFight || this.selectedDuel) {
+      let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        disableClose: false
+      });
+      dialogRef.componentInstance.messageTag = "deleteFightWarning"
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          //Delete the undraw.
+          if (this.selectedDuel && this.selectedDuel.type === DuelType.UNDRAW) {
+            this.groups[0].unties.splice(this.groups[0].unties.indexOf(this.selectedDuel), 1);
+            //Delete the fight.
+          } else {
+            if (this.selectedFight) {
+              this.groups[0].fights.splice(this.groups[0].fights.indexOf(this.selectedFight), 1);
+            }
+          }
+          this.groupService.update(this.groups[0]).subscribe(group => {
+            this.messageService.infoMessage("fightDeleted");
+            this.refreshFights();
+            this.refreshUnties();
+            this.selectFirstUnfinishedDuel();
+          });
+        }
+      });
     }
   }
 
@@ -289,7 +312,7 @@ export class FightListComponent implements OnInit {
       if (duel.duration) {
         this.timeChangedService.isElapsedTimeChanged.next(duel.duration);
       } else {
-        this.timeChangedService.isElapsedTimeChanged.next(1);
+        this.timeChangedService.isElapsedTimeChanged.next(0);
       }
     }
     if (duel) {
@@ -367,7 +390,7 @@ export class FightListComponent implements OnInit {
     return true;
   }
 
-  showTimerButton(): boolean {
+  showSelectedRelatedButton(): boolean {
     return !(this.selectedFight !== undefined || (this.selectedDuel !== undefined && this.selectedDuel.type === DuelType.UNDRAW));
   }
 }
