@@ -93,9 +93,10 @@ public class CompetitorsScoreList extends ParentList {
 
         for (final ScoreOfCompetitor scoreOfCompetitor : competitorTopTen) {
             mainTable.addCell(getCell(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell(scoreOfCompetitor.getWonDuels() + "/"
+            mainTable.addCell(getCell(scoreOfCompetitor.getWonDuels() + (scoreOfCompetitor.getUntieDuels() > 0 ? "*" : "") + "/"
                     + scoreOfCompetitor.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfCompetitor.getHits(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell("" + scoreOfCompetitor.getHits() + (scoreOfCompetitor.getUntieHits() > 0 ? "*" : ""),
+                    PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell("" + scoreOfCompetitor.getDuelsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }

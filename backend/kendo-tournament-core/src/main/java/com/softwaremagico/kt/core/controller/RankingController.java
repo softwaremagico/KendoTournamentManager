@@ -202,7 +202,7 @@ public class RankingController {
         final Set<ParticipantDTO> competitors = getParticipants(groupDTO.getTeams());
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final ParticipantDTO competitor : competitors) {
-            scores.add(new ScoreOfCompetitor(competitor, groupDTO.getFights()));
+            scores.add(new ScoreOfCompetitor(competitor, groupDTO.getFights(), groupDTO.getUnties()));
         }
         sortCompetitorsScores(groupDTO.getTournament().getTournamentScore().getScoreType(), scores);
         final List<ParticipantDTO> competitorsRanking = new ArrayList<>();
@@ -221,7 +221,7 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRanking(GroupDTO groupDTO) {
-        return getCompetitorsScoreRanking(getParticipants(groupDTO.getTeams()), groupDTO.getFights(), groupDTO.getTournament());
+        return getCompetitorsScoreRanking(getParticipants(groupDTO.getTeams()), groupDTO.getFights(), groupDTO.getUnties(), groupDTO.getTournament());
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
@@ -231,17 +231,26 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRanking(TournamentDTO tournamentDTO) {
-        return getCompetitorsScoreRanking(getParticipants(teamConverter.convertAll(teamProvider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
-                        .map(TeamConverterRequest::new).collect(Collectors.toList()))),
-                fightConverter.convertAll(fightProvider.getFights(tournamentConverter.reverse(tournamentDTO)).stream()
-                        .map(FightConverterRequest::new).collect(Collectors.toList())),
+        final List<GroupDTO> groups = groupConverter.convertAll(groupProvider.
+                getGroups(tournamentConverter.reverse(tournamentDTO)).stream().map(GroupConverterRequest::new).collect(Collectors.toList()));
+
+        return getCompetitorsScoreRanking(getParticipants(groups.stream()
+                        .flatMap(group -> group.getTeams().stream())
+                        .collect(Collectors.toList())),
+                groups.stream()
+                        .flatMap(group -> group.getFights().stream())
+                        .collect(Collectors.toList()),
+                groups.stream()
+                        .flatMap(group -> group.getUnties().stream())
+                        .collect(Collectors.toList()),
                 tournamentDTO);
     }
 
-    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Set<ParticipantDTO> competitors, List<FightDTO> fights, TournamentDTO tournamentDTO) {
+    public List<ScoreOfCompetitor> getCompetitorsScoreRanking(Set<ParticipantDTO> competitors, List<FightDTO> fights, List<DuelDTO> unties,
+                                                              TournamentDTO tournamentDTO) {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final ParticipantDTO competitor : competitors) {
-            scores.add(new ScoreOfCompetitor(competitor, fights));
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties));
         }
         sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
         return scores;

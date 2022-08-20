@@ -8,6 +8,8 @@ export class ScoreOfCompetitor {
   public duelsDone: number;
   public wonFights: number;
   public drawFights: number;
+  public untieDuels: number;
+  public untieHits: number;
 
   public static copy(source: ScoreOfCompetitor, target: ScoreOfCompetitor): void {
     target.wonDuels = source.wonDuels;

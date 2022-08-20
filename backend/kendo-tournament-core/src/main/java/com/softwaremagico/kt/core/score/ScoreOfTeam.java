@@ -43,7 +43,6 @@ public class ScoreOfTeam {
     private List<DuelDTO> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
-
     private Integer fightsDone = null;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
