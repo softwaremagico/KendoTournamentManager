@@ -2,17 +2,6 @@
   width: 100%;
   min-height: 100px;
 }
-
-.untie {
-  border: 2px solid;
-  background: #e1e6ed;
-}
-
-.duel {
-  display: flex;
-  vertical-align: middle;
-}
-
 @media screen and (max-width: 1024px) {
   .download-button {
     display: none !important;
