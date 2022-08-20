@@ -22,7 +22,7 @@
       <td class="team-ranking-value">{{teamScore.drawFights}}</td>
       <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
       <td class="team-ranking-value">{{teamScore.drawDuels}}</td>
-      <td class="team-ranking-value">{{teamScore.hits}}</td>
+      <td class="team-ranking-value">{{teamScore.hits}}{{(teamScore.untieDuels ? "*" : "")}}</td>
     </tr>
   </table>
 </div>

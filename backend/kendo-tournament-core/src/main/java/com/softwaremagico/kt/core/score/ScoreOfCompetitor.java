@@ -26,21 +26,26 @@ package com.softwaremagico.kt.core.score;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ScoreOfCompetitor {
 
     private ParticipantDTO competitor;
-
     @JsonIgnore
     protected List<FightDTO> fights;
+    @JsonIgnore
+    private List<DuelDTO> unties;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
+    private Integer untieDuels = null;
     private Integer hits = null;
+    private Integer untieHits = null;
     private Integer duelsDone = null;
     private Integer wonFights = null;
     private Integer drawFights = null;
@@ -49,9 +54,10 @@ public class ScoreOfCompetitor {
 
     }
 
-    public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights) {
+    public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights, List<DuelDTO> unties) {
         this.competitor = competitor;
         this.fights = fights;
+        this.unties = unties;
         update();
     }
 
@@ -66,6 +72,8 @@ public class ScoreOfCompetitor {
         setDuelsDone();
         setFightsWon();
         setFightsDraw();
+        setUntieDuels();
+        setUntieHits();
         setHits();
     }
 
@@ -120,6 +128,28 @@ public class ScoreOfCompetitor {
         }
     }
 
+    public void setUntieDuels() {
+        untieDuels = 0;
+        unties.forEach(duel -> {
+            if (Objects.equals(duel.getCompetitor1(), competitor) && duel.getWinner() == -1) {
+                untieDuels++;
+            } else if (Objects.equals(duel.getCompetitor2(), competitor) && duel.getWinner() == 1) {
+                untieDuels++;
+            }
+        });
+    }
+
+    public void setUntieHits() {
+        untieHits = 0;
+        unties.forEach(duel -> {
+            if (Objects.equals(duel.getCompetitor1(), competitor)) {
+                untieHits += duel.getCompetitor1ScoreValue();
+            } else if (Objects.equals(duel.getCompetitor2(), competitor)) {
+                untieHits += duel.getCompetitor2ScoreValue();
+            }
+        });
+    }
+
     public Integer getWonDuels() {
         return wonDuels;
     }
@@ -142,6 +172,14 @@ public class ScoreOfCompetitor {
 
     public Integer getDrawFights() {
         return drawFights;
+    }
+
+    public Integer getUntieDuels() {
+        return untieDuels;
+    }
+
+    public Integer getUntieHits() {
+        return untieHits;
     }
 
     @Override
