@@ -17,7 +17,7 @@ import {MessageService} from "../../../services/message.service";
 export class UndrawTeamsComponent implements OnInit, OnChanges {
 
   duels: Duel[];
-  teams: Team[]
+  teams: Team[] = [];
   tournament: Tournament;
   groupId: number;
 
@@ -44,14 +44,13 @@ export class UndrawTeamsComponent implements OnInit, OnChanges {
   }
 
   totalDuels(): number {
-    // if (this.teams.length == 2) {
-    //   return 1;
-    // }
-    // if (this.teams.length > 2) {
-    //   return this.teams.length;
-    // }
-    // return 0;
-    return 1;
+    if (this.teams.length == 2) {
+      return 1;
+    }
+    if (this.teams.length > 2) {
+      return this.teams.length;
+    }
+    return 0;
   }
 
   duelsCompleted(): boolean {
