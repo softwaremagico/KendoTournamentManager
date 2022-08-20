@@ -61,7 +61,7 @@ export class FightListComponent implements OnInit {
   ngOnInit(): void {
     this.refreshFights();
     this.refreshUnties();
-    this.untieAddedService.isDuelAdded.subscribe(addedDuel => {
+    this.untieAddedService.isDuelsAdded.subscribe(addedDuel => {
       this.refreshUnties();
     });
   }
@@ -76,7 +76,9 @@ export class FightListComponent implements OnInit {
             this.fights = groups.flatMap((group) => group.fights);
             //Use a timeout or refresh before the components are drawn.
             setTimeout(() => {
-              this.selectFirstUnfinishedDuel();
+              if (!this.selectFirstUnfinishedDuel() && this.unties.length === 0) {
+                this.showTeamsClassification(true);
+              }
             }, 1000);
           });
         }
@@ -90,7 +92,9 @@ export class FightListComponent implements OnInit {
         this.unties = duels;
         //Use a timeout or refresh before the components are drawn.
         setTimeout(() => {
-          this.selectFirstUnfinishedDuel();
+          if (!this.selectFirstUnfinishedDuel() && this.unties.length > 0) {
+            this.showTeamsClassification(true);
+          }
         }, 1000);
       });
     }
@@ -181,7 +185,6 @@ export class FightListComponent implements OnInit {
             this.messageService.infoMessage("fightDeleted");
             this.refreshFights();
             this.refreshUnties();
-            this.selectFirstUnfinishedDuel();
           });
         }
       });
@@ -299,7 +302,9 @@ export class FightListComponent implements OnInit {
       this.selectedDuel.duration = durationInSeconds;
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("Duel Finished!");
-        this.selectFirstUnfinishedDuel();
+        if (!this.selectFirstUnfinishedDuel()) {
+          this.showTeamsClassification(true);
+        }
         return duel;
       });
     }
@@ -346,14 +351,14 @@ export class FightListComponent implements OnInit {
     return true;
   }
 
-  selectFirstUnfinishedDuel() {
+  selectFirstUnfinishedDuel(): boolean {
     if (this.fights) {
       for (const fight of this.fights) {
         for (const duel of fight.duels) {
           if (!duel.duration) {
             this.selectedFight = fight;
             this.selectDuel(duel);
-            return;
+            return true;
           }
         }
       }
@@ -361,12 +366,11 @@ export class FightListComponent implements OnInit {
         if (!duel.duration) {
           this.selectedFight = undefined;
           this.selectDuel(duel);
-          return;
+          return true;
         }
       }
-      //All over. Show ranking
-      this.showTeamsClassification(true);
     }
+    return false;
   }
 
   updateDuelDuration(duelDuration: number) {

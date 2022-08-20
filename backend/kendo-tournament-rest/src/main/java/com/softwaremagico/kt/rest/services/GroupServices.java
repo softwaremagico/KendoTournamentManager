@@ -90,12 +90,12 @@ public class GroupServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Adds an untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Adds untie duels.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
-    public GroupDTO addUntie(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                             @RequestBody DuelDTO duelDTO,
-                             Authentication authentication,
-                             HttpServletRequest request) {
-        return groupController.addUntie(groupId, duelDTO, authentication.getName());
+    public GroupDTO addUnties(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
+                              @RequestBody List<DuelDTO> duelDTOs,
+                              Authentication authentication,
+                              HttpServletRequest request) {
+        return groupController.addUnties(groupId, duelDTOs, authentication.getName());
     }
 }

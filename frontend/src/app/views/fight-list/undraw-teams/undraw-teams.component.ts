@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, Inject, OnChanges, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
 import {Team} from "../../../models/team";
@@ -14,33 +14,59 @@ import {MessageService} from "../../../services/message.service";
   templateUrl: './undraw-teams.component.html',
   styleUrls: ['./undraw-teams.component.scss']
 })
-export class UndrawTeamsComponent implements OnInit {
+export class UndrawTeamsComponent implements OnInit, OnChanges {
 
-  duel: Duel;
-  team1: Team;
-  team2: Team;
+  duels: Duel[];
+  teams: Team[]
   tournament: Tournament;
   groupId: number;
 
   constructor(public dialogRef: MatDialogRef<UndrawTeamsComponent>, private untieAddedService: UntieAddedService,
-              @Optional() @Inject(MAT_DIALOG_DATA) private data: { tournament: Tournament, groupId: number, team1: Team, team2: Team },
+              @Optional() @Inject(MAT_DIALOG_DATA) private data: { tournament: Tournament, groupId: number, teams: Team[] },
               private groupServices: GroupService, private messageService: MessageService, public dialog: MatDialog) {
-    this.team1 = data.team1;
-    this.team2 = data.team2;
+    this.teams = data.teams;
     this.groupId = data.groupId;
     this.tournament = data.tournament;
-    this.duel = new Duel();
-    this.duel.totalDuration = data.tournament.duelsDuration;
-    this.duel.type = DuelType.UNDRAW;
+    this.duels = [];
+    for (let i = 0; i < this.totalDuels(); i++) {
+      const duel = new Duel();
+      duel.totalDuration = data.tournament.duelsDuration;
+      duel.type = DuelType.UNDRAW;
+      this.duels[i] = duel;
+    }
   }
 
   ngOnInit(): void {
   }
 
-  createFight() {
-    this.groupServices.addUntie(this.groupId, this.duel).subscribe(() => {
+  ngOnChanges(): void {
+
+  }
+
+  totalDuels(): number {
+    // if (this.teams.length == 2) {
+    //   return 1;
+    // }
+    // if (this.teams.length > 2) {
+    //   return this.teams.length;
+    // }
+    // return 0;
+    return 1;
+  }
+
+  duelsCompleted(): boolean {
+    for (const duel of this.duels) {
+      if (!duel.competitor1 || !duel.competitor2) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  createFights() {
+    this.groupServices.addUnties(this.groupId, this.duels).subscribe(() => {
       this.messageService.infoMessage("addFight");
-      this.untieAddedService.isDuelAdded.next(this.duel);
+      this.untieAddedService.isDuelsAdded.next(this.duels);
       this.dialogRef.close();
     });
   }
@@ -49,11 +75,11 @@ export class UndrawTeamsComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  setCompetitor1(participant: Participant) {
-    this.duel.competitor1 = participant;
+  setCompetitor1(duelIndex: number, participant: Participant) {
+    this.duels[duelIndex].competitor1 = participant;
   }
 
-  setCompetitor2(participant: Participant) {
-    this.duel.competitor2 = participant;
+  setCompetitor2(duelIndex: number, participant: Participant) {
+    this.duels[duelIndex].competitor2 = participant;
   }
 }

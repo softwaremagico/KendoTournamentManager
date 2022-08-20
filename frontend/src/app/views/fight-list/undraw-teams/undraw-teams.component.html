@@ -1,8 +1,26 @@
-<div class="undraw-generator">
-  <app-member-selector [team]="team1" (selectedMember)="setCompetitor1($event)"></app-member-selector>
-  <app-member-selector [team]="team2" (selectedMember)="setCompetitor2($event)"></app-member-selector>
+<mat-tab-group *ngIf="totalDuels() >= 2">
+  <!-- TODO(softwaremagico): https://stackblitz.com/angular/eardvdpkrkgy?file=app%2Ftab-group-dynamic-example.html -->
+  <mat-tab *ngFor="let team of teams; let i = index" [label]="teams[i].name + ' - ' +teams[i+1].name">
+    <div class="undraw-generator">
+      <app-member-selector [team]="teams[i]" (selectedMember)="setCompetitor1(i, $event)"></app-member-selector>
+      <app-member-selector [team]="teams[i+1]" (selectedMember)="setCompetitor2(i, $event)"></app-member-selector>
+    </div>
+  </mat-tab>
+  <!--  <mat-tab label="{{teams[0].name}} - {{teams[1].name}}">-->
+  <!--    <div class="undraw-generator">-->
+  <!--      <app-member-selector [team]="teams[0]" (selectedMember)="setCompetitor1(0, $event)"></app-member-selector>-->
+  <!--      <app-member-selector [team]="teams[1]" (selectedMember)="setCompetitor2(0, $event)"></app-member-selector>-->
+  <!--    </div>-->
+  <!--  </mat-tab>-->
+</mat-tab-group>
+<div *ngIf="totalDuels() == 1">
+  <div class="undraw-generator">
+    <app-member-selector [team]="teams[0]" (selectedMember)="setCompetitor1(0, $event)"></app-member-selector>
+    <app-member-selector [team]="teams[1]" (selectedMember)="setCompetitor2(0, $event)"></app-member-selector>
+  </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="createFight()" mat-flat-button color="primary">{{'accept' | translate}}</button>
+  <button mat-raised-button (click)="createFights()" mat-flat-button color="primary"
+          [disabled]="!duelsCompleted()">{{'accept' | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="secondary">{{'cancel' | translate}}</button>
 </div>
