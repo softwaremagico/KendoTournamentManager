@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.utils.ITeamName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -41,7 +42,7 @@ import java.util.Locale;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}))
-public class Team extends Element implements Comparable<Team> {
+public class Team extends Element implements Comparable<Team>, ITeamName {
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
