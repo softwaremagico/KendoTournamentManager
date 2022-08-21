@@ -1,4 +1,28 @@
-package com.softwaremagico.kt.blog;
+package com.softwaremagico.kt.html.lists;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (PDF)
+ * %%
+ * Copyright (C) 2021 - 2022 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
@@ -16,7 +40,7 @@ import java.util.stream.Collectors;
 
 
 public class BlogExporter {
-    private final static String NEW_LINE = "&nbsp;\n";
+    private static final String NEW_LINE = "&nbsp;\n";
 
     private final MessageSource messageSource;
     private final Locale locale;
@@ -50,7 +74,7 @@ public class BlogExporter {
     }
 
     public String getWordpressFormat() {
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder();
         addTitle(stringBuilder, tournament);
         addInformation(stringBuilder, tournament);
         addCompetitors(stringBuilder);
@@ -64,7 +88,6 @@ public class BlogExporter {
 
     /**
      * Header of the document
-     *
      */
     private static void addTitle(StringBuilder stringBuilder, TournamentDTO tournament) {
         stringBuilder.append("<h2>").append(tournament.getName()).append("</h2>\n");
@@ -89,18 +112,18 @@ public class BlogExporter {
      */
     private void addCompetitors(StringBuilder stringBuilder) {
         stringBuilder.append("<h4>").append(messageSource.getMessage("club.list", null, locale)).append("</h4>");
-        List<List<String>> rows = new ArrayList<>();
-        for (ParticipantDTO competitor : competitors) {
-            List<String> columns = new ArrayList<>();
+        final List<List<String>> rows = new ArrayList<>();
+        for (final ParticipantDTO competitor : competitors) {
+            final List<String> columns = new ArrayList<>();
 
-            RoleDTO competitorsRole = roles.stream().filter(roleDTO -> Objects.equals(roleDTO.getParticipant(), competitor)).findFirst().orElse(null);
+            final RoleDTO competitorsRole = roles.stream().filter(roleDTO -> Objects.equals(roleDTO.getParticipant(), competitor)).findFirst().orElse(null);
             if (competitorsRole != null) {
                 columns.add(NameUtils.getLastnameName(competitor));
                 columns.add(messageSource.getMessage("role.type." + competitorsRole.getRoleType().getCode(), null, locale));
                 rows.add(columns);
             }
         }
-        int[] widths = {30, 15};
+        final int[] widths = {30, 15};
         createTable(stringBuilder, rows, widths);
     }
 
@@ -110,7 +133,7 @@ public class BlogExporter {
     private void addScoreTables(StringBuilder stringBuilder, TournamentDTO tournament) {
         stringBuilder.append(NEW_LINE + "<h4>").append(messageSource.getMessage("fight.list", null, locale)).append("</h4>");
 
-        int[] widths = {25, 5, 5, 5, 5, 5, 5, 5, 25};
+        final int[] widths = {25, 5, 5, 5, 5, 5, 5, 5, 25};
         // Separate by groups
         for (int i = 0; i < groups.size(); i++) {
             if (groups.size() > 1) {
@@ -120,8 +143,8 @@ public class BlogExporter {
                         .append(ShiaijoName.getShiaijoName(groups.get(i).getShiaijo())).append(")").append("</h4>\n");
             }
             // For each fight
-            for (FightDTO fight : fights) {
-                List<List<String>> rows = new ArrayList<>();
+            for (final FightDTO fight : fights) {
+                final List<List<String>> rows = new ArrayList<>();
                 if (groups.get(i).getFights().contains(fight)) {
                     if (tournament.getTeamSize() > 1) {
                         stringBuilder.append(NEW_LINE + "<h5>").append(fight.getTeam1().getName()).append(" - ")
@@ -130,7 +153,7 @@ public class BlogExporter {
                     // Create for each competitor
 
                     for (int teamMember = 0; teamMember < tournament.getTeamSize(); teamMember++) {
-                        List<String> columns = new ArrayList<>();
+                        final List<String> columns = new ArrayList<>();
                         // Team 1
                         ParticipantDTO competitor = fight.getTeam1().getMembers().get(teamMember);
                         String name;
@@ -163,16 +186,16 @@ public class BlogExporter {
 
     private void addTeamClassificationTable(StringBuilder stringBuilder) {
         stringBuilder.append(NEW_LINE + "<h4>").append(messageSource.getMessage("classification.score", null, locale)).append("</h4>\n");
-        List<List<String>> rows = new ArrayList<>();
+        final List<List<String>> rows = new ArrayList<>();
         // Header
         List<String> columns = new ArrayList<>();
-        columns.add("<b>" + messageSource.getMessage("classification.teams.name", null, locale) + "</b>");
+        columns.add("<b>" + messageSource.getMessage("classification.team.name", null, locale) + "</b>");
         columns.add("<b>" + messageSource.getMessage("classification.teams.fights.won", null, locale) + "</b>");
         columns.add("<b>" + messageSource.getMessage("classification.teams.duels.won", null, locale) + "</b>");
         columns.add("<b>" + messageSource.getMessage("classification.teams.hits", null, locale) + "</b>");
         rows.add(columns);
 
-        for (ScoreOfTeam scoreOfTeam : scoreOfTeams) {
+        for (final ScoreOfTeam scoreOfTeam : scoreOfTeams) {
             columns = new ArrayList<>();
             columns.add(NameUtils.getShortName(scoreOfTeam.getTeam()));
             columns.add(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights());
@@ -180,14 +203,14 @@ public class BlogExporter {
             columns.add("" + scoreOfTeam.getHits());
             rows.add(columns);
         }
-        int[] widths = {20, 10, 10, 10};
+        final int[] widths = {20, 10, 10, 10};
         createTable(stringBuilder, rows, widths);
     }
 
     private void addCompetitorClassificationTable(StringBuilder stringBuilder) {
         stringBuilder.append(NEW_LINE + "<h4>").append(messageSource.getMessage("classification.competitors.title", null, locale))
                 .append("</h4>\n");
-        List<List<String>> rows = new ArrayList<>();
+        final List<List<String>> rows = new ArrayList<>();
         // Header
         List<String> columns = new ArrayList<>();
         columns.add("<b>" + messageSource.getMessage("classification.competitors.competitor.name", null, locale) + "</b>");
@@ -195,24 +218,24 @@ public class BlogExporter {
         columns.add("<b>" + messageSource.getMessage("classification.competitors.duels.won", null, locale) + "</b>");
         rows.add(columns);
 
-        for (ScoreOfCompetitor scoreOfCompetitor : scoreOfCompetitors) {
+        for (final ScoreOfCompetitor scoreOfCompetitor : scoreOfCompetitors) {
             columns = new ArrayList<>();
             columns.add(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()));
             columns.add(scoreOfCompetitor.getWonDuels() + "/" + scoreOfCompetitor.getDrawDuels());
             columns.add("" + scoreOfCompetitor.getHits());
             rows.add(columns);
         }
-        int[] widths = {30, 15, 15};
+        final int[] widths = {30, 15, 15};
         createTable(stringBuilder, rows, widths);
     }
 
     private void createTable(StringBuilder stringBuilder, List<List<String>> rows, int[] widths) {
         stringBuilder.append("<table>\n");
         stringBuilder.append("<tbody>\n");
-        for (List<String> row : rows) {
+        for (final List<String> row : rows) {
             stringBuilder.append("<tr>\n");
             int columnNumber = 0;
-            for (String column : row) {
+            for (final String column : row) {
                 if (widths != null && columnNumber < widths.length) {
                     stringBuilder.append("<td style=\"width:").append(widths[columnNumber]).append("%\">\n");
                 } else {
@@ -256,10 +279,14 @@ public class BlogExporter {
     }
 
     private String getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
-        if (leftTeam) {
-            return fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation() + "";
-        } else {
-            return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation() + "";
+        try {
+            if (leftTeam) {
+                return fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation() + "";
+            } else {
+                return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation() + "";
+            }
+        } catch (IndexOutOfBoundsException e) {
+            return "";
         }
     }
 }

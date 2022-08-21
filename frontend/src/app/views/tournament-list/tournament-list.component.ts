@@ -15,6 +15,8 @@ import {TournamentTeamsComponent} from "./tournament-teams/tournament-teams.comp
 import {Router} from '@angular/router';
 import {UserSessionService} from "../../services/user-session.service";
 import {Action} from "../../action";
+import {RankingService} from "../../services/ranking.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-tournament-list',
@@ -30,7 +32,7 @@ export class TournamentListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              public dialog: MatDialog, private messageService: MessageService) {
+              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog, private messageService: MessageService) {
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
@@ -140,5 +142,17 @@ export class TournamentListComponent implements OnInit {
     }
   }
 
+  downloadBlogCode() {
+    if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
+        const blob = new Blob([html], {type: 'txt/plain'});
+        const downloadURL = window.URL.createObjectURL(blob);
+        let pwa = window.open(downloadURL);
+        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
+          alert(this.translateService.instant('disablePopUpBlocker'));
+        }
+      });
+    }
+  }
 }
 

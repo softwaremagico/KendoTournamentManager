@@ -61,7 +61,7 @@ public class TeamsScoreList extends ParentList {
     @Override
     public void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                BaseFont font, int fontSize) {
-        mainTable.addCell(getCell(messageSource.getMessage("classification.teams.name", null, locale),
+        mainTable.addCell(getCell(messageSource.getMessage("classification.team.name", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
         mainTable.addCell(getCell(messageSource.getMessage("classification.teams.fights.won", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));

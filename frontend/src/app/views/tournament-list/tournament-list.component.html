@@ -35,6 +35,10 @@
         <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()">
           <mat-icon>clear</mat-icon>
         </button>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()">
+          <mat-icon svgIcon="tournament-blog" class="kendo-icon"></mat-icon>
+        </button>
       </div>
     </div>
     <basic-table [basicTableData]="basicTableData"></basic-table>
