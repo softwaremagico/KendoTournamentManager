@@ -88,7 +88,7 @@ public class RoleList extends ParentList {
 
             for (final RoleDTO role : participantsByClub.getValue()) {
                 mainTable.addCell(getCell(NameUtils.getLastnameName(role.getParticipant()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-                mainTable.addCell(getCell(messageSource.getMessage("competitors.role.name." +
+                mainTable.addCell(getCell(messageSource.getMessage("role.type." +
                                 role.getRoleType().toString().toLowerCase(locale), null, locale),
                         PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
                 added = true;
