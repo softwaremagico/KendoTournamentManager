@@ -40,4 +40,8 @@ public enum RoleType {
         }
         return null;
     }
+
+    public String getCode() {
+        return name().replace("-", ".").toLowerCase();
+    }
 }
