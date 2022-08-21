@@ -76,4 +76,14 @@ export class RankingService {
     });
   }
 
+  getTournamentSummaryAsHtml(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}` + '/summary/' + tournamentId + '/html';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+      })
+    });
+  }
+
 }

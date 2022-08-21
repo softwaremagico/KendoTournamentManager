@@ -1,0 +1,58 @@
+package com.softwaremagico.kt.html;
+
+/*-
+ * #%L
+ * Kendo Tournament Manager (PDF)
+ * %%
+ * Copyright (C) 2021 - 2022 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
+import com.softwaremagico.kt.html.controller.HtmlController;
+import com.softwaremagico.kt.utils.BasicDataTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.Locale;
+
+@SpringBootTest
+@Test(groups = {"blogTests"})
+public class HtmlTests extends BasicDataTest {
+
+    private static final String PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
+
+    @Autowired
+    private HtmlController htmlController;
+
+    @BeforeClass
+    public void prepareData() {
+        populateData();
+        resolveFights();
+    }
+
+    @Test
+    public void generateBlogHtml() {
+        Assert.assertTrue(htmlController.generateBlogCode(Locale.getDefault(), tournament)
+                .getWordpressFormat().length() > 200);
+    }
+}
