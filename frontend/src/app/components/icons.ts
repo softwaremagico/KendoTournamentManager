@@ -17,6 +17,7 @@ export class IconModule {
       .addSvgIcon("card", this.setPath(`${this.path}/card.svg`))
       .addSvgIcon("teams-classification", this.setPath(`${this.path}/teams-classification.svg`))
       .addSvgIcon("undraw-score", this.setPath(`${this.path}/undraw-score.svg`))
+      .addSvgIcon("tournament-blog", this.setPath(`${this.path}/blog.svg`))
       .addSvgIcon("competitors-classification", this.setPath(`${this.path}/competitors-classification.svg`));
   }
 
