@@ -48,4 +48,8 @@ public enum TournamentType {
         }
         return null;
     }
+
+    public String getCode() {
+        return name().replace("-", ".").toLowerCase();
+    }
 }

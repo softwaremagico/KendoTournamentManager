@@ -218,4 +218,17 @@ public class NameUtils {
         return acronym;
     }
 
+    public static String getShortName(ITeamName teamName) {
+        return getShortName(teamName, 21);
+    }
+
+    public static String getShortName(ITeamName teamName, int length) {
+        if (teamName.getName().length() <= length) {
+            return teamName.getName();
+        } else {
+            return teamName.getName().substring(0, length - 3).trim() + ". "
+                    + teamName.getName().substring(teamName.getName().length() - 2).trim();
+        }
+    }
+
 }
