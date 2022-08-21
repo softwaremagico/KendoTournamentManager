@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.html.controller.HtmlController;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.InvalidXmlElementException;
@@ -48,6 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,10 +63,14 @@ public class RankingServices {
 
     private final PdfController pdfController;
 
-    public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController) {
+    private final HtmlController htmlController;
+
+    public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
+                           HtmlController htmlController) {
         this.rankingController = rankingController;
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
+        this.htmlController = htmlController;
     }
 
     @PreAuthorize("hasRole('ROLE_VIEWER')")
@@ -139,5 +145,19 @@ public class RankingServices {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @Operation(summary = "Gets complete tournament summary as html", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/summary/{tournamentId}/html", produces = MediaType.TEXT_PLAIN_VALUE)
+    public byte[] getTournamentsSummaryAsHtml(@Parameter(description = "Id of an existing tournament", required = true)
+                                              @PathVariable("tournamentId") Integer tournamentId,
+                                              Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + ".txt").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        return htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
     }
 }
