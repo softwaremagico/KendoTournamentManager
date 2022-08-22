@@ -28,6 +28,7 @@ import com.softwaremagico.kt.html.controller.HtmlController;
 import com.softwaremagico.kt.utils.BasicDataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,6 +38,7 @@ import java.util.Locale;
 
 @SpringBootTest
 @Test(groups = {"blogTests"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class HtmlTests extends BasicDataTest {
 
     private static final String PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
