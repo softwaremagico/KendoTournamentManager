@@ -31,6 +31,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.utils.BasicDataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -41,6 +42,7 @@ import java.util.Locale;
 
 @SpringBootTest
 @Test(groups = {"scoreListPdf"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ListTests extends BasicDataTest {
     private static final String PDF_PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
 
