@@ -60,6 +60,7 @@ services:
       context: ./frontend
       args:
         - version
+        - release
     image: kendo-tournament-frontend
     restart: always
     networks:
