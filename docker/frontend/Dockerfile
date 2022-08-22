@@ -1,6 +1,8 @@
-FROM node:16-alpine
+FROM node:14.20.0-alpine
 
 ARG version
+
+ARG release
 
 ENV project_name kendo-tournament-frontend
 
@@ -19,11 +21,11 @@ WORKDIR /usr/src/
 RUN apk --no-cache add supervisor openssl unzip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
-    wget https://github.com/softwaremagico/KendoTournamentManager/archive/refs/tags/kendo-tournament-${version}.zip && \
-    unzip kendo-tournament-${version}.zip && \
-    mv KendoTournamentManager-kendo-tournament-${version}/frontend/* . && \
-    rm -r KendoTournamentManager-kendo-tournament-${version} && \
-    rm kendo-tournament-${version}.zip && \
+    wget https://github.com/softwaremagico/KendoTournamentManager/archive/refs/tags/${release}.zip && \
+    unzip ${release}.zip && \
+    mv KendoTournamentManager-${version}/frontend/* . && \
+    rm -r KendoTournamentManager-${version} && \
+    rm ${release}.zip && \
     apk del openssl
 
 #Working in the app directory
