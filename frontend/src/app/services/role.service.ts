@@ -11,6 +11,7 @@ import {Participant} from "../models/participant";
 import {Tournament} from "../models/tournament";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
+import {SystemOverloadService} from "./system-overload.service";
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +21,18 @@ export class RoleService {
   private baseUrl = this.environmentService.getBackendUrl() + '/roles';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
+              private loggerService: LoggerService, private systemOverloadService: SystemOverloadService, public authenticatedUserService: AuthenticatedUserService) {
   }
 
   getAll(): Observable<Role[]> {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Role[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched all roles`)),
+        tap({
+          next: () => this.loggerService.info(`fetched all roles`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role[]>(`gets all`))
       );
   }
@@ -36,7 +41,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Role>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched role id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched role id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role>(`get id=${id}`))
       );
   }
@@ -45,7 +54,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}/tournaments/${id}`;
     return this.http.get<Role[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched roles from tournament id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched roles from tournament id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
@@ -54,7 +67,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}/tournaments/${id}/types/` + type;
     return this.http.get<Role[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched roles from tournament id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched roles from tournament id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
@@ -63,7 +80,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}/tournaments/${id}/types/` + types.join(',');
     return this.http.get<Role[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched roles from tournament id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched roles from tournament id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role[]>(`get from tournament id=${id}`))
       );
   }
@@ -72,7 +93,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting role id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting role id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<number>(`delete id=${id}`))
       );
   }
@@ -81,7 +106,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Role>(url, role, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting role ${role}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting role ${role}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role>(`delete ${role}`))
       );
   }
@@ -93,7 +122,11 @@ export class RoleService {
       tournament: tournament
     }, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting role for ${participant} on ${tournament}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting role for ${participant} on ${tournament}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role>(`delete role for ${participant} on ${tournament}`))
       );
   }
@@ -102,7 +135,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Role>(url, role, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((newRole: Role) => this.loggerService.info(`adding role ${newRole}`)),
+        tap({
+          next: (newRole: Role) => this.loggerService.info(`adding role ${newRole}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role>(`adding ${role}`))
       );
   }
@@ -111,7 +148,11 @@ export class RoleService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Role>(url, role, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`)),
+        tap({
+          next: (updatedRole: Role) => this.loggerService.info(`updating role ${updatedRole}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Role>(`updating ${role}`))
       );
   }

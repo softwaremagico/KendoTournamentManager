@@ -8,6 +8,8 @@ import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
+import {SystemOverloadService} from "./system-overload.service";
+import {ScoreOfTeam} from "../models/score-of-team";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +19,8 @@ export class FightService {
   private baseUrl = this.environmentService.getBackendUrl() + '/fights';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
+              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private systemOverloadService: SystemOverloadService) {
 
   }
 
@@ -25,7 +28,11 @@ export class FightService {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Fight[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched all fights`)),
+        tap({
+          next: () => this.loggerService.info(`fetched all fights`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight[]>(`gets all`))
       );
   }
@@ -34,7 +41,11 @@ export class FightService {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
     return this.http.get<Fight[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched fights from tournament ${tournament.name}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched fights from tournament ${tournament.name}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight[]>(`get from tournament ${tournament}`))
       );
   }
@@ -43,7 +54,11 @@ export class FightService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting fight id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting fight id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<number>(`delete id=${id}`))
       );
   }
@@ -52,7 +67,11 @@ export class FightService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Fight>(url, fight, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting fight ${fight}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting fight ${fight}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight>(`delete ${fight}`))
       );
   }
@@ -61,7 +80,11 @@ export class FightService {
     const url: string = `${this.baseUrl}/delete/list`;
     return this.http.post<Fight[]>(url, fights, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting fights ${fights}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting fights ${fights}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight[]>(`delete ${fights}`))
       );
   }
@@ -70,7 +93,11 @@ export class FightService {
     const url: string = `${this.baseUrl}/delete/tournaments`;
     return this.http.post<Fight>(url, {tournament: tournament}, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting fights on ${tournament}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting fights on ${tournament}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight>(`delete fights on ${tournament}`))
       );
   }
@@ -79,7 +106,11 @@ export class FightService {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Fight>(url, fight, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((_newFight: Fight) => this.loggerService.info(`adding fight`)),
+        tap({
+          next: (_newFight: Fight) => this.loggerService.info(`adding fight`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight>(`adding fight`))
       );
   }
@@ -88,7 +119,11 @@ export class FightService {
     const url: string = `${this.baseUrl}` + '/list';
     return this.http.post<Fight[]>(url, fights, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((_newFight: Fight[]) => this.loggerService.info(`adding fight`)),
+        tap({
+          next: (_newFight: Fight[]) => this.loggerService.info(`adding fight`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight[]>(`adding fight`))
       );
   }
@@ -97,7 +132,10 @@ export class FightService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Fight>(url, fight, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((_updatedFight: Fight) => this.loggerService.info(`updating fight`)),
+        tap({next:(_updatedFight: Fight) => this.loggerService.info(`updating fight`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight>(`updating fight`))
       );
   }
@@ -106,7 +144,10 @@ export class FightService {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level + '/maximize/' + maximizeFights;
     return this.http.put<Fight[]>(url, undefined, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((_newFight: Fight[]) => this.loggerService.info(`adding fight`)),
+        tap({next:(_newFight: Fight[]) => this.loggerService.info(`adding fight`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Fight[]>(`adding fight`))
       );
   }
@@ -118,6 +159,13 @@ export class FightService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
       })
-    });
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting fights summary`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting fight summary`))
+    );
   }
 }
