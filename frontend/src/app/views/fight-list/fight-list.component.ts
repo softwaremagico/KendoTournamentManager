@@ -42,6 +42,7 @@ export class FightListComponent implements OnInit {
   private readonly tournamentId: number | undefined;
   groups: Group[];
   swappedColors: boolean = false;
+  swappedTeams: boolean = false;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
@@ -50,6 +51,7 @@ export class FightListComponent implements OnInit {
               private messageService: MessageService, public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
+    this.swappedTeams = this.userSessionService.getSwappedTeams();
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -404,5 +406,10 @@ export class FightListComponent implements OnInit {
   swapColors() {
     this.swappedColors = !this.swappedColors;
     this.userSessionService.setSwappedColors(this.swappedColors);
+  }
+
+  swapTeams() {
+    this.swappedTeams = !this.swappedTeams;
+    this.userSessionService.setSwappedTeams(this.swappedTeams);
   }
 }

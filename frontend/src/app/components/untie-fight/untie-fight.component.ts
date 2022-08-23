@@ -18,9 +18,11 @@ export class UntieFightComponent implements OnInit {
   @Input()
   over: boolean;
 
-
   @Input()
   swapColors: boolean;
+
+  @Input()
+  swapTeams: boolean;
 
   @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
 
