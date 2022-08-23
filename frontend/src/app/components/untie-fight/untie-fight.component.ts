@@ -18,6 +18,10 @@ export class UntieFightComponent implements OnInit {
   @Input()
   over: boolean;
 
+
+  @Input()
+  swapColors: boolean;
+
   @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
 
   constructor(private duelChangedService: DuelChangedService) {
