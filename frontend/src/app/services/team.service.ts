@@ -108,6 +108,15 @@ export class TeamService {
       );
   }
 
+  setAll(teams: Team[]): Observable<Team[]> {
+    const url: string = `${this.baseUrl}/set`;
+    return this.http.post<Team[]>(url, teams, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap((newTeam: Team[]) => this.loggerService.info(`adding ` + teams.length + "` teams.`")),
+        catchError(this.messageService.handleError<Team[]>(`adding ` + teams.length + "` teams.`"))
+      );
+  }
+
   update(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Team>(url, team, this.authenticatedUserService.httpOptions)
