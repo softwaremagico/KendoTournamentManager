@@ -1,6 +1,7 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
 import {debounceTime, fromEvent, Subscription} from "rxjs";
+import {NameUtilsService} from "../../../../../services/name-utils.service";
 
 @Component({
   selector: 'user-name',
@@ -22,6 +23,10 @@ export class UserNameComponent implements OnInit, OnChanges {
 
   public displayName: string = '';
 
+  constructor(public nameUtilsService: NameUtilsService) {
+
+  }
+
   ngOnInit(): void {
     this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(200))
       .subscribe(event => {
@@ -39,44 +44,19 @@ export class UserNameComponent implements OnInit, OnChanges {
   }
 
   getShortName(): string {
-    if (!this.participant) return "";
-    return this.participant.name.slice(0, 1).toUpperCase() + ".";
+    return this.nameUtilsService.getShortName(this.participant);
   }
 
   getShortLastName(): string {
-    if (!this.participant) return "";
-    let capital: number = 0;
-    for (let i = 0; i < this.participant.lastname.length; i++) {
-      if (this.participant.lastname[i] !== ' ' && this.participant.lastname[i].toUpperCase() === this.participant.lastname[i]) {
-        capital = i;
-        break;
-      }
-    }
-    let lastNameEnd = this.participant.lastname.indexOf(' ', capital);
-    if (lastNameEnd <= 0) {
-      lastNameEnd = this.participant.lastname.length;
-    }
-    return this.participant.lastname.substring(0, lastNameEnd);
+    return this.nameUtilsService.getShortLastName(this.participant);
   }
 
   getLastname(): string {
-    if (!this.participant) return "";
-    let lastnames: string[] = this.participant.lastname.split(" ");
-    let finalResult: string[] = [];
-    for (let lastname of lastnames) {
-      finalResult.push(lastname.length < 3 ? lastname : (lastname[0].toUpperCase() + lastname.substring(1).toLowerCase()));
-    }
-    return finalResult.join(" ");
+    return this.nameUtilsService.getLastname(this.participant);
   }
 
   getDisplayName(resolution: number): string {
-    if (resolution > 1200) {
-      return this.getLastname() + ', ' + this.getShortName();
-    } else if (resolution > 900) {
-      return this.getShortLastName() + ', ' + this.getShortName();
-    } else {
-      return this.getShortLastName();
-    }
+    return this.nameUtilsService.getDisplayName(this.participant, resolution);
   }
 
 }

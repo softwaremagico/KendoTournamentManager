@@ -99,11 +99,28 @@ public class TeamServices {
     @Operation(summary = "Creates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TeamDTO add(@RequestBody TeamDTO teamDto, Authentication authentication, HttpServletRequest request) {
-        if (teamDto == null || teamDto.getTournament() == null) {
+    public TeamDTO add(@RequestBody TeamDTO teamDTO, Authentication authentication, HttpServletRequest request) {
+        if (teamDTO == null || teamDTO.getTournament() == null) {
             throw new BadRequestException(getClass(), "Team data is missing");
         }
-        return teamController.create(teamDto, authentication.getName());
+        return teamController.create(teamDTO, authentication.getName());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Defines the teams.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/set", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TeamDTO> set(@RequestBody List<TeamDTO> teamsDTOs, Authentication authentication, HttpServletRequest request) {
+        if (teamsDTOs == null || teamsDTOs.isEmpty()) {
+            throw new BadRequestException(getClass(), "Team data is missing");
+        }
+        teamsDTOs.forEach(teamDTO -> {
+            if (teamDTO.getTournament() == null) {
+                throw new BadRequestException(getClass(), "Team data is missing");
+            }
+        });
+        teamController.delete(teamsDTOs.get(0).getTournament());
+        return teamController.create(teamsDTOs, authentication.getName());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

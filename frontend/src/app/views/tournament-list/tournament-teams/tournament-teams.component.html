@@ -16,7 +16,8 @@
              (keyup.enter)="setEditable(team, false); updateTeamName(team)"
              [(ngModel)]="team.name" type="text"/>
       <div class="input-padding" *ngIf="team.editing"></div>
-      <div class="team" cdkDropList [attr.data-tournament-size]="tournament.teamSize"
+      <div class="team" [class.small]="this.tournament.teamSize===1" cdkDropList
+           [attr.data-tournament-size]="tournament.teamSize"
            [cdkDropListData]="getMembersContainer(team)"
            (cdkDropListDropped)="dropMember($event, team)"
            [cdkDropListEnterPredicate]="checkTeamSize">
@@ -36,6 +37,11 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
+  <button mat-raised-button (click)="generateTeams()" [style.display]="this.tournament.teamSize!==1? 'none':''"
+          mat-flat-button>
+    <mat-icon>auto_fix_high</mat-icon>
+    {{'wizard' | translate}}
+  </button>
   <button mat-raised-button (click)="randomTeams()" mat-flat-button>
     <mat-icon>casino</mat-icon>
     Random
