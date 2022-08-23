@@ -56,4 +56,16 @@ export class UserSessionService {
   getSwappedColors(): boolean {
     return Boolean(this.cookies.get("swappedColors"));
   }
+
+  setSwappedTeams(swappedTeams: boolean) {
+    if (swappedTeams) {
+      this.cookies.set("swappedTeams", swappedTeams.toString());
+    } else {
+      this.cookies.delete("swappedTeams");
+    }
+  }
+
+  getSwappedTeams(): boolean {
+    return Boolean(this.cookies.get("swappedTeams"));
+  }
 }
