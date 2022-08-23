@@ -22,8 +22,15 @@
   border-width: 2px;
   border-color: white;
   border-style: solid;
-  color: red;
   background-color: #011d4a;
+}
+
+.red-ribbon {
+  color: red;
+}
+
+.ribbon-icon {
+  transform: rotate(0deg);
 }
 
 .right-team {
@@ -33,9 +40,12 @@
   border-width: 2px;
   border-color: white;
   border-style: solid;
-  color: white;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
   background-color: #011d4a;
+}
+
+.white-ribbon {
+  color: white;
 }
 
 .fight-container {

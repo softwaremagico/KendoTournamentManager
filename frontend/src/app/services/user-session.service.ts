@@ -44,4 +44,16 @@ export class UserSessionService {
   getItemsPerPage(): number {
     return Number(this.cookies.get("itemsPerPage"));
   }
+
+  setSwappedColors(swappedColors: boolean) {
+    if (swappedColors) {
+      this.cookies.set("swappedColors", swappedColors.toString());
+    } else {
+      this.cookies.delete("swappedColors");
+    }
+  }
+
+  getSwappedColors(): boolean {
+    return Boolean(this.cookies.get("swappedColors"));
+  }
 }
