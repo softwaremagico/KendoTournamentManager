@@ -9,6 +9,7 @@ import {catchError, tap} from "rxjs/operators";
 import {Group} from "../models/group";
 import {Team} from "../models/team";
 import {Duel} from "../models/duel";
+import {SystemOverloadService} from "./system-overload.service";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class GroupService {
   private baseUrl = this.environmentService.getBackendUrl() + '/groups';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
+              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private systemOverloadService: SystemOverloadService) {
 
   }
 
@@ -26,7 +28,11 @@ export class GroupService {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Group[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched all groups`)),
+        tap({
+          next: () => this.loggerService.info(`fetched all groups`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Group[]>(`gets all`))
       );
   }
@@ -35,7 +41,11 @@ export class GroupService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Group>(url, group, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((updatedGroup: Group) => this.loggerService.info(`updating group '${updatedGroup}'`)),
+        tap({
+          next: (updatedGroup: Group) => this.loggerService.info(`updating group '${updatedGroup}'`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Group>(`updating '${group}'`))
       );
   }
@@ -44,7 +54,11 @@ export class GroupService {
     const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId;
     return this.http.get<Group[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched groups from tournament ${tournamentId}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched groups from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Group[]>(`gets from tournament ${tournamentId}`))
       );
   }
@@ -53,7 +67,11 @@ export class GroupService {
     const url: string = `${this.baseUrl}/` + groupId + '/teams';
     return this.http.put<Group>(url, teams, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`Updating teams for group ${groupId}`)),
+        tap({
+          next: () => this.loggerService.info(`Updating teams for group ${groupId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Group>(`updates ${groupId}`))
       );
   }
@@ -62,7 +80,11 @@ export class GroupService {
     const url: string = `${this.baseUrl}/teams`;
     return this.http.put<Group>(url, teams, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`Updating teams for default group`)),
+        tap({
+          next: () => this.loggerService.info(`Updating teams for default group`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Group>(`updates teams for default group`))
       );
   }
@@ -71,7 +93,11 @@ export class GroupService {
     const url: string = `${this.baseUrl}/` + groupId + `/unties`;
     return this.http.put<Group>(url, duels, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`Updating teams for default group`)),
+        tap({
+          next: () => this.loggerService.info(`Updating teams for default group`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Group>(`updates teams for default group`))
       );
   }
