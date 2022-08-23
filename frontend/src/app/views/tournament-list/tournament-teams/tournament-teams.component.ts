@@ -13,6 +13,7 @@ import {TeamService} from "../../../services/team.service";
 import {catchError, tap} from "rxjs/operators";
 import {LoggerService} from "../../../services/logger.service";
 import {NameUtilsService} from "../../../services/name-utils.service";
+import {SystemOverloadService} from "../../../services/system-overload.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -28,7 +29,8 @@ export class TournamentTeamsComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
-              public nameUtilsService: NameUtilsService, @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+              public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
 
@@ -273,6 +275,7 @@ export class TournamentTeamsComponent implements OnInit {
         for (const team of _teams) {
           this.members.set(team, team.members);
         }
+        this.systemOverloadService.isBusy.next(false);
       });
     }
   }

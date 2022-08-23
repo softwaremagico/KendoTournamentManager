@@ -1,3 +1,4 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <mat-tab-group *ngIf="totalDuels() >= 2">
   <mat-tab *ngFor="let team of teams; let i = index"
            [label]="teams[(i%(teams.length))].name + ' - ' +teams[((i+1)%(teams.length))].name">

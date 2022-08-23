@@ -8,6 +8,7 @@ import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {ScoreOfTeam} from "../models/score-of-team";
 import {ScoreOfCompetitor} from "../models/score-of-competitor";
+import {SystemOverloadService} from "./system-overload.service";
 
 @Injectable({
   providedIn: 'root'
@@ -17,14 +18,19 @@ export class RankingService {
   private baseUrl = this.environmentService.getBackendUrl() + '/rankings';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
+              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private systemOverloadService: SystemOverloadService) {
   }
 
   getCompetitorsScoreRankingByGroup(groupId: number): Observable<ScoreOfCompetitor[]> {
     const url: string = `${this.baseUrl}` + '/competitors/group/' + groupId;
     return this.http.get<ScoreOfCompetitor[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(() => this.loggerService.info(`getting competitors ranking`)),
+        tap({
+          next: () => this.loggerService.info(`getting competitors ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<ScoreOfCompetitor[]>(`getting competitors ranking`))
       );
   }
@@ -33,7 +39,11 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId;
     return this.http.get<ScoreOfCompetitor[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(() => this.loggerService.info(`getting competitors ranking`)),
+        tap({
+          next: () => this.loggerService.info(`getting competitors ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<ScoreOfCompetitor[]>(`getting competitors ranking`))
       );
   }
@@ -45,14 +55,25 @@ export class RankingService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
       })
-    });
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting competitors ranking`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting competitors ranking`))
+    );
   }
 
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
     const url: string = `${this.baseUrl}` + '/teams/group/' + groupId;
     return this.http.get<ScoreOfTeam[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(() => this.loggerService.info(`getting teams ranking`)),
+        tap({
+          next: () => this.loggerService.info(`getting teams ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<ScoreOfTeam[]>(`getting teams ranking`))
       );
   }
@@ -61,7 +82,11 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId;
     return this.http.get<ScoreOfTeam[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(() => this.loggerService.info(`getting teams ranking`)),
+        tap({
+          next: () => this.loggerService.info(`getting teams ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<ScoreOfTeam[]>(`getting teams ranking`))
       );
   }
@@ -73,7 +98,14 @@ export class RankingService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
       })
-    });
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting teams ranking`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting teams ranking`))
+    );
   }
 
   getTournamentSummaryAsHtml(tournamentId: number): Observable<Blob> {
@@ -83,7 +115,14 @@ export class RankingService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
       })
-    });
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting tournament summary code`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting tournament summary code`))
+    );
   }
 
 }
