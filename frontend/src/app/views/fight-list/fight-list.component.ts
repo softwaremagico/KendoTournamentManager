@@ -24,6 +24,7 @@ import {DuelChangedService} from "../../services/duel-changed.service";
 import {UntieAddedService} from "../../services/untie-added.service";
 import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
+import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -40,13 +41,15 @@ export class FightListComponent implements OnInit {
   timer: boolean = false;
   private readonly tournamentId: number | undefined;
   groups: Group[];
+  swappedColors: boolean = false;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
               public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService,
-              private untieAddedService: UntieAddedService, public dialog: MatDialog,
+              private untieAddedService: UntieAddedService, public dialog: MatDialog, private userSessionService: UserSessionService,
               private messageService: MessageService, public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
+    this.swappedColors = this.userSessionService.getSwappedColors();
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -396,5 +399,10 @@ export class FightListComponent implements OnInit {
 
   showSelectedRelatedButton(): boolean {
     return !(this.selectedFight !== undefined || (this.selectedDuel !== undefined && this.selectedDuel.type === DuelType.UNDRAW));
+  }
+
+  swapColors() {
+    this.swappedColors = !this.swappedColors;
+    this.userSessionService.setSwappedColors(this.swappedColors);
   }
 }

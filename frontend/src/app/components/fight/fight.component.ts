@@ -23,6 +23,9 @@ export class FightComponent implements OnInit {
 
   selectedDuel: Duel | undefined;
 
+  @Input()
+  swapColors: boolean;
+
   constructor(private duelChangedService: DuelChangedService) {
     this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
       if (selectedDuel && this.fight && this.fight.duels) {

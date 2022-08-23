@@ -1,19 +1,21 @@
 <div class="fight-container">
-  <div class="left-team" *ngIf="showTeamTitle">
+  <div class="left-team" [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors" *ngIf="showTeamTitle">
     {{fight.team1.name}}
   </div>
-  <div class="left-team" *ngIf="!showTeamTitle">
-    -
+  <div class="left-team ribbon-icon" [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors"
+       *ngIf="!showTeamTitle">
+    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
   </div>
   <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}">
     <duel class="duel" *ngFor="let duel of fight.duels" [duel]="duel" (click)="selectDuel(duel)"
           [selected]="duel === selectedDuel"
           [ngClass]="{duelSelected: duel === selectedDuel && selected, over: isOver(duel)}"></duel>
   </div>
-  <div class="right-team" *ngIf="showTeamTitle">
+  <div class="right-team" [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors" *ngIf="showTeamTitle">
     {{fight.team2.name}}
   </div>
-  <div class="right-team" *ngIf="!showTeamTitle">
-    -
+  <div class="right-team ribbon-icon" [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors"
+       *ngIf="!showTeamTitle">
+    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
   </div>
 </div>
