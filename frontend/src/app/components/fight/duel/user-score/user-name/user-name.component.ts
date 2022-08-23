@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
 import {debounceTime, fromEvent, Subscription} from "rxjs";
 
@@ -7,13 +7,16 @@ import {debounceTime, fromEvent, Subscription} from "rxjs";
   templateUrl: './user-name.component.html',
   styleUrls: ['./user-name.component.scss']
 })
-export class UserNameComponent implements OnInit {
+export class UserNameComponent implements OnInit, OnChanges {
 
   @Input()
   participant: Participant | undefined;
 
   @Input()
   left: boolean;
+
+  @Input()
+  swapTeams: boolean;
 
   resizeSubscription$: Subscription;
 
@@ -29,6 +32,10 @@ export class UserNameComponent implements OnInit {
 
   ngOnDestroy() {
     this.resizeSubscription$.unsubscribe()
+  }
+
+  ngOnChanges() {
+    this.displayName = this.getDisplayName(window.innerWidth);
   }
 
   getShortName(): string {

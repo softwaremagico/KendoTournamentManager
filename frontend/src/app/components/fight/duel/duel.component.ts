@@ -15,6 +15,9 @@ export class DuelComponent implements OnInit {
   @Input()
   selected: boolean;
 
+  @Input()
+  swapTeams: boolean;
+
   constructor(private duelChangedService: DuelChangedService) {
     this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
       if (selectedDuel && this.duel) {
