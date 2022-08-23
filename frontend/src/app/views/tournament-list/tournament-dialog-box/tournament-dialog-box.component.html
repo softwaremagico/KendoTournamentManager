@@ -21,7 +21,7 @@
     <mat-label>Duels Duration</mat-label>
     <mat-select [(value)]="tournament.duelsDuration">
       <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
-        {{number}}
+        {{number}} {{'seconds' | translate}}
       </mat-option>
     </mat-select>
   </mat-form-field>
