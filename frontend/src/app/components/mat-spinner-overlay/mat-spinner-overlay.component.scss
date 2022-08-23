@@ -5,12 +5,12 @@
   transform: translateX(-50%) translateY(-50%);
 }
 
-.overlay{
-  height:100vh;
-  width:100%;
-  background-color:rgba(0, 0, 0, 0.286);
-  z-index:    10;
-  top:        0;
-  left:       0;
-  position:   fixed;
+.overlay {
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.286);
+  z-index: 10;
+  top: 0;
+  left: 0;
+  position: fixed;
 }
