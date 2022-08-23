@@ -490,6 +490,7 @@
   "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
   "group": "Pool",
   "undraw": "Undraw",
-  "addFight": "The fight has been added correctly."
+  "addFight": "The fight has been added correctly.",
+  "seconds": "seconds"
 }
 
