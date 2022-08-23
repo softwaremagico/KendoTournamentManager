@@ -72,6 +72,8 @@ import { UndrawTeamsComponent } from './views/fight-list/undraw-teams/undraw-tea
 import { MemberSelectorComponent } from './components/basic/member-selector/member-selector.component';
 import { UntieFightComponent } from './components/untie-fight/untie-fight.component';
 import {MatTabsModule} from "@angular/material/tabs";
+import {MatSpinnerOverlayComponent} from "./components/mat-spinner-overlay/mat-spinner-overlay.component";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 
 registerLocaleData(localeES, "es");
@@ -112,7 +114,8 @@ registerLocaleData(localeNL, "nl");
     TimerComponent,
     UndrawTeamsComponent,
     MemberSelectorComponent,
-    UntieFightComponent
+    UntieFightComponent,
+    MatSpinnerOverlayComponent
   ],
   imports: [
     BrowserModule,
@@ -152,7 +155,8 @@ registerLocaleData(localeNL, "nl");
     MatAutocompleteModule,
     DragDropModule,
     IconModule,
-    MatTabsModule
+    MatTabsModule,
+    MatProgressSpinnerModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

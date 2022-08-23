@@ -7,6 +7,7 @@ import {Club} from "../models/club";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
+import {SystemOverloadService} from "./system-overload.service";
 
 
 @Injectable({
@@ -17,14 +18,19 @@ export class ClubService {
   private baseUrl = this.environmentService.getBackendUrl() + '/clubs';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
+              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private systemOverloadService: SystemOverloadService) {
   }
 
   getAll(): Observable<Club[]> {
     const url: string = `${this.baseUrl}`;
     return this.http.get<Club[]>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched all clubs`)),
+        tap({
+          next: () => this.loggerService.info(`fetched all clubs`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Club[]>(`gets all`))
       );
   }
@@ -33,7 +39,11 @@ export class ClubService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.get<Club>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`fetched club id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`fetched club id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Club>(`get id=${id}`))
       );
   }
@@ -42,7 +52,11 @@ export class ClubService {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting club id=${id}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting club id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<number>(`delete id=${id}`))
       );
   }
@@ -51,7 +65,11 @@ export class ClubService {
     const url: string = `${this.baseUrl}/delete`;
     return this.http.post<Club>(url, club, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap(_ => this.loggerService.info(`deleting club ${club}`)),
+        tap({
+          next: () => this.loggerService.info(`deleting club ${club}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Club>(`delete ${club}`))
       );
   }
@@ -60,7 +78,11 @@ export class ClubService {
     const url: string = `${this.baseUrl}`;
     return this.http.post<Club>(url, club, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((newClub: Club) => this.loggerService.info(`adding club ${newClub}`)),
+        tap({
+          next: (newClub: Club) => this.loggerService.info(`adding club ${newClub}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Club>(`adding ${club}`))
       );
   }
@@ -69,7 +91,11 @@ export class ClubService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Club>(url, club, this.authenticatedUserService.httpOptions)
       .pipe(
-        tap((updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub}`)),
+        tap({
+          next: (updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
         catchError(this.messageService.handleError<Club>(`updating ${club}`))
       );
   }
