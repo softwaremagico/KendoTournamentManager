@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
@@ -10,7 +10,7 @@ import {KeyValue} from "@angular/common";
   templateUrl: './score.component.html',
   styleUrls: ['./score.component.scss']
 })
-export class ScoreComponent implements OnInit {
+export class ScoreComponent implements OnInit, OnChanges {
 
   @Input()
   index: number;
@@ -20,6 +20,9 @@ export class ScoreComponent implements OnInit {
 
   @Input()
   left: boolean;
+
+  @Input()
+  swapTeams: boolean;
 
   public scores = Score;
 
@@ -38,19 +41,38 @@ export class ScoreComponent implements OnInit {
     // This is intentional
   }
 
+  ngOnChanges() {
+  }
+
   private updateDuel(score: Score) {
     if (score) {
       if (this.left) {
         if (score !== Score.EMPTY) {
-          this.duel.competitor1Score[this.index] = score;
+          if (!this.swapTeams) {
+            this.duel.competitor1Score[this.index] = score;
+          } else {
+            this.duel.competitor2Score[this.index] = score;
+          }
         } else {
-          this.duel.competitor1Score.splice(this.index, 1)
+          if (!this.swapTeams) {
+            this.duel.competitor1Score.splice(this.index, 1)
+          } else {
+            this.duel.competitor2Score.splice(this.index, 1)
+          }
         }
       } else {
         if (score !== Score.EMPTY) {
-          this.duel.competitor2Score[this.index] = score;
+          if (!this.swapTeams) {
+            this.duel.competitor2Score[this.index] = score;
+          } else {
+            this.duel.competitor1Score[this.index] = score;
+          }
         } else {
-          this.duel.competitor2Score.splice(this.index, 1)
+          if (!this.swapTeams) {
+            this.duel.competitor2Score.splice(this.index, 1)
+          } else {
+            this.duel.competitor1Score.splice(this.index, 1)
+          }
         }
       }
     }
@@ -66,9 +88,17 @@ export class ScoreComponent implements OnInit {
 
   scoreRepresentation(): string {
     if (this.left) {
-      return Score.tag(this.duel.competitor1Score[this.index]);
+      if (!this.swapTeams) {
+        return Score.tag(this.duel.competitor1Score[this.index]);
+      } else {
+        return Score.tag(this.duel.competitor2Score[this.index]);
+      }
     } else {
-      return Score.tag(this.duel.competitor2Score[this.index]);
+      if (!this.swapTeams) {
+        return Score.tag(this.duel.competitor2Score[this.index]);
+      } else {
+        return Score.tag(this.duel.competitor1Score[this.index]);
+      }
     }
   }
 

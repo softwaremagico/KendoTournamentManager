@@ -26,10 +26,11 @@
                 (click)="showTimer(false)">
           <mat-icon>timer_off</mat-icon>
         </button>
+        <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" (click)="swapColors()">
           <mat-icon svgIcon="exchange-colors" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="true">
+        <button mat-button color="primary"  (click)="swapTeams()">
           <mat-icon svgIcon="exchange-teams" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
@@ -61,12 +62,13 @@
     <div class="mat-elevation-z8">
       <div class="fight-list">
         <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
-               [over]="isFightOver(fight)" [swapColors]="swappedColors" (click)="selectFight(fight)"
+               [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
+               (click)="selectFight(fight)"
                (onSelectedDuel)="selectDuel($event[0])"></fight>
       </div>
       <div class="unties-list">
         <untie-fight *ngFor="let duel of unties" [duel]="duel" (click)="selectDuel(duel)"
-                     [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                     [selected]="duel === selectedDuel" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
                      [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></untie-fight>
       </div>
     </div>
