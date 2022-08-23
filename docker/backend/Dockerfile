@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:18-jdk-alpine
 
 ARG release
 ARG machine_domain
