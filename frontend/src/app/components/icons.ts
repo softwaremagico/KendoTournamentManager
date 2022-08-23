@@ -18,6 +18,9 @@ export class IconModule {
       .addSvgIcon("teams-classification", this.setPath(`${this.path}/teams-classification.svg`))
       .addSvgIcon("undraw-score", this.setPath(`${this.path}/undraw-score.svg`))
       .addSvgIcon("tournament-blog", this.setPath(`${this.path}/blog.svg`))
+      .addSvgIcon("ribbon", this.setPath(`${this.path}/ribbon.svg`))
+      .addSvgIcon("exchange-colors", this.setPath(`${this.path}/exchange.svg`))
+      .addSvgIcon("exchange-teams", this.setPath(`${this.path}/exchange-team.svg`))
       .addSvgIcon("competitors-classification", this.setPath(`${this.path}/competitors-classification.svg`));
   }
 
