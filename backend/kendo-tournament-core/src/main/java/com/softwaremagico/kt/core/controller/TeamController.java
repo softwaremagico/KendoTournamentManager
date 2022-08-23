@@ -39,6 +39,7 @@ import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,6 +90,19 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
             teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
         return super.create(teamDTO, username);
+    }
+
+    @Override
+    public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username) {
+        teamsDTOs.forEach(teamDTO -> {
+            if (teamDTO.getGroup() == null) {
+                teamDTO.setGroup(1);
+            }
+            if (teamDTO.getName() == null) {
+                teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
+            }
+        });
+        return super.create(teamsDTOs, username);
     }
 
     public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {

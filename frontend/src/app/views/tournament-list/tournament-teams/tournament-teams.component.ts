@@ -12,6 +12,7 @@ import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
 import {catchError, tap} from "rxjs/operators";
 import {LoggerService} from "../../../services/logger.service";
+import {NameUtilsService} from "../../../services/name-utils.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -27,14 +28,11 @@ export class TournamentTeamsComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+              public nameUtilsService: NameUtilsService, @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
   }
 
   getMembersContainer(team: Team): Participant[] {
-    if (this.members.get(team) === undefined) {
-      this.members.set(team, []);
-    }
     return this.members.get(team)!;
   }
 
@@ -198,6 +196,7 @@ export class TournamentTeamsComponent implements OnInit {
     ).subscribe(_team => {
       this.messageService.infoMessage("New team '" + _team.name + "' added.");
       this.teams.push(_team);
+      this.members.set(_team, []);
     });
   }
 
@@ -250,5 +249,31 @@ export class TournamentTeamsComponent implements OnInit {
     const participant: Participant = participants[selected];
     participants.splice(selected, 1);
     return participant;
+  }
+
+  generateTeams() {
+    if (this.tournament.teamSize === 1) {
+      this.teams = [];
+      let participants: Participant[];
+      participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+      this.members = new Map<Team, Participant[]>();
+      for (const member of participants) {
+        const team: Team = new Team();
+        team.tournament = this.tournament;
+        team.name = this.nameUtilsService.getLastnameName(member);
+        team.members = [];
+        team.members[0] = member;
+        this.teams.push(team);
+      }
+      this.teamService.setAll(this.teams).subscribe(_teams => {
+        this.messageService.infoMessage(_teams.length + " team added!");
+        this.teams = _teams
+        this.userListData.participants = [];
+        this.userListData.filteredParticipants = this.userListData.participants;
+        for (const team of _teams) {
+          this.members.set(team, team.members);
+        }
+      });
+    }
   }
 }
