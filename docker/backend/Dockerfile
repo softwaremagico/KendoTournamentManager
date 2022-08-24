@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
     cd /opt/libraries && \
     zip -0 /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/* && \
     zip -d /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/mysql-connector* && \
-    apt-get autoremove -y openssl zip unzip curl
+    apt-get autoremove -y openssl zip unzip
 
 #Copy configuration files.
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
