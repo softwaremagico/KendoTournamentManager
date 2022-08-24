@@ -21,7 +21,7 @@ RUN mkdir -p /usr/src/
 WORKDIR /usr/src/
 
 # Download code
-RUN apk --no-cache add supervisor openssl unzip build-base gcc && \
+RUN apk --no-cache add supervisor openssl curl unzip build-base gcc && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
     wget https://github.com/softwaremagico/KendoTournamentManager/archive/refs/tags/${release}.zip && \
