@@ -39,6 +39,7 @@ RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
     sed -i "s|jwt\.secret.*|jwt.secret=${jwt_secret}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.platform.*|spring.kendo.datasource.platform=${database_type}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jpa\.hibernate\.ddl-auto.*|spring.kendo.datasource.jpa.hibernate.ddl-auto=update|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|spring\.datasource\.data\.*||g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.jpa\.properties\.hibernate\.dialect.*|spring.jpa.properties.hibernate.dialect=${database_dialect}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jdbc-url.*|spring.kendo.datasource.jdbc-url=jdbc:${database_type}://kendo-tournament-database:${database_port}/${database_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.username.*|spring.kendo.datasource.username=${database_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
