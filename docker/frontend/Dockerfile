@@ -43,7 +43,7 @@ RUN  sed -i "s|PROJECT_FOLDER|/opt/${project_name}|g" /etc/supervisor/conf.d/sup
 
 # Compile
 RUN npm install -g @angular/cli --unsafe-perm=true --allow-root && \
-    npm install -timeout=240000 && \
+    npm install -timeout=360000 && \
     ng build --configuration=docker --base-href /kendo-tournament-frontend
 
 # EXEC
