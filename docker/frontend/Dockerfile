@@ -6,6 +6,9 @@ ARG release
 
 ENV project_name kendo-tournament-frontend
 
+#Enable more RAM to compile libsass
+ENV NODE_OPTIONS="--max-old-space-size=750"
+
 #Set timezone.
 ENV TZ=Europe/Madrid
 RUN apk add --no-cache tzdata && \
@@ -18,7 +21,7 @@ RUN mkdir -p /usr/src/
 WORKDIR /usr/src/
 
 # Download code
-RUN apk --no-cache add supervisor openssl unzip && \
+RUN apk --no-cache add supervisor openssl unzip build-base gcc && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
     wget https://github.com/softwaremagico/KendoTournamentManager/archive/refs/tags/${release}.zip && \
@@ -39,7 +42,7 @@ RUN  sed -i "s|PROJECT_FOLDER|/opt/${project_name}|g" /etc/supervisor/conf.d/sup
      sed -i "s|PROJECT_NAME|${project_name}|g" /etc/supervisor/conf.d/supervisord.conf
 
 # Compile
-RUN npm install -g @angular/cli && \
+RUN npm install -g @angular/cli --unsafe-perm=true --allow-root && \
     npm install -timeout=240000 && \
     ng build --configuration=docker --base-href /kendo-tournament-frontend
 
