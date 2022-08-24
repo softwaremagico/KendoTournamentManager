@@ -16,17 +16,53 @@ database_port=5432
 # Using REVERSE PROXY and Generating SSL certificates for the first time
 
 The reverse proxy is prepared to use let's encrypt certificates. First time you run it, rproxy will listen to
-ports `80` and `8080`. SSL configuration is commented, as we need to rproxy starts to generate the SSL certificates. 
+ports `80` and `8080`. SSL configuration is commented, as we need to rproxy starts to generate the SSL certificates.
 
-First, try to generate your certificates, running in your machine where the docker containers are installed:
+Create a folder where store the certificates on the server:
+
 ```
-/usr/bin/docker run -t --rm -v  docker_ssl-certificates:/etc/letsencrypt -v  docker_ssl-certificates-data:/data/letsencrypt deliverous/certbot certonly -m <<my-email>> --agree-tos --force-renew --no-eff-email --webroot --webroot-path=/data/letsencrypt -d <<my-domain>>
+mkdir -p /etc/letsencrypt
 ```
+
+Update two files:
+
+- On docker-compose.yml, enable the port redirection `80` on `kendo-tournament-rproxy` definition by uncommenting the
+  line `# - "80:80"`
+- On `docker/rproxy/config/servers.conf` change the server listening on port `80` to:
+
+```
+server {
+  listen       80;
+  listen [::]:80;
+  server_name MACHINE_DOMAIN;
+
+  location ^~ /.well-known {
+      allow all;
+      root  /data/letsencrypt/;
+  }
+  
+  # Configure http to redirect to https;
+  #location / {
+  #  return 301 https://$host$request_uri;
+  #}
+}
+```
+
+Now, try to generate your certificates, running in your machine where the docker containers are installed:
+
+```
+/usr/bin/docker run -t --rm -v  /etc/letsencrypt:/etc/letsencrypt deliverous/certbot certonly -m <<my-email>> --agree-tos --force-renew --no-eff-email --webroot --webroot-path=/data/letsencrypt -d <<my-domain>>
+```
+
 Remember to change `<<my-email>>` and `<<my-domain>>` with valid values.
 
-If the certificates are success, now you must configure the reverse proxy to use them. Edit the file `rproxy/config/servers.conf` and:
+## Configure reverse proxy server
+
+If the certificates are generated successfully, now you must configure the reverse proxy to use them. Edit the
+file `rproxy/config/servers.conf` and:
 
 Change the port from 8080 to 442:
+
 ```
   listen 443 ssl;
   #listen 8080;
@@ -40,7 +76,9 @@ Uncomment the certificate placeholders:
   ssl_trusted_certificate /etc/letsencrypt/live/MACHINE_DOMAIN/chain.pem;
 ```
 
-Next thing to do, is enabling http to https redirection, uncommenting these lines:
+Next thing to do, is enabling http to https redirection, uncommenting these lines (that are commented if you are
+deploying certificates using a docker container, as described above):
+
 ```
   # Configure http to redirect to https;
   location / {
@@ -56,7 +94,8 @@ docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d 
 
 ## Renewal of SSL certificates
 
-Your certificates usually expire in 90 days. For the renewal of the SSL certificates, you need to configure your cron system to ask for the renewal time by time. An
+Your certificates usually expire in 90 days. For the renewal of the SSL certificates, you need to configure your cron
+system to ask for the renewal time by time. An
 example, where is asking for a renewal each sunday at 5am:
 
 ```
@@ -66,3 +105,41 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ```
 
 If using this example, as before remember to change `<<my-email>>` and `<<my-domain>>` with valid values.
+
+# Creating SSL Certificates on a RaspberryPi (arm architecture)
+
+Certbot docker container is not available for `arm` architectures, then we need to use the standard `certbot`
+application.
+
+Install it as any other Ubuntu standard application (or use the correct command for other Linux distributions):
+
+```
+sudo apt install certbot
+```
+
+Ensure that port 80 is not used by any other docker container as the reverse proxy, and also ensure that is available on
+the server and not blocked by any firewall. Let's Encrypt must access to your port 80. That means that must be
+publicly visible on Internet.
+
+And execute the certbot:
+
+```
+certbot certonly --standalone -d <<my-domain>> -m <<my-email>> --agree-tos --force-renew --no-eff-email --webroot-path=/data/letsencrypt
+```
+
+Remember to change `<<my-email>>` and `<<my-domain>>` with valid values.
+
+After this, if you see the success message, you can configure the reverse proxy server as explained above.
+
+## Renewal of SSL certificates
+
+As before, your certificates will expire in 90 days, and you will need to renew them. Ensure that reverse proxy is
+stopped for freeing the port 80.
+
+```
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+0 5 * * 7 /usr/bin/docker stop kendo-tournament-rproxy >/dev/null 2>&1 && /usr/bin/certbot certonly --standalone -d <<my-domain>> -m <<my-email>> --agree-tos --force-renew --no-eff-email --webroot-path=/data/letsencrypt && /usr/bin/docker start kendo-tournament-rproxy >/dev/null 2>&1
+```
+
+As before remember to change `<<my-email>>` and `<<my-domain>>` with valid values.
