@@ -3,8 +3,6 @@ version: '3.9'
 
 volumes:
   kendo-tournament-database:
-  ssl-certificates:
-  ssl-certificates-data:
 
 
 networks:
@@ -28,10 +26,9 @@ services:
       - external
     ports:
       - "443:443"
-      - "80:80"
+#      - "80:80"    # Enable this if you are using certbot as a docker container.
     volumes:
-      - ssl-certificates:/etc/letsencrypt
-      - ssl-certificates-data:/data/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt
     container_name: kendo-tournament-rproxy
     hostname: kendo-tournament-rproxy
     links:
