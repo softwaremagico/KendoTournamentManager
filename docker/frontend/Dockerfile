@@ -15,7 +15,7 @@ RUN mkdir -p /${HTML_ROOT_FOLDER}
 RUN apk --no-cache add supervisor openssl curl unzip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
-    wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-frontend.zip && \
+    wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-frontend-docker.zip && \
     unzip kendo-tournament-frontend.zip && \
     mv frontend/* ${HTML_ROOT_FOLDER} && \
     rm -r frontend && \
