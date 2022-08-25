@@ -63,5 +63,7 @@ COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN  sed -i "s|PROJECT_FOLDER|/opt/${project_name}|g" /etc/supervisor/conf.d/supervisord.conf && \
      sed -i "s|PROJECT_NAME|${project_name}|g" /etc/supervisor/conf.d/supervisord.conf
 
+EXPOSE 8080
+
 # EXEC
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
