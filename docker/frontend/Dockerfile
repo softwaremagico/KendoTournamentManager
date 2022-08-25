@@ -1,6 +1,7 @@
 FROM nginx:alpine
 
 ARG release
+ARG machine_domain
 
 ENV HTML_ROOT_FOLDER /www
 
@@ -16,10 +17,10 @@ RUN apk --no-cache add supervisor openssl curl unzip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
     wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-frontend-docker.zip && \
-    unzip kendo-tournament-frontend.zip && \
+    unzip kendo-tournament-frontend-docker.zip && \
     mv frontend/* ${HTML_ROOT_FOLDER} && \
     rm -r frontend && \
-    rm kendo-tournament-frontend.zip && \
+    rm kendo-tournament-frontend-docker.zip && \
     apk del openssl
 
 EXPOSE 4200
@@ -28,6 +29,8 @@ COPY config/servers.conf  /etc/nginx/conf.d/default.conf
 
 #Update Root Folder
 RUN sed -i "s|ROOT_FOLDER|${HTML_ROOT_FOLDER}|g" /etc/nginx/conf.d/default.conf
+
+RUN sed -i "s|MACHINE_DOMAIN|${machine_domain}|g" ${HTML_ROOT_FOLDER}/main.*.js
 
 #Working in the app directory
 WORKDIR ${HTML_ROOT_FOLDER}
