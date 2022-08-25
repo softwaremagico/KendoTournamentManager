@@ -26,17 +26,14 @@ services:
       - external
     ports:
       - "443:443"
-#      - "80:80"    # Enable this if you are using certbot as a docker container.
+    #      - "80:80"    # Enable this if you are using certbot as a docker container.
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
     container_name: kendo-tournament-rproxy
     hostname: kendo-tournament-rproxy
-    links:
-      - "kendo-tournament-frontend"
-      - "kendo-tournament-backend"
     depends_on:
-            #      kendo-tournament-frontend:
-            #        condition: service_healthy
+      kendo-tournament-frontend:
+        condition: service_healthy
       kendo-tournament-backend:
         condition: service_healthy
     healthcheck:
@@ -57,6 +54,7 @@ services:
       context: ./frontend
       args:
         - release
+        - machine_domain
     image: kendo-tournament-frontend
     restart: always
     networks:
@@ -68,7 +66,7 @@ services:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-frontend
     hostname: kendo-tournament-frontend
-    working_dir: /opt/kendo-tournament-frontend/
+    working_dir: /www
     environment:
       - NODE_PATH=/usr/local/lib/node_modules/
     healthcheck:
@@ -76,8 +74,6 @@ services:
       interval: 30s
       timeout: 30s
       retries: 5
-    links:
-      - "kendo-tournament-backend"
     depends_on:
       - "kendo-tournament-backend"
     logging:
@@ -109,8 +105,6 @@ services:
     container_name: kendo-tournament-backend
     hostname: kendo-tournament-backend
     working_dir: /opt/kendo-tournament-backend/
-    links:
-      - "kendo-tournament-database"
     depends_on:
       - "kendo-tournament-database"
     healthcheck:
