@@ -1,29 +1,38 @@
 <div class="login-container">
-  <mat-card>
-    <mat-card-content>
-      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
-        <h2>{{'logIn' | translate}}</h2>
-        <div>
-          <mat-form-field class="form-input">
-            <input matInput placeholder="{{'email' | translate}}" formControlName="username" required>
-            <mat-error>
-              {{'invalidEmail' | translate}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field class="form-input">
-            <input matInput type="password" placeholder="{{'password' | translate}}" formControlName="password"
-                   required>
-            <mat-error>
-              {{'invalidPassword' | translate}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div>
-          <button mat-raised-button color="primary">{{'login' | translate}}</button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+  <div class="screen">
+    <div class="screen-content">
+      <mat-card>
+        <mat-card-content>
+          <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+            <h2 class="login-title">{{'logIn' | translate}}</h2>
+            <div class="login-field">
+              <mat-icon class="input-icon" color="primary">mail</mat-icon>
+              <mat-form-field class="form-input">
+                <input class="login-input" matInput placeholder="{{'email' | translate}}" formControlName="username" required>
+                <mat-error>
+                  {{'invalidEmail' | translate}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="login-field">
+              <mat-icon class="input-icon" color="primary">lock</mat-icon>
+              <mat-form-field class="form-input">
+                <input class="login-input" matInput type="password" placeholder="{{'password' | translate}}" formControlName="password"
+                       required>
+                <mat-error>
+                  {{'invalidPassword' | translate}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div>
+              <button mat-raised-button color="primary">
+                <mat-icon>keyboard_double_arrow_right</mat-icon>
+                {{'login' | translate}}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 </div>
