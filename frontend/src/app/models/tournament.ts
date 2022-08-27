@@ -2,6 +2,11 @@ import {TournamentType} from "./tournament-type";
 import {Element} from "./element";
 
 export class Tournament extends Element {
+  public static readonly DEFAULT_DUELS_DURATION: number = 180;
+  public static readonly DEFAULT_TYPE: TournamentType = TournamentType.LEAGUE;
+  public static readonly DEFAULT_SHIAIJOS: number = 1;
+  public static readonly DEFAULT_TEAM_SIZE: number = 3;
+
   public name: string;
   public shiaijos?: number;
   public teamSize?: number;
