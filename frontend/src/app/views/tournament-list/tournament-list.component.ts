@@ -57,6 +57,10 @@ export class TournamentListComponent implements OnInit {
 
   addElement(): void {
     const tournament = new Tournament();
+    tournament.duelsDuration = Tournament.DEFAULT_DUELS_DURATION;
+    tournament.type = Tournament.DEFAULT_TYPE;
+    tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
+    tournament.teamSize = Tournament.DEFAULT_TEAM_SIZE;
     this.openDialog('Add a tournament', Action.Add, tournament);
   }
 
