@@ -82,18 +82,18 @@ export class TournamentTeamsComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  private transferCard(event: CdkDragDrop<Participant[], any>): Participant {
+  private transferCard(event: CdkDragDrop<Participant[], any>, memberIndex: number): Participant {
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      moveItemInArray(event.container.data, event.previousIndex, memberIndex);
     } else {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
-        event.currentIndex,
+        memberIndex,
       );
     }
-    return event.container.data[event.currentIndex];
+    return event.container.data[memberIndex];
   }
 
   removeFromTeam(event: CdkDragDrop<Participant[], any>) {
@@ -120,9 +120,9 @@ export class TournamentTeamsComponent implements OnInit {
     });
   }
 
-  dropMember(event: CdkDragDrop<Participant[], any>, team: Team) {
+  dropMember(event: CdkDragDrop<Participant[], any>, team: Team, memberIndex: number) {
     const sourceTeam: Team | undefined = this.searchTeam(event);
-    const participant: Participant = this.transferCard(event);
+    const participant: Participant = this.transferCard(event, memberIndex);
     team.members = this.getMembersContainer(team);
     // Update origin team.
     if (sourceTeam) {
@@ -164,11 +164,7 @@ export class TournamentTeamsComponent implements OnInit {
   }
 
   checkTeamSize(_item: CdkDrag, dropList: CdkDropList): boolean {
-    const size = dropList.element.nativeElement.getAttribute('data-tournament-size');
-    if (!!size) {
-      return (dropList.data.length < +size);
-    }
-    return true;
+    return (dropList.data.length < 1);
   }
 
   setEditable(team: Team, editable: boolean) {
