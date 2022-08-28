@@ -134,6 +134,9 @@ export class TimerComponent implements OnInit {
   }
 
   toDoubleDigit(num: number): string {
+    if(isNaN(num)){
+      return '00';
+    }
     return num < 10 ? '0' + num : num + '';
   };
 
