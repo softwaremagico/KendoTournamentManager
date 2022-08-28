@@ -3,7 +3,7 @@
   border-radius: 10px;
   width: 300px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 5px 20px 5px 20px;
   text-align: center;
   background: #222222;
   position: fixed;
@@ -21,8 +21,8 @@
   width: 270px;
   height: 70px;
   overflow: hidden;
-  display : flex;
-  align-items : center;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -38,7 +38,9 @@
 }
 
 @keyframes blinker {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 .time {
@@ -77,5 +79,9 @@
 
 .forward {
   color: #00ff00;
+}
+
+.drag-icon {
+  color: #8097b3;
 }
 
