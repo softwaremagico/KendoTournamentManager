@@ -17,19 +17,23 @@
              (keyup.enter)="setEditable(team, false); updateTeamName(team)"
              [(ngModel)]="team.name" type="text"/>
       <div class="input-padding" *ngIf="team.editing"></div>
-      <div class="team" [class.small]="this.tournament.teamSize===1" cdkDropList
-           [attr.data-tournament-size]="tournament.teamSize"
-           [cdkDropListData]="getMembersContainer(team)"
-           (cdkDropListDropped)="dropMember($event, team)"
-           [cdkDropListEnterPredicate]="checkTeamSize">
-        <mat-card class="user-card" *ngFor="let user of members.get(team)" cdkDrag [cdkDragData]="user">
-          <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
-            <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
-            <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-          </mat-card-content>
-        </mat-card>
+      <div class="team" [class.small]="this.tournament.teamSize===1"
+           [attr.data-tournament-size]="tournament.teamSize">
+        <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize)" cdkDropList
+             [cdkDropListData]="getMembersContainer(team)"
+             (cdkDropListDropped)="dropMember($event, team, teamRoom)"
+             [cdkDropListEnterPredicate]="checkTeamSize">
+          <mat-card class="user-card" *ngIf="members.get(team) && members.get(team).values[teamRoom]" cdkDrag
+                    [cdkDragData]="members.get(team).values[teamRoom]">
+            <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
+              <mat-card-title>{{members.get(team).values[teamRoom] ? members.get(team).values[teamRoom].lastname : ""}}
+                , {{members.get(team).values[teamRoom] ? members.get(team).values[teamRoom].name : ""}}</mat-card-title>
+              <mat-card-subtitle>{{members.get(team).values[teamRoom] ? members.get(team).values[teamRoom].club : "" ? members.get(team).values[teamRoom].club.name : ""}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </div>
     <div class="new-team" (click)="addTeam()">
