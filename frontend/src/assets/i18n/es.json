@@ -565,7 +565,8 @@
   "admin": "Administrador",
   "editor": "Editor",
   "viewer": "Espectador",
-  "guest": "Invitado"
+  "guest": "Invitado",
+  "profile": "Perfil"
 }
 
 
