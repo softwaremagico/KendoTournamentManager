@@ -15,15 +15,18 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="sortedTeams()" mat-flat-button>
+  <button mat-raised-button (click)="sortedTeams()" mat-flat-button
+          *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
     <mat-icon>auto_fix_high</mat-icon>
     {{'wizard' | translate}}
   </button>
-  <button mat-raised-button (click)="randomTeams()" mat-flat-button>
+  <button mat-raised-button (click)="randomTeams()" mat-flat-button
+          *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
   <button mat-raised-button (click)="acceptAction()" mat-flat-button color="primary"
+          *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
           [disabled]="teamsOrder.length===0 || teamListData.teams.length>0">
     <mat-icon>done</mat-icon>
     {{'accept' | translate}}</button>

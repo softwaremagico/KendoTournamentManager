@@ -18,6 +18,7 @@
 </div>
 <div mat-dialog-actions class="button-container">
   <button mat-raised-button (click)="createFights()" mat-flat-button color="primary"
+          *ngIf="(RbacActivity.CREATE_DUEL | rbac : this.rbacService.activities)"
           [disabled]="!duelsCompleted()">{{'accept' | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="secondary">{{'cancel' | translate}}</button>
 </div>

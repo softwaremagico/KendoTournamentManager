@@ -13,13 +13,15 @@ import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
 import {Action} from "../../action";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../services/rbac/rbac.service";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 
 @Component({
   selector: 'app-participant-list',
   templateUrl: './participant-list.component.html',
   styleUrls: ['./participant-list.component.scss']
 })
-export class ParticipantListComponent implements OnInit {
+export class ParticipantListComponent extends RbacBasedComponent implements OnInit {
 
   basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>();
   clubs: Club[];
@@ -29,7 +31,8 @@ export class ParticipantListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
-              private clubService: ClubService, private translateService: TranslateService) {
+              private clubService: ClubService, private translateService: TranslateService, rbacService: RbacService) {
+    super(rbacService);
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'clubName', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'idCard', 'name', 'lastname', 'club', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'lastname', 'clubName'];

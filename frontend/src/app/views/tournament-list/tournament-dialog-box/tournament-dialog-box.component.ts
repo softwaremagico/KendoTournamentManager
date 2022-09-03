@@ -3,15 +3,16 @@ import {Tournament} from "../../../models/tournament";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {TournamentType} from "../../../models/tournament-type";
 import {Action} from "../../../action";
-import {TournamentScore} from "../../../models/tournament-score.model";
 import {ScoreType} from "../../../models/score-type";
+import {RbacService} from "../../../services/rbac/rbac.service";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 
 @Component({
   selector: 'app-tournament-dialog-box',
   templateUrl: './tournament-dialog-box.component.html',
   styleUrls: ['./tournament-dialog-box.component.scss']
 })
-export class TournamentDialogBoxComponent {
+export class TournamentDialogBoxComponent extends RbacBasedComponent {
 
   tournament: Tournament;
   title: string;
@@ -21,9 +22,10 @@ export class TournamentDialogBoxComponent {
   scoreTypes: ScoreType[];
 
   constructor(
-    public dialogRef: MatDialogRef<TournamentDialogBoxComponent>,
+    public dialogRef: MatDialogRef<TournamentDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Tournament }) {
+    super(rbacService)
     this.tournament = data.entity;
     this.title = data.title;
     this.action = data.action;
