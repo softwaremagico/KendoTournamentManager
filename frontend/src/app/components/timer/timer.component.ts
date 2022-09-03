@@ -2,16 +2,17 @@ import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@ang
 import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
 import {takeUntil} from "rxjs";
-import {KendoComponent} from "../kendo-component";
 import {MatDialog} from "@angular/material/dialog";
 import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
+import {RbacBasedComponent} from "../RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss']
 })
-export class TimerComponent extends KendoComponent implements OnInit {
+export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   started = false;
 
@@ -39,8 +40,9 @@ export class TimerComponent extends KendoComponent implements OnInit {
   increasedTime: number = 0;
 
 
-  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog) {
-    super();
+  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
+              rbacService: RbacService) {
+    super(rbacService);
     this.started = false;
   }
 

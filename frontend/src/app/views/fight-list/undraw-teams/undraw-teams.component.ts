@@ -8,23 +8,27 @@ import {DuelType} from "../../../models/duel-type";
 import {UntieAddedService} from "../../../services/notifications/untie-added.service";
 import {GroupService} from "../../../services/group.service";
 import {MessageService} from "../../../services/message.service";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-undraw-teams',
   templateUrl: './undraw-teams.component.html',
   styleUrls: ['./undraw-teams.component.scss']
 })
-export class UndrawTeamsComponent implements OnInit, OnChanges {
+export class UndrawTeamsComponent extends RbacBasedComponent implements OnInit, OnChanges {
 
   duels: Duel[];
   teams: Team[] = [];
   tournament: Tournament;
   groupId: number;
-  totalDuels:number;
+  totalDuels: number;
 
   constructor(public dialogRef: MatDialogRef<UndrawTeamsComponent>, private untieAddedService: UntieAddedService,
               @Optional() @Inject(MAT_DIALOG_DATA) private data: { tournament: Tournament, groupId: number, teams: Team[] },
-              private groupServices: GroupService, private messageService: MessageService, public dialog: MatDialog) {
+              private groupServices: GroupService, private messageService: MessageService, public dialog: MatDialog,
+              rbacService: RbacService) {
+    super(rbacService);
     this.teams = data.teams;
     this.totalDuels = this.getTotalDuels();
     this.groupId = data.groupId;
