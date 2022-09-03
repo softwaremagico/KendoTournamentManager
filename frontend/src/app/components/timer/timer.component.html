@@ -5,22 +5,34 @@
       <div class="time"><span>{{toDoubleDigit(minutes)}} : {{toDoubleDigit(seconds)}}</span></div>
     </div>
     <div class="timer-buttons">
-      <button class="rewind" (click)="addTime(-60)">-1'</button>
-      <button class="rewind" (click)="addTime(-10)">-10"</button>
-      <button class="play" (click)="startTimer()" [hidden]="started">
+      <button class="rewind" (click)="addTime(-60)"
+              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">-1'
+      </button>
+      <button class="rewind" (click)="addTime(-10)"
+              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">-10"
+      </button>
+      <button class="play" (click)="startTimer()" [hidden]="started"
+              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
         <mat-icon>play_arrow</mat-icon>
       </button>
-      <button class="pause" (click)="pauseTimer()" [hidden]="!started">
+      <button class="pause" (click)="pauseTimer()" [hidden]="!started"
+              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
         <mat-icon>pause</mat-icon>
       </button>
-      <button class="stop" (click)="finishTimer()">
+      <button class="stop" (click)="finishTimer()"
+              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
         <mat-icon>check_circle</mat-icon>
       </button>
-      <button class="restore" (click)="restoreTimer()" [disabled]="this.elapsedSeconds === 0">
+      <button class="restore" (click)="restoreTimer()" [disabled]="this.elapsedSeconds === 0"
+              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
         <mat-icon>restore</mat-icon>
       </button>
-      <button class="forward" (click)="addTime(+10)">+10"</button>
-      <button class="forward" (click)="addTime(+60)">+1'</button>
+      <button class="forward" (click)="addTime(+10)"
+              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">+10"
+      </button>
+      <button class="forward" (click)="addTime(+60)"
+              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">+1'
+      </button>
     </div>
   </div>
 </div>

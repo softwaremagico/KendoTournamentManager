@@ -1,31 +1,39 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-    <input placeholder="{{'clubName' | translate}}" matInput [(ngModel)]="club.name">
+    <input placeholder="{{'clubName' | translate}}" matInput [(ngModel)]="club.name"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'clubCountry' | translate}}" matInput [(ngModel)]="club.country">
+    <input placeholder="{{'clubCountry' | translate}}" matInput [(ngModel)]="club.country"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'clubCity' | translate}}" matInput [(ngModel)]="club.city">
+    <input placeholder="{{'clubCity' | translate}}" matInput [(ngModel)]="club.city"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'clubAddress' | translate}}" matInput [(ngModel)]="club.address">
+    <input placeholder="{{'clubAddress' | translate}}" matInput [(ngModel)]="club.address"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'clubEmail' | translate}}" matInput [(ngModel)]="club.email">
+    <input placeholder="{{'clubEmail' | translate}}" matInput [(ngModel)]="club.email"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'clubPhone' | translate}}" matInput [(ngModel)]="club.phone">
+    <input placeholder="{{'clubPhone' | translate}}" matInput [(ngModel)]="club.phone"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'clubWeb' | translate}}" matInput [(ngModel)]="club.web">
+    <input placeholder="{{'clubWeb' | translate}}" matInput [(ngModel)]="club.web"
+           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
   </mat-form-field>
   <ng-template #elseTemplate>
     <span [innerHTML]="'clubDeleteQuestion' | translate : {name: club.name}"></span>
   </ng-template>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="doAction()" mat-flat-button color="primary">{{actionName.toLowerCase() | translate}}</button>
+  <button mat-raised-button (click)="doAction()" mat-flat-button color="primary"
+          *ngIf="(RbacActivity.EDIT_CLUB | rbac : this.rbacService.activities)">{{actionName.toLowerCase() | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
 </div>

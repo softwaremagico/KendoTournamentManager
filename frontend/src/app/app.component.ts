@@ -8,6 +8,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {Router} from "@angular/router";
 import {MessageService} from "./services/message.service";
 import {RbacService} from "./services/rbac/rbac.service";
+import {RbacBasedComponent} from "./components/RbacBasedComponent";
 
 @Component({
   selector: 'app-root',
@@ -15,14 +16,15 @@ import {RbacService} from "./services/rbac/rbac.service";
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent {
+export class AppComponent extends RbacBasedComponent{
   selectedLanguage = 'en';
   loggedIn = false;
   selectedRow: string = '';
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
-              private messageService: MessageService, private rbacService: RbacService) {
+              private messageService: MessageService, rbacService: RbacService) {
+    super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');
     this.loggedInService.isUserLoggedIn.subscribe(value => this.loggedIn = value);
