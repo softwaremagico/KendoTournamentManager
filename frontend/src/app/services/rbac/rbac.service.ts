@@ -28,6 +28,13 @@ export class RbacService {
     this.activities = this.getActivities(roles);
   }
 
+  public isAllowed(activity: RbacActivity): boolean {
+    if (!this.activities) {
+      return false;
+    }
+    return this.activities.includes(activity);
+  }
+
   private getActivities(roles: string[]): RbacActivity[] {
     let activities: RbacActivity[] = this.getGuestActivities();
     for (const role of roles) {
@@ -78,7 +85,10 @@ export class RbacService {
       RbacActivity.READ_ALL_DUELS,
       RbacActivity.READ_ONE_DUEL,
       RbacActivity.READ_ALL_RANKINGS,
-      RbacActivity.READ_ONE_RANKING];
+      RbacActivity.READ_ONE_RANKING,
+      RbacActivity.CHANGE_PASSWORD,
+      RbacActivity.CAN_LOGOUT,
+      RbacActivity.CHANGE_LANGUAGE,];
   }
 
   private getGuestActivities(): RbacActivity[] {

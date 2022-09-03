@@ -11,13 +11,14 @@
       <div class="role" cdkDropList
            [cdkDropListData]="getParticipantsContainer(role)"
            (cdkDropListDropped)="dropParticipant($event, role)">
-        <app-user-card *ngFor="let user of participants.get(role)" [user]="user"></app-user-card>
+        <app-user-card *ngFor="let user of participants.get(role)" [user]="user"
+                       [activity]="RbacActivity.EDIT_ROLE"></app-user-card>
       </div>
     </div>
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="downloadPDF()" mat-flat-button>
+  <button mat-raised-button (click)="downloadPDF()" mat-flat-button *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)">
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>

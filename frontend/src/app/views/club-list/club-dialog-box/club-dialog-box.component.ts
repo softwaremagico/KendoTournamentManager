@@ -2,13 +2,15 @@ import {Component, Inject, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Club} from "../../../models/club";
 import {Action} from "../../../action";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-club-dialog-box',
   templateUrl: './club-dialog-box.component.html',
   styleUrls: ['./club-dialog-box.component.scss']
 })
-export class ClubDialogBoxComponent {
+export class ClubDialogBoxComponent extends RbacBasedComponent {
 
   club: Club;
   title: string;
@@ -16,9 +18,10 @@ export class ClubDialogBoxComponent {
   actionName: string;
 
   constructor(
-    public dialogRef: MatDialogRef<ClubDialogBoxComponent>,
+    public dialogRef: MatDialogRef<ClubDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Club }) {
+    super(rbacService);
     this.club = data.entity;
     this.title = data.title;
     this.action = data.action;

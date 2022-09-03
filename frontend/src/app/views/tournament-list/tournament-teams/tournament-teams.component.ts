@@ -15,13 +15,15 @@ import {LoggerService} from "../../../services/logger.service";
 import {NameUtilsService} from "../../../services/name-utils.service";
 import {SystemOverloadService} from "../../../services/notifications/system-overload.service";
 import {Club} from "../../../models/club";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-tournament-teams',
   templateUrl: './tournament-teams.component.html',
   styleUrls: ['./tournament-teams.component.scss']
 })
-export class TournamentTeamsComponent implements OnInit {
+export class TournamentTeamsComponent extends RbacBasedComponent implements OnInit {
 
   userListData: UserListData = new UserListData();
   tournament: Tournament;
@@ -31,7 +33,9 @@ export class TournamentTeamsComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
+              rbacService: RbacService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+    super(rbacService);
     this.tournament = data.tournament;
   }
 

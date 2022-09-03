@@ -3,58 +3,71 @@
   <div class="kendo-table">
     <div class="upper-menu">
       <div class="cell">
-        <button mat-button color="secondary" (click)="goBackToTournament()">
+        <button mat-button color="secondary" (click)="goBackToTournament()"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button class="add-button" *ngIf="false" mat-button color="primary" (click)="addElement()">
+        <button class="add-button" mat-button color="primary" (click)="addElement()"
+                *ngIf="false && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>add</mat-icon>
         </button>
-        <button class="delete-button" *ngIf="false" mat-button color="warn" [disabled]="showSelectedRelatedButton()"
-                (click)="deleteElement()">
+        <button class="delete-button" mat-button color="warn" [disabled]="showSelectedRelatedButton()"
+                (click)="deleteElement()"
+                *ngIf="false && (RbacActivity.DELETE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>clear</mat-icon>
         </button>
-        <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()">
+        <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()"
+                *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <mat-divider class="timer-divider" [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(1)">
+        <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(1)"
+                *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>check_circle</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="!timer"
+        <button class="timer-button" mat-button color="primary"
                 [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)"
+                *ngIf="!timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
                 (click)="showTimer(canStartFight(selectedDuel))">
           <mat-icon>timer</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="timer"
+        <button class="timer-button" mat-button color="primary"
                 [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)"
+                *ngIf="timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
                 (click)="showTimer(false)">
           <mat-icon>timer_off</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button class="exchange-colors" mat-button color="primary" (click)="swapColors()">
+        <button class="exchange-colors" mat-button color="primary" (click)="swapColors()"
+                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.activities)">
           <mat-icon svgIcon="exchange-colors" class="kendo-icon"></mat-icon>
         </button>
-        <button class="exchange-teams" mat-button color="primary" (click)="swapTeams()">
+        <button class="exchange-teams" mat-button color="primary" (click)="swapTeams()"
+                *ngIf="(RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.activities)">
           <mat-icon svgIcon="exchange-teams" class="kendo-icon"></mat-icon>
         </button>
-        <button class="member-order" mat-button color="primary" *ngIf="!membersOrder" (click)="enableMemberOrder(true)">
+        <button class="member-order" mat-button color="primary" (click)="enableMemberOrder(true)"
+                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.activities)">
           <mat-icon svgIcon="member-order" class="kendo-icon"></mat-icon>
         </button>
-        <button class="member-order" mat-button color="primary" *ngIf="membersOrder" (click)="enableMemberOrder(false)">
+        <button class="member-order" mat-button color="primary" (click)="enableMemberOrder(false)"
+                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.activities)">
           <mat-icon svgIcon="member-order-disable" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
-                *ngIf="tournament && tournament.teamSize && tournament.teamSize>1"
+                *ngIf="tournament && tournament.teamSize && tournament.teamSize>1 && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
                 (click)="showTeamsClassification(areAllDuelsOver())">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
         <button class="competitors-classification" mat-button color="primary" [disabled]="!fights || fights.length===0"
+                *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
                 (click)="showCompetitorsClassification()">
           <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider class="download-divider" [vertical]="true"></mat-divider>
         <button class="download-button" mat-button color="primary" [disabled]="!fights || fights.length===0"
+                *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.activities)"
                 (click)="downloadPDF()">
           <mat-icon>file_download</mat-icon>
         </button>

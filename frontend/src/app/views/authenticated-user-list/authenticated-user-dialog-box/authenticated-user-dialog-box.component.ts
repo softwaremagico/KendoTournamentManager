@@ -4,13 +4,15 @@ import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import {UserRoles} from "../../../services/rbac/user-roles";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-authenticated-user-dialog-box',
   templateUrl: './authenticated-user-dialog-box.component.html',
   styleUrls: ['./authenticated-user-dialog-box.component.scss']
 })
-export class AuthenticatedUserDialogBoxComponent implements OnInit {
+export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent implements OnInit {
 
   authenticatedUser: AuthenticatedUser;
   title: string;
@@ -21,9 +23,10 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   registerForm: FormGroup;
 
   constructor(
-    public dialogRef: MatDialogRef<AuthenticatedUserDialogBoxComponent>,
+    public dialogRef: MatDialogRef<AuthenticatedUserDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: AuthenticatedUser }) {
+    super(rbacService);
     this.authenticatedUser = data.entity;
     this.title = data.title;
     this.action = data.action;
