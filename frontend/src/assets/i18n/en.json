@@ -573,6 +573,7 @@
   "editor": "Editor",
   "viewer": "Viewer",
   "guest": "Guest",
-  "roles": "Role"
+  "roles": "Role",
+  "profile": "Profile"
 }
 
