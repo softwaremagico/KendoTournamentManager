@@ -44,7 +44,7 @@ public class ParticipantConverter extends ElementConverter<Participant, Particip
 
     @Override
     public ParticipantDTO convert(ParticipantConverterRequest from) {
-        if (from == null) {
+        if (from == null || from.getEntity() == null) {
             return null;
         }
         final ParticipantDTO participantDTO = new ParticipantDTO();
