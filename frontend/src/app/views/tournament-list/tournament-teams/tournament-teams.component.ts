@@ -136,6 +136,7 @@ export class TournamentTeamsComponent implements OnInit {
         }
 
         this.deleteMemberFromTeam(movedParticipant);
+        this.updateTeam(sourceTeam);
         //Add to user list.
         this.userListData.participants.push(movedParticipant);
 
@@ -219,12 +220,13 @@ export class TournamentTeamsComponent implements OnInit {
     return undefined;
   }
 
-  checkTeamSize(_item: CdkDrag, dropList: CdkDropList): boolean {
-    const size = dropList.element.nativeElement.getAttribute('data-tournament-size');
-    if (!!size) {
-      return (dropList.data.length < +size);
-    }
-    return true;
+  dropListEnterPredicate(memberIndex: number, team: Team) {
+    return function (_item: CdkDrag<Participant>, dropList: CdkDropList): boolean {
+      if (team) {
+        return team.members[memberIndex] === undefined || team.members[memberIndex] === null;
+      }
+      return true;
+    };
   }
 
   setEditable(team: Team, editable: boolean) {
