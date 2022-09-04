@@ -7,13 +7,14 @@ import {RoleService} from "../../../services/role.service";
 import {forkJoin} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
-import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
 import {TeamService} from "../../../services/team.service";
 import {catchError, tap} from "rxjs/operators";
 import {LoggerService} from "../../../services/logger.service";
 import {NameUtilsService} from "../../../services/name-utils.service";
 import {SystemOverloadService} from "../../../services/system-overload.service";
+import {Club} from "../../../models/club";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -25,7 +26,7 @@ export class TournamentTeamsComponent implements OnInit {
   userListData: UserListData = new UserListData();
   tournament: Tournament;
   teams: Team[];
-  members = new Map<Team, Participant[]>();
+  members = new Map<Team, Map<number, Participant>>();
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
@@ -34,7 +35,7 @@ export class TournamentTeamsComponent implements OnInit {
     this.tournament = data.tournament;
   }
 
-  getMembersContainer(team: Team): Participant[] {
+  getMembersContainer(team: Team): Map<number, Participant> {
     return this.members.get(team)!;
   }
 
@@ -51,12 +52,17 @@ export class TournamentTeamsComponent implements OnInit {
           return a.name.localeCompare(b.name);
         });
         for (let team of teams) {
-          for (let member of team.members) {
-            this.userListData.participants.splice(this.userListData.participants.map(function (p: Participant) {
-              return p.id;
-            }).indexOf(member.id), 1)
+          this.members.set(team, new Map<number, Participant>());
+          for (let i = 0; i < this.tournament.teamSize; i++) {
+            //Remove team members from selector list.
+            if (team.members[i]) {
+              this.userListData.participants.splice(this.userListData.participants.map(function (p: Participant) {
+                return p.id;
+              }).indexOf(team.members[i].id), 1);
+              //Set the member on the right position.
+              this.members.get(team)?.set(i, team.members[i]);
+            }
           }
-          this.members.set(team, team.members);
         }
         this.userListData.filteredParticipants = this.userListData.participants;
         this.teams = teams;
@@ -78,29 +84,53 @@ export class TournamentTeamsComponent implements OnInit {
     }
   }
 
+  getMember(team: Team, index: number): Participant {
+    return this.getMembersContainer(team)[index];
+  }
+
+  getCardSubTitle(team: Team, index: number): string {
+    if (this.getMember(team, index)) {
+      const club: Club | undefined = this.getMember(team, index).club;
+      if (club) {
+        return club.name;
+      }
+    }
+    return "";
+  }
+
   closeDialog() {
     this.dialogRef.close();
   }
 
-  private transferCard(event: CdkDragDrop<Participant[], any>, memberIndex: number): Participant {
+  private transferCard(event: CdkDragDrop<Map<number, Participant>, any>, memberIndex: number): Participant {
     if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, memberIndex);
+      //moveItemInArray(event.container.data, event.previousIndex, memberIndex);
+      event.container.data.set(memberIndex, event.container.data[event.previousIndex]);
+      event.container.data.delete(event.previousIndex);
     } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        memberIndex,
-      );
+      const translatedTeamMember = event.previousContainer.data[event.previousIndex];
+      event.previousContainer.data.splice(event.previousIndex, 1);
+      event.container.data[memberIndex] = translatedTeamMember;
     }
     return event.container.data[memberIndex];
   }
 
   removeFromTeam(event: CdkDragDrop<Participant[], any>) {
+    // Correct index, as always return the first non-empty.
+    let emptyElements: number = 0;
+    let indexChecked: number = 0;
+    do {
+      console.log(event.previousContainer.data[indexChecked]);
+      if (!event.previousContainer.data[indexChecked]) {
+        emptyElements++;
+      }
+      indexChecked++;
+    } while (indexChecked <= event.previousIndex + emptyElements);
+    console.log('-->' + event.previousIndex + emptyElements);
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
-      event.previousIndex,
+      event.previousIndex + emptyElements,
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex];
@@ -120,10 +150,17 @@ export class TournamentTeamsComponent implements OnInit {
     });
   }
 
-  dropMember(event: CdkDragDrop<Participant[], any>, team: Team, memberIndex: number) {
+  dropMember(event: CdkDragDrop<Map<number, Participant>, any>, team: Team, memberIndex: number) {
     const sourceTeam: Team | undefined = this.searchTeam(event);
     const participant: Participant = this.transferCard(event, memberIndex);
-    team.members = this.getMembersContainer(team);
+    const teamMembers: Map<number, Participant> = this.getMembersContainer(team);
+    team.members = [];
+    for (let i = 0; i < this.tournament.teamSize; i++) {
+      if (teamMembers[i]) {
+        this.members.get(team).set(i, team.members[i]);
+        team.members[i] = teamMembers[i];
+      }
+    }
     // Update origin team.
     if (sourceTeam) {
       this.updateTeam(sourceTeam, undefined);
@@ -153,18 +190,26 @@ export class TournamentTeamsComponent implements OnInit {
     ).subscribe(() => member ? this.messageService.infoMessage("Team '" + Team.name + "' member '" + member.name + " " + member.lastname + "' updated.") : "");
   }
 
-  searchTeam(event: CdkDragDrop<Participant[], any>) {
+  searchTeam(event: CdkDragDrop<Map<number, Participant>, any>) {
     const participant: Participant = event.previousContainer.data[event.previousIndex];
     for (let team of [...this.members.keys()]) {
-      if (this.getMembersContainer(team).indexOf(participant) !== -1) {
-        return team;
+      if (this.members.get(team) !== undefined) {
+        for (let teamMember of this.members.get(team).values) {
+          if (teamMember == participant) {
+            return team;
+          }
+        }
       }
     }
     return undefined;
   }
 
   checkTeamSize(_item: CdkDrag, dropList: CdkDropList): boolean {
-    return (dropList.data.length < 1);
+    const size = dropList.element.nativeElement.getAttribute('data-tournament-size');
+    if (!!size) {
+      return (dropList.data.length < +size);
+    }
+    return true;
   }
 
   setEditable(team: Team, editable: boolean) {
@@ -194,7 +239,7 @@ export class TournamentTeamsComponent implements OnInit {
     ).subscribe(_team => {
       this.messageService.infoMessage("New team '" + _team.name + "' added.");
       this.teams.push(_team);
-      this.members.set(_team, []);
+      this.members.set(_team, new Map<number, Participant>());
     });
   }
 
@@ -229,7 +274,11 @@ export class TournamentTeamsComponent implements OnInit {
           team.members[i] = participant;
         }
       }
-      this.members.set(team, team.members);
+      for (let i = 0; i < this.tournament.teamSize; i++) {
+        if (team.members[i]) {
+          this.members.get(team)?.set(i, team.members[i]);
+        }
+      }
       this.teamService.update(team).pipe(
         tap((newTeam: Team) => {
           this.loggerService.info("Team '" + newTeam.name + "' updated.");
@@ -254,7 +303,7 @@ export class TournamentTeamsComponent implements OnInit {
       this.teams = [];
       let participants: Participant[];
       participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
-      this.members = new Map<Team, Participant[]>();
+      this.members = new Map<Team, Map<number, Participant>>();
       for (const member of participants) {
         const team: Team = new Team();
         team.tournament = this.tournament;
@@ -269,7 +318,11 @@ export class TournamentTeamsComponent implements OnInit {
         this.userListData.participants = [];
         this.userListData.filteredParticipants = this.userListData.participants;
         for (const team of _teams) {
-          this.members.set(team, team.members);
+          for (let i = 0; i < this.tournament.teamSize; i++) {
+            if (team.members[i]) {
+              this.members.get(team)?.set(i, team.members[i]);
+            }
+          }
         }
         this.systemOverloadService.isBusy.next(false);
       });
