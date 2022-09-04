@@ -128,7 +128,13 @@ export class TournamentTeamsComponent implements OnInit {
     if (sourceTeam && this.members) {
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(movedParticipant);
       if (sourceIndex || sourceIndex === 0) {
-        this.members.get(sourceTeam)?.splice(sourceIndex, 1);
+        //Removing team member from team.
+        const teamMembers: (Participant | undefined)[] | undefined = this.members.get(sourceTeam);
+        if (teamMembers) {
+          teamMembers[sourceIndex] = undefined;
+          this.members.set(sourceTeam, teamMembers);
+        }
+
         this.deleteMemberFromTeam(movedParticipant);
         //Add to user list.
         this.userListData.participants.push(movedParticipant);
@@ -159,14 +165,14 @@ export class TournamentTeamsComponent implements OnInit {
       //Reordering the team.
       const sourceIndex: number | undefined = this.members.get(sourceTeam)?.indexOf(event.item.data);
       if (sourceIndex || sourceIndex === 0) {
-        //Moving to an empty space.
-        // if (team.members[memberIndex] == undefined) {
-        //   team.members[1] = undefined;
-        // } else {
-        //   //Swapping with an existing member.
-        //   moveItemInArray(team.members, sourceIndex, memberIndex);
-        // }
-        moveItemInArray(team.members, sourceIndex, memberIndex);
+        // Moving to an empty space.
+        if (team.members[memberIndex] == undefined) {
+          team.members[memberIndex] = participant;
+          team.members[sourceIndex] = undefined;
+        } else {
+          //Swapping with an existing member.
+          moveItemInArray(team.members, sourceIndex, memberIndex);
+        }
       }
       this.updateTeam(team, participant);
     } else {
