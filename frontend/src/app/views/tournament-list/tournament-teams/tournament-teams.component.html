@@ -19,16 +19,16 @@
       <div class="input-padding" *ngIf="team.editing"></div>
       <div class="team" [class.small]="this.tournament.teamSize===1"
            [attr.data-tournament-size]="tournament.teamSize">
-        <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize)" cdkDropList
+        <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize); let i = index" cdkDropList
              [cdkDropListData]="getMembersContainer(team)"
-             (cdkDropListDropped)="dropMember($event, team, teamRoom)"
+             (cdkDropListDropped)="dropMember($event, team, i)"
              [cdkDropListEnterPredicate]="checkTeamSize">
-          <mat-card class="user-card" *ngIf="members.get(team) && members.get(team).values[teamRoom]" cdkDrag
-                    [cdkDragData]="members.get(team).values[teamRoom]">
+          <mat-card class="user-card" *ngIf="getMember(team, i)" cdkDrag
+                    [cdkDragData]="getMember(team, i)">
             <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
-              <mat-card-title>{{members.get(team).values[teamRoom] ? members.get(team).values[teamRoom].lastname : ""}}
-                , {{members.get(team).values[teamRoom] ? members.get(team).values[teamRoom].name : ""}}</mat-card-title>
-              <mat-card-subtitle>{{members.get(team).values[teamRoom] ? members.get(team).values[teamRoom].club : "" ? members.get(team).values[teamRoom].club.name : ""}}</mat-card-subtitle>
+              <mat-card-title>{{getMember(team, i) ? getMember(team, i).lastname + ", " : ""}}
+                {{getMember(team, i) ? getMember(team, i).name : ""}}</mat-card-title>
+              <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
             </mat-card-content>
