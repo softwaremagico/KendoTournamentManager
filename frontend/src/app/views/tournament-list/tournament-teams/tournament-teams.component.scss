@@ -16,9 +16,7 @@
 
 .team {
   min-height: 200px;
-  border-color: #c3d1e1;
-  border-radius: 15px;
-  border-style: dotted;
+  border: 1px solid #c3d1e1;
   overflow: auto;
 }
 
@@ -99,7 +97,6 @@ h2 {
 
 .team-member-room {
   min-height: 60px;
-  border-color: #c3d1e1;
-  border-style: dashed;
+  border: 1px solid #c3d1e1;
 }
 
