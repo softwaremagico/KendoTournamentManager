@@ -26,7 +26,9 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     //Refresh automatically the team.
-    this.members = [...this.team.members];
+    const teamMembers: (Participant | undefined)[] = this.team.members;
+    //Removing undefined members.
+    this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
   }
 
   checkDroppedElement(item: CdkDrag<Participant>) {
