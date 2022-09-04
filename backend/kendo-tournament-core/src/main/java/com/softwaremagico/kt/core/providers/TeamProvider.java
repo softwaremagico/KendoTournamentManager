@@ -107,7 +107,7 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
         if (optionalTeam.isPresent()) {
             //Setting tournament for updating.
             optionalTeam.get().setTournament(tournament);
-            optionalTeam.get().getMembers().remove(member);
+            optionalTeam.get().getMembers().set(optionalTeam.get().getMembers().indexOf(member), null);
             optionalTeam = Optional.of(update(optionalTeam.get()));
             //setting tournament for returning element.
             optionalTeam.get().setTournament(tournament);

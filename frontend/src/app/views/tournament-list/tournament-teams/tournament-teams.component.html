@@ -18,12 +18,12 @@
              [(ngModel)]="team.name" type="text"/>
       <div class="input-padding" *ngIf="team.editing"></div>
       <div class="team" [class.small]="this.tournament.teamSize===1"
-           [attr.data-tournament-size]="tournament.teamSize">
+           [attr.data-tournament-size]="tournament.teamSize" [attr.data-team]="team">
         <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize); let i = index"
              cdkDropList
              [cdkDropListData]="getMembersContainer(team)"
              (cdkDropListDropped)="dropMember($event, team, i)"
-             [cdkDropListEnterPredicate]="checkTeamSize">
+             [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
           <mat-card class="user-card" *ngIf="getMember(team, i)" cdkDrag
                     [cdkDragData]="getMember(team, i)">
             <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
