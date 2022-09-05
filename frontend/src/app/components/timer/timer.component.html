@@ -1,5 +1,6 @@
-<div id="app-timer">
+<div id="app-timer" cdkDrag>
   <div class="container">
+    <mat-icon class="drag-icon" cdkDragHandle>drag_handle</mat-icon>
     <div class="timer" [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished()}">
       <div class="time"><span>{{toDoubleDigit(minutes)}} : {{toDoubleDigit(seconds)}}</span></div>
     </div>
