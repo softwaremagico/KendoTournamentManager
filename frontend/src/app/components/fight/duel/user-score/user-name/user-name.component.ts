@@ -14,10 +14,15 @@ export class UserNameComponent implements OnInit, OnChanges {
   participant: Participant | undefined;
 
   @Input()
+  memberIndex: number;
+
+  @Input()
   left: boolean;
 
   @Input()
   swapTeams: boolean;
+
+  reorderAllowed: boolean = true;
 
   resizeSubscription$: Subscription;
 

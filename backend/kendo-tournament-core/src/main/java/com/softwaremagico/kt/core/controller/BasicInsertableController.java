@@ -69,6 +69,16 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     }
 
     @Transactional
+    public List<DTO> updateAll(List<DTO> dtos, String username) {
+        List<DTO> refreshedData = new ArrayList<>();
+        dtos.forEach(dto -> {
+            dto.setUpdatedBy(username);
+            refreshedData.add(create(dto, null));
+        });
+        return refreshedData;
+    }
+
+    @Transactional
     public DTO create(DTO dto, String username) {
         if (dto.getCreatedBy() == null && username != null) {
             dto.setCreatedBy(username);
