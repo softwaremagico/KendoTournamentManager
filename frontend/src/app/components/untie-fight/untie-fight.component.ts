@@ -27,7 +27,7 @@ export class UntieFightComponent implements OnInit {
   @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
 
   constructor(private duelChangedService: DuelChangedService) {
-    this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
+    this.duelChangedService.isDuelUpdated.subscribe(selectedDuel => {
       if (selectedDuel && this.duel) {
         if (selectedDuel.id === this.duel.id) {
           this.selected = true;
