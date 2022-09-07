@@ -136,7 +136,7 @@ export class TournamentTeamsComponent implements OnInit {
         }
 
         this.deleteMemberFromTeam(movedParticipant);
-        this.updateTeam(sourceTeam);
+        this.updateTeam(sourceTeam, undefined);
         //Add to user list.
         this.userListData.participants.push(movedParticipant);
 
