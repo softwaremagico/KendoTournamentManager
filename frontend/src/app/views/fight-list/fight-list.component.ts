@@ -25,6 +25,7 @@ import {UntieAddedService} from "../../services/untie-added.service";
 import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
+import {MembersOrderChangedService} from "../../services/members-order-changed.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -48,7 +49,8 @@ export class FightListComponent implements OnInit {
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
               public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, public dialog: MatDialog, private userSessionService: UserSessionService,
-              private messageService: MessageService, public translateService: TranslateService) {
+              private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
+              public translateService: TranslateService) {
     let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
@@ -68,6 +70,39 @@ export class FightListComponent implements OnInit {
     this.refreshUnties();
     this.untieAddedService.isDuelsAdded.subscribe(addedDuel => {
       this.refreshUnties();
+    });
+
+    this.membersOrderChangedService.membersOrderChanged.subscribe(_fight => {
+      let onlyNewFights: boolean = false;
+      let updatedFights: boolean = false;
+      if (_fight && this.fights) {
+        for (const fight of this.fights) {
+          if (onlyNewFights && fight.team1.id === _fight.team1.id) {
+            for (let i = 0; i < this.tournament.teamSize; i++) {
+              if (!fight.duels[i].duration) {
+                fight.duels[i].competitor1 = _fight.duels[i].competitor1;
+                this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
+                updatedFights = true;
+              }
+            }
+          } else if (onlyNewFights && fight.team2.id === _fight.team2.id) {
+            for (let i = 0; i < this.tournament.teamSize; i++) {
+              if (!fight.duels[i].duration) {
+                fight.duels[i].competitor2 = _fight.duels[i].competitor2;
+                this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
+                updatedFights = true;
+              }
+            }
+          }
+          //Only this fight and the next ones. Not the previous ones.
+          if (fight === _fight) {
+            onlyNewFights = true;
+          }
+        }
+        if (updatedFights) {
+          this.fightService.updateAll(this.fights).subscribe();
+        }
+      }
     });
   }
 
@@ -103,6 +138,10 @@ export class FightListComponent implements OnInit {
         }, 1000);
       });
     }
+  }
+
+  private refreshMembersOrder() {
+
   }
 
   openConfirmationGenerateElementsDialog() {
@@ -317,7 +356,7 @@ export class FightListComponent implements OnInit {
 
   selectDuel(duel: Duel) {
     this.selectedDuel = duel;
-    this.duelChangedService.isDuelSelected.next(duel);
+    this.duelChangedService.isDuelUpdated.next(duel);
     if (duel) {
       if (duel.duration) {
         this.timeChangedService.isElapsedTimeChanged.next(duel.duration);

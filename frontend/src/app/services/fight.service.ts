@@ -140,6 +140,18 @@ export class FightService {
       );
   }
 
+  updateAll(fights: Fight[]): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}`;
+    return this.http.put<Fight[]>(url, fights, this.authenticatedUserService.httpOptions)
+      .pipe(
+        tap({next:(_updatedFight: Fight[]) => this.loggerService.info(`updating fight`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Fight[]>(`updating fight`))
+      );
+  }
+
   create(tournamentId: number, level: number, maximizeFights: boolean): Observable<Fight[]> {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level + '/maximize/' + maximizeFights;
     return this.http.put<Fight[]>(url, undefined, this.authenticatedUserService.httpOptions)
