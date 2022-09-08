@@ -2,13 +2,15 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/duel-changed.service";
+import {KendoComponent} from "../kendo-component";
+import {takeUntil} from "rxjs";
 
 @Component({
   selector: 'fight',
   templateUrl: './fight.component.html',
   styleUrls: ['./fight.component.scss']
 })
-export class FightComponent implements OnInit {
+export class FightComponent extends KendoComponent implements OnInit {
 
   @Input()
   fight: Fight;
@@ -30,7 +32,11 @@ export class FightComponent implements OnInit {
   swapTeams: boolean;
 
   constructor(private duelChangedService: DuelChangedService) {
-    this.duelChangedService.isDuelUpdated.subscribe(selectedDuel => {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
       if (selectedDuel && this.fight && this.fight.duels) {
         this.selected = false;
         this.selectedDuel = undefined;
@@ -42,10 +48,6 @@ export class FightComponent implements OnInit {
         }
       }
     });
-  }
-
-  ngOnInit(): void {
-    // This is intentional
   }
 
   showTeamTitle(): boolean {

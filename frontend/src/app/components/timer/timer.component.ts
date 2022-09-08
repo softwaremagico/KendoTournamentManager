@@ -1,13 +1,15 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/time-changed.service";
+import {Subject, takeUntil} from "rxjs";
+import {KendoComponent} from "../kendo-component";
 
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss']
 })
-export class TimerComponent implements OnInit {
+export class TimerComponent extends KendoComponent implements OnInit {
 
   started = false;
 
@@ -33,6 +35,7 @@ export class TimerComponent implements OnInit {
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService) {
+    super();
     this.started = false;
   }
 
@@ -41,10 +44,10 @@ export class TimerComponent implements OnInit {
     this.clockHandler = setInterval(function () {
       self.secondElapsed.apply(self);
     }, 1000);
-    this.timeChangedService.isElapsedTimeChanged.subscribe(elapsedTime => {
+    this.timeChangedService.isElapsedTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(elapsedTime => {
       this.elapsedSeconds = elapsedTime;
     });
-    this.timeChangedService.isTotalTimeChanged.subscribe(totalTime => {
+    this.timeChangedService.isTotalTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(totalTime => {
       this.resetVariablesAsSeconds(totalTime, false);
     });
   }
@@ -90,7 +93,7 @@ export class TimerComponent implements OnInit {
       this.elapsedSeconds = 1;
     }
     this.onTimerFinished.emit([this.elapsedSeconds]);
-    this.resetVariables(this.startingMinutes, this.startingSeconds, false);
+    this.resetVariables(this.minutes, this.seconds, false);
     this.alarmOn = false;
     this.elapsedSeconds = 0;
   };
@@ -134,7 +137,7 @@ export class TimerComponent implements OnInit {
   }
 
   toDoubleDigit(num: number): string {
-    if(isNaN(num)){
+    if (isNaN(num)) {
       return '00';
     }
     return num < 10 ? '0' + num : num + '';
