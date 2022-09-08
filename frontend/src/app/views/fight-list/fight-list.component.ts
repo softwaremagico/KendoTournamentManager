@@ -44,6 +44,7 @@ export class FightListComponent implements OnInit {
   groups: Group[];
   swappedColors: boolean = false;
   swappedTeams: boolean = false;
+  membersOrder: boolean = false;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
@@ -450,5 +451,10 @@ export class FightListComponent implements OnInit {
   swapTeams() {
     this.swappedTeams = !this.swappedTeams;
     this.userSessionService.setSwappedTeams(this.swappedTeams);
+  }
+
+  enableMemberOrder(enabled: boolean) {
+    this.membersOrder = enabled;
+    this.membersOrderChangedService.membersOrderAllowed.next(enabled);
   }
 }

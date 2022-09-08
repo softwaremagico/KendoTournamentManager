@@ -70,7 +70,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
 
     @Transactional
     public List<DTO> updateAll(List<DTO> dtos, String username) {
-        List<DTO> refreshedData = new ArrayList<>();
+        final List<DTO> refreshedData = new ArrayList<>();
         dtos.forEach(dto -> {
             dto.setUpdatedBy(username);
             refreshedData.add(create(dto, null));

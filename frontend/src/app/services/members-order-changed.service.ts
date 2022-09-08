@@ -9,6 +9,8 @@ export class MembersOrderChangedService {
 
   public membersOrderChanged: BehaviorSubject<Fight> = new BehaviorSubject<Fight>(new Fight());
 
+  public membersOrderAllowed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   constructor() {
   }
 }
