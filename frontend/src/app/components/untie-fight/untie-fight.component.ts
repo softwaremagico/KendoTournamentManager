@@ -1,13 +1,15 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/duel-changed.service";
+import {KendoComponent} from "../kendo-component";
+import {takeUntil} from "rxjs";
 
 @Component({
   selector: 'untie-fight',
   templateUrl: './untie-fight.component.html',
   styleUrls: ['./untie-fight.component.scss']
 })
-export class UntieFightComponent implements OnInit {
+export class UntieFightComponent extends KendoComponent implements OnInit {
 
   @Input()
   duel: Duel;
@@ -27,17 +29,17 @@ export class UntieFightComponent implements OnInit {
   @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
 
   constructor(private duelChangedService: DuelChangedService) {
-    this.duelChangedService.isDuelUpdated.subscribe(selectedDuel => {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
       if (selectedDuel && this.duel) {
         if (selectedDuel.id === this.duel.id) {
           this.selected = true;
         }
       }
     });
-  }
-
-  ngOnInit(): void {
-    // This is intentional
   }
 
   selectDuel(duel: Duel) {
