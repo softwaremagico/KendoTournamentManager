@@ -141,7 +141,7 @@ export class FightService {
   }
 
   updateAll(fights: Fight[]): Observable<Fight[]> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/all`;
     return this.http.put<Fight[]>(url, fights, this.authenticatedUserService.httpOptions)
       .pipe(
         tap({next:(_updatedFight: Fight[]) => this.loggerService.info(`updating fight`),

@@ -188,7 +188,7 @@ public class FightServices {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a list of fights.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> update(@RequestBody List<FightDTO> fightDTOs, Authentication authentication, HttpServletRequest request) {
         if (fightDTOs == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
