@@ -59,7 +59,7 @@
     </div>
     <div class="filter">
       <mat-form-field class="filter-field">
-        <input matInput type="text" placeholder="{{'filter' | translate}}">
+        <input matInput [disabled]="true" type="text" placeholder="{{'filter' | translate}}">
       </mat-form-field>
     </div>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
