@@ -6,19 +6,19 @@
         <button mat-button color="secondary" (click)="goBackToTournament()">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button mat-button color="primary" (click)="addElement()">
+        <button class="add-button" mat-button color="primary" (click)="addElement()">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(1)">
-          <mat-icon>check_circle</mat-icon>
+        <button class="delete-button" mat-button color="warn" [disabled]="showSelectedRelatedButton()" (click)="deleteElement()">
+          <mat-icon>clear</mat-icon>
         </button>
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="showSelectedRelatedButton()" (click)="deleteElement()">
-          <mat-icon>clear</mat-icon>
+        <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(1)">
+          <mat-icon>check_circle</mat-icon>
         </button>
-        <mat-divider [vertical]="true"></mat-divider>
+        <mat-divider class="timer-divider" [vertical]="true"></mat-divider>
         <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="showSelectedRelatedButton()"
                 (click)="showTimer(true)">
           <mat-icon>timer</mat-icon>
@@ -28,11 +28,17 @@
           <mat-icon>timer_off</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button color="primary" (click)="swapColors()">
+        <button class="exchange-colors" mat-button color="primary" (click)="swapColors()">
           <mat-icon svgIcon="exchange-colors" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="primary"  (click)="swapTeams()">
+        <button class="exchange-teams" mat-button color="primary"  (click)="swapTeams()">
           <mat-icon svgIcon="exchange-teams" class="kendo-icon"></mat-icon>
+        </button>
+        <button class="member-order" mat-button color="primary" *ngIf="!membersOrder"  (click)="enableMemberOrder(true)">
+          <mat-icon svgIcon="member-order" class="kendo-icon"></mat-icon>
+        </button>
+        <button class="member-order" mat-button color="primary" *ngIf="membersOrder"  (click)="enableMemberOrder(false)">
+          <mat-icon svgIcon="member-order-disable" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
@@ -40,7 +46,7 @@
                 (click)="showTeamsClassification(areAllDuelsOver())">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!fights || fights.length===0"
+        <button class="competitors-classification" mat-button color="primary" [disabled]="!fights || fights.length===0"
                 (click)="showCompetitorsClassification()">
           <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
         </button>
@@ -53,7 +59,7 @@
     </div>
     <div class="filter">
       <mat-form-field class="filter-field">
-        <input matInput type="text" placeholder="{{'filter' | translate}}">
+        <input matInput [disabled]="true" type="text" placeholder="{{'filter' | translate}}">
       </mat-form-field>
     </div>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"

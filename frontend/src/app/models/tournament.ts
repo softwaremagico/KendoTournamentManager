@@ -9,7 +9,7 @@ export class Tournament extends Element {
 
   public name: string;
   public shiaijos?: number;
-  public teamSize?: number;
+  public teamSize: number = 3;
   public type?: TournamentType;
   public duelsDuration: number;
 

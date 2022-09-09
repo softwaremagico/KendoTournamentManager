@@ -4,7 +4,7 @@ import {Tournament} from "./tournament";
 
 export class Team extends Element {
   public name: string;
-  public members: Participant[];
+  public members: (Participant | undefined)[];
   public tournament: Tournament;
   public group?: number;
   public editing: boolean = false;
@@ -15,12 +15,14 @@ export class Team extends Element {
     if (source.members !== undefined) {
       target.members = [];
       for (let member of target.members) {
-        target.members.push(Participant.clone(member));
+        if (member) {
+          target.members.push(Participant.clone(member));
+        } else {
+          target.members.push(undefined);
+        }
       }
     }
-    if (source.tournament !== undefined) {
-      target.tournament = Tournament.clone(source.tournament);
-    }
+    target.tournament = Tournament.clone(source.tournament);
   }
 
   public static clone(data: Team): Team {

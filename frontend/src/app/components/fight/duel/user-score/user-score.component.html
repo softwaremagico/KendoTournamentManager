@@ -2,7 +2,8 @@
   <score *ngIf="!left" [index]="0" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></score>
   <score *ngIf="!left" [index]="1" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [hidden]="isUntie()"></score>
   <fault *ngIf="!left" [duel]="duel" [left]="left"></fault>
-  <user-name class="user-name" [participant]="getParticipant()" [swapTeams]="swapTeams" [left]="left"></user-name>
+  <user-name class="user-name" [participant]="getParticipant()" [memberIndex]="duelIndex" [swapTeams]="swapTeams"
+             [left]="left"></user-name>
   <fault *ngIf="left" [duel]="duel" [left]="left"></fault>
   <score *ngIf="left" [index]="1" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [hidden]="isUntie()"></score>
   <score *ngIf="left" [index]="0" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></score>

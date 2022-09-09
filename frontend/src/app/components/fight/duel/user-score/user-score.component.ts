@@ -14,6 +14,9 @@ export class UserScoreComponent implements OnInit, OnChanges {
   duel: Duel;
 
   @Input()
+  duelIndex: number;
+
+  @Input()
   left: boolean;
 
   @Input()
