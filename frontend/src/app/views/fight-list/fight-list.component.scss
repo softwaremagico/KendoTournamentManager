@@ -2,7 +2,8 @@
   width: 100%;
   min-height: 100px;
 }
-@media screen and (max-width: 1024px) {
+
+@media screen and (max-width: 1250px) {
   .download-button {
     display: none !important;
   }
@@ -10,4 +11,44 @@
   .download-divider {
     display: none !important;
   }
+
+  .exchange-colors {
+    display: none !important;
+  }
+
+  .exchange-teams {
+    display: none !important;
+  }
+}
+
+
+@media screen and (max-width: 1024px) {
+
+  .member-order {
+    display: none !important;
+  }
+
+  .competitors-classification {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .timer-button {
+    display: none !important;
+  }
+
+  .timer-divider {
+    display: none !important;
+  }
+
+  .add-button {
+    display: none !important;
+  }
+
+  .delete-button {
+    display: none !important;
+  }
+
+
 }

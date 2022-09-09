@@ -30,7 +30,7 @@ export class FightComponent implements OnInit {
   swapTeams: boolean;
 
   constructor(private duelChangedService: DuelChangedService) {
-    this.duelChangedService.isDuelSelected.subscribe(selectedDuel => {
+    this.duelChangedService.isDuelUpdated.subscribe(selectedDuel => {
       if (selectedDuel && this.fight && this.fight.duels) {
         this.selected = false;
         this.selectedDuel = undefined;

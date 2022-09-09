@@ -6,8 +6,8 @@
        *ngIf="!showTeamTitle">
     <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
   </div>
-  <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}">
-    <duel class="duel" *ngFor="let duel of fight.duels" [duel]="duel" (click)="selectDuel(duel)"
+  <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}" cdkDropListGroup>
+    <duel class="duel" *ngFor="let duel of fight.duels; let i = index" [duel]="duel" [duelIndex]="i" [fight]="fight" (click)="selectDuel(duel)"
           [selected]="duel === selectedDuel" [swapTeams]="swapTeams"
           [ngClass]="{duelSelected: duel === selectedDuel && selected, over: isOver(duel)}"></duel>
   </div>

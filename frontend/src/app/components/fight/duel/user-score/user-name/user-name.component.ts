@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
 import {debounceTime, fromEvent, Subscription} from "rxjs";
 import {NameUtilsService} from "../../../../../services/name-utils.service";
+import {MembersOrderChangedService} from "../../../../../services/members-order-changed.service";
 
 @Component({
   selector: 'user-name',
@@ -14,17 +15,22 @@ export class UserNameComponent implements OnInit, OnChanges {
   participant: Participant | undefined;
 
   @Input()
+  memberIndex: number;
+
+  @Input()
   left: boolean;
 
   @Input()
   swapTeams: boolean;
 
+  reorderAllowed: boolean = true;
+
   resizeSubscription$: Subscription;
 
   public displayName: string = '';
 
-  constructor(public nameUtilsService: NameUtilsService) {
-
+  constructor(private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
+    this.membersOrderChangedService.membersOrderAllowed.subscribe(enabled => this.reorderAllowed = enabled);
   }
 
   ngOnInit(): void {
