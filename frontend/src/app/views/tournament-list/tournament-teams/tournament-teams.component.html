@@ -17,19 +17,23 @@
              (keyup.enter)="setEditable(team, false); updateTeamName(team)"
              [(ngModel)]="team.name" type="text"/>
       <div class="input-padding" *ngIf="team.editing"></div>
-      <div class="team" [class.small]="this.tournament.teamSize===1" cdkDropList
-           [attr.data-tournament-size]="tournament.teamSize"
-           [cdkDropListData]="getMembersContainer(team)"
-           (cdkDropListDropped)="dropMember($event, team)"
-           [cdkDropListEnterPredicate]="checkTeamSize">
-        <mat-card class="user-card" *ngFor="let user of members.get(team)" cdkDrag [cdkDragData]="user">
-          <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
-            <mat-card-title>{{user.lastname}}, {{user.name}}</mat-card-title>
-            <mat-card-subtitle>{{user.club ? user.club.name : ""}}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-          </mat-card-content>
-        </mat-card>
+      <div class="team" [class.small]="this.tournament.teamSize===1"
+           [attr.data-tournament-size]="tournament.teamSize" [attr.data-team]="team">
+        <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize); let i = index"
+             cdkDropList
+             [cdkDropListData]="getMembersContainer(team)"
+             (cdkDropListDropped)="dropMember($event, team, i)"
+             [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
+          <mat-card class="user-card" *ngIf="getMember(team, i)" cdkDrag
+                    [cdkDragData]="getMember(team, i)">
+            <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
+              <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
+              <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </div>
     <div class="new-team" (click)="addTeam()">
