@@ -187,6 +187,16 @@ public class FightServices {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Updates a list of fights.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FightDTO> update(@RequestBody List<FightDTO> fightDTOs, Authentication authentication, HttpServletRequest request) {
+        if (fightDTOs == null) {
+            throw new BadRequestException(getClass(), "Fight data is missing");
+        }
+        return fightController.updateAll(fightDTOs, authentication.getName());
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}/maximize/{maximizeFights}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
