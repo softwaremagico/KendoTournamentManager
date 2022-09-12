@@ -9,7 +9,7 @@ import {Participant} from "../models/participant";
 import {Tournament} from "../models/tournament";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
-import {SystemOverloadService} from "./system-overload.service";
+import {SystemOverloadService} from "./notifications/system-overload.service";
 
 @Injectable({
   providedIn: 'root'

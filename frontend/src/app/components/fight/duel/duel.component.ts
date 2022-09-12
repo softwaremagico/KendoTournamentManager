@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Duel} from "../../../models/duel";
-import {DuelChangedService} from "../../../services/duel-changed.service";
+import {DuelChangedService} from "../../../services/notifications/duel-changed.service";
 import {CdkDrag, CdkDragDrop, CdkDropList} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 import {Fight} from "../../../models/fight";
-import {MembersOrderChangedService} from "../../../services/members-order-changed.service";
+import {MembersOrderChangedService} from "../../../services/notifications/members-order-changed.service";
 import {takeUntil} from "rxjs";
 import {KendoComponent} from "../../kendo-component";
 
