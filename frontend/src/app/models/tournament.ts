@@ -15,6 +15,11 @@ export class Tournament extends Element {
   public duelsDuration: number;
   public tournamentScore: TournamentScore;
 
+  constructor() {
+    super();
+    this.tournamentScore = new TournamentScore();
+  }
+
   public static override copy(source: Tournament, target: Tournament): void {
     Element.copy(source, target);
     target.name = source.name;

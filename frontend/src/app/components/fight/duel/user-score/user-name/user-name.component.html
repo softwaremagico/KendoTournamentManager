@@ -5,7 +5,7 @@
   </div>
   {{displayName}}
 </div>
-<div class="user-name" *ngIf="!participant" [cdkDragData]="participant" cdkDrag>
+<div class="user-name" [class.left]="left" [class.right]="!left" *ngIf="!participant" [cdkDragData]="participant" cdkDrag>
   <div class="drag-handle" cdkDragHandle>
     <mat-icon *ngIf="reorderAllowed">swap_vert</mat-icon>
   </div>
