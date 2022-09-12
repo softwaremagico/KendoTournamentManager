@@ -17,6 +17,9 @@ export class FaultComponent implements OnInit {
   @Input()
   left: boolean;
 
+  @Input()
+  swapTeams: boolean;
+
   constructor(private duelService: DuelService, private messageService: MessageService) {
   }
 
@@ -25,7 +28,7 @@ export class FaultComponent implements OnInit {
   }
 
   private setFault(fault: boolean) {
-    if (this.left) {
+    if ((this.left && !this.swapTeams) || (!this.left && this.swapTeams)) {
       if (!fault || !this.duel.competitor1Fault) {
         this.duel.competitor1Fault = fault;
       } else {
@@ -55,11 +58,15 @@ export class FaultComponent implements OnInit {
   }
 
   hasFault(): boolean {
-    if (this.left) {
+    if ((this.left && !this.swapTeams) || (!this.left && this.swapTeams)) {
       return this.duel.competitor1Fault != null && this.duel.competitor1Fault;
     } else {
       return this.duel.competitor2Fault != null && this.duel.competitor2Fault;
     }
+  }
+
+  canFault(): boolean {
+    return this.duel.competitor1 !== null && this.duel.competitor2 !== null;
   }
 
 }

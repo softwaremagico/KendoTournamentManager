@@ -102,4 +102,41 @@ export class ScoreComponent implements OnInit, OnChanges {
     }
   }
 
+  possibleScores(): Score[] {
+    if (this.left) {
+      if (!this.swapTeams) {
+        if (!this.duel.competitor1) {
+          return Score.clear();
+        }
+        if (!this.duel.competitor2) {
+          return Score.noCompetitor();
+        }
+      } else {
+        if (!this.duel.competitor2) {
+          return Score.clear();
+        }
+        if (!this.duel.competitor1) {
+          return Score.noCompetitor();
+        }
+      }
+    } else {
+      if (!this.swapTeams) {
+        if (!this.duel.competitor2) {
+          return Score.clear();
+        }
+        if (!this.duel.competitor1) {
+          return Score.noCompetitor();
+        }
+      } else {
+        if (!this.duel.competitor1) {
+          return Score.clear();
+        }
+        if (!this.duel.competitor2) {
+          return Score.noCompetitor();
+        }
+      }
+    }
+    return Score.toArray();
+  }
+
 }
