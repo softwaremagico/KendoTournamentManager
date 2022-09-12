@@ -6,19 +6,19 @@
         <button mat-button color="secondary" (click)="goBackToTournament()">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button class="add-button" mat-button color="primary" (click)="addElement()">
+        <button class="add-button" *ngIf="false" mat-button color="primary" (click)="addElement()">
           <mat-icon>add</mat-icon>
         </button>
-        <button class="delete-button" mat-button color="warn" [disabled]="showSelectedRelatedButton()" (click)="deleteElement()">
+        <button class="delete-button" *ngIf="false" mat-button color="warn" [disabled]="showSelectedRelatedButton()" (click)="deleteElement()">
           <mat-icon>clear</mat-icon>
         </button>
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
+        <mat-divider class="timer-divider" [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(1)">
           <mat-icon>check_circle</mat-icon>
         </button>
-        <mat-divider class="timer-divider" [vertical]="true"></mat-divider>
         <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="showSelectedRelatedButton()"
                 (click)="showTimer(true)">
           <mat-icon>timer</mat-icon>
