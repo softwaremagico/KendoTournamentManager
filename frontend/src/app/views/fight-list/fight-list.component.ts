@@ -26,8 +26,9 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/members-order-changed.service";
-import {Subject, takeUntil} from "rxjs";
+import {takeUntil} from "rxjs";
 import {KendoComponent} from "../../components/kendo-component";
+import {Score} from "../../models/score";
 
 @Component({
   selector: 'app-fight-list',
@@ -345,8 +346,26 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
     this.timer = show;
   }
 
+  setIpponScores(duel: Duel) {
+    //Put default points.
+    if (duel.competitor1 !== null && duel.competitor2 == null) {
+      duel.competitor1Score = [];
+      duel.competitor1Score.push(Score.IPPON);
+      duel.competitor1Score.push(Score.IPPON);
+    } else if (duel.competitor2 !== null && duel.competitor1 == null) {
+      duel.competitor2Score = [];
+      duel.competitor2Score.push(Score.IPPON);
+      duel.competitor2Score.push(Score.IPPON);
+    }
+  }
+
+  canStartFight(duel: Duel | undefined): boolean {
+    return duel !== undefined && duel.competitor1 !== null && duel.competitor2 !== null;
+  }
+
   finishDuel(durationInSeconds: number) {
     if (this.selectedDuel) {
+      this.setIpponScores(this.selectedDuel);
       this.selectedDuel.duration = durationInSeconds;
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("Duel Finished!");

@@ -1,5 +1,5 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="mat-elevation-z8">
+<div class="fight-view">
   <div class="kendo-table">
     <div class="upper-menu">
       <div class="cell">
@@ -9,7 +9,8 @@
         <button class="add-button" *ngIf="false" mat-button color="primary" (click)="addElement()">
           <mat-icon>add</mat-icon>
         </button>
-        <button class="delete-button" *ngIf="false" mat-button color="warn" [disabled]="showSelectedRelatedButton()" (click)="deleteElement()">
+        <button class="delete-button" *ngIf="false" mat-button color="warn" [disabled]="showSelectedRelatedButton()"
+                (click)="deleteElement()">
           <mat-icon>clear</mat-icon>
         </button>
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()">
@@ -19,11 +20,13 @@
         <button mat-button color="primary" [disabled]="!selectedFight" (click)="finishDuel(1)">
           <mat-icon>check_circle</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="!timer" [disabled]="showSelectedRelatedButton()"
-                (click)="showTimer(true)">
+        <button class="timer-button" mat-button color="primary" *ngIf="!timer"
+                [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)"
+                (click)="showTimer(canStartFight(selectedDuel))">
           <mat-icon>timer</mat-icon>
         </button>
-        <button class="timer-button" mat-button color="primary" *ngIf="timer" [disabled]="showSelectedRelatedButton()"
+        <button class="timer-button" mat-button color="primary" *ngIf="timer"
+                [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)"
                 (click)="showTimer(false)">
           <mat-icon>timer_off</mat-icon>
         </button>
@@ -31,13 +34,13 @@
         <button class="exchange-colors" mat-button color="primary" (click)="swapColors()">
           <mat-icon svgIcon="exchange-colors" class="kendo-icon"></mat-icon>
         </button>
-        <button class="exchange-teams" mat-button color="primary"  (click)="swapTeams()">
+        <button class="exchange-teams" mat-button color="primary" (click)="swapTeams()">
           <mat-icon svgIcon="exchange-teams" class="kendo-icon"></mat-icon>
         </button>
-        <button class="member-order" mat-button color="primary" *ngIf="!membersOrder"  (click)="enableMemberOrder(true)">
+        <button class="member-order" mat-button color="primary" *ngIf="!membersOrder" (click)="enableMemberOrder(true)">
           <mat-icon svgIcon="member-order" class="kendo-icon"></mat-icon>
         </button>
-        <button class="member-order" mat-button color="primary" *ngIf="membersOrder"  (click)="enableMemberOrder(false)">
+        <button class="member-order" mat-button color="primary" *ngIf="membersOrder" (click)="enableMemberOrder(false)">
           <mat-icon svgIcon="member-order-disable" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
@@ -66,7 +69,7 @@
                [hidden]="!timer" (onTimerFinished)="finishDuel($event[0])"
                (onTimerChanged)="updateDuelElapsedTime($event[0])"
                (timeDurationChanged)="updateDuelDuration($event[0])"></app-timer>
-    <div class="mat-elevation-z8">
+    <div class="fight-container">
       <div class="fight-list">
         <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
                [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
