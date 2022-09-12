@@ -9,7 +9,7 @@ import {catchError, tap} from "rxjs/operators";
 import {Group} from "../models/group";
 import {Team} from "../models/team";
 import {Duel} from "../models/duel";
-import {SystemOverloadService} from "./system-overload.service";
+import {SystemOverloadService} from "./notifications/system-overload.service";
 
 @Injectable({
   providedIn: 'root'

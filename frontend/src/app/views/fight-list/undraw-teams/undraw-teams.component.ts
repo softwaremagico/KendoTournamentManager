@@ -5,7 +5,7 @@ import {Team} from "../../../models/team";
 import {Participant} from "../../../models/participant";
 import {Duel} from "../../../models/duel";
 import {DuelType} from "../../../models/duel-type";
-import {UntieAddedService} from "../../../services/untie-added.service";
+import {UntieAddedService} from "../../../services/notifications/untie-added.service";
 import {GroupService} from "../../../services/group.service";
 import {MessageService} from "../../../services/message.service";
 

@@ -19,13 +19,13 @@ import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ran
 import {TranslateService} from "@ngx-translate/core";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
-import {TimeChangedService} from "../../services/time-changed.service";
-import {DuelChangedService} from "../../services/duel-changed.service";
-import {UntieAddedService} from "../../services/untie-added.service";
+import {TimeChangedService} from "../../services/notifications/time-changed.service";
+import {DuelChangedService} from "../../services/notifications/duel-changed.service";
+import {UntieAddedService} from "../../services/notifications/untie-added.service";
 import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
-import {MembersOrderChangedService} from "../../services/members-order-changed.service";
+import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
 import {takeUntil} from "rxjs";
 import {KendoComponent} from "../../components/kendo-component";
 import {Score} from "../../models/score";

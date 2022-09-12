@@ -7,7 +7,7 @@ import {Club} from "../models/club";
 import {AuthenticatedUserService} from "./authenticated-user.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
-import {SystemOverloadService} from "./system-overload.service";
+import {SystemOverloadService} from "./notifications/system-overload.service";
 
 
 @Injectable({
