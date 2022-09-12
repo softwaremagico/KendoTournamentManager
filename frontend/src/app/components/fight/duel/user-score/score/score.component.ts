@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
+import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
 
 @Component({
   selector: 'score',
@@ -25,11 +26,15 @@ export class ScoreComponent implements OnInit, OnChanges {
 
   scoreRepresentation: string;
 
-  constructor(private duelService: DuelService, private messageService: MessageService) {
+  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
-    // This is intentional
+    this.scoreUpdatedService.isScoreUpdated.subscribe(duel => {
+      if (duel == this.duel) {
+        this.scoreRepresentation = this.getScoreRepresentation();
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -38,47 +43,76 @@ export class ScoreComponent implements OnInit, OnChanges {
     }
   }
 
-  private updateDuel(score: Score) {
+  private updateDuel(score: Score): boolean {
+    let updated = false;
     if (score) {
       if (this.left) {
         if (score !== Score.EMPTY) {
           if (!this.swapTeams) {
-            this.duel.competitor1Score[this.index] = score;
+            if (this.duel.competitor1Score[this.index] !== score) {
+              this.duel.competitor1Score[this.index] = score;
+              updated = true;
+            }
           } else {
-            this.duel.competitor2Score[this.index] = score;
+            if (this.duel.competitor2Score[this.index] !== score) {
+              this.duel.competitor2Score[this.index] = score;
+              updated = true;
+            }
           }
         } else {
           if (!this.swapTeams) {
-            this.duel.competitor1Score.splice(this.index, 1)
+            if (this.duel.competitor1Score[this.index] !== undefined) {
+              this.duel.competitor1Score.splice(this.index, 1);
+              updated = true;
+            }
           } else {
-            this.duel.competitor2Score.splice(this.index, 1)
+            if (this.duel.competitor2Score[this.index] !== undefined) {
+              this.duel.competitor2Score.splice(this.index, 1);
+              updated = true;
+            }
           }
         }
       } else {
         if (score !== Score.EMPTY) {
           if (!this.swapTeams) {
-            this.duel.competitor2Score[this.index] = score;
+            if (this.duel.competitor2Score[this.index] !== score) {
+              this.duel.competitor2Score[this.index] = score;
+              updated = true;
+            }
           } else {
-            this.duel.competitor1Score[this.index] = score;
+            if (this.duel.competitor1Score[this.index] !== score) {
+              this.duel.competitor1Score[this.index] = score;
+              updated = true;
+            }
           }
         } else {
           if (!this.swapTeams) {
-            this.duel.competitor2Score.splice(this.index, 1)
+            if (this.duel.competitor2Score[this.index] !== undefined) {
+              this.duel.competitor2Score.splice(this.index, 1);
+              updated = true;
+            }
           } else {
-            this.duel.competitor1Score.splice(this.index, 1)
+            if (this.duel.competitor1Score[this.index] !== undefined) {
+              this.duel.competitor1Score.splice(this.index, 1);
+              updated = true;
+            }
           }
         }
       }
     }
-    this.scoreRepresentation = this.getScoreRepresentation();
+    if (updated) {
+      this.scoreUpdatedService.isScoreUpdated.next(this.duel);
+    }
+    return updated;
   }
 
   updateScore(score: Score) {
-    this.updateDuel(score);
-    this.duelService.update(this.duel).subscribe(duel => {
-      this.messageService.infoMessage("Score Updated");
-      return duel;
-    });
+    if (this.updateDuel(score)) {
+      this.duelService.update(this.duel).subscribe(duel => {
+        this.messageService.infoMessage("Score Updated");
+        return duel;
+      });
+    }
   }
 
   getScoreRepresentation(): string {

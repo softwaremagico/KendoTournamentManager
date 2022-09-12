@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Duel} from "../../models/duel";
-import {DuelChangedService} from "../../services/duel-changed.service";
+import {DuelChangedService} from "../../services/notifications/duel-changed.service";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
 

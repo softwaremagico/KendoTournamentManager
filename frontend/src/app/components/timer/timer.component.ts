@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
-import {TimeChangedService} from "../../services/time-changed.service";
+import {TimeChangedService} from "../../services/notifications/time-changed.service";
 import {Subject, takeUntil} from "rxjs";
 import {KendoComponent} from "../kendo-component";
 

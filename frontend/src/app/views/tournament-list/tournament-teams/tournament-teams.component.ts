@@ -13,7 +13,7 @@ import {TeamService} from "../../../services/team.service";
 import {catchError, tap} from "rxjs/operators";
 import {LoggerService} from "../../../services/logger.service";
 import {NameUtilsService} from "../../../services/name-utils.service";
-import {SystemOverloadService} from "../../../services/system-overload.service";
+import {SystemOverloadService} from "../../../services/notifications/system-overload.service";
 import {Club} from "../../../models/club";
 
 @Component({
