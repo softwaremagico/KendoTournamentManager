@@ -120,7 +120,6 @@
   "DesignerMenuItem": "Designer",
   "RingMenuItem": "Ring League",
   "MonitorMenuItem": "Monitor",
-  "ScoreMenuItem": "Score rules",
   "ScoreMonitorMenuItem": "Score",
   "TreeMonitorMenuItem": "Ranking",
   "AccreditationMenuItem": "Accreditation cards",
@@ -180,10 +179,6 @@
   "ColourCheckBox": "Inverse Colours",
   "RefereeTitle": "List of referees",
   "DeleteLevelLabel": "Delete Round",
-  "ClassicRadioButton": "Classic",
-  "EuropeanRadioButton": "European",
-  "InternationalRadioButton": "International",
-  "CustomRadioButton": "Custom",
   "WinTag": "Win",
   "DrawTag": "Draw",
   "ExportPNG": "Export to PNG",
@@ -491,6 +486,11 @@
   "group": "Pool",
   "undraw": "Undraw",
   "addFight": "The fight has been added correctly.",
-  "seconds": "seconds"
+  "seconds": "seconds",
+  "classic": "Classic",
+  "european": "European",
+  "international": "International",
+  "custom": "Custom",
+  "scoreRules": "Score Rules"
 }
 
