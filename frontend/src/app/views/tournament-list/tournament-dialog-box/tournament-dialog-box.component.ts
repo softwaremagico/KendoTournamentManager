@@ -3,6 +3,8 @@ import {Tournament} from "../../../models/tournament";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {TournamentType} from "../../../models/tournament-type";
 import {Action} from "../../../action";
+import {TournamentScore} from "../../../models/tournament-score.model";
+import {ScoreType} from "../../../models/score-type";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -16,6 +18,7 @@ export class TournamentDialogBoxComponent {
   action: Action;
   actionName: string;
   tournamentType: TournamentType[];
+  scoreTypes: ScoreType[];
 
   constructor(
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>,
@@ -26,6 +29,7 @@ export class TournamentDialogBoxComponent {
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournamentType = TournamentType.toArray();
+    this.scoreTypes = ScoreType.toArray();
   }
 
   doAction() {
