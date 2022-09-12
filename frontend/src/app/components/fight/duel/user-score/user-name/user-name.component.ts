@@ -1,15 +1,16 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
-import {debounceTime, fromEvent, Subscription} from "rxjs";
+import {debounceTime, fromEvent, Subject, Subscription, takeUntil} from "rxjs";
 import {NameUtilsService} from "../../../../../services/name-utils.service";
 import {MembersOrderChangedService} from "../../../../../services/members-order-changed.service";
+import {KendoComponent} from "../../../../kendo-component";
 
 @Component({
   selector: 'user-name',
   templateUrl: './user-name.component.html',
   styleUrls: ['./user-name.component.scss']
 })
-export class UserNameComponent implements OnInit, OnChanges {
+export class UserNameComponent extends KendoComponent implements OnInit, OnChanges {
 
   @Input()
   participant: Participant | undefined;
@@ -30,19 +31,16 @@ export class UserNameComponent implements OnInit, OnChanges {
   public displayName: string = '';
 
   constructor(private nameUtilsService: NameUtilsService, private membersOrderChangedService: MembersOrderChangedService) {
-    this.membersOrderChangedService.membersOrderAllowed.subscribe(enabled => this.reorderAllowed = enabled);
+    super();
   }
 
   ngOnInit(): void {
+    this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
     this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(200))
       .subscribe(event => {
         this.displayName = this.getDisplayName(window.innerWidth);
       });
     this.displayName = this.getDisplayName(window.innerWidth);
-  }
-
-  ngOnDestroy() {
-    this.resizeSubscription$.unsubscribe()
   }
 
   ngOnChanges() {
