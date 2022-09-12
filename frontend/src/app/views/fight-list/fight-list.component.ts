@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
@@ -26,13 +26,15 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/members-order-changed.service";
+import {Subject, takeUntil} from "rxjs";
+import {KendoComponent} from "../../components/kendo-component";
 
 @Component({
   selector: 'app-fight-list',
   templateUrl: './fight-list.component.html',
   styleUrls: ['./fight-list.component.scss']
 })
-export class FightListComponent implements OnInit {
+export class FightListComponent extends KendoComponent implements OnInit, OnDestroy {
 
   fights: Fight[];
   unties: Duel[];
@@ -52,6 +54,7 @@ export class FightListComponent implements OnInit {
               private untieAddedService: UntieAddedService, public dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               public translateService: TranslateService) {
+    super();
     let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
@@ -69,11 +72,11 @@ export class FightListComponent implements OnInit {
   ngOnInit(): void {
     this.refreshFights();
     this.refreshUnties();
-    this.untieAddedService.isDuelsAdded.subscribe(addedDuel => {
+    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe(addedDuel => {
       this.refreshUnties();
     });
 
-    this.membersOrderChangedService.membersOrderChanged.subscribe(_fight => {
+    this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe(_fight => {
       let onlyNewFights: boolean = false;
       let updatedFights: boolean = false;
       if (_fight && this.fights) {
