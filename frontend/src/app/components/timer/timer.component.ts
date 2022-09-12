@@ -29,7 +29,7 @@ export class TimerComponent extends KendoComponent implements OnInit {
 
   minutes: number;
   seconds: number;
-  private clockHandler: number;
+  private clockHandler: NodeJS.Timeout;
   elapsedSeconds: number = 0;
   private alarmOn: boolean;
 
