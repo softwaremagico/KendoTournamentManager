@@ -6,6 +6,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 
+const { version: appVersion } = require('../../../../package.json')
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -15,9 +17,11 @@ export class LoginComponent {
   username: string;
   password: string;
   loginForm: FormGroup;
+  appVersion: string;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, public authenticatedUserService: AuthenticatedUserService,
               private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
+    this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
       password: ['', Validators.required]
