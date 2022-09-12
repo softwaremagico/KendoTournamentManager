@@ -1,14 +1,13 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
-import {KeyValue} from "@angular/common";
 
 @Component({
   selector: 'score',
   templateUrl: './score.component.html',
-  styleUrls: ['./score.component.scss']
+  styleUrls: ['./score.component.scss'],
 })
 export class ScoreComponent implements OnInit, OnChanges {
 
@@ -24,15 +23,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   @Input()
   swapTeams: boolean;
 
-  public scores = Score;
-
-  get ScoreEnum(): typeof Score {
-    return Score;
-  }
-
-  unsorted = (_a: KeyValue<number, string>, _b: KeyValue<number, string>): number => {
-    return 0;
-  }
+  scoreRepresentation: string;
 
   constructor(private duelService: DuelService, private messageService: MessageService) {
   }
@@ -41,7 +32,10 @@ export class ScoreComponent implements OnInit, OnChanges {
     // This is intentional
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['duel'] || changes['left'] || changes['swapTeams']) {
+      this.scoreRepresentation = this.getScoreRepresentation();
+    }
   }
 
   private updateDuel(score: Score) {
@@ -76,6 +70,7 @@ export class ScoreComponent implements OnInit, OnChanges {
         }
       }
     }
+    this.scoreRepresentation = this.getScoreRepresentation();
   }
 
   updateScore(score: Score) {
@@ -86,7 +81,7 @@ export class ScoreComponent implements OnInit, OnChanges {
     });
   }
 
-  scoreRepresentation(): string {
+  getScoreRepresentation(): string {
     if (this.left) {
       if (!this.swapTeams) {
         return Score.tag(this.duel.competitor1Score[this.index]);
