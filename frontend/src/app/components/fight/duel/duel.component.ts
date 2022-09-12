@@ -5,13 +5,15 @@ import {CdkDrag, CdkDragDrop, CdkDropList} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 import {Fight} from "../../../models/fight";
 import {MembersOrderChangedService} from "../../../services/members-order-changed.service";
+import {takeUntil} from "rxjs";
+import {KendoComponent} from "../../kendo-component";
 
 @Component({
   selector: 'duel',
   templateUrl: './duel.component.html',
   styleUrls: ['./duel.component.scss']
 })
-export class DuelComponent implements OnInit {
+export class DuelComponent extends KendoComponent implements OnInit {
 
   @Input()
   fight: Fight;
@@ -29,15 +31,15 @@ export class DuelComponent implements OnInit {
   swapTeams: boolean;
 
   constructor(private duelChangedService: DuelChangedService, private membersOrderChangedService: MembersOrderChangedService) {
-    this.duelChangedService.isDuelUpdated.subscribe(selectedDuel => {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
       if (selectedDuel && this.duel) {
         this.selected = (selectedDuel.id === this.duel.id);
       }
     });
-  }
-
-  ngOnInit(): void {
-    // This is intentional
   }
 
   dropListEnterPredicate(fight: Fight, left: boolean) {
