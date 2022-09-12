@@ -57,16 +57,4 @@ export class FaultComponent implements OnInit {
     });
   }
 
-  hasFault(): boolean {
-    if ((this.left && !this.swapTeams) || (!this.left && this.swapTeams)) {
-      return this.duel.competitor1Fault != null && this.duel.competitor1Fault;
-    } else {
-      return this.duel.competitor2Fault != null && this.duel.competitor2Fault;
-    }
-  }
-
-  canFault(): boolean {
-    return this.duel.competitor1 !== null && this.duel.competitor2 !== null;
-  }
-
 }

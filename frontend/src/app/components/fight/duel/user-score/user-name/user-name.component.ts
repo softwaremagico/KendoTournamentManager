@@ -1,9 +1,10 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
-import {debounceTime, fromEvent, Subject, Subscription, takeUntil} from "rxjs";
+import {debounceTime, fromEvent, Subscription, takeUntil} from "rxjs";
 import {NameUtilsService} from "../../../../../services/name-utils.service";
 import {MembersOrderChangedService} from "../../../../../services/members-order-changed.service";
 import {KendoComponent} from "../../../../kendo-component";
+import {Duel} from "../../../../../models/duel";
 
 @Component({
   selector: 'user-name',
@@ -14,6 +15,9 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   @Input()
   participant: Participant | undefined;
+
+  @Input()
+  duel: Duel;
 
   @Input()
   memberIndex: number;
@@ -37,7 +41,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   ngOnInit(): void {
     this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
     this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(200))
-      .subscribe(event => {
+      .subscribe(() => {
         this.displayName = this.getDisplayName(window.innerWidth);
       });
     this.displayName = this.getDisplayName(window.innerWidth);

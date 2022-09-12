@@ -1,13 +1,13 @@
 <div class="user-name" [class.left]="left" [class.right]="!left" *ngIf="participant" [cdkDragData]="participant"
      cdkDrag>
   <div class="drag-handle" cdkDragHandle>
-    <mat-icon *ngIf="reorderAllowed">swap_vert</mat-icon>
+    <mat-icon *ngIf="reorderAllowed && (this.duel.duration ? this.duel.duration < 1 : true)">swap_vert</mat-icon>
   </div>
   {{displayName}}
 </div>
 <div class="user-name" [class.left]="left" [class.right]="!left" *ngIf="!participant" [cdkDragData]="participant" cdkDrag>
   <div class="drag-handle" cdkDragHandle>
-    <mat-icon *ngIf="reorderAllowed">swap_vert</mat-icon>
+    <mat-icon *ngIf="reorderAllowed && (this.duel.duration ? this.duel.duration < 1 : true)">swap_vert</mat-icon>
   </div>
   ***REMOVED*** ***REMOVED***
 </div>

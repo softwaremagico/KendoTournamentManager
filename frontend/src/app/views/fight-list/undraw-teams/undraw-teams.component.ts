@@ -1,4 +1,4 @@
-import {Component, Inject, OnChanges, OnInit, Optional} from '@angular/core';
+import {Component, Inject, OnChanges, OnInit, Optional, SimpleChanges} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
 import {Team} from "../../../models/team";
@@ -20,15 +20,17 @@ export class UndrawTeamsComponent implements OnInit, OnChanges {
   teams: Team[] = [];
   tournament: Tournament;
   groupId: number;
+  totalDuels:number;
 
   constructor(public dialogRef: MatDialogRef<UndrawTeamsComponent>, private untieAddedService: UntieAddedService,
               @Optional() @Inject(MAT_DIALOG_DATA) private data: { tournament: Tournament, groupId: number, teams: Team[] },
               private groupServices: GroupService, private messageService: MessageService, public dialog: MatDialog) {
     this.teams = data.teams;
+    this.totalDuels = this.getTotalDuels();
     this.groupId = data.groupId;
     this.tournament = data.tournament;
     this.duels = [];
-    for (let i = 0; i < this.totalDuels(); i++) {
+    for (let i = 0; i < this.getTotalDuels(); i++) {
       const duel = new Duel();
       duel.totalDuration = data.tournament.duelsDuration;
       duel.type = DuelType.UNDRAW;
@@ -39,11 +41,13 @@ export class UndrawTeamsComponent implements OnInit, OnChanges {
   ngOnInit(): void {
   }
 
-  ngOnChanges(): void {
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['teams']) {
+      this.totalDuels = this.getTotalDuels();
+    }
   }
 
-  totalDuels(): number {
+  getTotalDuels(): number {
     if (this.teams.length == 2) {
       return 1;
     }
