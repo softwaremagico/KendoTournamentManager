@@ -1,5 +1,6 @@
 import {TournamentType} from "./tournament-type";
 import {Element} from "./element";
+import {TournamentScore} from "./tournament-score.model";
 
 export class Tournament extends Element {
   public static readonly DEFAULT_DUELS_DURATION: number = 180;
@@ -12,6 +13,7 @@ export class Tournament extends Element {
   public teamSize: number = 3;
   public type?: TournamentType;
   public duelsDuration: number;
+  public tournamentScore: TournamentScore;
 
   public static override copy(source: Tournament, target: Tournament): void {
     Element.copy(source, target);

@@ -18,6 +18,14 @@
     <input placeholder="Tournament Team Size" matInput [(ngModel)]="tournament.teamSize">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
+    <mat-label>{{'scoreRules' | translate}}</mat-label>
+    <mat-select [(value)]="tournament.tournamentScore.scoreType">
+      <mat-option *ngFor="let type of scoreTypes" [value]="type">
+        {{type.toLowerCase() | translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>Duels Duration</mat-label>
     <mat-select [(value)]="tournament.duelsDuration">
       <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
