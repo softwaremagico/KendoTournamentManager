@@ -1,6 +1,6 @@
 <div class="score-area" [matMenuTriggerFor]="menu">
   <mat-menu #menu="matMenu">
-    <button *ngFor="let score of ScoreEnum.toArray()" mat-menu-item
+    <button *ngFor="let score of possibleScores()" mat-menu-item
             (click)="updateScore(score)">{{score.toLowerCase() | translate}}</button>
   </mat-menu>
   <div class="point" *ngIf="scoreRepresentation()!==''">

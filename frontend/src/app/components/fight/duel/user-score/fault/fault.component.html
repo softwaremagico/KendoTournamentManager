@@ -1,6 +1,6 @@
 <div class="fault" [matMenuTriggerFor]="menu">
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="updateFault(true)">{{'fault' | translate}}</button>
+    <button mat-menu-item *ngIf="canFault()" (click)="updateFault(true)">{{'fault' | translate}}</button>
     <button mat-menu-item (click)="updateFault(false)">{{'clear' | translate}}</button>
   </mat-menu>
   <div class="fault-content" *ngIf="hasFault()">
