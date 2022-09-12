@@ -1,3 +1,8 @@
+.app-timer {
+  // To avoid a jump when dragging
+  transform: translate3d(0px, 0px, 0px);
+}
+
 .container {
   border: 1px solid #333;
   border-radius: 10px;
@@ -7,7 +12,7 @@
   text-align: center;
   background: #222222;
   position: fixed;
-  top: 15vh;
+  top: 5vh;
   right: 3vw;
   z-index: 100001;
 }
