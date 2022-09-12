@@ -8,7 +8,7 @@ import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {ScoreOfTeam} from "../models/score-of-team";
 import {ScoreOfCompetitor} from "../models/score-of-competitor";
-import {SystemOverloadService} from "./system-overload.service";
+import {SystemOverloadService} from "./notifications/system-overload.service";
 
 @Injectable({
   providedIn: 'root'

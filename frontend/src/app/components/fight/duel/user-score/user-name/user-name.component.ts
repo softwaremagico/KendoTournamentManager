@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Participant} from "../../../../../models/participant";
 import {debounceTime, fromEvent, Subscription, takeUntil} from "rxjs";
 import {NameUtilsService} from "../../../../../services/name-utils.service";
-import {MembersOrderChangedService} from "../../../../../services/members-order-changed.service";
+import {MembersOrderChangedService} from "../../../../../services/notifications/members-order-changed.service";
 import {KendoComponent} from "../../../../kendo-component";
 import {Duel} from "../../../../../models/duel";
 
