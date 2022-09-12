@@ -1,6 +1,23 @@
+.fight-container {
+  height: 83vh;
+  max-height: 83vh;
+  min-height: 50vh;
+  overflow-y: auto;
+}
+
 .fight-list {
   width: 100%;
   min-height: 100px;
+}
+
+.unties-list {
+  width: 100%;
+}
+
+@media screen and (max-height: 750px) {
+  .fight-container {
+    height: 75vh;
+  }
 }
 
 @media screen and (max-width: 1250px) {
