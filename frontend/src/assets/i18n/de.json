@@ -458,7 +458,15 @@
   "referee": "Kampfrichter",
   "disablePopUpBlocker": "Bitte deaktivieren Sie Ihren Popup-Blocker und versuchen Sie es erneut.",
   "undraw": "Entscheiden",
-  "seconds": "sekunden"
+  "seconds": "sekunden",
+  "participants": "Teilnehmer",
+  "registry": "Registrierung",
+  "paginatorItemsPerPage": "Objekte pro seite:",
+  "paginatorNextPage": "Nächste seite",
+  "paginatorPreviousPage": "Vorherige seite",
+  "paginatorFirstPage": "Erste seite",
+  "paginatorLastPage": "Letzte Seite",
+  "paginatorOf": "von"
 }
 
 
