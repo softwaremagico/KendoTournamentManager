@@ -474,7 +474,31 @@
   "tournamentEdit": "Toernooi Bewerken",
   "tournamentDelete": "Toernooi Verwijderen",
   "tournamentDeleteQuestion": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
-  "filter": "Filter"
+  "infoTournamentStored": "Het toernooi is opgeslagen.",
+  "infoTournamentUpdated": "Het toernooi is bijgewerkt.",
+  "infoTournamentDeleted": "Het toernooi is verwijderd!",
+  "filter": "Filter",
+  "clubName": "Naam",
+  "clubCountry": "Land",
+  "clubCity": "Stad",
+  "clubAddress": "Adres",
+  "clubEmail": "E-mail",
+  "clubPhone": "Telefoon",
+  "clubWeb": "Web",
+  "clubDeleteQuestion": "Weet je zeker dat je <strong>{{name}} wilt verwijderen?",
+  "clubAdd": "Een Nieuwe Club Toevoegen",
+  "clubEdit": "Club Bewerken",
+  "clubDelete": "Club Verwijderen",
+  "infoClubStored": "Het club is opgeslagen.",
+  "infoClubUpdated": "Het club is bijgewerkt.",
+  "infoClubDeleted": "Het club is verwijderd!",
+  "participantDeleteQuestion": "Weet je zeker dat je <strong>{{name}} {{lastname}}</strong> wilt verwijderen?",
+  "participantAdd": "Een Nieuwe Deelnemer Toevoegen",
+  "participantEdit": "Deelnemer Bewerken",
+  "participantDelete": "Deelnemer Verwijderen",
+  "infoParticipantStored": "Het deelnemer is opgeslagen.",
+  "infoParticipantUpdated": "Het deelnemer is bijgewerkt.",
+  "infoParticipantDeleted": "Het deelnemer is verwijderd!"
 }
 
 

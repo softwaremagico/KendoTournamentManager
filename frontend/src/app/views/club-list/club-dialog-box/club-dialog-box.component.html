@@ -1,31 +1,31 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-    <input placeholder="Club Name" matInput [(ngModel)]="club.name">
+    <input placeholder="{{'clubName' | translate}}" matInput [(ngModel)]="club.name">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Club Country" matInput [(ngModel)]="club.country">
+    <input placeholder="{{'clubCountry' | translate}}" matInput [(ngModel)]="club.country">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Club City" matInput [(ngModel)]="club.city">
+    <input placeholder="{{'clubCity' | translate}}" matInput [(ngModel)]="club.city">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Club Address" matInput [(ngModel)]="club.address">
+    <input placeholder="{{'clubAddress' | translate}}" matInput [(ngModel)]="club.address">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Club Email" matInput [(ngModel)]="club.email">
+    <input placeholder="{{'clubEmail' | translate}}" matInput [(ngModel)]="club.email">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Club Phone" matInput [(ngModel)]="club.phone">
+    <input placeholder="{{'clubPhone' | translate}}" matInput [(ngModel)]="club.phone">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Club Web" matInput [(ngModel)]="club.web">
+    <input placeholder="{{'clubWeb' | translate}}" matInput [(ngModel)]="club.web">
   </mat-form-field>
   <ng-template #elseTemplate>
-    Are you sure to delete <strong>{{club.name}}</strong>?
+    <span [innerHTML]="'clubDeleteQuestion' | translate : {name: club.name}"></span>
   </ng-template>
 </div>
 <div mat-dialog-actions class="button-container">
   <button mat-raised-button (click)="doAction()" mat-flat-button color="primary">{{actionName.toLowerCase() | translate}}</button>
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
 </div>

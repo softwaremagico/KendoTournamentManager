@@ -474,7 +474,31 @@
   "tournamentEdit": "Turnier Bearbeiten",
   "tournamentDelete": "Turnier Löschent",
   "tournamentDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?",
-  "filter": "Filter"
+  "infoTournamentStored": "Das turnier wurde gespeichert.",
+  "infoTournamentUpdated": "Das turnier wurde aktualisiert.",
+  "infoTournamentDeleted": "Das turnier wurde gelöscht!",
+  "filter": "Filter",
+  "clubName": "Name",
+  "clubCountry": "Land",
+  "clubCity": "Stadt",
+  "clubAddress": "Adresse",
+  "clubEmail": "Email",
+  "clubPhone": "Telefon",
+  "clubWeb": "Web",
+  "clubDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?",
+  "clubAdd": "Verein Hinzufügen",
+  "clubEdit": "Verein Bearbeiten",
+  "clubDelete": "Verein Löschen",
+  "infoClubStored": "Das verein wurde gespeichert.",
+  "infoClubUpdated": "Das verein wurde aktualisiert.",
+  "infoClubDeleted": "Das verein wurde gelöscht!",
+  "participantDeleteQuestion": "Möchten sie <strong>{{name}} {{lastname}} wirklich löschen?",
+  "participantAdd": "Teilnehmer Hinzufügen",
+  "participantEdit": "Teilnehmer Bearbeiten",
+  "participantDelete": "Teilnehmer Löschen",
+  "infoParticipantStored": "Das teilnehmer wurde gespeichert.",
+  "infoParticipantUpdated": "Das teilnehmer wurde aktualisiert.",
+  "infoParticipantDeleted": "Das teilnehmer wurde gelöscht!"
 }
 
 

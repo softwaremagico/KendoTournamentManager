@@ -12,6 +12,7 @@ import {ParticipantDialogBoxComponent} from "./participant-dialog-box/participan
 import {ClubService} from "../../services/club.service";
 import {Club} from "../../models/club";
 import {Action} from "../../action";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-participant-list',
@@ -28,7 +29,7 @@ export class ParticipantListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
-              private clubService: ClubService) {
+              private clubService: ClubService, private translateService: TranslateService) {
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'clubName', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'idCard', 'name', 'lastname', 'club', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'lastname', 'clubName'];
@@ -51,18 +52,18 @@ export class ParticipantListComponent implements OnInit {
 
   addElement(): void {
     const participant = new Participant();
-    this.openDialog('Add a new club', Action.Add, participant);
+    this.openDialog(this.translateService.instant('participantAdd'), Action.Add, participant);
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog('Edit club', Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.instant('participantEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog('Delete club', Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.instant('participantDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 
@@ -98,13 +99,13 @@ export class ParticipantListComponent implements OnInit {
     this.participantService.add(participant).subscribe(_participant => {
       this.basicTableData.dataSource.data.push(_participant);
       this.basicTableData.dataSource._updateChangeSubscription();
-      this.messageService.infoMessage("Participant Stored");
+      this.messageService.infoMessage(this.translateService.instant('infoParticipantStored'));
     });
   }
 
   updateRowData(participant: Participant) {
     this.participantService.update(participant).subscribe(() => {
-        this.messageService.infoMessage("Participant Updated");
+        this.messageService.infoMessage(this.translateService.instant('infoParticipantUpdated'));
       }
     );
   }
@@ -112,7 +113,7 @@ export class ParticipantListComponent implements OnInit {
   deleteRowData(participant: Participant) {
     this.participantService.delete(participant).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
-        this.messageService.infoMessage("Participant Deleted");
+        this.messageService.infoMessage(this.translateService.instant('infoParticipantDeleted'));
       }
     );
   }
