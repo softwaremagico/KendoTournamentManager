@@ -9,14 +9,14 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {ClubListComponent} from './views/club-list/club-list.component';
 import {MatTableModule} from "@angular/material/table";
-import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatPaginatorIntl, MatPaginatorModule} from "@angular/material/paginator";
 import {MatMenuModule} from "@angular/material/menu";
 import {ClubDialogBoxComponent} from './views/club-list/club-dialog-box/club-dialog-box.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -59,6 +59,7 @@ import {UserCardComponent} from './components/user-card/user-card.component';
 import {TeamCardComponent} from './components/team-card/team-card.component';
 import {registerLocaleData} from "@angular/common";
 import localeES from "@angular/common/locales/es";
+import localeCAT from "@angular/common/locales/ca-ES-VALENCIA";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
@@ -68,17 +69,18 @@ import {ConfirmationDialogComponent} from './components/basic/confirmation-dialo
 import {TeamRankingComponent} from './views/fight-list/team-ranking/team-ranking.component';
 import {CompetitorsRankingComponent} from './views/fight-list/competitors-ranking/competitors-ranking.component';
 import {TimerComponent} from './components/timer/timer.component';
-import { UndrawTeamsComponent } from './views/fight-list/undraw-teams/undraw-teams.component';
-import { MemberSelectorComponent } from './components/basic/member-selector/member-selector.component';
-import { UntieFightComponent } from './components/untie-fight/untie-fight.component';
+import {UndrawTeamsComponent} from './views/fight-list/undraw-teams/undraw-teams.component';
+import {MemberSelectorComponent} from './components/basic/member-selector/member-selector.component';
+import {UntieFightComponent} from './components/untie-fight/untie-fight.component';
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatSpinnerOverlayComponent} from "./components/mat-spinner-overlay/mat-spinner-overlay.component";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {PaginatorI18n} from "./components/basic/basic-table/paginator-i18n";
 
 
 registerLocaleData(localeES, "es");
 registerLocaleData(localeIT, "it");
-registerLocaleData(localeDE, "de");
+registerLocaleData(localeCAT, "ca");
 registerLocaleData(localeDE, "de");
 registerLocaleData(localeNL, "nl");
 
@@ -158,7 +160,15 @@ registerLocaleData(localeNL, "nl");
     MatTabsModule,
     MatProgressSpinnerModule
   ],
-  providers: [CookieService],
+  providers: [CookieService, {
+    provide: MatPaginatorIntl,
+    useFactory: (translate: TranslateService) => {
+      const service = new PaginatorI18n();
+      service.injectTranslateService(translate);
+      return service;
+    },
+    deps: [TranslateService]
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
