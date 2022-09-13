@@ -495,7 +495,8 @@
   "tournamentAdd": "Añadir Tourneo",
   "tournamentEdit": "Editar Tourneo",
   "tournamentDelete": "Eliminar Tourneo",
-  "tournamentDeleteQuestion": "¿Estás seguro de eliminar <strong>{{name}}</strong>?"
+  "tournamentDeleteQuestion": "¿Estás seguro de eliminar <strong>{{name}}</strong>?",
+  "filter": "Filtro"
 }
 
 
