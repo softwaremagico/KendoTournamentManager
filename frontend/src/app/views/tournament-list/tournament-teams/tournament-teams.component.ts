@@ -150,11 +150,11 @@ export class TournamentTeamsComponent implements OnInit {
   deleteMemberFromTeam(participant: Participant) {
     this.teamService.deleteByMemberAndTournament(participant, this.tournament).pipe(
       tap(() => {
-        this.loggerService.info("Member '" + participant.name + " " + participant.lastname + "' removed.");
+        this.loggerService.info("infoMemberDeleted");
       }),
       catchError(this.messageService.handleError<Team>("removing '" + participant.name + " " + participant.lastname + "'"))
     ).subscribe(() => {
-      this.messageService.infoMessage("Member '" + participant.name + " " + participant.lastname + "' removed.");
+      this.messageService.infoMessage("infoMemberDeleted");
     });
   }
 
@@ -207,7 +207,7 @@ export class TournamentTeamsComponent implements OnInit {
       }),
       catchError(member ? this.messageService.handleError<Team>("Updating '" + member.name + " " + member.lastname + "'") :
         this.messageService.handleError<Team>("Updating '" + team.name + "'"))
-    ).subscribe(() => member ? this.messageService.infoMessage("Team '" + Team.name + "' member '" + member.name + " " + member.lastname + "' updated.") : "");
+    ).subscribe(() => member ? this.messageService.infoMessage("infoTeamUpdated") : "");
   }
 
   searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>) {
@@ -242,7 +242,7 @@ export class TournamentTeamsComponent implements OnInit {
       }),
       catchError(this.messageService.handleError<Team>("Updating team name to '" + team.name + "'."))
     ).subscribe(() => {
-      this.messageService.infoMessage("Team name updated to '" + team.name + "'.");
+      this.messageService.infoMessage("infoTeamUpdated");
     });
   }
 
@@ -256,7 +256,7 @@ export class TournamentTeamsComponent implements OnInit {
       }),
       catchError(this.messageService.handleError<Team>("Adding new team."))
     ).subscribe(_team => {
-      this.messageService.infoMessage("New team '" + _team.name + "' added.");
+      this.messageService.infoMessage("infoTeamStored");
       this.teams.push(_team);
       this.members.set(_team, []);
     });
@@ -279,7 +279,7 @@ export class TournamentTeamsComponent implements OnInit {
       }),
       catchError(this.messageService.handleError<Team>("removing team '" + team.name + "'."))
     ).subscribe(() => {
-      this.messageService.infoMessage("Team '" + team.name + "' removed.");
+      this.messageService.infoMessage("infoTeamDeleted");
       this.teams.splice(this.teams.indexOf(team), 1);
     });
   }
@@ -330,7 +330,7 @@ export class TournamentTeamsComponent implements OnInit {
         this.teams.push(team);
       }
       this.teamService.setAll(this.teams).subscribe(_teams => {
-        this.messageService.infoMessage(_teams.length + " team added!");
+        this.messageService.infoMessage("infoTeamsAdded");
         this.teams = _teams
         this.userListData.participants = [];
         this.userListData.filteredParticipants = this.userListData.participants;

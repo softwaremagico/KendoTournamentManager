@@ -263,7 +263,7 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
             this.fights = fights;
-            this.messageService.infoMessage("Fights Created!");
+            this.messageService.infoMessage("infoFightCreated");
           });
         }
       });
@@ -273,13 +273,13 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
   addRowData(fights: Fight[]) {
     this.fightService.addCollection(fights).subscribe(_fights => {
       this.fights.push(..._fights)
-      this.messageService.infoMessage("Fights Stored");
+      this.messageService.infoMessage("fightStored");
     });
   }
 
   updateRowData(fight: Fight) {
     this.fightService.update(fight).subscribe(() => {
-        this.messageService.infoMessage("Fight Updated");
+        this.messageService.infoMessage("infoFightUpdated");
       }
     );
   }
@@ -287,7 +287,7 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
         let currentFights: Fight[] = this.fights.filter(existing_fight => existing_fight !== fight);
-        this.messageService.infoMessage("Fight Deleted. Current fights: " + currentFights.length);
+        this.messageService.infoMessage("fightDeleted");
       }
     );
   }
@@ -368,7 +368,7 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
       this.setIpponScores(this.selectedDuel);
       this.selectedDuel.duration = durationInSeconds;
       this.duelService.update(this.selectedDuel).subscribe(duel => {
-        this.messageService.infoMessage("Duel Finished!");
+        this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
           this.showTeamsClassification(true);
         }
