@@ -318,7 +318,6 @@
   "storeCompetitorError": "Fehler beim speichern eines Teilnehmers in die Datenbank",
   "imageTooLarge": "Das Bild ist zu groß und kann nicht gespeichert werden. (max. 1MB)",
   "storeTournamentError": "Fehler beim speichern eines Wettkampfes.",
-  "tournamentDeleteQuestion": "Der ausgewählte Wettkampf wird gelöscht. Fortfahren?",
   "tournamentDeleted": "Der Wettkampf wurde gelöscht!",
   "storeRefereeError": "Fehler beim speichern eines Kampfrichters.",
   "storeTeamError": "Fehler beim speichern eines Teams.",
@@ -466,7 +465,15 @@
   "paginatorPreviousPage": "Vorherige seite",
   "paginatorFirstPage": "Erste seite",
   "paginatorLastPage": "Letzte Seite",
-  "paginatorOf": "von"
+  "paginatorOf": "von",
+  "tournamentName": "Turniername",
+  "tournamentShiaijos": "Anzahl der Shiaijos",
+  "tournamentTeamSize": "Teamgröße",
+  "tournamentDuelsDurations": "Duell-Dauer",
+  "tournamentAdd": "Turnier Hinzufügen",
+  "tournamentEdit": "Turnier Bearbeiten",
+  "tournamentDelete": "Turnier Löschent",
+  "tournamentDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?"
 }
 
 

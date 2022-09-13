@@ -280,7 +280,6 @@
   "storeCompetitorError": "Error when trying to store a competitor into the database.",
   "imageTooLarge": "The image is too large for being stored into the database (the image's size must be less than 1MB).",
   "storeTournamentError": "Error when trying to store a tournament into the database.",
-  "tournamentDeleteQuestion": "The selected tournament will be deleted. Would you like to continue?",
   "tournamentDeleted": "The tournament has been deleted!",
   "storeRefereeError": "Error when trying to store a referee into the database.",
   "storeTeamError": "Error when trying to store a team into the database.",
@@ -497,6 +496,14 @@
   "paginatorPreviousPage": "Previous page",
   "paginatorFirstPage": "First page",
   "paginatorLastPage": "Last page",
-  "paginatorOf": "of"
+  "paginatorOf": "of",
+  "tournamentName": "Tournament Name",
+  "tournamentShiaijos": "Number of Shiaijos",
+  "tournamentTeamSize": "Team Size",
+  "tournamentDuelsDurations": "Duels Duration",
+  "tournamentAdd": "Add Tournament",
+  "tournamentEdit": "Edit Tournament",
+  "tournamentDelete": "Delete Tournament",
+  "tournamentDeleteQuestion": "Are you sure to delete <strong>{{name}}</strong>?"
 }
 
