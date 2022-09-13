@@ -528,6 +528,19 @@
   "participantDelete": "Delete Participant",
   "infoParticipantStored": "The participant has been stored.",
   "infoParticipantUpdated": "The participant has been updated.",
-  "infoParticipantDeleted": "The participant has been deleted!"
+  "infoParticipantDeleted": "The participant has been deleted!",
+  "infoFaultUpdated": "Fault updated.",
+  "infoScoreUpdated": "Score updated.",
+  "infoFightCreated": "Match created.",
+  "infoFightUpdated": "Match updated.",
+  "infoDuelFinished": "Duel finished!",
+  "infoRoleDeleted": "Role deleted!",
+  "infoRoleStored": "Role stored.",
+  "infoMemberDeleted": "Member deleted!",
+  "infoMemberStored": "Member stored.",
+  "infoTeamsAdded": "Teams stored.",
+  "infoTeamDeleted": "Team deleted!",
+  "infoTeamStored": "Team stored.",
+  "infoTeamUpdated": "Team updated."
 }
 

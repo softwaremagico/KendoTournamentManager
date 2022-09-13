@@ -515,7 +515,20 @@
   "participantDelete": "Suprimeix el Participant",
   "infoParticipantStored": "S'ha guardat el participant.",
   "infoParticipantUpdated": "El participant s'ha actualitzat.",
-  "infoParticipantDeleted": "S'ha esborrat el participant!"
+  "infoParticipantDeleted": "S'ha esborrat el participant!",
+  "infoFaultUpdated": "Falta actualitzada.",
+  "infoScoreUpdated": "S'ha actualitzat la puntuació.",
+  "infoFightCreated": "Partit creat.",
+  "infoFightUpdated": "S'ha actualitzat el partit!",
+  "infoDuelFinished": "S'ha acabat el duel!",
+  "infoRoleDeleted": "S'ha esborrat el rol!",
+  "infoRoleStored": "Rol emmagatzemat.",
+  "infoMemberDeleted": "S'ha esborrat el membre!",
+  "infoMemberStored": "Membre Afegit.",
+  "infoTeamsAdded": "S'han guardat els equips.",
+  "infoTeamDeleted": "Equip suprimit!",
+  "infoTeamStored": "Equip emmagatzemat.",
+  "infoTeamUpdated": "Equip actualitzat."
 }
 
 

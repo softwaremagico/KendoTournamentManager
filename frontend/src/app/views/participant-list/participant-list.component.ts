@@ -99,13 +99,13 @@ export class ParticipantListComponent implements OnInit {
     this.participantService.add(participant).subscribe(_participant => {
       this.basicTableData.dataSource.data.push(_participant);
       this.basicTableData.dataSource._updateChangeSubscription();
-      this.messageService.infoMessage(this.translateService.instant('infoParticipantStored'));
+      this.messageService.infoMessage('infoParticipantStored');
     });
   }
 
   updateRowData(participant: Participant) {
     this.participantService.update(participant).subscribe(() => {
-        this.messageService.infoMessage(this.translateService.instant('infoParticipantUpdated'));
+        this.messageService.infoMessage('infoParticipantUpdated');
       }
     );
   }
@@ -113,7 +113,7 @@ export class ParticipantListComponent implements OnInit {
   deleteRowData(participant: Participant) {
     this.participantService.delete(participant).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
-        this.messageService.infoMessage(this.translateService.instant('infoParticipantDeleted'));
+        this.messageService.infoMessage('infoParticipantDeleted');
       }
     );
   }

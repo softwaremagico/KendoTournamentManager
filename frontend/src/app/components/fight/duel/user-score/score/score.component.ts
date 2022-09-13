@@ -4,6 +4,7 @@ import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'score',
@@ -26,7 +27,8 @@ export class ScoreComponent implements OnInit, OnChanges {
 
   scoreRepresentation: string;
 
-  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService) {
+  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
+              private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -109,7 +111,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   updateScore(score: Score) {
     if (this.updateDuel(score)) {
       this.duelService.update(this.duel).subscribe(duel => {
-        this.messageService.infoMessage("Score Updated");
+        this.messageService.infoMessage('infoScoreUpdated');
         return duel;
       });
     }

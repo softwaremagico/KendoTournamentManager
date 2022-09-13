@@ -85,7 +85,7 @@ export class TournamentRolesComponent implements OnInit {
     );
     const participant: Participant = event.container.data[event.currentIndex]
     this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
-      this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
+      this.messageService.infoMessage("infoRoleDeleted");
     });
     this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
@@ -98,7 +98,7 @@ export class TournamentRolesComponent implements OnInit {
     role.participant = participant;
     role.roleType = roleName;
     this.roleService.add(role).subscribe(_role => {
-      this.messageService.infoMessage("Role '" + role.roleType + "' for '" + participant.name + " " + participant.lastname + "' stored.");
+      this.messageService.infoMessage("infoRoleStored");
     });
     if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
