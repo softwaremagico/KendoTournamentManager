@@ -490,7 +490,8 @@
   "tournamentAdd": "Afegeix un Torneig",
   "tournamentEdit": "Edita el Torneig",
   "tournamentDelete": "Suprimeix el Torneig",
-  "tournamentDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?"
+  "tournamentDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?",
+  "filter": "Filtre"
 }
 
 

@@ -14,12 +14,12 @@
       </a>
       <span class="example-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
-        <a mat-button (click)="toggleMenu('Registry')">Registry
+        <a mat-button (click)="toggleMenu('Registry')">{{'registry' | translate}}
           <mat-icon *ngIf="selectedRow !== 'Registry'">expand_more</mat-icon>
           <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
         </a>
         <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
-        <a mat-button routerLink="/reports">{{'reports' | translate}}</a>
+<!--        <a mat-button routerLink="/reports">{{'reports' | translate}}</a>-->
         <a mat-button (click)="toggleMenu('Language')">
           {{'LanguageMenu' | translate}}
           <mat-icon *ngIf="selectedRow !== 'Language'">expand_more</mat-icon>
@@ -68,9 +68,9 @@
         <mat-list-item routerLink="/tournaments">
           <mat-icon>dashboard</mat-icon>
           {{'tournaments' | translate}}</mat-list-item>
-        <mat-list-item routerLink="/reports">
-          <mat-icon>dashboard</mat-icon>
-          {{'reports' | translate}}</mat-list-item>
+<!--        <mat-list-item routerLink="/reports">-->
+<!--          <mat-icon>dashboard</mat-icon>-->
+<!--          {{'reports' | translate}}</mat-list-item>-->
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>
             {{'LanguageMenu' | translate}}
