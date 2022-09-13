@@ -473,7 +473,8 @@
   "tournamentAdd": "Toernooi Toevoegen",
   "tournamentEdit": "Toernooi Bewerken",
   "tournamentDelete": "Toernooi Verwijderen",
-  "tournamentDeleteQuestion": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?"
+  "tournamentDeleteQuestion": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
+  "filter": "Filter"
 }
 
 

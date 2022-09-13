@@ -473,7 +473,8 @@
   "tournamentAdd": "Turnier Hinzufügen",
   "tournamentEdit": "Turnier Bearbeiten",
   "tournamentDelete": "Turnier Löschent",
-  "tournamentDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?"
+  "tournamentDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?",
+  "filter": "Filter"
 }
 
 
