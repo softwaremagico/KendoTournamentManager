@@ -320,7 +320,6 @@
   "storeCompetitorError": "Si è verificato un errore mentre si stava salvando un competitore nel database",
   "imageTooLarge": "L'immagine è troppo grande per essere salvata nel database (deve essere inferiore de 1MB)",
   "storeTournamentError": "Si è verificato un errore mentre si stava salvando un campionato",
-  "tournamentDeleteQuestion": "Si cancellerà il campionato selezionato. Si vuole continuare?",
   "tournamentDeleted": "Il campionato è stato cancellato!",
   "storeRefereeError": "Si è verificato un errore mentre si stava salvando un arbitro nel database",
   "storeTeamError": "Si è verificato un errore mentre si stava salvando una squadra nel database",
@@ -477,7 +476,15 @@
   "paginatorPreviousPage": "Pagina precedente",
   "paginatorFirstPage": "Prima pagina",
   "paginatorLastPage": "Ultima pagina",
-  "paginatorOf": "de"
+  "paginatorOf": "de",
+  "tournamentName": "Nome del Torneo",
+  "tournamentShiaijos": "Numero di Shiaijos",
+  "tournamentTeamSize": "Dimensione della squadra",
+  "tournamentDuelsDurations": "Durata dei Combattimenti",
+  "tournamentAdd": "Aggiungi Torneo",
+  "tournamentEdit": "Modifica Torneo",
+  "tournamentDelete": "Elimina Torneo",
+  "tournamentDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?"
 }
 
 

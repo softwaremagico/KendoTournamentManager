@@ -318,7 +318,6 @@
   "storeCompetitorError": "Fout bij het opslaan van de deelnemer in de database.",
   "imageTooLarge": "De foto is te groot om in de database te worden opgenomen (het bestand mag max. 1 MB zijn).",
   "storeTournamentError": "Fout bij het opslaan van het toernooi in de database.",
-  "tournamentDeleteQuestion": "De geselecteerde toernooi wordt verwijderd. Weet je zeker dat je wilt doorgaan?",
   "tournamentDeleted": "Het toernooi is verwijderd!",
   "storeRefereeError": "Fout bij het opslaan van het scheidsrechters in de database.",
   "storeTeamError": "Fout bij het opslaan van het team in de database.",
@@ -466,7 +465,15 @@
   "paginatorPreviousPage": "Vorige pagina",
   "paginatorFirstPage": "Eerste pagina",
   "paginatorLastPage": "Laatste pagina",
-  "paginatorOf": "van"
+  "paginatorOf": "van",
+  "tournamentName": "Toernooi naam",
+  "tournamentShiaijos": "Aantal Shiaijos",
+  "tournamentTeamSize": "Team Grootte",
+  "tournamentDuelsDurations": "Duur van Gevechten",
+  "tournamentAdd": "Toernooi Toevoegen",
+  "tournamentEdit": "Toernooi Bewerken",
+  "tournamentDelete": "Toernooi Verwijderen",
+  "tournamentDeleteQuestion": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?"
 }
 
 
