@@ -10,6 +10,7 @@ import {ClubDialogBoxComponent} from './club-dialog-box/club-dialog-box.componen
 import {MessageService} from "../../services/message.service";
 import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
 import {Action} from "../../action";
+import {TranslateService} from "@ngx-translate/core";
 
 
 @Component({
@@ -25,7 +26,8 @@ export class ClubListComponent implements OnInit {
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService) {
+  constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
+              private translateService: TranslateService) {
     this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
       'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
@@ -46,18 +48,18 @@ export class ClubListComponent implements OnInit {
   }
 
   addElement(): void {
-    this.openDialog('Add a new club', Action.Add, new Club());
+    this.openDialog(this.translateService.instant('clubAdd'), Action.Add, new Club());
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog('Edit club', Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.instant('clubEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog('Delete club', Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.instant('clubDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 
@@ -90,13 +92,13 @@ export class ClubListComponent implements OnInit {
     this.clubService.add(club).subscribe(_club => {
       this.basicTableData.dataSource.data.push(_club);
       this.basicTableData.dataSource._updateChangeSubscription();
-      this.messageService.infoMessage("Club Stored");
+      this.messageService.infoMessage(this.translateService.instant('infoClubStored'));
     });
   }
 
   updateRowData(club: Club) {
     this.clubService.update(club).subscribe(() => {
-        this.messageService.infoMessage("Club Updated");
+        this.messageService.infoMessage(this.translateService.instant('infoClubUpdated'));
       }
     );
   }
@@ -104,7 +106,7 @@ export class ClubListComponent implements OnInit {
   deleteRowData(club: Club) {
     this.clubService.delete(club).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
-        this.messageService.infoMessage("Club Deleted");
+        this.messageService.infoMessage(this.translateService.instant('infoClubDeleted'));
       }
     );
   }

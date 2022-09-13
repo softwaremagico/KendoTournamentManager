@@ -485,7 +485,31 @@
   "tournamentEdit": "Modifica Torneo",
   "tournamentDelete": "Elimina Torneo",
   "tournamentDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?",
-  "filter": "Filtro"
+  "infoTournamentStored": "Il torneo è stato memorizzato.",
+  "infoTournamentUpdated": "Il torneo è stato aggiornato.",
+  "infoTournamentDeleted": "Il torneo è stato cancellato!",
+  "filter": "Filtro",
+  "clubName": "Nome",
+  "clubCountry": "Paese",
+  "clubCity": "Città",
+  "clubAddress": "Indirizzo",
+  "clubEmail": "E-mail",
+  "clubPhone": "Telefono",
+  "clubWeb": "Web",
+  "clubDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?",
+  "clubAdd": "Aggiungi un Nuovo Club",
+  "clubEdit": "Modifica Club",
+  "clubDelete": "Elimina il Club",
+  "infoClubStored": "Il club è stato memorizzato.",
+  "infoClubUpdated": "Il club è stato aggiornato.",
+  "infoClubDeleted": "Il club è stato cancellato!",
+  "participantDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}} {{lastname}}</strong>?",
+  "participantAdd": "Aggiungi un Nuovo Partecipante",
+  "participantEdit": "Modifica Partecipante",
+  "participantDelete": "Elimina il Partecipante",
+  "infoParticipantStored": "Il partecipante è stato memorizzato.",
+  "infoParticipantUpdated": "Il partecipante è stato aggiornato.",
+  "infoParticipantDeleted": "Il partecipante è stato cancellato!"
 }
 
 

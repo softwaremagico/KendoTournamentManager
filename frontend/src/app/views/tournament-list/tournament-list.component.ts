@@ -100,13 +100,13 @@ export class TournamentListComponent implements OnInit {
     this.tournamentService.add(tournament).subscribe(_tournament => {
       this.basicTableData.dataSource.data.push(_tournament);
       this.basicTableData.dataSource._updateChangeSubscription();
-      this.messageService.infoMessage("Tournament Stored");
+      this.messageService.infoMessage(this.translateService.instant('infoTournamentStored'));
     });
   }
 
   updateRowData(tournament: Tournament) {
     this.tournamentService.update(tournament).subscribe(() => {
-        this.messageService.infoMessage("Tournament Updated");
+        this.messageService.infoMessage(this.translateService.instant('infoTournamentUpdated'));
       }
     );
   }
@@ -114,7 +114,7 @@ export class TournamentListComponent implements OnInit {
   deleteRowData(tournament: Tournament) {
     this.tournamentService.delete(tournament).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
-        this.messageService.infoMessage("Tournament Deleted");
+        this.messageService.infoMessage(this.translateService.instant('infoTournamentDeleted'));
       }
     );
   }
