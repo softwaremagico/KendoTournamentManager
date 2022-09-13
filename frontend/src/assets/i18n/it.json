@@ -484,7 +484,8 @@
   "tournamentAdd": "Aggiungi Torneo",
   "tournamentEdit": "Modifica Torneo",
   "tournamentDelete": "Elimina Torneo",
-  "tournamentDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?"
+  "tournamentDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?",
+  "filter": "Filtro"
 }
 
 
