@@ -3,6 +3,7 @@ import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {MessageService} from "../../../../../services/message.service";
 import {Score} from "../../../../../models/score";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'fault',
@@ -20,7 +21,7 @@ export class FaultComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-  constructor(private duelService: DuelService, private messageService: MessageService) {
+  constructor(private duelService: DuelService, private messageService: MessageService, private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -52,7 +53,7 @@ export class FaultComponent implements OnInit {
   updateFault(fault: boolean) {
     this.setFault(fault);
     this.duelService.update(this.duel).subscribe(duel => {
-      this.messageService.infoMessage("Fault Updated");
+      this.messageService.infoMessage('infoFaultUpdated');
       return duel;
     });
   }

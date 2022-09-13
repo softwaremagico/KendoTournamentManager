@@ -498,7 +498,20 @@
   "participantDelete": "Teilnehmer Löschen",
   "infoParticipantStored": "Das teilnehmer wurde gespeichert.",
   "infoParticipantUpdated": "Das teilnehmer wurde aktualisiert.",
-  "infoParticipantDeleted": "Das teilnehmer wurde gelöscht!"
+  "infoParticipantDeleted": "Das teilnehmer wurde gelöscht!",
+  "infoFaultUpdated": "Störung aktualisiert.",
+  "infoScoreUpdated": "Punktzahl aktualisiert.",
+  "infoFightCreated": "Übereinstimmung erstellt.",
+  "infoFightUpdated": "Spiel aktualisiert.",
+  "infoDuelFinished": "Duell beendet!",
+  "infoRoleDeleted": "Rolle gelöscht!",
+  "infoRoleStored": "Rolle gespeichert.",
+  "infoMemberDeleted": "Mitglied gelöscht!",
+  "infoMemberStored": "Mitglied gespeichert.",
+  "infoTeamsAdded": "Mannschaften gespeichert.",
+  "infoTeamDeleted": "Team gelöscht!",
+  "infoTeamStored": "Team gespeichert.",
+  "infoTeamUpdated": "Team aktualisiert."
 }
 
 

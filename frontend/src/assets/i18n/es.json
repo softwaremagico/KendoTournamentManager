@@ -520,7 +520,20 @@
   "participantDelete": "Eliminar Participante",
   "infoParticipantStored": "El participante ha sido guardado.",
   "infoParticipantUpdated": "El participante ha sido actualizado.",
-  "infoParticipantDeleted": "¡El participante ha sido borrado!"
+  "infoParticipantDeleted": "¡El participante ha sido borrado!",
+  "infoFaultUpdated": "Falta actualizada.",
+  "infoScoreUpdated": "Puntuación actualizada.",
+  "infoFightCreated": "Partido creado.",
+  "infoFightUpdated": "Partido actualizado.",
+  "infoDuelFinished": "¡Duelo acabado!",
+  "infoRoleDeleted": "¡Rol borrado!",
+  "infoRoleStored": "Rol guardado.",
+  "infoMemberDeleted": "¡Miembro deleted!",
+  "infoMemberStored": "Miembro guardado.",
+  "infoTeamsAdded": "Equipo guardado.",
+  "infoTeamDeleted": "¡Equipo borrado!",
+  "infoTeamStored": "Equipo guardado.",
+  "infoTeamUpdated": "Equipo actualizado."
 }
 
 
