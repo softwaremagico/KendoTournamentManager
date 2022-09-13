@@ -322,7 +322,6 @@
   "storeCompetitorError": "Error mentre s'intentaba enmagatzemar un competidor a la base de dades.",
   "imageTooLarge": "La imatge és massa gran per a guardar-se a la base de dades (deu de ser menor que 1MB).",
   "storeTournamentError": "Error mentre s'intentava enmagatzemar un campiontat a la base de dades.",
-  "tournamentDeleteQuestion": "Va a eliminar-se el campionat seleccionat. Desitja continuar?",
   "tournamentDeleted": "S'ha eliminat el campionat!",
   "storeRefereeError": "Error mentre s'intentava enmagatzemar un àbitre a la base de dades.",
   "storeTeamError": "Error mentre s'intentava enmagatzemar un equip a la base de dades.",
@@ -483,7 +482,15 @@
   "paginatorPreviousPage": "Pàgina anterior",
   "paginatorFirstPage": "Primera pàgina",
   "paginatorLastPage": "Última pàgina",
-  "paginatorOf": "de"
+  "paginatorOf": "de",
+  "tournamentName": "Nom del Torneig",
+  "tournamentShiaijos": "Nombre de Shiaijos",
+  "tournamentTeamSize": "Grandària de l'Equip",
+  "tournamentDuelsDurations": "Durada dels Duels",
+  "tournamentAdd": "Afegeix un Torneig",
+  "tournamentEdit": "Edita el Torneig",
+  "tournamentDelete": "Suprimeix el Torneig",
+  "tournamentDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?"
 }
 
 

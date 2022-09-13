@@ -1,10 +1,10 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-    <input placeholder="Tournament Name" matInput [(ngModel)]="tournament.name">
+    <input placeholder="{{'tournamentName' | translate}}" matInput [(ngModel)]="tournament.name">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <mat-label>Tournament Type</mat-label>
+    <mat-label>{{'tournamentType' | translate}}</mat-label>
     <mat-select [(value)]="tournament.type">
       <mat-option *ngFor="let type of tournamentType" [value]="type">
         {{type.toLowerCase() | translate}}
@@ -12,10 +12,10 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Number of Shiaijos" matInput [(ngModel)]="tournament.shiaijos">
+    <input placeholder="{{'tournamentShiaijos' | translate}}" matInput [(ngModel)]="tournament.shiaijos">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="Tournament Team Size" matInput [(ngModel)]="tournament.teamSize">
+    <input placeholder="{{'tournamentTeamSize' | translate}}" matInput [(ngModel)]="tournament.teamSize">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{'scoreRules' | translate}}</mat-label>
@@ -26,7 +26,7 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
-    <mat-label>Duels Duration</mat-label>
+    <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
     <mat-select [(value)]="tournament.duelsDuration">
       <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
         {{number}} {{'seconds' | translate}}
@@ -34,7 +34,7 @@
     </mat-select>
   </mat-form-field>
   <ng-template #elseTemplate>
-    Are you sure to delete <strong>{{tournament.name}}</strong>?
+    <span [innerHTML]="'tournamentDeleteQuestion' | translate : {name: tournament.name}"></span>
   </ng-template>
 </div>
 <div mat-dialog-actions class="button-container">

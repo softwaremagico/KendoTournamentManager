@@ -316,7 +316,6 @@
   "storeCompetitorError": "Error mientras se intentaba almacenar un competidor en la base de datos.",
   "imageTooLarge": "La imagen es demasiado grande para guardarse en la base de datos (debe ser menor que 1MB).",
   "storeTournamentError": "Error mientras se intentaba almacenar un campeonato en la base de datos.",
-  "tournamentDeleteQuestion": "Se va a eliminar el campeonato seleccionado. ¿Desea continuar?",
   "tournamentDeleted": "¡Se ha eliminado el campeonato!",
   "storeRefereeError": "Error mientras se intentaba almacenar un árbitro en la base de datos.",
   "storeTeamError": "Error mientras se intentaba almacenar un equipo en la base de datos.",
@@ -488,7 +487,15 @@
   "paginatorPreviousPage": "Página anterior",
   "paginatorFirstPage": "Primera página",
   "paginatorLastPage": "Última página",
-  "paginatorOf": "de"
+  "paginatorOf": "de",
+  "tournamentName": "Nombre del Torneo",
+  "tournamentShiaijos": "Numero de Shiaijos",
+  "tournamentTeamSize": "Tamaño de los Equipos",
+  "tournamentDuelsDurations": "Duración de los combates",
+  "tournamentAdd": "Añadir Tourneo",
+  "tournamentEdit": "Editar Tourneo",
+  "tournamentDelete": "Eliminar Tourneo",
+  "tournamentDeleteQuestion": "¿Estás seguro de eliminar <strong>{{name}}</strong>?"
 }
 
 
