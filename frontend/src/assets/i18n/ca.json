@@ -491,7 +491,31 @@
   "tournamentEdit": "Edita el Torneig",
   "tournamentDelete": "Suprimeix el Torneig",
   "tournamentDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?",
-  "filter": "Filtre"
+  "infoTournamentStored": "S'ha guardat el torneig.",
+  "infoTournamentUpdated": "El torneig s'ha actualitzat.",
+  "infoTournamentDeleted": "S'ha esborrat el torneig!",
+  "filter": "Filtre",
+  "clubName": "Nom",
+  "clubCountry": "País",
+  "clubCity": "Ciutat",
+  "clubAddress": "Adreça",
+  "clubEmail": "Correu Electrònic",
+  "clubPhone": "Telèfon",
+  "clubWeb": "Web",
+  "clubDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?",
+  "clubAdd": "Afegeix un Club Nou",
+  "clubEdit": "Edita el Club",
+  "clubDelete": "Suprimeix el Club",
+  "infoClubStored": "S'ha guardat el club.",
+  "infoClubUpdated": "El club s'ha actualitzat.",
+  "infoClubDeleted": "S'ha esborrat el club!",
+  "participantDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}} {{lastname}}</strong>?",
+  "participantAdd": "Afegeix un Participant Nou",
+  "participantEdit": "Edita el Participant",
+  "participantDelete": "Suprimeix el Participant",
+  "infoParticipantStored": "S'ha guardat el participant.",
+  "infoParticipantUpdated": "El participant s'ha actualitzat.",
+  "infoParticipantDeleted": "S'ha esborrat el participant!"
 }
 
 
