@@ -475,7 +475,15 @@
   "download": "Descarregar",
   "disablePopUpBlocker": "Si us plau, desactiveu el vostre bloquejador de finestres emergents i torneu-ho a provar.",
   "undraw": "Desempatar",
-  "seconds": "segons"
+  "seconds": "segons",
+  "participants": "Participants",
+  "registry": "Registre",
+  "paginatorItemsPerPage": "Elements per pàgina:",
+  "paginatorNextPage": "Pàgina següent",
+  "paginatorPreviousPage": "Pàgina anterior",
+  "paginatorFirstPage": "Primera pàgina",
+  "paginatorLastPage": "Última pàgina",
+  "paginatorOf": "de"
 }
 
 

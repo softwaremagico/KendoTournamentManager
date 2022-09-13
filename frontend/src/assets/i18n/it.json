@@ -469,7 +469,15 @@
   "download": "Scaricare",
   "disablePopUpBlocker": "Disattiva il blocco dei popup e riprova.",
   "undraw": "Spareggiare",
-  "seconds": "secondi"
+  "seconds": "secondi",
+  "participants": "Partecipanti",
+  "registry": "Registro",
+  "paginatorItemsPerPage": "Oggetti per pagina:",
+  "paginatorNextPage": "Pagina successiva",
+  "paginatorPreviousPage": "Pagina precedente",
+  "paginatorFirstPage": "Prima pagina",
+  "paginatorLastPage": "Ultima pagina",
+  "paginatorOf": "de"
 }
 
 

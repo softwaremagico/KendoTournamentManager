@@ -66,7 +66,7 @@
   "ButtonMonitorTournament": "Load Score",
   "ButtonMonitorTreeTournament": "Ranking",
   "RefreshButton": "Refresh",
-  "participants": "Participant",
+  "participants": "Participants",
   "PasswordLabel": "Password",
   "DatabaseLabel": "Database",
   "TournamentLabel": "League",
@@ -244,7 +244,6 @@
   "PointListMenuItemGlobal": "Score list (global)",
   "PointListMenuItemGroup": "Score list (group)",
   "FinishGroupButton": "Finish Championship",
-
   "UsingMultipleComputersTag": "Using one computer per shiaijo.",
   "AddNewFight": "Add a new match",
   "RedTeam": "Red Team",
@@ -491,6 +490,13 @@
   "european": "European",
   "international": "International",
   "custom": "Custom",
-  "scoreRules": "Score Rules"
+  "scoreRules": "Score Rules",
+  "registry": "Registry",
+  "paginatorItemsPerPage": "Items per page:",
+  "paginatorNextPage": "Next page",
+  "paginatorPreviousPage": "Previous page",
+  "paginatorFirstPage": "First page",
+  "paginatorLastPage": "Last page",
+  "paginatorOf": "of"
 }
 
