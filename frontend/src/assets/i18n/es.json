@@ -480,7 +480,15 @@
   "download": "Descargar",
   "disablePopUpBlocker": "Por favor, deshabilite su bloqueador de ventanas emergentes y vuelva a intentarlo.",
   "undraw": "Desempatar",
-  "seconds": "segundos"
+  "seconds": "segundos",
+  "participants": "Participantes",
+  "registry": "Registro",
+  "paginatorItemsPerPage": "Elementos por página:",
+  "paginatorNextPage": "Siguiente página",
+  "paginatorPreviousPage": "Página anterior",
+  "paginatorFirstPage": "Primera página",
+  "paginatorLastPage": "Última página",
+  "paginatorOf": "de"
 }
 
 

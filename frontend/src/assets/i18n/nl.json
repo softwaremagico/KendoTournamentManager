@@ -458,7 +458,15 @@
   "referee": "Scheidsrechters",
   "disablePopUpBlocker": "Schakel uw pop-upblokkering uit en probeer het opnieuw.",
   "undraw": "Tiebreaker",
-  "seconds": "seconden"
+  "seconds": "seconden",
+  "participants": "Deelnemers",
+  "registry": "Registratie",
+  "paginatorItemsPerPage": "Artikelen per pagina:",
+  "paginatorNextPage": "Volgende pagina",
+  "paginatorPreviousPage": "Vorige pagina",
+  "paginatorFirstPage": "Eerste pagina",
+  "paginatorLastPage": "Laatste pagina",
+  "paginatorOf": "van"
 }
 
 
