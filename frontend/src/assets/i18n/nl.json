@@ -498,7 +498,20 @@
   "participantDelete": "Deelnemer Verwijderen",
   "infoParticipantStored": "Het deelnemer is opgeslagen.",
   "infoParticipantUpdated": "Het deelnemer is bijgewerkt.",
-  "infoParticipantDeleted": "Het deelnemer is verwijderd!"
+  "infoParticipantDeleted": "Het deelnemer is verwijderd!",
+  "infoFaultUpdated": "Fout bijgewerkt.",
+  "infoScoreUpdated": "Score bijgewerkt.",
+  "infoFightCreated": "Wedstrijd gemaakt.",
+  "infoFightUpdated": "Wedstrijd bijgewerkt.",
+  "infoDuelFinished": "Duel afgelopen!",
+  "infoRoleDeleted": "Rol verwijderd!",
+  "infoRoleStored": "Rol opgeslagen.",
+  "infoMemberDeleted": "Lid verwijderd!",
+  "infoMemberStored": "Lid opgeslagen.",
+  "infoTeamsAdded": "Teams opgeslagen.",
+  "infoTeamDeleted": "Team verwijderd!",
+  "infoTeamStored": "Team opgeslagen.",
+  "infoTeamUpdated": "Team bijgewerkt."
 }
 
 
