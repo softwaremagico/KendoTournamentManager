@@ -10,7 +10,7 @@ ENV TZ=Europe/Madrid
 RUN apk add --no-cache curl tzdata && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN mkdir -p /${HTML_ROOT_FOLDER}
+RUN mkdir -p /${HTML_ROOT_FOLDER}/errors
 
 # Download code
 RUN apk --no-cache add supervisor openssl curl unzip && \
@@ -23,14 +23,15 @@ RUN apk --no-cache add supervisor openssl curl unzip && \
     rm kendo-tournament-frontend-docker.zip && \
     apk del openssl
 
+COPY files/404/* ${HTML_ROOT_FOLDER}/errors/
+
 EXPOSE 4200
 
 COPY config/servers.conf  /etc/nginx/conf.d/default.conf
 
 #Update Root Folder
-RUN sed -i "s|ROOT_FOLDER|${HTML_ROOT_FOLDER}|g" /etc/nginx/conf.d/default.conf
-
-RUN sed -i "s|MACHINE_DOMAIN|${machine_domain}|g" ${HTML_ROOT_FOLDER}/main.*.js
+RUN sed -i "s|ROOT_FOLDER|${HTML_ROOT_FOLDER}|g" /etc/nginx/conf.d/default.conf && \
+    sed -i "s|MACHINE_DOMAIN|${machine_domain}|g" ${HTML_ROOT_FOLDER}/main.*.js
 
 #Working in the app directory
 WORKDIR ${HTML_ROOT_FOLDER}
