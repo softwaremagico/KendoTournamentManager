@@ -3,6 +3,7 @@ version: '3.9'
 
 volumes:
   kendo-tournament-database:
+  rproxy-settings:
 
 
 networks:
@@ -29,6 +30,7 @@ services:
     #      - "80:80"    # Enable this if you are using certbot as a docker container.
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
+      - rproxy-settings:/etc/nginx/conf.d
     container_name: kendo-tournament-rproxy
     hostname: kendo-tournament-rproxy
     depends_on:
