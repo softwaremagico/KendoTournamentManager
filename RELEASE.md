@@ -1,7 +1,7 @@
 # Create the frontend file.
 
 ```
-ng build --configuration docker
+ng build --configuration docker --output-hashing=all
 ```
 
 And in folder `frontend/dist` zip the content of the folder `frontend` as `kendo-tournament-frontend-docker.zip`.

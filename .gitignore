@@ -20,3 +20,4 @@ release.properties
 *.jar
 *.iml
 default_data.sql
+*.bak
