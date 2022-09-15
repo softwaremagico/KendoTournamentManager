@@ -3,7 +3,6 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
-    filter: hue-rotate(220deg) saturate(5);
     font-family: Montreal, sans-serif;
 }
 
