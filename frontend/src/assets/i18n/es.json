@@ -75,7 +75,7 @@
   "RoleLabel": "Rol",
   "AccreditationPDFButton": "Acreditación",
   "FileMenu": "Archivo",
-  "LanguageMenu": "Idioma",
+  "language": "Idioma",
   "OptionsMenu": "Opciones",
   "StatisticsMenu": "Gráficas",
   "InsertMenu": "Insertar",
@@ -533,7 +533,9 @@
   "infoTeamsAdded": "Equipo guardado.",
   "infoTeamDeleted": "¡Equipo borrado!",
   "infoTeamStored": "Equipo guardado.",
-  "infoTeamUpdated": "Equipo actualizado."
+  "infoTeamUpdated": "Equipo actualizado.",
+  "administration": "Administración",
+  "settings": "Ajustes"
 }
 
 
