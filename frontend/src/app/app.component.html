@@ -21,8 +21,8 @@
           <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
         </a>
         <a mat-button routerLink="/tournaments">
-          <mat-icon svgIcon="men" class="kendo-icon"></mat-icon>
-          <span class="upper-menu-title">{{'tournaments' | translate}}</span>
+          <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
+          <span class="upper-menu-title">{{'competitions' | translate}}</span>
         </a>
         <a mat-button (click)="toggleMenu('Admin')">
           <mat-icon>admin_panel_settings</mat-icon>
@@ -82,38 +82,41 @@
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>
             <mat-icon>edit_note</mat-icon>
-            {{'registry' | translate}}
+            <span class="left-menu-selector-entry">{{'registry' | translate}}</span>
           </mat-expansion-panel-header>
           <mat-nav-list dense>
             <a mat-list-item routerLink="/clubs">
               <mat-icon>home</mat-icon>
-              {{'clubs' | translate}}</a>
-            <a mat-list-item routerLink="#">
+              <span class="left-menu-single-entry">{{'clubs' | translate}}</span>
+            </a>
+            <a mat-list-item routerLink="/participants">
               <mat-icon>people</mat-icon>
-              {{'participants' | translate}}</a>
+              <span class="left-menu-single-entry">{{'participants' | translate}}</span>
+            </a>
           </mat-nav-list>
         </mat-expansion-panel>
         <mat-list-item routerLink="/tournaments">
-          <mat-icon svgIcon="men" class="kendo-icon"></mat-icon>
-          {{'tournaments' | translate}}</mat-list-item>
+          <mat-icon svgIcon="teams-classification" class="left-kendo-icon"></mat-icon>
+          <span class="left-menu-single-entry">{{'competitions' | translate}}</span>
+        </mat-list-item>
         <!***REMOVED***       <mat-list-item routerLink="/reports">-->
         <!***REMOVED***         <mat-icon>dashboard</mat-icon>-->
         <!***REMOVED***         {{'reports' | translate}}</mat-list-item>-->
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>
             <mat-icon>admin_panel_settings</mat-icon>
-            {{'administration' | translate}}
+            <span class="left-menu-selector-entry">{{'administration' | translate}}</span>
           </mat-expansion-panel-header>
         </mat-expansion-panel>
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>
             <mat-icon>settings</mat-icon>
-            {{'settings' | translate}}
+            <span class="left-menu-selector-entry">{{'settings' | translate}}</span>
           </mat-expansion-panel-header>
           <mat-nav-list dense>
-            <a mat-button [matMenuTriggerFor]="languageMenu">
+            <a mat-list-item [matMenuTriggerFor]="languageMenu">
               <mat-icon>flag</mat-icon>
-              {{'language' | translate}}
+              <span class="left-menu-single-entry">{{'language' | translate}}</span>
             </a>
             <mat-menu #languageMenu="matMenu">
               <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">

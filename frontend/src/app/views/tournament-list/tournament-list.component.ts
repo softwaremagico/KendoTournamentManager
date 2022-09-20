@@ -61,18 +61,18 @@ export class TournamentListComponent implements OnInit {
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
     tournament.teamSize = Tournament.DEFAULT_TEAM_SIZE;
-    this.openDialog(this.translateService.instant('tournamentAdd'), Action.Add, tournament);
+    this.openDialog(this.translateService.instant('competitionAdd'), Action.Add, tournament);
   }
 
   editElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('tournamentEdit'), Action.Update, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.instant('competitionEdit'), Action.Update, this.basicTableData.selectedElement);
     }
   }
 
   deleteElement(): void {
     if (this.basicTableData.selectedElement) {
-      this.openDialog(this.translateService.instant('tournamentDelete'), Action.Delete, this.basicTableData.selectedElement);
+      this.openDialog(this.translateService.instant('competitionDelete'), Action.Delete, this.basicTableData.selectedElement);
     }
   }
 

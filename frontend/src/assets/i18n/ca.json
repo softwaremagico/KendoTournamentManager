@@ -530,7 +530,13 @@
   "infoTeamStored": "Equip emmagatzemat.",
   "infoTeamUpdated": "Equip actualitzat.",
   "administration": "Administració",
-  "settings": "Ajustaments"
+  "settings": "Ajustaments",
+  "competition": "Competició",
+  "competitions": "Competicions",
+  "competitionAdd": "Afegeix Competició",
+  "competitionEdit": "Edita Competició",
+  "competitionDelete": "Suprimeix la Competició",
+  "competitionName": "Nom de la Competició"
 }
 
 

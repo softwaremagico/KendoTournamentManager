@@ -543,6 +543,12 @@
   "infoTeamStored": "Team stored.",
   "infoTeamUpdated": "Team updated.",
   "administration": "Administration",
-  "settings": "Settings"
+  "settings": "Settings",
+  "competition": "Competition",
+  "competitions": "Competitions",
+  "competitionAdd": "Add Competition",
+  "competitionEdit": "Edit Competition",
+  "competitionDelete": "Delete Competition",
+  "competitionName": "Competition Name"
 }
 
