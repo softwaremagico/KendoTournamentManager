@@ -535,7 +535,13 @@
   "infoTeamStored": "Equipo guardado.",
   "infoTeamUpdated": "Equipo actualizado.",
   "administration": "Administración",
-  "settings": "Ajustes"
+  "settings": "Ajustes",
+  "competition": "Competición",
+  "competitions": "Competiciones",
+  "competitionAdd": "Añadir Competición",
+  "competitionEdit": "Editar Competición",
+  "competitionDelete": "Eliminar la Competición",
+  "competitionName": "Nombre de la Competición"
 }
 
 
