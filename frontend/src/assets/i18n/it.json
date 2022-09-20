@@ -523,8 +523,11 @@
   "infoTeamDeleted": "Squadra eliminata!",
   "infoTeamStored": "Squadra memorizzata.",
   "infoTeamUpdated": "Squadra aggiornata.",
-  "administration": "GEstione",
-  "settings": "Impostazioni"
+  "administration": "Gestione",
+  "settings": "Impostazioni",
+  "competition": "Competizione",
+  "competitions": "Competizioni",
+  "competitionName": "Nome della Competizione"
 }
 
 
