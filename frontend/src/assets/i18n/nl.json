@@ -513,7 +513,13 @@
   "infoTeamStored": "Team opgeslagen.",
   "infoTeamUpdated": "Team bijgewerkt.",
   "administration": "Administratie",
-  "settings": "Instellingen"
+  "settings": "Instellingen",
+  "competition": "Wedstrijd",
+  "competitions": "Wedstrijden",
+  "competitionAdd": "Wedstrijd Toevoegen",
+  "competitionEdit": "Wedstrijd Bewerken",
+  "competitionDelete": "Wedstrijd Verwijderen",
+  "competitionName": "Wedstrijden naam"
 }
 
 

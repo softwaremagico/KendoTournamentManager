@@ -513,7 +513,13 @@
   "infoTeamStored": "Team gespeichert.",
   "infoTeamUpdated": "Team aktualisiert.",
   "administration": "Verwaltung",
-  "settings": "Einstellungen"
+  "settings": "Einstellungen",
+  "competition": "Wettbewerb",
+  "competitions": "Wettbewerbs",
+  "competitionAdd": "Wettbewerb Hinzufügen",
+  "competitionEdit": "Wettbewerb Bearbeiten",
+  "competitionDelete": "Wettbewerb Löschent",
+  "competitionName": "Wettbewerbname"
 }
 
 

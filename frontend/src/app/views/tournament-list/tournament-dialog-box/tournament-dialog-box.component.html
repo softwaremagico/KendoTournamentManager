@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-    <input placeholder="{{'tournamentName' | translate}}" matInput [(ngModel)]="tournament.name">
+    <input placeholder="{{'competitionName' | translate}}" matInput [(ngModel)]="tournament.name">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{'tournamentType' | translate}}</mat-label>
