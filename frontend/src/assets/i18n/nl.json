@@ -79,7 +79,7 @@
   "RoleLabel": "Rol",
   "AccreditationPDFButton": "Bewijs van deelname",
   "FileMenu": "Bestand",
-  "LanguageMenu": "Taal",
+  "language": "Taal",
   "OptionsMenu": "Opties",
   "StatisticsMenu": "Grafieken",
   "InsertMenu": "Invoegen",
@@ -511,7 +511,9 @@
   "infoTeamsAdded": "Teams opgeslagen.",
   "infoTeamDeleted": "Team verwijderd!",
   "infoTeamStored": "Team opgeslagen.",
-  "infoTeamUpdated": "Team bijgewerkt."
+  "infoTeamUpdated": "Team bijgewerkt.",
+  "administration": "Administratie",
+  "settings": "Instellingen"
 }
 
 
