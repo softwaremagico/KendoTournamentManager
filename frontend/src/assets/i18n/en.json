@@ -74,7 +74,7 @@
   "RoleLabel": "Role",
   "AccreditationPDFButton": "Accreditation",
   "FileMenu": "File",
-  "LanguageMenu": "Language",
+  "language": "Language",
   "OptionsMenu": "Options",
   "StatisticsMenu": "Graphics",
   "InsertMenu": "Insert",
@@ -541,6 +541,8 @@
   "infoTeamsAdded": "Teams stored.",
   "infoTeamDeleted": "Team deleted!",
   "infoTeamStored": "Team stored.",
-  "infoTeamUpdated": "Team updated."
+  "infoTeamUpdated": "Team updated.",
+  "administration": "Administration",
+  "settings": "Settings"
 }
 

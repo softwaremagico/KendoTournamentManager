@@ -81,7 +81,7 @@
   "RoleLabel": "Rol",
   "AccreditationPDFButton": "Acreditació",
   "FileMenu": "Arxiu",
-  "LanguageMenu": "Idioma",
+  "language": "Idioma",
   "OptionsMenu": "Opcions",
   "StatisticsMenu": "Gráfiques",
   "InsertMenu": "Inserir",
@@ -528,7 +528,9 @@
   "infoTeamsAdded": "S'han guardat els equips.",
   "infoTeamDeleted": "Equip suprimit!",
   "infoTeamStored": "Equip emmagatzemat.",
-  "infoTeamUpdated": "Equip actualitzat."
+  "infoTeamUpdated": "Equip actualitzat.",
+  "administration": "Administració",
+  "settings": "Ajustaments"
 }
 
 

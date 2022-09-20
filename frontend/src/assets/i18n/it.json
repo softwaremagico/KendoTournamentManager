@@ -79,7 +79,7 @@
   "RoleLabel": "Ruolo",
   "AccreditationPDFButton": "Accreditamento",
   "FileMenu": "File",
-  "LanguageMenu": "Lingua",
+  "language": "Lingua",
   "OptionsMenu": "Opzioni",
   "StatisticsMenu": "Grafica",
   "InsertMenu": "Inserire",
@@ -522,7 +522,9 @@
   "infoTeamsAdded": "Squadre archiviate.",
   "infoTeamDeleted": "Squadra eliminata!",
   "infoTeamStored": "Squadra memorizzata.",
-  "infoTeamUpdated": "Squadra aggiornata."
+  "infoTeamUpdated": "Squadra aggiornata.",
+  "administration": "GEstione",
+  "settings": "Impostazioni"
 }
 
 

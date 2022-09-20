@@ -79,7 +79,7 @@
   "RoleLabel": "Rolle",
   "AccreditationPDFButton": "Akkreditierung",
   "FileMenu": "Datei",
-  "LanguageMenu": "Sprache",
+  "language": "Sprache",
   "OptionsMenu": "Optionen",
   "StatisticsMenu": "Grafiken",
   "InsertMenu": "Einfügen",
@@ -511,7 +511,9 @@
   "infoTeamsAdded": "Mannschaften gespeichert.",
   "infoTeamDeleted": "Team gelöscht!",
   "infoTeamStored": "Team gespeichert.",
-  "infoTeamUpdated": "Team aktualisiert."
+  "infoTeamUpdated": "Team aktualisiert.",
+  "administration": "Verwaltung",
+  "settings": "Einstellungen"
 }
 
 

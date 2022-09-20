@@ -35,7 +35,7 @@ a {
   padding: 0 14px;
 }
 
-.example-spacer {
+.menu-spacer {
   flex: 1 1 auto;
 }
 
@@ -76,10 +76,13 @@ a {
   .app-title {
     display: none !important;
   }
+  .upper-menu-title {
+    display: none !important;
+  }
 }
 
 @media screen and (min-width: 1200px) {
-  .app-title-red {
+  .app-title-reduced {
     display: none !important;
   }
 }
