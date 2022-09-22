@@ -536,7 +536,17 @@
   "competitionAdd": "Afegeix Competició",
   "competitionEdit": "Edita Competició",
   "competitionDelete": "Suprimeix la Competició",
-  "competitionName": "Nom de la Competició"
+  "competitionName": "Nom de la Competició",
+  "users": "Usuaris",
+  "username": "Nom d'Usuari",
+  "fullName": "Nom Complet",
+  "authenticatedUserDeleteQuestion": "Esteu segur que suprimiu <strong>{{username}}</strong>?",
+  "authenticatedUserAdd": "Afegeix un usuari nou",
+  "authenticatedUserEdit": "Edita usuari",
+  "authenticatedUserDelete": "Suprimeix l'usuari",
+  "infoAuthenticatedUserStored": "S'ha guardat l'usuari.",
+  "infoAuthenticatedUserUpdated": "L'usuari ha estat actualitzat.",
+  "infoAuthenticatedUserDeleted": "L'usuari ha estat esborrat!"
 }
 
 
