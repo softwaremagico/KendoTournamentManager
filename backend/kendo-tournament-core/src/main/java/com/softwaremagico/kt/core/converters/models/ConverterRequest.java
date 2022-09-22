@@ -34,6 +34,10 @@ public class ConverterRequest<T> {
 
     protected T entity;
 
+    public boolean hasEntity() {
+        return entity != null;
+    }
+
     public T getEntity() {
         if (entity == null) {
             throw new UnexpectedValueException(this.getClass(), "Entity could not be converted into a proper object.", ExceptionType.WARNING);

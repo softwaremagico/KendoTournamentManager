@@ -32,6 +32,15 @@ import java.util.stream.Collectors;
 
 public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> implements IElementConverter<F, T, R> {
 
+    protected abstract T convertElement(R from);
+
+    public T convert(R from) {
+        if (from == null || !from.hasEntity()) {
+            return null;
+        }
+        return convertElement(from);
+    }
+
     @Override
     public List<T> convertAll(Collection<R> from) {
         return from.stream().map(this::convert).collect(Collectors.toList());
