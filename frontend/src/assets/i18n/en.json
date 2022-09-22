@@ -549,6 +549,16 @@
   "competitionAdd": "Add Competition",
   "competitionEdit": "Edit Competition",
   "competitionDelete": "Delete Competition",
-  "competitionName": "Competition Name"
+  "competitionName": "Competition Name",
+  "users": "Users",
+  "username": "Username",
+  "fullName": "Full Name",
+  "authenticatedUserDeleteQuestion": "Are you sure to delete <strong>{{username}}</strong>?",
+  "authenticatedUserAdd": "Add a New User",
+  "authenticatedUserEdit": "Edit User",
+  "authenticatedUserDelete": "Delete User",
+  "infoAuthenticatedUserStored": "The user has been stored.",
+  "infoAuthenticatedUserUpdated": "The user has been updated.",
+  "infoAuthenticatedUserDeleted": "The user has been deleted!"
 }
 

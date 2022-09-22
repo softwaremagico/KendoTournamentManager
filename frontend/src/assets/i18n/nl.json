@@ -519,7 +519,17 @@
   "competitionAdd": "Wedstrijd Toevoegen",
   "competitionEdit": "Wedstrijd Bewerken",
   "competitionDelete": "Wedstrijd Verwijderen",
-  "competitionName": "Wedstrijden naam"
+  "competitionName": "Wedstrijden naam",
+  "users": "Gebruikers",
+  "username": "Gebruikersnaam",
+  "fullName": "Voor-en Achternaam",
+  "authenticatedUserDeleteQuestion": "Weet je zeker dat je <strong>{{username}}</strong> wilt verwijderen?",
+  "authenticatedUserAdd": "Voeg Gebruiker Toe",
+  "authenticatedUserEdit": "Bewerk Gebruiker",
+  "authenticatedUserDelete": "Verwijder Gebruiker",
+  "infoAuthenticatedUserStored": "De gebruiker is opgeslagen.",
+  "infoAuthenticatedUserUpdated": "De gebruiker is bijgewerkt.",
+  "infoAuthenticatedUserDeleted": "De gebruiker is verwijderd!"
 }
 
 

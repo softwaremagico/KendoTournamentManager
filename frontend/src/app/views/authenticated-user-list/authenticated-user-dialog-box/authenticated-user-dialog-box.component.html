@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
+    <input placeholder="{{'username' | translate}}" matInput [(ngModel)]="authenticatedUser.username">
+  </mat-form-field>
+  <mat-form-field *ngIf="actionName != 'Delete'">
+    <input placeholder="{{'fullName' | translate}}" matInput [(ngModel)]="authenticatedUser.fullName">
+  </mat-form-field>
+  <ng-template #elseTemplate>
+    <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {name: authenticatedUser.username}"></span>
+  </ng-template>
+</div>
+<div mat-dialog-actions class="button-container">
+  <button mat-raised-button (click)="doAction()" mat-flat-button color="primary">{{actionName.toLowerCase() | translate}}</button>
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
+</div>

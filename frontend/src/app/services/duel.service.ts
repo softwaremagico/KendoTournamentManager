@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
-import {AuthenticatedUserService} from "./authenticated-user.service";
+import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Duel} from "../models/duel";
@@ -16,13 +16,13 @@ export class DuelService {
   private baseUrl = this.environmentService.getBackendUrl() + '/duels';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService) {
+              private loggerService: LoggerService, public loginService: LoginService) {
 
   }
 
   update(duel: Duel): Observable<Duel> {
     const url: string = `${this.baseUrl}/fights`;
-    return this.http.put<Duel>(url, duel, this.authenticatedUserService.httpOptions)
+    return this.http.put<Duel>(url, duel, this.loginService.httpOptions)
       .pipe(
         tap((_updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
         catchError(this.messageService.handleError<Duel>(`updating duel`))
@@ -31,7 +31,7 @@ export class DuelService {
 
   getUntiesFromGroup(groupId: number): Observable<Duel[]> {
     const url: string = `${this.baseUrl}/groups/` + groupId + '/unties';
-    return this.http.get<Duel[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Duel[]>(url, this.loginService.httpOptions)
       .pipe(
         tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from group '` + groupId + `'`)),
         catchError(this.messageService.handleError<Duel[]>(`getting unties from group '` + groupId + `'`))
@@ -40,7 +40,7 @@ export class DuelService {
 
   getUntiesFromTournament(tournamentId: number): Observable<Duel[]> {
     const url: string = `${this.baseUrl}/tournaments/` + tournamentId + '/unties';
-    return this.http.get<Duel[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Duel[]>(url, this.loginService.httpOptions)
       .pipe(
         tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from tournament '` + tournamentId + `'`)),
         catchError(this.messageService.handleError<Duel[]>(`getting unties from tournament '` + tournamentId + `'`))
