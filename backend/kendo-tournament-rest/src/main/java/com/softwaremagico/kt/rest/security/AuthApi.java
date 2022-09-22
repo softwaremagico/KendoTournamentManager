@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Random;
 
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -75,8 +76,14 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
+                try {
+                    Thread.sleep(new Random().nextInt(10) * 1000);
+                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
+                } catch (InterruptedException e) {
+                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
+                }
             }
             //We verify the provided credentials using the authentication manager
             final Authentication authenticate = authenticationManager
