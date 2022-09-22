@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class TournamentScoreConverter extends ElementConverter<TournamentScore, TournamentScoreDTO, TournamentScoreConverterRequest> {
 
     @Override
-    public TournamentScoreDTO convert(TournamentScoreConverterRequest from) {
+    protected TournamentScoreDTO convertElement(TournamentScoreConverterRequest from) {
         final TournamentScoreDTO tournamentScoreDTO = new TournamentScoreDTO();
         BeanUtils.copyProperties(from.getEntity(), tournamentScoreDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         return tournamentScoreDTO;

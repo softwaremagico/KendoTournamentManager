@@ -57,7 +57,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
 
 
     @Override
-    public FightDTO convert(FightConverterRequest from) {
+    protected FightDTO convertElement(FightConverterRequest from) {
         final FightDTO fightDTO = new FightDTO();
         BeanUtils.copyProperties(from.getEntity(), fightDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         fightDTO.setTeam1(teamConverter.convert(

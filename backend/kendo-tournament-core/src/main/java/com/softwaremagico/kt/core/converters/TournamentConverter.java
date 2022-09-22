@@ -44,7 +44,7 @@ public class TournamentConverter extends ElementConverter<Tournament, Tournament
 
 
     @Override
-    public TournamentDTO convert(TournamentConverterRequest from) {
+    protected TournamentDTO convertElement(TournamentConverterRequest from) {
         final TournamentDTO tournamentDTO = new TournamentDTO();
         BeanUtils.copyProperties(from.getEntity(), tournamentDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         try {
