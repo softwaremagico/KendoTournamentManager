@@ -53,7 +53,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
 
 
     @Override
-    public TeamDTO convert(TeamConverterRequest from) {
+    protected TeamDTO convertElement(TeamConverterRequest from) {
         final TeamDTO teamDTO = new TeamDTO();
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
