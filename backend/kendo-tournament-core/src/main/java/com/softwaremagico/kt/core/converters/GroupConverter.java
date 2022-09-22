@@ -50,7 +50,7 @@ public class GroupConverter extends ElementConverter<Group, GroupDTO, GroupConve
 
 
     @Override
-    public GroupDTO convert(GroupConverterRequest from) {
+    protected GroupDTO convertElement(GroupConverterRequest from) {
         final GroupDTO groupDTO = new GroupDTO();
         BeanUtils.copyProperties(from.getEntity(), groupDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         groupDTO.setTournament(tournamentConverter.convert(
