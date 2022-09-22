@@ -43,10 +43,7 @@ public class ParticipantConverter extends ElementConverter<Participant, Particip
 
 
     @Override
-    public ParticipantDTO convert(ParticipantConverterRequest from) {
-        if (from == null || from.getEntity() == null) {
-            return null;
-        }
+    protected ParticipantDTO convertElement(ParticipantConverterRequest from) {
         final ParticipantDTO participantDTO = new ParticipantDTO();
         BeanUtils.copyProperties(from.getEntity(), participantDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         participantDTO.setClub(clubConverter.convert(new ClubConverterRequest(from.getEntity().getClub())));
