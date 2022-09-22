@@ -74,6 +74,15 @@
           {{language}}</a>
       </div>
     </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="selectedRow === 'Admin'" class="toolbar-submenu">
+      <span class="menu-spacer"></span>
+      <div fxShow="true" fxHide.lt-md="true">
+        <a mat-button routerLink="/users">
+          <mat-icon>person</mat-icon>
+          <span class="upper-menu-title">{{'users' | translate}}</span>
+        </a>
+      </div>
+    </mat-toolbar-row>
   </mat-toolbar>
 
   <mat-sidenav-container fxFlexFill>
@@ -107,6 +116,12 @@
             <mat-icon>admin_panel_settings</mat-icon>
             <span class="left-menu-selector-entry">{{'administration' | translate}}</span>
           </mat-expansion-panel-header>
+          <mat-nav-list dense>
+            <a mat-list-item routerLink="/users">
+              <mat-icon>person</mat-icon>
+              <span class="left-menu-single-entry">{{'users' | translate}}</span>
+            </a>
+          </mat-nav-list>
         </mat-expansion-panel>
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>

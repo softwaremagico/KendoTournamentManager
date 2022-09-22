@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
-import {AuthenticatedUserService} from "./authenticated-user.service";
+import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {Team} from "../models/team";
 import {catchError, tap} from "rxjs/operators";
@@ -19,13 +19,13 @@ export class TeamService {
   private baseUrl = this.environmentService.getBackendUrl() + '/teams';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private loggerService: LoggerService, public loginService: LoginService,
               private systemOverloadService: SystemOverloadService) {
   }
 
   getAll(): Observable<Team[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Team[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Team[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all teams`),
@@ -38,7 +38,7 @@ export class TeamService {
 
   get(id: number): Observable<Team> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Team>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Team>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched team id=${id}`),
@@ -51,7 +51,7 @@ export class TeamService {
 
   getFromTournament(tournament: Tournament): Observable<Team[]> {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
-    return this.http.get<Team[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Team[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched teams from tournament ${tournament.name}`),
@@ -64,7 +64,7 @@ export class TeamService {
 
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.delete<number>(url, this.authenticatedUserService.httpOptions)
+    return this.http.delete<number>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting team id=${id}`),
@@ -77,7 +77,7 @@ export class TeamService {
 
   delete(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Team>(url, team, this.authenticatedUserService.httpOptions)
+    return this.http.post<Team>(url, team, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting team ${team}`),
@@ -93,7 +93,7 @@ export class TeamService {
     return this.http.post<Team>(url, {
       participant: participant,
       tournament: tournament
-    }, this.authenticatedUserService.httpOptions)
+    }, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting member ${participant} on ${tournament}`),
@@ -109,7 +109,7 @@ export class TeamService {
     return this.http.post<Team>(url, {
       participants: participants,
       tournament: tournament
-    }, this.authenticatedUserService.httpOptions)
+    }, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting members ${participants} on ${tournament}`),
@@ -122,7 +122,7 @@ export class TeamService {
 
   deleteByTournament(tournament: Tournament): Observable<Team> {
     const url: string = `${this.baseUrl}/delete/tournaments`;
-    return this.http.post<Team>(url, {tournament: tournament}, this.authenticatedUserService.httpOptions)
+    return this.http.post<Team>(url, {tournament: tournament}, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting teams on ${tournament}`),
@@ -135,7 +135,7 @@ export class TeamService {
 
   add(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Team>(url, team, this.authenticatedUserService.httpOptions)
+    return this.http.post<Team>(url, team, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (newTeam: Team) => this.loggerService.info(`adding team ${newTeam.name}`),
@@ -149,7 +149,7 @@ export class TeamService {
   setAll(teams: Team[]): Observable<Team[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/set`;
-    return this.http.post<Team[]>(url, teams, this.authenticatedUserService.httpOptions)
+    return this.http.post<Team[]>(url, teams, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (newTeam: Team[]) => this.loggerService.info(`adding ` + teams.length + "` teams.`"),
@@ -162,7 +162,7 @@ export class TeamService {
 
   update(team: Team): Observable<Team> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Team>(url, team, this.authenticatedUserService.httpOptions)
+    return this.http.put<Team>(url, team, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (updatedTeam: Team) => this.loggerService.info(`updating team ${updatedTeam}`),

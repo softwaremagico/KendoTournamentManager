@@ -59,6 +59,8 @@ public class AuthApi {
     private final AuthenticatedUserController authenticatedUserController;
     private final BruteForceService bruteForceService;
 
+    private final Random random = new Random();
+
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService) {
@@ -77,7 +79,7 @@ public class AuthApi {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
                 try {
-                    Thread.sleep(new Random().nextInt(10) * 1000);
+                    Thread.sleep(random.nextInt(10) * 1000);
                     RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
                     throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
                 } catch (InterruptedException e) {
