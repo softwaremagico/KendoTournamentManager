@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
-import {AuthenticatedUserService} from "./authenticated-user.service";
+import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Group} from "../models/group";
@@ -19,14 +19,14 @@ export class GroupService {
   private baseUrl = this.environmentService.getBackendUrl() + '/groups';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private loggerService: LoggerService, public loginService: LoginService,
               private systemOverloadService: SystemOverloadService) {
 
   }
 
   getAll(): Observable<Group[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Group[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Group[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all groups`),
@@ -39,7 +39,7 @@ export class GroupService {
 
   update(group: Group): Observable<Group> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Group>(url, group, this.authenticatedUserService.httpOptions)
+    return this.http.put<Group>(url, group, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (updatedGroup: Group) => this.loggerService.info(`updating group '${updatedGroup}'`),
@@ -52,7 +52,7 @@ export class GroupService {
 
   getAllByTournament(tournamentId: number): Observable<Group[]> {
     const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId;
-    return this.http.get<Group[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Group[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched groups from tournament ${tournamentId}`),
@@ -65,7 +65,7 @@ export class GroupService {
 
   setTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + '/teams';
-    return this.http.put<Group>(url, teams, this.authenticatedUserService.httpOptions)
+    return this.http.put<Group>(url, teams, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating teams for group ${groupId}`),
@@ -78,7 +78,7 @@ export class GroupService {
 
   setTeams(teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/teams`;
-    return this.http.put<Group>(url, teams, this.authenticatedUserService.httpOptions)
+    return this.http.put<Group>(url, teams, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating teams for default group`),
@@ -91,7 +91,7 @@ export class GroupService {
 
   addUnties(groupId: number, duels: Duel[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + `/unties`;
-    return this.http.put<Group>(url, duels, this.authenticatedUserService.httpOptions)
+    return this.http.put<Group>(url, duels, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating teams for default group`),

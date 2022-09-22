@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
-import {AuthenticatedUserService} from "./services/authenticated-user.service";
+import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./guards/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
 
@@ -15,7 +15,7 @@ export class AppComponent {
   loggedIn = false;
   selectedRow: string = '';
 
-  constructor(public translate: TranslateService, public authenticatedUserService: AuthenticatedUserService, public loggedInService: LoggedInService,
+  constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService) {
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');

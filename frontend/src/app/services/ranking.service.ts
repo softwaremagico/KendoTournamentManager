@@ -3,7 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
-import {AuthenticatedUserService} from "./authenticated-user.service";
+import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {ScoreOfTeam} from "../models/score-of-team";
@@ -18,13 +18,13 @@ export class RankingService {
   private baseUrl = this.environmentService.getBackendUrl() + '/rankings';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private loggerService: LoggerService, public loginService: LoginService,
               private systemOverloadService: SystemOverloadService) {
   }
 
   getCompetitorsScoreRankingByGroup(groupId: number): Observable<ScoreOfCompetitor[]> {
     const url: string = `${this.baseUrl}` + '/competitors/group/' + groupId;
-    return this.http.get<ScoreOfCompetitor[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<ScoreOfCompetitor[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
@@ -37,7 +37,7 @@ export class RankingService {
 
   getCompetitorsScoreRankingByTournament(tournamentId: number): Observable<ScoreOfCompetitor[]> {
     const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId;
-    return this.http.get<ScoreOfCompetitor[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<ScoreOfCompetitor[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
@@ -53,7 +53,7 @@ export class RankingService {
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
       })
     }).pipe(
       tap({
@@ -67,7 +67,7 @@ export class RankingService {
 
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
     const url: string = `${this.baseUrl}` + '/teams/group/' + groupId;
-    return this.http.get<ScoreOfTeam[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<ScoreOfTeam[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting teams ranking`),
@@ -80,7 +80,7 @@ export class RankingService {
 
   getTeamsScoreRankingByTournament(tournamentId: number): Observable<ScoreOfTeam[]> {
     const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId;
-    return this.http.get<ScoreOfTeam[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<ScoreOfTeam[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting teams ranking`),
@@ -96,7 +96,7 @@ export class RankingService {
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
       })
     }).pipe(
       tap({
@@ -113,7 +113,7 @@ export class RankingService {
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.authenticatedUserService.getJwtValue()
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
       })
     }).pipe(
       tap({

@@ -527,7 +527,17 @@
   "settings": "Impostazioni",
   "competition": "Competizione",
   "competitions": "Competizioni",
-  "competitionName": "Nome della Competizione"
+  "competitionName": "Nome della Competizione",
+  "users": "Utenti",
+  "username": "Nome Utente",
+  "fullName": "Nome e Cognome",
+  "authenticatedUserDeleteQuestion": "Sei sicuro di eliminare <strong>{{username}}</strong>?",
+  "authenticatedUserAdd": "Aggiungi un Nuovo Utente",
+  "authenticatedUserEdit": "Modifica Utente",
+  "authenticatedUserDelete": "Elimina Utente",
+  "infoAuthenticatedUserStored": "L'utente è stato memorizzato.",
+  "infoAuthenticatedUserUpdated": "L'utente è stato aggiornato.",
+  "infoAuthenticatedUserDeleted": "L'utente è stato cancellato!"
 }
 
 

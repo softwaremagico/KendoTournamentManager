@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import {AuthenticatedUserService} from "../services/authenticated-user.service";
+import {LoginService} from "../services/login.service";
 import {BehaviorSubject} from "rxjs";
 
 @Injectable({
@@ -10,11 +10,11 @@ export class LoggedInService implements CanActivate {
 
   public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(private router: Router, public authenticatedUserService: AuthenticatedUserService) {
+  constructor(private router: Router, public loginService: LoginService) {
   }
 
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authenticatedUserService.getJwtValue()) {
+    if (this.loginService.getJwtValue()) {
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
       return true;
