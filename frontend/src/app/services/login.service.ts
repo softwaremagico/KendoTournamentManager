@@ -1,17 +1,20 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
+import {catchError, map, tap} from "rxjs/operators";
 import {CookieService} from "ngx-cookie-service";
 
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
+import {SystemOverloadService} from "./notifications/system-overload.service";
+import {LoggerService} from "./logger.service";
+import {MessageService} from "./message.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticatedUserService {
+export class LoginService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/auth/public';
 

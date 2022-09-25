@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
-import {AuthenticatedUserService} from "./authenticated-user.service";
+import {LoginService} from "./login.service";
 import {Log} from "./models/log";
 import {catchError} from "rxjs/operators";
 import {Observable, of} from "rxjs";
@@ -13,7 +13,7 @@ export class LoggerService {
 
   private baseUrl = this.environmentService.getBackendUrl() + '/logger';
 
-  constructor(private http: HttpClient, private environmentService: EnvironmentService, public authenticatedUserService: AuthenticatedUserService) {
+  constructor(private http: HttpClient, private environmentService: EnvironmentService, public loginService: LoginService) {
   }
 
   info(message: string) {
@@ -26,7 +26,7 @@ export class LoggerService {
     const url: string = `${this.baseUrl}/info`;
 
     console.log(log.message);
-    return this.http.post(url, log, this.authenticatedUserService.httpOptions).pipe(
+    return this.http.post(url, log, this.loginService.httpOptions).pipe(
       catchError(this.handleErrorConsole('sendInfo'))
     ).subscribe();
   }
@@ -39,7 +39,7 @@ export class LoggerService {
 
   sendWarning(log: Log) {
     const url: string = `${this.baseUrl}/warning`;
-    return this.http.post(url, log, this.authenticatedUserService.httpOptions).pipe(
+    return this.http.post(url, log, this.loginService.httpOptions).pipe(
       catchError(this.handleErrorConsole('sendWarning'))
     ).subscribe();
   }
@@ -52,7 +52,7 @@ export class LoggerService {
 
   sendError(log: Log) {
     const url: string = `${this.baseUrl}/error`;
-    return this.http.post(url, log, this.authenticatedUserService.httpOptions).pipe(
+    return this.http.post(url, log, this.loginService.httpOptions).pipe(
       catchError(this.handleErrorConsole('sendError'))
     ).subscribe();
   }

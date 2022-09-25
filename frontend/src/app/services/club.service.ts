@@ -4,7 +4,7 @@ import {EnvironmentService} from "../environment.service";
 import {catchError, tap} from 'rxjs/operators';
 import {Observable} from "rxjs";
 import {Club} from "../models/club";
-import {AuthenticatedUserService} from "./authenticated-user.service";
+import {LoginService} from "./login.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
@@ -18,13 +18,13 @@ export class ClubService {
   private baseUrl = this.environmentService.getBackendUrl() + '/clubs';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
-              private loggerService: LoggerService, public authenticatedUserService: AuthenticatedUserService,
+              private loggerService: LoggerService, public loginService: LoginService,
               private systemOverloadService: SystemOverloadService) {
   }
 
   getAll(): Observable<Club[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Club[]>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Club[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all clubs`),
@@ -37,7 +37,7 @@ export class ClubService {
 
   get(id: number): Observable<Club> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Club>(url, this.authenticatedUserService.httpOptions)
+    return this.http.get<Club>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched club id=${id}`),
@@ -50,7 +50,7 @@ export class ClubService {
 
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.delete<number>(url, this.authenticatedUserService.httpOptions)
+    return this.http.delete<number>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting club id=${id}`),
@@ -63,7 +63,7 @@ export class ClubService {
 
   delete(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Club>(url, club, this.authenticatedUserService.httpOptions)
+    return this.http.post<Club>(url, club, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting club ${club}`),
@@ -76,7 +76,7 @@ export class ClubService {
 
   add(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Club>(url, club, this.authenticatedUserService.httpOptions)
+    return this.http.post<Club>(url, club, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (newClub: Club) => this.loggerService.info(`adding club ${newClub}`),
@@ -89,7 +89,7 @@ export class ClubService {
 
   update(club: Club): Observable<Club> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Club>(url, club, this.authenticatedUserService.httpOptions)
+    return this.http.put<Club>(url, club, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (updatedClub: Club) => this.loggerService.info(`updating club ${updatedClub}`),
