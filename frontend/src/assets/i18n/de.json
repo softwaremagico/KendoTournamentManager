@@ -519,7 +519,17 @@
   "competitionAdd": "Wettbewerb Hinzufügen",
   "competitionEdit": "Wettbewerb Bearbeiten",
   "competitionDelete": "Wettbewerb Löschent",
-  "competitionName": "Wettbewerbname"
+  "competitionName": "Wettbewerbname",
+  "users": "Benutzer",
+  "username": "Nutzername",
+  "fullName": "Vollständiger Name",
+  "authenticatedUserDeleteQuestion": "Möchten sie <strong>{{username}} wirklich löschen?",
+  "authenticatedUserAdd": "Nutzer Hinzufügen",
+  "authenticatedUserEdit": "Benutzer Bearbeiten",
+  "authenticatedUserDelete": "Benutzer Löschen",
+  "infoAuthenticatedUserStored": "Der benutzer wurde gespeichert.",
+  "infoAuthenticatedUserUpdated": "Der benutzer wurde aktualisiert.",
+  "infoAuthenticatedUserDeleted": "Der benutzer wurde gelöscht!"
 }
 
 
