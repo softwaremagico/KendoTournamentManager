@@ -541,7 +541,17 @@
   "competitionAdd": "Añadir Competición",
   "competitionEdit": "Editar Competición",
   "competitionDelete": "Eliminar la Competición",
-  "competitionName": "Nombre de la Competición"
+  "competitionName": "Nombre de la Competición",
+  "users": "Usuarios",
+  "username": "Nombre de Usuario",
+  "fullName": "Nombre Completo",
+  "authenticatedUserDeleteQuestion": "¿Estás seguro de eliminar <strong>{{username}}</strong>?",
+  "authenticatedUserAdd": "Añadir un Nuevo Usuario",
+  "authenticatedUserEdit": "Editar Usuario",
+  "authenticatedUserDelete": "Borrar Usuario",
+  "infoAuthenticatedUserStored": "El usuario se ha guardado.",
+  "infoAuthenticatedUserUpdated": "Se ha actualizado el usuario.",
+  "infoAuthenticatedUserDeleted": "¡El usuario ha sido borrado!"
 }
 
 
