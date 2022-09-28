@@ -28,8 +28,11 @@ import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.exceptions.InvalidPasswordException;
+import com.softwaremagico.kt.rest.exceptions.UserNotFoundException;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -51,9 +54,41 @@ public class AuthenticatedUserController {
 
     public AuthenticatedUser createUser(String username, String firstName, String lastName, String password, String... roles) {
         try {
-            return authenticatedUserProvider.createUser(username, firstName, lastName, password, roles);
+            return authenticatedUserProvider.save(username, firstName, lastName, password, roles);
         } catch (DuplicatedUserException e) {
             throw new BadRequestException(this.getClass(), "Username exists!");
+        }
+    }
+
+    public void updatePassword(String username, String oldPassword, String newPassword) {
+        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+
+        //Check old password.
+        if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
+            throw new InvalidPasswordException(this.getClass(), "Provided password is incorrect!");
+        }
+
+        //Update new password.
+        user.setPassword(newPassword);
+        authenticatedUserProvider.save(user);
+    }
+
+    public AuthenticatedUser updateUser(CreateUserRequest createUserRequest) {
+        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
+        user.setName(createUserRequest.getName());
+        user.setLastname(createUserRequest.getLastName());
+        user.setRoles(createUserRequest.getAuthorities());
+        return authenticatedUserProvider.save(user);
+    }
+
+    public void deleteUser(String username) {
+        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+        //Ensure that at least, one user remain.
+        if (authenticatedUserProvider.count() > 1) {
+            authenticatedUserProvider.delete(user);
         }
     }
 
