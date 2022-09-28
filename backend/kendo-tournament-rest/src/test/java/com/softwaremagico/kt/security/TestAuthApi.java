@@ -53,8 +53,7 @@ import java.io.IOException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -63,6 +62,9 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
     private final static String USER_FIRST_NAME = "Test";
     private final static String USER_LAST_NAME = "User";
+
+    private final static String USER_NEW_FIRST_NAME = "New Test";
+    private final static String USER_NEW_LAST_NAME = "New User";
     private static final String USER_PASSWORD = "password";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
@@ -238,5 +240,29 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         System.out.println("------------------------- End Expected Logged Exception -------------------------");
+    }
+
+    @Test(dependsOnMethods = "testJwt")
+    public void testUpdateUser() throws Exception {
+        CreateUserRequest updateRequest = new CreateUserRequest();
+        updateRequest.setUsername(USER_NAME);
+        updateRequest.setName(USER_NEW_FIRST_NAME);
+        updateRequest.setLastName(USER_NEW_LAST_NAME);
+        updateRequest.setPassword(USER_PASSWORD + "wrong");
+
+        MvcResult createResult = this.mockMvc
+                .perform(patch("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(updateRequest))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
+        Assert.assertNotNull(authenticatedUser.getId());
+        Assert.assertEquals(updateRequest.getLastName(), authenticatedUser.getLastname());
+        Assert.assertEquals(updateRequest.getName(), authenticatedUser.getName());
+        Assert.assertNotEquals(updateRequest.getPassword(), authenticatedUser.getPassword());
     }
 }

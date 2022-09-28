@@ -24,7 +24,7 @@ package com.softwaremagico.kt.rest.security.dto;
  * #L%
  */
 
-public class ChangePasswordRequest {
+public class UpdatePasswordRequest {
     private String oldPassword;
 
     private String newPassword;
