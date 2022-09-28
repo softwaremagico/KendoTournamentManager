@@ -13,12 +13,14 @@
                 <include name="bruteForce"/>
                 <include name="restSimpleChampionshipTest"/>
                 <include name="userRegister"/>
+                <include name="passwordTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.security.TestAuthApi"/>
             <class name="com.softwaremagico.kt.security.RestAccessTests"/>
             <class name="com.softwaremagico.kt.security.BruteForceTests"/>
+            <class name="com.softwaremagico.kt.security.PasswordTests"/>
             <class name="com.softwaremagico.kt.rest.DtoToEntity"/>
             <class name="com.softwaremagico.kt.rest.RestSimpleChampionshipTest"/>
             <class name="com.softwaremagico.kt.rest.UserRegisterTests"/>

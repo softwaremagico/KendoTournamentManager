@@ -50,11 +50,15 @@ public class AuthenticatedUserProvider {
         return authenticatedUserRepository.findByUsername(username);
     }
 
+    public long count() {
+        return authenticatedUserRepository.count();
+    }
+
     public Optional<AuthenticatedUser> findByUniqueId(String uniqueId) {
         return findByUsername(uniqueId);
     }
 
-    public AuthenticatedUser createUser(String username, String firstName, String lastName, String password, String... roles) {
+    public AuthenticatedUser save(String username, String firstName, String lastName, String password, String... roles) {
         if (findByUsername(username).isPresent()) {
             throw new DuplicatedUserException(this.getClass(), "Username exists!");
         }
@@ -66,10 +70,10 @@ public class AuthenticatedUserProvider {
         authenticatedUser.setPassword(password);
         authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
 
-        return createUser(authenticatedUser);
+        return save(authenticatedUser);
     }
 
-    public AuthenticatedUser createUser(AuthenticatedUser authenticatedUser) {
+    public AuthenticatedUser save(AuthenticatedUser authenticatedUser) {
         return authenticatedUserRepository.save(authenticatedUser);
     }
 
