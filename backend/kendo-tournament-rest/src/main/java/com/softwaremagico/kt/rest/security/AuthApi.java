@@ -27,10 +27,13 @@ package com.softwaremagico.kt.rest.security;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
+import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.exceptions.UserBlockedException;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
+import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -42,12 +45,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import java.util.Random;
 
 @RestController
@@ -113,12 +114,38 @@ public class AuthApi {
         return authenticatedUserController.createUser(request);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(path = "/register")
+    public AuthenticatedUser update(@RequestBody CreateUserRequest request) {
+        return authenticatedUserController.updateUser(request);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Deletes a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(path = "/register/{username}")
+    public void delete(@Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
+                       Authentication authentication) {
+        if (Objects.equals(authentication.getName(), username)) {
+            throw new InvalidRequestException(this.getClass(), "You cannot delete the current user!");
+        }
+        authenticatedUserController.deleteUser(username);
+    }
+
     private String getClientIP(HttpServletRequest httpRequest) {
         final String xfHeader = httpRequest.getHeader("X-Forwarded-For");
         if (xfHeader == null) {
             return httpRequest.getRemoteAddr();
         }
         return xfHeader.split(",")[0];
+    }
+
+    @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/password")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void updatePassword(Authentication authentication, @RequestBody UpdatePasswordRequest request) throws InterruptedException {
+        Thread.sleep(random.nextInt(10) * 1000);
+        authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
     }
 
 
