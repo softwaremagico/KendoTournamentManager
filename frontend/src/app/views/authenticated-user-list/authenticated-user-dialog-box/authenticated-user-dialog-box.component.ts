@@ -39,11 +39,7 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.registerForm.controls['username'].markAsTouched();
-    this.registerForm.controls['name'].markAsTouched();
-    this.registerForm.controls['lastname'].markAsTouched();
-    this.registerForm.controls['password'].markAsTouched();
-    this.registerForm.controls['repeatPassword'].markAsTouched();
+    this.registerForm.markAllAsTouched();
   }
 
   doAction() {
@@ -62,5 +58,5 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
 export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
   const repeatPassword = control.get('repeatPassword');
-  return password && repeatPassword && password.value === repeatPassword.value ? { repeatPassword: true } : { repeatPassword: false };
+  return password && repeatPassword && password.value === repeatPassword.value ? null : { repeatPassword: false };
 };
