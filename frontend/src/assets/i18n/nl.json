@@ -533,7 +533,8 @@
   "newPassword": "Nieuw Wachtwoord",
   "oldPassword": "Oud Wachtwoord",
   "repeatPassword": "Herhaal wachtwoord",
-  "invalidPasswordError": "Wachtwoord moet een combinatie zijn van kleine letters, hoofdletters, cijfers en ten minste 8 tekens lang."
+  "invalidPasswordError": "Wachtwoord moet een combinatie zijn van kleine letters, hoofdletters, cijfers en ten minste 8 tekens lang.",
+  "infoPasswordUpdated": "Wachtwoord succesvol bijgewerkt."
 }
 
 

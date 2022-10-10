@@ -563,6 +563,7 @@
   "newPassword": "New Password",
   "oldPassword": "Old Password",
   "repeatPassword": "Repeat Password",
-  "invalidPasswordError": "Password must be a combination of lower-case, upper-case, numbers and at least 8 characters long."
+  "invalidPasswordError": "Password must be a combination of lower-case, upper-case, numbers and at least 8 characters long.",
+  "infoPasswordUpdated": "Password updated correctly!"
 }
 

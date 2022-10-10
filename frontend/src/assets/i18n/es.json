@@ -555,7 +555,8 @@
   "newPassword": "Nueva Contraseña",
   "oldPassword": "Contraseña Anterior",
   "repeatPassword": "Repite Contraseña",
-  "invalidPasswordError": "La contraseña debe ser una combinación de minúsculas, mayúsculas, números y al menos 8 caracteres."
+  "invalidPasswordError": "La contraseña debe ser una combinación de minúsculas, mayúsculas, números y al menos 8 caracteres.",
+  "infoPasswordUpdated": "Contraseña actualizada correctamente."
 }
 
 

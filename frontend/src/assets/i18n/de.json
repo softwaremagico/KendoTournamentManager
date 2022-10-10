@@ -533,7 +533,8 @@
   "newPassword": "Neues Passwort",
   "oldPassword": "Altes Passwort",
   "repeatPassword": "Passwort Wiederholen",
-  "invalidPasswordError": "Das Passwort muss eine Kombination aus Kleinbuchstaben, Großbuchstaben und Zahlen sein und mindestens 8 Zeichen lang sein."
+  "invalidPasswordError": "Das Passwort muss eine Kombination aus Kleinbuchstaben, Großbuchstaben und Zahlen sein und mindestens 8 Zeichen lang sein.",
+  "infoPasswordUpdated": "Passwort erfolgreich aktualisiert."
 }
 
 
