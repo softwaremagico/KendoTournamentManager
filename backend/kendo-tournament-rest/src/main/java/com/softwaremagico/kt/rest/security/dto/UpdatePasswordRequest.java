@@ -30,7 +30,7 @@ public class UpdatePasswordRequest {
     private String newPassword;
 
     public String getOldPassword() {
-        return oldPassword;
+        return oldPassword.trim();
     }
 
     public void setOldPassword(String oldPassword) {
@@ -38,7 +38,7 @@ public class UpdatePasswordRequest {
     }
 
     public String getNewPassword() {
-        return newPassword;
+        return newPassword.trim();
     }
 
     public void setNewPassword(String newPassword) {

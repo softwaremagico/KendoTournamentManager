@@ -118,15 +118,15 @@ public class AuthApi {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/register")
-    public AuthenticatedUser register(@RequestBody CreateUserRequest request, HttpServletRequest httpRequest) {
-        return authenticatedUserController.createUser(request);
+    public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
+        return authenticatedUserController.createUser(authentication.getName(), request);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(path = "/register")
-    public AuthenticatedUser update(@RequestBody CreateUserRequest request) {
-        return authenticatedUserController.updateUser(request);
+    public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
+        return authenticatedUserController.updateUser(authentication.getName(), request);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -137,7 +137,7 @@ public class AuthApi {
         if (Objects.equals(authentication.getName(), username)) {
             throw new InvalidRequestException(this.getClass(), "You cannot delete the current user!");
         }
-        authenticatedUserController.deleteUser(username);
+        authenticatedUserController.deleteUser(authentication.getName(), username);
     }
 
     private String getClientIP(HttpServletRequest httpRequest) {

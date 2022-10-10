@@ -98,7 +98,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
 
-        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+        authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         CreateUserRequest goodRequest = new CreateUserRequest();
         goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
         goodRequest.setName(USER_NAME);
-        goodRequest.setLastName(USER_LAST_NAME);
+        goodRequest.setLastname(USER_LAST_NAME);
         goodRequest.setPassword(USER_PASSWORD);
 
         this.mockMvc
@@ -197,7 +197,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         CreateUserRequest goodRequest = new CreateUserRequest();
         goodRequest.setUsername(String.format("%s_%d", USER_NAME, System.currentTimeMillis()));
         goodRequest.setName(USER_NAME);
-        goodRequest.setLastName(USER_LAST_NAME);
+        goodRequest.setLastname(USER_LAST_NAME);
         goodRequest.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
@@ -211,7 +211,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
         AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
         Assert.assertNotNull(authenticatedUser.getId());
-        Assert.assertEquals(goodRequest.getLastName(), authenticatedUser.getLastname());
+        Assert.assertEquals(goodRequest.getLastname(), authenticatedUser.getLastname());
         Assert.assertEquals(goodRequest.getName(), authenticatedUser.getName());
     }
 
@@ -220,7 +220,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         CreateUserRequest request = new CreateUserRequest();
         request.setUsername("invalid.username");
         request.setName(USER_NAME);
-        request.setLastName(USER_LAST_NAME);
+        request.setLastname(USER_LAST_NAME);
 
         // Adding two times same user.
         this.mockMvc
@@ -247,7 +247,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         CreateUserRequest updateRequest = new CreateUserRequest();
         updateRequest.setUsername(USER_NAME);
         updateRequest.setName(USER_NEW_FIRST_NAME);
-        updateRequest.setLastName(USER_NEW_LAST_NAME);
+        updateRequest.setLastname(USER_NEW_LAST_NAME);
         updateRequest.setPassword(USER_PASSWORD + "wrong");
 
         MvcResult createResult = this.mockMvc
@@ -261,7 +261,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
         AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
         Assert.assertNotNull(authenticatedUser.getId());
-        Assert.assertEquals(updateRequest.getLastName(), authenticatedUser.getLastname());
+        Assert.assertEquals(updateRequest.getLastname(), authenticatedUser.getLastname());
         Assert.assertEquals(updateRequest.getName(), authenticatedUser.getName());
         Assert.assertNotEquals(updateRequest.getPassword(), authenticatedUser.getPassword());
     }
