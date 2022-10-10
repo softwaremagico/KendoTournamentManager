@@ -139,7 +139,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         CreateUserRequest request = new CreateUserRequest();
         request.setUsername(USER_NAME);
         request.setName(USER_FIRST_NAME);
-        request.setLastName(USER_LAST_NAME);
+        request.setLastname(USER_LAST_NAME);
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
@@ -156,7 +156,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         CreateUserRequest request = new CreateUserRequest();
         request.setUsername(USER_NAME_2);
         request.setName(USER_FIRST_NAME_2);
-        request.setLastName(USER_LAST_NAME_2);
+        request.setLastname(USER_LAST_NAME_2);
         request.setPassword(USER_PASSWORD);
         request.setAuthorities(new HashSet<>(Arrays.asList(USER_ROLES)));
 

@@ -534,7 +534,8 @@
   "oldPassword": "Oud Wachtwoord",
   "repeatPassword": "Herhaal wachtwoord",
   "invalidPasswordError": "Wachtwoord moet een combinatie zijn van kleine letters, hoofdletters, cijfers en ten minste 8 tekens lang.",
-  "infoPasswordUpdated": "Wachtwoord succesvol bijgewerkt."
+  "infoPasswordUpdated": "Wachtwoord succesvol bijgewerkt.",
+  "errorUserAlreadyExists": "User with this username already exists!"
 }
 
 

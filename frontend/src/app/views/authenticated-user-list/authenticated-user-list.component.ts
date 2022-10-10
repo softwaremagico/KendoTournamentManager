@@ -92,7 +92,6 @@ export class AuthenticatedUserListComponent implements OnInit {
     this.userService.add(authenticatedUser).subscribe(_authenticatedUser => {
       this.basicTableData.dataSource.data.push(_authenticatedUser);
       this.basicTableData.dataSource._updateChangeSubscription();
-      this.messageService.infoMessage('infoAuthenticatedUserStored');
     });
   }
 

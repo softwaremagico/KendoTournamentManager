@@ -534,7 +534,8 @@
   "oldPassword": "Altes Passwort",
   "repeatPassword": "Passwort Wiederholen",
   "invalidPasswordError": "Das Passwort muss eine Kombination aus Kleinbuchstaben, Großbuchstaben und Zahlen sein und mindestens 8 Zeichen lang sein.",
-  "infoPasswordUpdated": "Passwort erfolgreich aktualisiert."
+  "infoPasswordUpdated": "Passwort erfolgreich aktualisiert.",
+  "errorUserAlreadyExists": "Ein Benutzer mit diesem Benutzernamen existiert bereits!"
 }
 
 

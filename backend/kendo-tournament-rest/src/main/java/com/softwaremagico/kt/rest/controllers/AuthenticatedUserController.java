@@ -48,14 +48,18 @@ public class AuthenticatedUserController {
         this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
-    public AuthenticatedUser createUser(CreateUserRequest createUserRequest) {
-        return createUser(createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastName(),
+    public AuthenticatedUser createUser(String creator, CreateUserRequest createUserRequest) {
+        return createUser(creator, createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastname(),
                 createUserRequest.getPassword());
     }
 
-    public AuthenticatedUser createUser(String username, String firstName, String lastName, String password, String... roles) {
+    public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
         try {
-            return authenticatedUserProvider.save(username, firstName, lastName, password, roles);
+            try {
+                return authenticatedUserProvider.save(username, firstName, lastName, password, roles);
+            } finally {
+                KendoTournamentLogger.info(this.getClass(), "User '{}' created by '{}'.", username, creator);
+            }
         } catch (DuplicatedUserException e) {
             throw new BadRequestException(this.getClass(), "Username exists!");
         }
@@ -73,24 +77,29 @@ public class AuthenticatedUserController {
         //Update new password.
         user.setPassword(newPassword);
         authenticatedUserProvider.save(user);
-        KendoTournamentLogger.info(this.getClass(), "Password updated correctly!");
+        KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", username);
     }
 
-    public AuthenticatedUser updateUser(CreateUserRequest createUserRequest) {
+    public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
         final AuthenticatedUser user = authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
         user.setName(createUserRequest.getName());
-        user.setLastname(createUserRequest.getLastName());
+        user.setLastname(createUserRequest.getLastname());
         user.setRoles(createUserRequest.getAuthorities());
-        return authenticatedUserProvider.save(user);
+        try {
+            return authenticatedUserProvider.save(user);
+        } finally {
+            KendoTournamentLogger.info(this.getClass(), "User '{}' updated by '{}'.", createUserRequest.getUsername(), updater);
+        }
     }
 
-    public void deleteUser(String username) {
+    public void deleteUser(String actioner, String username) {
         final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
         //Ensure that at least, one user remain.
         if (authenticatedUserProvider.count() > 1) {
             authenticatedUserProvider.delete(user);
+            KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
         }
     }
 

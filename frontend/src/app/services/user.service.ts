@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {catchError, tap} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {CookieService} from "ngx-cookie-service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
@@ -42,8 +42,22 @@ export class UserService {
     return this.http.post<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
       .pipe(
         tap({
-          next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`adding user ${_authenticatedUser}`),
-          error: () => this.systemOverloadService.isBusy.next(false),
+          next: (_authenticatedUser: AuthenticatedUser) => {
+            this.loggerService.info(`adding user ${_authenticatedUser}`);
+            this.messageService.infoMessage("infoAuthenticatedUserStored");
+          },
+          error: (error) => {
+            this.systemOverloadService.isBusy.next(false);
+            if (error instanceof HttpErrorResponse) {
+              switch (error.status) {
+                case 400:
+                  this.messageService.errorMessage("errorUserAlreadyExists");
+                  break;
+                default:
+                  throw error;
+              }
+            }
+          },
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<AuthenticatedUser>(`adding ${authenticatedUser}`))
@@ -76,9 +90,12 @@ export class UserService {
       );
   }
 
-  updatePassword(oldPassword: string, newPassword: string): Observable<void>  {
+  updatePassword(oldPassword: string, newPassword: string): Observable<void> {
     const url: string = `${this.baseUrl}/password`;
-    return this.http.post<void>(url, {oldPassword: oldPassword, newPassword: newPassword}, this.loginService.httpOptions)
+    return this.http.post<void>(url, {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    }, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating password!`),
