@@ -78,6 +78,7 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {PaginatorI18n} from "./components/basic/basic-table/paginator-i18n";
 import { AuthenticatedUserListComponent } from './views/authenticated-user-list/authenticated-user-list.component';
 import { AuthenticatedUserDialogBoxComponent } from './views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.component';
+import { PasswordsComponent } from './views/passwords/passwords.component';
 
 
 registerLocaleData(localeES, "es");
@@ -121,7 +122,8 @@ registerLocaleData(localeNL, "nl");
     UntieFightComponent,
     MatSpinnerOverlayComponent,
     AuthenticatedUserListComponent,
-    AuthenticatedUserDialogBoxComponent
+    AuthenticatedUserDialogBoxComponent,
+    PasswordsComponent
   ],
   imports: [
     BrowserModule,
