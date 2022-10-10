@@ -81,6 +81,10 @@
           <mat-icon>person</mat-icon>
           <span class="upper-menu-title">{{'users' | translate}}</span>
         </a>
+        <a mat-button routerLink="/passwords">
+          <mat-icon>key</mat-icon>
+          <span class="upper-menu-title">{{'password' | translate}}</span>
+        </a>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
@@ -120,6 +124,10 @@
             <a mat-list-item routerLink="/users">
               <mat-icon>person</mat-icon>
               <span class="left-menu-single-entry">{{'users' | translate}}</span>
+            </a>
+            <a mat-list-item routerLink="/passwords">
+              <mat-icon>key</mat-icon>
+              <span class="left-menu-single-entry">{{'password' | translate}}</span>
             </a>
           </mat-nav-list>
         </mat-expansion-panel>
