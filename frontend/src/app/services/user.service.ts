@@ -75,4 +75,17 @@ export class UserService {
         catchError(this.messageService.handleError<AuthenticatedUser>(`delete ${authenticatedUser}`))
       );
   }
+
+  updatePassword(oldPassword: string, newPassword: string): Observable<void>  {
+    const url: string = `${this.baseUrl}/password`;
+    return this.http.post<void>(url, {oldPassword: oldPassword, newPassword: newPassword}, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Updating password!`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Updating password!`))
+      );
+  }
 }

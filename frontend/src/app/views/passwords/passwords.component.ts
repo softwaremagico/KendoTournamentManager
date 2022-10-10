@@ -3,12 +3,15 @@ import {
   AbstractControl,
   FormControl,
   FormGroup,
-  FormGroupDirective, NgForm,
+  FormGroupDirective,
+  NgForm,
   ValidationErrors,
   ValidatorFn,
   Validators
 } from "@angular/forms";
 import {ErrorStateMatcher} from "@angular/material/core";
+import {UserService} from "../../services/user.service";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'app-passwords',
@@ -19,7 +22,7 @@ export class PasswordsComponent implements OnInit {
 
   hidePassword: boolean = true;
   oldPassword: string;
-  password: string;
+  newPassword: string;
   repeatedPassword: string;
   matcher = new MyErrorStateMatcher();
 
@@ -29,7 +32,7 @@ export class PasswordsComponent implements OnInit {
     repeatPassword: new FormControl('', Validators.required)
   }, {validators: confirmPasswordValidator, updateOn: 'change'});
 
-  constructor() {
+  constructor(private userService: UserService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -37,6 +40,9 @@ export class PasswordsComponent implements OnInit {
   }
 
   public changePassword() {
+    this.userService.updatePassword(this.oldPassword, this.newPassword).subscribe(() => {
+      this.messageService.infoMessage('infoAuthenticatedUserUpdated');
+    });
   }
 
   public findInvalidControls() {
@@ -52,7 +58,7 @@ export class PasswordsComponent implements OnInit {
   }
 
   passwordMatch(): boolean {
-    return !this.hidePassword && this.password === this.repeatedPassword;
+    return !this.hidePassword && this.newPassword === this.repeatedPassword;
   }
 }
 

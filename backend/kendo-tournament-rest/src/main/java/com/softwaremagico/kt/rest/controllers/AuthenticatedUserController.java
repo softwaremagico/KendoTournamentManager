@@ -26,6 +26,7 @@ package com.softwaremagico.kt.rest.controllers;
 
 import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.exceptions.InvalidPasswordException;
@@ -72,6 +73,7 @@ public class AuthenticatedUserController {
         //Update new password.
         user.setPassword(newPassword);
         authenticatedUserProvider.save(user);
+        KendoTournamentLogger.info(this.getClass(), "Password updated correctly!");
     }
 
     public AuthenticatedUser updateUser(CreateUserRequest createUserRequest) {
