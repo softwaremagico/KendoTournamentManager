@@ -559,6 +559,10 @@
   "authenticatedUserDelete": "Delete User",
   "infoAuthenticatedUserStored": "The user has been stored.",
   "infoAuthenticatedUserUpdated": "The user has been updated.",
-  "infoAuthenticatedUserDeleted": "The user has been deleted!"
+  "infoAuthenticatedUserDeleted": "The user has been deleted!",
+  "newPassword": "New Password",
+  "oldPassword": "Old Password",
+  "repeatPassword": "Repeat Password",
+  "invalidPasswordError": "Password must be a combination of lower-case, upper-case, numbers and at least 8 characters long."
 }
 

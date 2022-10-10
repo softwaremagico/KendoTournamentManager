@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {catchError, tap} from "rxjs/operators";
@@ -15,7 +15,7 @@ import {LoginService} from "./login.service";
 })
 export class UserService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/auth/public';
+  private baseUrl = this.environmentService.getBackendUrl() + '/auth';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService, private systemOverloadService: SystemOverloadService,
@@ -25,7 +25,7 @@ export class UserService {
   }
 
   getAll(): Observable<AuthenticatedUser[]> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/register`;
     return this.http.get<AuthenticatedUser[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -38,7 +38,7 @@ export class UserService {
   }
 
   add(authenticatedUser: AuthenticatedUser): Observable<AuthenticatedUser> {
-    const url: string = `${this.baseUrl}`;
+    const url: string = `${this.baseUrl}/register`;
     return this.http.post<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -51,8 +51,8 @@ export class UserService {
   }
 
   update(authenticatedUser: AuthenticatedUser): Observable<AuthenticatedUser> {
-    const url: string = `${this.baseUrl}`;
-    return this.http.put<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
+    const url: string = `${this.baseUrl}/register`;
+    return this.http.patch<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
       .pipe(
         tap({
           next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`updating user ${_authenticatedUser}`),
@@ -64,8 +64,8 @@ export class UserService {
   }
 
   delete(authenticatedUser: AuthenticatedUser): Observable<AuthenticatedUser> {
-    const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
+    const url: string = `${this.baseUrl}/register/` + authenticatedUser.username;
+    return this.http.delete<AuthenticatedUser>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting user ${authenticatedUser}`),
