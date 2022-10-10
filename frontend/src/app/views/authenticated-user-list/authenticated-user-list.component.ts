@@ -30,9 +30,9 @@ export class AuthenticatedUserListComponent implements OnInit {
 
   constructor(private loginService: LoginService, private userService: UserService, public dialog: MatDialog, private messageService: MessageService,
               private translateService: TranslateService) {
-    this.basicTableData.columns = ['id', 'username', 'fullName'];
-    this.basicTableData.columnsTags = ['id', 'username', 'fullName'];
-    this.basicTableData.visibleColumns = ['username', 'fullName'];
+    this.basicTableData.columns = ['id', 'username', 'name', 'lastname'];
+    this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname'];
+    this.basicTableData.visibleColumns = ['username', 'name', 'lastname'];
     this.basicTableData.selection = new SelectionModel<AuthenticatedUser>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<AuthenticatedUser>();
   }

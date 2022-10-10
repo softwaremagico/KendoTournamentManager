@@ -48,6 +48,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
 
@@ -106,11 +107,18 @@ public class AuthApi {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Gets all users.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/register")
+    public Collection<AuthenticatedUser> getAll(HttpServletRequest httpRequest) {
+        return authenticatedUserController.findAll();
+    }
+
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/register")
-    public AuthenticatedUser register(@RequestBody CreateUserRequest request) {
+    public AuthenticatedUser register(@RequestBody CreateUserRequest request, HttpServletRequest httpRequest) {
         return authenticatedUserController.createUser(request);
     }
 
@@ -123,9 +131,9 @@ public class AuthApi {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Deletes a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping(path = "/register/{username}")
+    @DeleteMapping(path = "/register/{username}")
     public void delete(@Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
-                       Authentication authentication) {
+                       Authentication authentication, HttpServletRequest httpRequest) {
         if (Objects.equals(authentication.getName(), username)) {
             throw new InvalidRequestException(this.getClass(), "You cannot delete the current user!");
         }
@@ -143,7 +151,8 @@ public class AuthApi {
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/password")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public void updatePassword(Authentication authentication, @RequestBody UpdatePasswordRequest request) throws InterruptedException {
+    public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
+            throws InterruptedException {
         Thread.sleep(random.nextInt(10) * 1000);
         authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
     }

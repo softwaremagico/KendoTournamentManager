@@ -529,7 +529,11 @@
   "authenticatedUserDelete": "Benutzer Löschen",
   "infoAuthenticatedUserStored": "Der benutzer wurde gespeichert.",
   "infoAuthenticatedUserUpdated": "Der benutzer wurde aktualisiert.",
-  "infoAuthenticatedUserDeleted": "Der benutzer wurde gelöscht!"
+  "infoAuthenticatedUserDeleted": "Der benutzer wurde gelöscht!",
+  "newPassword": "Neues Passwort",
+  "oldPassword": "Altes Passwort",
+  "repeatPassword": "Passwort Wiederholen",
+  "invalidPasswordError": "Das Passwort muss eine Kombination aus Kleinbuchstaben, Großbuchstaben und Zahlen sein und mindestens 8 Zeichen lang sein."
 }
 
 

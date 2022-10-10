@@ -551,7 +551,11 @@
   "authenticatedUserDelete": "Borrar Usuario",
   "infoAuthenticatedUserStored": "El usuario se ha guardado.",
   "infoAuthenticatedUserUpdated": "Se ha actualizado el usuario.",
-  "infoAuthenticatedUserDeleted": "¡El usuario ha sido borrado!"
+  "infoAuthenticatedUserDeleted": "¡El usuario ha sido borrado!",
+  "newPassword": "Nueva Contraseña",
+  "oldPassword": "Contraseña Anterior",
+  "repeatPassword": "Repite Contraseña",
+  "invalidPasswordError": "La contraseña debe ser una combinación de minúsculas, mayúsculas, números y al menos 8 caracteres."
 }
 
 
