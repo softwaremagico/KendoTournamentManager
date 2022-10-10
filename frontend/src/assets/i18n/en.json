@@ -564,6 +564,7 @@
   "oldPassword": "Old Password",
   "repeatPassword": "Repeat Password",
   "invalidPasswordError": "Password must be a combination of lower-case, upper-case, numbers and at least 8 characters long.",
-  "infoPasswordUpdated": "Password updated correctly!"
+  "infoPasswordUpdated": "Password updated correctly.",
+  "errorUserAlreadyExists": "User with this username already exists!"
 }
 

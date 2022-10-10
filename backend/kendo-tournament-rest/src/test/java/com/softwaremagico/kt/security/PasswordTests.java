@@ -50,7 +50,7 @@ public class PasswordTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setUp() {
-        authenticatedUserController.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+        authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
     }
 
     @Test(expectedExceptions = UserNotFoundException.class)
