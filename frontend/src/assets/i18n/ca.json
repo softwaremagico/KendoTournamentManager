@@ -546,7 +546,11 @@
   "authenticatedUserDelete": "Suprimeix l'usuari",
   "infoAuthenticatedUserStored": "S'ha guardat l'usuari.",
   "infoAuthenticatedUserUpdated": "L'usuari ha estat actualitzat.",
-  "infoAuthenticatedUserDeleted": "L'usuari ha estat esborrat!"
+  "infoAuthenticatedUserDeleted": "L'usuari ha estat esborrat!",
+  "newPassword": "Nova Contrasenya",
+  "oldPassword": "Contrasenya Anterior",
+  "repeatPassword": "Repeteix Contrasenya",
+  "invalidPasswordError": "La contrasenya ha de ser una combinació de minúscules, majúscules, números i com a mínim 8 caràcters."
 }
 
 
