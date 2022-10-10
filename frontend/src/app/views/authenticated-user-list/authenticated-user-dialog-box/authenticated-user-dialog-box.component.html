@@ -1,16 +1,37 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
-  <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-    <input placeholder="{{'username' | translate}}" matInput [(ngModel)]="authenticatedUser.username">
-  </mat-form-field>
-  <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'fullName' | translate}}" matInput [(ngModel)]="authenticatedUser.fullName">
-  </mat-form-field>
-  <ng-template #elseTemplate>
-    <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {name: authenticatedUser.username}"></span>
-  </ng-template>
+  <form [formGroup]="registerForm">
+    <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
+      <input formControlName="username" placeholder="{{'username' | translate}}" matInput
+             [(ngModel)]="authenticatedUser.username" required>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <input formControlName="name" placeholder="{{'name' | translate}}" matInput [(ngModel)]="authenticatedUser.name" required>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <input formControlName="lastname" placeholder="{{'lastname' | translate}}" matInput
+             [(ngModel)]="authenticatedUser.lastname" required>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
+      <input formControlName="password" placeholder="{{'password' | translate}}"
+             [type]="hidePassword ? 'password' : 'text'"
+             matInput [(ngModel)]="authenticatedUser.password" required>
+      <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | translate}}</mat-error>
+      <mat-icon matSuffix
+                (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update' && hidePassword">
+      <input formControlName="repeatPassword" name="repeatPassword" placeholder="{{'repeatPassword' | translate}}" [type]="'password'"
+             matInput [(ngModel)]="repeatedPassword" required pattern="{{registerForm.value.password}}">
+      <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
+    </mat-form-field>
+    <ng-template #elseTemplate>
+      <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {name: authenticatedUser.username}"></span>
+    </ng-template>
+  </form>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="doAction()" mat-flat-button color="primary">{{actionName.toLowerCase() | translate}}</button>
+  <button mat-raised-button (click)="doAction()" [disabled]="!passwordMatch()" mat-flat-button
+          color="primary">{{actionName.toLowerCase() | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
 </div>

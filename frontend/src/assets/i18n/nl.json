@@ -529,7 +529,11 @@
   "authenticatedUserDelete": "Verwijder Gebruiker",
   "infoAuthenticatedUserStored": "De gebruiker is opgeslagen.",
   "infoAuthenticatedUserUpdated": "De gebruiker is bijgewerkt.",
-  "infoAuthenticatedUserDeleted": "De gebruiker is verwijderd!"
+  "infoAuthenticatedUserDeleted": "De gebruiker is verwijderd!",
+  "newPassword": "Nieuw Wachtwoord",
+  "oldPassword": "Oud Wachtwoord",
+  "repeatPassword": "Herhaal wachtwoord",
+  "invalidPasswordError": "Wachtwoord moet een combinatie zijn van kleine letters, hoofdletters, cijfers en ten minste 8 tekens lang."
 }
 
 
