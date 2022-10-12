@@ -31,11 +31,16 @@ export class PaginatorI18n extends MatPaginatorIntl {
   }
 
   translateLabels() {
-    super.itemsPerPageLabel = this.translate.instant('paginatorItemsPerPage');
-    super.nextPageLabel = this.translate.instant('paginatorNextPage');
-    super.previousPageLabel = this.translate.instant('paginatorPreviousPage');
-    super.firstPageLabel = this.translate.instant('paginatorFirstPage');
-    super.lastPageLabel = this.translate.instant('paginatorLastPage');
+    super.itemsPerPageLabel = this.translate.instant('paginatorItemsPerPage') !== 'paginatorItemsPerPage' ?
+      this.translate.instant('paginatorItemsPerPage') : 'Items per page:';
+    super.nextPageLabel = this.translate.instant('paginatorNextPage') !== 'paginatorNextPage' ?
+      this.translate.instant('paginatorNextPage') : 'Next page';
+    super.previousPageLabel = this.translate.instant('paginatorPreviousPage')!== 'paginatorPreviousPage' ?
+      this.translate.instant('paginatorPreviousPage') : 'Previous page';
+    super.firstPageLabel = this.translate.instant('paginatorFirstPage')!== 'paginatorFirstPage' ?
+      this.translate.instant('paginatorFirstPage') : 'First page';
+    super.lastPageLabel = this.translate.instant('paginatorLastPage')!== 'paginatorLastPage' ?
+      this.translate.instant('paginatorLastPage') : 'Last page';
     this.changes.next();
   }
 }
