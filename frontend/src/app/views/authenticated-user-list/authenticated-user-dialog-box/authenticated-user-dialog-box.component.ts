@@ -18,14 +18,7 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   hidePassword: boolean = true;
   repeatedPassword: string;
 
-
-  registerForm = new FormGroup({
-    username: new FormControl('', Validators.required),
-    name: new FormControl('', Validators.required),
-    lastname: new FormControl('', Validators.required),
-    password: new FormControl('',  [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
-    repeatPassword: new FormControl('', Validators.required)
-  }, { validators: confirmPasswordValidator});
+  registerForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<AuthenticatedUserDialogBoxComponent>,
@@ -36,6 +29,14 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
     this.action = data.action;
     this.actionName = Action[data.action];
     this.repeatedPassword = "";
+
+    this.registerForm = new FormGroup({
+      username: new FormControl({value: '', disabled: this.action !== Action.Add}, Validators.required),
+      name: new FormControl('', Validators.required),
+      lastname: new FormControl('', Validators.required),
+      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
+      repeatPassword: new FormControl('', Validators.required)
+    }, {validators: confirmPasswordValidator});
   }
 
   ngOnInit(): void {
@@ -53,10 +54,15 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   passwordMatch(): boolean {
     return this.action != Action.Add || !this.hidePassword || this.authenticatedUser.password === this.repeatedPassword;
   }
+
+
+  public isOnCreation() {
+    return this.action === Action.Add;
+  }
 }
 
 export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
   const repeatPassword = control.get('repeatPassword');
-  return password && repeatPassword && password.value === repeatPassword.value ? null : { repeatPassword: false };
+  return password && repeatPassword && password.value === repeatPassword.value ? null : {repeatPassword: false};
 };

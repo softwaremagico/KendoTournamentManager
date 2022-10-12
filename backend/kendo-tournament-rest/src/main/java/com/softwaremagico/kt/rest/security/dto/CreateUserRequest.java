@@ -34,6 +34,9 @@ public class CreateUserRequest {
     private Set<String> authorities;
 
     public String getUsername() {
+        if (username == null) {
+            return null;
+        }
         return username.trim();
     }
 
@@ -42,6 +45,9 @@ public class CreateUserRequest {
     }
 
     public String getName() {
+        if (name == null) {
+            return null;
+        }
         return name.trim();
     }
 
@@ -50,6 +56,9 @@ public class CreateUserRequest {
     }
 
     public String getLastname() {
+        if (lastname == null) {
+            return null;
+        }
         return lastname.trim();
     }
 
@@ -58,6 +67,9 @@ public class CreateUserRequest {
     }
 
     public String getPassword() {
+        if (password == null) {
+            return null;
+        }
         return password.trim();
     }
 
