@@ -48,6 +48,8 @@ export class AuthenticatedUserListComponent implements OnInit {
   }
 
   addElement(): void {
+    const authenticatedUser: AuthenticatedUser = new AuthenticatedUser();
+    authenticatedUser.roles[0] = "ROLE_ADMIN";
     this.openDialog(this.translateService.instant('authenticatedUserAdd'), Action.Add, new AuthenticatedUser());
   }
 
@@ -78,7 +80,9 @@ export class AuthenticatedUserListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.action == Action.Add) {
+      if (result == undefined) {
+        //Do nothing
+      } else if (result.action == Action.Add) {
         this.addRowData(result.data);
       } else if (result.action == Action.Update) {
         this.updateRowData(result.data);

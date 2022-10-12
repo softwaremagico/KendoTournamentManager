@@ -5,4 +5,9 @@ export class AuthenticatedUser {
   public name: string;
   public lastname: string;
   public jwt: string;
+  public roles: string[];
+
+  constructor() {
+    this.roles = [];
+  }
 }
