@@ -85,7 +85,9 @@ export class TournamentListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result.action == Action.Add) {
+      if (result == undefined) {
+        //Do nothing
+      } else if (result.action == Action.Add) {
         this.addRowData(result.data);
       } else if (result.action == Action.Update) {
         this.updateRowData(result.data);

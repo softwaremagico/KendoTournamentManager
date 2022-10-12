@@ -26,12 +26,12 @@
       <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
     </mat-form-field>
     <ng-template #elseTemplate>
-      <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {name: authenticatedUser.username}"></span>
+      <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {username: authenticatedUser.username}"></span>
     </ng-template>
   </form>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="doAction()" [disabled]="!passwordMatch() || registerForm.invalid" mat-flat-button
+  <button mat-raised-button (click)="doAction()" [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" mat-flat-button
           color="primary">{{actionName.toLowerCase() | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
 </div>
