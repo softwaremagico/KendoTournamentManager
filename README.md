@@ -56,3 +56,6 @@ check [the documentation](./backend/README.md) about how to configure the databa
 The application can also be deployed as a [docker](https://www.docker.com/) container. If you want to deploy it as a
 docker, please read the [docker guide](./docker/README.md) of this project. This is the preferred way of deploying the
 application and probably the easiest way if you feel comfortable using docker
+
+# Default credentials.
+The default user is `admin@test` with password `asd123`. This user is an admin user that can create new users. Remember to change the password or remove this account. 
