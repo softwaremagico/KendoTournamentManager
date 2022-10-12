@@ -80,14 +80,10 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                try {
-                    Thread.sleep(random.nextInt(10) * 1000);
-                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                    throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-                } catch (InterruptedException e) {
-                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                    throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-                }
+                Thread.sleep(random.nextInt(10) * 1000L);
+                RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
+
             }
             //We verify the provided credentials using the authentication manager
             final Authentication authenticate = authenticationManager
@@ -101,9 +97,16 @@ public class AuthApi {
                     .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
                     .body(user);
         } catch (BadCredentialsException ex) {
-            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from ip '" + ip + "'!");
+            RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
             bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (InterruptedException e) {
+            RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+            try {
+                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
+            } finally {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -153,7 +156,7 @@ public class AuthApi {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
-        Thread.sleep(random.nextInt(10) * 1000);
+        Thread.sleep(random.nextInt(10) * 1000L);
         authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
     }
 
