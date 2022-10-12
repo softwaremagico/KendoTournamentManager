@@ -50,7 +50,6 @@ export class PasswordsComponent implements OnInit {
     const controls = this.passwordForm.controls;
     for (const name in controls) {
       if (controls[name].invalid) {
-        console.log('invalid', name)
         invalid.push(name);
       }
     }

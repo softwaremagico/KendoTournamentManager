@@ -177,7 +177,9 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
 
     if (dialogRef) {
       dialogRef.afterClosed().subscribe(result => {
-        if (result.action === Action.Add) {
+        if (result == undefined) {
+          //Do nothing
+        } else if (result.action === Action.Add) {
           this.createGroupFight(result.data);
         } else if (result.action === Action.Update) {
           this.updateRowData(result.data);
@@ -246,7 +248,9 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
       data: {title: 'Add a new Fight', action: Action.Add, entity: new Fight(), tournament: this.tournament}
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result.action === Action.Add) {
+      if (result == undefined) {
+        //Do nothing
+      } else if (result.action === Action.Add) {
         //this.createGroupFight();
       } else if (result.action === Action.Update) {
         this.updateRowData(result.data);
