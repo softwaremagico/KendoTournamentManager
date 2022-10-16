@@ -19,7 +19,7 @@
             <class name="com.softwaremagico.kt.persistence.repositories.ParticipantImageRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.TeamRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.GroupRepositoryTests"/>
-            <class name="com.softwaremagico.kt.encryption.CheckEncryptedDataStorage"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptedDataStorage"/>
         </classes>
     </test>
 </suite>

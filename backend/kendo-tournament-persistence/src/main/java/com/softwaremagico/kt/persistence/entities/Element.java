@@ -24,7 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeAttributeConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,7 +44,7 @@ public abstract class Element {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime createdAt;
 
     @Column(name = "created_by")
@@ -53,7 +53,7 @@ public abstract class Element {
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime updatedAt;
 
     @Column(name = "updated_by")
