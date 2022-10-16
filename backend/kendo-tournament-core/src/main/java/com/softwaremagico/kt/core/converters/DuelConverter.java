@@ -43,7 +43,7 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
 
 
     @Override
-    public DuelDTO convert(DuelConverterRequest from) {
+    protected DuelDTO convertElement(DuelConverterRequest from) {
         final DuelDTO duelDTO = new DuelDTO();
         BeanUtils.copyProperties(from.getEntity(), duelDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         duelDTO.setCompetitor1(participantConverter.convert(
