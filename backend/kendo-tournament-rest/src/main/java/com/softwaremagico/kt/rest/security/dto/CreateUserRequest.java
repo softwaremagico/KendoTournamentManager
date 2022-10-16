@@ -29,12 +29,15 @@ import java.util.Set;
 public class CreateUserRequest {
     private String username;
     private String name;
-    private String lastName;
+    private String lastname;
     private String password;
     private Set<String> authorities;
 
     public String getUsername() {
-        return username;
+        if (username == null) {
+            return null;
+        }
+        return username.trim();
     }
 
     public void setUsername(String username) {
@@ -42,23 +45,32 @@ public class CreateUserRequest {
     }
 
     public String getName() {
-        return name;
+        if (name == null) {
+            return null;
+        }
+        return name.trim();
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        if (lastname == null) {
+            return null;
+        }
+        return lastname.trim();
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getPassword() {
-        return password;
+        if (password == null) {
+            return null;
+        }
+        return password.trim();
     }
 
     public void setPassword(String password) {

@@ -79,7 +79,7 @@
   "RoleLabel": "Ruolo",
   "AccreditationPDFButton": "Accreditamento",
   "FileMenu": "File",
-  "LanguageMenu": "Lingua",
+  "language": "Lingua",
   "OptionsMenu": "Opzioni",
   "StatisticsMenu": "Grafica",
   "InsertMenu": "Inserire",
@@ -522,7 +522,28 @@
   "infoTeamsAdded": "Squadre archiviate.",
   "infoTeamDeleted": "Squadra eliminata!",
   "infoTeamStored": "Squadra memorizzata.",
-  "infoTeamUpdated": "Squadra aggiornata."
+  "infoTeamUpdated": "Squadra aggiornata.",
+  "administration": "Gestione",
+  "settings": "Impostazioni",
+  "competition": "Competizione",
+  "competitions": "Competizioni",
+  "competitionName": "Nome della Competizione",
+  "users": "Utenti",
+  "username": "Nome Utente",
+  "fullName": "Nome e Cognome",
+  "authenticatedUserDeleteQuestion": "Sei sicuro di eliminare <strong>{{username}}</strong>?",
+  "authenticatedUserAdd": "Aggiungi un Nuovo Utente",
+  "authenticatedUserEdit": "Modifica Utente",
+  "authenticatedUserDelete": "Elimina Utente",
+  "infoAuthenticatedUserStored": "L'utente è stato memorizzato.",
+  "infoAuthenticatedUserUpdated": "L'utente è stato aggiornato.",
+  "infoAuthenticatedUserDeleted": "L'utente è stato cancellato!",
+  "newPassword": "Nuova Password",
+  "oldPassword": "Vecchia Password",
+  "repeatPassword": "Ripeti la Password",
+  "invalidPasswordError": "La password deve essere una combinazione di lettere minuscole, maiuscole, numeri e almeno 8 caratteri.",
+  "infoPasswordUpdated": "Password aggiornata correttamente.",
+  "errorUserAlreadyExists": "Een gebruiker met die gebruikersnaam bestaat al!"
 }
 
 
