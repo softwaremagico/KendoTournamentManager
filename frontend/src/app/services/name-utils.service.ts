@@ -9,6 +9,11 @@ export class NameUtilsService {
   constructor() {
   }
 
+  getName(participant: Participant | undefined): string {
+    if (!participant) return "";
+    return participant.name;
+  }
+
   getShortName(participant: Participant | undefined): string {
     if (!participant) return "";
     return participant.name.slice(0, 1).toUpperCase() + ".";
@@ -45,7 +50,9 @@ export class NameUtilsService {
   }
 
   getDisplayName(participant: Participant | undefined, resolution: number): string {
-    if (resolution > 1200) {
+    if (resolution > 1500) {
+      return this.getLastname(participant) + ', ' + this.getName(participant);
+    } else if (resolution > 1200) {
       return this.getLastname(participant) + ', ' + this.getShortName(participant);
     } else if (resolution > 900) {
       return this.getShortLastName(participant) + ', ' + this.getShortName(participant);
