@@ -59,7 +59,7 @@ public class LocalDateTimeAttributeConverter extends AbstractCryptoConverter<Loc
                 // From SQL Script.
                 return LocalDateTime.parse(dbData, formatter);
             } catch (DateTimeParseException dte) {
-                EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid long value in database.");
+                EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
                 return null;
             }
         }
@@ -67,6 +67,6 @@ public class LocalDateTimeAttributeConverter extends AbstractCryptoConverter<Loc
 
     @Override
     protected String entityAttributeToString(LocalDateTime attribute) {
-        return attribute == null ? null : attribute.toString() + "";
+        return attribute == null ? null : attribute + "";
     }
 }
