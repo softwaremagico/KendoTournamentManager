@@ -29,19 +29,21 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 @Converter(autoApply = true)
-public class LocalDateTimeAttributeConverter extends AbstractCryptoConverter<LocalDateTime> implements AttributeConverter<LocalDateTime, String> {
+public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalDateTime> implements AttributeConverter<LocalDateTime, String> {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx", Locale.getDefault());
 
-    public LocalDateTimeAttributeConverter() {
+    public LocalDateTimeCryptoConverter() {
         this(new CipherInitializer());
     }
 
-    public LocalDateTimeAttributeConverter(CipherInitializer cipherInitializer) {
+    public LocalDateTimeCryptoConverter(CipherInitializer cipherInitializer) {
         super(cipherInitializer);
     }
 
@@ -59,8 +61,13 @@ public class LocalDateTimeAttributeConverter extends AbstractCryptoConverter<Loc
                 // From SQL Script.
                 return LocalDateTime.parse(dbData, formatter);
             } catch (DateTimeParseException dte) {
-                EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
-                return null;
+                try {
+                    //Try with offset.
+                    return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
+                } catch (DateTimeParseException e) {
+                    EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
+                    return null;
+                }
             }
         }
     }
