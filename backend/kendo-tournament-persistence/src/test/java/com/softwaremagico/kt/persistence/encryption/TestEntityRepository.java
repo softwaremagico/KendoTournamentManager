@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.encryption;
+package com.softwaremagico.kt.persistence.encryption;
 
 /*-
  * #%L

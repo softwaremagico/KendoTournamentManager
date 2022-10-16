@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.encryption;
+package com.softwaremagico.kt.persistence.encryption;
 
 /*-
  * #%L
@@ -60,5 +60,17 @@ public class CheckEncryptedDataStorage extends AbstractTransactionalTestNGSpring
         Assert.assertEquals(new HashSet<>(entities), originalEntities);
         Assert.assertEquals(new HashSet<>(testEntityRepository.findAll()), entities);
 
+    }
+
+    @Test
+    public void checkLocalDateTimeConverter(){
+        LocalDateTimeCryptoConverter localDateTimeCryptoConverter = new LocalDateTimeCryptoConverter();
+        Assert.assertNotNull(localDateTimeCryptoConverter.stringToEntityAttribute("2015-10-25 10:00:00"));
+    }
+
+    @Test
+    public void checkLocalDateTimeConverterWithOffset(){
+        LocalDateTimeCryptoConverter localDateTimeCryptoConverter = new LocalDateTimeCryptoConverter();
+        Assert.assertNotNull(localDateTimeCryptoConverter.stringToEntityAttribute("2015-10-25 10:00:00.000000+02"));
     }
 }
