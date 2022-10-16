@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class ClubConverter extends ElementConverter<Club, ClubDTO, ClubConverterRequest> {
 
     @Override
-    public ClubDTO convert(ClubConverterRequest from) {
+    protected ClubDTO convertElement(ClubConverterRequest from) {
         final ClubDTO clubDTO = new ClubDTO();
         BeanUtils.copyProperties(from.getEntity(), clubDTO);
         return clubDTO;
