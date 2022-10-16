@@ -42,7 +42,7 @@ public class ParticipantImageConverter extends ElementConverter<ParticipantImage
 
 
     @Override
-    public ParticipantImageDTO convert(ParticipantImageConverterRequest from) {
+    protected ParticipantImageDTO convertElement(ParticipantImageConverterRequest from) {
         final ParticipantImageDTO participantImageDTO = new ParticipantImageDTO();
         BeanUtils.copyProperties(from.getEntity(), participantImageDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         return participantImageDTO;

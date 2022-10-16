@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 
-import {AuthenticatedUserService} from "../../services/authenticated-user.service";
+import {LoginService} from "../../services/login.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
@@ -19,7 +19,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   appVersion: string;
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, public authenticatedUserService: AuthenticatedUserService,
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, public loginService: LoginService,
               private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
@@ -29,8 +29,8 @@ export class LoginComponent {
   }
 
   login() {
-    this.authenticatedUserService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value).subscribe(data => {
-        this.authenticatedUserService.setJwtValue(data.jwt);
+    this.loginService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value).subscribe(data => {
+        this.loginService.setJwtValue(data.jwt);
 
         let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         this.router.navigate([returnUrl]);

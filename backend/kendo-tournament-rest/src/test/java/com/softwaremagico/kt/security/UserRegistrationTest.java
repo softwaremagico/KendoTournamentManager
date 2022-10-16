@@ -112,7 +112,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserProvider.createUser(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+        AuthenticatedUser authenticatedUser = authenticatedUserProvider.save(USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -139,7 +139,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         CreateUserRequest request = new CreateUserRequest();
         request.setUsername(USER_NAME);
         request.setName(USER_FIRST_NAME);
-        request.setLastName(USER_LAST_NAME);
+        request.setLastname(USER_LAST_NAME);
         request.setPassword(USER_PASSWORD);
 
         MvcResult createResult = this.mockMvc
@@ -156,7 +156,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         CreateUserRequest request = new CreateUserRequest();
         request.setUsername(USER_NAME_2);
         request.setName(USER_FIRST_NAME_2);
-        request.setLastName(USER_LAST_NAME_2);
+        request.setLastname(USER_LAST_NAME_2);
         request.setPassword(USER_PASSWORD);
         request.setAuthorities(new HashSet<>(Arrays.asList(USER_ROLES)));
 

@@ -10,41 +10,81 @@
       <img class="filter-white" width="50" src="assets/img/kote.svg" alt="kote">
       <a mat-button class="softwaremagico" routerLink="/">
         <span class="app-title">Kendo Tournament Manager v2</span>
-        <span class="app-title-red">KTM v2</span>
+        <span class="app-title-reduced">KTM v2</span>
       </a>
-      <span class="example-spacer"></span>
+      <span class="menu-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
-        <a mat-button (click)="toggleMenu('Registry')">{{'registry' | translate}}
+        <a mat-button (click)="toggleMenu('Registry')">
+          <mat-icon>edit_note</mat-icon>
+          <span class="upper-menu-title">{{'registry' | translate}}</span>
           <mat-icon *ngIf="selectedRow !== 'Registry'">expand_more</mat-icon>
           <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
         </a>
-        <a mat-button routerLink="/tournaments">{{'tournaments' | translate}}</a>
-<!--        <a mat-button routerLink="/reports">{{'reports' | translate}}</a>-->
-        <a mat-button (click)="toggleMenu('Language')">
-          {{'LanguageMenu' | translate}}
-          <mat-icon *ngIf="selectedRow !== 'Language'">expand_more</mat-icon>
-          <mat-icon *ngIf="selectedRow === 'Language'">expand_less</mat-icon>
+        <a mat-button routerLink="/tournaments">
+          <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
+          <span class="upper-menu-title">{{'competitions' | translate}}</span>
+        </a>
+        <a mat-button (click)="toggleMenu('Admin')">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span class="upper-menu-title">{{'administration' | translate}}</span>
+          <mat-icon *ngIf="selectedRow !== 'Admin'">expand_more</mat-icon>
+          <mat-icon *ngIf="selectedRow === 'Admin'">expand_less</mat-icon>
+        </a>
+        <a mat-button (click)="toggleMenu('Settings')">
+          <mat-icon>settings</mat-icon>
+          <span class="upper-menu-title">{{'settings' | translate}}</span>
+          <mat-icon *ngIf="selectedRow !== 'Settings'">expand_more</mat-icon>
+          <mat-icon *ngIf="selectedRow === 'Settings'">expand_less</mat-icon>
         </a>
       </div>
     </mat-toolbar-row>
     <!-- Submenu -->
     <mat-toolbar-row *ngIf="selectedRow === 'Registry'" class="toolbar-submenu">
-      <span class="example-spacer"></span>
+      <span class="menu-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
         <a mat-button routerLink="/clubs">
           <mat-icon>home</mat-icon>
-          {{'clubs' | translate}}</a>
+          <span class="upper-menu-title">{{'clubs' | translate}} </span>
+        </a>
         <a mat-button routerLink="/participants">
           <mat-icon>people</mat-icon>
-          {{'participants' | translate}}</a>
+          <span class="upper-menu-title">{{'participants' | translate}}</span>
+        </a>
+      </div>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="selectedRow === 'Settings'" class="toolbar-submenu">
+      <span class="menu-spacer"></span>
+      <div fxShow="true" fxHide.lt-md="true">
+        <a mat-button [matMenuTriggerFor]="languageMenu">
+          <mat-icon>flag</mat-icon>
+          <span class="upper-menu-title">{{'language' | translate}}</span>
+        </a>
+        <mat-menu #languageMenu="matMenu">
+          <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
+            <mat-icon>flag</mat-icon>
+            {{language}}</a>
+        </mat-menu>
       </div>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="selectedRow === 'Language'" class="toolbar-submenu">
-      <span class="example-spacer"></span>
+      <span class="menu-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
         <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language); toggleMenu('')">
           <mat-icon>flag</mat-icon>
           {{language}}</a>
+      </div>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="selectedRow === 'Admin'" class="toolbar-submenu">
+      <span class="menu-spacer"></span>
+      <div fxShow="true" fxHide.lt-md="true">
+        <a mat-button routerLink="/users">
+          <mat-icon>person</mat-icon>
+          <span class="upper-menu-title">{{'users' | translate}}</span>
+        </a>
+        <a mat-button routerLink="/passwords">
+          <mat-icon>key</mat-icon>
+          <span class="upper-menu-title">{{'password' | translate}}</span>
+        </a>
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
@@ -54,31 +94,58 @@
       <mat-nav-list dense>
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>
-            {{'registry' | translate}}
+            <mat-icon>edit_note</mat-icon>
+            <span class="left-menu-selector-entry">{{'registry' | translate}}</span>
           </mat-expansion-panel-header>
           <mat-nav-list dense>
             <a mat-list-item routerLink="/clubs">
               <mat-icon>home</mat-icon>
-              {{'clubs' | translate}}</a>
-            <a mat-list-item routerLink="#">
+              <span class="left-menu-single-entry">{{'clubs' | translate}}</span>
+            </a>
+            <a mat-list-item routerLink="/participants">
               <mat-icon>people</mat-icon>
-              {{'participants' | translate}}</a>
+              <span class="left-menu-single-entry">{{'participants' | translate}}</span>
+            </a>
           </mat-nav-list>
         </mat-expansion-panel>
         <mat-list-item routerLink="/tournaments">
-          <mat-icon>dashboard</mat-icon>
-          {{'tournaments' | translate}}</mat-list-item>
-<!--        <mat-list-item routerLink="/reports">-->
-<!--          <mat-icon>dashboard</mat-icon>-->
-<!--          {{'reports' | translate}}</mat-list-item>-->
+          <mat-icon svgIcon="teams-classification" class="left-kendo-icon"></mat-icon>
+          <span class="left-menu-single-entry">{{'competitions' | translate}}</span>
+        </mat-list-item>
+        <!--        <mat-list-item routerLink="/reports">-->
+        <!--          <mat-icon>dashboard</mat-icon>-->
+        <!--          {{'reports' | translate}}</mat-list-item>-->
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
           <mat-expansion-panel-header>
-            {{'LanguageMenu' | translate}}
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span class="left-menu-selector-entry">{{'administration' | translate}}</span>
           </mat-expansion-panel-header>
           <mat-nav-list dense>
-            <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
+            <a mat-list-item routerLink="/users">
+              <mat-icon>person</mat-icon>
+              <span class="left-menu-single-entry">{{'users' | translate}}</span>
+            </a>
+            <a mat-list-item routerLink="/passwords">
+              <mat-icon>key</mat-icon>
+              <span class="left-menu-single-entry">{{'password' | translate}}</span>
+            </a>
+          </mat-nav-list>
+        </mat-expansion-panel>
+        <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
+          <mat-expansion-panel-header>
+            <mat-icon>settings</mat-icon>
+            <span class="left-menu-selector-entry">{{'settings' | translate}}</span>
+          </mat-expansion-panel-header>
+          <mat-nav-list dense>
+            <a mat-list-item [matMenuTriggerFor]="languageMenu">
               <mat-icon>flag</mat-icon>
-              {{language}}</a>
+              <span class="left-menu-single-entry">{{'language' | translate}}</span>
+            </a>
+            <mat-menu #languageMenu="matMenu">
+              <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
+                <mat-icon>flag</mat-icon>
+                {{language}}</a>
+            </mat-menu>
           </mat-nav-list>
         </mat-expansion-panel>
       </mat-nav-list>
