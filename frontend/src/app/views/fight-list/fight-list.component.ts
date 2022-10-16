@@ -320,10 +320,12 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
   }
 
   showTeamsClassification(fightsFinished: boolean) {
-    this.dialog.open(TeamRankingComponent, {
-      width: '85vw',
-      data: {tournament: this.tournament, groupId: this.groups[0].id, finished: fightsFinished}
-    });
+    if (this.groups.length > 0) {
+      this.dialog.open(TeamRankingComponent, {
+        width: '85vw',
+        data: {tournament: this.tournament, groupId: this.groups[0].id, finished: fightsFinished}
+      });
+    }
   }
 
   showCompetitorsClassification() {
