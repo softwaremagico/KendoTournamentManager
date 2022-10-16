@@ -37,6 +37,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class AuthenticatedUserController {
@@ -101,6 +102,12 @@ public class AuthenticatedUserController {
             authenticatedUserProvider.delete(user);
             KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
         }
+    }
+
+    public Set<String> getRoles(String username) {
+        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+        return user.getRoles();
     }
 
     public List<AuthenticatedUser> findAll() {

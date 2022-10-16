@@ -47,21 +47,21 @@ public class ParticipantServices {
         this.participantController = participantController;
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all participants.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ParticipantDTO> getAll(HttpServletRequest request) {
         return participantController.get();
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Counts all participants.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long count(HttpServletRequest request) {
         return participantController.count();
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantDTO get(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
@@ -69,7 +69,7 @@ public class ParticipantServices {
         return participantController.get(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Creates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -77,7 +77,7 @@ public class ParticipantServices {
         return participantController.create(participantDTO, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,7 +86,7 @@ public class ParticipantServices {
         participantController.deleteById(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,7 +94,7 @@ public class ParticipantServices {
         participantController.delete(participantDTO);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantDTO update(@RequestBody ParticipantDTO participantDTO, Authentication authentication, HttpServletRequest request) {

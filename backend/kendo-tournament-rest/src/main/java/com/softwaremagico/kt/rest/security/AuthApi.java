@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -158,6 +159,13 @@ public class AuthApi {
             throws InterruptedException {
         Thread.sleep(random.nextInt(10) * 1000L);
         authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
+    }
+
+    @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/roles")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public Set<String> getRoles(Authentication authentication, HttpServletRequest httpRequest) {
+        return authenticatedUserController.getRoles(authentication.getName());
     }
 
 
