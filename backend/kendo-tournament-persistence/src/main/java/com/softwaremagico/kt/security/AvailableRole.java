@@ -26,6 +26,9 @@ package com.softwaremagico.kt.security;
 
 public enum AvailableRole {
     ROLE_VIEWER,
+
+    ROLE_EDITOROR,
+
     ROLE_ADMIN;
 
     private static final String ROLE_PREFIX = "ROLE_";
