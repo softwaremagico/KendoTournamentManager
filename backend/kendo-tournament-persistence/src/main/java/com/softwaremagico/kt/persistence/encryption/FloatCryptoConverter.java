@@ -50,7 +50,7 @@ public class FloatCryptoConverter extends AbstractCryptoConverter<Float> impleme
         try {
             return (dbData == null || dbData.isEmpty()) ? null : Float.parseFloat(dbData);
         } catch (NumberFormatException nfe) {
-            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid long value in database.");
+            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid float value '{}' in database.", dbData);
             return null;
         }
     }
