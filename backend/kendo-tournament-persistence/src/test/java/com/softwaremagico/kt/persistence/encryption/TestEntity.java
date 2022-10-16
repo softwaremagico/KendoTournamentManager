@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.encryption;
+package com.softwaremagico.kt.persistence.encryption;
 
 /*-
  * #%L
@@ -23,8 +23,6 @@ package com.softwaremagico.kt.encryption;
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-
-import com.softwaremagico.kt.persistence.encryption.*;
 
 import javax.persistence.*;
 import java.security.SecureRandom;
@@ -71,7 +69,7 @@ public class TestEntity {
     private LocalDate localDateColumn;
 
     @Column(nullable = false)
-    @Convert(converter = LocalDateTimeAttributeConverter.class)
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime localDateTimeColumn;
 
     @Column(nullable = false)
