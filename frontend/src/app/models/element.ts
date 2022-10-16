@@ -5,6 +5,12 @@ export class Element {
   public createdBy?: string;
   public updatedBy?: string;
 
+  constructor() {
+    this.createdAt = new Date();
+    this.createdBy = localStorage.getItem('username')!;
+  }
+
+
   public static copy(source: Element, target: Element): void {
     target.id = source.id;
     target.createdAt = source.createdAt;
