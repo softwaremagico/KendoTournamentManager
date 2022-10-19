@@ -552,7 +552,8 @@
   "repeatPassword": "Repeteix Contrasenya",
   "invalidPasswordError": "La contrasenya ha de ser una combinació de minúscules, majúscules, números i com a mínim 8 caràcters.",
   "infoPasswordUpdated": "Contrasenya actualitzada correctament.",
-  "errorUserAlreadyExists": "Ja hi ha un usuari amb aquest nom d'usuari!"
+  "errorUserAlreadyExists": "Ja hi ha un usuari amb aquest nom d'usuari!",
+  "timerResetWarning": "Estàs segur que vols restablir l'hora?"
 }
 
 

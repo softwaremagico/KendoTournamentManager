@@ -557,7 +557,8 @@
   "repeatPassword": "Repite Contraseña",
   "invalidPasswordError": "La contraseña debe ser una combinación de minúsculas, mayúsculas, números y al menos 8 caracteres.",
   "infoPasswordUpdated": "Contraseña actualizada correctamente.",
-  "errorUserAlreadyExists": "Ya existe un usuario con ese nombre de usuario!"
+  "errorUserAlreadyExists": "Ya existe un usuario con ese nombre de usuario!",
+  "timerResetWarning": "¿Estás seguro de querer restablecer el tiempo?"
 }
 
 
