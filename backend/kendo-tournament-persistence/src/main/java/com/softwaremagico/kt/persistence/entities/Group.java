@@ -66,7 +66,7 @@ public class Group extends Element {
 
     @Column(name = "number_of_winners", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
-    private int numberOfWinners;
+    private int numberOfWinners = 1;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "unties", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
