@@ -16,6 +16,9 @@
       <button class="stop" (click)="finishTimer()">
         <mat-icon>check_circle</mat-icon>
       </button>
+      <button class="restore" (click)="restoreTimer()" [disabled]="this.elapsedSeconds === 0">
+        <mat-icon>restore</mat-icon>
+      </button>
       <button class="forward" (click)="addTime(+10)">+10"</button>
       <button class="forward" (click)="addTime(+60)">+1'</button>
     </div>
