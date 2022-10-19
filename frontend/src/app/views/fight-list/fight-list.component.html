@@ -68,7 +68,7 @@
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" (onTimerFinished)="finishDuel($event[0])"
                (onTimerChanged)="updateDuelElapsedTime($event[0])"
-               (timeDurationChanged)="updateDuelDuration($event[0])"></app-timer>
+               (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
       <div class="fight-list">
         <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
