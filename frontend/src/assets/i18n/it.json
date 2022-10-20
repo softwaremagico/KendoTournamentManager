@@ -543,7 +543,8 @@
   "repeatPassword": "Ripeti la Password",
   "invalidPasswordError": "La password deve essere una combinazione di lettere minuscole, maiuscole, numeri e almeno 8 caratteri.",
   "infoPasswordUpdated": "Password aggiornata correttamente.",
-  "errorUserAlreadyExists": "Een gebruiker met die gebruikersnaam bestaat al!"
+  "errorUserAlreadyExists": "Een gebruiker met die gebruikersnaam bestaat al!",
+  "timerResetWarning": "Sei sicuro di voler azzerare l'ora?"
 }
 
 

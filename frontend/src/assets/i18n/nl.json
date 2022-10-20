@@ -535,7 +535,8 @@
   "repeatPassword": "Herhaal wachtwoord",
   "invalidPasswordError": "Wachtwoord moet een combinatie zijn van kleine letters, hoofdletters, cijfers en ten minste 8 tekens lang.",
   "infoPasswordUpdated": "Wachtwoord succesvol bijgewerkt.",
-  "errorUserAlreadyExists": "User with this username already exists!"
+  "errorUserAlreadyExists": "User with this username already exists!",
+  "timerResetWarning": "Weet je zeker dat je de tijd wilt resetten?"
 }
 
 
