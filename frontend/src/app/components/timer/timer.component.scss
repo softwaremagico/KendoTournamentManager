@@ -6,7 +6,7 @@
 .container {
   border: 1px solid #333;
   border-radius: 10px;
-  width: 300px;
+  width: 350px;
   margin: 20px auto;
   padding: 5px 20px 5px 20px;
   text-align: center;
@@ -23,7 +23,7 @@
   margin: auto;
   border: 8px solid #8097b3;
   border-radius: 5%;
-  width: 270px;
+  width: 330px;
   height: 70px;
   overflow: hidden;
   display: flex;
@@ -80,6 +80,10 @@
 
 .rewind {
   color: #ff0000;
+}
+
+.restore {
+  color: #FF9800;
 }
 
 .forward {

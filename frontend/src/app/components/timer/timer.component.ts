@@ -1,8 +1,10 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output} from '@angular/core';
 import {AudioService} from "../../services/audio.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
-import {Subject, takeUntil} from "rxjs";
+import {takeUntil} from "rxjs";
 import {KendoComponent} from "../kendo-component";
+import {MatDialog} from "@angular/material/dialog";
+import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-timer',
@@ -26,15 +28,18 @@ export class TimerComponent extends KendoComponent implements OnInit {
   @Output() onTimerFinished: EventEmitter<any> = new EventEmitter();
   @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
+  @Output() timerClosed: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
   seconds: number;
   private clockHandler: NodeJS.Timeout;
   elapsedSeconds: number = 0;
   private alarmOn: boolean;
+  totalTime: number;
+  increasedTime: number = 0;
 
 
-  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService) {
+  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,) {
     super();
     this.started = false;
   }
@@ -49,6 +54,7 @@ export class TimerComponent extends KendoComponent implements OnInit {
     });
     this.timeChangedService.isTotalTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(totalTime => {
       this.resetVariablesAsSeconds(totalTime, false);
+      this.totalTime = totalTime;
     });
   }
 
@@ -62,6 +68,15 @@ export class TimerComponent extends KendoComponent implements OnInit {
       }
     } else if (event.key === 'Enter') {
       this.finishTimer();
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardNonPrintableEvent(event: KeyboardEvent) {
+    if (event.key === 'Backspace') {
+      this.restoreTimer();
+    } else if (event.key === 'Escape') {
+      this.timerClosed.emit(true);
     }
   }
 
@@ -97,6 +112,25 @@ export class TimerComponent extends KendoComponent implements OnInit {
     this.alarmOn = false;
     this.elapsedSeconds = 0;
   };
+
+  restoreTimer() {
+    if (this.elapsedSeconds === 0) {
+      return;
+    }
+    let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: false
+    });
+    dialogRef.componentInstance.messageTag = "timerResetWarning"
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.elapsedSeconds = 0;
+        this.onTimerChanged.emit([this.elapsedSeconds]);
+        this.resetVariablesAsSeconds(this.totalTime + this.increasedTime, false);
+        this.alarmOn = false;
+      }
+    });
+  }
 
   timerComplete() {
     this.onTimerFinished.emit([this.elapsedSeconds]);
@@ -145,6 +179,7 @@ export class TimerComponent extends KendoComponent implements OnInit {
 
   addTime(time: number) {
     this.seconds += time;
+    this.increasedTime += time;
     let rawSeconds: number = this.seconds + this.minutes * 60;
     if (rawSeconds < 0) {
       rawSeconds = 0;
