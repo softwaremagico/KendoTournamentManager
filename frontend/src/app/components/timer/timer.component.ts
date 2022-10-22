@@ -39,7 +39,7 @@ export class TimerComponent extends KendoComponent implements OnInit {
   increasedTime: number = 0;
 
 
-  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,) {
+  constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog) {
     super();
     this.started = false;
   }
