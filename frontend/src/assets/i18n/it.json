@@ -544,7 +544,11 @@
   "invalidPasswordError": "La password deve essere una combinazione di lettere minuscole, maiuscole, numeri e almeno 8 caratteri.",
   "infoPasswordUpdated": "Password aggiornata correttamente.",
   "errorUserAlreadyExists": "Een gebruiker met die gebruikersnaam bestaat al!",
-  "timerResetWarning": "Sei sicuro di voler azzerare l'ora?"
+  "timerResetWarning": "Sei sicuro di voler azzerare l'ora?",
+  "logoutWarning": "Sei sicuro di voler uscire?",
+  "logout": "Disconnettersi",
+  "userloggedInMessage": "L'utente ha effettuato l'accesso con successo",
+  "userloggedOutMessage": "L'utente si è disconnesso correttamente"
 }
 
 
