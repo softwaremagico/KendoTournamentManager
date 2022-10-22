@@ -469,7 +469,8 @@
   "volunteer": "Voluntario",
   "deniedUserError": "Usuari o contrasenya invàlids",
   "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
-  "userCorrectMessage": "Usuari registrat correctament.",
+  "userloggedInMessage": "Usuari registrat correctament.",
+  "userloggedOutMessage": "La sessió d'usuari s'ha tancat correctament",
   "wizard": "Assistent",
   "download": "Descarregar",
   "disablePopUpBlocker": "Si us plau, desactiveu el vostre bloquejador de finestres emergents i torneu-ho a provar.",
@@ -553,7 +554,9 @@
   "invalidPasswordError": "La contrasenya ha de ser una combinació de minúscules, majúscules, números i com a mínim 8 caràcters.",
   "infoPasswordUpdated": "Contrasenya actualitzada correctament.",
   "errorUserAlreadyExists": "Ja hi ha un usuari amb aquest nom d'usuari!",
-  "timerResetWarning": "Estàs segur que vols restablir l'hora?"
+  "timerResetWarning": "Estàs segur que vols restablir l'hora?",
+  "logoutWarning": "Esteu segur de voler tancar sessió?",
+  "logout": "Tancar sessió"
 }
 
 
