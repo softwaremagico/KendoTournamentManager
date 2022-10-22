@@ -34,7 +34,7 @@ export class LoginComponent {
 
         let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         this.router.navigate([returnUrl]);
-        this.messageService.infoMessage("userCorrectMessage");
+        this.messageService.infoMessage("userloggedInMessage");
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
       },
       error => {
