@@ -463,7 +463,8 @@
   "volunteer": "Voluntario",
   "deniedUserError": "Usuario o contraseña inválidos.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
-  "userCorrectMessage": "Usuario registrado correctamente.",
+  "userloggedInMessage": "Usuario registrado correctamente.",
+  "userloggedOutMessage": "La sesión del usuario se ha cerrado correctamente",
   "accept": "Aceptar",
   "cancel": "Cancelar",
   "delete": "Borrar",
@@ -558,7 +559,9 @@
   "invalidPasswordError": "La contraseña debe ser una combinación de minúsculas, mayúsculas, números y al menos 8 caracteres.",
   "infoPasswordUpdated": "Contraseña actualizada correctamente.",
   "errorUserAlreadyExists": "Ya existe un usuario con ese nombre de usuario!",
-  "timerResetWarning": "¿Estás seguro de querer restablecer el tiempo?"
+  "timerResetWarning": "¿Estás seguro de querer restablecer el tiempo?",
+  "logoutWarning": "¿Estas seguro de querer cerrar sesión?",
+  "logout": "Cerrar sesión"
 }
 
 
