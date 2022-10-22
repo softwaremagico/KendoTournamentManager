@@ -39,6 +39,10 @@ export class LoginService {
         }));
   }
 
+  logout(): void{
+    this.cookies.delete("jwt");
+  }
+
   private refreshHeader() {
     this.httpOptions = {
       headers: new HttpHeaders({
