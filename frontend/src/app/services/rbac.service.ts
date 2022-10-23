@@ -241,4 +241,24 @@ export class RbacService {
     return this.hasRole(['viewer', 'editor', 'admin']);
   }
 
+  /**
+   * User Actions
+   */
+
+  canReadAllUsers(): boolean {
+    return this.hasRole(['admin']);
+  }
+
+  canReadAUser(): boolean {
+    return this.hasRole(['admin']);
+  }
+
+  canUpdateAUser(): boolean {
+    return this.hasRole(['admin']);
+  }
+
+  canDeleteAUser(): boolean {
+    return this.hasRole(['admin']);
+  }
+
 }
