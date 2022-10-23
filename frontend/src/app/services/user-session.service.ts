@@ -23,49 +23,49 @@ export class UserSessionService {
 
   setTournament(tournamentId: string | undefined) {
     if (tournamentId) {
-      this.cookies.set("lastSelectedTournament", tournamentId);
+      sessionStorage.setItem("lastSelectedTournament", tournamentId);
     } else {
-      this.cookies.delete("lastSelectedTournament");
+      sessionStorage.removeItem("lastSelectedTournament");
     }
   }
 
   getTournament() {
-    return this.cookies.get("lastSelectedTournament");
+    return sessionStorage.getItem("lastSelectedTournament");
   }
 
   setItemsPerPage(pageSize: number | undefined) {
     if (pageSize) {
-      this.cookies.set("itemsPerPage", pageSize.toString());
+      sessionStorage.setItem("itemsPerPage", pageSize.toString());
     } else {
-      this.cookies.delete("itemsPerPage");
+      sessionStorage.removeItem("itemsPerPage");
     }
   }
 
   getItemsPerPage(): number {
-    return Number(this.cookies.get("itemsPerPage"));
+    return Number(sessionStorage.getItem("itemsPerPage"));
   }
 
   setSwappedColors(swappedColors: boolean) {
     if (swappedColors) {
-      this.cookies.set("swappedColors", swappedColors.toString());
+      sessionStorage.setItem("swappedColors", swappedColors.toString());
     } else {
-      this.cookies.delete("swappedColors");
+      sessionStorage.removeItem("swappedColors");
     }
   }
 
   getSwappedColors(): boolean {
-    return Boolean(this.cookies.get("swappedColors"));
+    return Boolean(sessionStorage.getItem("swappedColors"));
   }
 
   setSwappedTeams(swappedTeams: boolean) {
     if (swappedTeams) {
-      this.cookies.set("swappedTeams", swappedTeams.toString());
+      sessionStorage.setItem("swappedTeams", swappedTeams.toString());
     } else {
-      this.cookies.delete("swappedTeams");
+      sessionStorage.removeItem("swappedTeams");
     }
   }
 
   getSwappedTeams(): boolean {
-    return Boolean(this.cookies.get("swappedTeams"));
+    return Boolean(sessionStorage.getItem("swappedTeams"));
   }
 }

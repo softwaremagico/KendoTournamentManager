@@ -105,4 +105,17 @@ export class UserService {
         catchError(this.messageService.handleError<void>(`Updating password!`))
       );
   }
+
+  getRoles(): Observable<string[]> {
+    const url: string = `${this.baseUrl}/roles`;
+    return this.http.get<string[]>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Getting roles for user`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<string[]>(`Roles cannot be retrieved!`))
+      );
+  }
 }
