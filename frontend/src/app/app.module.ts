@@ -76,9 +76,11 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatSpinnerOverlayComponent} from "./components/mat-spinner-overlay/mat-spinner-overlay.component";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {PaginatorI18n} from "./components/basic/basic-table/paginator-i18n";
-import { AuthenticatedUserListComponent } from './views/authenticated-user-list/authenticated-user-list.component';
-import { AuthenticatedUserDialogBoxComponent } from './views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.component';
-import { PasswordsComponent } from './views/passwords/passwords.component';
+import {AuthenticatedUserListComponent} from './views/authenticated-user-list/authenticated-user-list.component';
+import {
+  AuthenticatedUserDialogBoxComponent
+} from './views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.component';
+import {PasswordsComponent} from './views/passwords/passwords.component';
 
 
 registerLocaleData(localeES, "es");
