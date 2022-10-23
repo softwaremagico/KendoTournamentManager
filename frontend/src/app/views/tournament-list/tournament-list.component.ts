@@ -17,6 +17,7 @@ import {UserSessionService} from "../../services/user-session.service";
 import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../services/rbac.service";
 
 @Component({
   selector: 'app-tournament-list',
@@ -32,7 +33,8 @@ export class TournamentListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog, private messageService: MessageService) {
+              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
+              private messageService: MessageService, private rbacService: RbacService) {
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
@@ -159,6 +161,15 @@ export class TournamentListComponent implements OnInit {
         }
       });
     }
+  }
+
+  canAddTournament(): boolean {
+    console.log(this.rbacService.canAddTournament());
+    return this.rbacService.canAddTournament();
+  }
+
+  canEditTournament(): boolean {
+    return this.rbacService.canEditTournament()
   }
 }
 

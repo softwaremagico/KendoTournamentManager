@@ -3,10 +3,10 @@
   <div class="kendo-table">
     <div class="upper-menu">
       <div class="cell">
-        <button mat-button color="primary" (click)="addElement()">
+        <button mat-button color="primary" (click)="addElement()" *ngIf="canAddTournament()">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="editElement()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="editElement()" *ngIf="canEditTournament()">
           <mat-icon>create</mat-icon>
         </button>
         <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addRoles()">

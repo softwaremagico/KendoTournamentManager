@@ -55,8 +55,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type) {
-        TournamentDTO tournamentDTO = converter.convert(createConverterRequest(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : 3,
-                type != null ? type : TournamentType.LEAGUE))));
+        final TournamentDTO tournamentDTO = converter.convert(createConverterRequest(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1,
+                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE))));
         //Add default group:
         groupProvider.addGroup(converter.reverse(tournamentDTO), new Group());
         return tournamentDTO;
