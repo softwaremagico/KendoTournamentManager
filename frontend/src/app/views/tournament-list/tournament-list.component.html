@@ -9,10 +9,10 @@
         <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="editElement()" *ngIf="canEditTournament()">
           <mat-icon>create</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addRoles()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addRoles()" *ngIf="canViewRoles()">
           <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addTeams()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addTeams()" *ngIf="canViewTeams()">
           <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
         </button>
         <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
@@ -30,14 +30,14 @@
         <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
         <!--          <mat-icon>integration_instructions</mat-icon>-->
         <!--        </button>-->
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="openFights()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="openFights()" *ngIf="canViewFight()">
           <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()">
+        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()" *ngIf="canDeleteTournament()">
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()" *ngIf="canViewRanking()">
           <mat-icon svgIcon="tournament-blog" class="kendo-icon"></mat-icon>
         </button>
       </div>
