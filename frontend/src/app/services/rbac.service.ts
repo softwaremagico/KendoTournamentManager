@@ -1,5 +1,8 @@
 import {Injectable} from '@angular/core';
 import {UserService} from "./user.service";
+import * as CryptoJS from 'crypto-js';
+
+const {version: appVersion} = require('../../../package.json')
 
 @Injectable({
   providedIn: 'root'
@@ -7,18 +10,23 @@ import {UserService} from "./user.service";
 export class RbacService {
 
   roles: string[];
+  appVersion: string;
 
   constructor(private userService: UserService) {
+    this.appVersion = appVersion;
   }
 
   setRoles(roles: string[]): void {
     this.roles = roles.map(role => role.toLowerCase());
-    sessionStorage.setItem("roles", JSON.stringify(roles));
+    sessionStorage.setItem("accessToken", CryptoJS.AES.encrypt(JSON.stringify(roles), this.appVersion.trim()).toString());
   }
 
   getRoles(): string[] {
     if (!this.roles) {
-      this.roles = JSON.parse(sessionStorage.getItem("roles")!);
+      const accessToken: string = sessionStorage.getItem("accessToken")!;
+      if (accessToken) {
+        this.roles = JSON.parse(CryptoJS.AES.decrypt(accessToken, this.appVersion.trim()).toString(CryptoJS.enc.Utf8));
+      }
       if (!this.roles) {
         this.userService.getRoles().subscribe(_roles => {
           this.setRoles(_roles);
@@ -30,7 +38,7 @@ export class RbacService {
 
   private hasRole(desiredRoles: string[]) {
     for (const role of desiredRoles) {
-      if (this.getRoles().indexOf(role.toLowerCase()) > -1) {
+      if (this.getRoles() && this.getRoles().indexOf(role.toLowerCase()) > -1) {
         return true;
       }
     }

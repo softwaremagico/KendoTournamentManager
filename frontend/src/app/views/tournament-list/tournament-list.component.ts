@@ -164,7 +164,6 @@ export class TournamentListComponent implements OnInit {
   }
 
   canAddTournament(): boolean {
-    console.log(this.rbacService.canAddTournament());
     return this.rbacService.canAddTournament();
   }
 
