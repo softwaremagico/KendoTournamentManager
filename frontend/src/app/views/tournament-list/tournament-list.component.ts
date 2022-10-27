@@ -171,5 +171,25 @@ export class TournamentListComponent implements OnInit {
   canEditTournament(): boolean {
     return this.rbacService.canEditTournament()
   }
+
+  canDeleteTournament(): boolean {
+    return this.rbacService.canDeleteTournament()
+  }
+
+  canViewRoles(): boolean {
+    return this.rbacService.canReadAllRoles();
+  }
+
+  canViewTeams(): boolean {
+    return this.rbacService.canReadAllTeams();
+  }
+
+  canViewFight(): boolean {
+    return this.rbacService.canReadAFight();
+  }
+
+  canViewRanking(): boolean {
+    return this.rbacService.canReadAllRankings();
+  }
 }
 
