@@ -17,7 +17,8 @@ import {UserSessionService} from "../../services/user-session.service";
 import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
 import {TranslateService} from "@ngx-translate/core";
-import {RbacService} from "../../services/rbac.service";
+import {RbacService} from "../../services/rbac/rbac.service";
+import {RbacActivity} from "../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-tournament-list',
@@ -164,31 +165,31 @@ export class TournamentListComponent implements OnInit {
   }
 
   canAddTournament(): boolean {
-    return this.rbacService.canAddTournament();
+    return this.rbacService.isAllowedTo(RbacActivity.CREATE_TOURNAMENT);
   }
 
   canEditTournament(): boolean {
-    return this.rbacService.canEditTournament()
+    return this.rbacService.isAllowedTo(RbacActivity.EDIT_TOURNAMENT)
   }
 
   canDeleteTournament(): boolean {
-    return this.rbacService.canDeleteTournament()
+    return this.rbacService.isAllowedTo(RbacActivity.DELETE_TOURNAMENT)
   }
 
   canViewRoles(): boolean {
-    return this.rbacService.canReadAllRoles();
+    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_ROLES);
   }
 
   canViewTeams(): boolean {
-    return this.rbacService.canReadAllTeams();
+    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_TEAMS);
   }
 
   canViewFight(): boolean {
-    return this.rbacService.canReadAFight();
+    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_TEAMS);
   }
 
   canViewRanking(): boolean {
-    return this.rbacService.canReadAllRankings();
+    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_RANKINGS);
   }
 }
 
