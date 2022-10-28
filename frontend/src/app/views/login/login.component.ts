@@ -5,7 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
-import {RbacService} from "../../services/rbac.service";
+import {RbacService} from "../../services/rbac/rbac.service";
 
 const {version: appVersion} = require('../../../../package.json')
 
