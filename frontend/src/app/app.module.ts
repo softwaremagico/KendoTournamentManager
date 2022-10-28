@@ -81,6 +81,7 @@ import {
   AuthenticatedUserDialogBoxComponent
 } from './views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.component';
 import {PasswordsComponent} from './views/passwords/passwords.component';
+import { RbacPipe } from './pipes/rbac.pipe';
 
 
 registerLocaleData(localeES, "es");
@@ -125,7 +126,8 @@ registerLocaleData(localeNL, "nl");
     MatSpinnerOverlayComponent,
     AuthenticatedUserListComponent,
     AuthenticatedUserDialogBoxComponent,
-    PasswordsComponent
+    PasswordsComponent,
+    RbacPipe
   ],
   imports: [
     BrowserModule,
