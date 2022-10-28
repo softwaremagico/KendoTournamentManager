@@ -7,6 +7,7 @@ import {ConfirmationDialogComponent} from "./components/basic/confirmation-dialo
 import {MatDialog} from "@angular/material/dialog";
 import {Router} from "@angular/router";
 import {MessageService} from "./services/message.service";
+import {RbacService} from "./services/rbac/rbac.service";
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,7 @@ export class AppComponent {
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
-              private messageService: MessageService) {
+              private messageService: MessageService, private rbacService: RbacService) {
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');
     this.loggedInService.isUserLoggedIn.subscribe(value => this.loggedIn = value);
@@ -54,6 +55,7 @@ export class AppComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loginService.logout();
+        this.rbacService.setRoles([]);
         this.loggedIn = false;
         this.messageService.infoMessage("userloggedOutMessage");
         this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
