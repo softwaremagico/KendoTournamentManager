@@ -18,14 +18,14 @@ import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 
 @Component({
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
   styleUrls: ['./tournament-list.component.scss']
 })
-export class TournamentListComponent implements OnInit {
+export class TournamentListComponent extends RbacBasedComponent implements OnInit {
 
   basicTableData: BasicTableData<Tournament> = new BasicTableData<Tournament>();
 
@@ -36,6 +36,7 @@ export class TournamentListComponent implements OnInit {
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
               private messageService: MessageService, private rbacService: RbacService) {
+    super();
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
@@ -162,34 +163,6 @@ export class TournamentListComponent implements OnInit {
         }
       });
     }
-  }
-
-  canAddTournament(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.CREATE_TOURNAMENT);
-  }
-
-  canEditTournament(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.EDIT_TOURNAMENT)
-  }
-
-  canDeleteTournament(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.DELETE_TOURNAMENT)
-  }
-
-  canViewRoles(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_ROLES);
-  }
-
-  canViewTeams(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_TEAMS);
-  }
-
-  canViewFight(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_TEAMS);
-  }
-
-  canViewRanking(): boolean {
-    return this.rbacService.isAllowedTo(RbacActivity.READ_ALL_RANKINGS);
   }
 }
 
