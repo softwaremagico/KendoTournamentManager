@@ -3,16 +3,19 @@
   <div class="kendo-table">
     <div class="upper-menu">
       <div class="cell">
-        <button mat-button color="primary" (click)="addElement()" *ngIf="canAddTournament()">
+        <button mat-button color="primary" (click)="addElement()" *ngIf="(RbacActivity.CREATE_TOURNAMENT | rbac )">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="editElement()" *ngIf="canEditTournament()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="editElement()"
+                *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac )">
           <mat-icon>create</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addRoles()" *ngIf="canViewRoles()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addRoles()"
+                *ngIf="(RbacActivity.CREATE_ROLE | rbac )">
           <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addTeams()" *ngIf="canViewTeams()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addTeams()"
+                *ngIf="(RbacActivity.CREATE_TEAM | rbac )">
           <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
         </button>
         <!***REMOVED***       <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
@@ -30,14 +33,17 @@
         <!***REMOVED***       <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
         <!***REMOVED***         <mat-icon>integration_instructions</mat-icon>-->
         <!***REMOVED***       </button>-->
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="openFights()" *ngIf="canViewFight()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="openFights()"
+                *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac )">
           <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()" *ngIf="canDeleteTournament()">
+        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()"
+                *ngIf="(RbacActivity.DELETE_TOURNAMENT | rbac )">
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()" *ngIf="canViewRanking()">
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()"
+                *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac )">
           <mat-icon svgIcon="tournament-blog" class="kendo-icon"></mat-icon>
         </button>
       </div>

@@ -60,10 +60,10 @@ export enum RbacActivity {
 }
 
 export namespace RbacActivity {
-  export function getByKey(key: string) {
+  export function getByKey(key: string): RbacActivity | undefined {
     for (const valueKey in RbacActivity) {
       if ((RbacActivity as any)[valueKey] === key) {
-        return valueKey;
+        return <RbacActivity>valueKey;
       }
     }
     return undefined;
