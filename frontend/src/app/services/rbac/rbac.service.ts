@@ -8,7 +8,7 @@ import {UserService} from "../user.service";
 export class RbacService {
 
   private roles: string[];
-  private activities: RbacActivity[];
+  private activities: RbacActivity[] = [];
 
   constructor(private userService: UserService) {
     this.userService.getRoles().subscribe(_roles => {

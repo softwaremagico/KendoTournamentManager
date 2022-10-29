@@ -561,7 +561,11 @@
   "errorUserAlreadyExists": "Ya existe un usuario con ese nombre de usuario!",
   "timerResetWarning": "¿Estás seguro de querer restablecer el tiempo?",
   "logoutWarning": "¿Estas seguro de querer cerrar sesión?",
-  "logout": "Cerrar sesión"
+  "logout": "Cerrar sesión",
+  "admin": "Administrador",
+  "editor": "Editor",
+  "viewer": "Espectador",
+  "guest": "Invitado"
 }
 
 

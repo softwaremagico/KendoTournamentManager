@@ -14,6 +14,7 @@ import {
   AuthenticatedUserDialogBoxComponent
 } from "./authenticated-user-dialog-box/authenticated-user-dialog-box.component";
 import {UserService} from "../../services/user.service";
+import {UserRoles} from "../../services/rbac/user-roles";
 
 @Component({
   selector: 'app-authenticated-user-list',
@@ -49,7 +50,7 @@ export class AuthenticatedUserListComponent implements OnInit {
 
   addElement(): void {
     const authenticatedUser: AuthenticatedUser = new AuthenticatedUser();
-    authenticatedUser.roles[0] = "ROLE_ADMIN";
+    authenticatedUser.roles[0] = UserRoles.VIEWER;
     this.openDialog(this.translateService.instant('authenticatedUserAdd'), Action.Add, new AuthenticatedUser());
   }
 

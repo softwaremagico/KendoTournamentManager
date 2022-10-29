@@ -21,7 +21,7 @@ export class FaultComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-  constructor(private duelService: DuelService, private messageService: MessageService, private translateService: TranslateService) {
+  constructor(private duelService: DuelService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
