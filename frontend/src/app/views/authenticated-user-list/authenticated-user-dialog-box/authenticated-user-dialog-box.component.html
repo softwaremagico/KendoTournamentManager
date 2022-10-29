@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>{{title}}</h1>
-<div mat-dialog-content>
+<div mat-dialog-content class="form-layout">
   <form [formGroup]="registerForm" (ngSubmit)="doAction()">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
       <input formControlName="username" placeholder="{{'username' | translate}}" matInput required>
