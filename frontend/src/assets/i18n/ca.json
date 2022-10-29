@@ -78,7 +78,7 @@
   "DatabaseLabel": "base de dades",
   "TournamentLabel": "Lliga",
   "CompetitorMenu": "Competidor",
-  "RoleLabel": "Rol",
+  "roles": "Rol",
   "AccreditationPDFButton": "Acreditació",
   "FileMenu": "Arxiu",
   "language": "Idioma",

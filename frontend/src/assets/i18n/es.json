@@ -72,7 +72,7 @@
   "DatabaseLabel": "Base de Datos",
   "TournamentLabel": "Liga",
   "CompetitorMenu": "Competidor",
-  "RoleLabel": "Rol",
+  "roles": "Rol",
   "AccreditationPDFButton": "Acreditación",
   "FileMenu": "Archivo",
   "language": "Idioma",

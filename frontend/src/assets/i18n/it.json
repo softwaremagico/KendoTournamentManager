@@ -76,7 +76,7 @@
   "DatabaseLabel": "Database",
   "TournamentLabel": "Liga",
   "CompetitorMenu": "Competitore",
-  "RoleLabel": "Ruolo",
+  "roles": "Ruolo",
   "AccreditationPDFButton": "Accreditamento",
   "FileMenu": "File",
   "language": "Lingua",

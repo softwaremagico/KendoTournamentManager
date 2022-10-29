@@ -76,7 +76,7 @@
   "DatabaseLabel": "Database",
   "TournamentLabel": "Poule",
   "CompetitorMenu": "Deelnemer",
-  "RoleLabel": "Rol",
+  "roles": "Rol",
   "AccreditationPDFButton": "Bewijs van deelname",
   "FileMenu": "Bestand",
   "language": "Taal",

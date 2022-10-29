@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
 import {RbacActivity} from "./rbac.activity";
 import {UserService} from "../user.service";
+import {UserRoles} from "./user-roles";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RbacService {
 
-  private roles: string[];
+  private roles: UserRoles[];
   private activities: RbacActivity[] = [];
 
   constructor(private userService: UserService) {
@@ -22,8 +23,8 @@ export class RbacService {
     });
   }
 
-  public setRoles(roles: string[]): void {
-    this.roles = roles.map(role => role.toLowerCase());
+  public setRoles(roles: UserRoles[]): void {
+    this.roles = roles;
     this.activities = this.getActivities(roles);
   }
 
