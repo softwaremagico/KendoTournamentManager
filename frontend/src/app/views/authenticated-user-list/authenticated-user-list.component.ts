@@ -81,8 +81,12 @@ export class AuthenticatedUserListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
       if (result == undefined) {
         //Do nothing
+      } else if (result == Action.Cancel) {
+        //Do nothing
+        console.log('???');
       } else if (result.action == Action.Add) {
         this.addRowData(result.data);
       } else if (result.action == Action.Update) {

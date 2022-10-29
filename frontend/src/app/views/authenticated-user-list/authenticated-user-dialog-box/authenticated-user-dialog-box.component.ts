@@ -17,7 +17,6 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   action: Action;
   actionName: string;
   hidePassword: boolean = true;
-  repeatedPassword: string;
 
   registerForm: FormGroup;
 
@@ -29,7 +28,6 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
     this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
-    this.repeatedPassword = "";
 
     this.registerForm = new FormGroup({
       username: new FormControl({value: '', disabled: this.action !== Action.Add}, Validators.required),
@@ -55,11 +53,11 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   }
 
   closeDialog() {
-    this.dialogRef.close({action: Action.Cancel});
+    this.dialogRef.close({data: undefined, action: Action.Cancel});
   }
 
   passwordMatch(): boolean {
-    return this.action != Action.Add || !this.hidePassword || this.authenticatedUser.password === this.repeatedPassword;
+    return this.action != Action.Add || !this.hidePassword || this.registerForm.get('password')!.value === this.registerForm.get('repeatPassword')!.value;
   }
 
   public isOnCreation(): boolean {
@@ -68,10 +66,6 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
 
   get UserRoles(): typeof UserRoles {
     return UserRoles;
-  }
-
-  setUser(value: any) {
-
   }
 }
 
