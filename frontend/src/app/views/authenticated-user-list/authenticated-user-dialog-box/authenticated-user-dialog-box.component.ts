@@ -35,6 +35,7 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
       username: new FormControl({value: '', disabled: this.action !== Action.Add}, Validators.required),
       name: new FormControl('', Validators.required),
       lastname: new FormControl('', Validators.required),
+      role: new FormControl('', Validators.required),
       password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
       repeatPassword: new FormControl('', Validators.required)
     }, {validators: confirmPasswordValidator});
@@ -45,6 +46,11 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   }
 
   doAction() {
+    this.authenticatedUser.username = this.registerForm.get('username')!.value;
+    this.authenticatedUser.name = this.registerForm.get('name')!.value;
+    this.authenticatedUser.lastname = this.registerForm.get('lastname')!.value;
+    this.authenticatedUser.roles = this.registerForm.get('role')!.value;
+    this.authenticatedUser.password = this.registerForm.get('password')!.value;
     this.dialogRef.close({data: this.authenticatedUser, action: this.action});
   }
 
@@ -56,13 +62,16 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
     return this.action != Action.Add || !this.hidePassword || this.authenticatedUser.password === this.repeatedPassword;
   }
 
-
   public isOnCreation(): boolean {
     return this.action === Action.Add;
   }
 
   get UserRoles(): typeof UserRoles {
     return UserRoles;
+  }
+
+  setUser(value: any) {
+
   }
 }
 

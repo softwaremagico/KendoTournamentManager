@@ -76,7 +76,7 @@
   "DatabaseLabel": "Datenbank",
   "TournamentLabel": "Wettbewerb",
   "CompetitorMenu": "Teilnehmer",
-  "RoleLabel": "Rolle",
+  "roles": "Rolle",
   "AccreditationPDFButton": "Akkreditierung",
   "FileMenu": "Datei",
   "language": "Sprache",

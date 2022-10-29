@@ -71,7 +71,6 @@
   "DatabaseLabel": "Database",
   "TournamentLabel": "League",
   "CompetitorMenu": "Competitor",
-  "RoleLabel": "Role",
   "AccreditationPDFButton": "Accreditation",
   "FileMenu": "File",
   "language": "Language",
@@ -573,6 +572,7 @@
   "admin": "Administrator",
   "editor": "Editor",
   "viewer": "Viewer",
-  "guest": "Guest"
+  "guest": "Guest",
+  "roles": "Role"
 }
 
