@@ -11,8 +11,8 @@
       <input formControlName="lastname" placeholder="{{'lastname' | translate}}" matInput required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-select formControlName="role" [(value)]="authenticatedUser.roles" placeholder="{{'roles' | translate}}">
-        <mat-option *ngFor="let role of UserRoles.toArray()" [value]="role">
+      <mat-select formControlName="roles" [value]="authenticatedUser.roles" placeholder="{{'roles' | translate}}" multiple>
+        <mat-option *ngFor="let role of UserRoles.toArray()" [value]="UserRoles[role]">
           {{role.toLowerCase() | translate}}
         </mat-option>
       </mat-select>
@@ -37,7 +37,8 @@
       <button mat-raised-button type="submit" value="Submit"
               [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" mat-flat-button
               color="primary">{{actionName.toLowerCase() | translate}}</button>
-      <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
+      <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
+              color="warn">{{'cancel' | translate}}</button>
     </div>
   </form>
 </div>

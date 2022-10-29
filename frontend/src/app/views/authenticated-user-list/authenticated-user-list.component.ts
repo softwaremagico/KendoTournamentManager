@@ -31,8 +31,8 @@ export class AuthenticatedUserListComponent implements OnInit {
 
   constructor(private loginService: LoginService, private userService: UserService, public dialog: MatDialog, private messageService: MessageService,
               private translateService: TranslateService) {
-    this.basicTableData.columns = ['id', 'username', 'name', 'lastname'];
-    this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname'];
+    this.basicTableData.columns = ['id', 'username', 'name', 'lastname', 'roles'];
+    this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname', 'roles'];
     this.basicTableData.visibleColumns = ['username', 'name', 'lastname'];
     this.basicTableData.selection = new SelectionModel<AuthenticatedUser>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<AuthenticatedUser>();
@@ -81,12 +81,10 @@ export class AuthenticatedUserListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       if (result == undefined) {
         //Do nothing
       } else if (result == Action.Cancel) {
         //Do nothing
-        console.log('???');
       } else if (result.action == Action.Add) {
         this.addRowData(result.data);
       } else if (result.action == Action.Update) {
