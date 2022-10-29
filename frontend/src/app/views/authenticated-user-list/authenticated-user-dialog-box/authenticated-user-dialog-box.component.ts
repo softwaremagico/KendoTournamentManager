@@ -30,11 +30,19 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
     this.actionName = Action[data.action];
 
     this.registerForm = new FormGroup({
-      username: new FormControl({value: '', disabled: this.action !== Action.Add}, Validators.required),
-      name: new FormControl('', Validators.required),
-      lastname: new FormControl('', Validators.required),
-      role: new FormControl('', Validators.required),
-      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
+      username: new FormControl({
+        value: this.authenticatedUser.username,
+        disabled: this.action !== Action.Add
+      }, Validators.required),
+      name: new FormControl(this.authenticatedUser.name, [Validators.required, Validators.maxLength(20)]),
+      lastname: new FormControl(this.authenticatedUser.lastname, [Validators.required, Validators.maxLength(40)]),
+      roles: new FormControl({
+        //TODO(softwaremagico): default values not set.
+        value: this.authenticatedUser.roles,
+        disabled: this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
+      }, Validators.required),
+      password: new FormControl('', [Validators.required, Validators.maxLength(40),
+        Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
       repeatPassword: new FormControl('', Validators.required)
     }, {validators: confirmPasswordValidator});
   }
@@ -43,11 +51,11 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
     this.registerForm.markAllAsTouched();
   }
 
-  doAction() {
+  doAction(): void {
     this.authenticatedUser.username = this.registerForm.get('username')!.value;
     this.authenticatedUser.name = this.registerForm.get('name')!.value;
     this.authenticatedUser.lastname = this.registerForm.get('lastname')!.value;
-    this.authenticatedUser.roles = this.registerForm.get('role')!.value;
+    this.authenticatedUser.roles = this.registerForm.get('roles')!.value;
     this.authenticatedUser.password = this.registerForm.get('password')!.value;
     this.dialogRef.close({data: this.authenticatedUser, action: this.action});
   }
