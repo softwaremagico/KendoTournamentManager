@@ -3,6 +3,7 @@ import {Action} from "../../../action";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {UserRoles} from "../../../services/rbac/user-roles";
 
 @Component({
   selector: 'app-authenticated-user-dialog-box',
@@ -56,8 +57,12 @@ export class AuthenticatedUserDialogBoxComponent implements OnInit {
   }
 
 
-  public isOnCreation() {
+  public isOnCreation(): boolean {
     return this.action === Action.Add;
+  }
+
+  get UserRoles(): typeof UserRoles {
+    return UserRoles;
   }
 }
 

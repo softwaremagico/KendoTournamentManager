@@ -540,7 +540,11 @@
   "logoutWarning": "Möchten Sie sich wirklich abmelden?",
   "logout": "Ausloggen",
   "userloggedInMessage": "Benutzer erfolgreich angemeldet",
-  "userloggedOutMessage": "Benutzersitzung erfolgreich geschlossen"
+  "userloggedOutMessage": "Benutzersitzung erfolgreich geschlossen",
+  "admin": "Administrator",
+  "editor": "Editor",
+  "viewer": "Zuschauer",
+  "guest": "Gast"
 }
 
 
