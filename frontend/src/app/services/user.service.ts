@@ -9,6 +9,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 import {LoggerService} from "./logger.service";
 import {MessageService} from "./message.service";
 import {LoginService} from "./login.service";
+import {UserRoles} from "./rbac/user-roles";
 
 @Injectable({
   providedIn: 'root'
@@ -106,16 +107,16 @@ export class UserService {
       );
   }
 
-  getRoles(): Observable<string[]> {
+  getRoles(): Observable<UserRoles[]> {
     const url: string = `${this.baseUrl}/roles`;
-    return this.http.get<string[]>(url, this.loginService.httpOptions)
+    return this.http.get<UserRoles[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Getting roles for user`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        //catchError(this.messageService.handleError<string[]>(`Roles cannot be retrieved!`))
+        //catchError(this.messageService.handleError<UserRoles[]>(`Roles cannot be retrieved!`))
       );
   }
 }
