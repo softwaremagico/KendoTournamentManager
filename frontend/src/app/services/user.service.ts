@@ -115,7 +115,7 @@ export class UserService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<string[]>(`Roles cannot be retrieved!`))
+        //catchError(this.messageService.handleError<string[]>(`Roles cannot be retrieved!`))
       );
   }
 }
