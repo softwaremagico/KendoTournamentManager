@@ -540,7 +540,11 @@
   "logoutWarning": "Weet u zeker dat u wilt uitloggen?",
   "logout": "Uitloggen",
   "userloggedInMessage": "Gebruiker succesvol ingelogd\n\n",
-  "userloggedOutMessage": "Gebruikerssessie succesvol afgesloten"
+  "userloggedOutMessage": "Gebruikerssessie succesvol afgesloten",
+  "admin": "Beheerder",
+  "editor": "Editor",
+  "viewer": "Kijker",
+  "guest": "Gast"
 }
 
 

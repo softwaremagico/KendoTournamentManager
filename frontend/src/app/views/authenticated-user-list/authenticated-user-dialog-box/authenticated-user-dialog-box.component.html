@@ -6,11 +6,19 @@
              [(ngModel)]="authenticatedUser.username" required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="name" placeholder="{{'name' | translate}}" matInput [(ngModel)]="authenticatedUser.name" required>
+      <input formControlName="name" placeholder="{{'name' | translate}}" matInput [(ngModel)]="authenticatedUser.name"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input formControlName="lastname" placeholder="{{'lastname' | translate}}" matInput
              [(ngModel)]="authenticatedUser.lastname" required>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <mat-select [(ngModel)]="authenticatedUser.roles" multiple>
+        <mat-option *ngFor="let role of UserRoles.toArray()" [value]="role">
+          {{role.toLowerCase() | translate}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
       <input formControlName="password" placeholder="{{'password' | translate}}"
@@ -21,7 +29,8 @@
                 (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update' && hidePassword">
-      <input formControlName="repeatPassword" name="repeatPassword" placeholder="{{'repeatPassword' | translate}}" [type]="'password'"
+      <input formControlName="repeatPassword" name="repeatPassword" placeholder="{{'repeatPassword' | translate}}"
+             [type]="'password'"
              matInput [(ngModel)]="repeatedPassword" required pattern="{{registerForm.value.password}}">
       <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
     </mat-form-field>
@@ -31,7 +40,8 @@
   </form>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="doAction()" [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" mat-flat-button
+  <button mat-raised-button (click)="doAction()"
+          [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" mat-flat-button
           color="primary">{{actionName.toLowerCase() | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
 </div>
