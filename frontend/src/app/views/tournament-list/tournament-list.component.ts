@@ -35,8 +35,8 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
-              private messageService: MessageService, private rbacService: RbacService) {
-    super();
+              private messageService: MessageService, rbacService: RbacService) {
+    super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
