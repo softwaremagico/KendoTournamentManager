@@ -213,7 +213,7 @@ export class TournamentTeamsComponent implements OnInit {
   searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>) {
     const participant: Participant = event.previousContainer.data[event.previousIndex];
     for (let team of [...this.members.keys()]) {
-      if (this.getMembersContainer(team).indexOf(participant) !== -1) {
+      if (this.getMembersContainer(team).includes(participant)) {
         return team;
       }
     }
@@ -265,10 +265,10 @@ export class TournamentTeamsComponent implements OnInit {
   deleteTeam(team: Team): void {
     for (let participant of team.members) {
       if (participant) {
-        if (this.userListData.participants.indexOf(participant) < 0) {
+        if (!this.userListData.participants.includes(participant)) {
           this.userListData.participants.push(participant);
         }
-        if (this.userListData.filteredParticipants.indexOf(participant) < 0) {
+        if (!this.userListData.filteredParticipants.includes(participant)) {
           this.userListData.filteredParticipants.push(participant);
         }
       }
