@@ -9,7 +9,7 @@ import {UserRoles} from "./user-roles";
 export class RbacService {
 
   private roles: UserRoles[];
-  private activities: RbacActivity[] = [];
+  activities: RbacActivity[] = [];
 
   constructor(private userService: UserService) {
     this.userService.getRoles().subscribe(_roles => {
@@ -26,13 +26,6 @@ export class RbacService {
   public setRoles(roles: UserRoles[]): void {
     this.roles = roles;
     this.activities = this.getActivities(roles);
-  }
-
-  public isAllowedTo(rbacActivity: RbacActivity | undefined): boolean {
-    if (!rbacActivity) {
-      return false;
-    }
-    return this.activities.indexOf(rbacActivity) >= 0;
   }
 
   private getActivities(roles: string[]): RbacActivity[] {
