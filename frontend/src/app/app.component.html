@@ -27,19 +27,18 @@
           <span class="upper-menu-title">{{'competitions' | translate}}</span>
         </a>
         <a mat-button (click)="toggleMenu('Admin')"
-           *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities) ||
-           (RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities) ||
-           (RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
+           *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities)">
           <mat-icon>admin_panel_settings</mat-icon>
           <span class="upper-menu-title">{{'administration' | translate}}</span>
           <mat-icon *ngIf="selectedRow !== 'Admin'">expand_more</mat-icon>
           <mat-icon *ngIf="selectedRow === 'Admin'">expand_less</mat-icon>
         </a>
         <a mat-button (click)="toggleMenu('Settings')"
-           *ngIf="(RbacActivity.CHANGE_SETTINGS | rbac : this.rbacService.activities) ||
-           (RbacActivity.CHANGE_LANGUAGE | rbac : this.rbacService.activities)">
-          <mat-icon>settings</mat-icon>
-          <span class="upper-menu-title">{{'settings' | translate}}</span>
+           *ngIf="(RbacActivity.CHANGE_LANGUAGE | rbac : this.rbacService.activities) ||
+           (RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities) ||
+           (RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
+          <mat-icon>account_circle</mat-icon>
+          <span class="upper-menu-title">{{'profile' | translate}}</span>
           <mat-icon *ngIf="selectedRow !== 'Settings'">expand_more</mat-icon>
           <mat-icon *ngIf="selectedRow === 'Settings'">expand_less</mat-icon>
         </a>
@@ -72,6 +71,15 @@
             <mat-icon>flag</mat-icon>
             {{language}}</a>
         </mat-menu>
+        <a mat-button routerLink="/passwords"
+           *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)">
+          <mat-icon>key</mat-icon>
+          <span class="upper-menu-title">{{'password' | translate}}</span>
+        </a>
+        <a mat-button (click)="logout();" *ngIf="(RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
+          <mat-icon>logout</mat-icon>
+          <span class="upper-menu-title">{{'logout' | translate}}</span>
+        </a>
       </div>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="selectedRow === 'Language'" class="toolbar-submenu">
@@ -88,15 +96,6 @@
         <a mat-button routerLink="/users" *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities)">
           <mat-icon>person</mat-icon>
           <span class="upper-menu-title">{{'users' | translate}}</span>
-        </a>
-        <a mat-button routerLink="/passwords"
-           *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)">
-          <mat-icon>key</mat-icon>
-          <span class="upper-menu-title">{{'password' | translate}}</span>
-        </a>
-        <a mat-button (click)="logout();" *ngIf="(RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
-          <mat-icon>logout</mat-icon>
-          <span class="upper-menu-title">{{'logout' | translate}}</span>
         </a>
       </div>
     </mat-toolbar-row>
@@ -131,9 +130,8 @@
         <!--        <mat-list-item routerLink="/reports">-->
         <!--          <mat-icon>dashboard</mat-icon>-->
         <!--          {{'reports' | translate}}</mat-list-item>-->
-        <mat-expansion-panel [class.mat-elevation-z0]="true" dense *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities) ||
-           (RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities) ||
-           (RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
+        <mat-expansion-panel [class.mat-elevation-z0]="true" dense
+                             *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities)">
           <mat-expansion-panel-header>
             <mat-icon>admin_panel_settings</mat-icon>
             <span class="left-menu-selector-entry">{{'administration' | translate}}</span>
@@ -144,23 +142,14 @@
               <mat-icon>person</mat-icon>
               <span class="left-menu-single-entry">{{'users' | translate}}</span>
             </a>
-            <a mat-list-item routerLink="/passwords"
-               *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)">
-              <mat-icon>key</mat-icon>
-              <span class="left-menu-single-entry">{{'password' | translate}}</span>
-            </a>
-            <a mat-list-item (click)="logout();"
-               *ngIf="(RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
-              <mat-icon>key</mat-icon>
-              <span class="left-menu-single-entry">{{'logout' | translate}}</span>
-            </a>
           </mat-nav-list>
         </mat-expansion-panel>
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense>
-          <mat-expansion-panel-header *ngIf="(RbacActivity.CHANGE_SETTINGS | rbac : this.rbacService.activities) ||
-           (RbacActivity.CHANGE_LANGUAGE | rbac : this.rbacService.activities)">
-            <mat-icon>settings</mat-icon>
-            <span class="left-menu-selector-entry">{{'settings' | translate}}</span>
+          <mat-expansion-panel-header *ngIf="(RbacActivity.CHANGE_LANGUAGE | rbac : this.rbacService.activities) ||
+           (RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities) ||
+           (RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
+            <mat-icon>account_circle</mat-icon>
+            <span class="left-menu-selector-entry">{{'profile' | translate}}</span>
           </mat-expansion-panel-header>
           <mat-nav-list dense>
             <a mat-list-item [matMenuTriggerFor]="languageMenu"
@@ -173,6 +162,16 @@
                 <mat-icon>flag</mat-icon>
                 {{language}}</a>
             </mat-menu>
+            <a mat-list-item routerLink="/passwords"
+               *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)">
+              <mat-icon>key</mat-icon>
+              <span class="left-menu-single-entry">{{'password' | translate}}</span>
+            </a>
+            <a mat-list-item (click)="logout();"
+               *ngIf="(RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)">
+              <mat-icon>logout</mat-icon>
+              <span class="left-menu-single-entry">{{'logout' | translate}}</span>
+            </a>
           </mat-nav-list>
         </mat-expansion-panel>
       </mat-nav-list>
