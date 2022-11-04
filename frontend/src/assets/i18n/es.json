@@ -72,7 +72,7 @@
   "DatabaseLabel": "Base de Datos",
   "TournamentLabel": "Liga",
   "CompetitorMenu": "Competidor",
-  "RoleLabel": "Rol",
+  "roles": "Rol",
   "AccreditationPDFButton": "Acreditación",
   "FileMenu": "Archivo",
   "language": "Idioma",
@@ -561,7 +561,11 @@
   "errorUserAlreadyExists": "Ya existe un usuario con ese nombre de usuario!",
   "timerResetWarning": "¿Estás seguro de querer restablecer el tiempo?",
   "logoutWarning": "¿Estas seguro de querer cerrar sesión?",
-  "logout": "Cerrar sesión"
+  "logout": "Cerrar sesión",
+  "admin": "Administrador",
+  "editor": "Editor",
+  "viewer": "Espectador",
+  "guest": "Invitado"
 }
 
 

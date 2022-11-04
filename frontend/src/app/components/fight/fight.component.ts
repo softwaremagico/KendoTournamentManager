@@ -2,15 +2,17 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Fight} from "../../models/fight";
 import {Duel} from "../../models/duel";
 import {DuelChangedService} from "../../services/notifications/duel-changed.service";
-import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
+import {RbacBasedComponent} from "../RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
+import {RbacActivity} from "../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'fight',
   templateUrl: './fight.component.html',
   styleUrls: ['./fight.component.scss']
 })
-export class FightComponent extends KendoComponent implements OnInit {
+export class FightComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   fight: Fight;
@@ -31,8 +33,8 @@ export class FightComponent extends KendoComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-  constructor(private duelChangedService: DuelChangedService) {
-    super();
+  constructor(private duelChangedService: DuelChangedService, rbacService: RbacService) {
+    super(rbacService);
   }
 
   ngOnInit(): void {
@@ -58,8 +60,10 @@ export class FightComponent extends KendoComponent implements OnInit {
   }
 
   selectDuel(duel: Duel) {
-    this.selectedDuel = duel;
-    this.onSelectedDuel.emit([duel]);
+    if (this.rbacService.isAllowed(RbacActivity.SELECT_DUEL)) {
+      this.selectedDuel = duel;
+      this.onSelectedDuel.emit([duel]);
+    }
   }
 
   isOver(duel: Duel): boolean {

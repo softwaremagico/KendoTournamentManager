@@ -32,7 +32,7 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
   }
 
   checkDroppedElement(item: CdkDrag<Participant>) {
-    //TODO (softwaremagico): fitler drops.
+    //TODO (softwaremagico): filter drops.
     //return this.selectedMembers.length === 0;
     return true;
   }

@@ -48,7 +48,7 @@ public class DuelServices {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/fights", produces = MediaType.APPLICATION_JSON_VALUE)
     public DuelDTO update(@RequestBody DuelDTO duelDTO, Authentication authentication, HttpServletRequest request) {
@@ -58,7 +58,7 @@ public class DuelServices {
         return duelController.update(duelDTO, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/groups/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromGroup(@Parameter(description = "Id of the group.", required = true) @PathVariable("groupId") Integer groupId,
@@ -66,7 +66,7 @@ public class DuelServices {
         return duelController.getUntiesFromGroup(groupId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromTournament(@Parameter(description = "Id of the tournament.", required = true) @PathVariable("tournamentId")

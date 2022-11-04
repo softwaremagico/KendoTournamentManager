@@ -12,13 +12,15 @@ import {
 import {ErrorStateMatcher} from "@angular/material/core";
 import {UserService} from "../../services/user.service";
 import {MessageService} from "../../services/message.service";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-passwords',
   templateUrl: './passwords.component.html',
   styleUrls: ['./passwords.component.scss']
 })
-export class PasswordsComponent implements OnInit {
+export class PasswordsComponent extends RbacBasedComponent implements OnInit {
 
   hidePassword: boolean = true;
   oldPassword: string;
@@ -32,7 +34,8 @@ export class PasswordsComponent implements OnInit {
     repeatPassword: new FormControl('', Validators.required)
   }, {validators: confirmPasswordValidator, updateOn: 'change'});
 
-  constructor(private userService: UserService, private messageService: MessageService) {
+  constructor(private userService: UserService, private messageService: MessageService, rbacService: RbacService) {
+    super(rbacService);
   }
 
   ngOnInit(): void {

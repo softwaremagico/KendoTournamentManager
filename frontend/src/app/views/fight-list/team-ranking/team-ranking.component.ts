@@ -3,18 +3,19 @@ import {ScoreOfTeam} from "../../../models/score-of-team";
 import {RankingService} from "../../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
-import {concatMap, from, Subject, takeWhile} from "rxjs";
+import {Subject} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {UndrawTeamsComponent} from "../undraw-teams/undraw-teams.component";
 import {Team} from "../../../models/team";
-import {ConfirmationDialogComponent} from "../../../components/basic/confirmation-dialog/confirmation-dialog.component";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-team-ranking',
   templateUrl: './team-ranking.component.html',
   styleUrls: ['./team-ranking.component.scss']
 })
-export class TeamRankingComponent implements OnInit {
+export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
   teamScores: ScoreOfTeam[];
   tournament: Tournament;
@@ -26,7 +27,9 @@ export class TeamRankingComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, groupId: number, finished: boolean },
-              private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog) {
+              private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
+              rbacService: RbacService) {
+    super(rbacService);
     this.tournament = data.tournament;
     this.groupId = data.groupId;
     this.fightsFinished = data.finished;
