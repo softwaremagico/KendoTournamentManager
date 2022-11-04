@@ -11,13 +11,15 @@ import {MessageService} from "../../../services/message.service";
 import {Role} from "../../../models/role";
 import {forkJoin} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../../services/rbac/rbac.service";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 
 @Component({
   selector: 'app-tournament-roles',
   templateUrl: './tournament-roles.component.html',
   styleUrls: ['./tournament-roles.component.scss']
 })
-export class TournamentRolesComponent implements OnInit {
+export class TournamentRolesComponent extends RbacBasedComponent implements OnInit {
 
   userListData: UserListData = new UserListData();
   tournament: Tournament;
@@ -27,7 +29,9 @@ export class TournamentRolesComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService, public translateService: TranslateService,
+              rbacService: RbacService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
+    super(rbacService);
     this.tournament = data.tournament;
   }
 

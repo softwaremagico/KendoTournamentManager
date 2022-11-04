@@ -37,6 +37,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Controller
 public class AuthenticatedUserController {
@@ -85,7 +87,9 @@ public class AuthenticatedUserController {
                 new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
         user.setName(createUserRequest.getName());
         user.setLastname(createUserRequest.getLastname());
-        user.setRoles(createUserRequest.getAuthorities());
+        if (!Objects.equals(user.getUsername(), updater)) {
+            user.setRoles(createUserRequest.getAuthorities());
+        }
         try {
             return authenticatedUserProvider.save(user);
         } finally {
@@ -101,6 +105,12 @@ public class AuthenticatedUserController {
             authenticatedUserProvider.delete(user);
             KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
         }
+    }
+
+    public Set<String> getRoles(String username) {
+        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+        return user.getRoles();
     }
 
     public List<AuthenticatedUser> findAll() {

@@ -76,7 +76,7 @@
   "DatabaseLabel": "Database",
   "TournamentLabel": "Liga",
   "CompetitorMenu": "Competitore",
-  "RoleLabel": "Ruolo",
+  "roles": "Ruolo",
   "AccreditationPDFButton": "Accreditamento",
   "FileMenu": "File",
   "language": "Lingua",
@@ -548,7 +548,11 @@
   "logoutWarning": "Sei sicuro di voler uscire?",
   "logout": "Disconnettersi",
   "userloggedInMessage": "L'utente ha effettuato l'accesso con successo",
-  "userloggedOutMessage": "L'utente si è disconnesso correttamente"
+  "userloggedOutMessage": "L'utente si è disconnesso correttamente",
+  "admin": "Amministratore",
+  "editor": "Editore",
+  "viewer": "Spettatore",
+  "guest": "Ospite"
 }
 
 
