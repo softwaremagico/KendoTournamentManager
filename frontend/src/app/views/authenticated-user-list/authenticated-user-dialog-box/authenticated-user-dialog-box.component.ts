@@ -43,7 +43,8 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent impl
       roles: new FormControl({
         //TODO(softwaremagico): default values not set.
         value: this.authenticatedUser.roles,
-        disabled: !rbacService.isAllowed(RbacActivity.EDIT_USER) && this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_USER) &&
+          this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
       }, Validators.required),
       password: new FormControl('', [Validators.required, Validators.maxLength(40),
         Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
