@@ -2,15 +2,15 @@
 <div mat-dialog-content>
   <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
     <input placeholder="{{ 'participantName' | translate}}" matInput [(ngModel)]="participant.name"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <input placeholder="{{ 'lastname' | translate}}" matInput [(ngModel)]="participant.lastname"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <input placeholder="{{ 'idCard' | translate}}" matInput [(ngModel)]="participant.idCard"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{ 'club' | translate}}</mat-label>
@@ -18,7 +18,7 @@
            attr.aria-label="{{ 'club' | translate}}" matInput [(ngModel)]="participant.club"
            [formControl]="formControl"
            [matAutocomplete]="auto"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClub">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option.name}}

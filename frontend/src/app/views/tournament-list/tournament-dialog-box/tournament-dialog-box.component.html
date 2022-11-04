@@ -2,11 +2,11 @@
 <div mat-dialog-content>
   <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
     <input placeholder="{{'competitionName' | translate}}" matInput [(ngModel)]="tournament.name"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{'tournamentType' | translate}}</mat-label>
-    <mat-select [(value)]="tournament.type" [disabled]="rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+    <mat-select [(value)]="tournament.type" [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
       <mat-option *ngFor="let type of tournamentType" [value]="type">
         {{type.toLowerCase() | translate}}
       </mat-option>
@@ -14,16 +14,16 @@
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <input placeholder="{{'tournamentShiaijos' | translate}}" matInput [(ngModel)]="tournament.shiaijos"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <input placeholder="{{'tournamentTeamSize' | translate}}" matInput [(ngModel)]="tournament.teamSize"
-           [readonly]="rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{'scoreRules' | translate}}</mat-label>
     <mat-select [(value)]="tournament.tournamentScore.scoreType"
-                [disabled]="rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+                [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
       <mat-option *ngFor="let type of scoreTypes" [value]="type">
         {{type.toLowerCase() | translate}}
       </mat-option>
@@ -31,7 +31,7 @@
   </mat-form-field>
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
-    <mat-select [(value)]="tournament.duelsDuration" [disabled]="rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+    <mat-select [(value)]="tournament.duelsDuration" [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
       <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
         {{number}} {{'seconds' | translate}}
       </mat-option>
