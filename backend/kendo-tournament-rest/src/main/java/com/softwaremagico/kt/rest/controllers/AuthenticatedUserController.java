@@ -90,6 +90,7 @@ public class AuthenticatedUserController {
         if (!Objects.equals(user.getUsername(), updater)) {
             user.setRoles(createUserRequest.getAuthorities());
         }
+        KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}'.", createUserRequest.getUsername(), updater);
         try {
             return authenticatedUserProvider.save(user);
         } finally {
