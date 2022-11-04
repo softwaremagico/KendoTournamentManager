@@ -6,13 +6,15 @@ import {TeamListData} from "../../../components/basic/team-list/team-list-data";
 import {TeamService} from "../../../services/team.service";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-league-generator',
   templateUrl: './league-generator.component.html',
   styleUrls: ['./league-generator.component.scss']
 })
-export class LeagueGeneratorComponent implements OnInit {
+export class LeagueGeneratorComponent extends RbacBasedComponent implements OnInit {
 
   teamListData: TeamListData = new TeamListData();
   title: string;
@@ -23,8 +25,9 @@ export class LeagueGeneratorComponent implements OnInit {
   tournament: Tournament;
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
-              private teamService: TeamService,
+              private teamService: TeamService, rbacService: RbacService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, tournament: Tournament }) {
+    super(rbacService);
     this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];

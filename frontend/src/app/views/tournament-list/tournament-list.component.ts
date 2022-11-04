@@ -17,13 +17,15 @@ import {UserSessionService} from "../../services/user-session.service";
 import {Action} from "../../action";
 import {RankingService} from "../../services/ranking.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../services/rbac/rbac.service";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 
 @Component({
   selector: 'app-tournament-list',
   templateUrl: './tournament-list.component.html',
   styleUrls: ['./tournament-list.component.scss']
 })
-export class TournamentListComponent implements OnInit {
+export class TournamentListComponent extends RbacBasedComponent implements OnInit {
 
   basicTableData: BasicTableData<Tournament> = new BasicTableData<Tournament>();
 
@@ -32,7 +34,9 @@ export class TournamentListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
-              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog, private messageService: MessageService) {
+              private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
+              private messageService: MessageService, rbacService: RbacService) {
+    super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'type', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];

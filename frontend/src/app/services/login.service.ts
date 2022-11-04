@@ -1,15 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {catchError, map, tap} from "rxjs/operators";
+import {map} from "rxjs/operators";
 import {CookieService} from "ngx-cookie-service";
 
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
-import {SystemOverloadService} from "./notifications/system-overload.service";
-import {LoggerService} from "./logger.service";
-import {MessageService} from "./message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -39,8 +36,10 @@ export class LoginService {
         }));
   }
 
-  logout(): void{
+  logout(): void {
     this.cookies.delete("jwt");
+    this.cookies.delete("selectedLanguage");
+    sessionStorage.clear();
   }
 
   private refreshHeader() {

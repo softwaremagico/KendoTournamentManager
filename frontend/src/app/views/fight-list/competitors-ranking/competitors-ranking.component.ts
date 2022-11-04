@@ -4,20 +4,23 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {RankingService} from "../../../services/ranking.service";
 import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-competitors-ranking',
   templateUrl: './competitors-ranking.component.html',
   styleUrls: ['./competitors-ranking.component.scss']
 })
-export class CompetitorsRankingComponent implements OnInit {
+export class CompetitorsRankingComponent extends RbacBasedComponent implements OnInit {
 
   competitorsScore: ScoreOfCompetitor[];
   tournament: Tournament;
 
   constructor(public dialogRef: MatDialogRef<CompetitorsRankingComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
-              private rankingService: RankingService, public translateService: TranslateService) {
+              private rankingService: RankingService, public translateService: TranslateService, rbacService: RbacService) {
+    super(rbacService);
     this.tournament = data.tournament;
   }
 
