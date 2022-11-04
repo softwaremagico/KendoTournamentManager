@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {AuthenticatedUser} from "../models/authenticated-user";
-import {catchError, tap} from "rxjs/operators";
+import {catchError, map, tap} from "rxjs/operators";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {CookieService} from "ngx-cookie-service";
@@ -29,6 +29,12 @@ export class UserService {
     const url: string = `${this.baseUrl}/register`;
     return this.http.get<AuthenticatedUser[]>(url, this.loginService.httpOptions)
       .pipe(
+        map(_users => {
+          for (let user of _users) {
+            user.roles = UserRoles.getByKeys(user.roles);
+          }
+          return _users;
+        }),
         tap({
           next: () => this.loggerService.info(`fetched all users`),
           error: () => this.systemOverloadService.isBusy.next(false),

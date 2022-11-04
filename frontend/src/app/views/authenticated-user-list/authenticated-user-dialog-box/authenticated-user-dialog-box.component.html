@@ -15,7 +15,7 @@
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-select formControlName="roles" [value]="authenticatedUser.roles" placeholder="{{'roles' | translate}}"
-                  multiple [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
+                  multiple>
         <mat-option *ngFor="let role of UserRoles.toArray()" [value]="UserRoles[role]">
           {{role.toLowerCase() | translate}}
         </mat-option>
