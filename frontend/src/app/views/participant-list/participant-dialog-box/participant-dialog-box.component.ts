@@ -6,13 +6,15 @@ import {FormControl} from "@angular/forms";
 import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
 import {Action} from "../../../action";
+import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {RbacService} from "../../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-participant-dialog-box',
   templateUrl: './participant-dialog-box.component.html',
   styleUrls: ['./participant-dialog-box.component.scss']
 })
-export class ParticipantDialogBoxComponent implements OnInit {
+export class ParticipantDialogBoxComponent extends RbacBasedComponent implements OnInit {
 
   formControl = new FormControl();
   filteredOptions: Observable<Club[]>;
@@ -25,9 +27,10 @@ export class ParticipantDialogBoxComponent implements OnInit {
   clubs: Club[];
 
   constructor(
-    public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>,
+    public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }) {
+    super(rbacService);
     this.participant = data.entity;
     this.title = data.title;
     this.action = data.action;

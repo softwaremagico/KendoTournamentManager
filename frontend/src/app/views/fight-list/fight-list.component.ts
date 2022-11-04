@@ -27,15 +27,16 @@ import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
 import {takeUntil} from "rxjs";
-import {KendoComponent} from "../../components/kendo-component";
 import {Score} from "../../models/score";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-fight-list',
   templateUrl: './fight-list.component.html',
   styleUrls: ['./fight-list.component.scss']
 })
-export class FightListComponent extends KendoComponent implements OnInit, OnDestroy {
+export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
   fights: Fight[];
   unties: Duel[];
@@ -54,8 +55,8 @@ export class FightListComponent extends KendoComponent implements OnInit, OnDest
               public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, public dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              public translateService: TranslateService) {
-    super();
+              public translateService: TranslateService, rbacService: RbacService) {
+    super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();

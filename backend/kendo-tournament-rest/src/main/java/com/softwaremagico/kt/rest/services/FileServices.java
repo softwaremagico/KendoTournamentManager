@@ -47,7 +47,7 @@ public class FileServices {
         this.participantImageController = participantImageController;
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public void upload(@RequestParam("file") MultipartFile file,
@@ -56,7 +56,7 @@ public class FileServices {
 
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantImageDTO getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {

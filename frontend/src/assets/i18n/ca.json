@@ -78,7 +78,7 @@
   "DatabaseLabel": "base de dades",
   "TournamentLabel": "Lliga",
   "CompetitorMenu": "Competidor",
-  "RoleLabel": "Rol",
+  "roles": "Rol",
   "AccreditationPDFButton": "Acreditació",
   "FileMenu": "Arxiu",
   "language": "Idioma",
@@ -556,7 +556,11 @@
   "errorUserAlreadyExists": "Ja hi ha un usuari amb aquest nom d'usuari!",
   "timerResetWarning": "Estàs segur que vols restablir l'hora?",
   "logoutWarning": "Esteu segur de voler tancar sessió?",
-  "logout": "Tancar sessió"
+  "logout": "Tancar sessió",
+  "admin": "Administrador",
+  "editor": "Editor",
+  "viewer": "Espectador",
+  "guest": "Convidat"
 }
 
 

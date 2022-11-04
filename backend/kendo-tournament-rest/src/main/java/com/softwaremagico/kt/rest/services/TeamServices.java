@@ -48,21 +48,21 @@ public class TeamServices {
         this.teamController = teamController;
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(HttpServletRequest request) {
         return teamController.get();
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Counts all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long count(HttpServletRequest request) {
         return teamController.count();
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
@@ -70,7 +70,7 @@ public class TeamServices {
         return teamController.getAllByTournament(tournamentId);
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Counts all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long countByTournamentId(@Parameter(description = "Id of an existing tournament", required = true)
@@ -79,7 +79,7 @@ public class TeamServices {
         return teamController.countByTournament(tournamentId);
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(@RequestBody TournamentDTO tournamentDto,
@@ -87,7 +87,7 @@ public class TeamServices {
         return teamController.getAllByTournament(tournamentDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TeamDTO get(@Parameter(description = "Id of an existing team", required = true) @PathVariable("id") Integer id,
@@ -95,7 +95,7 @@ public class TeamServices {
         return teamController.get(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Creates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,7 +106,7 @@ public class TeamServices {
         return teamController.create(teamDTO, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Defines the teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/set", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,7 +123,7 @@ public class TeamServices {
         return teamController.create(teamsDTOs, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -132,14 +132,14 @@ public class TeamServices {
         teamController.deleteById(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody TeamDTO teamDto, HttpServletRequest request) {
         teamController.delete(teamDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes a member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -147,7 +147,7 @@ public class TeamServices {
         return teamController.delete(participantInTournament.getTournament(), participantInTournament.getParticipant());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes multiples member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -157,7 +157,7 @@ public class TeamServices {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -165,7 +165,7 @@ public class TeamServices {
         teamController.delete(tournamentDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TeamDTO update(@RequestBody TeamDTO teamDto, Authentication authentication, HttpServletRequest request) {

@@ -14,13 +14,16 @@ import {
   AuthenticatedUserDialogBoxComponent
 } from "./authenticated-user-dialog-box/authenticated-user-dialog-box.component";
 import {UserService} from "../../services/user.service";
+import {UserRoles} from "../../services/rbac/user-roles";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
 
 @Component({
   selector: 'app-authenticated-user-list',
   templateUrl: './authenticated-user-list.component.html',
   styleUrls: ['./authenticated-user-list.component.scss']
 })
-export class AuthenticatedUserListComponent implements OnInit {
+export class AuthenticatedUserListComponent extends RbacBasedComponent implements OnInit {
 
   basicTableData: BasicTableData<AuthenticatedUser> = new BasicTableData<AuthenticatedUser>();
 
@@ -29,9 +32,10 @@ export class AuthenticatedUserListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private loginService: LoginService, private userService: UserService, public dialog: MatDialog, private messageService: MessageService,
-              private translateService: TranslateService) {
-    this.basicTableData.columns = ['id', 'username', 'name', 'lastname'];
-    this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname'];
+              private translateService: TranslateService, rbacService: RbacService) {
+    super(rbacService);
+    this.basicTableData.columns = ['id', 'username', 'name', 'lastname', 'roles'];
+    this.basicTableData.columnsTags = ['id', 'username', 'name', 'lastname', 'roles'];
     this.basicTableData.visibleColumns = ['username', 'name', 'lastname'];
     this.basicTableData.selection = new SelectionModel<AuthenticatedUser>(false, []);
     this.basicTableData.dataSource = new MatTableDataSource<AuthenticatedUser>();
@@ -49,7 +53,7 @@ export class AuthenticatedUserListComponent implements OnInit {
 
   addElement(): void {
     const authenticatedUser: AuthenticatedUser = new AuthenticatedUser();
-    authenticatedUser.roles[0] = "ROLE_ADMIN";
+    authenticatedUser.roles[0] = UserRoles.VIEWER;
     this.openDialog(this.translateService.instant('authenticatedUserAdd'), Action.Add, new AuthenticatedUser());
   }
 
@@ -81,6 +85,8 @@ export class AuthenticatedUserListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
+        //Do nothing
+      } else if (result == Action.Cancel) {
         //Do nothing
       } else if (result.action == Action.Add) {
         this.addRowData(result.data);

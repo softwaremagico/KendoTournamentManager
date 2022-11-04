@@ -48,21 +48,21 @@ public class GroupServices {
         this.groupController = groupController;
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> getAll(HttpServletRequest request) {
         return groupController.get();
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO update(@RequestBody GroupDTO group, Authentication authentication, HttpServletRequest request) {
         return groupController.update(group, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
@@ -70,7 +70,7 @@ public class GroupServices {
         return groupController.getFromTournament(tournamentId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
@@ -80,7 +80,7 @@ public class GroupServices {
         return groupController.setTeams(groupId, teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on the first group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
@@ -89,7 +89,7 @@ public class GroupServices {
         return groupController.setTeams(teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Adds untie duels.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addUnties(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,

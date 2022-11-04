@@ -11,6 +11,8 @@ import {MessageService} from "../../services/message.service";
 import {BasicTableData} from "../../components/basic/basic-table/basic-table-data";
 import {Action} from "../../action";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
 
 
 @Component({
@@ -18,7 +20,7 @@ import {TranslateService} from "@ngx-translate/core";
   templateUrl: './club-list.component.html',
   styleUrls: ['./club-list.component.scss']
 })
-export class ClubListComponent implements OnInit {
+export class ClubListComponent extends RbacBasedComponent implements OnInit {
 
   basicTableData: BasicTableData<Club> = new BasicTableData<Club>();
 
@@ -27,7 +29,8 @@ export class ClubListComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
   constructor(private clubService: ClubService, public dialog: MatDialog, private messageService: MessageService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService, rbacService: RbacService) {
+    super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',
       'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'country', 'city', 'address', 'email', 'phone', 'web',

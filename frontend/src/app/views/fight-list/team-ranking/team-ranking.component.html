@@ -33,6 +33,7 @@
     {{'download' | translate}}
   </button>
   <button mat-raised-button (click)="undrawTeams(0)" *ngIf="fightsFinished &&
+  (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities) &&
   (isDrawWinner(0) || isDrawWinner(1) || isDrawWinner(2))" mat-flat-button>
     <mat-icon svgIcon="undraw-score" class="kendo-icon"></mat-icon>
     {{'undraw' | translate}}
