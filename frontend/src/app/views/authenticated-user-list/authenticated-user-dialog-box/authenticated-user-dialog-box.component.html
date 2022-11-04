@@ -3,19 +3,19 @@
   <form [formGroup]="registerForm" (ngSubmit)="doAction()">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
       <input formControlName="username" placeholder="{{'username' | translate}}" matInput required
-             [readonly]="rbacService.isAllowed(RbacActivity.EDIT_USER)">
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input formControlName="name" placeholder="{{'name' | translate}}" matInput required
-             [readonly]="rbacService.isAllowed(RbacActivity.EDIT_USER)">
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input formControlName="lastname" placeholder="{{'lastname' | translate}}" matInput required
-             [readonly]="rbacService.isAllowed(RbacActivity.EDIT_USER)">
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-select formControlName="roles" [value]="authenticatedUser.roles" placeholder="{{'roles' | translate}}"
-                  multiple [disabled]="rbacService.isAllowed(RbacActivity.EDIT_USER)">
+                  multiple [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
         <mat-option *ngFor="let role of UserRoles.toArray()" [value]="UserRoles[role]">
           {{role.toLowerCase() | translate}}
         </mat-option>
@@ -24,7 +24,7 @@
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
       <input formControlName="password" placeholder="{{'password' | translate}}"
              [type]="hidePassword ? 'password' : 'text'" matInput required
-             [readonly]="rbacService.isAllowed(RbacActivity.EDIT_USER)">
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
       <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | translate}}</mat-error>
       <mat-icon matSuffix
                 (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -32,7 +32,7 @@
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update' && hidePassword">
       <input formControlName="repeatPassword" name="repeatPassword" placeholder="{{'repeatPassword' | translate}}"
              [type]="'password'" required pattern="{{registerForm.value.password}}" matInput
-             [readonly]="rbacService.isAllowed(RbacActivity.EDIT_USER)">
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
       <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
     </mat-form-field>
     <ng-template #elseTemplate>

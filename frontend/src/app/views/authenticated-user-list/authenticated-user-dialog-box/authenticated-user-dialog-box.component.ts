@@ -6,6 +6,7 @@ import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, 
 import {UserRoles} from "../../../services/rbac/user-roles";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-authenticated-user-dialog-box',
@@ -42,7 +43,7 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent impl
       roles: new FormControl({
         //TODO(softwaremagico): default values not set.
         value: this.authenticatedUser.roles,
-        disabled: this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_USER) && this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
       }, Validators.required),
       password: new FormControl('', [Validators.required, Validators.maxLength(40),
         Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
