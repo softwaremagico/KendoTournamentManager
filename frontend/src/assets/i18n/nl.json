@@ -544,7 +544,8 @@
   "admin": "Beheerder",
   "editor": "Editor",
   "viewer": "Kijker",
-  "guest": "Gast"
+  "guest": "Gast",
+  "profile": "Profiel"
 }
 
 

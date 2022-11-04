@@ -544,7 +544,8 @@
   "admin": "Administrator",
   "editor": "Editor",
   "viewer": "Zuschauer",
-  "guest": "Gast"
+  "guest": "Gast",
+  "profile": "Profil"
 }
 
 
