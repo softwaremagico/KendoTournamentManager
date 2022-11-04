@@ -8,11 +8,24 @@ export enum UserRoles {
 export namespace UserRoles {
   export function getByKey(key: string): UserRoles | undefined {
     for (const valueKey in UserRoles) {
-      if ((UserRoles as any)[valueKey] === key) {
+      if ((UserRoles as any)[valueKey] === key.toUpperCase()) {
         return <UserRoles>valueKey;
       }
     }
     return undefined;
+  }
+}
+
+export namespace UserRoles {
+  export function getByKeys(keys: string[]): UserRoles[] {
+    const userRoles: UserRoles[] = [];
+    for (const key of keys) {
+      const userRole: UserRoles | undefined = getByKey(key);
+      if (userRole) {
+        userRoles.push(userRole);
+      }
+    }
+    return userRoles;
   }
 }
 
