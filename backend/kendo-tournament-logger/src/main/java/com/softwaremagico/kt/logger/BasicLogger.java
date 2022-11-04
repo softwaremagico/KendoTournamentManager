@@ -109,7 +109,9 @@ public abstract class BasicLogger {
      */
     public static void debug(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled()) {
-            logger.debug(className + ": " + messageTemplate, arguments);
+            // Replace pattern-breaking characters
+            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
+            logger.debug(String.format("%s: %s", className, messageTemplate), arguments);
         }
     }
 
