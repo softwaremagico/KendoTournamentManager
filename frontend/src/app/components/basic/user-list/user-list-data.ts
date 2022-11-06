@@ -5,9 +5,9 @@ export class UserListData {
   filteredParticipants: Participant[];
 
   filter(filter: string) {
-    this.filteredParticipants = this.participants.filter(user => user.lastname.toLowerCase().includes(filter) ||
-      user.name.toLowerCase().includes(filter) || user.idCard.toLowerCase().includes(filter) ||
-      (user.club ? user.club.name.toLowerCase().includes(filter) : ""));
+    this.filteredParticipants = this.participants.filter(user => user.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+      user.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || user.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+      (user.club ? user.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""));
   }
 
 }
