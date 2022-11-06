@@ -28,7 +28,15 @@ export class BasicTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // This is intentional
+    this.basicTableData.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      const dataSearch = Object.keys(data).reduce((searchTerm: string, key: string) => {
+        return (searchTerm + (data as { [key: string]: any })[key]);
+      }, '').normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase();
+
+      const transformedFilter = filter.trim().normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase();
+
+      return dataSearch.indexOf(transformedFilter) != -1;
+    }
   }
 
   ngAfterViewInit() {
