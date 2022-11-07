@@ -124,5 +124,12 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       });
     }
   }
+
+  countRole(roleType: RoleType): number {
+    if (!this.participants || !this.participants.get(roleType)) {
+      return 0;
+    }
+    return this.participants.get(roleType)!.length;
+  }
 }
 
