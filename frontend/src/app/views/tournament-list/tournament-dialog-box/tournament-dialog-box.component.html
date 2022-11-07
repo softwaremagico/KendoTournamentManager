@@ -23,8 +23,10 @@
   <mat-form-field *ngIf="actionName != 'Delete'">
     <mat-label>{{'scoreRules' | translate}}</mat-label>
     <mat-select [(value)]="tournament.tournamentScore.scoreType"
+                [matTooltipShowDelay]="500" matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}"
                 [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-      <mat-option *ngFor="let type of scoreTypes" [value]="type">
+      <mat-option *ngFor="let type of scoreTypes" [value]="type"
+                  [matTooltipShowDelay]="500" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
         {{type.toLowerCase() | translate}}
       </mat-option>
     </mat-select>
