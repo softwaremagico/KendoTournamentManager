@@ -1,3 +1,4 @@
+<div class="container">
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <mat-tab-group *ngIf="totalDuels >= 2">
   <mat-tab *ngFor="let team of teams; let i = index"
@@ -21,4 +22,5 @@
           *ngIf="(RbacActivity.CREATE_DUEL | rbac : this.rbacService.activities)"
           [disabled]="!duelsCompleted()">{{'accept' | translate}}</button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="secondary">{{'cancel' | translate}}</button>
+</div>
 </div>
