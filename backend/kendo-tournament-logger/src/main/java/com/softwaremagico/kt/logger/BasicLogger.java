@@ -57,6 +57,11 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(Logger logger, String className, String messageTemplate, Object... arguments) {
+        for (int i = 0; i < arguments.length; i++) {
+            if (arguments[i] != null) {
+                arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+            }
+        }
         logger.warn(className + ": " + messageTemplate, arguments);
     }
 
@@ -68,6 +73,11 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String messageTemplate, Object... arguments) {
+        for (int i = 0; i < arguments.length; i++) {
+            if (arguments[i] != null) {
+                arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+            }
+        }
         logger.info(messageTemplate, arguments);
     }
 
@@ -110,7 +120,11 @@ public abstract class BasicLogger {
     public static void debug(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled()) {
             // Replace pattern-breaking characters
-            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                }
+            }
             logger.debug(String.format("%s: %s", className, messageTemplate), arguments);
         }
     }
@@ -123,6 +137,11 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     protected static void severe(Logger logger, String messageTemplate, Object... arguments) {
+        for (int i = 0; i < arguments.length; i++) {
+            if (arguments[i] != null) {
+                arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+            }
+        }
         logger.error(messageTemplate, arguments);
     }
 
@@ -139,7 +158,7 @@ public abstract class BasicLogger {
     }
 
     /**
-     * Logs an error and send an email to the email configured in settings.conf
+     * Logs an error and email the email configured in settings.conf
      * file.
      *
      * @param logger          the Logger.
