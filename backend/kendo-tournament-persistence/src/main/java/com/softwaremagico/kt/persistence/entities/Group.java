@@ -183,5 +183,15 @@ public class Group extends Element {
     public void setUnties(List<Duel> unties) {
         this.unties = unties;
     }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "tournament=" + tournament +
+                ", shiaijo=" + shiaijo +
+                ", level=" + level +
+                ", index=" + index +
+                '}';
+    }
 }
 

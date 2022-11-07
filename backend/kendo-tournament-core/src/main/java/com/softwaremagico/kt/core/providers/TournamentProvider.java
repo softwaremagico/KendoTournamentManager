@@ -38,9 +38,9 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         super(tournamentRepository);
     }
 
-    public Tournament save(String name, Integer shiaijos, Integer teamSize, TournamentType type) {
+    public Tournament save(String name, Integer shiaijos, Integer teamSize, TournamentType type, String createdBy) {
         return repository.save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : 3,
-                type != null ? type : TournamentType.LEAGUE));
+                type != null ? type : TournamentType.LEAGUE, createdBy));
     }
 
 }
