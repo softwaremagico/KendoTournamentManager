@@ -189,7 +189,7 @@ public class ScoreOfTeam {
 
     @Override
     public String toString() {
-        return team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
-                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getUntieDuels())) + "\n";
+        return "{" + team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
+                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getUntieDuels())) + "}";
     }
 }

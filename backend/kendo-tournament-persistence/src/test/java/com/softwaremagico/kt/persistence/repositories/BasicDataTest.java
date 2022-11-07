@@ -87,7 +87,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected Tournament createTournament() {
-        return tournamentRepository.save(new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE));
+        return tournamentRepository.save(new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE, null));
     }
 
     protected List<Role> createRoles(List<Participant> members, Tournament tournament) {
