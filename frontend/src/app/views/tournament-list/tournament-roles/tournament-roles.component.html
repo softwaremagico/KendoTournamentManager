@@ -7,7 +7,10 @@
   </div>
   <div class="roles">
     <div class="roles-location" *ngFor="let role of roleTypes">
-      <h2>{{role.toLowerCase() | translate}}</h2>
+      <div class="role-header">
+        <h2 class="role-text">{{role.toLowerCase() | translate}}</h2>
+        <h2 class="role-counter" *ngIf="countRole(role)">(x{{countRole(role)}})</h2>
+      </div>
       <div class="role" cdkDropList
            [cdkDropListData]="getParticipantsContainer(role)"
            (cdkDropListDropped)="dropParticipant($event, role)">
@@ -18,7 +21,8 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="downloadPDF()" mat-flat-button *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)">
+  <button mat-raised-button (click)="downloadPDF()" mat-flat-button
+          *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)">
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>

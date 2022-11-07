@@ -52,4 +52,21 @@
   padding-bottom: 0px;
 }
 
+.role-header {
+  display: flow-root;
+  clear: both;
+}
+
+.role-text {
+  padding-left: 5vh;
+  float: left;
+}
+
+.role-counter {
+  padding-right: 5vh;
+  float: right;
+  color: #274e7e;
+  margin-bottom: -20px;
+}
+
 

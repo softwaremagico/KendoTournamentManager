@@ -1,4 +1,5 @@
-<mat-card class="user-card" cdkDrag [cdkDragData]="user" [cdkDragDisabled]="!(activity | rbac : this.rbacService.activities)">
+<mat-card class="user-card" cdkDrag [cdkDragData]="user"
+          [cdkDragDisabled]="!(activity | rbac : this.rbacService.activities)">
   <mat-card-header class="user-card-header">
     <mat-card-title class="user-card-title">{{user.lastname}}, {{user.name}}</mat-card-title>
     <mat-card-subtitle class="user-card-subtitle">{{user.club ? user.club.name : ""}}</mat-card-subtitle>
