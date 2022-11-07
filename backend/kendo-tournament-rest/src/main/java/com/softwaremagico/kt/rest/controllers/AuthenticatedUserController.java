@@ -85,16 +85,16 @@ public class AuthenticatedUserController {
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
         final AuthenticatedUser user = authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
-        user.setName(createUserRequest.getName());
-        user.setLastname(createUserRequest.getLastname());
+        user.setName(createUserRequest.getName() != null ? createUserRequest.getName().replaceAll("[\n\r\t]", "_") : "");
+        user.setLastname(createUserRequest.getLastname() != null ? createUserRequest.getLastname().replaceAll("[\n\r\t]", "_") : "");
         if (!Objects.equals(user.getUsername(), updater)) {
             user.setRoles(createUserRequest.getAuthorities());
         }
-        KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}'.", createUserRequest.getUsername(), updater);
+        KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}'.", user.getUsername(), updater);
         try {
             return authenticatedUserProvider.save(user);
         } finally {
-            KendoTournamentLogger.info(this.getClass(), "User '{}' updated by '{}'.", createUserRequest.getUsername(), updater);
+            KendoTournamentLogger.info(this.getClass(), "User '{}' updated by '{}'.", user.getUsername(), updater);
         }
     }
 
