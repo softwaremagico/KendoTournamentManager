@@ -136,7 +136,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "addParticipants")
     public void addTournament() {
         Assert.assertEquals(tournamentProvider.count(), 0);
-        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE);
+        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE, null);
         tournament = tournamentProvider.save(newTournament);
         Assert.assertEquals(tournamentProvider.count(), 1);
     }

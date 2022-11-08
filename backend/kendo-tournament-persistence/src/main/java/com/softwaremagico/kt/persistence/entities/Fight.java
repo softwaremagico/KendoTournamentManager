@@ -173,11 +173,11 @@ public class Fight extends Element {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         text.append("Tournament: ").append(tournament.getId()).append(", Shiaijo: ").append(shiaijo).append(", Teams: '").
-                append(team1.getName()).append("' vs '").append(team2.getName()).append("'\n");
+                append(team1.getName()).append("' vs '").append(team2.getName()).append("'");
         if (isOver()) {
             text.append(" [F]");
         }
-        return text.toString();
+        return text.append("\n").toString();
     }
 
     public void generateDuels() {
