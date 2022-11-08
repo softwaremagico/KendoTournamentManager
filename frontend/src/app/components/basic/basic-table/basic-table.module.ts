@@ -11,6 +11,7 @@ import {MatTableModule} from "@angular/material/table";
 import {MatInputModule} from "@angular/material/input";
 import {MatSortModule} from "@angular/material/sort";
 import {MatButtonModule} from "@angular/material/button";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -19,18 +20,19 @@ import {MatButtonModule} from "@angular/material/button";
   exports: [
     BasicTableComponent
   ],
-  imports: [
-    CommonModule,
-    TranslateModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatMenuModule,
-    MatCheckboxModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatInputModule,
-    MatSortModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        TranslateModule,
+        MatIconModule,
+        MatFormFieldModule,
+        MatMenuModule,
+        MatCheckboxModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatInputModule,
+        MatSortModule,
+        MatButtonModule,
+        MatTooltipModule
+    ]
 })
 export class BasicTableModule { }

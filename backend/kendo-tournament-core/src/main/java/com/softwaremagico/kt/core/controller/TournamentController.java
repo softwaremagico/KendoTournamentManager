@@ -54,11 +54,22 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         return new TournamentConverterRequest(entity);
     }
 
-    public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type) {
+    @Override
+    public TournamentDTO create(TournamentDTO tournamentDTO, String username) {
+        final TournamentDTO createdTournamentDto = super.create(tournamentDTO, username);
+        final Group group = new Group();
+        group.setCreatedBy(username);
+        groupProvider.addGroup(converter.reverse(createdTournamentDto), group);
+        return tournamentDTO;
+    }
+
+    public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
         final TournamentDTO tournamentDTO = converter.convert(createConverterRequest(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1,
-                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE))));
+                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE, username))));
         //Add default group:
-        groupProvider.addGroup(converter.reverse(tournamentDTO), new Group());
+        final Group group = new Group();
+        group.setCreatedBy(username);
+        groupProvider.addGroup(converter.reverse(tournamentDTO), group);
         return tournamentDTO;
     }
 

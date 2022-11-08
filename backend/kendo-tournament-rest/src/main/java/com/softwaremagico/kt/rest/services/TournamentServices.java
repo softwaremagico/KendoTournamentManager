@@ -79,7 +79,7 @@ public class TournamentServices {
                              @Parameter(description = "Members by team") @RequestParam(name = "teamSize") Integer teamSize,
                              @Parameter(description = "Type of tournament") @RequestParam(name = "type") TournamentType type,
                              Authentication authentication, HttpServletRequest request) {
-        return tournamentController.create(name, shiaijos, teamSize, type);
+        return tournamentController.create(name, shiaijos, teamSize, type, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
