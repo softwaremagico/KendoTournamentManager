@@ -82,6 +82,7 @@ import {
 } from './views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.component';
 import {PasswordsComponent} from './views/passwords/passwords.component';
 import { RbacPipe } from './pipes/rbac.pipe';
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 registerLocaleData(localeES, "es");
@@ -129,47 +130,48 @@ registerLocaleData(localeNL, "nl");
     PasswordsComponent,
     RbacPipe
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FlexLayoutModule,
-    HttpClientModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSliderModule,
-    AppRoutingModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatMenuModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    MatSortModule,
-    MatInputModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient]
-      }
-    }),
-    MatSelectModule,
-    MatSnackBarModule,
-    MatCardModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatExpansionModule,
-    MatCheckboxModule,
-    BasicTableModule,
-    MatAutocompleteModule,
-    DragDropModule,
-    IconModule,
-    MatTabsModule,
-    MatProgressSpinnerModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        FlexLayoutModule,
+        HttpClientModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSliderModule,
+        AppRoutingModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatMenuModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatDialogModule,
+        MatSortModule,
+        MatInputModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpTranslateLoader,
+                deps: [HttpClient]
+            }
+        }),
+        MatSelectModule,
+        MatSnackBarModule,
+        MatCardModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatExpansionModule,
+        MatCheckboxModule,
+        BasicTableModule,
+        MatAutocompleteModule,
+        DragDropModule,
+        IconModule,
+        MatTabsModule,
+        MatProgressSpinnerModule,
+        MatTooltipModule
+    ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
     useFactory: (translate: TranslateService) => {

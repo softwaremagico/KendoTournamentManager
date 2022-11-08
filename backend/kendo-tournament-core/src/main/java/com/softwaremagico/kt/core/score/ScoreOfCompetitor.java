@@ -184,7 +184,7 @@ public class ScoreOfCompetitor {
 
     @Override
     public String toString() {
-        return NameUtils.getLastnameName(competitor) + " D:" + getWonDuels() + "/" + getDrawDuels() + ", H:" + getHits();
+        return "{" + NameUtils.getLastnameName(competitor) + " D:" + getWonDuels() + "/" + getDrawDuels() + ", H:" + getHits() + "}";
     }
 
 }

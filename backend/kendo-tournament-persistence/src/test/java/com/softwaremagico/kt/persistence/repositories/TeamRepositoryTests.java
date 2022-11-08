@@ -73,7 +73,7 @@ public class TeamRepositoryTests extends AbstractTestNGSpringContextTests {
         club = clubRepository.save(clubFactory.createDefaultClub());
         Assert.assertEquals(participantRepository.count(), 0);
 
-        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, NUMBER_OF_MEMBERS, TournamentType.LEAGUE);
+        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, NUMBER_OF_MEMBERS, TournamentType.LEAGUE, null);
         tournament = tournamentRepository.save(newTournament);
     }
 
