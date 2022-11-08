@@ -40,7 +40,7 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   ngOnInit(): void {
     this.membersOrderChangedService.membersOrderAllowed.pipe(takeUntil(this.destroySubject)).subscribe(enabled => this.reorderAllowed = enabled);
-    this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(200))
+    this.resizeSubscription$ = fromEvent(window, 'resize').pipe(debounceTime(100))
       .subscribe(() => {
         this.displayName = this.getDisplayName(window.innerWidth);
       });

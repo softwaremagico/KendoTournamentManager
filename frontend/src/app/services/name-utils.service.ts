@@ -49,15 +49,22 @@ export class NameUtilsService {
     return this.getLastname(participant) + ", " + this.getShortName(participant);
   }
 
+  getAcronym(participant: Participant | undefined): string {
+    if (!participant) return "";
+    return participant.lastname.slice(0, 1) + ". " + participant.name.slice(0, 1) + ".";
+  }
+
   getDisplayName(participant: Participant | undefined, resolution: number): string {
     if (resolution > 1500) {
       return this.getLastname(participant) + ', ' + this.getName(participant);
     } else if (resolution > 1200) {
       return this.getLastname(participant) + ', ' + this.getShortName(participant);
-    } else if (resolution > 900) {
+    } else if (resolution > 1000) {
       return this.getShortLastName(participant) + ', ' + this.getShortName(participant);
-    } else {
+    } else if (resolution > 900) {
       return this.getShortLastName(participant);
+    } else {
+      return this.getAcronym(participant);
     }
   }
 }
