@@ -91,11 +91,13 @@ public class AuthApi {
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
             final AuthenticatedUser user = (AuthenticatedUser) authenticate.getPrincipal();
+            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
+            user.setPassword(jwtToken);
             bruteForceService.loginSucceeded(ip);
 
             //We generate the JWT token and return it as a response header along with the user identity information in the response body.
             return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
+                    .header(HttpHeaders.AUTHORIZATION, jwtToken)
                     .body(user);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
@@ -113,7 +115,7 @@ public class AuthApi {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Gets all users.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(path = "/register")
+    @GetMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<AuthenticatedUser> getAll(HttpServletRequest httpRequest) {
         return authenticatedUserController.findAll();
     }
@@ -121,14 +123,14 @@ public class AuthApi {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(path = "/register")
+    @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.createUser(authentication.getName(), request);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping(path = "/register")
+    @PatchMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.updateUser(authentication.getName(), request);
     }
@@ -162,7 +164,7 @@ public class AuthApi {
     }
 
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(path = "/roles")
+    @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public Set<String> getRoles(Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.getRoles(authentication.getName());
