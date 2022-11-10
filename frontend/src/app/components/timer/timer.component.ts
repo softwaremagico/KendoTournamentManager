@@ -14,10 +14,6 @@ import {RbacService} from "../../services/rbac/rbac.service";
 })
 export class TimerComponent extends RbacBasedComponent implements OnInit {
 
-  started = false;
-  minutesEditable = false;
-  secondsEditable = false;
-
   @Input()
   set startingMinutes(value: number) {
     this.minutes = value;
@@ -40,6 +36,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   private alarmOn: boolean;
   totalTime: number;
   increasedTime: number = 0;
+  started = false;
+  minutesEditable = false;
+  secondsEditable = false;
+  private clickedElement : HTMLElement;
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
@@ -163,6 +163,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     if (this.seconds === 0 && this.minutes === 0 && !this.alarmOn) {
       this.alarmOn = true;
       this.audioService.playAlarm();
+      this.pauseTimer();
     }
     this.elapsedSeconds++;
     if (this.seconds % 3 == 0) {
@@ -185,7 +186,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     return num < 10 ? '0' + num : num + '';
   };
 
-  addTime(time: number) {
+  addTime(time: number): void {
     this.seconds += time;
     this.increasedTime += time;
     let rawSeconds: number = this.seconds + this.minutes * 60;
@@ -201,28 +202,41 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 
-  setMinutesEditable(editable: boolean) {
+  setMinutesEditable(editable: boolean): void {
+    if(editable){
+      this.pauseTimer();
+    }
     this.minutesEditable = editable;
     this.secondsEditable = false;
   }
 
-  setSecondsEditable(editable: boolean) {
+  setSecondsEditable(editable: boolean): void {
+    if(editable){
+      this.pauseTimer();
+    }
     this.secondsEditable = editable;
     this.minutesEditable = false;
   }
 
   @HostListener('document:click', ['$event.target'])
-  onClick(element: HTMLElement) {
-    if (!element.classList.contains('timer-edition-minutes')) {
+  onClick(element: HTMLElement): void {
+    if (this.minutesEditable && !element.classList.contains('timer-edition-minutes')) {
       this.minutesEditable = false;
+      this.validateMinutesElement(this.clickedElement);
     }
-    if (!element.classList.contains('timer-edition-seconds')) {
+    if (this.secondsEditable && !element.classList.contains('timer-edition-seconds')) {
       this.secondsEditable = false;
+      this.validateSecondsElement(this.clickedElement);
     }
+    this.clickedElement = element;
   }
 
-  validateInputMinutes(event: Event) {
-    let inputValue: number = Number((event.target as HTMLInputElement).value);
+  validateInputMinutes(event: Event): void {
+    this.validateMinutesElement(event.target as HTMLInputElement);
+  }
+
+  validateMinutesElement(element: HTMLElement): void {
+    let inputValue: number = Number((element as HTMLInputElement).value);
     if (isNaN(inputValue)) {
       inputValue = this.minutes;
     } else if (inputValue < 0) {
@@ -231,11 +245,15 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
       inputValue = 20;
     }
     this.minutes = inputValue;
-    this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.updateElapsedTime();
   }
 
-  validateInputSeconds(event: Event) {
-    let inputValue: number = Number((event.target as HTMLInputElement).value);
+  validateInputSeconds(event: Event): void {
+    this.validateSecondsElement(event.target as HTMLInputElement);
+  }
+
+  validateSecondsElement(element: HTMLElement): void {
+    let inputValue: number = Number((element as HTMLInputElement).value);
     if (isNaN(inputValue)) {
       inputValue = this.seconds;
     } else if (inputValue < 0) {
@@ -244,6 +262,11 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
       inputValue = 59;
     }
     this.seconds = inputValue;
+    this.updateElapsedTime();
+  }
+
+  updateElapsedTime(): void {
+    this.elapsedSeconds = (this.totalTime + this.increasedTime - this.minutes * 60 - this.seconds);
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 }
