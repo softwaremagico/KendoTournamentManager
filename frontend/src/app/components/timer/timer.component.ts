@@ -15,6 +15,8 @@ import {RbacService} from "../../services/rbac/rbac.service";
 export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   started = false;
+  minutesEditable = false;
+  secondsEditable = false;
 
   @Input()
   set startingMinutes(value: number) {
@@ -62,23 +64,27 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.key === ' ') {
-      if (this.started) {
-        this.pauseTimer();
-      } else {
-        this.startTimer();
+    if (!this.secondsEditable && !this.minutesEditable) {
+      if (event.key === ' ') {
+        if (this.started) {
+          this.pauseTimer();
+        } else {
+          this.startTimer();
+        }
+      } else if (event.key === 'Enter') {
+        this.finishTimer();
       }
-    } else if (event.key === 'Enter') {
-      this.finishTimer();
     }
   }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardNonPrintableEvent(event: KeyboardEvent) {
-    if (event.key === 'Backspace') {
-      this.restoreTimer();
-    } else if (event.key === 'Escape') {
-      this.timerClosed.emit(true);
+    if (!this.secondsEditable && !this.minutesEditable) {
+      if (event.key === 'Backspace') {
+        this.restoreTimer();
+      } else if (event.key === 'Escape') {
+        this.timerClosed.emit(true);
+      }
     }
   }
 
@@ -195,4 +201,49 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 
+  setMinutesEditable(editable: boolean) {
+    this.minutesEditable = editable;
+    this.secondsEditable = false;
+  }
+
+  setSecondsEditable(editable: boolean) {
+    this.secondsEditable = editable;
+    this.minutesEditable = false;
+  }
+
+  @HostListener('document:click', ['$event.target'])
+  onClick(element: HTMLElement) {
+    if (!element.classList.contains('timer-edition-minutes')) {
+      this.minutesEditable = false;
+    }
+    if (!element.classList.contains('timer-edition-seconds')) {
+      this.secondsEditable = false;
+    }
+  }
+
+  validateInputMinutes(event: Event) {
+    let inputValue: number = Number((event.target as HTMLInputElement).value);
+    if (isNaN(inputValue)) {
+      inputValue = this.minutes;
+    } else if (inputValue < 0) {
+      inputValue = 0;
+    } else if (inputValue > 20) {
+      inputValue = 20;
+    }
+    this.minutes = inputValue;
+    this.onTimerChanged.emit([this.elapsedSeconds]);
+  }
+
+  validateInputSeconds(event: Event) {
+    let inputValue: number = Number((event.target as HTMLInputElement).value);
+    if (isNaN(inputValue)) {
+      inputValue = this.seconds;
+    } else if (inputValue < 0) {
+      inputValue = 0;
+    } else if (inputValue > 59) {
+      inputValue = 59;
+    }
+    this.seconds = inputValue;
+    this.onTimerChanged.emit([this.elapsedSeconds]);
+  }
 }
