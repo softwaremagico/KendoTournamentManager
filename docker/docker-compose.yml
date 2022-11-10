@@ -62,8 +62,6 @@ services:
     networks:
       - containers
       - external
-    ports:
-      - "4200:4200"
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-frontend
