@@ -34,7 +34,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -111,6 +110,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
                 ex.getMessage()
         )).and();
 
+        http.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll();
+
         //Block everything
         http.authorizeRequests().anyRequest().authenticated();
 
@@ -140,10 +141,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
     @Bean
     public AuthenticationManager customAuthenticationManager() throws Exception {
         return authenticationManager();
-    }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 }
