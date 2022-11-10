@@ -60,7 +60,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         final Group group = new Group();
         group.setCreatedBy(username);
         groupProvider.addGroup(converter.reverse(createdTournamentDto), group);
-        return tournamentDTO;
+        return createdTournamentDto;
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
