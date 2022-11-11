@@ -2,7 +2,21 @@
   <div class="container">
     <mat-icon class="drag-icon" cdkDragHandle>drag_handle</mat-icon>
     <div class="timer" [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished()}">
-      <div class="time"><span>{{toDoubleDigit(minutes)}} : {{toDoubleDigit(seconds)}}</span></div>
+      <div class="time">
+        <span (dblclick)="setMinutesEditable(true)" *ngIf="!minutesEditable">{{toDoubleDigit(minutes)}}</span>
+        <input type=number class="timer-edition timer-edition-minutes" *ngIf="minutesEditable" [value]="this.minutes"
+               oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
+               min="0" max="20" placeholder='00'
+               (keyup)="validateInputMinutes($event)"
+               (keyup.enter)="setMinutesEditable(false)"/>
+        <span>:</span>
+        <span (dblclick)="setSecondsEditable(true)" *ngIf="!secondsEditable">{{toDoubleDigit(seconds)}}</span>
+        <input type=number class="timer-edition timer-edition-seconds" *ngIf="secondsEditable" [value]="this.seconds"
+               oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
+               min="0" max="59" placeholder='00'
+               (keyup)="validateInputSeconds($event)"
+               (keyup.enter)="setSecondsEditable(false)"/>
+      </div>
     </div>
     <div class="timer-buttons">
       <button class="rewind" (click)="addTime(-60)"
