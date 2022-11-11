@@ -14,8 +14,6 @@ import {RbacService} from "../../services/rbac/rbac.service";
 })
 export class TimerComponent extends RbacBasedComponent implements OnInit {
 
-  started = false;
-
   @Input()
   set startingMinutes(value: number) {
     this.minutes = value;
@@ -38,6 +36,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   private alarmOn: boolean;
   totalTime: number;
   increasedTime: number = 0;
+  started = false;
+  minutesEditable = false;
+  secondsEditable = false;
+  private clickedElement : HTMLElement;
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
@@ -62,23 +64,27 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.key === ' ') {
-      if (this.started) {
-        this.pauseTimer();
-      } else {
-        this.startTimer();
+    if (!this.secondsEditable && !this.minutesEditable) {
+      if (event.key === ' ') {
+        if (this.started) {
+          this.pauseTimer();
+        } else {
+          this.startTimer();
+        }
+      } else if (event.key === 'Enter') {
+        this.finishTimer();
       }
-    } else if (event.key === 'Enter') {
-      this.finishTimer();
     }
   }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardNonPrintableEvent(event: KeyboardEvent) {
-    if (event.key === 'Backspace') {
-      this.restoreTimer();
-    } else if (event.key === 'Escape') {
-      this.timerClosed.emit(true);
+    if (!this.secondsEditable && !this.minutesEditable) {
+      if (event.key === 'Backspace') {
+        this.restoreTimer();
+      } else if (event.key === 'Escape') {
+        this.timerClosed.emit(true);
+      }
     }
   }
 
@@ -157,6 +163,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     if (this.seconds === 0 && this.minutes === 0 && !this.alarmOn) {
       this.alarmOn = true;
       this.audioService.playAlarm();
+      this.pauseTimer();
     }
     this.elapsedSeconds++;
     if (this.seconds % 3 == 0) {
@@ -179,7 +186,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     return num < 10 ? '0' + num : num + '';
   };
 
-  addTime(time: number) {
+  addTime(time: number): void {
     this.seconds += time;
     this.increasedTime += time;
     let rawSeconds: number = this.seconds + this.minutes * 60;
@@ -195,4 +202,71 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 
+  setMinutesEditable(editable: boolean): void {
+    if(editable){
+      this.pauseTimer();
+    }
+    this.minutesEditable = editable;
+    this.secondsEditable = false;
+  }
+
+  setSecondsEditable(editable: boolean): void {
+    if(editable){
+      this.pauseTimer();
+    }
+    this.secondsEditable = editable;
+    this.minutesEditable = false;
+  }
+
+  @HostListener('document:click', ['$event.target'])
+  onClick(element: HTMLElement): void {
+    if (this.minutesEditable && !element.classList.contains('timer-edition-minutes')) {
+      this.minutesEditable = false;
+      this.validateMinutesElement(this.clickedElement);
+    }
+    if (this.secondsEditable && !element.classList.contains('timer-edition-seconds')) {
+      this.secondsEditable = false;
+      this.validateSecondsElement(this.clickedElement);
+    }
+    this.clickedElement = element;
+  }
+
+  validateInputMinutes(event: Event): void {
+    this.validateMinutesElement(event.target as HTMLInputElement);
+  }
+
+  validateMinutesElement(element: HTMLElement): void {
+    let inputValue: number = Number((element as HTMLInputElement).value);
+    if (isNaN(inputValue)) {
+      inputValue = this.minutes;
+    } else if (inputValue < 0) {
+      inputValue = 0;
+    } else if (inputValue > 20) {
+      inputValue = 20;
+    }
+    this.minutes = inputValue;
+    this.updateElapsedTime();
+  }
+
+  validateInputSeconds(event: Event): void {
+    this.validateSecondsElement(event.target as HTMLInputElement);
+  }
+
+  validateSecondsElement(element: HTMLElement): void {
+    let inputValue: number = Number((element as HTMLInputElement).value);
+    if (isNaN(inputValue)) {
+      inputValue = this.seconds;
+    } else if (inputValue < 0) {
+      inputValue = 0;
+    } else if (inputValue > 59) {
+      inputValue = 59;
+    }
+    this.seconds = inputValue;
+    this.updateElapsedTime();
+  }
+
+  updateElapsedTime(): void {
+    this.elapsedSeconds = (this.totalTime + this.increasedTime - this.minutes * 60 - this.seconds);
+    this.onTimerChanged.emit([this.elapsedSeconds]);
+  }
 }
