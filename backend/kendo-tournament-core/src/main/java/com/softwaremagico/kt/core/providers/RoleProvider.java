@@ -68,4 +68,8 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
     public void delete(Participant participant, Tournament tournament) {
         repository.deleteByParticipantAndTournament(participant, tournament);
     }
+
+    public long delete(Tournament tournament) {
+        return repository.deleteByTournament(tournament);
+    }
 }

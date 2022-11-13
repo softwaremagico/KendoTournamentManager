@@ -36,6 +36,8 @@ import java.util.Objects;
 public class DuelDTO extends ElementDTO {
     private ParticipantDTO competitor1;
     private ParticipantDTO competitor2;
+
+    private TournamentDTO tournament;
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
     private Boolean competitor1Fault = false;
@@ -51,10 +53,11 @@ public class DuelDTO extends ElementDTO {
         setType(DuelType.STANDARD);
     }
 
-    public DuelDTO(ParticipantDTO competitor1, ParticipantDTO competitor2) {
+    public DuelDTO(ParticipantDTO competitor1, ParticipantDTO competitor2, TournamentDTO tournament) {
         this();
         setCompetitor1(competitor1);
         setCompetitor2(competitor2);
+        setTournament(tournament);
     }
 
     public ParticipantDTO getCompetitor1() {
@@ -188,6 +191,14 @@ public class DuelDTO extends ElementDTO {
     public boolean isOver() {
         return getCompetitor1ScoreValue() >= Duel.POINTS_TO_WIN || getCompetitor2ScoreValue() >= Duel.POINTS_TO_WIN ||
                 (getDuration() != null && getDuration() > 0);
+    }
+
+    public TournamentDTO getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(TournamentDTO tournament) {
+        this.tournament = tournament;
     }
 
     @Override

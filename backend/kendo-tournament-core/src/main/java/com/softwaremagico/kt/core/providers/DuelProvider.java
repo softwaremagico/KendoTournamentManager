@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,14 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @Autowired
     public DuelProvider(DuelRepository duelRepository) {
         super(duelRepository);
+    }
+
+    public long delete(Tournament tournament) {
+        return repository.deleteByTournament(tournament);
+    }
+
+    public long count(Tournament tournament) {
+        return repository.countByTournament(tournament);
     }
 
 }

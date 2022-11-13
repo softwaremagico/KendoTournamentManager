@@ -118,7 +118,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         if (fightDTO.getTeam1() != null && fightDTO.getTeam2() != null) {
             for (int i = 0; i < Math.max(fightDTO.getTeam1().getMembers().size(), fightDTO.getTeam2().getMembers().size()); i++) {
                 final DuelDTO duelDTO = new DuelDTO(i < fightDTO.getTeam1().getMembers().size() ? fightDTO.getTeam1().getMembers().get(i) : null,
-                        i < fightDTO.getTeam2().getMembers().size() ? fightDTO.getTeam2().getMembers().get(i) : null);
+                        i < fightDTO.getTeam2().getMembers().size() ? fightDTO.getTeam2().getMembers().get(i) : null, fightDTO.getTournament());
                 fightDTO.getDuels().add(duelDTO);
             }
         }
@@ -126,6 +126,10 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public boolean areOver(TournamentDTO tournament) {
         return provider.areOver(tournamentConverter.reverse(tournament));
+    }
+
+    public long count(TournamentDTO tournament) {
+        return provider.count(tournamentConverter.reverse(tournament));
     }
 
     public FightDTO getCurrent(TournamentDTO tournament) {
