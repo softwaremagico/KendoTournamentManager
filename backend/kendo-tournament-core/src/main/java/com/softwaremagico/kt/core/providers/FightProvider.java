@@ -81,7 +81,11 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return fight;
     }
 
-    public void delete(Tournament tournament) {
-        repository.deleteByTournament(tournament);
+    public long delete(Tournament tournament) {
+        return repository.deleteByTournament(tournament);
+    }
+
+    public long count(Tournament tournament) {
+        return repository.countByTournament(tournament);
     }
 }

@@ -70,7 +70,6 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
                 final Team team = new Team();
                 team.setName(String.format("Team %d", i));
                 team.setTournament(tournament);
-                team.setGroup(0);
                 newTeams.add(team);
             }
             teams.addAll(saveAll(newTeams));
@@ -86,8 +85,8 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
         return repository.countByTournament(tournament);
     }
 
-    public void delete(Tournament tournament) {
-        repository.deleteByTournament(tournament);
+    public long delete(Tournament tournament) {
+        return repository.deleteByTournament(tournament);
     }
 
     public void delete(Integer id) {
