@@ -28,9 +28,7 @@ package com.softwaremagico.kt.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softwaremagico.kt.core.controller.FightController;
-import com.softwaremagico.kt.core.controller.GroupController;
-import com.softwaremagico.kt.core.controller.ParticipantController;
+import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Duel;
@@ -52,11 +50,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -98,6 +97,15 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     @Autowired
     private FightController fightController;
+
+    @Autowired
+    private DuelController duelController;
+
+    @Autowired
+    private RoleController roleController;
+
+    @Autowired
+    private TeamController teamController;
 
     @Autowired
     private ParticipantController participantController;
@@ -295,6 +303,18 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         int teamMember = 0;
 
         MvcResult createResult = this.mockMvc
+                .perform(get("/groups/tournament/" + tournamentDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        List<GroupDTO> groupsDTO = objectMapper.readValue(createResult.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+
+        createResult = this.mockMvc
                 .perform(get("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
@@ -302,9 +322,8 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-
-        Collection<ParticipantDTO> participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(),
-                new TypeReference<List<ParticipantDTO>>() {
+        List<ParticipantDTO> participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(),
+                new TypeReference<>() {
                 });
 
         for (ParticipantDTO competitor : participantDTOs) {
@@ -331,6 +350,18 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             Assert.assertEquals(team.getTournament(), tournamentDTO);
             Assert.assertEquals(team.getName(), team.getName());
 
+            //First member of the team, add team to group
+            if (teamMember == 0) {
+                this.mockMvc
+                        .perform(patch("/groups/" + groupsDTO.get(0).getId() + "/teams/add")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + jwtToken)
+                                .content(toJson(Collections.singleton(team)))
+                                .with(csrf()))
+                        .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                        .andReturn();
+            }
+
             teamMember++;
 
             // Team filled up, create a new team.
@@ -348,7 +379,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andReturn();
 
 
-        Assert.assertEquals((int) TEAMS, Integer.parseInt(createResult.getResponse().getContentAsString()));
+        Assert.assertEquals(Integer.parseInt(createResult.getResponse().getContentAsString()), (int) TEAMS);
     }
 
     @Test(dependsOnMethods = {"addTeams"})
@@ -382,7 +413,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
         Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
 
-        // Check than teams have not crossed colors.
+        // Checks that teams have not crossed colors.
         for (int i = 0; i < tournamentFights.size() - 1; i++) {
             Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam2(), tournamentFights.get(i).getTeam1());
             Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam1(), tournamentFights.get(i).getTeam2());
@@ -393,7 +424,6 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     public void testSimpleWinner() throws Exception {
 
         while (!fightController.areOver(tournamentDTO)) {
-
             MvcResult createResult = this.mockMvc
                     .perform(get("/fights/tournaments/{tournamentId}/current", tournamentDTO.getId())
                             .contentType(MediaType.APPLICATION_JSON)
@@ -452,4 +482,23 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
         resetGroup(tournamentDTO);
     }
+
+    @AfterClass
+    public void deleteTournament() throws Exception {
+        this.mockMvc
+                .perform(delete("/tournaments/{tournamentId}", tournamentDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        Assert.assertEquals(fightController.count(tournamentDTO),0);
+        Assert.assertEquals(duelController.count(tournamentDTO),0);
+        Assert.assertEquals(groupController.count(tournamentDTO),0);
+        Assert.assertEquals(roleController.count(tournamentDTO),0);
+        Assert.assertEquals(teamController.count(tournamentDTO),0);
+
+    }
+
 }

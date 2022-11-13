@@ -47,7 +47,9 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findDistinctByFightsIdIn(Collection<Integer> fightId);
 
-    void deleteByTournament(Tournament tournament);
+    long deleteByTournament(Tournament tournament);
 
-    void deleteByTournamentAndLevel(Tournament tournament, Integer level);
+    long deleteByTournamentAndLevel(Tournament tournament, Integer level);
+
+    long countByTournament(Tournament tournament);
 }
