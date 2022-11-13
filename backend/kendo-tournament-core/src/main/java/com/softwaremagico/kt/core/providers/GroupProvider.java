@@ -24,8 +24,11 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.NotFoundException;
+import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +72,8 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return repository.save(group);
     }
 
-    public void delete(Tournament tournament) {
-        repository.deleteByTournament(tournament);
+    public long delete(Tournament tournament) {
+        return repository.deleteByTournament(tournament);
     }
 
     public void delete(Tournament tournament, Group group) {
@@ -79,7 +82,19 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         }
     }
 
-    public void delete(Tournament tournament, Integer level) {
-        repository.deleteByTournamentAndLevel(tournament, level);
+    public long delete(Tournament tournament, Integer level) {
+        return repository.deleteByTournamentAndLevel(tournament, level);
+    }
+
+    public Group addTeams(Integer groupId, List<Team> teams, String username) {
+        final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + "' not found.",
+                ExceptionType.INFO));
+        group.getTeams().addAll(teams.stream().filter(team -> !group.getTeams().contains(team)).collect(Collectors.toList()));
+        group.setUpdatedBy(username);
+        return repository.save(group);
+    }
+
+    public long count(Tournament tournament) {
+        return repository.countByTournament(tournament);
     }
 }
