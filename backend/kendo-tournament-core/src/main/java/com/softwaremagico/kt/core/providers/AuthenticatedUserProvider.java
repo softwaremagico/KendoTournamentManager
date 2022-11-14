@@ -68,7 +68,9 @@ public class AuthenticatedUserProvider {
         authenticatedUser.setName(firstName);
         authenticatedUser.setLastname(lastName);
         authenticatedUser.setPassword(password);
-        authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
+        if (roles != null) {
+            authenticatedUser.setRoles(Stream.of(roles).collect(Collectors.toSet()));
+        }
 
         return save(authenticatedUser);
     }

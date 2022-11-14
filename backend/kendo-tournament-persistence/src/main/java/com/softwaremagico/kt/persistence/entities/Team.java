@@ -24,7 +24,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.ITeamName;
 import org.hibernate.annotations.Cache;
@@ -57,10 +56,6 @@ public class Team extends Element implements Comparable<Team>, ITeamName {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
-
-    @Column(name = "group_index", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
-    private Integer group = 0; // for the championship
 
     public Team() {
         super();
@@ -104,14 +99,6 @@ public class Team extends Element implements Comparable<Team>, ITeamName {
 
     public void setTournament(Tournament tournament) {
         this.tournament = tournament;
-    }
-
-    public Integer getGroup() {
-        return group;
-    }
-
-    public void setGroup(Integer group) {
-        this.group = group;
     }
 
     public boolean isMember(Participant member) {
