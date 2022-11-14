@@ -44,8 +44,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -87,6 +89,9 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private ClubProvider clubProvider;
+
+    @Autowired
+    private DuelProvider duelProvider;
 
     @Autowired
     private GroupConverter groupConverter;
@@ -141,6 +146,16 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
 
+    @Test(dependsOnMethods = "addTournament")
+    public void addGroup() {
+        final Group group = new Group();
+        group.setTournament(tournament);
+        group.setIndex(0);
+        group.setShiaijo(0);
+        groupProvider.addGroup(tournament, group);
+        Assert.assertEquals(groupProvider.count(), 1);
+    }
+
     @Test(dependsOnMethods = {"addTournament"})
     public void addRoles() {
         for (Participant competitor : participantProvider.getAll()) {
@@ -149,11 +164,13 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(roleProvider.count(tournament), participantProvider.count());
     }
 
-    @Test(dependsOnMethods = {"addRoles"})
+    @Test(dependsOnMethods = {"addGroup"})
     public void addTeams() {
         int teamIndex = 0;
         Team team = null;
         int teamMember = 0;
+
+        final Group group = groupProvider.getGroups(tournament).get(0);
 
         for (Participant competitor : participantProvider.getAll()) {
             // Create a new team.
@@ -166,6 +183,11 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             // Add member.
             team.addMember(competitor);
             team = teamProvider.save(team);
+
+            if (teamMember == 0) {
+                groupProvider.addTeams(group.getId(), Collections.singletonList(team), null);
+            }
+
             teamMember++;
 
             // Team filled up, create a new team.
@@ -334,5 +356,17 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(rankingTeams.get(0)));
         Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), teamConverter.reverse(rankingTeams.get(1)));
         Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), teamConverter.reverse(rankingTeams.get(2)));
+    }
+
+    @AfterClass
+    public void deleteTournament() {
+        groupProvider.delete(tournament);
+        fightProvider.delete(tournament);
+        duelProvider.delete(tournament);
+        teamProvider.delete(tournament);
+        roleProvider.delete(tournament);
+        tournamentProvider.delete(tournament);
+        Assert.assertEquals(fightProvider.count(), 0);
+        Assert.assertEquals(duelProvider.count(), 0);
     }
 }

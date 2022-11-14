@@ -202,13 +202,11 @@ public class ConverterTests extends AbstractTestNGSpringContextTests {
         team.setName(TEAM_NAME);
         team.setTournament(createTournament());
         team.addMember(createParticipant());
-        team.setGroup(TEAM_GROUP);
         return team;
     }
 
     private void checkTeam(Team team) {
         Assert.assertEquals(team.getName(), TEAM_NAME);
-        Assert.assertEquals(team.getGroup(), TEAM_GROUP);
         checkTournament(team.getTournament());
         checkParticipant(team.getMembers().get(0));
 

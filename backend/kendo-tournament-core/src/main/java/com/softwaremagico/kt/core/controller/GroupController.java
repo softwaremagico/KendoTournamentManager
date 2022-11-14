@@ -25,10 +25,7 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.converters.DuelConverter;
-import com.softwaremagico.kt.core.converters.FightConverter;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.*;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
@@ -48,7 +45,6 @@ import org.springframework.stereotype.Controller;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,10 +59,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     private final DuelConverter duelConverter;
 
+    private final TeamConverter teamConverter;
+
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
-                           DuelProvider duelProvider, DuelConverter duelConverter) {
+                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -74,6 +72,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.fightConverter = fightConverter;
         this.duelProvider = duelProvider;
         this.duelConverter = duelConverter;
+        this.teamConverter = teamConverter;
     }
 
     @Override
@@ -114,6 +113,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         groupDTO.setUpdatedBy(username);
         validate(groupDTO);
         return create(groupDTO, null);
+    }
+
+    public GroupDTO addTeams(Integer groupId, List<TeamDTO> teams, String username) {
+        return converter.convert(createConverterRequest(provider.addTeams(groupId, teamConverter.reverseAll(teams), username)));
     }
 
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
@@ -160,6 +163,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         final GroupDTO groupDTO = get(groupId);
         groupDTO.getUnties().addAll(duelDTOS);
         return converter.convert(createConverterRequest(provider.save(converter.reverse(groupDTO))));
+    }
+
+    public long count(TournamentDTO tournament) {
+        return provider.count(tournamentConverter.reverse(tournament));
     }
 
 }
