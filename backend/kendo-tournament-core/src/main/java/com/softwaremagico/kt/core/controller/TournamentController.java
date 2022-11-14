@@ -27,8 +27,7 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
@@ -42,11 +41,24 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     private final GroupProvider groupProvider;
 
+    private final TeamProvider teamProvider;
+
+    private final RoleProvider roleProvider;
+
+    private final FightProvider fightProvider;
+
+    private final DuelProvider duelProvider;
+
 
     @Autowired
-    public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider) {
+    public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, TeamProvider teamProvider,
+                                RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider) {
         super(provider, converter);
         this.groupProvider = groupProvider;
+        this.teamProvider = teamProvider;
+        this.roleProvider = roleProvider;
+        this.fightProvider = fightProvider;
+        this.duelProvider = duelProvider;
     }
 
     @Override
@@ -71,6 +83,22 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         group.setCreatedBy(username);
         groupProvider.addGroup(converter.reverse(tournamentDTO), group);
         return tournamentDTO;
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        delete(get(id));
+    }
+
+    @Override
+    public void delete(TournamentDTO entity) {
+        final Tournament tournament = converter.reverse(entity);
+        groupProvider.delete(tournament);
+        fightProvider.delete(tournament);
+        duelProvider.delete(tournament);
+        teamProvider.delete(tournament);
+        roleProvider.delete(tournament);
+        provider.delete(tournament);
     }
 
 }

@@ -170,7 +170,7 @@ public class Group extends Element {
     }
 
     public void createUntieDuel(Participant competitor1, Participant competitor2) {
-        final Duel untie = new Duel(competitor1, competitor2);
+        final Duel untie = new Duel(competitor1, competitor2, tournament);
         untie.setTotalDuration(tournament.getDuelsDuration());
         untie.setType(DuelType.UNDRAW);
         unties.add(untie);

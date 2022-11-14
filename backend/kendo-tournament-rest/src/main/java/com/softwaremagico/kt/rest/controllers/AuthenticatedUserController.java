@@ -32,6 +32,7 @@ import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.exceptions.InvalidPasswordException;
 import com.softwaremagico.kt.rest.exceptions.UserNotFoundException;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
+import com.softwaremagico.kt.security.AvailableRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
@@ -52,7 +53,7 @@ public class AuthenticatedUserController {
 
     public AuthenticatedUser createUser(String creator, CreateUserRequest createUserRequest) {
         return createUser(creator, createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastname(),
-                createUserRequest.getPassword());
+                createUserRequest.getPassword(), (String[]) null);
     }
 
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
@@ -65,6 +66,14 @@ public class AuthenticatedUserController {
         } catch (DuplicatedUserException e) {
             throw new BadRequestException(this.getClass(), "Username exists!");
         }
+    }
+
+    public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, AvailableRole... roles) {
+        final String[] roleTags = new String[roles.length];
+        for (int i = 0; i < roles.length; i++) {
+            roleTags[i] = roles[i].name().replaceAll(AvailableRole.ROLE_PREFIX, "").toLowerCase();
+        }
+        return createUser(creator, username, firstName, lastName, password, roleTags);
     }
 
     public void updatePassword(String username, String oldPassword, String newPassword) {
@@ -120,5 +129,9 @@ public class AuthenticatedUserController {
 
     public void delete(AuthenticatedUser authenticatedUser) {
         authenticatedUserProvider.delete(authenticatedUser);
+    }
+
+    public long countUsers() {
+        return authenticatedUserProvider.count();
     }
 }

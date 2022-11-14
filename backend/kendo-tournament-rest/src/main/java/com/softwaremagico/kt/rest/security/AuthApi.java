@@ -32,6 +32,7 @@ import com.softwaremagico.kt.rest.exceptions.UserBlockedException;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
+import com.softwaremagico.kt.security.AvailableRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -101,6 +102,17 @@ public class AuthApi {
                     .body(user);
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
+            //Create a default user if no user exists. Needed when database is encrypted.
+            if (authenticatedUserController.countUsers() == 0) {
+                final AuthenticatedUser user = authenticatedUserController.createUser(
+                        null, request.getUsername(), null, null, request.getPassword(), AvailableRole.ROLE_ADMIN);
+                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
+                user.setPassword(jwtToken);
+                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+                final HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
+                return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
+            }
             bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (InterruptedException e) {

@@ -17,6 +17,8 @@ import {SystemOverloadService} from "../../../services/notifications/system-over
 import {Club} from "../../../models/club";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {GroupService} from "../../../services/group.service";
+import {Group} from "../../../models/group";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -29,11 +31,12 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   teams: Team[];
   members = new Map<Team, (Participant | undefined)[]>();
+  groups: Group[];
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
-              rbacService: RbacService,
+              rbacService: RbacService, private groupService: GroupService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -69,6 +72,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.teams = teams;
       }
     });
+    //Get tournament groups
+    this.groupService.getAllByTournament(this.tournament.id!).subscribe(_groups => {
+        this.groups = _groups;
+      }
+    )
   }
 
   @HostListener('document:click', ['$event.target'])
@@ -260,9 +268,18 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }),
       catchError(this.messageService.handleError<Team>("Adding new team."))
     ).subscribe(_team => {
-      this.messageService.infoMessage("infoTeamStored");
-      this.teams.push(_team);
-      this.members.set(_team, []);
+      const teams: Team[] = [];
+      teams.push(_team);
+      this.groupService.addTeamsToGroup(this.groups[0]!.id!, teams).pipe(
+        tap(() => {
+          this.loggerService.info("Adding team to group.");
+        }),
+        catchError(this.messageService.handleError<Group>("Adding team to group."))
+      ).subscribe(() => {
+        this.messageService.infoMessage("infoTeamStored");
+        this.teams.push(_team);
+        this.members.set(_team, []);
+      });
     });
   }
 

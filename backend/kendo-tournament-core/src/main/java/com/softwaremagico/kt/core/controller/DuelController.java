@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.controller;
 
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
@@ -101,6 +102,10 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         final List<GroupDTO> groupDTO = groupConverter.convertAll(groups.stream()
                 .map(GroupConverterRequest::new).collect(Collectors.toList()));
         return groupDTO.stream().flatMap(group -> group.getUnties().stream()).collect(Collectors.toList());
+    }
+
+    public long count(TournamentDTO tournament) {
+        return provider.count(tournamentConverter.reverse(tournament));
     }
 
 }
