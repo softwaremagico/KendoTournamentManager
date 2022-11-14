@@ -79,14 +79,6 @@ public class TeamDTO extends ElementDTO implements ITeamName {
         this.members.add(member);
     }
 
-    public Integer getGroup() {
-        return group;
-    }
-
-    public void setGroup(Integer group) {
-        this.group = group;
-    }
-
     public boolean isMember(ParticipantDTO member) {
         return members.contains(member);
     }
@@ -112,11 +104,11 @@ public class TeamDTO extends ElementDTO implements ITeamName {
         }
         final TeamDTO teamDTO = (TeamDTO) o;
         return getName().equals(teamDTO.getName()) && Objects.equals(getTournament(), teamDTO.getTournament()) &&
-                Objects.equals(getMembers(), teamDTO.getMembers()) && getGroup().equals(teamDTO.getGroup());
+                Objects.equals(getMembers(), teamDTO.getMembers());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getName(), getTournament(), getMembers(), getGroup());
+        return Objects.hash(super.hashCode(), getName(), getTournament(), getMembers());
     }
 }

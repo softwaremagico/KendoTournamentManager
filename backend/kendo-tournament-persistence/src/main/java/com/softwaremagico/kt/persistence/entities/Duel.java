@@ -86,15 +86,20 @@ public class Duel extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer totalDuration;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament", nullable = false)
+    private Tournament tournament;
+
     public Duel() {
         super();
         setType(DuelType.STANDARD);
     }
 
-    public Duel(Participant competitor1, Participant competitor2) {
+    public Duel(Participant competitor1, Participant competitor2, Tournament tournament) {
         this();
         setCompetitor1(competitor1);
         setCompetitor2(competitor2);
+        setTournament(tournament);
     }
 
     public Participant getCompetitor1() {
@@ -209,5 +214,13 @@ public class Duel extends Element {
 
     public void setTotalDuration(Integer totalDuration) {
         this.totalDuration = totalDuration;
+    }
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 }

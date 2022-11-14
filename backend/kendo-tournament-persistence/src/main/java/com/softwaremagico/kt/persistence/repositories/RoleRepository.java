@@ -48,4 +48,6 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     long countByTournament(Tournament tournament);
 
     void deleteByParticipantAndTournament(Participant participant, Tournament tournament);
+
+    long deleteByTournament(Tournament tournament);
 }

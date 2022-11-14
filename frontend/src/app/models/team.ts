@@ -6,7 +6,6 @@ export class Team extends Element {
   public name: string;
   public members: (Participant | undefined)[];
   public tournament: Tournament;
-  public group?: number;
   public editing: boolean = false;
 
   public static override copy(source: Team, target: Team): void {
