@@ -202,8 +202,8 @@ public class FightServices {
     public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  @Parameter(description = "Create as much fights as possible", required = true) @PathVariable("maximizeFights") boolean maximizeFights,
                                  @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
-                                 HttpServletRequest request) {
-        return fightController.createFights(tournamentId, TeamsOrder.NONE, maximizeFights, levelId);
+                                 Authentication authentication, HttpServletRequest request) {
+        return fightController.createFights(tournamentId, TeamsOrder.NONE, maximizeFights, levelId, authentication.getName());
     }
 
 

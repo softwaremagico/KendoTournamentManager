@@ -137,7 +137,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected List<Fight> createFights(Tournament tournament, List<Team> teams, Group group) {
         List<Fight> fights = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
-            fights.add(fightRepository.save(new Fight(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL)));
+            fights.add(fightRepository.save(new Fight(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL, null)));
         }
         group.setFights(fights);
         groupRepository.save(group);

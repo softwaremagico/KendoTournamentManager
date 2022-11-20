@@ -24,7 +24,6 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.RestServerLogger;
 import org.springframework.stereotype.Controller;
 
 import java.net.InetAddress;
@@ -45,7 +44,7 @@ public class NetworkController {
             }
             return String.join("-", hexadecimal);
         } catch (Exception e) {
-            RestServerLogger.debug(this.getClass().getName(), "No mac server found!");
+            //RestServerLogger.debug(this.getClass().getName(), "No mac server found!");
         }
         return "";
     }

@@ -95,11 +95,12 @@ public class Duel extends Element {
         setType(DuelType.STANDARD);
     }
 
-    public Duel(Participant competitor1, Participant competitor2, Tournament tournament) {
+    public Duel(Participant competitor1, Participant competitor2, Tournament tournament, String createdBy) {
         this();
         setCompetitor1(competitor1);
         setCompetitor2(competitor2);
         setTournament(tournament);
+        setCreatedBy(createdBy);
     }
 
     public Participant getCompetitor1() {

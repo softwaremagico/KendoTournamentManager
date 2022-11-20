@@ -47,12 +47,12 @@ public class FightManager {
     }
 
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level) {
-        return createCompleteFightList(tournament, teams, teamsOrder, level);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, String createdBy) {
+        return createCompleteFightList(tournament, teams, teamsOrder, level, createdBy);
     }
 
-    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
-        return new Fight(tournament, team1, team2, shiaijo, level);
+    private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
+        return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
     }
 
     /**
@@ -63,7 +63,8 @@ public class FightManager {
      * @param teamsOrder
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level) {
+    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
+                                                  String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return null;
         }
@@ -81,13 +82,13 @@ public class FightManager {
             }
             // Remaining fights sometimes repeat team. Align them.
             if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-                fight = createFight(tournament, team2, team1, 0, level);
+                fight = createFight(tournament, team2, team1, 0, level, createdBy);
             } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-                fight = createFight(tournament, team1, team2, 0, level);
+                fight = createFight(tournament, team1, team2, 0, level, createdBy);
             } else if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, 0, level);
+                fight = createFight(tournament, team1, team2, 0, level, createdBy);
             } else {
-                fight = createFight(tournament, team2, team1, 0, level);
+                fight = createFight(tournament, team2, team1, 0, level, createdBy);
             }
             fights.add(fight);
             lastFight = fight;
@@ -107,7 +108,8 @@ public class FightManager {
      * @param index
      * @return
      */
-    protected List<Fight> createTwoFightsForEachTeam(Tournament tournament, List<Team> teams, int fightArea, int level, int index) {
+    protected List<Fight> createTwoFightsForEachTeam(Tournament tournament, List<Team> teams, int fightArea, int level, int index,
+                                                     String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return null;
         }
@@ -121,9 +123,9 @@ public class FightManager {
             final Team team2 = teams.get((i + 1) % teams.size());
 
             if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, fightArea, level);
+                fight = createFight(tournament, team1, team2, fightArea, level, createdBy);
             } else {
-                fight = createFight(tournament, team2, team1, fightArea, level);
+                fight = createFight(tournament, team2, team1, fightArea, level, createdBy);
             }
             fights.add(fight);
         }
