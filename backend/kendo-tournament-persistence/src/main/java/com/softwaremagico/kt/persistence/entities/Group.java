@@ -169,8 +169,8 @@ public class Group extends Element {
         this.index = index;
     }
 
-    public void createUntieDuel(Participant competitor1, Participant competitor2) {
-        final Duel untie = new Duel(competitor1, competitor2, tournament);
+    public void createUntieDuel(Participant competitor1, Participant competitor2, String createdBy) {
+        final Duel untie = new Duel(competitor1, competitor2, tournament, createdBy);
         untie.setTotalDuration(tournament.getDuelsDuration());
         untie.setType(DuelType.UNDRAW);
         unties.add(untie);

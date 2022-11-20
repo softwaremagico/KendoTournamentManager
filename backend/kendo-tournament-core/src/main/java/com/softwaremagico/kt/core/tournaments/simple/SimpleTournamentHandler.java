@@ -159,12 +159,13 @@ public class SimpleTournamentHandler implements ITournamentManager {
     }
 
     @Override
-    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level) {
+    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level, String createdBy) {
         if (level != 0) {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
-        final List<Fight> fights = fightProvider.saveAll(fightManager.createFights(tournament, getGroup(tournament).getTeams(), TeamsOrder.NONE, level));
+        final List<Fight> fights = fightProvider.saveAll(fightManager.createFights(tournament, getGroup(tournament).getTeams(),
+                TeamsOrder.NONE, level, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);
         groupProvider.save(group);
