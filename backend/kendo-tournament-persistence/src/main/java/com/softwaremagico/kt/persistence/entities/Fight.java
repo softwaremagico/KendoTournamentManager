@@ -75,14 +75,15 @@ public class Fight extends Element {
         super();
     }
 
-    public Fight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level) {
+    public Fight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
         this();
         setTournament(tournament);
         setTeam1(team1);
         setTeam2(team2);
         setShiaijo(shiaijo);
         setLevel(level);
-        generateDuels();
+        generateDuels(createdBy);
+        setCreatedBy(createdBy);
     }
 
     public Team getTeam1() {
@@ -180,12 +181,12 @@ public class Fight extends Element {
         return text.append("\n").toString();
     }
 
-    public void generateDuels() {
+    public void generateDuels(String createdBy) {
         duels.clear();
         if (team1 != null && team2 != null) {
             for (int i = 0; i < Math.max(team1.getMembers().size(), team2.getMembers().size()); i++) {
                 final Duel duel = new Duel(i < team1.getMembers().size() ? team1.getMembers().get(i) : null,
-                        i < team2.getMembers().size() ? team2.getMembers().get(i) : null, tournament);
+                        i < team2.getMembers().size() ? team2.getMembers().get(i) : null, tournament, createdBy);
                 duel.setTotalDuration(tournament.getDuelsDuration());
                 duels.add(duel);
             }

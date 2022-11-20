@@ -36,7 +36,7 @@ import java.util.List;
 
 public interface ITournamentManager {
 
-    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level);
+    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level, String createdBy);
 
     List<Group> getGroups(Tournament tournament);
 
