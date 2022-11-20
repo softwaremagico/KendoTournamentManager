@@ -117,10 +117,10 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         return total;
     }
 
-    private void resetGroup(Group group) {
+    private void resetGroup(Group group, String createdBy) {
         group.getFights().forEach(fight -> {
             fight.getDuels().clear();
-            fight.generateDuels();
+            fight.generateDuels(createdBy);
         });
         group.getUnties().clear();
         groupProvider.save(group);
@@ -201,7 +201,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = simpleTournamentHandler.createFights(tournament, TeamsOrder.SORTED, true, 0);
+        List<Fight> tournamentFights = simpleTournamentHandler.createFights(tournament, TeamsOrder.SORTED, true, 0, null);
         //Check group has been created.
         Assert.assertEquals(simpleTournamentHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
@@ -236,7 +236,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             Assert.assertTrue(teamsScore.get(i).getHits() >= teamsScore.get(i + 1).getHits());
         }
 
-        resetGroup(groupProvider.getGroups(tournament).get(0));
+        resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
 
     /**
@@ -276,7 +276,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Group group = simpleTournamentHandler.getGroups(tournament).get(0);
         group.createUntieDuel(
                 teamProvider.get(tournament, "Team01").get().getMembers().get(0),
-                teamProvider.get(tournament, "Team03").get().getMembers().get(0));
+                teamProvider.get(tournament, "Team03").get().getMembers().get(0), null);
         group.getUnties().get(0).addCompetitor2Score(Score.MEN);
         groupProvider.save(group);
 
@@ -287,7 +287,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
         Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(scores.get(0).getTeam()));
 
-        resetGroup(groupProvider.getGroups(tournament).get(0));
+        resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
 
     /**
@@ -334,19 +334,19 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Group group = simpleTournamentHandler.getGroups(tournament).get(0);
         group.createUntieDuel(
                 teamProvider.get(tournament, "Team05").get().getMembers().get(0),
-                teamProvider.get(tournament, "Team03").get().getMembers().get(0));
+                teamProvider.get(tournament, "Team03").get().getMembers().get(0), null);
 
         group.getUnties().get(0).addCompetitor2Score(Score.MEN);
 
         group.createUntieDuel(
                 teamProvider.get(tournament, "Team05").get().getMembers().get(0),
-                teamProvider.get(tournament, "Team01").get().getMembers().get(0));
+                teamProvider.get(tournament, "Team01").get().getMembers().get(0), null);
 
         group.getUnties().get(1).addCompetitor1Score(Score.MEN);
 
         group.createUntieDuel(
                 teamProvider.get(tournament, "Team03").get().getMembers().get(0),
-                teamProvider.get(tournament, "Team01").get().getMembers().get(0));
+                teamProvider.get(tournament, "Team01").get().getMembers().get(0), null);
 
         group.getUnties().get(2).addCompetitor1Score(Score.MEN);
 
