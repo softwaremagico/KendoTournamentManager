@@ -245,8 +245,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   openDialog(title: string, action: Action, fight: Fight) {
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
-      width: '85vw',
-      data: {title: 'Add a new Fight', action: Action.Add, entity: new Fight(), tournament: this.tournament}
+      width: '1150px',
+      data: {title: 'Add a new Fight', action: Action.Add, entity: new Fight(), tournament: this.tournament,
+        swappedColors: this.swappedColors, swappedTeams: this.swappedTeams}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
