@@ -4,6 +4,11 @@ team-card {
   height: 40px;
 }
 
+.team-list{
+  flex-flow: row wrap;
+  display: flex;
+}
+
 .mat-card-header .mat-card-title {
   font-size: 16px;
 }
