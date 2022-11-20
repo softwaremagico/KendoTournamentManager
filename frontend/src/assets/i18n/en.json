@@ -245,8 +245,6 @@
   "FinishGroupButton": "Finish Championship",
   "UsingMultipleComputersTag": "Using one computer per shiaijo.",
   "addFight": "Add a new match",
-  "RedTeam": "Red Team",
-  "WhiteTeam": "White Team",
   "HierarchicalDrawTag": "More than lost",
   "WinOverDrawsRadioButton": "Win over draws",
   "LoadMenuItem": "Reload",
@@ -483,7 +481,7 @@
   "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
   "group": "Pool",
   "undraw": "Undraw",
-  "addFight": "The fight has been added correctly.",
+  "addFightMessage": "The fight has been added correctly.",
   "seconds": "seconds",
   "classic": "Classic",
   "classicHint": "Winner is obtained by won matches, and if there is a tie by the won duels. Also if there is another tie, hits are taken into account. Draw matches or duels are ignored.",
@@ -584,6 +582,8 @@
   "back": "Going back",
   "chronometerOn": "Show Chronometer",
   "chronometerOff": "Hide Chronometer",
-  "fields": "Fields"
+  "fields": "Fields",
+  "redTeam": "Red Team",
+  "whiteTeam": "White Team"
 }
 
