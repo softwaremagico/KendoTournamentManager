@@ -80,3 +80,8 @@ on `auth/public/login` path, and the admin user credentials described previously
 ## Running unit tests
 
 In the case you want to run the tests, run `mvn test` on the `backend` folder to execute all tests.
+
+
+# 3rd party components
+
+Font used on pdf is: ArchitectsDaughter by [Kimberly Geswein](https://fonts.google.com/specimen/Architects+Daughter/about). 
