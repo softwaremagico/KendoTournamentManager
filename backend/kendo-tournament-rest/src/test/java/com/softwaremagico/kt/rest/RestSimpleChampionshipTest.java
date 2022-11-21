@@ -135,7 +135,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         group.getFights().forEach(fight -> {
             fight.getDuels().clear();
             fight.setFinishedAt(null);
-            fightController.generateDuels(fight);
+            fightController.generateDuels(fight, null);
         });
         group.getUnties().clear();
         groupController.update(group, null);

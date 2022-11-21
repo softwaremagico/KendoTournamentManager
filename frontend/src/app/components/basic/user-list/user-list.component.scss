@@ -4,6 +4,11 @@
   height: 40px;
 }
 
+.user-list{
+  flex-flow: row wrap;
+  display: flex;
+}
+
 .mat-card-header .mat-card-title {
   font-size: 16px;
 }

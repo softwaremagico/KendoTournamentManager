@@ -10,12 +10,12 @@
         </button>
         <button class="add-button" mat-button color="primary" (click)="addElement()"
                 [matTooltipShowDelay]="500" matTooltip="{{'addFight' | translate}}"
-                *ngIf="false && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
+                *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>add</mat-icon>
         </button>
         <button class="delete-button" mat-button color="warn" [disabled]="showSelectedRelatedButton()"
                 (click)="deleteElement()" [matTooltipShowDelay]="500" matTooltip="{{'delete' | translate}}"
-                *ngIf="false && (RbacActivity.DELETE_FIGHT | rbac : this.rbacService.activities)">
+                *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>clear</mat-icon>
         </button>
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()"

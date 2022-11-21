@@ -127,22 +127,22 @@ public class FightServices {
     @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO add(@RequestBody FightDTO fightDto, Authentication authentication, HttpServletRequest request) {
-        if (fightDto == null) {
+    public FightDTO add(@RequestBody FightDTO newFightDTO, Authentication authentication, HttpServletRequest request) {
+        if (newFightDTO == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        return fightController.create(fightDto, authentication.getName());
+        return fightController.create(newFightDTO, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Creates a set of fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FightDTO> add(@RequestBody Collection<FightDTO> fightDtos, Authentication authentication, HttpServletRequest request) {
-        if (fightDtos == null || fightDtos.isEmpty()) {
+    public List<FightDTO> add(@RequestBody Collection<FightDTO> fightDTOs, Authentication authentication, HttpServletRequest request) {
+        if (fightDTOs == null || fightDTOs.isEmpty()) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        return fightController.create(fightDtos, authentication.getName());
+        return fightController.create(fightDTOs, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -184,6 +184,16 @@ public class FightServices {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
         return fightController.update(fightDto, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Generate duels on a fight.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/duels", produces = MediaType.APPLICATION_JSON_VALUE)
+    public FightDTO generateDuels(@RequestBody FightDTO fightDto, Authentication authentication, HttpServletRequest request) {
+        if (fightDto == null) {
+            throw new BadRequestException(getClass(), "Fight data is missing");
+        }
+        return fightController.generateDuels(fightDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
