@@ -1,16 +1,20 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatDialogRef} from "@angular/material/dialog";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss']
 })
-export class ConfirmationDialogComponent {
+export class ConfirmationDialogComponent implements OnInit {
 
-  public messageTag: string;
+  message: string;
+  messageTag: string;
+  parameters: object;
 
-  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>) {
+  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>, private translateService: TranslateService) {
+
   }
 
   acceptAction() {
@@ -19,5 +23,12 @@ export class ConfirmationDialogComponent {
 
   cancelDialog() {
     this.dialogRef.close(false);
+  }
+
+  ngOnInit(): void {
+    this.message = "";
+    this.translateService.get(this.messageTag, this.parameters).subscribe((res: string) => {
+      this.message += res;
+    });
   }
 }
