@@ -180,4 +180,16 @@ export class FightService {
       catchError(this.messageService.handleError<Blob>(`getting fight summary`))
     );
   }
+
+  generateDuels(fight: Fight): Observable<Fight> {
+    const url: string = `${this.baseUrl}/duels`;
+    return this.http.put<Fight>(url, fight, this.loginService.httpOptions)
+      .pipe(
+        tap({next:(_updatedFight: Fight) => this.loggerService.info(`generating duels for a fight`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Fight>(`generating duels for a fight`))
+      );
+  }
 }
