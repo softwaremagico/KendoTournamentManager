@@ -5,7 +5,7 @@ import {Action} from "../../../action";
 import {TeamListData} from "../../../components/basic/team-list/team-list-data";
 import {TeamService} from "../../../services/team.service";
 import {Tournament} from "../../../models/tournament";
-import {CdkDrag, CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
 
 @Component({
@@ -59,34 +59,8 @@ export class FightDialogBoxComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  removeTeam(event: CdkDragDrop<Team[], any>) {
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex,
-    );
-    // const team: Team = event.container.data[event.currentIndex]
-    // this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
-    //   this.messageService.infoMessage("Role for '" + participant.name + " " + participant.lastname + "' removed.");
-    // });
-    this.teamListData.filteredTeams.sort((a, b) => a.name.localeCompare(b.name));
-    this.teamListData.teams.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  checkDroppedElement(item: CdkDrag<Team>) {
-    //TODO (softwaremagico): filter drops.
-    //return this.selectedMembers.length === 0;
-    return true;
-  }
-
-  dropTeam(event: CdkDragDrop<Team[], any>) {
-    this.transferCard(event);
-  }
-
-  transferCard(event: CdkDragDrop<Team[], any>): Team {
-    //Only one team allowed.
-    if (event.container.data.length === 0) {
+  dropTeam(event: CdkDragDrop<Team[], any>): Team {
+    if (event.container.data.length === 0 || (event.container.data !== this.selectedTeam1 || event.container.data !== this.selectedTeam2)) {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -94,7 +68,13 @@ export class FightDialogBoxComponent implements OnInit {
         event.currentIndex,
       );
     }
+    this.teamListData.filteredTeams.sort((a, b) => a.name.localeCompare(b.name));
+    this.teamListData.teams.sort((a, b) => a.name.localeCompare(b.name));
     return event.container.data[event.currentIndex];
+  }
+
+  checkDroppedElement(item: CdkDrag<Team>, drop: CdkDropList) {
+    return (drop.data.length === 0 || drop.data.length === 1 && drop.data!.includes(item.data));
   }
 
 }
