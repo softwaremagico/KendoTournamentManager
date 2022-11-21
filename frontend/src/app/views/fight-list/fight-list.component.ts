@@ -234,6 +234,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         disableClose: false
       });
       dialogRef.componentInstance.messageTag = "deleteFightWarning"
+      dialogRef.componentInstance.parameters = {
+        team1: !this.swappedTeams?(this.selectedFight?.team1.name):(this.selectedFight?.team2.name),
+        team2: !this.swappedTeams?(this.selectedFight?.team2.name):(this.selectedFight?.team1.name),
+      }
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
