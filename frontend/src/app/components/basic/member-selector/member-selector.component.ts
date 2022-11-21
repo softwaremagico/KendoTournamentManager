@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {Team} from "../../../models/team";
-import {CdkDrag, CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
 
 @Component({
@@ -31,10 +31,8 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
     this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
   }
 
-  checkDroppedElement(item: CdkDrag<Participant>) {
-    //TODO (softwaremagico): filter drops.
-    //return this.selectedMembers.length === 0;
-    return true;
+  checkDroppedElement(item: CdkDrag<Participant>, drop: CdkDropList) {
+    return drop.data.length === 0;
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>) {
