@@ -53,11 +53,12 @@ public class DuelDTO extends ElementDTO {
         setType(DuelType.STANDARD);
     }
 
-    public DuelDTO(ParticipantDTO competitor1, ParticipantDTO competitor2, TournamentDTO tournament) {
+    public DuelDTO(ParticipantDTO competitor1, ParticipantDTO competitor2, TournamentDTO tournament, String createdBy) {
         this();
         setCompetitor1(competitor1);
         setCompetitor2(competitor2);
         setTournament(tournament);
+        setCreatedBy(createdBy);
     }
 
     public ParticipantDTO getCompetitor1() {
