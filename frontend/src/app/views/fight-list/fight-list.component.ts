@@ -30,6 +30,7 @@ import {takeUntil} from "rxjs";
 import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -52,10 +53,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
-              public timeChangedService: TimeChangedService, public duelChangedService: DuelChangedService,
-              private untieAddedService: UntieAddedService, public dialog: MatDialog, private userSessionService: UserSessionService,
+              private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
+              private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
+              private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              public translateService: TranslateService, rbacService: RbacService) {
+              private translateService: TranslateService, rbacService: RbacService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
@@ -74,9 +76,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   ngOnInit(): void {
     this.refreshFights();
     this.refreshUnties();
-    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe(addedDuel => {
+    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe(() => {
       this.refreshUnties();
     });
+    this.groupUpdatedService.isGroupUpdated.pipe(takeUntil(this.destroySubject)).subscribe(_group => {
+      this.replaceGroup(_group);
+    })
 
     this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe(_fight => {
       let onlyNewFights: boolean = false;
@@ -112,6 +117,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
+  private replaceGroup(group: Group) {
+    if (group! && this.groups!) {
+      const selectedFightIndex: number | undefined = this.fights.indexOf(this.selectedFight!);
+      const selectedDuelIndex: number | undefined = this.selectedFight?.duels.indexOf(this.selectedDuel!);
+      const groupIndex = this.groups.map(group => group.id).indexOf(group.id);
+      this.groups.splice(groupIndex, 1, group);
+      this.fights = this.groups.flatMap((group) => group.fights);
+      this.selectFight(this.fights[selectedFightIndex!]);
+      this.selectDuel(this.selectedFight?.duels[selectedDuelIndex!]!);
+    }
+  }
+
   private refreshFights() {
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe(tournament => {
@@ -144,10 +161,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }, 1000);
       });
     }
-  }
-
-  private refreshMembersOrder() {
-
   }
 
   openConfirmationGenerateElementsDialog() {
@@ -206,12 +219,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
-    this.openDialog('Add a new Fight', Action.Add, new Fight());
+    this.openAddFightDialog('Add a new Fight', Action.Add, new Fight(), this.groups[0], this.selectedFight);
   }
 
   editElement(): void {
     if (this.selectedFight) {
-      this.openDialog('Edit fight', Action.Update, this.selectedFight);
+      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.groups[0], undefined);
     }
   }
 
@@ -243,11 +256,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openDialog(title: string, action: Action, fight: Fight) {
+  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined) {
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '1150px',
-      data: {title: 'Add a new Fight', action: Action.Add, entity: new Fight(), tournament: this.tournament,
-        swappedColors: this.swappedColors, swappedTeams: this.swappedTeams}
+      data: {
+        title: 'Add a new Fight',
+        action: Action.Add,
+        entity: fight,
+        group: group,
+        afterFight: Fight,
+        tournament: this.tournament,
+        swappedColors: this.swappedColors,
+        swappedTeams: this.swappedTeams
+      }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {

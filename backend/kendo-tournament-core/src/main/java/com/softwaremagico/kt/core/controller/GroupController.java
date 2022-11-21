@@ -98,6 +98,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Transactional
     public GroupDTO update(GroupDTO groupDTO, String username) {
+        validate(groupDTO);
         final GroupDTO oldGroupDTO = get(groupDTO.getId());
         final List<FightDTO> fights = new ArrayList<>(oldGroupDTO.getFights());
         oldGroupDTO.getFights().clear();
@@ -111,7 +112,6 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         converter.convert(createConverterRequest(provider.save(converter.reverse(oldGroupDTO))));
 
         groupDTO.setUpdatedBy(username);
-        validate(groupDTO);
         return create(groupDTO, null);
     }
 
