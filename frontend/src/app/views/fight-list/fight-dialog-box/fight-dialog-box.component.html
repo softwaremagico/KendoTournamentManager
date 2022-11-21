@@ -2,13 +2,31 @@
 <div class="fights-creator" cdkDropListGroup>
   <div cdkDropList class="teams-container"
        [cdkDropListData]="teamListData.filteredTeams"
-       (cdkDropListDropped)="removeTeam($event)">
+       (cdkDropListDropped)="dropTeam($event)">
     <team-list [teamListData]="teamListData"></team-list>
   </div>
+  <div class="new-fight-title">
+    <!--    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>-->
+    <h2 class="teams-title" [class.red-ribbon]="!swappedColors"
+        [class.white-ribbon]="swappedColors">{{!swappedColors ? ('redTeam' | translate) : ('whiteTeam' | translate)}}</h2>
+    <!--    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>-->
+    <h2 class="teams-title" [class.red-ribbon]="swappedColors"
+        [class.white-ribbon]="!swappedColors">{{swappedColors ? ('redTeam' | translate) : ('whiteTeam' | translate)}}</h2>
+  </div>
   <div class="new-fight">
-
+    <div class="team-selected" cdkDropList [cdkDropListEnterPredicate]="checkDroppedElement"
+         [cdkDropListData]="selectedTeam1" [cdkDropListSortingDisabled]="false"
+         (cdkDropListDropped)="dropTeam($event)">
+      <app-team-card *ngFor="let team of selectedTeam1" [team]="team"></app-team-card>
+    </div>
+    <div class="team-selected" cdkDropList [cdkDropListEnterPredicate]="checkDroppedElement"
+         [cdkDropListData]="selectedTeam2" [cdkDropListSortingDisabled]="false"
+         (cdkDropListDropped)="dropTeam($event)">
+      <app-team-card *ngFor="let team of selectedTeam2" [team]="team"></app-team-card>
+    </div>
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
+  <button mat-raised-button (click)="addFights()" mat-flat-button color="primary">{{'add' | translate}}</button>
+  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
 </div>
