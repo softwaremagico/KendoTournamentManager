@@ -109,10 +109,21 @@ export class BasicTableComponent implements OnInit {
       return this.pipe.transform(column, 'short');
     } else {
       if (column) {
-        return this.translateService.instant(column);
+        const text: string = (column as string);
+        if (text.toUpperCase() === text) {
+          //probably is an enum
+          return this.translateService.instant(this.snakeToCamel(text.toLowerCase()));
+        } else {
+          return this.translateService.instant(text);
+        }
+
       } else {
         return "";
       }
     }
+  }
+
+  snakeToCamel(string: string): string {
+    return string.toLowerCase().replace(/[-_][a-z]/g, (group) => group.slice(-1).toUpperCase());
   }
 }
