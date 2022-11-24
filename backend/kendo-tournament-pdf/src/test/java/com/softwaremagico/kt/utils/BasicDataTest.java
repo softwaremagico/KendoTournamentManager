@@ -144,7 +144,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
             List<DuelDTO> duels = new ArrayList<>();
             for (int j = 0; j < tournament.getTeamSize(); j++) {
                 duels.add(new DuelDTO(teams.get((i) % teams.size()).getMembers().get(j), teams.get((i + 1) % teams.size()).getMembers().get(j),
-                        tournament));
+                        tournament, null));
             }
             fightDTO.setDuels(duels);
             fights.add(fightController.create(fightDTO, null));

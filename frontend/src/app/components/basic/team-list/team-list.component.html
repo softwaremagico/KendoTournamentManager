@@ -3,10 +3,10 @@
     <input matInput type="text" [(ngModel)]="filterString" (keyup)="filter($event)"
            placeholder="{{'filter' | translate}}">
   </mat-form-field>
+  <button #resetButton class="reset" mat-button color="warn" (click)="reset()">
+    <mat-icon>clear</mat-icon>
+  </button>
 </div>
-<button #resetButton class="reset" mat-button color="warn" (click)="reset()">
-  <mat-icon>clear</mat-icon>
-</button>
 <div class="team-list" *ngIf="teamListData.filteredTeams">
   <app-team-card *ngFor="let team of teamListData.filteredTeams" [team]="team"></app-team-card>
 </div>
