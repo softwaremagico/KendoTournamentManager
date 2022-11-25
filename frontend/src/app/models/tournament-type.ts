@@ -4,7 +4,7 @@ export enum TournamentType {
   // LOOP = 'LOOP',
   // CUSTOM_CHAMPIONSHIP = 'CUSTOM_CHAMPIONSHIP',
   // KING_OF_THE_MOUNTAIN = 'KING_OF_THE_MOUNTAIN',
-  // CUSTOMIZED = 'CUSTOMIZED'
+  CUSTOMIZED = 'CUSTOMIZED'
 }
 
 export namespace TournamentType {
