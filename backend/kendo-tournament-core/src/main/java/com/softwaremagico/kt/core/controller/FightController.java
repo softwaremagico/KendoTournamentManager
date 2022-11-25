@@ -36,8 +36,9 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.CustomTournamentHandler;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
-import com.softwaremagico.kt.core.tournaments.simple.SimpleTournamentHandler;
+import com.softwaremagico.kt.core.tournaments.SimpleTournamentHandler;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -60,14 +61,17 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final GroupProvider groupProvider;
     private final SimpleTournamentHandler simpleTournamentHandler;
 
+    private final CustomTournamentHandler customTournamentHandler;
+
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                           GroupProvider groupProvider, SimpleTournamentHandler simpleTournamentHandler) {
+                           GroupProvider groupProvider, SimpleTournamentHandler simpleTournamentHandler, CustomTournamentHandler customTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.groupProvider = groupProvider;
         this.simpleTournamentHandler = simpleTournamentHandler;
+        this.customTournamentHandler = customTournamentHandler;
     }
 
     @Override
@@ -172,8 +176,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                 //manager.fillGroups();
                 break;
             case CUSTOMIZED:
-                //manager = new PersonalizedTournament(tournament);
-                break;
+                return customTournamentHandler;
             case KING_OF_THE_MOUNTAIN:
                 //manager = new KingOfTheMountainTournament(tournament);
                 break;
