@@ -36,9 +36,9 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.core.tournaments.CustomTournamentHandler;
+import com.softwaremagico.kt.core.tournaments.CustomLeagueHandler;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
-import com.softwaremagico.kt.core.tournaments.SimpleTournamentHandler;
+import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -59,18 +59,18 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final GroupProvider groupProvider;
-    private final SimpleTournamentHandler simpleTournamentHandler;
+    private final SimpleLeagueHandler simpleLeagueHandler;
 
-    private final CustomTournamentHandler customTournamentHandler;
+    private final CustomLeagueHandler customTournamentHandler;
 
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                           GroupProvider groupProvider, SimpleTournamentHandler simpleTournamentHandler, CustomTournamentHandler customTournamentHandler) {
+                           GroupProvider groupProvider, SimpleLeagueHandler simpleLeagueHandler, CustomLeagueHandler customTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.groupProvider = groupProvider;
-        this.simpleTournamentHandler = simpleTournamentHandler;
+        this.simpleLeagueHandler = simpleLeagueHandler;
         this.customTournamentHandler = customTournamentHandler;
     }
 
@@ -181,7 +181,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                 //manager = new KingOfTheMountainTournament(tournament);
                 break;
             case LEAGUE:
-                return simpleTournamentHandler;
+                return simpleLeagueHandler;
         }
         return null;
     }
