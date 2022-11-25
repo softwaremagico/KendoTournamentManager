@@ -35,7 +35,7 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.tournaments.SimpleTournamentHandler;
+import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -58,8 +58,8 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
-    private static final Integer MEMBERS = 3;
-    private static final Integer TEAMS = 6;
+    private static final int MEMBERS = 3;
+    private static final int TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
     private static Tournament tournament = null;
 
@@ -79,7 +79,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private TeamProvider teamProvider;
 
     @Autowired
-    private SimpleTournamentHandler simpleTournamentHandler;
+    private SimpleLeagueHandler simpleLeagueHandler;
 
     @Autowired
     private FightProvider fightProvider;
@@ -201,9 +201,9 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = simpleTournamentHandler.createFights(tournament, TeamsOrder.SORTED, true, 0, null);
+        List<Fight> tournamentFights = simpleLeagueHandler.createFights(tournament, TeamsOrder.SORTED, true, 0, null);
         //Check group has been created.
-        Assert.assertEquals(simpleTournamentHandler.getGroups(tournament).size(), 1);
+        Assert.assertEquals(simpleLeagueHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
 
         Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
@@ -273,16 +273,16 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), drawTeams.get(1));
 
         // Finally wins Team3 at an untied duel
-        Group group = simpleTournamentHandler.getGroups(tournament).get(0);
+        Group group = simpleLeagueHandler.getGroups(tournament).get(0);
         group.createUntieDuel(
                 teamProvider.get(tournament, "Team01").get().getMembers().get(0),
                 teamProvider.get(tournament, "Team03").get().getMembers().get(0), null);
         group.getUnties().get(0).addCompetitor2Score(Score.MEN);
         groupProvider.save(group);
 
-        groupProvider.save(simpleTournamentHandler.getGroups(tournament).get(0));
+        groupProvider.save(simpleLeagueHandler.getGroups(tournament).get(0));
 
-        simpleTournamentHandler.getGroups(tournament).get(0).getUnties().get(0).addCompetitor2Score(Score.MEN);
+        simpleLeagueHandler.getGroups(tournament).get(0).getUnties().get(0).addCompetitor2Score(Score.MEN);
 
         List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
         Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(scores.get(0).getTeam()));
@@ -331,7 +331,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), drawTeams.get(2));
 
         // Finally wins Team3, Team5, Team1
-        Group group = simpleTournamentHandler.getGroups(tournament).get(0);
+        Group group = simpleLeagueHandler.getGroups(tournament).get(0);
         group.createUntieDuel(
                 teamProvider.get(tournament, "Team05").get().getMembers().get(0),
                 teamProvider.get(tournament, "Team03").get().getMembers().get(0), null);
@@ -366,6 +366,8 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         teamProvider.delete(tournament);
         roleProvider.delete(tournament);
         tournamentProvider.delete(tournament);
+        participantProvider.deleteAll();
+        clubProvider.delete(club);
         Assert.assertEquals(fightProvider.count(), 0);
         Assert.assertEquals(duelProvider.count(), 0);
     }
