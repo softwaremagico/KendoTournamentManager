@@ -74,7 +74,7 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         repository.deleteById(id);
     }
 
-    public void delete() {
+    public void deleteAll() {
         repository.deleteAll();
     }
 
