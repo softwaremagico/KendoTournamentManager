@@ -20,7 +20,7 @@
         </button>
         <button mat-button color="primary" (click)="openConfirmationGenerateElementsDialog()"
                 [matTooltipShowDelay]="500" matTooltip="{{'wizard' | translate}}"
-                *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
+                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <mat-divider class="timer-divider" [vertical]="true"></mat-divider>
