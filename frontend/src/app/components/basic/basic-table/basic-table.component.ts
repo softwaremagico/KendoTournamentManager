@@ -116,7 +116,6 @@ export class BasicTableComponent implements OnInit {
         } else {
           return this.translateService.instant(text);
         }
-
       } else {
         return "";
       }
