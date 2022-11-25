@@ -31,6 +31,7 @@ import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
+import {ScrollStrategyOptions} from "@angular/cdk/overlay";
 
 @Component({
   selector: 'app-fight-list',
@@ -50,6 +51,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   swappedColors: boolean = false;
   swappedTeams: boolean = false;
   membersOrder: boolean = false;
+  isWizardEnabled: boolean;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
@@ -133,6 +135,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe(tournament => {
         this.tournament = tournament;
+        this.isWizardEnabled = tournament.type != TournamentType.CUSTOMIZED;
         if (this.tournamentId) {
           this.groupService.getAllByTournament(this.tournamentId).subscribe(groups => {
             this.groups = groups;
@@ -241,8 +244,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       });
       dialogRef.componentInstance.messageTag = "deleteFightWarning"
       dialogRef.componentInstance.parameters = {
-        team1: !this.swappedTeams?(this.selectedFight?.team1.name):(this.selectedFight?.team2.name),
-        team2: !this.swappedTeams?(this.selectedFight?.team2.name):(this.selectedFight?.team1.name),
+        team1: !this.swappedTeams ? (this.selectedFight?.team1.name) : (this.selectedFight?.team2.name),
+        team2: !this.swappedTeams ? (this.selectedFight?.team2.name) : (this.selectedFight?.team1.name),
       }
 
       dialogRef.afterClosed().subscribe(result => {
@@ -268,7 +271,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined) {
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
-      width: '1150px',
+      width: '90vw',
+      height: '95vh',
       data: {
         title: 'Add a new Fight',
         action: Action.Add,
