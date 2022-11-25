@@ -63,7 +63,8 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
 
     public List<Team> getAll(Tournament tournament) {
         final List<Team> teams = repository.findByTournament(tournament);
-        if (teams.isEmpty() && tournament.getType() == TournamentType.LEAGUE) {
+        if (teams.isEmpty() && (tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED ||
+                tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
             final List<Team> newTeams = new ArrayList<>();
             final long competitors = roleProvider.count(tournament);
             for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
