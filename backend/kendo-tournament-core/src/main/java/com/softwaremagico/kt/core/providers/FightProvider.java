@@ -31,7 +31,6 @@ import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -48,7 +47,7 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return fights;
     }
 
-    public Collection<Fight> getFights(Tournament tournament) {
+    public List<Fight> getFights(Tournament tournament) {
         final List<Fight> fights = repository.findByTournament(tournament);
         fights.forEach(f -> {
             f.setTournament(tournament);
