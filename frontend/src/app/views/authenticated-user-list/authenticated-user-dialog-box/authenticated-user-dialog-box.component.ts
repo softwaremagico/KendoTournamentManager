@@ -41,7 +41,6 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent impl
       name: new FormControl(this.authenticatedUser.name, [Validators.required, Validators.maxLength(20)]),
       lastname: new FormControl(this.authenticatedUser.lastname, [Validators.required, Validators.maxLength(40)]),
       roles: new FormControl({
-        //TODO(softwaremagico): default values not set.
         value: this.authenticatedUser.roles,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_USER) &&
           this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
@@ -49,7 +48,7 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent impl
       password: new FormControl('', [Validators.required, Validators.maxLength(40),
         Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
       repeatPassword: new FormControl('', Validators.required)
-    }, {validators: confirmPasswordValidator});
+    }, );
   }
 
   ngOnInit(): void {
@@ -85,5 +84,5 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent impl
 export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
   const repeatPassword = control.get('repeatPassword');
-  return password && repeatPassword && password.value === repeatPassword.value ? null : {repeatPassword: false};
+  return password && repeatPassword && password.value === repeatPassword.value ? {repeatPassword: true} : {repeatPassword: false};
 };
