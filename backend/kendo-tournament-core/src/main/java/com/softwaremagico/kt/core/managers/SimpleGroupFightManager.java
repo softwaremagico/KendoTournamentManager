@@ -36,12 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FightManager {
+public class SimpleGroupFightManager {
     private final FightProvider fightProvider;
     private final DuelProvider duelProvider;
 
     @Autowired
-    public FightManager(FightProvider fightProvider, DuelProvider duelProvider) {
+    public SimpleGroupFightManager(FightProvider fightProvider, DuelProvider duelProvider) {
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
     }
@@ -94,40 +94,6 @@ public class FightManager {
             lastFight = fight;
             teamSelector.removeAdversary(team1, team2);
             team1 = team2;
-        }
-        return fights;
-    }
-
-    /**
-     * All teams fights agains the next and previous team of the list.
-     *
-     * @param tournament
-     * @param teams
-     * @param fightArea
-     * @param level
-     * @param index
-     * @return
-     */
-    protected List<Fight> createTwoFightsForEachTeam(Tournament tournament, List<Team> teams, int fightArea, int level, int index,
-                                                     String createdBy) {
-        if (teams == null || tournament == null || teams.size() < 2) {
-            return null;
-        }
-        final List<Fight> fights = new ArrayList<>();
-
-        // If only exists two teams, there are only one fight. If no, as many
-        // fights as teams
-        for (int i = 0; i < (teams.size() > 2 ? teams.size() : 1); i++) {
-            Fight fight;
-            final Team team1 = teams.get(i);
-            final Team team2 = teams.get((i + 1) % teams.size());
-
-            if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, fightArea, level, createdBy);
-            } else {
-                fight = createFight(tournament, team2, team1, fightArea, level, createdBy);
-            }
-            fights.add(fight);
         }
         return fights;
     }
