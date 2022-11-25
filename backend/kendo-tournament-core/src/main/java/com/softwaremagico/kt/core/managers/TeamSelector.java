@@ -31,24 +31,22 @@ import java.util.*;
 
 public class TeamSelector {
 
-    private Random randomGenerator = new Random();
+    private final Random randomGenerator = new Random();
 
-    private List<Team> teams;
+    private final List<Team> teams;
     private Map<Team, List<Team>> combination;
 
     protected TeamSelector(List<Team> teams, TeamsOrder teamsOrder) {
         this.teams = teams;
-        if (teamsOrder == TeamsOrder.SORTED) {
-            Collections.sort(this.teams);
+        switch (teamsOrder) {
+            case SORTED:
+                Collections.sort(this.teams);
+                break;
+            case RANDOM:
+                Collections.shuffle(teams);
+                break;
         }
         combination = getAdversaries();
-    }
-
-    public void shuffleTeams() {
-        if (teams != null) {
-            Collections.shuffle(teams);
-            combination = getAdversaries();
-        }
     }
 
     public List<Team> getAdversaries(Team team) {
