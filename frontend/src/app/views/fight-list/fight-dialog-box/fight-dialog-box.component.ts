@@ -93,10 +93,6 @@ export class FightDialogBoxComponent implements OnInit {
   addFights() {
     this.fight.team1 = this.selectedTeam1[0];
     this.fight.team2 = this.selectedTeam2[0];
-    this.fight.tournament = this.group.tournament;
-    this.fight.shiaijo = 0;
-    this.fight.level = this.group.level;
-    this.fight.duels = [];
 
     this.fightService.generateDuels(this.fight).subscribe(_fight => {
       if (this.previousFight !== undefined) {
