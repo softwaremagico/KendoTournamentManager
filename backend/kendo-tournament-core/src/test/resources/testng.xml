@@ -6,12 +6,14 @@
                 <include name="simpleChampionshipTest"/>
                 <include name="loopChampionshipTest"/>
                 <include name="converterTests"/>
+                <include name="scoreTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.core.tests.SimpleChampionshipTest"/>
             <class name="com.softwaremagico.kt.core.tests.LoopChampionshipTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTests"/>
+            <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
         </classes>
     </test>
 </suite>

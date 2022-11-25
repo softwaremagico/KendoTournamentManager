@@ -67,13 +67,17 @@ public class Tournament extends Element {
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy) {
+        this(name, shiaijos, teamSize, type, createdBy, ScoreType.CLASSIC);
+    }
+
+    public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy, ScoreType scoreType) {
         this();
         setName(name);
         setShiaijos(shiaijos);
         setTeamSize(teamSize);
         setType(type);
         setCreatedBy(createdBy);
-        setTournamentScore(new TournamentScore());
+        setTournamentScore(new TournamentScore(scoreType));
     }
 
 
