@@ -8,15 +8,16 @@
 }
 
 .fights-creator {
-  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  height: 95%;
 }
 
 .teams-container {
   overflow: auto;
-  min-height: 40vh;
-  max-height: 70vh;
   margin-left: 50px;
   margin-right: 50px;
+  height: 75%;
 }
 
 .roles-location.ng-star-inserted {
@@ -39,7 +40,8 @@
 
 .team-list {
   padding-right: 10px;
-  min-height: 60vh;
+  min-height: 20vh;
+  max-height: 400px;
 }
 
 .mat-raised-button {
@@ -49,6 +51,7 @@
 .new-fight-title {
   display: flex;
   width: 100%;
+  padding-top: 20px;
 }
 
 .teams-title {
@@ -73,6 +76,7 @@
 .new-fight {
   display: flex;
   height: 140px;
+  padding-bottom: 20px;
 }
 
 .team-selected {
@@ -81,6 +85,10 @@
   width: 100%;
   margin-left: 50px;
   margin-right: 50px;
+}
+
+.mat-dialog-actions {
+  padding: 0px;
 }
 
 
