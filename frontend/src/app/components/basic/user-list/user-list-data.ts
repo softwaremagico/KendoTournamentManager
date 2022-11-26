@@ -5,9 +5,11 @@ export class UserListData {
   filteredParticipants: Participant[];
 
   filter(filter: string) {
-    this.filteredParticipants = this.participants.filter(user => user.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
-      user.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || user.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
-      (user.club ? user.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""));
+    if (this.participants) {
+      this.filteredParticipants = this.participants.filter(user => user.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+        user.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || user.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+        (user.club ? user.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""));
+    }
   }
 
 }
