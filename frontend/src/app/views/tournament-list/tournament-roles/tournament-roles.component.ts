@@ -13,6 +13,7 @@ import {forkJoin} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -29,7 +30,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService, public translateService: TranslateService,
-              rbacService: RbacService,
+              rbacService: RbacService, private filterResetService: FilterResetService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -103,6 +104,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     role.roleType = roleName;
     this.roleService.add(role).subscribe(_role => {
       this.messageService.infoMessage("infoRoleStored");
+      this.filterResetService.resetFilter.next(true);
     });
     if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {UserListData} from "./user-list-data";
+import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 
 @Component({
   selector: 'user-list',
@@ -12,8 +13,15 @@ export class UserListComponent implements OnInit {
   userListData: UserListData;
   filterString: string;
 
+  constructor(private filterResetService: FilterResetService) {
+  }
+
   ngOnInit(): void {
-    // This is intentional
+    this.filterResetService.resetFilter.pipe().subscribe(value => {
+      if (value) {
+        this.reset();
+      }
+    });
   }
 
   filter(event: Event) {
