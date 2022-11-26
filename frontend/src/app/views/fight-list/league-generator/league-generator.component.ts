@@ -36,9 +36,11 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
 
   ngOnInit(): void {
     this.teamService.getFromTournament(this.tournament).subscribe(teams => {
-      teams.sort(function (a, b) {
-        return a.name.localeCompare(b.name);
-      });
+      if(teams) {
+        teams.sort(function (a, b) {
+          return a.name.localeCompare(b.name);
+        });
+      }
       this.teamListData.teams = teams;
       this.teamListData.filteredTeams = teams;
     });
