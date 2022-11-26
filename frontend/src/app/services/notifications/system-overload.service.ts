@@ -7,6 +7,7 @@ import {BehaviorSubject} from "rxjs";
 export class SystemOverloadService {
 
   public isBusy: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public isTransactionalBusy: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() { }
 }
