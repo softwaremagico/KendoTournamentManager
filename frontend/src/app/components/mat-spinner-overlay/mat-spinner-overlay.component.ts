@@ -24,10 +24,14 @@ export class MatSpinnerOverlayComponent extends KendoComponent implements OnInit
   @Input() color: ThemePalette = "primary";
 
   showSpinner = false;
+  waitBigOperation = false;
 
   ngOnInit() {
     this.systemOverloadService.isBusy.pipe(takeUntil(this.destroySubject)).subscribe(busy => {
       this.showSpinner = busy;
+    });
+    this.systemOverloadService.isTransactionalBusy.pipe(takeUntil(this.destroySubject)).subscribe(busy => {
+      this.waitBigOperation = busy;
     });
   }
 
