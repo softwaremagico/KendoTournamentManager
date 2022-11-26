@@ -57,8 +57,8 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
     private static final int MEMBERS = 3;
-    private static final int TEAMS = 6;
-    private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
+    private static final int TEAMS = 4;
+    private static final String TOURNAMENT_NAME = "scoreChampionshipTest";
     private static Tournament tournament = null;
 
     @Autowired
@@ -220,21 +220,62 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
 
         final Group groupTest = groupProvider.getGroups(tournament).get(0);
 
-            // Team1 vs Team2
-            groupTest.getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
-            groupTest.getFights().get(0).getDuels().get(1).addCompetitor2Score(Score.MEN);
-            // Team3 vs Team2
-            groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
-            groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
-            groupTest.getFights().get(1).getDuels().get(1).addCompetitor2Score(Score.MEN);
-            // Team3 vs Team4
-            // Team1 vs Team4
-            groupTest.getFights().get(3).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        // Team1 vs Team2
+        groupTest.getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(0).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team2
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team4
+        // Team1 vs Team4
+        groupTest.getFights().get(3).getDuels().get(0).addCompetitor2Score(Score.MEN);
 
-            // Total Team1 0/1F 2D 2H
-            // Total Team2 0/1F 1D 1H
-            // Total Team3 1/1F 1/3D 2H
-            // Total Team4 1/1F 1/5D 1H
+        // Total Team1 0/1F 1/3D 1H
+        // Total Team2 0/1F 2/2D 2H
+        // Total Team3 1/1F 1/4D 2H
+        // Total Team4 1/1F 1/5D 1H
+
+        // finish fights.
+        groupTest.getFights().forEach(fight -> {
+            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fightProvider.save(fight);
+        });
+
+        // Team01 has more duels won, but less draw fights than team3 and team4.
+        // Tam03 has less draw duels but more hits than team4. In European,
+        // win Team04
+        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+
+        resetGroup(groupProvider.getGroups(tournament).get(0), null);
+    }
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void testInternationalScore() {
+        tournament.setTournamentScore(new TournamentScore(ScoreType.INTERNATIONAL));
+        tournament = tournamentProvider.save(tournament);
+
+        final Group groupTest = groupProvider.getGroups(tournament).get(0);
+
+        // Team1 vs Team2
+        groupTest.getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(0).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team2
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team4
+        // Team1 vs Team4
+        groupTest.getFights().get(3).getDuels().get(0).addCompetitor2Score(Score.MEN);
+
+        // Total Team1 0/1F 1/3D 1H
+        // Total Team2 0/1F 2/2D 2H
+        // Total Team3 1/1F 1/4D 2H
+        // Total Team4 1/1F 1/5D 1H
 
         // finish fights.
         groupTest.getFights().forEach(fight -> {
@@ -246,7 +287,93 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
         // Tam03 has less draw duels but more hits than team4. In International,
         // win Team03
         List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(scores.get(0).getTeam()));
+        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+
+        resetGroup(groupProvider.getGroups(tournament).get(0), null);
+    }
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void testClassicScore() {
+        tournament.setTournamentScore(new TournamentScore(ScoreType.CLASSIC));
+        tournament = tournamentProvider.save(tournament);
+
+        final Group groupTest = groupProvider.getGroups(tournament).get(0);
+
+        // Team1 vs Team2
+        groupTest.getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(0).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team2
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team4
+        // Team1 vs Team4
+        groupTest.getFights().get(3).getDuels().get(0).addCompetitor2Score(Score.MEN);
+
+        // Total Team1 0/1F 1/3D 1H
+        // Total Team2 0/1F 2/2D 2H
+        // Total Team3 1/1F 1/4D 2H
+        // Total Team4 1/1F 1/5D 1H
+
+        // finish fights.
+        groupTest.getFights().forEach(fight -> {
+            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fightProvider.save(fight);
+        });
+
+        // Team01 has more duels won, but less draw fights than team3 and team4.
+        // Tam03 has less draw duels but more hits than team4. In Classic,
+        // win Team03
+        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+
+        resetGroup(groupProvider.getGroups(tournament).get(0), null);
+    }
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void testWinOverDrawsScore() {
+        tournament.setTournamentScore(new TournamentScore(ScoreType.WIN_OVER_DRAWS));
+        tournament = tournamentProvider.save(tournament);
+
+        final Group groupTest = groupProvider.getGroups(tournament).get(0);
+
+        // Team1 vs Team2
+        groupTest.getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(0).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team2
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groupTest.getFights().get(1).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        // Team3 vs Team4
+        // Team1 vs Team4
+        groupTest.getFights().get(3).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        groupTest.getFights().get(3).getDuels().get(0).addCompetitor2Score(Score.MEN);
+
+        // Total Team1 0/1F 1/4D 1H
+        // Total Team2 0/1F 2/3D 2H
+        // Total Team3 1/1F 1/3D 2H
+        // Total Team4 1/1F 1/5D 2H
+
+        // finish fights.
+        groupTest.getFights().forEach(fight -> {
+            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fightProvider.save(fight);
+        });
+
+        // Team01 has more duels won, but less draw fights than team3 and team4.
+        // Tam03 has less draw duels but more hits than team4. In WInOverDraws,
+        // win Team03
+        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
 
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
