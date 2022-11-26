@@ -32,6 +32,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {ScrollStrategyOptions} from "@angular/cdk/overlay";
+import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -59,7 +60,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              private translateService: TranslateService, rbacService: RbacService) {
+              private translateService: TranslateService, rbacService: RbacService,
+              private systemOverloadService: SystemOverloadService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
@@ -76,6 +78,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   ngOnInit(): void {
+    this.systemOverloadService.isTransactionalBusy.next(true);
     this.refreshFights();
     this.refreshUnties();
     this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe(() => {
@@ -116,6 +119,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
           this.fightService.updateAll(this.fights).subscribe();
         }
       }
+      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
@@ -222,8 +226,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
-    const group : Group = this.groups[0];
-    const fight : Fight = new Fight();
+    const group: Group = this.groups[0];
+    const fight: Fight = new Fight();
     fight.tournament = group.tournament;
     fight.shiaijo = 0;
     fight.level = group.level;
