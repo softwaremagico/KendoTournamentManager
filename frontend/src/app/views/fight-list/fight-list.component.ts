@@ -189,7 +189,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   generateElements() {
     let dialogRef;
-    if (this.tournament.type === TournamentType.LEAGUE) {
+    if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP) {
       dialogRef = this.dialog.open(LeagueGeneratorComponent, {
         width: '85vw',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}

@@ -38,6 +38,7 @@ import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.CustomLeagueHandler;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
+import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
 import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -62,16 +63,19 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final SimpleLeagueHandler simpleLeagueHandler;
 
     private final CustomLeagueHandler customTournamentHandler;
+    private final LoopLeagueHandler loopLeagueHandler;
 
     @Autowired
-    public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                           GroupProvider groupProvider, SimpleLeagueHandler simpleLeagueHandler, CustomLeagueHandler customTournamentHandler) {
+    public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
+                           TournamentProvider tournamentProvider, GroupProvider groupProvider, SimpleLeagueHandler simpleLeagueHandler,
+                           CustomLeagueHandler customTournamentHandler, LoopLeagueHandler loopLeagueHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.groupProvider = groupProvider;
         this.simpleLeagueHandler = simpleLeagueHandler;
         this.customTournamentHandler = customTournamentHandler;
+        this.loopLeagueHandler = loopLeagueHandler;
     }
 
     @Override
@@ -156,7 +160,6 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             final List<Fight> createdFights = selectedManager.createFights(tournament, teamsOrder, maximizeFights, level, createdBy);
             provider.saveAll(createdFights);
             return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
-
         }
         return new ArrayList<>();
     }
@@ -164,8 +167,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private ITournamentManager selectManager(TournamentType type) {
         switch (type) {
             case LOOP:
-                //manager = new LoopTournamentManager(tournament);
-                break;
+                return loopLeagueHandler;
             case TREE:
             case CHAMPIONSHIP:
                 //manager = new Championship(tournament);

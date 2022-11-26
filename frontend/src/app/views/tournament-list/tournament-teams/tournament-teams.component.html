@@ -27,7 +27,9 @@
              [cdkDropListData]="getMembersContainer(team)"
              (cdkDropListDropped)="dropMember($event, team, i)"
              [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
-          <mat-card class="user-card" *ngIf="members.get(team)![i]" cdkDrag
+          <mat-card class="user-card"
+                    *ngIf="members!==undefined && members.get(team)!==undefined && members.get(team)![i]!==undefined"
+                    cdkDrag
                     [cdkDragData]="getMember(team, i)"
                     [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.activities)">
             <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
