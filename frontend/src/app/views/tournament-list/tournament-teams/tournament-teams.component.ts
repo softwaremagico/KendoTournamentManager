@@ -294,6 +294,9 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
       }
     }
+    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+
     this.teamService.delete(team).pipe(
       tap(() => {
         this.loggerService.info("Team '" + team.name + "' removed.");
@@ -303,6 +306,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       this.messageService.infoMessage("infoTeamDeleted");
       this.teams.splice(this.teams.indexOf(team), 1);
     });
+    this.members.delete(team);
   }
 
   randomTeams(): void {
