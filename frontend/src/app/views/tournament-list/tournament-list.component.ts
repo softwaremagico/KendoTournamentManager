@@ -106,6 +106,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.tournamentService.add(tournament).subscribe(_tournament => {
       this.basicTableData.dataSource.data.push(_tournament);
       this.basicTableData.dataSource._updateChangeSubscription();
+      this.basicTableData.selectItem(_tournament);
       this.messageService.infoMessage('infoTournamentStored');
     });
   }

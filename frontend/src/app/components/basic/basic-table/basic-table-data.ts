@@ -10,4 +10,9 @@ export class BasicTableData<T> {
   dataSource: MatTableDataSource<T>;
   selectedElement: T | undefined;
 
+  selectItem(item: any): void {
+    this.selection.toggle(item);
+    this.selectedElement = item;
+  }
+
 }
