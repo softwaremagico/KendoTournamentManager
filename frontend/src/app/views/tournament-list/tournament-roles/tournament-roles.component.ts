@@ -112,6 +112,13 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     if (this.userListData.filteredParticipants.includes(participant)) {
       this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
     }
+    this.shortRoles();
+  }
+
+  private shortRoles(): void {
+    this.participants.forEach(function(value,key){
+      value.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    });
   }
 
   downloadPDF() {
