@@ -1,4 +1,4 @@
 <div class="draw-score">
   <span class="draw-value"
-        *ngIf="this.duel.duration && this.duel.duration > 0 && this.duel.competitor1Score.length === this.duel.competitor2Score.length">X</span>
+        *ngIf="(duel | draw : duel.duration)">X</span>
 </div>
