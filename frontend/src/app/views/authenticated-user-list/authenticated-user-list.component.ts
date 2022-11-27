@@ -102,6 +102,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
     this.userService.add(authenticatedUser).subscribe(_authenticatedUser => {
       this.basicTableData.dataSource.data.push(_authenticatedUser);
       this.basicTableData.dataSource._updateChangeSubscription();
+      this.basicTableData.selectItem(_authenticatedUser);
     });
   }
 
