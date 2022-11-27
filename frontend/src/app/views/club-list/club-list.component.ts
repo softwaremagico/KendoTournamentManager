@@ -97,6 +97,7 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
     this.clubService.add(club).subscribe(_club => {
       this.basicTableData.dataSource.data.push(_club);
       this.basicTableData.dataSource._updateChangeSubscription();
+      this.basicTableData.selectItem(_club);
       this.messageService.infoMessage('infoClubStored');
     });
   }
