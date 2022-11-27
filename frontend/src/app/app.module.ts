@@ -83,6 +83,7 @@ import {
 import {PasswordsComponent} from './views/passwords/passwords.component';
 import { RbacPipe } from './pipes/rbac.pipe';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import { DrawPipe } from './pipes/draw.pipe';
 
 
 registerLocaleData(localeES, "es");
@@ -128,7 +129,8 @@ registerLocaleData(localeNL, "nl");
     AuthenticatedUserListComponent,
     AuthenticatedUserDialogBoxComponent,
     PasswordsComponent,
-    RbacPipe
+    RbacPipe,
+    DrawPipe
   ],
     imports: [
         BrowserModule,
