@@ -1,12 +1,4 @@
-<div class="filter">
-  <mat-form-field>
-    <input matInput type="text" [(ngModel)]="filterString" (keyup)="filter($event)"
-           placeholder="{{'filter' | translate}}">
-  </mat-form-field>
-</div>
-<button #resetButton class="reset" mat-button color="warn" (click)="reset()">
-  <mat-icon>clear</mat-icon>
-</button>
+<app-filter (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
 <div class="user-list" *ngIf="userListData.filteredParticipants">
   <app-user-card *ngFor="let user of userListData.filteredParticipants" [user]="user"></app-user-card>
 </div>
