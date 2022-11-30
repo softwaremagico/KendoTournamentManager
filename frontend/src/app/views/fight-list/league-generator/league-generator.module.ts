@@ -8,6 +8,8 @@ import {TeamCardModule} from "../../../components/team-card/team-card.module";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -21,7 +23,9 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
     TeamCardModule,
     MatIconModule,
     RbacModule,
-    MatSpinnerOverlayModule
+    MatSpinnerOverlayModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class LeagueGeneratorModule { }

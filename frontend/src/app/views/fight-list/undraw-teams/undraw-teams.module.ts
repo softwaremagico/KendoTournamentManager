@@ -6,6 +6,8 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MemberSelectorModule} from "../../../components/basic/member-selector/member-selector.module";
 import {TranslateModule} from "@ngx-translate/core";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -17,7 +19,9 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
     MatTabsModule,
     MemberSelectorModule,
     TranslateModule,
-    RbacModule
+    RbacModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class UndrawTeamsModule { }

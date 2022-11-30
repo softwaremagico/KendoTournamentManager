@@ -9,6 +9,8 @@ import {MatIconModule} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -23,7 +25,9 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
     MatIconModule,
     FormsModule,
     RbacModule,
-    MatSpinnerOverlayModule
+    MatSpinnerOverlayModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class TournamentTeamsModule { }

@@ -1,9 +1,10 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {TimerComponent} from "./timer.component";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
-
+import {DragDropModule} from "@angular/cdk/drag-drop";
+import {TranslateModule} from "@ngx-translate/core";
 
 
 @NgModule({
@@ -14,7 +15,10 @@ import {MatIconModule} from "@angular/material/icon";
   imports: [
     CommonModule,
     RbacModule,
-    MatIconModule
+    MatIconModule,
+    DragDropModule,
+    TranslateModule
   ]
 })
-export class TimerModule { }
+export class TimerModule {
+}
