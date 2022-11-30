@@ -6,6 +6,8 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
 import {TranslateModule} from "@ngx-translate/core";
 import {TeamCardModule} from "../../../components/team-card/team-card.module";
 import {TeamListModule} from "../../../components/basic/team-list/team-list.module";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -17,7 +19,9 @@ import {TeamListModule} from "../../../components/basic/team-list/team-list.modu
     MatSpinnerOverlayModule,
     TranslateModule,
     TeamCardModule,
-    TeamListModule
+    TeamListModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class FightDialogBoxModule { }

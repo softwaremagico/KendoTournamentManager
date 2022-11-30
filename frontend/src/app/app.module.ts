@@ -57,6 +57,23 @@ import {MatSpinnerOverlayModule} from "./components/mat-spinner-overlay/mat-spin
 import {FightModule} from "./components/fight/fight.module";
 import {UntieFightModule} from "./components/untie-fight/untie-fight.module";
 import {TimerModule} from "./components/timer/timer.module";
+import {ConfirmationDialogModule} from "./components/basic/confirmation-dialog/confirmation-dialog.module";
+import {
+  AuthenticatedUserDialogBoxModule
+} from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
+import {ClubDialogBoxModule} from "./views/club-list/club-dialog-box/club-dialog-box.module";
+import {CompetitorsRankingModule} from "./views/fight-list/competitors-ranking/competitors-ranking.module";
+import {FightDialogBoxModule} from "./views/fight-list/fight-dialog-box/fight-dialog-box.module";
+import {LeagueGeneratorModule} from "./views/fight-list/league-generator/league-generator.module";
+import {TeamRankingModule} from "./views/fight-list/team-ranking/team-ranking.module";
+import {UndrawTeamsModule} from "./views/fight-list/undraw-teams/undraw-teams.module";
+import {
+  ParticipantDialogBoxModule
+} from "./views/participant-list/participant-dialog-box/participant-dialog-box.module";
+import {TournamentTeamsComponent} from "./views/tournament-list/tournament-teams/tournament-teams.component";
+import {TournamentTeamsModule} from "./views/tournament-list/tournament-teams/tournament-teams.module";
+import {TournamentRolesModule} from "./views/tournament-list/tournament-roles/tournament-roles.module";
+import {TournamentDialogBoxModule} from "./views/tournament-list/tournament-dialog-box/tournament-dialog-box.module";
 
 
 registerLocaleData(localeES, "es");
@@ -125,6 +142,18 @@ registerLocaleData(localeNL, "nl");
     FightModule,
     UntieFightModule,
     TimerModule,
+    ConfirmationDialogModule,
+    AuthenticatedUserDialogBoxModule,
+    ClubDialogBoxModule,
+    CompetitorsRankingModule,
+    FightDialogBoxModule,
+    LeagueGeneratorModule,
+    TeamRankingModule,
+    ParticipantDialogBoxModule,
+    TournamentTeamsModule,
+    TournamentRolesModule,
+    TournamentDialogBoxModule,
+    UndrawTeamsModule,
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,

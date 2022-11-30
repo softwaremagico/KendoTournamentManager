@@ -5,6 +5,7 @@ import {FormsModule} from "@angular/forms";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -15,12 +16,13 @@ import {MatIconModule} from "@angular/material/icon";
   exports: [
     FilterComponent
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    TranslateModule,
-    MatInputModule,
-    MatIconModule
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        TranslateModule,
+        MatInputModule,
+        MatIconModule,
+        MatButtonModule
+    ]
 })
 export class FilterModule { }

@@ -7,6 +7,8 @@ import {MatSelectModule} from "@angular/material/select";
 import {FormsModule} from "@angular/forms";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -18,7 +20,9 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
     MatSelectModule,
     FormsModule,
     MatTooltipModule,
-    RbacModule
+    RbacModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class TournamentDialogBoxModule {
