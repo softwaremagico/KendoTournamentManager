@@ -12,6 +12,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatSortModule} from "@angular/material/sort";
 import {MatButtonModule} from "@angular/material/button";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {FilterModule} from "../filter/filter.module";
 
 @NgModule({
   declarations: [
@@ -20,19 +21,20 @@ import {MatTooltipModule} from "@angular/material/tooltip";
   exports: [
     BasicTableComponent
   ],
-    imports: [
-        CommonModule,
-        TranslateModule,
-        MatIconModule,
-        MatFormFieldModule,
-        MatMenuModule,
-        MatCheckboxModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatInputModule,
-        MatSortModule,
-        MatButtonModule,
-        MatTooltipModule
-    ]
+  imports: [
+    CommonModule,
+    TranslateModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatMenuModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatInputModule,
+    MatSortModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FilterModule
+  ]
 })
 export class BasicTableModule { }
