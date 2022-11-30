@@ -1,6 +1,6 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {Duel} from "../models/duel";
-import {Score} from "../models/score";
+import {Duel} from "../../models/duel";
+import {Score} from "../../models/score";
 
 @Pipe({
   name: 'draw'
