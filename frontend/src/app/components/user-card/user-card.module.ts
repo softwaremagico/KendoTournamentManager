@@ -5,6 +5,7 @@ import {MatCardModule} from "@angular/material/card";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {AppModule} from "../../app.module";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
+import {TranslateModule} from "@ngx-translate/core";
 
 
 @NgModule({
@@ -18,8 +19,8 @@ import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
     CommonModule,
     MatCardModule,
     DragDropModule,
-    AppModule,
-    RbacModule
+    RbacModule,
+    TranslateModule
   ]
 })
 export class UserCardModule {

@@ -5,6 +5,8 @@ import {TranslateModule} from "@ngx-translate/core";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -15,7 +17,9 @@ import {MatIconModule} from "@angular/material/icon";
     TranslateModule,
     MatSpinnerOverlayModule,
     RbacModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class TeamRankingModule { }
