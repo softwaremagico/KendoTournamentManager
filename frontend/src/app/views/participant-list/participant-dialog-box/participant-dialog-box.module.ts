@@ -7,6 +7,9 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
+import {MatInputModule} from "@angular/material/input";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -20,7 +23,10 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
     MatAutocompleteModule,
     ReactiveFormsModule,
     MatIconModule,
-    RbacModule
+    RbacModule,
+    MatInputModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class ParticipantDialogBoxModule { }

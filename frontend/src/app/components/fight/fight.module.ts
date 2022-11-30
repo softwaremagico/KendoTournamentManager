@@ -4,6 +4,8 @@ import {FightComponent} from "./fight.component";
 import {DuelModule} from "./duel/duel.module";
 import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
+import {DragDropModule} from "@angular/cdk/drag-drop";
+import {TranslateModule} from "@ngx-translate/core";
 
 
 @NgModule({
@@ -15,7 +17,9 @@ import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
     CommonModule,
     DuelModule,
     MatIconModule,
-    RbacModule
+    RbacModule,
+    DragDropModule,
+    TranslateModule
   ]
 })
 export class FightModule {

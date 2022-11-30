@@ -8,6 +8,9 @@ import {MatOptionModule} from "@angular/material/core";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import {MatDialogModule} from "@angular/material/dialog";
 
 
 
@@ -21,7 +24,10 @@ import {MatSelectModule} from "@angular/material/select";
     MatOptionModule,
     RbacModule,
     MatIconModule,
-    MatSelectModule
+    MatSelectModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDialogModule
   ]
 })
 export class AuthenticatedUserDialogBoxModule { }

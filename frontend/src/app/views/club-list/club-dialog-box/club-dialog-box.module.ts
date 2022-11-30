@@ -5,6 +5,9 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {TranslateModule} from "@ngx-translate/core";
 import {FormsModule} from "@angular/forms";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
+import {MatInputModule} from "@angular/material/input";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatButtonModule} from "@angular/material/button";
 
 
 
@@ -15,7 +18,10 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
     MatFormFieldModule,
     TranslateModule,
     FormsModule,
-    RbacModule
+    RbacModule,
+    MatInputModule,
+    MatDialogModule,
+    MatButtonModule
   ]
 })
 export class ClubDialogBoxModule { }
