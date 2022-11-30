@@ -16,8 +16,7 @@ export class TeamListComponent implements OnInit {
     // This is intentional
   }
 
-  filter(event: Event) {
-    const filter: string = (event.target as HTMLInputElement).value.toLowerCase();
+  filter(filter: string) {
     this.teamListData.filter(filter);
   }
 

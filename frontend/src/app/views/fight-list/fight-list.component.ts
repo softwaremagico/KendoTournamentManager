@@ -526,4 +526,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.membersOrder = enabled;
     this.membersOrderChangedService.membersOrderAllowed.next(enabled);
   }
+
+  filter(filter: string) {
+
+  }
 }
