@@ -1,8 +1,4 @@
-<div class="filter">
-  <mat-form-field class="filter-field">
-    <input matInput type="text" (keyup)="filter($event)" placeholder="{{'filter' | translate}}">
-  </mat-form-field>
-</div>
+<app-filter (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
 <button class="tune-button" mat-button [matMenuTriggerFor]="mainMenuButton" [matTooltipShowDelay]="500"
         matTooltip="{{'fields' | translate}}">
   <mat-icon>tune</mat-icon>

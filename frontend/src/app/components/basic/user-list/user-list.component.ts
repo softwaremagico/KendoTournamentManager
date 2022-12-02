@@ -11,7 +11,6 @@ export class UserListComponent implements OnInit {
 
   @Input()
   userListData: UserListData;
-  filterString: string;
 
   constructor(private filterResetService: FilterResetService) {
   }
@@ -19,18 +18,12 @@ export class UserListComponent implements OnInit {
   ngOnInit(): void {
     this.filterResetService.resetFilter.pipe().subscribe(value => {
       if (value) {
-        this.reset();
+        this.filter('');
       }
     });
   }
 
-  filter(event: Event) {
-    const filter: string = (event.target as HTMLInputElement).value.toLowerCase();
-    this.userListData.filter(filter);
-  }
-
-  reset() {
-    this.filterString = '';
-    this.userListData.filter('');
+  filter(filterString: string) {
+    this.userListData.filter(filterString);
   }
 }
