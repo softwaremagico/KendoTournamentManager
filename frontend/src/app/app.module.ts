@@ -36,7 +36,6 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {TournamentListComponent} from './views/tournament-list/tournament-list.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {IconModule} from "./components/icons";
-import {FightListComponent} from './views/fight-list/fight-list.component';
 import {registerLocaleData} from "@angular/common";
 import localeES from "@angular/common/locales/es";
 import localeCAT from "@angular/common/locales/ca-ES-VALENCIA";
@@ -70,10 +69,10 @@ import {UndrawTeamsModule} from "./views/fight-list/undraw-teams/undraw-teams.mo
 import {
   ParticipantDialogBoxModule
 } from "./views/participant-list/participant-dialog-box/participant-dialog-box.module";
-import {TournamentTeamsComponent} from "./views/tournament-list/tournament-teams/tournament-teams.component";
 import {TournamentTeamsModule} from "./views/tournament-list/tournament-teams/tournament-teams.module";
 import {TournamentRolesModule} from "./views/tournament-list/tournament-roles/tournament-roles.module";
 import {TournamentDialogBoxModule} from "./views/tournament-list/tournament-dialog-box/tournament-dialog-box.module";
+import {FightListModule} from "./views/fight-list/fight-list-module";
 
 
 registerLocaleData(localeES, "es");
@@ -89,7 +88,6 @@ registerLocaleData(localeNL, "nl");
     LoginComponent,
     ParticipantListComponent,
     TournamentListComponent,
-    FightListComponent,
     AuthenticatedUserListComponent,
     PasswordsComponent
   ],
@@ -154,6 +152,7 @@ registerLocaleData(localeNL, "nl");
     TournamentRolesModule,
     TournamentDialogBoxModule,
     UndrawTeamsModule,
+    FightListModule,
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
