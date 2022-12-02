@@ -66,9 +66,8 @@ export class BasicTableComponent implements OnInit {
     }
   }
 
-  filter(event: Event) {
-    const filter = (event.target as HTMLInputElement).value;
-    this.basicTableData.dataSource.filter = filter.trim().toLowerCase();
+  filter(filter: string) {
+    this.basicTableData.dataSource.filter = filter;
   }
 
   isColumnVisible(column: string): boolean {

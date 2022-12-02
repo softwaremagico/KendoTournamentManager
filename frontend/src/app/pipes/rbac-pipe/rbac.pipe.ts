@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-import {RbacActivity} from "../services/rbac/rbac.activity";
+import {RbacActivity} from "../../services/rbac/rbac.activity";
 
 @Pipe({
   name: 'rbac'
