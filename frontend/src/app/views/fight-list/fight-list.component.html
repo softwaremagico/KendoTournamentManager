@@ -86,11 +86,7 @@
         </button>
       </div>
     </div>
-    <div class="filter">
-      <mat-form-field class="filter-field">
-        <input matInput [disabled]="true" type="text" placeholder="{{'filter' | translate}}">
-      </mat-form-field>
-    </div>
+    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [disabled]="true"></app-filter>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" (onTimerFinished)="finishDuel($event[0])"
                (onTimerChanged)="updateDuelElapsedTime($event[0])"
