@@ -36,10 +36,7 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.core.tournaments.CustomLeagueHandler;
-import com.softwaremagico.kt.core.tournaments.ITournamentManager;
-import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
-import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
+import com.softwaremagico.kt.core.tournaments.*;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -64,11 +61,13 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     private final CustomLeagueHandler customTournamentHandler;
     private final LoopLeagueHandler loopLeagueHandler;
+    private final KingOfTheMountainHandler kingOfTheMountainHandler;
 
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, GroupProvider groupProvider, SimpleLeagueHandler simpleLeagueHandler,
-                           CustomLeagueHandler customTournamentHandler, LoopLeagueHandler loopLeagueHandler) {
+                           CustomLeagueHandler customTournamentHandler, LoopLeagueHandler loopLeagueHandler,
+                           KingOfTheMountainHandler kingOfTheMountainHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -76,6 +75,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         this.simpleLeagueHandler = simpleLeagueHandler;
         this.customTournamentHandler = customTournamentHandler;
         this.loopLeagueHandler = loopLeagueHandler;
+        this.kingOfTheMountainHandler = kingOfTheMountainHandler;
     }
 
     @Override
@@ -180,8 +180,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             case CUSTOMIZED:
                 return customTournamentHandler;
             case KING_OF_THE_MOUNTAIN:
-                //manager = new KingOfTheMountainTournament(tournament);
-                break;
+                return kingOfTheMountainHandler;
             case LEAGUE:
                 return simpleLeagueHandler;
         }

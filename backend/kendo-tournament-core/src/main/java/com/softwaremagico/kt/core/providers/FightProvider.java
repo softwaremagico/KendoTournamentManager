@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FightProvider extends CrudProvider<Fight, Integer, FightRepository> {
@@ -86,5 +87,13 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
 
     public long count(Tournament tournament) {
         return repository.countByTournament(tournament);
+    }
+
+    public Integer getCurrentLevel(Tournament tournament) {
+        Optional<Fight> fight = repository.findFirstByTournamentOrderByLevelDesc(tournament);
+        if (fight.isPresent()) {
+            return fight.get().getLevel();
+        }
+        return 0;
     }
 }
