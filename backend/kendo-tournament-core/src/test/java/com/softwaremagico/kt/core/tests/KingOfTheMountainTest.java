@@ -1,30 +1,5 @@
 package com.softwaremagico.kt.core.tests;
 
-/*-
- * #%L
- * Kendo Tournament Manager (Core)
- * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
- * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
- */
-
-
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -33,7 +8,8 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
+import com.softwaremagico.kt.core.tournaments.KingOfTheMountainHandler;
+import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -42,24 +18,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
 
-
 @SpringBootTest
-@Test(groups = {"loopChampionshipTest"})
-public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
+@Test(groups = {"kingOfTheMountainTest"})
+public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
     private static final int MEMBERS = 3;
-    private static final int TEAMS = 6;
-    private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
+    private static final int TEAMS = 2;
+    private static final String TOURNAMENT_NAME = "scoreChampionshipTest";
     private static Tournament tournament = null;
+
 
     @Autowired
     private TournamentProvider tournamentProvider;
@@ -77,7 +52,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     private TeamProvider teamProvider;
 
     @Autowired
-    private LoopLeagueHandler loopLeagueHandler;
+    private SimpleLeagueHandler simpleLeagueHandler;
 
     @Autowired
     private FightProvider fightProvider;
@@ -100,20 +75,10 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private RankingController rankingController;
 
+    @Autowired
+    private KingOfTheMountainHandler kingOfTheMountainHandler;
+
     private Club club;
-
-    public static int getNumberOfCombats(Integer numberOfTeams) {
-        return numberOfTeams * (numberOfTeams - 1);
-    }
-
-    private void resetGroup(Group group, String createdBy) {
-        group.getFights().forEach(fight -> {
-            fight.getDuels().clear();
-            fight.generateDuels(createdBy);
-        });
-        group.getUnties().clear();
-        groupProvider.save(group);
-    }
 
     @Test
     public void addClub() {
@@ -130,7 +95,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "addParticipants")
     public void addTournament() {
         Assert.assertEquals(tournamentProvider.count(), 0);
-        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE, null);
+        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.KING_OF_THE_MOUNTAIN, null);
         tournament = tournamentProvider.save(newTournament);
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
@@ -190,66 +155,24 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = loopLeagueHandler.createFights(tournament, TeamsOrder.SORTED, true, 0, null);
+        List<Fight> tournamentFights = kingOfTheMountainHandler.createFights(tournament, TeamsOrder.SORTED, true, 0, null);
         //Check group has been created.
-        Assert.assertEquals(loopLeagueHandler.getGroups(tournament).size(), 1);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
 
-        Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
-
-        // Checker than teams are in loop
-        Team teamInLoop = null;
-        for (int i = 0; i < tournamentFights.size(); i++) {
-            if (i % (TEAMS - 1) == 0) {
-                teamInLoop = tournamentFights.get(i).getTeam1();
-            }
-            Assert.assertEquals(teamInLoop, tournamentFights.get(i).getTeam1());
-        }
+        Assert.assertEquals(tournamentFights.size(), 2);
     }
 
     @Test(dependsOnMethods = {"createFights"})
     public void testSimpleWinner() {
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
-        int counter = 0;
-        //First team win all fights, second all fights -1 third all fights -2, ...
-        for (int i = 0; i < tournamentFights.size(); i++) {
-            Fight currentFight = tournamentFights.get(i);
-            if (i % TEAMS < TEAMS - counter) {
-                // First duel won
-                currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-                currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-            }
-            currentFight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
-            fightProvider.save(currentFight);
-            if (i % TEAMS == TEAMS - 1) {
-                counter++;
-            }
-        }
+        tournamentFights.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
+        tournamentFights.forEach(fight -> fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION)));
+        fightProvider.save(tournamentFights.get(0));
 
         List<ScoreOfTeam> teamsScore = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
         Assert.assertEquals(teamsScore.size(), TEAMS);
 
-        for (int i = 0; i < teamsScore.size() - 1; i++) {
-            Assert.assertTrue(teamsScore.get(i).getWonFights() >= teamsScore.get(i + 1).getWonFights());
-            Assert.assertTrue(teamsScore.get(i).getWonDuels() >= teamsScore.get(i + 1).getWonDuels());
-            Assert.assertTrue(teamsScore.get(i).getHits() >= teamsScore.get(i + 1).getHits());
-        }
-
-        resetGroup(groupProvider.getGroups(tournament).get(0), null);
-    }
-
-
-    @AfterClass
-    public void deleteTournament() {
-        groupProvider.delete(tournament);
-        fightProvider.delete(tournament);
-        duelProvider.delete(tournament);
-        teamProvider.delete(tournament);
-        roleProvider.delete(tournament);
-        participantProvider.deleteAll();
-        clubProvider.delete(club);
-        tournamentProvider.delete(tournament);
-        Assert.assertEquals(fightProvider.count(), 0);
-        Assert.assertEquals(duelProvider.count(), 0);
+        Assert.assertEquals(teamsScore.get(0).getTeam().getName(), tournamentFights.get(0).getTeam1().getName());
     }
 }
