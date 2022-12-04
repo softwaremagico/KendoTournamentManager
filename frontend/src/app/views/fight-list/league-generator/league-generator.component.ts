@@ -9,7 +9,6 @@ import {Team} from "../../../models/team";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentType} from "../../../models/tournament-type";
-import {MatSlideToggleChange} from "@angular/material/slide-toggle";
 import {TournamentService} from "../../../services/tournament.service";
 import {FormControl} from "@angular/forms";
 
@@ -37,7 +36,8 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
-    this.canHaveDuplicated = data.tournament.type == TournamentType.LOOP;
+    this.canHaveDuplicated = TournamentType.canHaveDuplicates(this.tournament.type);
+    console.log(this.tournament.maximizeFights)
     this.avoidDuplicates.setValue(!this.tournament.maximizeFights);
   }
 
