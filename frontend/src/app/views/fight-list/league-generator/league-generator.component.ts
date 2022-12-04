@@ -8,6 +8,10 @@ import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../models/team";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {TournamentType} from "../../../models/tournament-type";
+import {MatSlideToggleChange} from "@angular/material/slide-toggle";
+import {TournamentService} from "../../../services/tournament.service";
+import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-league-generator',
@@ -21,28 +25,37 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   action: Action;
   actionName: string;
   teamsOrder: Team[] = [];
-
+  canHaveDuplicated: boolean;
   tournament: Tournament;
+  avoidDuplicates = new FormControl('', []);
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
-              private teamService: TeamService, rbacService: RbacService,
+              private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, tournament: Tournament }) {
     super(rbacService);
     this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
+    this.canHaveDuplicated = data.tournament.type == TournamentType.LOOP;
+    this.avoidDuplicates.setValue(!this.tournament.maximizeFights);
   }
 
   ngOnInit(): void {
     this.teamService.getFromTournament(this.tournament).subscribe(teams => {
-      if(teams) {
+      if (teams) {
         teams.sort(function (a, b) {
           return a.name.localeCompare(b.name);
         });
       }
       this.teamListData.teams = teams;
       this.teamListData.filteredTeams = teams;
+    });
+    this.avoidDuplicates.valueChanges.subscribe(avoidDuplicates => {
+      this.tournament.maximizeFights = !avoidDuplicates;
+      this.tournamentService.update(this.tournament).subscribe(_tournament => {
+        this.tournament = _tournament;
+      });
     });
   }
 
