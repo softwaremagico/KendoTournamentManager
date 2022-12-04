@@ -61,7 +61,7 @@ public class LoopGroupFightManager {
     protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
                                                   String createdBy) {
         if (teams.size() < 2) {
-            return null;
+            return new ArrayList<>();
         }
         final List<Fight> fights = new ArrayList<>();
         final TeamSelector remainingFights = new LoopTeamSelector(teams, teamsOrder);
@@ -70,7 +70,12 @@ public class LoopGroupFightManager {
 
         for (final Team team : remainingTeams) {
             for (final Team adversary : remainingFights.getAdversaries(team)) {
-                fights.add(createFight(tournament, team, adversary, 0, level, createdBy));
+                //Avoid repeat fights between the same teams.
+                if (tournament.isMaximizeFights() || fights.stream().
+                        noneMatch(fight -> ((fight.getTeam1() == team && fight.getTeam2() == adversary) ||
+                                (fight.getTeam2() == team && fight.getTeam1() == adversary)))) {
+                    fights.add(createFight(tournament, team, adversary, 0, level, createdBy));
+                }
             }
         }
 

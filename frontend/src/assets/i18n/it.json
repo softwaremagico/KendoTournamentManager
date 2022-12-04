@@ -563,7 +563,8 @@
   "back": "Tornare",
   "chronometerOn": "Mostra il cronometro",
   "chronometerOff": "Nascondi cronometro",
-  "fields": "Campi"
+  "fields": "Campi",
+  "avoidDuplicateFights": "Evita combatti duplicati"
 }
 
 
