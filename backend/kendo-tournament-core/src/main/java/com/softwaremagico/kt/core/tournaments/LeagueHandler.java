@@ -71,6 +71,19 @@ public abstract class LeagueHandler implements ITournamentManager {
         return groups.get(0);
     }
 
+    protected Group addGroup(Tournament tournament, Integer level) {
+        return addGroup(tournament, teamProvider.getAll(tournament), level);
+    }
+
+    protected Group addGroup(Tournament tournament, List<Team> teams, Integer level) {
+        final Group group = new Group();
+        group.setTournament(tournament);
+        group.setLevel(level);
+        group.setIndex(0);
+        group.setTeams(teams);
+        return addGroup(tournament, group);
+    }
+
     @Override
     public Integer getNumberOfLevels() {
         return 1;
@@ -202,7 +215,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
-        return groupProvider.getGroups(tournament, shiaijo);
+        return groupProvider.getGroupsByShiaijo(tournament, shiaijo);
     }
 
     @Override

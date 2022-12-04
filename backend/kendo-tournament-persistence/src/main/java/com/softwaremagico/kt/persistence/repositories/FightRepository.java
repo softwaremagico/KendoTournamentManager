@@ -31,6 +31,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -46,7 +47,9 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
 
     long countByTournament(Tournament tournament);
 
-    Fight findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(Tournament tournament);
+    Optional<Fight> findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(Tournament tournament);
 
     long deleteByTournament(Tournament tournament);
+
+    Optional<Fight> findFirstByTournamentOrderByLevelDesc(Tournament tournament);
 }
