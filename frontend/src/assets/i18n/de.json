@@ -556,7 +556,8 @@
   "back": "Terugkomen",
   "chronometerOn": "Stoppuhr zeigen",
   "chronometerOff": "Stoppuhr ausblenden",
-  "fields": "Feld"
+  "fields": "Feld",
+  "avoidDuplicateFights": "Vermeiden sie doppelte übereinstimmungen"
 }
 
 
