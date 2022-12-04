@@ -52,7 +52,11 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public Group getGroup(Fight fight) {
-        return repository.findByFightsId(fight.getId());
+        return repository.findByFightsId(fight.getId()).orElse(null);
+    }
+
+    public List<Group> getGroupsByLevel(Tournament tournament, Integer level) {
+        return repository.findByTournamentAndLevelOrderByIndexAsc(tournament, level);
     }
 
     public Group getGroup(Integer groupId) {
@@ -63,7 +67,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return repository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toList()));
     }
 
-    public List<Group> getGroups(Tournament tournament, Integer shiaijo) {
+    public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
         return repository.findByTournamentAndShiaijoOrderByLevelAscIndexAsc(tournament, shiaijo);
     }
 
