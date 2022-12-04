@@ -12,6 +12,8 @@
          (cdkDropListDropped)="dropTeam($event)">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
+    <mat-slide-toggle *ngIf="canHaveDuplicated"
+                      [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}</mat-slide-toggle>
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
