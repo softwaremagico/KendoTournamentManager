@@ -65,6 +65,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
     tournament.teamSize = Tournament.DEFAULT_TEAM_SIZE;
+    tournament.maximizeFights = true;
     this.openDialog(this.translateService.instant('competitionAdd'), Action.Add, tournament);
   }
 
