@@ -9,21 +9,23 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {MatInputModule} from "@angular/material/input";
 
 
 @NgModule({
   declarations: [TournamentDialogBoxComponent],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    TranslateModule,
-    MatSelectModule,
-    FormsModule,
-    MatTooltipModule,
-    RbacModule,
-    MatDialogModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        TranslateModule,
+        MatSelectModule,
+        FormsModule,
+        MatTooltipModule,
+        RbacModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatInputModule
+    ]
 })
 export class TournamentDialogBoxModule {
 }

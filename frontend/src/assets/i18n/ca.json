@@ -571,7 +571,8 @@
   "back": "Tornar",
   "chronometerOn": "Mostra cronòmetre",
   "chronometerOff": "Amagar cronòmetre",
-  "fields": "Camps"
+  "fields": "Camps",
+  "avoidDuplicateFights": "Evitar partits duplicats"
 }
 
 
