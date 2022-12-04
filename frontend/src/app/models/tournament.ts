@@ -14,6 +14,7 @@ export class Tournament extends Element {
   public type?: TournamentType;
   public duelsDuration: number;
   public tournamentScore: TournamentScore;
+  public maximizeFights: boolean;
 
   constructor() {
     super();
@@ -27,6 +28,8 @@ export class Tournament extends Element {
     target.teamSize = source.teamSize;
     target.type = source.type;
     target.duelsDuration = source.duelsDuration;
+    target.tournamentScore = source.tournamentScore;
+    target.maximizeFights = source.maximizeFights;
   }
 
   public static clone(data: Tournament): Tournament {

@@ -556,7 +556,8 @@
   "back": "Terugkomen",
   "chronometerOn": "Stopwatch tonen",
   "chronometerOff": "Stopwatch verbergen",
-  "fields": "Veld"
+  "fields": "Veld",
+  "avoidDuplicateFights": "Vermijd dubbele overeenkomsten"
 }
 
 
