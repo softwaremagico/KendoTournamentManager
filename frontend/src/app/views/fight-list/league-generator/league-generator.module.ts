@@ -10,6 +10,8 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -25,7 +27,10 @@ import {MatButtonModule} from "@angular/material/button";
     RbacModule,
     MatSpinnerOverlayModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSlideToggleModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class LeagueGeneratorModule { }

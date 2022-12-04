@@ -576,7 +576,8 @@
   "back": "Volver",
   "chronometerOn": "Mostrar cronómetro",
   "chronometerOff": "Ocutlar cronómetro",
-  "fields": "Campos"
+  "fields": "Campos",
+  "avoidDuplicateFights": "Evita partidos duplicados"
 }
 
 

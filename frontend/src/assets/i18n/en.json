@@ -584,6 +584,7 @@
   "chronometerOff": "Hide Chronometer",
   "fields": "Fields",
   "redTeam": "Red Team",
-  "whiteTeam": "White Team"
+  "whiteTeam": "White Team",
+  "avoidDuplicateFights": "Avoid duplicated fights"
 }
 
