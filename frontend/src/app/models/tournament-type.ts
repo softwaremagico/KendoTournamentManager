@@ -31,3 +31,9 @@ export namespace TournamentType {
     });
   }
 }
+
+export namespace TournamentType {
+  export function canHaveDuplicates(type: TournamentType | undefined): boolean {
+    return type === TournamentType.LOOP;
+  }
+}
