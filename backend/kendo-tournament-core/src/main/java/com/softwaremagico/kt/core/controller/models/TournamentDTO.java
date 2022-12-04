@@ -42,6 +42,8 @@ public class TournamentDTO extends ElementDTO {
 
     private Integer duelsDuration;
 
+    private boolean maximizeFights;
+
     public TournamentDTO() {
         super();
     }
@@ -101,6 +103,14 @@ public class TournamentDTO extends ElementDTO {
 
     public void setDuelsDuration(Integer duelsDuration) {
         this.duelsDuration = duelsDuration;
+    }
+
+    public boolean isMaximizeFights() {
+        return maximizeFights;
+    }
+
+    public void setMaximizeFights(boolean maximizeFights) {
+        this.maximizeFights = maximizeFights;
     }
 
     @Override
