@@ -50,7 +50,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     }
 
     @Cacheable("duelsDurationAverage")
-    public long getDurationAverage() {
+    public Long getDurationAverage() {
         return repository.getDurationAverage();
     }
 
