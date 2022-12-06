@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.statistics;
  */
 
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -42,6 +43,10 @@ public class FightStatisticsProvider {
 
     public FightStatisticsProvider(DuelProvider duelProvider) {
         this.duelProvider = duelProvider;
+    }
+
+    public FightStatisticsDTO calculate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
+        return calculate(tournamentDTO.getType(), tournamentDTO.isMaximizeFights(), tournamentDTO.getTeamSize(), teams);
     }
 
 
