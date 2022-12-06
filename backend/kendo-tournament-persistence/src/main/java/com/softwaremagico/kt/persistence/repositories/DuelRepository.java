@@ -27,6 +27,7 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -38,4 +39,7 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     long deleteByTournament(Tournament tournament);
 
     long countByTournament(Tournament tournament);
+
+    @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
+    long getDurationAverage();
 }
