@@ -24,20 +24,29 @@ package com.softwaremagico.kt.core.statistics;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.RoleConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.RoleConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
+import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -50,25 +59,44 @@ public class FightStatisticsProvider {
     private final TeamProvider teamProvider;
     private final TeamConverter teamConverter;
     private final TournamentConverter tournamentConverter;
+    private final RoleProvider roleProvider;
+    private final RoleConverter roleConverter;
 
     public FightStatisticsProvider(DuelProvider duelProvider, TeamProvider teamProvider, TeamConverter teamConverter,
-                                   TournamentConverter tournamentConverter) {
+                                   TournamentConverter tournamentConverter, RoleProvider roleProvider, RoleConverter roleConverter) {
         this.duelProvider = duelProvider;
         this.teamProvider = teamProvider;
         this.teamConverter = teamConverter;
         this.tournamentConverter = tournamentConverter;
+        this.roleProvider = roleProvider;
+        this.roleConverter = roleConverter;
     }
 
+    /**
+     * Calculate the statistics by teams if they are already defined, or using the members if not.
+     *
+     * @param tournamentDTO the tournament.
+     * @return some estimations.
+     */
     public FightStatisticsDTO calculate(TournamentDTO tournamentDTO) {
         final List<Team> teams = teamProvider.getAll(tournamentConverter.reverse(tournamentDTO));
-        return calculate(tournamentDTO, teamConverter.convertAll(teams.stream()
-                .map(TeamConverterRequest::new).collect(Collectors.toList())));
+        if (!teams.isEmpty()) {
+            return calculate(tournamentDTO, teamConverter.convertAll(teams.stream()
+                    .map(TeamConverterRequest::new).collect(Collectors.toList())));
+        }
+        final List<Role> roles = roleProvider.getAll(tournamentConverter.reverse(tournamentDTO));
+        return calculateByRoles(tournamentDTO, roleConverter.convertAll(roles.stream().filter(role ->
+                        Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).collect(Collectors.toList()).stream()
+                .map(RoleConverterRequest::new).collect(Collectors.toList())));
     }
 
     public FightStatisticsDTO calculate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
         return calculate(tournamentDTO.getType(), tournamentDTO.isMaximizeFights(), tournamentDTO.getTeamSize(), teams);
     }
 
+    public FightStatisticsDTO calculateByRoles(TournamentDTO tournamentDTO, Collection<RoleDTO> roles) {
+        return calculate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).collect(Collectors.toList())));
+    }
 
     public FightStatisticsDTO calculate(TournamentType tournamentType, boolean maximizeFights, int teamSize, Collection<TeamDTO> teams) {
         if (tournamentType == null || teams == null || teams.size() < 2) {
@@ -125,5 +153,44 @@ public class FightStatisticsProvider {
 
         //Duels are counted twice, once for each team
         return counter.get() / 2;
+    }
+
+    /**
+     * Emulate some teams if are not defined yet only to calculate the number of fights and duels.
+     *
+     * @param tournamentDTO the tournament where emulate.
+     * @param participants  the list of members that will participate on the tournament.
+     * @return a list of transient teams.
+     */
+    private List<TeamDTO> emulateTeams(TournamentDTO tournamentDTO, Collection<ParticipantDTO> participants) {
+        int teamIndex = 0;
+        final List<TeamDTO> teams = new ArrayList<>();
+        TeamDTO team = null;
+        int teamMember = 0;
+
+
+        for (final ParticipantDTO competitor : participants) {
+            // Create a new team.
+            if (team == null) {
+                teamIndex++;
+                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                teamMember = 0;
+            }
+
+            // Add member.
+            team.addMember(competitor);
+
+            if (teamMember == 0) {
+                teams.add(team);
+            }
+
+            teamMember++;
+
+            // Team filled up, create a new team.
+            if (teamMember >= tournamentDTO.getTeamSize()) {
+                team = null;
+            }
+        }
+        return teams;
     }
 }

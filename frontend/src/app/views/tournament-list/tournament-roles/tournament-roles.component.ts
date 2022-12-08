@@ -14,6 +14,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
+import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -31,6 +32,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
               public participantService: ParticipantService, public roleService: RoleService,
               private messageService: MessageService, public translateService: TranslateService,
               rbacService: RbacService, private filterResetService: FilterResetService,
+              private statisticsChangedService: StatisticsChangedService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -94,6 +96,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     });
     this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
@@ -113,10 +116,11 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
     }
     this.shortRoles();
+    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   private shortRoles(): void {
-    this.participants.forEach(function(value,key){
+    this.participants.forEach(function (value, key) {
       value.sort((a, b) => a.lastname.localeCompare(b.lastname));
     });
   }
