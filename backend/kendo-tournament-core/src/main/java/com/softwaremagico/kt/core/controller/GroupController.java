@@ -32,10 +32,7 @@ import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentInvalidException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.FightProvider;
-import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
@@ -61,10 +58,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     private final TeamConverter teamConverter;
 
+    private final TeamProvider teamProvider;
+
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
-                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter) {
+                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter, TeamProvider teamProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -73,6 +72,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.duelProvider = duelProvider;
         this.duelConverter = duelConverter;
         this.teamConverter = teamConverter;
+        this.teamProvider = teamProvider;
     }
 
     @Override
@@ -117,6 +117,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     public GroupDTO addTeams(Integer groupId, List<TeamDTO> teams, String username) {
         return converter.convert(createConverterRequest(provider.addTeams(groupId, teamConverter.reverseAll(teams), username)));
+    }
+
+    public GroupDTO deleteTeams(Integer groupId, List<TeamDTO> teams, String username) {
+        return converter.convert(createConverterRequest(provider.deleteTeams(groupId, teamConverter.reverseAll(teams), username)));
     }
 
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
