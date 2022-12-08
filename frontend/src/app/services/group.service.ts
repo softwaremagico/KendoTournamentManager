@@ -89,6 +89,19 @@ export class GroupService {
       );
   }
 
+  deleteTeamsFromGroup(groupId: number, teams: Team[]): Observable<Group> {
+    const url: string = `${this.baseUrl}/` + groupId + '/teams/delete';
+    return this.http.patch<Group>(url, teams, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Adding teams to group ${groupId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group>(`updates ${groupId}`))
+      );
+  }
+
   setTeams(teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/teams`;
     return this.http.put<Group>(url, teams, this.loginService.httpOptions)

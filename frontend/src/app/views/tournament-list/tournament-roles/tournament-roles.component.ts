@@ -93,10 +93,10 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     const participant: Participant = event.container.data[event.currentIndex]
     this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
       this.messageService.infoMessage("infoRoleDeleted");
+      this.statisticsChangedService.areStatisticsChanged.next(true);
     });
     this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
@@ -108,6 +108,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     this.roleService.add(role).subscribe(_role => {
       this.messageService.infoMessage("infoRoleStored");
       this.filterResetService.resetFilter.next(true);
+      this.statisticsChangedService.areStatisticsChanged.next(true);
     });
     if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
@@ -116,7 +117,6 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       this.userListData.filteredParticipants.splice(this.userListData.filteredParticipants.indexOf(participant), 1);
     }
     this.shortRoles();
-    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   private shortRoles(): void {
