@@ -28,7 +28,8 @@
                cdkDropList
                [cdkDropListData]="getMembersContainer(team)"
                (cdkDropListDropped)="dropMember($event, team, i)"
-               [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
+               [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)"
+               [cdkDropListDisabled]="isTeamLocked(team)">
             <mat-card class="user-card"
                       *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
