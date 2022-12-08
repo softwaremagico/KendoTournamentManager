@@ -252,10 +252,14 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   dropListEnterPredicate(memberIndex: number, team: Team) {
     return function (_item: CdkDrag<Participant>, dropList: CdkDropList): boolean {
       if (team) {
-        return team.members[memberIndex] === undefined || team.members[memberIndex] === null;
+        return !team.locked && (team.members[memberIndex] === undefined || team.members[memberIndex] === null);
       }
       return true;
     };
+  }
+
+  isTeamLocked(team: Team) {
+    return team.locked;
   }
 
   setEditable(team: Team, editable: boolean) {
