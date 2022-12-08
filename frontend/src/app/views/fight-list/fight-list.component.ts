@@ -10,7 +10,6 @@ import {Action} from "../../action";
 import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.component";
 import {TournamentType} from "../../models/tournament-type";
 import {LeagueGeneratorComponent} from "./league-generator/league-generator.component";
-import {TeamService} from "../../services/team.service";
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
@@ -31,7 +30,6 @@ import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
-import {ScrollStrategyOptions} from "@angular/cdk/overlay";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 
 @Component({
@@ -55,7 +53,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   isWizardEnabled: boolean;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
-              private teamService: TeamService, private groupService: GroupService, private duelService: DuelService,
+              private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,

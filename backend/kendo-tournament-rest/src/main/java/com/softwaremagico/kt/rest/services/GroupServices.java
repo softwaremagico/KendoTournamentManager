@@ -91,6 +91,16 @@ public class GroupServices {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/{groupId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GroupDTO deleteTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
+                            @RequestBody List<TeamDTO> teamsDto,
+                            Authentication authentication,
+                            HttpServletRequest request) {
+        return groupController.deleteTeams(groupId, teamsDto, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on the first group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
