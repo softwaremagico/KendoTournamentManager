@@ -32,6 +32,9 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
     this.statisticsChangedService.areStatisticsChanged.pipe(takeUntil(this.destroySubject)).subscribe(() => {
       if (this.tournament && this.tournament.id) {
         this.statisticsServices.get(this.tournament.id, !this.teams, this.teams).subscribe((_fightStatistics) => {
+          if (_fightStatistics === undefined || _fightStatistics === null) {
+            _fightStatistics = new FightStatistics();
+          }
           this.fightStatistics = _fightStatistics;
           this.setHours(this.fightStatistics.time);
           this.setMinutes(this.fightStatistics.time);
