@@ -20,6 +20,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {GroupService} from "../../../services/group.service";
 import {Group} from "../../../models/group";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
+import {FightService} from "../../../services/fight.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -33,11 +34,12 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   teams: Team[];
   members = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
+  teamInFights: Team[] = [];
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
-              rbacService: RbacService, private groupService: GroupService,
+              rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
               private statisticsChangedService: StatisticsChangedService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
@@ -79,6 +81,16 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.groups = _groups;
       }
     )
+    //Prevent removing teams that are on fights
+    this.fightService.getFromTournament(this.tournament).subscribe(_fights => {
+      this.teamInFights.push(..._fights.map(fight => fight.team1));
+      this.teamInFights.push(..._fights.map(fight => fight.team2));
+      //Remove duplicates.
+      this.teamInFights = this.teamInFights.filter((team, i, a) => i === a.indexOf(team));
+      for (let team of this.teams) {
+        team.locked = this.teamInFights.some(t => t.id === team.id);
+      }
+    })
   }
 
   @HostListener('document:click', ['$event.target'])
@@ -156,7 +168,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
         this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
         this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-        this.statisticsChangedService.areStatisticsChanged.next(true);
       }
     }
   }
@@ -211,7 +222,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
     }
-    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   updateTeam(team: Team, member: Participant | undefined) {
@@ -222,7 +232,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }),
       catchError(member ? this.messageService.handleError<Team>("Updating '" + member.name + " " + member.lastname + "'") :
         this.messageService.handleError<Team>("Updating '" + team.name + "'"))
-    ).subscribe(() => member ? this.messageService.infoMessage("infoTeamUpdated") : "");
+    ).subscribe(() => {
+      member ? this.messageService.infoMessage("infoTeamUpdated") : "";
+      this.statisticsChangedService.areStatisticsChanged.next(true);
+    })
+    ;
   }
 
   searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>) {
@@ -301,17 +315,26 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
 
-    this.teamService.delete(team).pipe(
+    const teams: Team[] = [];
+    teams.push(team);
+    this.groupService.deleteTeamsFromGroup(this.groups[0]!.id!, teams).pipe(
       tap(() => {
-        this.loggerService.info("Team '" + team.name + "' removed.");
+        this.loggerService.info("Team '" + team.name + "' removed from group.");
       }),
-      catchError(this.messageService.handleError<Team>("removing team '" + team.name + "'."))
+      catchError(this.messageService.handleError<Team>("removing team '" + team.name + "' from group."))
     ).subscribe(() => {
-      this.messageService.infoMessage("infoTeamDeleted");
-      this.teams.splice(this.teams.indexOf(team), 1);
+      this.teamService.delete(team).pipe(
+        tap(() => {
+          this.loggerService.info("Team '" + team.name + "' removed.");
+        }),
+        catchError(this.messageService.handleError<Team>("removing team '" + team.name + "' from database."))
+      ).subscribe(() => {
+        this.messageService.infoMessage("infoTeamDeleted");
+        this.teams.splice(this.teams.indexOf(team), 1);
+        this.statisticsChangedService.areStatisticsChanged.next(true);
+      });
     });
     this.members.delete(team);
-    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   randomTeams(): void {
@@ -331,12 +354,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
           this.loggerService.info("Team '" + newTeam.name + "' updated.");
         }),
         catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
-      ).subscribe();
+      ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
     }
     //Remaining one on left column.
     this.userListData.participants = participants;
     this.userListData.filteredParticipants = this.userListData.participants;
-    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   getRandomMember(participants: Participant[]): Participant {
@@ -369,8 +391,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
           this.members.set(team, team.members);
         }
         this.systemOverloadService.isBusy.next(false);
+        this.statisticsChangedService.areStatisticsChanged.next(true);
       });
     }
-    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 }
