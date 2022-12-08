@@ -26,13 +26,20 @@ package com.softwaremagico.kt.core.statistics;
 
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.TeamConverter;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class FightStatisticsProvider {
@@ -40,9 +47,22 @@ public class FightStatisticsProvider {
     private static final int TIME_BETWEEN_DUELS = 10;
 
     private final DuelProvider duelProvider;
+    private final TeamProvider teamProvider;
+    private final TeamConverter teamConverter;
+    private final TournamentConverter tournamentConverter;
 
-    public FightStatisticsProvider(DuelProvider duelProvider) {
+    public FightStatisticsProvider(DuelProvider duelProvider, TeamProvider teamProvider, TeamConverter teamConverter,
+                                   TournamentConverter tournamentConverter) {
         this.duelProvider = duelProvider;
+        this.teamProvider = teamProvider;
+        this.teamConverter = teamConverter;
+        this.tournamentConverter = tournamentConverter;
+    }
+
+    public FightStatisticsDTO calculate(TournamentDTO tournamentDTO) {
+        final List<Team> teams = teamProvider.getAll(tournamentConverter.reverse(tournamentDTO));
+        return calculate(tournamentDTO, teamConverter.convertAll(teams.stream()
+                .map(TeamConverterRequest::new).collect(Collectors.toList())));
     }
 
     public FightStatisticsDTO calculate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
