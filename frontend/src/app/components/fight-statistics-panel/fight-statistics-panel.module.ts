@@ -7,6 +7,9 @@ import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [FightStatisticsPanelComponent],
+  exports: [
+    FightStatisticsPanelComponent
+  ],
   imports: [
     CommonModule,
     MatIconModule,
