@@ -6,7 +6,7 @@
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="right-panel">
-    <app-fight-statistics-panel [tournament]="tournament"></app-fight-statistics-panel>
+    <app-fight-statistics-panel [tournament]="tournament" [teams]="false"></app-fight-statistics-panel>
     <div class="roles">
       <div class="roles-location" *ngFor="let role of roleTypes">
         <div class="role-header">

@@ -16,6 +16,9 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   @Input()
   tournament: Tournament;
 
+  @Input()
+  teams: boolean;
+
   fightStatistics: FightStatistics;
   hours: number;
   minutes: number;
@@ -28,7 +31,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   ngOnInit(): void {
     this.statisticsChangedService.areStatisticsChanged.pipe(takeUntil(this.destroySubject)).subscribe(() => {
       if (this.tournament && this.tournament.id) {
-        this.statisticsServices.get(this.tournament.id, true, false).subscribe((_fightStatistics) => {
+        this.statisticsServices.get(this.tournament.id, !this.teams, this.teams).subscribe((_fightStatistics) => {
           this.fightStatistics = _fightStatistics;
           this.setHours(this.fightStatistics.time);
           this.setMinutes(this.fightStatistics.time);
