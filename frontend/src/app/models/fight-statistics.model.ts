@@ -1,6 +1,6 @@
 export class FightStatistics {
 
-  fightNumber: number;
+  fightsNumber: number;
   fightsByTeam?: number;
   duelsNumber: number;
   //In seconds.

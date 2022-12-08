@@ -25,26 +25,26 @@ package com.softwaremagico.kt.core.statistics.models;
  */
 
 public class FightStatisticsDTO {
-    private Integer fightNumber;
+    private Integer fightsNumber;
     private Integer fightsByTeam;
-    private Integer duelNumber;
+    private Integer duelsNumber;
     //In seconds.
     private Long time;
 
-    public Integer getFightNumber() {
-        return fightNumber;
+    public Integer getFightsNumber() {
+        return fightsNumber;
     }
 
-    public void setFightNumber(Integer fightNumber) {
-        this.fightNumber = fightNumber;
+    public void setFightsNumber(Integer fightsNumber) {
+        this.fightsNumber = fightsNumber;
     }
 
-    public Integer getDuelNumber() {
-        return duelNumber;
+    public Integer getDuelsNumber() {
+        return duelsNumber;
     }
 
-    public void setDuelNumber(Integer duelNumber) {
-        this.duelNumber = duelNumber;
+    public void setDuelsNumber(Integer duelsNumber) {
+        this.duelsNumber = duelsNumber;
     }
 
     public Long getTime() {

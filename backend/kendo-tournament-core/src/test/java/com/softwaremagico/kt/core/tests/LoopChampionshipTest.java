@@ -220,8 +220,8 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
         final Group group = groupProvider.getGroups(tournament).get(0);
         FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournament.getType(), MAXIMIZE_FIGHTS, MEMBERS,
                 teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
-        Assert.assertEquals(fightStatisticsDTO.getFightNumber().intValue(), group.getFights().size());
-        Assert.assertEquals(fightStatisticsDTO.getDuelNumber().intValue(), group.getFights().size() * MEMBERS);
+        Assert.assertEquals(fightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
+        Assert.assertEquals(fightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
     }
 
     @Test(dependsOnMethods = {"createFights"})
