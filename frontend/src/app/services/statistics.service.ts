@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -21,9 +21,21 @@ export class StatisticsService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  get(tournamentId: number): Observable<FightStatistics> {
-    const url: string = `${this.baseUrl}/tournament/${tournamentId}`;
-    return this.http.get<FightStatistics>(url, this.loginService.httpOptions)
+  get(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<FightStatistics> {
+    let url: string = `${this.baseUrl}/tournament/${tournamentId}`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      }),
+      params: new HttpParams({
+        fromObject : {
+          'calculateByMembers' : calculateByMembers,
+          'calculateByTeams' : calculateByTeams
+        }
+      })
+    };
+    return this.http.get<FightStatistics>(url, httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched statistics from tournament id=${tournamentId}`),

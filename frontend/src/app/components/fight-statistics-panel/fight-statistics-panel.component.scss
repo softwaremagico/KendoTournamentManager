@@ -1,11 +1,29 @@
 .panel {
-  display: inline-block;
-  width: 100%;
+  display: table;
+  width: auto;
+  padding-left: 5vh;
+  padding-right: 5vh;
+  padding-bottom: 20px;
 }
 
 .viewer {
-  display: inline-block;
-  width: 26%;
-  padding-left: 10px;
-  padding-right: 10px;
+  display: table-cell;
+  width: 33%;
+  font-size: 1vw;
+  color: #011d4a;
+}
+
+.viewer .text{
+  padding-left: 1vh;
+  margin-bottom: 15px;
+  vertical-align: super;
+}
+
+.viewer .warning {
+  color: #ffd740;
+}
+
+.viewer .alert {
+  color: #ff0000;
+  animation: blinker 1s linear infinite;
 }
