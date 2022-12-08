@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @RestController
 @RequestMapping("/statistics")
@@ -55,9 +54,8 @@ public class StatisticsServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FightStatisticsDTO> getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
-                                                                        Integer tournamentId, HttpServletRequest request) {
-        //return fightStatisticsProvider.calculate(tournamentId);
-        return null;
+    public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                          @PathVariable("tournamentId") Integer tournamentId, HttpServletRequest request) {
+        return fightStatisticsProvider.calculate(tournamentController.get(tournamentId));
     }
 }
