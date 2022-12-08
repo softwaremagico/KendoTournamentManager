@@ -546,7 +546,7 @@
   "timerResetWarning": "Weet je zeker dat je de tijd wilt resetten?",
   "logoutWarning": "Weet u zeker dat u wilt uitloggen?",
   "logout": "Uitloggen",
-  "userloggedInMessage": "Gebruiker succesvol ingelogd\n\n",
+  "userloggedInMessage": "Gebruiker succesvol ingelogd",
   "userloggedOutMessage": "Gebruikerssessie succesvol afgesloten",
   "admin": "Beheerder",
   "editor": "Editor",
@@ -557,7 +557,10 @@
   "chronometerOn": "Stopwatch tonen",
   "chronometerOff": "Stopwatch verbergen",
   "fields": "Veld",
-  "avoidDuplicateFights": "Vermijd dubbele overeenkomsten"
+  "avoidDuplicateFights": "Vermijd dubbele overeenkomsten",
+  "estimatedFights": "Geschat aantal wedstrijden",
+  "estimatedDuels": "Geschat aantal aanvallen",
+  "estimatedTime": "Geschatte benodigde tijd"
 }
 
 
