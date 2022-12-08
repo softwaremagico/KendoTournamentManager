@@ -94,6 +94,14 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return repository.save(group);
     }
 
+    public Group deleteTeams(Integer groupId, List<Team> teams, String username) {
+        final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + "' not found.",
+                ExceptionType.INFO));
+        group.getTeams().removeAll(teams);
+        group.setUpdatedBy(username);
+        return repository.save(group);
+    }
+
     public long count(Tournament tournament) {
         return repository.countByTournament(tournament);
     }
