@@ -1,14 +1,14 @@
 <div class="panel">
   <div class="viewer fights">
-    <mat-icon svgIcon="matches" class="kendo-icon"></mat-icon>
+    <mat-icon svgIcon="match" class="kendo-icon"></mat-icon>
     <span>{{fightStatistics.fightNumber}}</span>
   </div>
   <div class="viewer duels">
-    <mat-icon svgIcon="fights" class="kendo-icon"></mat-icon>
+    <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
     <span>{{fightStatistics.duelsNumber}}</span>
   </div>
   <div class="viewer time">
     <mat-icon>timer</mat-icon>
-    <span>{{hours}}:{{minutes}}:{{seconds}}</span>
+    <span>{{toDoubleDigit(hours)}}:{{toDoubleDigit(minutes)}}:{{toDoubleDigit(seconds)}}</span>
   </div>
 </div>
