@@ -29,10 +29,13 @@ import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.core.statistics.FightStatisticsProvider;
+import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
 import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -47,6 +50,7 @@ import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -59,6 +63,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
+    private static final boolean MAXIMIZE_FIGHTS = true;
     private static Tournament tournament = null;
 
     @Autowired
@@ -100,6 +105,9 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private RankingController rankingController;
 
+    @Autowired
+    private FightStatisticsProvider fightStatisticsProvider;
+
     private Club club;
 
     public static int getNumberOfCombats(Integer numberOfTeams) {
@@ -130,7 +138,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "addParticipants")
     public void addTournament() {
         Assert.assertEquals(tournamentProvider.count(), 0);
-        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE, null);
+        Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LOOP, null);
         tournament = tournamentProvider.save(newTournament);
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
@@ -190,7 +198,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = loopLeagueHandler.createFights(tournament, TeamsOrder.SORTED, true, 0, null);
+        List<Fight> tournamentFights = loopLeagueHandler.createFights(tournament, TeamsOrder.SORTED, MAXIMIZE_FIGHTS, 0, null);
         //Check group has been created.
         Assert.assertEquals(loopLeagueHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
@@ -205,6 +213,15 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
             }
             Assert.assertEquals(teamInLoop, tournamentFights.get(i).getTeam1());
         }
+    }
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void checkStatistics() {
+        final Group group = groupProvider.getGroups(tournament).get(0);
+        FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournament.getType(), MAXIMIZE_FIGHTS, MEMBERS,
+                teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
+        Assert.assertEquals(fightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
+        Assert.assertEquals(fightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
     }
 
     @Test(dependsOnMethods = {"createFights"})

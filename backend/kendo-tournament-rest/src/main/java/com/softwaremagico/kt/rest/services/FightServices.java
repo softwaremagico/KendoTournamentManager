@@ -95,12 +95,12 @@ public class FightServices {
     public byte[] getTeamsScoreRankingFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
-        final TournamentDTO tournamentDto = tournamentController.get(tournamentId);
+        final TournamentDTO tournamentDTO = tournamentController.get(tournamentId);
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                    .filename(tournamentDto.getName() + " - teams score.pdf").build();
+                    .filename(tournamentDTO.getName() + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateFightsSummaryList(locale, tournamentDto).generate();
+            return pdfController.generateFightsSummaryList(locale, tournamentDTO).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
