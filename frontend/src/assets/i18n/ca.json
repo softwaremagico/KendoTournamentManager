@@ -572,7 +572,10 @@
   "chronometerOn": "Mostra cronòmetre",
   "chronometerOff": "Amagar cronòmetre",
   "fields": "Camps",
-  "avoidDuplicateFights": "Evitar partits duplicats"
+  "avoidDuplicateFights": "Evitar partits duplicats",
+  "estimatedFights": "Nombre estimat de partits",
+  "estimatedDuels": "Nombre estimat de combats",
+  "estimatedTime": "Temps necessari estimat"
 }
 
 

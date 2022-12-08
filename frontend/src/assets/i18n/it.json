@@ -564,7 +564,10 @@
   "chronometerOn": "Mostra il cronometro",
   "chronometerOff": "Nascondi cronometro",
   "fields": "Campi",
-  "avoidDuplicateFights": "Evita combatti duplicati"
+  "avoidDuplicateFights": "Evita combatti duplicati",
+  "estimatedFights": "Numero stimato di incontri",
+  "estimatedDuels": "Numero stimato di duelli",
+  "estimatedTime": "Tempo stimato necessario"
 }
 
 
