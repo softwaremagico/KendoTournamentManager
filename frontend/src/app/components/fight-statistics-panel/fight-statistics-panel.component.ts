@@ -28,7 +28,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   ngOnInit(): void {
     this.statisticsChangedService.areStatisticsChanged.pipe(takeUntil(this.destroySubject)).subscribe(() => {
       if (this.tournament && this.tournament.id) {
-        this.statisticsServices.get(this.tournament.id).subscribe((_fightStatistics) => {
+        this.statisticsServices.get(this.tournament.id, true, false).subscribe((_fightStatistics) => {
           this.fightStatistics = _fightStatistics;
           this.setHours(this.fightStatistics.time);
           this.setMinutes(this.fightStatistics.time);
@@ -39,15 +39,21 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   }
 
   private setHours(seconds: number): void {
-    this.hours = seconds / 3600;
+    this.hours = Math.floor(seconds / 3600);
   }
 
   private setMinutes(seconds: number): void {
-    this.minutes = (seconds - (seconds / 3600)) / 60;
+    this.minutes = Math.floor((seconds % 3600) / 60);
   }
 
   private setSeconds(seconds: number): void {
     this.seconds = seconds % 60;
+  }
+
+  getTime(): string {
+    return (this.hours ? this.toDoubleDigit(this.hours) : "00") + ":" +
+      (this.minutes ? this.toDoubleDigit(this.minutes) : "00") + ":" +
+      (this.seconds ? this.toDoubleDigit(this.seconds) : "00")
   }
 
   toDoubleDigit(num: number): string {

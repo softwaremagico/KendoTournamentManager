@@ -1,14 +1,15 @@
-<div class="panel">
+<div class="panel" *ngIf="fightStatistics!==undefined">
   <div class="viewer fights">
-    <mat-icon svgIcon="match" class="kendo-icon"></mat-icon>
-    <span>{{fightStatistics.fightNumber}}</span>
+    <mat-icon svgIcon="match" class="kendo-icon" color="primary"></mat-icon>
+    <span class="text">{{fightStatistics.fightsNumber}}</span>
   </div>
   <div class="viewer duels">
-    <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
-    <span>{{fightStatistics.duelsNumber}}</span>
+    <mat-icon svgIcon="fight" class="kendo-icon" color="primary"></mat-icon>
+    <span class="text">{{fightStatistics.duelsNumber ? fightStatistics.duelsNumber : "0"}}</span>
   </div>
   <div class="viewer time">
-    <mat-icon>timer</mat-icon>
-    <span>{{toDoubleDigit(hours)}}:{{toDoubleDigit(minutes)}}:{{toDoubleDigit(seconds)}}</span>
+    <mat-icon class="kendo-icon" color="primary">timer</mat-icon>
+    <span class="text"
+          [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}">{{getTime()}}</span>
   </div>
 </div>
