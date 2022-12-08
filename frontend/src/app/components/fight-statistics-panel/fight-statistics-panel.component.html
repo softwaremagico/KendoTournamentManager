@@ -1,4 +1,4 @@
-<div class="panel" *ngIf="fightStatistics!==undefined">
+<div class="panel" *ngIf="fightStatistics!==undefined && fightStatistics!==null && fightStatistics.fightsNumber">
   <div class="viewer fights">
     <mat-icon svgIcon="match" class="kendo-icon" color="primary"
               matTooltip="{{'estimatedFights' | translate}}"></mat-icon>
