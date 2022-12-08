@@ -585,6 +585,9 @@
   "fields": "Fields",
   "redTeam": "Red Team",
   "whiteTeam": "White Team",
-  "avoidDuplicateFights": "Avoid duplicated fights"
+  "avoidDuplicateFights": "Avoid duplicated fights",
+  "estimatedFights": "Estimated number of matches",
+  "estimatedDuels": "Estimated number of fights",
+  "estimatedTime": "Estimated needed time"
 }
 
