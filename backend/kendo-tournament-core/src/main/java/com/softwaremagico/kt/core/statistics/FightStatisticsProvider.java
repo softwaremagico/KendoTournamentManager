@@ -90,6 +90,19 @@ public class FightStatisticsProvider {
                 .map(RoleConverterRequest::new).collect(Collectors.toList())));
     }
 
+    public FightStatisticsDTO calculateByTeams(TournamentDTO tournamentDTO) {
+        final List<Team> teams = teamProvider.getAll(tournamentConverter.reverse(tournamentDTO));
+        return calculate(tournamentDTO, teamConverter.convertAll(teams.stream()
+                .map(TeamConverterRequest::new).collect(Collectors.toList())));
+    }
+
+    public FightStatisticsDTO calculateByMembers(TournamentDTO tournamentDTO) {
+        final List<Role> roles = roleProvider.getAll(tournamentConverter.reverse(tournamentDTO));
+        return calculateByRoles(tournamentDTO, roleConverter.convertAll(roles.stream().filter(role ->
+                        Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).collect(Collectors.toList()).stream()
+                .map(RoleConverterRequest::new).collect(Collectors.toList())));
+    }
+
     public FightStatisticsDTO calculate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
         return calculate(tournamentDTO.getType(), tournamentDTO.isMaximizeFights(), tournamentDTO.getTeamSize(), teams);
     }
@@ -116,12 +129,12 @@ public class FightStatisticsProvider {
 
     private FightStatisticsDTO calculateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
         final FightStatisticsDTO fightStatisticsDTO = new FightStatisticsDTO();
-        fightStatisticsDTO.setFightNumber((teams.size() * (teams.size() - 1)) / 2);
+        fightStatisticsDTO.setFightsNumber((teams.size() * (teams.size() - 1)) / 2);
         fightStatisticsDTO.setFightsByTeam((teams.size() - 1));
-        fightStatisticsDTO.setDuelNumber(getDuels(fightStatisticsDTO.getFightsByTeam(), teamSize, teams));
+        fightStatisticsDTO.setDuelsNumber(getDuels(fightStatisticsDTO.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
-            fightStatisticsDTO.setTime(fightStatisticsDTO.getDuelNumber() * (duelProvider.getDurationAverage() + TIME_BETWEEN_DUELS) +
-                    (long) TIME_BETWEEN_FIGHTS * fightStatisticsDTO.getFightNumber());
+            fightStatisticsDTO.setTime(fightStatisticsDTO.getDuelsNumber() * (duelProvider.getDurationAverage() + TIME_BETWEEN_DUELS) +
+                    (long) TIME_BETWEEN_FIGHTS * fightStatisticsDTO.getFightsNumber());
         }
         return fightStatisticsDTO;
     }
@@ -129,15 +142,15 @@ public class FightStatisticsProvider {
     private FightStatisticsDTO calculateLoopStatistics(boolean maximizeFights, int teamSize, Collection<TeamDTO> teams) {
         final FightStatisticsDTO fightStatisticsDTO = new FightStatisticsDTO();
         if (maximizeFights) {
-            fightStatisticsDTO.setFightNumber((teams.size() * (teams.size() - 1)));
+            fightStatisticsDTO.setFightsNumber((teams.size() * (teams.size() - 1)));
             fightStatisticsDTO.setFightsByTeam((teams.size() - 1) * 2);
         } else {
-            fightStatisticsDTO.setFightNumber((teams.size() * teams.size() - 1) / 2);
+            fightStatisticsDTO.setFightsNumber((teams.size() * teams.size() - 1) / 2);
             fightStatisticsDTO.setFightsByTeam((teams.size() - 1));
         }
-        fightStatisticsDTO.setDuelNumber(getDuels(fightStatisticsDTO.getFightsByTeam(), teamSize, teams));
+        fightStatisticsDTO.setDuelsNumber(getDuels(fightStatisticsDTO.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
-            fightStatisticsDTO.setTime(fightStatisticsDTO.getDuelNumber() * duelProvider.getDurationAverage());
+            fightStatisticsDTO.setTime(fightStatisticsDTO.getDuelsNumber() * duelProvider.getDurationAverage());
         }
         return fightStatisticsDTO;
     }

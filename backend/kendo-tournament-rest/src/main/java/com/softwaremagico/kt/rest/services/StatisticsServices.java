@@ -27,17 +27,16 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.statistics.FightStatisticsProvider;
 import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/statistics")
@@ -55,7 +54,18 @@ public class StatisticsServices {
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                          @PathVariable("tournamentId") Integer tournamentId, HttpServletRequest request) {
+                                                          @PathVariable("tournamentId") Integer tournamentId,
+                                                          @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
+                                                          @RequestParam(name = "calculateByMembers") Optional<Boolean> checkByMembers,
+                                                          HttpServletRequest request) {
+        if (checkByMembers.isPresent() && checkByMembers.get()) {
+            KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by members.");
+            return fightStatisticsProvider.calculateByMembers(tournamentController.get(tournamentId));
+        }
+        if (checkByTeams.isPresent() && checkByTeams.get()) {
+            KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by teams.");
+            return fightStatisticsProvider.calculateByTeams(tournamentController.get(tournamentId));
+        }
         return fightStatisticsProvider.calculate(tournamentController.get(tournamentId));
     }
 }
