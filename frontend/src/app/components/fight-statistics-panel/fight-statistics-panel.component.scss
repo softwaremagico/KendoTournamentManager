@@ -1,0 +1,29 @@
+.panel {
+  display: table;
+  width: auto;
+  padding-left: 5vh;
+  padding-right: 5vh;
+  padding-bottom: 20px;
+}
+
+.viewer {
+  display: table-cell;
+  width: 33%;
+  font-size: 0.8vw;
+  color: #011d4a;
+}
+
+.viewer .text{
+  padding-left: 1vh;
+  margin-bottom: 15px;
+  vertical-align: super;
+}
+
+.viewer .warning {
+  color: #ffd740;
+}
+
+.viewer .alert {
+  color: #ff0000;
+  animation: blinker 1s linear infinite;
+}
