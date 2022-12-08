@@ -5,18 +5,20 @@
        (cdkDropListDropped)="removeRole($event)">
     <user-list [userListData]="userListData"></user-list>
   </div>
-  <div class="roles">
+  <div class="right-panel">
     <app-fight-statistics-panel [tournament]="tournament"></app-fight-statistics-panel>
-    <div class="roles-location" *ngFor="let role of roleTypes">
-      <div class="role-header">
-        <h2 class="role-text">{{role.toLowerCase() | translate}}</h2>
-        <h2 class="role-counter" *ngIf="countRole(role)">(x{{countRole(role)}})</h2>
-      </div>
-      <div class="role" cdkDropList
-           [cdkDropListData]="getParticipantsContainer(role)"
-           (cdkDropListDropped)="dropParticipant($event, role)">
-        <app-user-card *ngFor="let user of participants.get(role)" [user]="user"
-                       [activity]="RbacActivity.EDIT_ROLE"></app-user-card>
+    <div class="roles">
+      <div class="roles-location" *ngFor="let role of roleTypes">
+        <div class="role-header">
+          <h2 class="role-text">{{role.toLowerCase() | translate}}</h2>
+          <h2 class="role-counter" *ngIf="countRole(role)">(x{{countRole(role)}})</h2>
+        </div>
+        <div class="role" cdkDropList
+             [cdkDropListData]="getParticipantsContainer(role)"
+             (cdkDropListDropped)="dropParticipant($event, role)">
+          <app-user-card *ngFor="let user of participants.get(role)" [user]="user"
+                         [activity]="RbacActivity.EDIT_ROLE"></app-user-card>
+        </div>
       </div>
     </div>
   </div>
