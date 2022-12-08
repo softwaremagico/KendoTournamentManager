@@ -122,9 +122,9 @@ public class FightStatisticsProvider {
                 return calculateLoopStatistics(maximizeFights, teamSize, teams);
             case CUSTOMIZED:
             case KING_OF_THE_MOUNTAIN:
+            default:
                 return null;
         }
-        return null;
     }
 
     private FightStatisticsDTO calculateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
