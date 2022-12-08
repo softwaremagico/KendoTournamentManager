@@ -557,7 +557,10 @@
   "chronometerOn": "Stoppuhr zeigen",
   "chronometerOff": "Stoppuhr ausblenden",
   "fields": "Feld",
-  "avoidDuplicateFights": "Vermeiden sie doppelte übereinstimmungen"
+  "avoidDuplicateFights": "Vermeiden sie doppelte übereinstimmungen",
+  "estimatedFights": "Geschätzte Anzahl der Übereinstimmungen",
+  "estimatedDuels": "Geschätzte Anzahl der Kämpfe",
+  "estimatedTime": "Geschätzte benötigte Zeit"
 }
 
 

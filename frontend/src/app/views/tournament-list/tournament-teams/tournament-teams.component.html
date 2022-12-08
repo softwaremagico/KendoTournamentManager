@@ -5,45 +5,48 @@
        (cdkDropListDropped)="removeFromTeam($event)">
     <user-list [userListData]="userListData"></user-list>
   </div>
-  <div class="teams">
-    <div class="teams-location" *ngFor="let team of teams">
-      <div>
-        <h2 class="team-header" *ngIf="!team.editing"
-            (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))">{{team.name}}</h2>
-        <button mat-button color="warn"
-                *ngIf="!team.editing && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.activities)"
-                (click)="deleteTeam(team)">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </div>
-      <input class="team-title-editable" *ngIf="team.editing"
-             (keyup.enter)="setEditable(team, false); updateTeamName(team)"
-             [(ngModel)]="team.name" type="text"/>
-      <div class="input-padding" *ngIf="team.editing"></div>
-      <div class="team" [class.small]="this.tournament.teamSize===1"
-           [attr.data-tournament-size]="tournament.teamSize" [attr.data-team]="team">
-        <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize); let i = index"
-             cdkDropList
-             [cdkDropListData]="getMembersContainer(team)"
-             (cdkDropListDropped)="dropMember($event, team, i)"
-             [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
-          <mat-card class="user-card"
-                    *ngIf="members!==undefined && members.get(team)!==undefined
+  <div class="right-panel">
+    <app-fight-statistics-panel [tournament]="tournament" [teams]="true"></app-fight-statistics-panel>
+    <div class="teams">
+      <div class="teams-location" *ngFor="let team of teams">
+        <div>
+          <h2 class="team-header" *ngIf="!team.editing"
+              (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))">{{team.name}}</h2>
+          <button mat-button color="warn"
+                  *ngIf="!team.editing && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.activities)"
+                  (click)="deleteTeam(team)">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </div>
+        <input class="team-title-editable" *ngIf="team.editing"
+               (keyup.enter)="setEditable(team, false); updateTeamName(team)"
+               [(ngModel)]="team.name" type="text"/>
+        <div class="input-padding" *ngIf="team.editing"></div>
+        <div class="team" [class.small]="this.tournament.teamSize===1"
+             [attr.data-tournament-size]="tournament.teamSize" [attr.data-team]="team">
+          <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize); let i = index"
+               cdkDropList
+               [cdkDropListData]="getMembersContainer(team)"
+               (cdkDropListDropped)="dropMember($event, team, i)"
+               [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
+            <mat-card class="user-card"
+                      *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
-                    cdkDrag [cdkDragData]="getMember(team, i)"
-                    [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.activities)">
-            <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
-              <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
-              <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-            </mat-card-content>
-          </mat-card>
+                      cdkDrag [cdkDragData]="getMember(team, i)"
+                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.activities)">
+              <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
+                <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
+                <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+              </mat-card-content>
+            </mat-card>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="new-team" (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)">
-      <div class="row">{{'addTeamToTournament' | translate}} </div>
+      <div class="new-team" (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)">
+        <div class="row">{{'addTeamToTournament' | translate}} </div>
+      </div>
     </div>
   </div>
 </div>

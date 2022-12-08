@@ -26,8 +26,11 @@
 
 .teams {
   overflow: auto;
-  padding-left: 20px;
-  height: 100%;
+}
+
+.right-panel{
+  padding-left: 10px;
+  display:grid
 }
 
 .team-title-editable {
