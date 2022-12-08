@@ -19,6 +19,7 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {GroupService} from "../../../services/group.service";
 import {Group} from "../../../models/group";
+import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -37,6 +38,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
               rbacService: RbacService, private groupService: GroupService,
+              private statisticsChangedService: StatisticsChangedService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -154,7 +156,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
         this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
         this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-
+        this.statisticsChangedService.areStatisticsChanged.next(true);
       }
     }
   }
@@ -209,6 +211,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     if (this.userListData.participants.includes(participant)) {
       this.userListData.participants.splice(this.userListData.participants.indexOf(participant), 1);
     }
+    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   updateTeam(team: Team, member: Participant | undefined) {
@@ -280,6 +283,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.teams.push(_team);
         this.members.set(_team, []);
       });
+      this.statisticsChangedService.areStatisticsChanged.next(true);
     });
   }
 
@@ -307,6 +311,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       this.teams.splice(this.teams.indexOf(team), 1);
     });
     this.members.delete(team);
+    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   randomTeams(): void {
@@ -331,6 +336,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     //Remaining one on left column.
     this.userListData.participants = participants;
     this.userListData.filteredParticipants = this.userListData.participants;
+    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 
   getRandomMember(participants: Participant[]): Participant {
@@ -365,5 +371,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.systemOverloadService.isBusy.next(false);
       });
     }
+    this.statisticsChangedService.areStatisticsChanged.next(true);
   }
 }
