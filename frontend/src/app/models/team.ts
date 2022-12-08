@@ -7,6 +7,8 @@ export class Team extends Element {
   public members: (Participant | undefined)[];
   public tournament: Tournament;
   public editing: boolean = false;
+  //A locked team cannot be deleted as has fights.
+  public locked: boolean = true;
 
   public static override copy(source: Team, target: Team): void {
     Element.copy(source, target);
