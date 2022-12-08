@@ -11,23 +11,25 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
 
 
 
 @NgModule({
   declarations: [TournamentTeamsComponent],
-  imports: [
-    CommonModule,
-    DragDropModule,
-    UserListModule,
-    MatCardModule,
-    TranslateModule,
-    MatIconModule,
-    FormsModule,
-    RbacModule,
-    MatSpinnerOverlayModule,
-    MatDialogModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        DragDropModule,
+        UserListModule,
+        MatCardModule,
+        TranslateModule,
+        MatIconModule,
+        FormsModule,
+        RbacModule,
+        MatSpinnerOverlayModule,
+        MatDialogModule,
+        MatButtonModule,
+        FightStatisticsPanelModule
+    ]
 })
 export class TournamentTeamsModule { }

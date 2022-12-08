@@ -73,6 +73,7 @@ import {TournamentTeamsModule} from "./views/tournament-list/tournament-teams/to
 import {TournamentRolesModule} from "./views/tournament-list/tournament-roles/tournament-roles.module";
 import {TournamentDialogBoxModule} from "./views/tournament-list/tournament-dialog-box/tournament-dialog-box.module";
 import {FightListModule} from "./views/fight-list/fight-list-module";
+import {FightStatisticsPanelModule} from "./components/fight-statistics-panel/fight-statistics-panel.module";
 
 
 registerLocaleData(localeES, "es");
@@ -153,6 +154,7 @@ registerLocaleData(localeNL, "nl");
     TournamentDialogBoxModule,
     UndrawTeamsModule,
     FightListModule,
+    FightStatisticsPanelModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,

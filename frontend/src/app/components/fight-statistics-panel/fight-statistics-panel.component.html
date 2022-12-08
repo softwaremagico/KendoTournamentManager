@@ -1,0 +1,18 @@
+<div class="panel" *ngIf="fightStatistics!==undefined">
+  <div class="viewer fights">
+    <mat-icon svgIcon="match" class="kendo-icon" color="primary"
+              matTooltip="{{'estimatedFights' | translate}}"></mat-icon>
+    <span class="text" matTooltip="{{'estimatedFights' | translate}}">{{fightStatistics.fightsNumber}}</span>
+  </div>
+  <div class="viewer duels">
+    <mat-icon svgIcon="fight" class="kendo-icon" color="primary"
+              matTooltip="{{'estimatedDuels' | translate}}"></mat-icon>
+    <span class="text"
+          matTooltip="{{'estimatedDuels' | translate}}">{{fightStatistics.duelsNumber ? fightStatistics.duelsNumber : "0"}}</span>
+  </div>
+  <div class="viewer time">
+    <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedTime' | translate}}">timer</mat-icon>
+    <span class="text" matTooltip="{{'estimatedTime' | translate}}"
+          [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}">{{getTime()}}</span>
+  </div>
+</div>
