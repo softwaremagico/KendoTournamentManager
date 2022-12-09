@@ -575,7 +575,8 @@
   "avoidDuplicateFights": "Evitar partits duplicats",
   "estimatedFights": "Nombre estimat de partits",
   "estimatedDuels": "Nombre estimat de combats",
-  "estimatedTime": "Temps necessari estimat"
+  "estimatedTime": "Temps necessari estimat",
+  "elementInUse": "Aquest element està sent usat en una altra part i no pot ser modificat"
 }
 
 
