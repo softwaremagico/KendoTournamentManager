@@ -567,7 +567,8 @@
   "avoidDuplicateFights": "Evita combatti duplicati",
   "estimatedFights": "Numero stimato di incontri",
   "estimatedDuels": "Numero stimato di duelli",
-  "estimatedTime": "Tempo stimato necessario"
+  "estimatedTime": "Tempo stimato necessario",
+  "elementInUse": "Questo elemento viene utilizzato altrove e non può essere modificato."
 }
 
 
