@@ -15,6 +15,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
+import {TeamService} from "../../../services/team.service";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -33,6 +34,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
               private messageService: MessageService, public translateService: TranslateService,
               rbacService: RbacService, private filterResetService: FilterResetService,
               private statisticsChangedService: StatisticsChangedService,
+              private teamService: TeamService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -66,6 +68,20 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       });
       this.userListData.participants = participants;
       this.userListData.filteredParticipants = participants;
+      //Prevent removing participants that are on teams already
+      this.teamService.getFromTournament(this.tournament).subscribe(_teams => {
+        let teamMembers: Participant[] = [];
+        for (let team of _teams) {
+          for (let member of team.members) {
+            if (member) {
+              teamMembers.push(member);
+            }
+          }
+        }
+        for (let participant of this.participants.get(RoleType.COMPETITOR)!) {
+          participant.locked = teamMembers.some(p => p.id === participant.id);
+        }
+      });
     });
   }
 
@@ -73,14 +89,17 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     this.dialogRef.close();
   }
 
-  transferCard(event: CdkDragDrop<Participant[], any>): Participant {
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex,
-    );
-    return event.container.data[event.currentIndex];
+  transferCard(event: CdkDragDrop<Participant[], any>): Participant | undefined {
+    if (event.previousContainer !== event.container) {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+      return event.container.data[event.currentIndex];
+    }
+    return undefined;
   }
 
   removeRole(event: CdkDragDrop<Participant[], any>) {
@@ -100,7 +119,10 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
-    const participant: Participant = this.transferCard(event);
+    const participant: Participant | undefined = this.transferCard(event);
+    if (!participant) {
+      return;
+    }
     const role: Role = new Role();
     role.tournament = this.tournament;
     role.participant = participant;
