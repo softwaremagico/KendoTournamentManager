@@ -580,7 +580,8 @@
   "avoidDuplicateFights": "Evita partidos duplicados",
   "estimatedFights": "Número estimado de partidos",
   "estimatedDuels": "Número estimado de combates",
-  "estimatedTime": "Tiempo necesario estimado"
+  "estimatedTime": "Tiempo necesario estimado",
+  "elementInUse": "Este elemento esta siendo usado en otra parte y no puede ser modificado."
 }
 
 
