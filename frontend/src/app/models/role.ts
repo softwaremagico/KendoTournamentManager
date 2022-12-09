@@ -7,6 +7,8 @@ export class Role extends Element {
   public tournament: Tournament;
   public participant: Participant;
   public roleType: RoleType;
+  //A locked role cannot be deleted as is used on teams.
+  public locked: boolean = true;
 
 
   public static override copy(source: Role, target: Role): void {
