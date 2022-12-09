@@ -560,7 +560,8 @@
   "avoidDuplicateFights": "Vermijd dubbele overeenkomsten",
   "estimatedFights": "Geschat aantal wedstrijden",
   "estimatedDuels": "Geschat aantal aanvallen",
-  "estimatedTime": "Geschatte benodigde tijd"
+  "estimatedTime": "Geschatte benodigde tijd",
+  "elementInUse": "Dit element wordt elders gebruikt en kan niet worden gewijzigd."
 }
 
 

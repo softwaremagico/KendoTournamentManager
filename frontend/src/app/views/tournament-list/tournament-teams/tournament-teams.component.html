@@ -38,6 +38,9 @@
               <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
                 <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
                 <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
+                <mat-icon class="locked" *ngIf="team.locked" color="warn" matTooltip="{{'elementInUse' | translate}}">
+                  block
+                </mat-icon>
               </mat-card-header>
               <mat-card-content>
               </mat-card-content>
