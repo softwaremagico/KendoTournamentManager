@@ -17,6 +17,9 @@ export class UserCardComponent extends RbacBasedComponent {
   @Input()
   activity: RbacActivity = RbacActivity.DRAG_PARTICIPANT;
 
+  @Input()
+  dragDisabled: boolean = false;
+
   constructor(rbacService: RbacService) {
     super(rbacService);
   }

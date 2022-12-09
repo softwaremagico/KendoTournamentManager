@@ -34,7 +34,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   teams: Team[];
   members = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
-  teamInFights: Team[] = [];
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
@@ -83,12 +82,13 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     )
     //Prevent removing teams that are on fights
     this.fightService.getFromTournament(this.tournament).subscribe(_fights => {
-      this.teamInFights.push(..._fights.map(fight => fight.team1));
-      this.teamInFights.push(..._fights.map(fight => fight.team2));
+      let teamInFights : Team[]=[];
+      teamInFights.push(..._fights.map(fight => fight.team1));
+      teamInFights.push(..._fights.map(fight => fight.team2));
       //Remove duplicates.
-      this.teamInFights = this.teamInFights.filter((team, i, a) => i === a.indexOf(team));
+      teamInFights = teamInFights.filter((team, i, a) => i === a.indexOf(team));
       for (let team of this.teams) {
-        team.locked = this.teamInFights.some(t => t.id === team.id);
+        team.locked = teamInFights.some(t => t.id === team.id);
       }
     })
   }
