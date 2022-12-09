@@ -7,6 +7,7 @@ import {AppModule} from "../../app.module";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatIconModule} from "@angular/material/icon";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
@@ -16,14 +17,15 @@ import {MatIconModule} from "@angular/material/icon";
   exports: [
     UserCardComponent
   ],
-    imports: [
-        CommonModule,
-        MatCardModule,
-        DragDropModule,
-        RbacModule,
-        TranslateModule,
-        MatIconModule
-    ]
+  imports: [
+    CommonModule,
+    MatCardModule,
+    DragDropModule,
+    RbacModule,
+    TranslateModule,
+    MatIconModule,
+    MatTooltipModule,
+  ]
 })
 export class UserCardModule {
 }

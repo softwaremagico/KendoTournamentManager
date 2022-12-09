@@ -588,6 +588,7 @@
   "avoidDuplicateFights": "Avoid duplicated fights",
   "estimatedFights": "Estimated number of matches",
   "estimatedDuels": "Estimated number of fights",
-  "estimatedTime": "Estimated needed time"
+  "estimatedTime": "Estimated needed time",
+  "elementInUse": "This element is in use elsewhere and cannot be changed"
 }
 
