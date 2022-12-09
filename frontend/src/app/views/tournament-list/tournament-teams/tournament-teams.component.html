@@ -28,7 +28,8 @@
                cdkDropList
                [cdkDropListData]="getMembersContainer(team)"
                (cdkDropListDropped)="dropMember($event, team, i)"
-               [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)">
+               [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)"
+               [cdkDropListDisabled]="isTeamLocked(team)">
             <mat-card class="user-card"
                       *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
@@ -37,6 +38,9 @@
               <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
                 <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
                 <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
+                <mat-icon class="locked" *ngIf="team.locked" color="warn" matTooltip="{{'elementInUse' | translate}}">
+                  block
+                </mat-icon>
               </mat-card-header>
               <mat-card-content>
               </mat-card-content>

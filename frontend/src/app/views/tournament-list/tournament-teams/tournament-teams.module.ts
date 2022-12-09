@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {TournamentTeamsComponent} from "./tournament-teams.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {UserListModule} from "../../../components/basic/user-list/user-list.module";
@@ -12,24 +12,26 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {FightStatisticsPanelModule} from "../../../components/fight-statistics-panel/fight-statistics-panel.module";
-
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
   declarations: [TournamentTeamsComponent],
-    imports: [
-        CommonModule,
-        DragDropModule,
-        UserListModule,
-        MatCardModule,
-        TranslateModule,
-        MatIconModule,
-        FormsModule,
-        RbacModule,
-        MatSpinnerOverlayModule,
-        MatDialogModule,
-        MatButtonModule,
-        FightStatisticsPanelModule
-    ]
+  imports: [
+    CommonModule,
+    DragDropModule,
+    UserListModule,
+    MatCardModule,
+    TranslateModule,
+    MatIconModule,
+    FormsModule,
+    RbacModule,
+    MatSpinnerOverlayModule,
+    MatDialogModule,
+    MatButtonModule,
+    FightStatisticsPanelModule,
+    MatTooltipModule,
+  ]
 })
-export class TournamentTeamsModule { }
+export class TournamentTeamsModule {
+}

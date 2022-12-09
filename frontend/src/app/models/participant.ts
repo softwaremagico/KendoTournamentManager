@@ -6,6 +6,7 @@ export class Participant extends Element {
   public name: string;
   public lastname: string;
   public club?: Club;
+  public locked: boolean = false;
 
   public get clubName(): string {
     return this.club ? this.club.name : "";
