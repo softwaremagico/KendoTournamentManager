@@ -31,7 +31,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
     private static final int MEMBERS = 3;
-    private static final int TEAMS = 2;
+    private static final int TEAMS = 4;
     private static final String TOURNAMENT_NAME = "scoreChampionshipTest";
     private static Tournament tournament = null;
 
@@ -160,7 +160,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
 
-        Assert.assertEquals(tournamentFights.size(), 2);
+        Assert.assertEquals(tournamentFights.size(), 1);
     }
 
     @Test(dependsOnMethods = {"createFights"})
@@ -175,4 +175,99 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
         Assert.assertEquals(teamsScore.get(0).getTeam().getName(), tournamentFights.get(0).getTeam1().getName());
     }
+
+    @Test(dependsOnMethods = {"testSimpleWinner"})
+    public void nextFight1() {
+        kingOfTheMountainHandler.createNextFights(tournament, null);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 2);
+
+        List<Fight> tournamentFights = fightProvider.getFights(tournament);
+        Assert.assertEquals(tournamentFights.size(), 2);
+
+        //1st team must be the previous one. But the other not
+        Assert.assertEquals(tournamentFights.get(1).getTeam1(), tournamentFights.get(0).getTeam1());
+        Assert.assertNotEquals(tournamentFights.get(1).getTeam2(), tournamentFights.get(0).getTeam2());
+        Assert.assertEquals(tournamentFights.get(1).getTeam2().getName(), "Team03");
+
+        //Finish the fight
+        tournamentFights.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
+        tournamentFights.get(1).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        fightProvider.save(tournamentFights.get(1));
+    }
+
+    @Test(dependsOnMethods = {"nextFight1"})
+    public void nextFight2() {
+        kingOfTheMountainHandler.createNextFights(tournament, null);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 3);
+
+        List<Fight> tournamentFights = fightProvider.getFights(tournament);
+        Assert.assertEquals(tournamentFights.size(), 3);
+
+        //1st team must be the previous one. But the other not
+        Assert.assertEquals(tournamentFights.get(2).getTeam1(), tournamentFights.get(1).getTeam1());
+        Assert.assertNotEquals(tournamentFights.get(2).getTeam2(), tournamentFights.get(1).getTeam2());
+        Assert.assertEquals(tournamentFights.get(2).getTeam2().getName(), "Team04");
+
+        //Finish the fight
+        tournamentFights.get(2).getDuels().get(0).addCompetitor1Score(Score.DO);
+        tournamentFights.get(2).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        fightProvider.save(tournamentFights.get(2));
+
+    }
+
+    @Test(dependsOnMethods = {"nextFight2"})
+    public void loopStartsAgain() {
+        kingOfTheMountainHandler.createNextFights(tournament, null);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 4);
+
+        List<Fight> tournamentFights = fightProvider.getFights(tournament);
+        Assert.assertEquals(tournamentFights.size(), 4);
+
+        //1st team must be the previous one. But the other not
+        Assert.assertEquals(tournamentFights.get(3).getTeam1(), tournamentFights.get(2).getTeam1());
+        Assert.assertNotEquals(tournamentFights.get(3).getTeam2(), tournamentFights.get(2).getTeam2());
+        Assert.assertEquals(tournamentFights.get(3).getTeam2().getName(), "Team02");
+
+        //Finish the fight. Team1 loose now
+        tournamentFights.get(3).getDuels().get(0).addCompetitor2Score(Score.KOTE);
+        tournamentFights.get(3).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        fightProvider.save(tournamentFights.get(3));
+    }
+
+    @Test(dependsOnMethods = {"loopStartsAgain"})
+    public void team1Loose() {
+        kingOfTheMountainHandler.createNextFights(tournament, null);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 5);
+
+        List<Fight> tournamentFights = fightProvider.getFights(tournament);
+        Assert.assertEquals(tournamentFights.size(), 5);
+
+        //2nd team must be the previous one. But the 1st must be out.
+        Assert.assertNotEquals(tournamentFights.get(4).getTeam1(), tournamentFights.get(3).getTeam1());
+        Assert.assertEquals(tournamentFights.get(4).getTeam2(), tournamentFights.get(3).getTeam2());
+        Assert.assertEquals(tournamentFights.get(4).getTeam2().getName(), "Team02");
+        Assert.assertEquals(tournamentFights.get(4).getTeam1().getName(), "Team03");
+
+        //No winner
+        tournamentFights.get(4).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        fightProvider.save(tournamentFights.get(4));
+    }
+
+    @Test(dependsOnMethods = {"team1Loose"})
+    public void afterDraw() {
+        kingOfTheMountainHandler.createNextFights(tournament, null);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 6);
+
+        List<Fight> tournamentFights = fightProvider.getFights(tournament);
+        Assert.assertEquals(tournamentFights.size(), 6);
+
+        //Both teams must be replaced
+        Assert.assertNotEquals(tournamentFights.get(5).getTeam1(), tournamentFights.get(4).getTeam1());
+        Assert.assertNotEquals(tournamentFights.get(5).getTeam2(), tournamentFights.get(4).getTeam2());
+
+        Assert.assertEquals(tournamentFights.get(4).getTeam2().getName(), "Team04");
+        Assert.assertEquals(tournamentFights.get(4).getTeam1().getName(), "Team01");
+    }
+
+
 }
