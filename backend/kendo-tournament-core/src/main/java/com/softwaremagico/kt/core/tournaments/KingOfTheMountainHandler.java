@@ -34,13 +34,12 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
-import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Group;
-import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,9 +54,12 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     private final GroupConverter groupConverter;
     private final TeamConverter teamConverter;
 
+    private final TournamentRepository tournamentRepository;
+
     public KingOfTheMountainHandler(KingOfTheMountainFightManager kingOfTheMountainFightManager, FightProvider fightProvider,
                                     GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter,
-                                    RankingController rankingController, TeamConverter teamConverter) {
+                                    RankingController rankingController, TeamConverter teamConverter,
+                                    TournamentRepository tournamentRepository) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
         this.kingOfTheMountainFightManager = kingOfTheMountainFightManager;
         this.fightProvider = fightProvider;
@@ -66,6 +68,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         this.rankingController = rankingController;
         this.groupConverter = groupConverter;
         this.teamConverter = teamConverter;
+        this.tournamentRepository = tournamentRepository;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         if (level != 0) {
             return null;
         }
-        //Create fights from first two groups.
+        //Create fights from first group.
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament,
                 getGroup(tournament).getTeams().subList(0, 2), level, createdBy));
         final Group group = getGroup(tournament);
@@ -83,13 +86,12 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     }
 
     public List<Fight> createNextFights(Tournament tournament, String createdBy) {
-        final Integer level = fightProvider.getCurrentLevel(tournament) + 1;
+        final Integer level = 0;
         //Gets the two teams of the group.
         final List<Team> teams = new ArrayList<>();
         // Winner team must maintain the color.
-        final List<Team> existingTeams = teamProvider.getAll(tournament);
-        //Generates group.
-        final Group group = addGroup(tournament, teams, level);
+        //Generates next group.
+        final Group group = addGroup(tournament, getGroupTeams(tournament), level);
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, teams,
                 level, createdBy));
         group.setFights(fights);
@@ -97,22 +99,46 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         return fights;
     }
 
-    private List<Team> getLevelTeams(Tournament tournament, Integer level) {
+    private List<Team> getGroupTeams(Tournament tournament) {
         final List<Team> existingTeams = teamProvider.getAll(tournament);
         final List<Team> teams = new ArrayList<>();
-        if (level > 0) {
-            final Group previousGroup = groupProvider.getGroupsByLevel(tournament, level - 1).get(0);
-            HashMap<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(previousGroup)));
-            //Previous winner
-            if (ranking.get(0) != null && ranking.get(0).size() == 1) {
-                final Team previousWinner = teamConverter.reverse(ranking.get(0).get(0));
-                //Next team on the list
-                teams.add(existingTeams.get((existingTeams.indexOf(previousWinner) + 1) % existingTeams.size()));
-                //Add winner on the same color
-                teams.set(previousGroup.getTeams().indexOf(previousWinner), previousWinner);
-            } else {
+        List<Group> groups = groupProvider.getGroupsByLevel(tournament, 0);
+        final Group lastGroup = groups.get(groups.size() - 1);
+        final HashMap<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
+        //Previous winner with no draw
+        if (ranking.get(0) != null && ranking.get(0).size() == 1) {
+            final Team previousWinner = teamConverter.reverse(ranking.get(0).get(0));
+            //Next team on the list. Looser is the other team on the previous group.
+            teams.add(getNextTeam(existingTeams, Collections.singletonList(previousWinner), tournament));
+            //Add winner on the same color
+            teams.add(lastGroup.getTeams().indexOf(previousWinner), previousWinner);
+        } else {
+            //A draw!
+            teams.add(getNextTeam(existingTeams, teamConverter.reverseAll(ranking.get(0)), tournament));
+            teams.add(getNextTeam(existingTeams, teamConverter.reverseAll(ranking.get(0)), tournament));
+        }
+        return teams;
+    }
 
+    private Team getNextTeam(List<Team> teams, List<Team> winners, Tournament tournament) {
+        int kingIndex;
+        try {
+            kingIndex = Integer.parseInt(tournament.getExtraProperties().get(TournamentProperty.KING_INDEX));
+        } catch (NumberFormatException e) {
+            kingIndex = 2;
+        }
+        kingIndex++;
+        // Avoid to repeat a winner.
+        for (Team winner : winners) {
+            if (teams.indexOf(winner) == kingIndex % teams.size()) {
+                kingIndex++;
             }
         }
+
+        // Get next team and save index.
+        final Team nextTeam = teams.get(kingIndex % teams.size());
+        tournament.addExtraProperties(TournamentProperty.KING_INDEX, "" + ++kingIndex);
+        tournamentRepository.save(tournament);
+        return nextTeam;
     }
 }
