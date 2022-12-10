@@ -76,10 +76,14 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     protected Group addGroup(Tournament tournament, List<Team> teams, Integer level) {
+        return addGroup(tournament, teams, level, 0);
+    }
+
+    protected Group addGroup(Tournament tournament, List<Team> teams, Integer level, Integer index) {
         final Group group = new Group();
         group.setTournament(tournament);
         group.setLevel(level);
-        group.setIndex(0);
+        group.setIndex(index);
         group.setTeams(teams);
         return addGroup(tournament, group);
     }
