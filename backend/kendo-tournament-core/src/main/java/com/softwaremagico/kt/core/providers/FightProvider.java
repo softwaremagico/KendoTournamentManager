@@ -90,7 +90,7 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
     }
 
     public Integer getCurrentLevel(Tournament tournament) {
-        Optional<Fight> fight = repository.findFirstByTournamentOrderByLevelDesc(tournament);
+        final Optional<Fight> fight = repository.findFirstByTournamentOrderByLevelDesc(tournament);
         if (fight.isPresent()) {
             return fight.get().getLevel();
         }
