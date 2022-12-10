@@ -91,8 +91,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         final List<Team> teams = new ArrayList<>();
         // Winner team must maintain the color.
         //Generates next group.
-        final Group group = addGroup(tournament, getGroupTeams(tournament), level);
-        final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, teams,
+        final Group group = addGroup(tournament, getGroupTeams(tournament), level, groupProvider.getGroupsByLevel(tournament, 0).size());
+        final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, group.getTeams(),
                 level, createdBy));
         group.setFights(fights);
         groupProvider.save(group);
@@ -113,9 +113,13 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             //Add winner on the same color
             teams.add(lastGroup.getTeams().indexOf(previousWinner), previousWinner);
         } else {
+            List<Team> previousWinners = teamConverter.reverseAll(ranking.get(0));
             //A draw!
-            teams.add(getNextTeam(existingTeams, teamConverter.reverseAll(ranking.get(0)), tournament));
-            teams.add(getNextTeam(existingTeams, teamConverter.reverseAll(ranking.get(0)), tournament));
+            Team firstTeam = getNextTeam(existingTeams, previousWinners, tournament);
+            teams.add(firstTeam);
+            //Avoid to select again the same team.
+            previousWinners.add(firstTeam);
+            teams.add(getNextTeam(existingTeams, previousWinners, tournament));
         }
         return teams;
     }
@@ -124,8 +128,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         int kingIndex;
         try {
             kingIndex = Integer.parseInt(tournament.getExtraProperties().get(TournamentProperty.KING_INDEX));
-        } catch (NumberFormatException e) {
-            kingIndex = 2;
+        } catch (NumberFormatException | NullPointerException e) {
+            kingIndex = 1;
         }
         kingIndex++;
         // Avoid to repeat a winner.
@@ -140,5 +144,15 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         tournament.addExtraProperties(TournamentProperty.KING_INDEX, "" + ++kingIndex);
         tournamentRepository.save(tournament);
         return nextTeam;
+    }
+
+    @Override
+    public List<Group> getGroups(Tournament tournament) {
+        return groupProvider.getGroups(tournament);
+    }
+
+    @Override
+    public Group addGroup(Tournament tournament, Group group) {
+        return groupProvider.addGroup(tournament, group);
     }
 }
