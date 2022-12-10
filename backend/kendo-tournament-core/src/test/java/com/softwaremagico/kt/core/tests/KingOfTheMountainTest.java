@@ -265,8 +265,8 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
         Assert.assertNotEquals(tournamentFights.get(5).getTeam1(), tournamentFights.get(4).getTeam1());
         Assert.assertNotEquals(tournamentFights.get(5).getTeam2(), tournamentFights.get(4).getTeam2());
 
-        Assert.assertEquals(tournamentFights.get(4).getTeam2().getName(), "Team04");
-        Assert.assertEquals(tournamentFights.get(4).getTeam1().getName(), "Team01");
+        Assert.assertEquals(tournamentFights.get(5).getTeam1().getName(), "Team04");
+        Assert.assertEquals(tournamentFights.get(5).getTeam2().getName(), "Team01");
     }
 
 

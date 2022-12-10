@@ -38,10 +38,7 @@ import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class KingOfTheMountainHandler extends LeagueHandler {
@@ -87,9 +84,6 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     public List<Fight> createNextFights(Tournament tournament, String createdBy) {
         final Integer level = 0;
-        //Gets the two teams of the group.
-        final List<Team> teams = new ArrayList<>();
-        // Winner team must maintain the color.
         //Generates next group.
         final Group group = addGroup(tournament, getGroupTeams(tournament), level, groupProvider.getGroupsByLevel(tournament, 0).size());
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, group.getTeams(),
@@ -103,6 +97,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         final List<Team> existingTeams = teamProvider.getAll(tournament);
         final List<Team> teams = new ArrayList<>();
         List<Group> groups = groupProvider.getGroupsByLevel(tournament, 0);
+        //Repository OrderByIndex not working well...
+        groups.sort(Comparator.comparing(Group::getIndex));
         final Group lastGroup = groups.get(groups.size() - 1);
         final HashMap<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
         //Previous winner with no draw
@@ -141,7 +137,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
         // Get next team and save index.
         final Team nextTeam = teams.get(kingIndex % teams.size());
-        tournament.addExtraProperties(TournamentProperty.KING_INDEX, "" + ++kingIndex);
+        tournament.addExtraProperties(TournamentProperty.KING_INDEX, "" + kingIndex);
         tournamentRepository.save(tournament);
         return nextTeam;
     }
