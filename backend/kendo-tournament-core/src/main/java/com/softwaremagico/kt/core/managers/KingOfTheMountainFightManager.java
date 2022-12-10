@@ -46,14 +46,14 @@ public class KingOfTheMountainFightManager {
     }
 
     public List<Fight> createFights(Tournament tournament, List<Team> teams, Integer level, String createdBy) {
-        return createTwoFightsForEachTeam(tournament, teams, level, createdBy);
+        return createOneFightsForEachTeam(tournament, teams, level, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
         return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
     }
 
-    private List<Fight> createTwoFightsForEachTeam(Tournament tournament, List<Team> teams, int level, String createdBy) {
+    private List<Fight> createOneFightsForEachTeam(Tournament tournament, List<Team> teams, int level, String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return null;
         }
