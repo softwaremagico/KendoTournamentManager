@@ -146,7 +146,7 @@ public class FightStatisticsProvider {
 
     private FightStatisticsDTO calculateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
         final FightStatisticsDTO fightStatisticsDTO = new FightStatisticsDTO();
-        final TournamentExtraProperty property = tournamentExtraPropertyProvider.findByTournamentAndProperty(tournamentConverter.reverse(tournamentDTO),
+        final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournamentConverter.reverse(tournamentDTO),
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
         final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
         if (maximizeFights) {

@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.persistence.repositories;
+package com.softwaremagico.kt.core.converters.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,25 +24,10 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
-import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-import java.util.List;
-
-@Repository
-@Transactional
-public interface TournamentExtraPropertyRepository extends JpaRepository<TournamentExtraProperty, Integer> {
-
-    List<TournamentExtraProperty> findByTournament(Tournament tournament);
-
-    TournamentExtraProperty findByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
-
-    int deleteByTournament(Tournament tournament);
-
-    int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
-
+public class TournamentExtraPropertyConverterRequest extends ConverterRequest<TournamentExtraProperty> {
+    public TournamentExtraPropertyConverterRequest(TournamentExtraProperty entity) {
+        super(entity);
+    }
 }
