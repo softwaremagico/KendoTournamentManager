@@ -57,7 +57,7 @@ public class SimpleLeagueHandler extends LeagueHandler {
     }
 
     @Override
-    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level, String createdBy) {
+    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
         if (level != 0) {
             return null;
         }

@@ -46,7 +46,7 @@ public class CustomLeagueHandler extends LeagueHandler {
     }
 
     @Override
-    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level, String createdBy) {
+    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
         throw new CustomTournamentFightsException(this.getClass(), "This league cannot generate fights.");
     }
 }
