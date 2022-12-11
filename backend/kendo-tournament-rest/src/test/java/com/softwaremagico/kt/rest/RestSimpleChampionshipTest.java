@@ -386,7 +386,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     public void createFights() throws Exception {
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/fights/create/tournaments/{tournamentId}/levels/{levelId}/maximize/{maximizeFights}", tournamentDTO.getId(), 0, true)
+                .perform(put("/fights/create/tournaments/{tournamentId}/levels/{levelId}", tournamentDTO.getId(), 0, true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
