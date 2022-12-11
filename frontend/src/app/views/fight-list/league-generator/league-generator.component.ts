@@ -49,7 +49,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
       .subscribe(_tournamentProperty => {
         if (_tournamentProperty) {
-          this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() == "true");
+          this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() !== "true");
         } else {
           this.avoidDuplicates.setValue(false);
         }
@@ -66,7 +66,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.avoidDuplicates.valueChanges.subscribe(avoidDuplicates => {
       const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
       tournamentProperty.tournament = this.tournament;
-      tournamentProperty.value = avoidDuplicates + "";
+      tournamentProperty.value = !avoidDuplicates + "";
       tournamentProperty.property = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
       this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
         this.messageService.infoMessage('infoTournamentUpdated');

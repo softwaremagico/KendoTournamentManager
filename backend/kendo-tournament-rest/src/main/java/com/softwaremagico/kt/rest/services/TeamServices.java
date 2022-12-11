@@ -87,6 +87,23 @@ public class TeamServices {
         return teamController.getAllByTournament(tournamentDto);
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Generates default teams.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TeamDTO> create(@RequestBody TournamentDTO tournamentDto,
+                                HttpServletRequest request) {
+        return teamController.create(tournamentDto);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Deletes all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(value = "/tournaments/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
+        teamController.delete(tournamentDto);
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets a team.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -155,14 +172,6 @@ public class TeamServices {
         for (final ParticipantDTO participantInTournament : participantsInTournaments.getParticipant()) {
             teamController.delete(participantsInTournaments.getTournament(), participantInTournament);
         }
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
-        teamController.delete(tournamentDto);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
