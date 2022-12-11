@@ -8,47 +8,48 @@ package com.softwaremagico.kt.core.providers;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *
+ *  
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ *  
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
-import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
-import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
-    private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
+public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtraProperty, Integer, TournamentExtraPropertyRepository> {
 
     @Autowired
-    public TournamentProvider(TournamentRepository tournamentRepository, TournamentExtraPropertyRepository tournamentExtraPropertyRepository) {
-        super(tournamentRepository);
-        this.tournamentExtraPropertyRepository = tournamentExtraPropertyRepository;
+    public TournamentExtraPropertyProvider(TournamentExtraPropertyRepository repository) {
+        super(repository);
     }
 
-    public Tournament save(String name, Integer shiaijos, Integer teamSize, TournamentType type, String createdBy) {
-        return repository.save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : 3,
-                type != null ? type : TournamentType.LEAGUE, createdBy));
+    public List<TournamentExtraProperty> findByTournament(Tournament tournament) {
+        return repository.findByTournament(tournament);
     }
 
-    public void delete(Tournament tournament) {
-        tournamentExtraPropertyRepository.deleteByTournament(tournament);
-        repository.delete(tournament);
+    public TournamentExtraProperty findByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
+        return repository.findByTournamentAndProperty(tournament, key);
     }
 
+    public TournamentExtraProperty save(TournamentExtraProperty tournamentExtraProperty) {
+        return repository.save(tournamentExtraProperty);
+    }
 }
