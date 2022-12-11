@@ -32,8 +32,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Cacheable
@@ -67,13 +65,6 @@ public class Tournament extends Element {
 
     @Column(name = "maximize_fights", nullable = false)
     private boolean maximizeFights = true;
-
-    @ElementCollection
-    @CollectionTable(name = "tournament_extra_properties",
-            joinColumns = {@JoinColumn(name = "tournament_id", referencedColumnName = "id")})
-    @MapKeyColumn(name = "property")
-    @Column(name = "value")
-    private Map<TournamentProperty, String> extraProperties;
 
     public Tournament() {
         super();
@@ -153,16 +144,5 @@ public class Tournament extends Element {
     @Override
     public String toString() {
         return this.getName();
-    }
-
-    public Map<TournamentProperty, String> getExtraProperties() {
-        return extraProperties;
-    }
-
-    public void addExtraProperties(TournamentProperty property, String value) {
-        if (this.extraProperties == null) {
-            this.extraProperties = new HashMap<>();
-        }
-        extraProperties.put(property, value);
     }
 }
