@@ -304,7 +304,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.groupService.setTeams(teams).subscribe(() => {
         this.fights = [];
         if (this.tournamentId) {
-          this.fightService.create(this.tournamentId, 0, true).subscribe(fights => {
+          this.fightService.create(this.tournamentId, 0).subscribe(fights => {
             this.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
           });
