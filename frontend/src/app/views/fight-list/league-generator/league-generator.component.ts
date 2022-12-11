@@ -66,7 +66,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.avoidDuplicates.valueChanges.subscribe(avoidDuplicates => {
       const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
       tournamentProperty.tournament = this.tournament;
-      tournamentProperty.value = !avoidDuplicates + "";
+      tournamentProperty.value = avoidDuplicates + "";
       tournamentProperty.property = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
       this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
         this.messageService.infoMessage('infoTournamentUpdated');
