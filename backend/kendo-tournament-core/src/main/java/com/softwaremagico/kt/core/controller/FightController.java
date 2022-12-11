@@ -151,13 +151,13 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO))))));
     }
 
-    public List<FightDTO> createFights(Integer tournamentId, TeamsOrder teamsOrder, boolean maximizeFights, Integer level, String createdBy) {
+    public List<FightDTO> createFights(Integer tournamentId, TeamsOrder teamsOrder, Integer level, String createdBy) {
         final Tournament tournament = (tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = selectedManager.createFights(tournament, teamsOrder, maximizeFights, level, createdBy);
+            final List<Fight> createdFights = selectedManager.createFights(tournament, teamsOrder, level, createdBy);
             provider.saveAll(createdFights);
             return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
         }

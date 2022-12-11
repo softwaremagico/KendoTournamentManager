@@ -25,6 +25,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 public enum TournamentExtraPropertyKey {
+    MAXIMIZE_FIGHTS,
     KING_INDEX;
 
 
