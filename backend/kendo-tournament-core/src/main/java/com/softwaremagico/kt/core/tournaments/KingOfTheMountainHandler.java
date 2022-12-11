@@ -122,7 +122,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     private Team getNextTeam(List<Team> teams, List<Team> winners, Tournament tournament) {
         final AtomicInteger kingIndex = new AtomicInteger(0);
-        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.findByTournamentAndProperty(tournament,
+        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
                 TournamentExtraPropertyKey.KING_INDEX);
         if (extraProperty == null) {
             extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,

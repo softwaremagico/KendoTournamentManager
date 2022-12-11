@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.persistence.repositories;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Rest)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,25 +24,42 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-import java.util.List;
+public class TournamentExtraPropertyDTO extends ElementDTO {
 
-@Repository
-@Transactional
-public interface TournamentExtraPropertyRepository extends JpaRepository<TournamentExtraProperty, Integer> {
 
-    List<TournamentExtraProperty> findByTournament(Tournament tournament);
+    private TournamentDTO tournament;
 
-    TournamentExtraProperty findByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
+    private TournamentExtraPropertyKey property;
 
-    int deleteByTournament(Tournament tournament);
+    private String value;
 
-    int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
+    public TournamentExtraPropertyDTO() {
+        super();
+    }
 
+    public TournamentDTO getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(TournamentDTO tournament) {
+        this.tournament = tournament;
+    }
+
+    public TournamentExtraPropertyKey getProperty() {
+        return property;
+    }
+
+    public void setProperty(TournamentExtraPropertyKey property) {
+        this.property = property;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

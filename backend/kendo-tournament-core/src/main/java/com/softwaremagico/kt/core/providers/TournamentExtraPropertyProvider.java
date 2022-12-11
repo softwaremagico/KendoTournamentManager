@@ -41,12 +41,16 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         super(repository);
     }
 
-    public List<TournamentExtraProperty> findByTournament(Tournament tournament) {
+    public List<TournamentExtraProperty> getAll(Tournament tournament) {
         return repository.findByTournament(tournament);
     }
 
-    public TournamentExtraProperty findByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
+    public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
         return repository.findByTournamentAndProperty(tournament, key);
+    }
+
+    public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
+        return repository.deleteByTournamentAndProperty(tournament, key);
     }
 
     public TournamentExtraProperty save(TournamentExtraProperty tournamentExtraProperty) {
