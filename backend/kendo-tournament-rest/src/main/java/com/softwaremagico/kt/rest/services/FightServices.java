@@ -208,12 +208,11 @@ public class FightServices {
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}/maximize/{maximizeFights}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/create/tournaments/{tournamentId}/levels/{levelId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                                 @Parameter(description = "Create as much fights as possible", required = true) @PathVariable("maximizeFights") boolean maximizeFights,
                                  @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
                                  Authentication authentication, HttpServletRequest request) {
-        return fightController.createFights(tournamentId, TeamsOrder.NONE, maximizeFights, levelId, authentication.getName());
+        return fightController.createFights(tournamentId, TeamsOrder.NONE, levelId, authentication.getName());
     }
 
 
