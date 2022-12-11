@@ -31,14 +31,12 @@ import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.managers.KingOfTheMountainFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.FightProvider;
-import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.persistence.entities.*;
-import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class KingOfTheMountainHandler extends LeagueHandler {
@@ -51,12 +49,13 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     private final GroupConverter groupConverter;
     private final TeamConverter teamConverter;
 
-    private final TournamentRepository tournamentRepository;
+    private final TournamentProvider tournamentProvider;
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
     public KingOfTheMountainHandler(KingOfTheMountainFightManager kingOfTheMountainFightManager, FightProvider fightProvider,
                                     GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter,
-                                    RankingController rankingController, TeamConverter teamConverter,
-                                    TournamentRepository tournamentRepository) {
+                                    RankingController rankingController, TeamConverter teamConverter, TournamentProvider tournamentProvider,
+                                    TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
         this.kingOfTheMountainFightManager = kingOfTheMountainFightManager;
         this.fightProvider = fightProvider;
@@ -65,7 +64,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         this.rankingController = rankingController;
         this.groupConverter = groupConverter;
         this.teamConverter = teamConverter;
-        this.tournamentRepository = tournamentRepository;
+        this.tournamentProvider = tournamentProvider;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     private List<Team> getGroupTeams(Tournament tournament) {
         final List<Team> existingTeams = teamProvider.getAll(tournament);
         final List<Team> teams = new ArrayList<>();
-        List<Group> groups = groupProvider.getGroupsByLevel(tournament, 0);
+        final List<Group> groups = groupProvider.getGroupsByLevel(tournament, 0);
         //Repository OrderByIndex not working well...
         groups.sort(Comparator.comparing(Group::getIndex));
         final Group lastGroup = groups.get(groups.size() - 1);
@@ -109,9 +109,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             //Add winner on the same color
             teams.add(lastGroup.getTeams().indexOf(previousWinner), previousWinner);
         } else {
-            List<Team> previousWinners = teamConverter.reverseAll(ranking.get(0));
+            final List<Team> previousWinners = teamConverter.reverseAll(ranking.get(0));
             //A draw!
-            Team firstTeam = getNextTeam(existingTeams, previousWinners, tournament);
+            final Team firstTeam = getNextTeam(existingTeams, previousWinners, tournament);
             teams.add(firstTeam);
             //Avoid to select again the same team.
             previousWinners.add(firstTeam);
@@ -121,24 +121,30 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     }
 
     private Team getNextTeam(List<Team> teams, List<Team> winners, Tournament tournament) {
-        int kingIndex;
-        try {
-            kingIndex = Integer.parseInt(tournament.getExtraProperties().get(TournamentProperty.KING_INDEX));
-        } catch (NumberFormatException | NullPointerException e) {
-            kingIndex = 1;
+        final AtomicInteger kingIndex = new AtomicInteger(0);
+        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.findByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.KING_INDEX);
+        if (extraProperty == null) {
+            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.KING_INDEX, "1"));
         }
-        kingIndex++;
+        try {
+            kingIndex.addAndGet(Integer.parseInt(extraProperty.getValue()));
+        } catch (NumberFormatException | NullPointerException e) {
+            kingIndex.set(1);
+        }
+        kingIndex.getAndIncrement();
         // Avoid to repeat a winner.
-        for (Team winner : winners) {
-            if (teams.indexOf(winner) == kingIndex % teams.size()) {
-                kingIndex++;
+        for (final Team winner : winners) {
+            if (teams.indexOf(winner) == kingIndex.get() % teams.size()) {
+                kingIndex.getAndIncrement();
             }
         }
 
         // Get next team and save index.
-        final Team nextTeam = teams.get(kingIndex % teams.size());
-        tournament.addExtraProperties(TournamentProperty.KING_INDEX, "" + kingIndex);
-        tournamentRepository.save(tournament);
+        final Team nextTeam = teams.get(kingIndex.get() % teams.size());
+        extraProperty.setValue(kingIndex.get() + "");
+        tournamentExtraPropertyProvider.save(extraProperty);
         return nextTeam;
     }
 
