@@ -1,5 +1,29 @@
 package com.softwaremagico.kt.core.tests;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2022 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -18,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -270,4 +295,17 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     }
 
 
+    @AfterClass
+    public void deleteTournament() {
+        groupProvider.delete(tournament);
+        fightProvider.delete(tournament);
+        duelProvider.delete(tournament);
+        teamProvider.delete(tournament);
+        roleProvider.delete(tournament);
+        tournamentProvider.delete(tournament);
+        participantProvider.deleteAll();
+        clubProvider.delete(club);
+        Assert.assertEquals(fightProvider.count(), 0);
+        Assert.assertEquals(duelProvider.count(), 0);
+    }
 }
