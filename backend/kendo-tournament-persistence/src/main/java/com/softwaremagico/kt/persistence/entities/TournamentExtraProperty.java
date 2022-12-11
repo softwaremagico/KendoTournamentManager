@@ -61,6 +61,10 @@ public class TournamentExtraProperty extends Element {
         this.value = value;
     }
 
+    public Tournament getTournament() {
+        return tournament;
+    }
+
     public void setTournament(Tournament tournament) {
         this.tournament = tournament;
     }
