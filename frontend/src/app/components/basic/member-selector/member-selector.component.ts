@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {Team} from "../../../models/team";
 import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Participant} from "../../../models/participant";
@@ -8,7 +8,7 @@ import {Participant} from "../../../models/participant";
   templateUrl: './member-selector.component.html',
   styleUrls: ['./member-selector.component.scss']
 })
-export class MemberSelectorComponent implements OnInit, OnChanges {
+export class MemberSelectorComponent implements OnChanges {
 
   @Input()
   team: Team;
@@ -17,12 +17,6 @@ export class MemberSelectorComponent implements OnInit, OnChanges {
   selectedMembers: Participant[] = [];
 
   @Output() selectedMember = new EventEmitter<Participant>();
-
-  constructor() {
-  }
-
-  ngOnInit(): void {
-  }
 
   ngOnChanges() {
     //Refresh automatically the team.

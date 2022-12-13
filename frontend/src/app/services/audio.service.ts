@@ -5,8 +5,6 @@ import {Injectable} from '@angular/core';
 })
 export class AudioService {
 
-  constructor() { }
-
   playAlarm(): void {
     const audio = new Audio();
     audio.src = '../../assets/audio/alarm.wav';

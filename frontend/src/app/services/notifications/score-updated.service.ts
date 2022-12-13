@@ -8,7 +8,4 @@ import {Duel} from "../../models/duel";
 export class ScoreUpdatedService {
 
   public isScoreUpdated: BehaviorSubject<Duel> = new BehaviorSubject<Duel>(new Duel());
-
-  constructor() {
-  }
 }
