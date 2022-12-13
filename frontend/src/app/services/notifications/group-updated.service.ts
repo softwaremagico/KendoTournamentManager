@@ -9,6 +9,4 @@ export class GroupUpdatedService {
 
   public isGroupUpdated: BehaviorSubject<Group> = new BehaviorSubject<Group>(new Group());
 
-  constructor() {
-  }
 }

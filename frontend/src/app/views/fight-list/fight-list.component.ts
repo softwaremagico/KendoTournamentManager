@@ -122,13 +122,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   private replaceGroup(group: Group) {
-    if (group! && this.groups!) {
+    if (group && this.groups) {
       const selectedFightIndex: number | undefined = this.fights.indexOf(this.selectedFight!);
       const selectedDuelIndex: number | undefined = this.selectedFight?.duels.indexOf(this.selectedDuel!);
       const groupIndex = this.groups.map(group => group.id).indexOf(group.id);
       this.groups.splice(groupIndex, 1, group);
       this.fights = this.groups.flatMap((group) => group.fights);
-      this.selectFight(this.fights[selectedFightIndex!]);
+      this.selectFight(this.fights[selectedFightIndex]);
       this.selectDuel(this.selectedFight?.duels[selectedDuelIndex!]!);
     }
   }
@@ -329,7 +329,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
-        let currentFights: Fight[] = this.fights.filter(existing_fight => existing_fight !== fight);
+        this.fights.filter(existing_fight => existing_fight !== fight);
         this.messageService.infoMessage("fightDeleted");
       }
     );
@@ -526,6 +526,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   filter(filter: string) {
-
+    //Ignored now.
   }
 }
