@@ -99,7 +99,6 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
       event.previousIndex,
       event.currentIndex,
     );
-    // const team: Team = event.container.data[event.currentIndex];
     this.teamListData.filteredTeams.sort((a, b) => a.name.localeCompare(b.name));
     this.teamListData.teams.sort((a, b) => a.name.localeCompare(b.name));
   }

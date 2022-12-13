@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {Action} from "../../../action";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {UserRoles} from "../../../services/rbac/user-roles";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
@@ -48,7 +48,7 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent impl
       password: new FormControl('', [Validators.required, Validators.maxLength(40),
         Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
       repeatPassword: new FormControl('', Validators.required)
-    }, );
+    },);
   }
 
   ngOnInit(): void {
