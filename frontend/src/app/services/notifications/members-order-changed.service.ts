@@ -11,6 +11,4 @@ export class MembersOrderChangedService {
 
   public membersOrderAllowed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor() {
-  }
 }

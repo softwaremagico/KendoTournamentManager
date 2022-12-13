@@ -1,4 +1,4 @@
-import {Component, Inject, OnChanges, OnInit, Optional, SimpleChanges} from '@angular/core';
+import {Component, Inject, OnChanges, Optional, SimpleChanges} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../models/tournament";
 import {Team} from "../../../models/team";
@@ -16,7 +16,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
   templateUrl: './undraw-teams.component.html',
   styleUrls: ['./undraw-teams.component.scss']
 })
-export class UndrawTeamsComponent extends RbacBasedComponent implements OnInit, OnChanges {
+export class UndrawTeamsComponent extends RbacBasedComponent implements OnChanges {
 
   duels: Duel[];
   teams: Team[] = [];
@@ -40,9 +40,6 @@ export class UndrawTeamsComponent extends RbacBasedComponent implements OnInit, 
       duel.type = DuelType.UNDRAW;
       this.duels[i] = duel;
     }
-  }
-
-  ngOnInit(): void {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
