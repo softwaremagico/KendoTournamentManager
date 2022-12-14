@@ -70,6 +70,9 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     private TournamentProvider tournamentProvider;
 
     @Autowired
+    private TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
+    @Autowired
     private TournamentConverter tournamentConverter;
 
     @Autowired
@@ -140,6 +143,8 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentProvider.count(), 0);
         Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LOOP, null);
         tournament = tournamentProvider.save(newTournament);
+        TournamentExtraProperty tournamentExtraProperty = new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, MAXIMIZE_FIGHTS + "");
+        tournamentExtraPropertyProvider.save(tournamentExtraProperty);
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
 
@@ -193,12 +198,12 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals((int) TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
     }
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = loopLeagueHandler.createFights(tournament, TeamsOrder.SORTED, MAXIMIZE_FIGHTS, 0, null);
+        List<Fight> tournamentFights = loopLeagueHandler.createFights(tournament, TeamsOrder.SORTED, 0, null);
         //Check group has been created.
         Assert.assertEquals(loopLeagueHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
@@ -218,7 +223,8 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights"})
     public void checkStatistics() {
         final Group group = groupProvider.getGroups(tournament).get(0);
-        FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournament.getType(), MAXIMIZE_FIGHTS, MEMBERS,
+        FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
+                MEMBERS,
                 teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
         Assert.assertEquals(fightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
         Assert.assertEquals(fightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);

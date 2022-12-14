@@ -6,9 +6,6 @@ import {Participant} from "../models/participant";
 })
 export class NameUtilsService {
 
-  constructor() {
-  }
-
   getName(participant: Participant | undefined): string {
     if (!participant) return "";
     return participant.name;

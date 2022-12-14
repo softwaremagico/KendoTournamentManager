@@ -65,7 +65,6 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
-    private static final boolean MAXIMIZE_FIGHTS = false;
     private static Tournament tournament = null;
 
     @Autowired
@@ -209,7 +208,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = simpleLeagueHandler.createFights(tournament, TeamsOrder.SORTED, MAXIMIZE_FIGHTS, 0, null);
+        List<Fight> tournamentFights = simpleLeagueHandler.createFights(tournament, TeamsOrder.SORTED, 0, null);
         //Check group has been created.
         Assert.assertEquals(simpleLeagueHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
@@ -226,7 +225,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights"})
     public void checkStatistics() {
         final Group group = groupProvider.getGroups(tournament).get(0);
-        FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournament.getType(), MAXIMIZE_FIGHTS, MEMBERS,
+        FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournamentConverter.convert(new TournamentConverterRequest(tournament)), MEMBERS,
                 teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
         Assert.assertEquals(fightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
         Assert.assertEquals(fightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);

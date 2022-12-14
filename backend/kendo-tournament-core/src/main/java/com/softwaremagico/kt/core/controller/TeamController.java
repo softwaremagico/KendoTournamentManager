@@ -36,6 +36,7 @@ import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,14 +71,25 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO) {
-        return converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
+        final List<TeamDTO> teams = converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
                 .map(this::createConverterRequest).collect(Collectors.toList()));
+        if (teams.isEmpty()) {
+            return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO)).stream()
+                    .map(this::createConverterRequest).collect(Collectors.toList()));
+        }
+        return teams;
     }
 
     public List<TeamDTO> getAllByTournament(Integer tournamentId) {
-        return converter.convertAll(provider.getAll(tournamentProvider.get(tournamentId)
-                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")))
+        final Tournament tournament = tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
+        final List<TeamDTO> teams = converter.convertAll(provider.getAll(tournament)
                 .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        if (teams.isEmpty()) {
+            return converter.convertAll(provider.createDefaultTeams(tournament).stream()
+                    .map(this::createConverterRequest).collect(Collectors.toList()));
+        }
+        return teams;
     }
 
     public long countByTournament(Integer tournamentId) {
@@ -91,6 +103,11 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
             teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
         return super.create(teamDTO, username);
+    }
+
+    public List<TeamDTO> create(TournamentDTO tournamentDTO) {
+        return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO)).stream()
+                .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
     @Override

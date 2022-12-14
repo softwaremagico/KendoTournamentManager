@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -69,6 +70,23 @@ public abstract class LeagueHandler implements ITournamentManager {
             return addGroup(tournament, group);
         }
         return groups.get(0);
+    }
+
+    protected Group addGroup(Tournament tournament, Integer level) {
+        return addGroup(tournament, teamProvider.getAll(tournament), level);
+    }
+
+    protected Group addGroup(Tournament tournament, List<Team> teams, Integer level) {
+        return addGroup(tournament, teams, level, 0);
+    }
+
+    protected Group addGroup(Tournament tournament, List<Team> teams, Integer level, Integer index) {
+        final Group group = new Group();
+        group.setTournament(tournament);
+        group.setLevel(level);
+        group.setIndex(index);
+        group.setTeams(teams);
+        return addGroup(tournament, group);
     }
 
     @Override
@@ -202,7 +220,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
-        return groupProvider.getGroups(tournament, shiaijo);
+        return groupProvider.getGroupsByShiaijo(tournament, shiaijo);
     }
 
     @Override
@@ -231,5 +249,15 @@ public abstract class LeagueHandler implements ITournamentManager {
         final List<TeamDTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
                 groupConverter.convert(new GroupConverterRequest(group)), group.getNumberOfWinners());
         return (teamsInDraw != null);
+    }
+
+    @Override
+    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
+        return createFights(tournament, teamsOrder, 0, createdBy);
+    }
+
+    @Override
+    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+        return new ArrayList<>();
     }
 }

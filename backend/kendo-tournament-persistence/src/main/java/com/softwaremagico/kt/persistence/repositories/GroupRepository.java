@@ -32,6 +32,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -39,11 +40,11 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findByTournamentOrderByLevelAscIndexAsc(Tournament tournament);
 
-    List<Group> findByTournamentAndLevelOrderByIndexAsc(Tournament tournament, Integer level);
+    List<Group> findByTournamentAndLevelOrderByLevelAscIndexAsc(Tournament tournament, Integer level);
 
     List<Group> findByTournamentAndShiaijoOrderByLevelAscIndexAsc(Tournament tournament, Integer shiaijo);
 
-    Group findByFightsId(Integer fightId);
+    Optional<Group> findByFightsId(Integer fightId);
 
     List<Group> findDistinctByFightsIdIn(Collection<Integer> fightId);
 

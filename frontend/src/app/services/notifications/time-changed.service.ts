@@ -9,5 +9,4 @@ export class TimeChangedService {
   public isElapsedTimeChanged: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public isTotalTimeChanged: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  constructor() { }
 }
