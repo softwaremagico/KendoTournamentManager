@@ -142,7 +142,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     }
 
     private void resetGroup(TournamentDTO tournamentDTO) {
-        resetGroup(groupController.getGroups(tournamentDTO).get(0));
+        resetGroup(groupController.get(tournamentDTO).get(0));
     }
 
     private <T> String toJson(T object) throws JsonProcessingException {

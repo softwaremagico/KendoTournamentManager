@@ -70,12 +70,12 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
-        return createFights(tournament, teamsOrder, (int) getNextLevel(tournament), createdBy);
+        return createFights(tournament, teamsOrder, getNextLevel(tournament), createdBy);
     }
 
-    private long getNextLevel(Tournament tournament) {
+    private int getNextLevel(Tournament tournament) {
         //Each group on a different level, to ensure that the last group winner is the king of the mountain and the winner of the league.
-        return groupProvider.count(tournament);
+        return (int) groupProvider.count(tournament);
     }
 
     @Override
@@ -91,9 +91,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     @Override
     public List<Fight> createNextFights(Tournament tournament, String createdBy) {
-        final Integer level = 0;
         //Generates next group.
-        final Group group = addGroup(tournament, getGroupTeams(tournament), level, groupProvider.getGroupsByLevel(tournament, 0).size());
+        final int level = getNextLevel(tournament);
+        final Group group = addGroup(tournament, getGroupTeams(tournament, level), getNextLevel(tournament), 0);
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, group.getTeams(),
                 level, createdBy));
         group.setFights(fights);
@@ -101,34 +101,35 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         return fights;
     }
 
-    private List<Team> getGroupTeams(Tournament tournament) {
+    private List<Team> getGroupTeams(Tournament tournament, int level) {
         final List<Team> existingTeams = teamProvider.getAll(tournament);
         final List<Team> teams = new ArrayList<>();
-        final List<Group> groups = groupProvider.getGroupsByLevel(tournament, 0);
+        final List<Group> groups = groupProvider.getGroupsByLevel(tournament, level - 1);
         //Repository OrderByIndex not working well...
-        groups.sort(Comparator.comparing(Group::getIndex));
+        groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
         final Group lastGroup = groups.get(groups.size() - 1);
         final HashMap<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
         //Previous winner with no draw
         if (ranking.get(0) != null && ranking.get(0).size() == 1) {
             final Team previousWinner = teamConverter.reverse(ranking.get(0).get(0));
+            final Team previousLooser = teamConverter.reverse(ranking.get(1).get(0));
             //Next team on the list. Looser is the other team on the previous group.
-            teams.add(getNextTeam(existingTeams, Collections.singletonList(previousWinner), tournament));
+            teams.add(getNextTeam(existingTeams, Collections.singletonList(previousWinner), Collections.singletonList(previousLooser), tournament));
             //Add winner on the same color
             teams.add(lastGroup.getTeams().indexOf(previousWinner), previousWinner);
         } else {
             final List<Team> previousWinners = teamConverter.reverseAll(ranking.get(0));
             //A draw!
-            final Team firstTeam = getNextTeam(existingTeams, previousWinners, tournament);
+            final Team firstTeam = getNextTeam(existingTeams, previousWinners, new ArrayList<>(), tournament);
             teams.add(firstTeam);
             //Avoid to select again the same team.
             previousWinners.add(firstTeam);
-            teams.add(getNextTeam(existingTeams, previousWinners, tournament));
+            teams.add(getNextTeam(existingTeams, previousWinners, new ArrayList<>(), tournament));
         }
         return teams;
     }
 
-    private Team getNextTeam(List<Team> teams, List<Team> winners, Tournament tournament) {
+    private Team getNextTeam(List<Team> teams, List<Team> winners, List<Team> loosers, Tournament tournament) {
         final AtomicInteger kingIndex = new AtomicInteger(0);
         TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
                 TournamentExtraPropertyKey.KING_INDEX);
@@ -145,6 +146,12 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         // Avoid to repeat a winner.
         for (final Team winner : winners) {
             if (teams.indexOf(winner) == kingIndex.get() % teams.size()) {
+                kingIndex.getAndIncrement();
+            }
+        }
+        // Avoid to repeat a looser.
+        for (final Team looser : loosers) {
+            if (teams.indexOf(looser) == kingIndex.get() % teams.size()) {
                 kingIndex.getAndIncrement();
             }
         }
