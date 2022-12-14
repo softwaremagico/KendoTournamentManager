@@ -152,8 +152,8 @@ export class FightService {
       );
   }
 
-  create(tournamentId: number, level: number, maximizeFights: boolean): Observable<Fight[]> {
-    const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level + '/maximize/' + maximizeFights;
+  create(tournamentId: number, level: number): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level;
     return this.http.put<Fight[]>(url, undefined, this.loginService.httpOptions)
       .pipe(
         tap({next:(_newFight: Fight[]) => this.loggerService.info(`adding fight`),
@@ -161,6 +161,18 @@ export class FightService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<Fight[]>(`adding fight`))
+      );
+  }
+
+  createNext(tournamentId: number): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/next';
+    return this.http.put<Fight[]>(url, undefined, this.loginService.httpOptions)
+      .pipe(
+        tap({next:(_newFight: Fight[]) => this.loggerService.info(`generating next fights`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Fight[]>(`generating next fights`))
       );
   }
 

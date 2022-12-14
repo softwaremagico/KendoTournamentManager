@@ -152,7 +152,7 @@ public class RankingController {
      *
      * @return classification of the teams
      */
-    private HashMap<Integer, List<TeamDTO>> getTeamsByPosition(GroupDTO groupDTO) {
+    public HashMap<Integer, List<TeamDTO>> getTeamsByPosition(GroupDTO groupDTO) {
         final HashMap<Integer, List<TeamDTO>> teamsByPosition = new HashMap<>();
         final List<ScoreOfTeam> scores = getTeamsScoreRanking(groupDTO);
 

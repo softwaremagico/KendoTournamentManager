@@ -9,6 +9,7 @@ export class Group extends Element {
   teams: Team[];
   shiaijo: number;
   level: number;
+  index: number;
   fights: Fight[];
   numberOfWinners: number;
   unties: Duel[];
@@ -21,6 +22,7 @@ export class Group extends Element {
     target.shiaijo = source.shiaijo;
     target.level = source.level;
     target.numberOfWinners = source.numberOfWinners;
+    target.index = source.index;
     if (source.teams !== undefined) {
       target.teams = [];
       for (let team of target.teams) {

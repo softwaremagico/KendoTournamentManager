@@ -61,11 +61,10 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
         return team;
     }
 
-    public List<Team> getAll(Tournament tournament) {
-        final List<Team> teams = repository.findByTournament(tournament);
-        if (teams.isEmpty() && (tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED ||
+    public List<Team> createDefaultTeams(Tournament tournament) {
+        final List<Team> newTeams = new ArrayList<>();
+        if ((tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED ||
                 tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
-            final List<Team> newTeams = new ArrayList<>();
             final long competitors = roleProvider.count(tournament);
             for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
                 final Team team = new Team();
@@ -73,12 +72,13 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
                 team.setTournament(tournament);
                 newTeams.add(team);
             }
-            teams.addAll(saveAll(newTeams));
-        } else {
-            for (final Team team : teams) {
-                team.setTournament(tournament);
-            }
         }
+        return new ArrayList<>(saveAll(newTeams));
+    }
+
+    public synchronized List<Team> getAll(Tournament tournament) {
+        final List<Team> teams = repository.findByTournament(tournament);
+        teams.forEach(team -> team.setTournament(tournament));
         return teams;
     }
 

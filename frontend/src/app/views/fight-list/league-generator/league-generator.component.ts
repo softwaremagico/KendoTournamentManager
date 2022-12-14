@@ -11,6 +11,10 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentType} from "../../../models/tournament-type";
 import {TournamentService} from "../../../services/tournament.service";
 import {FormControl} from "@angular/forms";
+import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
+import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
+import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
+import {MessageService} from "../../../services/message.service";
 
 @Component({
   selector: 'app-league-generator',
@@ -30,6 +34,8 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
               private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
+              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
+              private messageService: MessageService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, tournament: Tournament }) {
     super(rbacService);
     this.title = data.title;
@@ -37,11 +43,17 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
     this.canHaveDuplicated = TournamentType.canHaveDuplicates(this.tournament.type);
-    console.log(this.tournament.maximizeFights)
-    this.avoidDuplicates.setValue(!this.tournament.maximizeFights);
   }
 
   ngOnInit(): void {
+    this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
+      .subscribe(_tournamentProperty => {
+        if (_tournamentProperty) {
+          this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() !== "true");
+        } else {
+          this.avoidDuplicates.setValue(false);
+        }
+      });
     this.teamService.getFromTournament(this.tournament).subscribe(teams => {
       if (teams) {
         teams.sort(function (a, b) {
@@ -52,9 +64,12 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
       this.teamListData.filteredTeams = teams;
     });
     this.avoidDuplicates.valueChanges.subscribe(avoidDuplicates => {
-      this.tournament.maximizeFights = !avoidDuplicates;
-      this.tournamentService.update(this.tournament).subscribe(_tournament => {
-        this.tournament = _tournament;
+      const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+      tournamentProperty.tournament = this.tournament;
+      tournamentProperty.value = !avoidDuplicates + "";
+      tournamentProperty.property = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
+      this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+        this.messageService.infoMessage('infoTournamentUpdated');
       });
     });
   }
@@ -84,7 +99,6 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
       event.previousIndex,
       event.currentIndex,
     );
-    // const team: Team = event.container.data[event.currentIndex];
     this.teamListData.filteredTeams.sort((a, b) => a.name.localeCompare(b.name));
     this.teamListData.teams.sort((a, b) => a.name.localeCompare(b.name));
   }

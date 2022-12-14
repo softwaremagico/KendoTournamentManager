@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,7 +53,7 @@ public class Tournament extends Element {
 
     @Column(name = "tournament_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = StringCryptoConverter.class)
+    @Convert(converter = TournamentTypeCryptoConverter.class)
     private TournamentType type;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -61,9 +62,6 @@ public class Tournament extends Element {
 
     @Column(name = "duels_duration", nullable = false)
     private Integer duelsDuration = 180;
-
-    @Column(name = "maximize_fights", nullable = false)
-    private boolean maximizeFights = true;
 
     public Tournament() {
         super();
@@ -130,14 +128,6 @@ public class Tournament extends Element {
 
     public void setDuelsDuration(Integer duelsDuration) {
         this.duelsDuration = duelsDuration;
-    }
-
-    public boolean isMaximizeFights() {
-        return maximizeFights;
-    }
-
-    public void setMaximizeFights(boolean maximizeFights) {
-        this.maximizeFights = maximizeFights;
     }
 
     @Override

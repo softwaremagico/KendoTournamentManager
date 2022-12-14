@@ -9,6 +9,4 @@ export class UntieAddedService {
 
   public isDuelsAdded: BehaviorSubject<Duel[]> = new BehaviorSubject<Duel[]>([]);
 
-  constructor() {
-  }
 }

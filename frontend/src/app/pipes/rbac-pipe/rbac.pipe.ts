@@ -6,9 +6,6 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 })
 export class RbacPipe implements PipeTransform {
 
-  constructor() {
-  }
-
   transform(activity: RbacActivity, allowedActivities: RbacActivity[]): boolean {
     if (!allowedActivities) {
       return false;

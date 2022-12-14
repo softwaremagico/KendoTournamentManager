@@ -121,7 +121,7 @@ export class TeamService {
   }
 
   deleteByTournament(tournament: Tournament): Observable<Team> {
-    const url: string = `${this.baseUrl}/delete/tournaments`;
+    const url: string = `${this.baseUrl}/tournaments/delete`;
     return this.http.post<Team>(url, {tournament: tournament}, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -130,6 +130,19 @@ export class TeamService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<Team>(`delete teams on ${tournament}`))
+      );
+  }
+
+  createByTournament(tournament: Tournament): Observable<Team[]> {
+    const url: string = `${this.baseUrl}/tournaments`;
+    return this.http.put<Team[]>(url, {tournament: tournament}, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`creating teams for ${tournament}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Team[]>(`creating teams for ${tournament}`))
       );
   }
 
