@@ -42,6 +42,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,13 +88,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
     public List<GroupDTO> get(TournamentDTO tournament) {
-        return converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournament)).stream().map(this::createConverterRequest)
-                .collect(Collectors.toList()));
-    }
-
-    public List<GroupDTO> getGroups(TournamentDTO tournamentDTO) {
-        return converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournamentDTO)).stream().map(this::createConverterRequest)
-                .collect(Collectors.toList()));
+        final List<GroupDTO> groups = converter.convertAll(provider.getGroups(tournamentConverter.reverse(tournament))
+                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        groups.sort(Comparator.comparing(GroupDTO::getLevel).thenComparing(GroupDTO::getIndex));
+        return groups;
     }
 
     @Transactional
@@ -145,7 +143,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         if (teams.isEmpty()) {
             throw new TeamNotFoundException(this.getClass(), "No teams found!");
         }
-        GroupDTO groupDTO = getGroups(teams.get(0).getTournament()).stream().findAny().orElseThrow(() ->
+        GroupDTO groupDTO = get(teams.get(0).getTournament()).stream().findAny().orElseThrow(() ->
                 new GroupNotFoundException(this.getClass(), "No groups found!"));
         if (groupDTO.getTournament().getType().equals(TournamentType.CHAMPIONSHIP) ||
                 groupDTO.getTournament().getType().equals(TournamentType.TREE) ||
