@@ -55,4 +55,16 @@ export class MessageService {
     };
   }
 
+  logOnlyError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      //Log error
+      const log: Log = new Log();
+      log.message = `${operation} failed: ${error.message}`;
+      this.loggerService.sendError(log);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
+
 }
