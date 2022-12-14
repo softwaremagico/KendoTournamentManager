@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -68,7 +68,7 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
 
     public List<RoleDTO> getByTournamentId(Integer tournamentId) {
         return converter.convertAll(provider.getAll(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists."))).stream()
+                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists."))).stream()
                 .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
@@ -99,6 +99,14 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
 
     public void delete(ParticipantDTO participantDTO, TournamentDTO tournamentDTO) {
         provider.delete(participantConverter.reverse(participantDTO), tournamentConverter.reverse(tournamentDTO));
+    }
+
+    @Override
+    public RoleDTO create(RoleDTO roleDTO, String username) {
+        //Delete any previous role.
+        delete(roleDTO.getParticipant(), roleDTO.getTournament());
+        //Add the new role.
+        return super.create(roleDTO, username);
     }
 
 }
