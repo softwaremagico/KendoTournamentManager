@@ -36,7 +36,11 @@ import java.util.List;
 
 public interface ITournamentManager {
 
+    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy);
+
     List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy);
+
+    List<Fight> createNextFights(Tournament tournament, String createdBy);
 
     List<Group> getGroups(Tournament tournament);
 

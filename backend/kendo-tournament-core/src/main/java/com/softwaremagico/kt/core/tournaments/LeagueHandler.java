@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
+import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -248,5 +249,15 @@ public abstract class LeagueHandler implements ITournamentManager {
         final List<TeamDTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
                 groupConverter.convert(new GroupConverterRequest(group)), group.getNumberOfWinners());
         return (teamsInDraw != null);
+    }
+
+    @Override
+    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
+        return createFights(tournament, teamsOrder, 0, createdBy);
+    }
+
+    @Override
+    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+        return new ArrayList<>();
     }
 }
