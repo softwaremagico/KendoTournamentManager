@@ -69,10 +69,17 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     }
 
     @Override
+    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
+        return createFights(tournament, teamsOrder, (int) getNextLevel(tournament), createdBy);
+    }
+
+    private long getNextLevel(Tournament tournament) {
+        //Each group on a different level, to ensure that the last group winner is the king of the mountain and the winner of the league.
+        return groupProvider.count(tournament);
+    }
+
+    @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        if (level != 0) {
-            return null;
-        }
         //Create fights from first group.
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament,
                 getGroup(tournament).getTeams().subList(0, 2), level, createdBy));
@@ -82,6 +89,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         return fights;
     }
 
+    @Override
     public List<Fight> createNextFights(Tournament tournament, String createdBy) {
         final Integer level = 0;
         //Generates next group.

@@ -187,7 +187,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   generateElements() {
     let dialogRef;
-    if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP) {
+    if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
+      this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
       dialogRef = this.dialog.open(LeagueGeneratorComponent, {
         width: '85vw',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
@@ -415,11 +416,21 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
-          this.showTeamsClassification(true);
+          this.generateNextFights();
         }
         return duel;
       });
     }
+  }
+
+  generateNextFights(): void {
+    this.fightService.createNext(this.tournamentId!).subscribe(_fights => {
+      if (_fights.length > 0) {
+        this.refreshFights();
+      } else {
+        this.showTeamsClassification(true);
+      }
+    });
   }
 
   selectDuel(duel: Duel) {
