@@ -164,6 +164,18 @@ export class FightService {
       );
   }
 
+  createNext(tournamentId: number): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/next';
+    return this.http.put<Fight[]>(url, undefined, this.loginService.httpOptions)
+      .pipe(
+        tap({next:(_newFight: Fight[]) => this.loggerService.info(`generating next fights`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Fight[]>(`generating next fights`))
+      );
+  }
+
   getFightSummaryPDf(tournamentId: number): Observable<Blob> {
     const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {

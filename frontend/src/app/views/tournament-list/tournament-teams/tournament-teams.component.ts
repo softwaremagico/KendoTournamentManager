@@ -87,8 +87,10 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       teamInFights.push(..._fights.map(fight => fight.team2));
       //Remove duplicates.
       teamInFights = teamInFights.filter((team, i, a) => i === a.indexOf(team));
-      for (let team of this.teams) {
-        team.locked = teamInFights.some(t => t.id === team.id);
+      if (this.teams) {
+        for (let team of this.teams) {
+          team.locked = teamInFights.some(t => t.id === team.id);
+        }
       }
     })
   }

@@ -216,4 +216,15 @@ public class FightServices {
     }
 
 
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Creates next fights.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping(value = "/create/tournaments/{tournamentId}/next", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FightDTO> createNext(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                         Integer tournamentId,
+                                     Authentication authentication, HttpServletRequest request) {
+        return fightController.createNextFights(tournamentId, authentication.getName());
+    }
+
+
 }
