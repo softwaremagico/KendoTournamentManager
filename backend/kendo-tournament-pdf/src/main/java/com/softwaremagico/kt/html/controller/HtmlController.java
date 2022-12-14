@@ -57,7 +57,7 @@ public class HtmlController {
 
     public BlogExporter generateBlogCode(Locale locale, TournamentDTO tournament) {
         final List<RoleDTO> roleDTOS = roleController.get(tournament);
-        return new BlogExporter(messageSource, locale, tournament, roleDTOS, groupController.getGroups(tournament),
+        return new BlogExporter(messageSource, locale, tournament, roleDTOS, groupController.get(tournament),
                 roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList()), rankingController.getTeamsScoreRanking(tournament),
                 rankingController.getCompetitorsScoreRanking(tournament));
 

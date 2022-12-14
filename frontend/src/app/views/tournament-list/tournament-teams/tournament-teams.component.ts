@@ -82,13 +82,15 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     )
     //Prevent removing teams that are on fights
     this.fightService.getFromTournament(this.tournament).subscribe(_fights => {
-      let teamInFights : Team[]=[];
+      let teamInFights: Team[] = [];
       teamInFights.push(..._fights.map(fight => fight.team1));
       teamInFights.push(..._fights.map(fight => fight.team2));
       //Remove duplicates.
       teamInFights = teamInFights.filter((team, i, a) => i === a.indexOf(team));
-      for (let team of this.teams) {
-        team.locked = teamInFights.some(t => t.id === team.id);
+      if (this.teams) {
+        for (let team of this.teams) {
+          team.locked = teamInFights.some(t => t.id === team.id);
+        }
       }
     })
   }
@@ -227,8 +229,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   updateTeam(team: Team, member: Participant | undefined) {
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
-        member ? this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.") :
+        if (member) {
+          this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.")
+        } else {
           this.loggerService.info("Team '" + newTeam.name + "' updated.");
+        }
       }),
       catchError(member ? this.messageService.handleError<Team>("Updating '" + member.name + " " + member.lastname + "'") :
         this.messageService.handleError<Team>("Updating '" + team.name + "'"))

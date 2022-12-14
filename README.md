@@ -6,7 +6,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-258.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-267.5h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -20,13 +20,12 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
-
 Kendo Tournament Manager v2 is a complete rebuild of the old
 tool [Kendo Tournament Generator](https://sourceforge.net/projects/kendotournament/files/) with the effort of adapting
-it to the modern technologies. The new architecture allows the deployment of this tool as a web application -rather than
+it to more modern technologies. The new architecture allows the deployment of this tool as a web application -rather than
 a desktop application- allowing some advantages such as better compatibility between devices, as now can be used in any
-Android/iOS system as a standard webpage, or better scoring synchronization between multiple devices as now everything
-is centralized in one server.
+Android/iOS through the browser, or better scoring synchronization between multiple devices as now everything
+is centralized on the cloudbb.
 
 ## Installation
 
@@ -58,4 +57,6 @@ docker, please read the [docker guide](./docker/README.md) of this project. This
 application and probably the easiest way if you feel comfortable using docker
 
 # Default credentials.
-The default user is `admin@test` with password `asd123`. This user is an admin user that can create new users. Remember to change the password or remove this account. 
+
+The default user is `admin@test` with password `asd123`. This user is an admin user that can create new users. Remember
+to change the password or remove this account. 

@@ -8,7 +8,4 @@ import {Duel} from "../../models/duel";
 export class DuelChangedService {
 
   public isDuelUpdated: BehaviorSubject<Duel> = new BehaviorSubject<Duel>(new Duel());
-
-  constructor() {
-  }
 }
