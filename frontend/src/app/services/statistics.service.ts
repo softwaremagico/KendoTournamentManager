@@ -42,7 +42,7 @@ export class StatisticsService {
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<FightStatistics>(`get id=${tournamentId}`))
+        catchError(this.messageService.logOnlyError<FightStatistics>(`get id=${tournamentId}`))
       );
   }
 }
