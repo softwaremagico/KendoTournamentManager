@@ -51,6 +51,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   swappedTeams: boolean = false;
   membersOrder: boolean = false;
   isWizardEnabled: boolean;
+  kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -141,6 +142,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (this.tournamentId) {
           this.groupService.getAllByTournament(this.tournamentId).subscribe(groups => {
             this.groups = groups;
+            this.groups.sort((a, b) => {
+              if (a.level === b.level) {
+                return a.index - b.index;
+              }
+              return a.level - b.level;
+            });
             this.fights = groups.flatMap((group) => group.fights);
             //Use a timeout or refresh before the components are drawn.
             setTimeout(() => {
@@ -427,6 +434,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.fightService.createNext(this.tournamentId!).subscribe(_fights => {
       if (_fights.length > 0) {
         this.refreshFights();
+        this.refreshUnties();
       } else {
         this.showTeamsClassification(true);
       }

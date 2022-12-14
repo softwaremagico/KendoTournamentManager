@@ -56,7 +56,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroupsByLevel(Tournament tournament, Integer level) {
-        return repository.findByTournamentAndLevelOrderByIndexAsc(tournament, level);
+        return repository.findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
     }
 
     public Group getGroup(Integer groupId) {
