@@ -36,11 +36,13 @@ import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.RoleType;
-import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -61,15 +63,18 @@ public class FightStatisticsProvider {
     private final TournamentConverter tournamentConverter;
     private final RoleProvider roleProvider;
     private final RoleConverter roleConverter;
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
     public FightStatisticsProvider(DuelProvider duelProvider, TeamProvider teamProvider, TeamConverter teamConverter,
-                                   TournamentConverter tournamentConverter, RoleProvider roleProvider, RoleConverter roleConverter) {
+                                   TournamentConverter tournamentConverter, RoleProvider roleProvider, RoleConverter roleConverter,
+                                   TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.duelProvider = duelProvider;
         this.teamProvider = teamProvider;
         this.teamConverter = teamConverter;
         this.tournamentConverter = tournamentConverter;
         this.roleProvider = roleProvider;
         this.roleConverter = roleConverter;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     /**
@@ -104,22 +109,22 @@ public class FightStatisticsProvider {
     }
 
     public FightStatisticsDTO calculate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
-        return calculate(tournamentDTO.getType(), tournamentDTO.isMaximizeFights(), tournamentDTO.getTeamSize(), teams);
+        return calculate(tournamentDTO, tournamentDTO.getTeamSize(), teams);
     }
 
     public FightStatisticsDTO calculateByRoles(TournamentDTO tournamentDTO, Collection<RoleDTO> roles) {
         return calculate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).collect(Collectors.toList())));
     }
 
-    public FightStatisticsDTO calculate(TournamentType tournamentType, boolean maximizeFights, int teamSize, Collection<TeamDTO> teams) {
-        if (tournamentType == null || teams == null || teams.size() < 2) {
+    public FightStatisticsDTO calculate(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
+        if (tournamentDTO == null || teams == null || teams.size() < 2) {
             return null;
         }
-        switch (tournamentType) {
+        switch (tournamentDTO.getType()) {
             case LEAGUE:
                 return calculateLeagueStatistics(teamSize, teams);
             case LOOP:
-                return calculateLoopStatistics(maximizeFights, teamSize, teams);
+                return calculateLoopStatistics(tournamentDTO, teamSize, teams);
             case CUSTOMIZED:
             case KING_OF_THE_MOUNTAIN:
             default:
@@ -139,8 +144,11 @@ public class FightStatisticsProvider {
         return fightStatisticsDTO;
     }
 
-    private FightStatisticsDTO calculateLoopStatistics(boolean maximizeFights, int teamSize, Collection<TeamDTO> teams) {
+    private FightStatisticsDTO calculateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
         final FightStatisticsDTO fightStatisticsDTO = new FightStatisticsDTO();
+        final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournamentConverter.reverse(tournamentDTO),
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
+        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
         if (maximizeFights) {
             fightStatisticsDTO.setFightsNumber((teams.size() * (teams.size() - 1)));
             fightStatisticsDTO.setFightsByTeam((teams.size() - 1) * 2);

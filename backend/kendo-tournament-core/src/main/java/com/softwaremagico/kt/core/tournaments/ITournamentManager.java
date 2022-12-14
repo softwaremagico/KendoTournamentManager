@@ -36,7 +36,11 @@ import java.util.List;
 
 public interface ITournamentManager {
 
-    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, boolean maximizeFights, Integer level, String createdBy);
+    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy);
+
+    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy);
+
+    List<Fight> createNextFights(Tournament tournament, String createdBy);
 
     List<Group> getGroups(Tournament tournament);
 
@@ -107,7 +111,7 @@ public interface ITournamentManager {
     /**
      * Defines if a fight has a draw value or not.
      *
-     * @param fight
+     * @param group
      * @return
      */
     boolean hasDrawScore(Group group);

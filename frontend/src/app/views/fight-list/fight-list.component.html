@@ -67,7 +67,8 @@
         <mat-divider [vertical]="true"></mat-divider>
         <button mat-button color="primary" [disabled]="!fights || fights.length===0"
                 [matTooltipShowDelay]="500" matTooltip="{{'teamsRanking' | translate}}"
-                *ngIf="tournament && tournament.teamSize && tournament.teamSize>1 && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
+                *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType))
+                 && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
                 (click)="showTeamsClassification(areAllDuelsOver())">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>

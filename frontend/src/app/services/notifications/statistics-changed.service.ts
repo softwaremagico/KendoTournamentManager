@@ -8,6 +8,4 @@ export class StatisticsChangedService {
 
   public areStatisticsChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor() {
-  }
 }

@@ -83,19 +83,29 @@ public class ScoreOfCompetitor {
 
     public void setDuelsDone() {
         duelsDone = 0;
-        fights.forEach(fight -> duelsDone += fight.getDuels(competitor).size());
+        fights.forEach(fight -> {
+            if (fight.isOver()) {
+                duelsDone += fight.getDuels(competitor).size();
+            }
+        });
     }
 
     public void setDuelsWon() {
         wonDuels = 0;
-        fights.forEach(fight -> wonDuels += fight.getDuelsWon(competitor));
+        fights.forEach(fight -> {
+            if (fight.isOver()) {
+                wonDuels += fight.getDuelsWon(competitor);
+            }
+        });
     }
 
     public void setFightsWon() {
         wonFights = 0;
         for (final FightDTO fight : fights) {
-            if (fight.isWon(competitor)) {
-                wonFights++;
+            if (fight.isOver()) {
+                if (fight.isWon(competitor)) {
+                    wonFights++;
+                }
             }
         }
     }

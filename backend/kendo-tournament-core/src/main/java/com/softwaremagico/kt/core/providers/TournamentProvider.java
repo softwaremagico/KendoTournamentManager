@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
+    private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
 
     @Autowired
-    public TournamentProvider(TournamentRepository tournamentRepository) {
+    public TournamentProvider(TournamentRepository tournamentRepository, TournamentExtraPropertyRepository tournamentExtraPropertyRepository) {
         super(tournamentRepository);
+        this.tournamentExtraPropertyRepository = tournamentExtraPropertyRepository;
     }
 
     public Tournament save(String name, Integer shiaijos, Integer teamSize, TournamentType type, String createdBy) {
         return repository.save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : 3,
                 type != null ? type : TournamentType.LEAGUE, createdBy));
+    }
+
+    public void delete(Tournament tournament) {
+        tournamentExtraPropertyRepository.deleteByTournament(tournament);
+        repository.delete(tournament);
     }
 
 }
