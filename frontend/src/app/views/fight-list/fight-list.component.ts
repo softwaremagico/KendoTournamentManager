@@ -436,7 +436,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         this.refreshFights();
         this.refreshUnties();
       } else {
-        this.showTeamsClassification(true);
+        if ((this.tournament && this.tournament.teamSize && this.tournament.teamSize > 1) ||
+          (this.tournament && this.tournament.type === this.kingOfTheMountainType)) {
+          this.showTeamsClassification(true);
+        } else {
+          this.showCompetitorsClassification();
+        }
       }
     });
   }
