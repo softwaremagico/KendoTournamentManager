@@ -14,6 +14,7 @@ export class Tournament extends Element {
   public type?: TournamentType;
   public duelsDuration: number;
   public tournamentScore: TournamentScore;
+  public locked: boolean;
 
   constructor() {
     super();
@@ -28,6 +29,7 @@ export class Tournament extends Element {
     target.type = source.type;
     target.duelsDuration = source.duelsDuration;
     target.tournamentScore = source.tournamentScore;
+    target.locked = source.locked;
   }
 
   public static clone(data: Tournament): Tournament {

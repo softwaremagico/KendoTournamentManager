@@ -568,7 +568,12 @@
   "estimatedFights": "Numero stimato di incontri",
   "estimatedDuels": "Numero stimato di duelli",
   "estimatedTime": "Tempo stimato necessario",
-  "elementInUse": "Questo elemento viene utilizzato altrove e non può essere modificato."
+  "elementInUse": "Questo elemento viene utilizzato altrove e non può essere modificato.",
+  "locked": "Bloccato",
+  "tournamentLock": "Evita i cambiamenti nel torneo",
+  "tournamentUnlock": "Consente di apportare modifiche al torneo",
+  "yes": "Sì",
+  "no": "No"
 }
 
 
