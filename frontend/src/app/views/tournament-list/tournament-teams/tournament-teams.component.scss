@@ -20,7 +20,7 @@
   overflow: auto;
 }
 
-.small{
+.small {
   min-height: 80px;
 }
 
@@ -28,9 +28,9 @@
   overflow: auto;
 }
 
-.right-panel{
+.right-panel {
   padding-left: 10px;
-  display:grid
+  display: grid
 }
 
 .team-title-editable {
@@ -73,7 +73,7 @@ h2 {
 
 .new-team {
   height: 60px;
-  background-color: #001239;
+  background-color: var(--contrast-color);
   color: white;
   border-radius: 15px;
   display: flex;

@@ -68,4 +68,16 @@ export class UserSessionService {
   getSwappedTeams(): boolean {
     return Boolean(sessionStorage.getItem("swappedTeams"));
   }
+
+  setNightMode(nightMode: boolean) {
+    if (nightMode) {
+      sessionStorage.setItem("nightMode", nightMode.toString());
+    } else {
+      sessionStorage.removeItem("nightMode");
+    }
+  }
+
+  getNightMode(): boolean {
+    return Boolean(sessionStorage.getItem("nightMode"));
+  }
 }
