@@ -65,6 +65,24 @@ public class Duel extends Element {
     @Enumerated(EnumType.STRING)
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "competitor_1_score_time")
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<Integer> competitor1ScoreTime = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "competitor_2_score_time")
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<Integer> competitor2ScoreTime = new ArrayList<>();
+
+    @Column(name = "competitor_1_fault_time")
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer competitor1FaultTime;
+
+    @Column(name = "competitor_2_fault_time")
+    @Convert(converter = IntegerCryptoConverter.class)
+    private Integer competitor2FaultTime;
+
     @Column(name = "competitor_1_fault")
     @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor1Fault = false;
@@ -223,5 +241,37 @@ public class Duel extends Element {
 
     public void setTournament(Tournament tournament) {
         this.tournament = tournament;
+    }
+
+    public List<Integer> getCompetitor1ScoreTime() {
+        return competitor1ScoreTime;
+    }
+
+    public void setCompetitor1ScoreTime(List<Integer> competitor1ScoreTime) {
+        this.competitor1ScoreTime = competitor1ScoreTime;
+    }
+
+    public List<Integer> getCompetitor2ScoreTime() {
+        return competitor2ScoreTime;
+    }
+
+    public void setCompetitor2ScoreTime(List<Integer> competitor2ScoreTime) {
+        this.competitor2ScoreTime = competitor2ScoreTime;
+    }
+
+    public Integer getCompetitor1FaultTime() {
+        return competitor1FaultTime;
+    }
+
+    public void setCompetitor1FaultTime(Integer competitor1FaultTime) {
+        this.competitor1FaultTime = competitor1FaultTime;
+    }
+
+    public Integer getCompetitor2FaultTime() {
+        return competitor2FaultTime;
+    }
+
+    public void setCompetitor2FaultTime(Integer competitor2FaultTime) {
+        this.competitor2FaultTime = competitor2FaultTime;
     }
 }
