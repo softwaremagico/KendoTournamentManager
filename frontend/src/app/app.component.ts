@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, HostBinding} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./guards/logged-in.service";
@@ -9,20 +9,23 @@ import {Router} from "@angular/router";
 import {MessageService} from "./services/message.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
+import {OverlayContainer} from "@angular/cdk/overlay";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-
-export class AppComponent extends RbacBasedComponent{
+export class AppComponent extends RbacBasedComponent {
   selectedLanguage = 'en';
   loggedIn = false;
   selectedRow: string = '';
+  nightModeEnabled: boolean = false;
+  @HostBinding('class') className = '';
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
+              private overlay: OverlayContainer,
               private messageService: MessageService, rbacService: RbacService) {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
@@ -32,6 +35,8 @@ export class AppComponent extends RbacBasedComponent{
       this.translate.use(userSessionService.getLanguage());
       this.selectedLanguage = userSessionService.getLanguage();
     }
+    this.nightModeEnabled = userSessionService.getNightMode();
+    this.setDarkModeTheme();
   }
 
   toggleMenu(selectedRow: string) {
@@ -63,5 +68,20 @@ export class AppComponent extends RbacBasedComponent{
         this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
       }
     });
+  }
+
+  switchDarkMode() {
+    this.nightModeEnabled = !this.nightModeEnabled;
+    this.userSessionService.setNightMode(this.nightModeEnabled);
+    this.setDarkModeTheme();
+  }
+
+  private setDarkModeTheme(){
+    this.className = this.nightModeEnabled ? 'dark-mode' : '';
+    if (this.nightModeEnabled) {
+      this.overlay.getContainerElement().classList.add('dark-mode');
+    } else {
+      this.overlay.getContainerElement().classList.remove('dark-mode');
+    }
   }
 }
