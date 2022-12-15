@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, HostBinding} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./guards/logged-in.service";
@@ -15,11 +15,12 @@ import {RbacBasedComponent} from "./components/RbacBasedComponent";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-
-export class AppComponent extends RbacBasedComponent{
+export class AppComponent extends RbacBasedComponent {
   selectedLanguage = 'en';
   loggedIn = false;
   selectedRow: string = '';
+  darkModeEnabled: boolean = false;
+  @HostBinding('class') className = '';
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
@@ -63,5 +64,10 @@ export class AppComponent extends RbacBasedComponent{
         this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
       }
     });
+  }
+
+  switchDarkMode() {
+    this.darkModeEnabled = !this.darkModeEnabled;
+    this.className = this.darkModeEnabled ? 'dark-mode' : '';
   }
 }

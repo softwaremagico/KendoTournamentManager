@@ -46,6 +46,9 @@
           <mat-icon *ngIf="selectedRow !== 'Settings'">expand_more</mat-icon>
           <mat-icon *ngIf="selectedRow === 'Settings'">expand_less</mat-icon>
         </a>
+        <a mat-button (click)="switchDarkMode()">
+          <mat-icon>bedtime</mat-icon>
+        </a>
       </div>
     </mat-toolbar-row>
     <!-- Submenu -->
