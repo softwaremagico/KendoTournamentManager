@@ -1,9 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
-body {
-  margin: 0%;
-}
+@import "basic-colors";
 
 //Messages
 .mat-snack-bar-container.info-snackbar.message-service {
@@ -18,8 +15,8 @@ body {
 }
 
 .mat-snack-bar-container.error-snackbar.message-service {
-  background: #6e0309;
-  color: #ffd740;
+  background: var(--alert);
+  color: var(--warning);
 }
 
 // Table
@@ -59,16 +56,25 @@ body {
 }
 
 .mat-row.hovered {
-  background: #8097b3;
+  background: var(--hover-color);
+}
+
+.dark-mode .mat-row.hovered  {
+  background: #b0a3d5;
 }
 
 .mat-row.highlighted {
-  background: #012f67;
+  background: var(--hightligh-color);
+  color: var(--text-color);
+}
+
+.dark-mode .mat-row.highlighted {
+  background: #5f4ca1;
   color: white;
 }
 
 .highlighted .mat-cell {
-  color: white;
+  color: var(--selected-color);
   font-weight: bold;
 }
 
@@ -77,15 +83,11 @@ body {
 }
 
 .mat-paginator-container {
-  color: #012f67;
+  color: var(--footer);
 }
 
 .table-settings {
   padding: 15px;
-}
-
-.menu-setting-option {
-  padding: 5px;
 }
 
 @font-face {

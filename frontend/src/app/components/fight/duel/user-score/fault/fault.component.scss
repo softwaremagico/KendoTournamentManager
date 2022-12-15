@@ -2,7 +2,7 @@
   height: 50px;
   width: 25px;
   border-width: 1px;
-  border-color: #011d4a;
+  border-color: var(--primay-color);
   border-style: solid;
   margin: 2px 5px;
   display: flex;
@@ -15,5 +15,5 @@
   height: 0;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
-  border-bottom: 25px solid #011d4a;
+  border-bottom: 25px solid var(--primay-color);
 }
