@@ -15,6 +15,9 @@
   --text-disabled: #8097b3;
   --background-color: #ffffff;
   --shadow: #00123988;
+  --card-shadow1: rgba(1, 47, 103, 0.2);
+  --card-shadow2: rgba(1, 47, 103, 0.14);
+  --card-shadow3: rgba(1, 47, 103, 0.12);
 }
 
 :root .dark-mode {
@@ -32,5 +35,8 @@
   --text-disabled: #303030;
   --background-color: #303030;
   --shadow: #776e9788;
+  --card-shadow1: rgba(176, 163, 213, 0.6);
+  --card-shadow2: rgba(176, 163, 213, 0.5);
+  --card-shadow3: rgba(176, 163, 213, 0.3);
 }
 
