@@ -6,7 +6,6 @@
   width: 100%;
   display: table;
   min-width: 600px;
-  background: white;
 }
 
 .duel {
@@ -53,7 +52,6 @@
 }
 
 .selected {
-  background: white;
 }
 
 .over {
@@ -72,5 +70,4 @@
   transition: transform .2s; /* Animation */
   //Transform causes problem with the timer component z-index.
   //transform: scale(1.03);
-  background: white;
 }
