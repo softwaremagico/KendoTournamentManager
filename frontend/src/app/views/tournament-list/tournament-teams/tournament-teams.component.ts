@@ -238,7 +238,9 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       catchError(member ? this.messageService.handleError<Team>("Updating '" + member.name + " " + member.lastname + "'") :
         this.messageService.handleError<Team>("Updating '" + team.name + "'"))
     ).subscribe(() => {
-      member ? this.messageService.infoMessage("infoTeamUpdated") : "";
+      if (member) {
+        this.messageService.infoMessage("infoTeamUpdated");
+      }
       this.statisticsChangedService.areStatisticsChanged.next(true);
     })
     ;
