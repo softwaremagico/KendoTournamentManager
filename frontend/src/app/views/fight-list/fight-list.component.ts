@@ -337,7 +337,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
-        this.fights.filter(existing_fight => existing_fight !== fight);
+        this.fights = this.fights.filter(existing_fight => existing_fight !== fight);
         this.messageService.infoMessage("fightDeleted");
       }
     );
