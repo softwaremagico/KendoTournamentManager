@@ -1,4 +1,4 @@
-import {Component, HostBinding} from '@angular/core';
+import {Component, HostBinding, Renderer2} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {LoginService} from "./services/login.service";
 import {LoggedInService} from "./guards/logged-in.service";
@@ -25,7 +25,7 @@ export class AppComponent extends RbacBasedComponent {
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
-              private overlay: OverlayContainer,
+              private overlay: OverlayContainer, private _renderer: Renderer2,
               private messageService: MessageService, rbacService: RbacService) {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
@@ -80,8 +80,12 @@ export class AppComponent extends RbacBasedComponent {
     this.className = this.nightModeEnabled ? 'dark-mode' : '';
     if (this.nightModeEnabled) {
       this.overlay.getContainerElement().classList.add('dark-mode');
+      //For drag and drop preview.
+      this._renderer.addClass(document.body, 'dark-mode');
     } else {
       this.overlay.getContainerElement().classList.remove('dark-mode');
+      //For drag and drop preview.
+      this._renderer.removeClass(document.body, 'dark-mode');
     }
   }
 }
