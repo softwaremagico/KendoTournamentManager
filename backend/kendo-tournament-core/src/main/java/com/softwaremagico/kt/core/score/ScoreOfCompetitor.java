@@ -49,15 +49,18 @@ public class ScoreOfCompetitor {
     private Integer duelsDone = null;
     private Integer wonFights = null;
     private Integer drawFights = null;
+    @JsonIgnore
+    private boolean countNotOver = false;
 
     public ScoreOfCompetitor() {
 
     }
 
-    public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights, List<DuelDTO> unties) {
+    public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights, List<DuelDTO> unties, boolean countNotOver) {
         this.competitor = competitor;
         this.fights = fights;
         this.unties = unties;
+        this.countNotOver = countNotOver;
         update();
     }
 
@@ -84,7 +87,7 @@ public class ScoreOfCompetitor {
     public void setDuelsDone() {
         duelsDone = 0;
         fights.forEach(fight -> {
-            if (fight.isOver()) {
+            if (fight.isOver() || countNotOver) {
                 duelsDone += fight.getDuels(competitor).size();
             }
         });
@@ -93,7 +96,7 @@ public class ScoreOfCompetitor {
     public void setDuelsWon() {
         wonDuels = 0;
         fights.forEach(fight -> {
-            if (fight.isOver()) {
+            if (fight.isOver() || countNotOver) {
                 wonDuels += fight.getDuelsWon(competitor);
             }
         });
@@ -102,7 +105,7 @@ public class ScoreOfCompetitor {
     public void setFightsWon() {
         wonFights = 0;
         for (final FightDTO fight : fights) {
-            if (fight.isOver()) {
+            if (fight.isOver() || countNotOver) {
                 if (fight.isWon(competitor)) {
                     wonFights++;
                 }
@@ -113,7 +116,7 @@ public class ScoreOfCompetitor {
     public void setFightsDraw() {
         drawFights = 0;
         for (final FightDTO fight : fights) {
-            if (fight.isOver()) {
+            if (fight.isOver() || countNotOver) {
                 if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
                         || fight.getTeam2().isMember(competitor))) {
                     drawFights++;
@@ -125,7 +128,7 @@ public class ScoreOfCompetitor {
     public void setDuelsDraw() {
         drawDuels = 0;
         for (final FightDTO fight : fights) {
-            if (fight.isOver()) {
+            if (fight.isOver() || countNotOver) {
                 drawDuels += fight.getDrawDuels(competitor);
             }
         }
