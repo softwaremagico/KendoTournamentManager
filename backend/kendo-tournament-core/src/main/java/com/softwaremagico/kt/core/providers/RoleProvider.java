@@ -65,6 +65,10 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         return repository.countByTournament(tournament);
     }
 
+    public long count(Tournament tournament, RoleType roleType) {
+        return repository.countByTournamentAndRoleType(tournament, roleType);
+    }
+
     public void delete(Participant participant, Tournament tournament) {
         repository.deleteByParticipantAndTournament(participant, tournament);
     }
