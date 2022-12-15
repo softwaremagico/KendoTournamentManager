@@ -32,19 +32,23 @@ export class FaultComponent implements OnInit {
     if ((this.left && !this.swapTeams) || (!this.left && this.swapTeams)) {
       if (!fault || !this.duel.competitor1Fault) {
         this.duel.competitor1Fault = fault;
+        this.duel.competitor1FaultTime = this.duel.duration!;
       } else {
         this.duel.competitor1Fault = false;
         if (this.duel.competitor2Score.length < 2) {
           this.duel.competitor2Score.push(Score.HANSOKU);
+          this.duel.competitor2ScoreTime.push(this.duel.duration!);
         }
       }
     } else {
       if (!fault || !this.duel.competitor2Fault) {
         this.duel.competitor2Fault = fault;
+        this.duel.competitor2FaultTime = this.duel.duration!;
       } else {
         this.duel.competitor2Fault = false;
         if (this.duel.competitor1Score.length < 2) {
           this.duel.competitor1Score.push(Score.HANSOKU);
+          this.duel.competitor1ScoreTime.push(this.duel.duration!);
         }
       }
     }

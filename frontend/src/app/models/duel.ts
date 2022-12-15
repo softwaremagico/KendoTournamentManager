@@ -10,6 +10,10 @@ export class Duel extends Element {
   public competitor2Fault: boolean;
   public competitor1Score: Score[];
   public competitor2Score: Score[];
+  public competitor1ScoreTime: number[];
+  public competitor2ScoreTime: number[];
+  public competitor1FaultTime: number;
+  public competitor2FaultTime: number;
   public type: DuelType;
   public duration?: number;
   public totalDuration?: number;
@@ -35,6 +39,11 @@ export class Duel extends Element {
     target.competitor2Score = [];
     source.competitor1Score.forEach(score => target.competitor1Score.push(score));
     source.competitor2Score.forEach(score => target.competitor2Score.push(score));
+    source.competitor1ScoreTime.forEach(time => target.competitor1ScoreTime.push(time));
+    source.competitor2ScoreTime.forEach(time => target.competitor2ScoreTime.push(time));
+
+    target.competitor1FaultTime = source.competitor1FaultTime;
+    target.competitor2FaultTime = source.competitor2FaultTime;
   }
 
   public static clone(data: Duel): Duel {
