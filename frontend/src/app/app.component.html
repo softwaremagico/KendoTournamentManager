@@ -47,7 +47,8 @@
           <mat-icon *ngIf="selectedRow === 'Settings'">expand_less</mat-icon>
         </a>
         <a mat-button (click)="switchDarkMode()">
-          <mat-icon>bedtime</mat-icon>
+          <mat-icon *ngIf="!nightModeEnabled">bedtime</mat-icon>
+          <mat-icon *ngIf="nightModeEnabled">bedtime_off</mat-icon>
         </a>
       </div>
     </mat-toolbar-row>
@@ -76,10 +77,10 @@
           <mat-icon>flag</mat-icon>
           <span class="upper-menu-title">{{'language' | translate}}</span>
         </a>
-        <mat-menu #languageMenu="matMenu">
+        <mat-menu #languageMenu="matMenu" backdropClass="kendo-mat-menu">
           <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
-            <mat-icon>flag</mat-icon>
-            {{language}}</a>
+            <mat-icon class="menu-text">flag</mat-icon>
+            <span class="menu-text">{{language}}</span></a>
         </mat-menu>
         <a mat-button routerLink="/passwords" [matTooltipShowDelay]="500" matTooltip="{{'password' | translate}}"
            *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)">

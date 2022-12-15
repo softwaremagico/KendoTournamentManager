@@ -20,7 +20,7 @@ export class AppComponent extends RbacBasedComponent {
   selectedLanguage = 'en';
   loggedIn = false;
   selectedRow: string = '';
-  darkModeEnabled: boolean = false;
+  nightModeEnabled: boolean = false;
   @HostBinding('class') className = '';
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
@@ -35,6 +35,8 @@ export class AppComponent extends RbacBasedComponent {
       this.translate.use(userSessionService.getLanguage());
       this.selectedLanguage = userSessionService.getLanguage();
     }
+    this.nightModeEnabled = userSessionService.getNightMode();
+    this.setDarkModeTheme();
   }
 
   toggleMenu(selectedRow: string) {
@@ -69,9 +71,14 @@ export class AppComponent extends RbacBasedComponent {
   }
 
   switchDarkMode() {
-    this.darkModeEnabled = !this.darkModeEnabled;
-    this.className = this.darkModeEnabled ? 'dark-mode' : '';
-    if (this.darkModeEnabled) {
+    this.nightModeEnabled = !this.nightModeEnabled;
+    this.userSessionService.setNightMode(this.nightModeEnabled);
+    this.setDarkModeTheme();
+  }
+
+  private setDarkModeTheme(){
+    this.className = this.nightModeEnabled ? 'dark-mode' : '';
+    if (this.nightModeEnabled) {
       this.overlay.getContainerElement().classList.add('dark-mode');
     } else {
       this.overlay.getContainerElement().classList.remove('dark-mode');
