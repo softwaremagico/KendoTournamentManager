@@ -37,6 +37,7 @@ import com.softwaremagico.kt.core.score.*;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.ScoreType;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
@@ -202,7 +203,8 @@ public class RankingController {
         final Set<ParticipantDTO> competitors = getParticipants(groupDTO.getTeams());
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final ParticipantDTO competitor : competitors) {
-            scores.add(new ScoreOfCompetitor(competitor, groupDTO.getFights(), groupDTO.getUnties()));
+            scores.add(new ScoreOfCompetitor(competitor, groupDTO.getFights(), groupDTO.getUnties(),
+                    countNotOver(groupDTO.getTournament())));
         }
         sortCompetitorsScores(groupDTO.getTournament().getTournamentScore().getScoreType(), scores);
         final List<ParticipantDTO> competitorsRanking = new ArrayList<>();
@@ -250,7 +252,7 @@ public class RankingController {
                                                               TournamentDTO tournamentDTO) {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         for (final ParticipantDTO competitor : competitors) {
-            scores.add(new ScoreOfCompetitor(competitor, fights, unties));
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties, countNotOver(tournamentDTO)));
         }
         sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
         return scores;
@@ -354,5 +356,15 @@ public class RankingController {
             default:
                 return new ScoreOfCompetitorClassic();
         }
+    }
+
+    /**
+     * On some leagues, we need to count the fights not finished for the score.
+     *
+     * @param tournamentDTO
+     * @return if must be counted.
+     */
+    private boolean countNotOver(TournamentDTO tournamentDTO) {
+        return tournamentDTO.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
     }
 }
