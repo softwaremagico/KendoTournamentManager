@@ -10,7 +10,7 @@
   display: table-cell;
   width: 33%;
   font-size: 0.8vw;
-  color: #011d4a;
+  color: var(--secondary-text-color);
 }
 
 .viewer .text{
@@ -20,10 +20,10 @@
 }
 
 .viewer .warning {
-  color: #ffd740;
+  color: var(--warning);
 }
 
 .viewer .alert {
-  color: #ff0000;
+  color: var(--alert);
   animation: blinker 1s linear infinite;
 }
