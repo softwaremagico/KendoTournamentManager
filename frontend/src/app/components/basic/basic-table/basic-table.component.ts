@@ -105,6 +105,8 @@ export class BasicTableComponent implements OnInit {
   getColumnData(column: any): any {
     if (typeof column === 'number') {
       return column;
+    } else if (typeof column === 'boolean') {
+      return column ? this.translateService.instant('yes') : this.translateService.instant('no');
     } else if (!isNaN(Date.parse(column))) {
       return this.pipe.transform(column, 'short');
     } else {
