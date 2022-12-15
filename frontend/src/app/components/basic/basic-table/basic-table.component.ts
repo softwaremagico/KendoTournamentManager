@@ -29,6 +29,7 @@ export class BasicTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.basicTableData.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
       const dataSearch = Object.keys(data).reduce((searchTerm: string, key: string) => {
         return (searchTerm + (data as { [key: string]: any })[key]);
       }, '').normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase();

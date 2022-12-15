@@ -40,6 +40,6 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     long countByTournament(Tournament tournament);
 
-    @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
+    @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
 }
