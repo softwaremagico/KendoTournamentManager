@@ -179,8 +179,8 @@
             </a>
             <mat-menu #languageMenu="matMenu">
               <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
-                <mat-icon>flag</mat-icon>
-                {{language}}</a>
+                <mat-icon class="menu-text">flag</mat-icon>
+                <span class="menu-text">{{language}}</span></a>
             </mat-menu>
             <a mat-list-item routerLink="/passwords"
                *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)"
