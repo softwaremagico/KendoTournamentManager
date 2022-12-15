@@ -9,6 +9,7 @@ import {Router} from "@angular/router";
 import {MessageService} from "./services/message.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
+import {OverlayContainer} from "@angular/cdk/overlay";
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ export class AppComponent extends RbacBasedComponent {
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
+              private overlay: OverlayContainer,
               private messageService: MessageService, rbacService: RbacService) {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
@@ -69,5 +71,10 @@ export class AppComponent extends RbacBasedComponent {
   switchDarkMode() {
     this.darkModeEnabled = !this.darkModeEnabled;
     this.className = this.darkModeEnabled ? 'dark-mode' : '';
+    if (this.darkModeEnabled) {
+      this.overlay.getContainerElement().classList.add('dark-mode');
+    } else {
+      this.overlay.getContainerElement().classList.remove('dark-mode');
+    }
   }
 }
