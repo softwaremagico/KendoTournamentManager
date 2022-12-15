@@ -2,7 +2,7 @@
   height: 50px;
   width: 50px;
   border-width: 1px;
-  border-color: #011d4a;
+  border-color: var(--primay-color);
   border-style: solid;
   margin: 2px 0px;
   justify-content: center;
@@ -11,8 +11,8 @@
 
 .point {
   border-radius: 50%;
-  border: 3px solid #011d4a;
-  color: #011d4a;
+  border: 3px solid var(--primay-color);
+  color: var(--primay-color);
   padding: 12px;
   display: flex;
   justify-content: center;

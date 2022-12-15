@@ -19,7 +19,7 @@
   text-align: center;
   font-size: 130%;
   padding-bottom: 10px;
-  color: #001239;
+  color: var(--secondary-text-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -28,8 +28,7 @@
 .team-ranking-value {
   text-align: center;
   padding: 10px;
-  color: #001239;
-  //color: #4d6d95;
+  color: var(--secondary-text-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
