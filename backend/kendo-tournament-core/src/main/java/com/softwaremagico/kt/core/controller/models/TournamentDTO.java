@@ -42,6 +42,8 @@ public class TournamentDTO extends ElementDTO {
 
     private Integer duelsDuration;
 
+    private boolean locked;
+
     public TournamentDTO() {
         super();
     }
@@ -101,6 +103,14 @@ public class TournamentDTO extends ElementDTO {
 
     public void setDuelsDuration(Integer duelsDuration) {
         this.duelsDuration = duelsDuration;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     @Override

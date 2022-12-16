@@ -576,7 +576,12 @@
   "estimatedFights": "Nombre estimat de partits",
   "estimatedDuels": "Nombre estimat de combats",
   "estimatedTime": "Temps necessari estimat",
-  "elementInUse": "Aquest element està sent usat en una altra part i no pot ser modificat"
+  "elementInUse": "Aquest element està sent usat en una altra part i no pot ser modificat",
+  "locked": "Bloquejat",
+  "tournamentLock": "Evita canvis al torneig",
+  "tournamentUnlock": "Permet realitzar canvis al torneig",
+  "yes": "Yes",
+  "no": "No"
 }
 
 

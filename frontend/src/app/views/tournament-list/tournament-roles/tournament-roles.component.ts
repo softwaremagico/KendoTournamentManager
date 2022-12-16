@@ -66,6 +66,12 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       participants.sort(function (a, b) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
+      //Block participants.
+      if (this.tournament.locked) {
+        for (let participant of participants) {
+          participant.locked = participant.locked || this.tournament.locked;
+        }
+      }
       this.userListData.participants = participants;
       this.userListData.filteredParticipants = participants;
       //Prevent removing participants that are on teams already
@@ -79,7 +85,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
           }
         }
         for (let participant of this.participants.get(RoleType.COMPETITOR)!) {
-          participant.locked = teamMembers.some(p => p.id === participant.id);
+          participant.locked = teamMembers.some(p => p.id === participant.id) || this.tournament.locked;
         }
       });
     });
