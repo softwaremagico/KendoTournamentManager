@@ -20,6 +20,9 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   @Input()
+  editable: boolean = true;
+
+  @Input()
   set startingSeconds(value: number) {
     this.seconds = value;
   }
@@ -39,7 +42,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   started = false;
   minutesEditable = false;
   secondsEditable = false;
-  private clickedElement : HTMLElement;
+  private clickedElement: HTMLElement;
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
@@ -64,7 +67,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (!this.secondsEditable && !this.minutesEditable) {
+    if (!this.secondsEditable && !this.minutesEditable && this.editable) {
       if (event.key === ' ') {
         if (this.started) {
           this.pauseTimer();
@@ -79,7 +82,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardNonPrintableEvent(event: KeyboardEvent) {
-    if (!this.secondsEditable && !this.minutesEditable) {
+    if (!this.secondsEditable && !this.minutesEditable && this.editable) {
       if (event.key === 'Backspace') {
         this.restoreTimer();
       } else if (event.key === 'Escape') {
@@ -203,18 +206,18 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   setMinutesEditable(editable: boolean): void {
-    if(editable){
+    if (editable) {
       this.pauseTimer();
     }
-    this.minutesEditable = editable;
+    this.minutesEditable = editable && this.editable;
     this.secondsEditable = false;
   }
 
   setSecondsEditable(editable: boolean): void {
-    if(editable){
+    if (editable) {
       this.pauseTimer();
     }
-    this.secondsEditable = editable;
+    this.secondsEditable = editable && this.editable;
     this.minutesEditable = false;
   }
 

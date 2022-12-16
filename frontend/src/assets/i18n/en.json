@@ -589,6 +589,11 @@
   "estimatedFights": "Estimated number of matches",
   "estimatedDuels": "Estimated number of fights",
   "estimatedTime": "Estimated needed time",
-  "elementInUse": "This element is in use elsewhere and cannot be changed"
+  "elementInUse": "This element is in use elsewhere and cannot be changed",
+  "locked": "Locked",
+  "tournamentLock": "Protect the tournament from changes",
+  "tournamentUnlock": "Allow changes on the tournament",
+  "yes": "Yes",
+  "no": "No"
 }
 
