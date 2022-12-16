@@ -72,6 +72,7 @@ export class RbacService {
     this.removeActivity(adminActivities, RbacActivity.CREATE_USER);
     this.removeActivity(adminActivities, RbacActivity.EDIT_USER);
     this.removeActivity(adminActivities, RbacActivity.DELETE_USER);
+    this.removeActivity(adminActivities, RbacActivity.EDIT_LOCKED_TOURNAMENT);
     return adminActivities;
   }
 

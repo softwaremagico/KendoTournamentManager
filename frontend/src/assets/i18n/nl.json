@@ -561,7 +561,12 @@
   "estimatedFights": "Geschat aantal wedstrijden",
   "estimatedDuels": "Geschat aantal aanvallen",
   "estimatedTime": "Geschatte benodigde tijd",
-  "elementInUse": "Dit element wordt elders gebruikt en kan niet worden gewijzigd."
+  "elementInUse": "Dit element wordt elders gebruikt en kan niet worden gewijzigd.",
+  "locked": "Op slot",
+  "tournamentLock": "Vermijd veranderingen in het toernooi",
+  "tournamentUnlock": "Hiermee kunt u wijzigingen aanbrengen in het toernooi",
+  "yes": "Ja",
+  "no": "Niet"
 }
 
 
