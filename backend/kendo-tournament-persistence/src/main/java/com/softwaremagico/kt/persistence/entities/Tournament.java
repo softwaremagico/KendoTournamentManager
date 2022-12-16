@@ -63,6 +63,9 @@ public class Tournament extends Element {
     @Column(name = "duels_duration", nullable = false)
     private Integer duelsDuration = 180;
 
+    @Column(name = "locked", nullable = false)
+    private boolean locked = false;
+
     public Tournament() {
         super();
     }
@@ -128,6 +131,14 @@ public class Tournament extends Element {
 
     public void setDuelsDuration(Integer duelsDuration) {
         this.duelsDuration = duelsDuration;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     @Override

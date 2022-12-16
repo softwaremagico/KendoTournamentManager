@@ -561,7 +561,12 @@
   "estimatedFights": "Geschätzte Anzahl der Übereinstimmungen",
   "estimatedDuels": "Geschätzte Anzahl der Kämpfe",
   "estimatedTime": "Geschätzte benötigte Zeit",
-  "elementInUse": "Dieses Element wird anderweitig verwendet und kann nicht geändert werden."
+  "elementInUse": "Dieses Element wird anderweitig verwendet und kann nicht geändert werden.",
+  "locked": "Gesperrt",
+  "tournamentLock": "Vermeiden Sie Änderungen im Turnier",
+  "tournamentUnlock": "Ermöglicht es Ihnen, Änderungen am Turnier vorzunehmen",
+  "yes": "Ja",
+  "no": "Nein"
 }
 
 
