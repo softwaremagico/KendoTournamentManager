@@ -137,9 +137,9 @@ public class FightStatisticsProvider {
         fightStatisticsDTO.setFightsNumber((teams.size() * (teams.size() - 1)) / 2);
         fightStatisticsDTO.setFightsByTeam((teams.size() - 1));
         fightStatisticsDTO.setDuelsNumber(getDuels(fightStatisticsDTO.getFightsByTeam(), teamSize, teams));
-        if (duelProvider.getDurationAverage() != null) {
+        if (duelProvider.getDurationAverage() != null && fightStatisticsDTO.getDuelsNumber() != null) {
             fightStatisticsDTO.setTime(fightStatisticsDTO.getDuelsNumber() * (duelProvider.getDurationAverage() + TIME_BETWEEN_DUELS) +
-                    (long) TIME_BETWEEN_FIGHTS * fightStatisticsDTO.getFightsNumber());
+                    (fightStatisticsDTO.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * fightStatisticsDTO.getFightsNumber() : 0));
         }
         return fightStatisticsDTO;
     }
