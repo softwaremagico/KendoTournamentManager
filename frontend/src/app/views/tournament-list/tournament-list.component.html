@@ -8,8 +8,7 @@
                 *ngIf="(RbacActivity.CREATE_TOURNAMENT | rbac : this.rbacService.activities)">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement ||
-                (basicTableData.selectedElement!.locked && !(RbacActivity.EDIT_LOCKED_TOURNAMENT | rbac : this.rbacService.activities))"
+        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
                 (click)="editElement()"
                 [matTooltipShowDelay]="500" matTooltip="{{'tournamentEdit' | translate}}"
                 *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | rbac : this.rbacService.activities)">
