@@ -53,7 +53,8 @@ public class AuthenticatedUserController {
 
     public AuthenticatedUser createUser(String creator, CreateUserRequest createUserRequest) {
         return createUser(creator, createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastname(),
-                createUserRequest.getPassword(), (String[]) null);
+                createUserRequest.getPassword(), createUserRequest.getRoles() != null ?
+                        createUserRequest.getRoles().toArray(new String[0]) : null);
     }
 
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
@@ -97,7 +98,7 @@ public class AuthenticatedUserController {
         user.setName(createUserRequest.getName() != null ? createUserRequest.getName().replaceAll("[\n\r\t]", "_") : "");
         user.setLastname(createUserRequest.getLastname() != null ? createUserRequest.getLastname().replaceAll("[\n\r\t]", "_") : "");
         if (!Objects.equals(user.getUsername(), updater)) {
-            user.setRoles(createUserRequest.getAuthorities());
+            user.setRoles(createUserRequest.getRoles());
         }
         KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}' with roles '{}'.", user.getUsername(),
                 updater, user.getRoles());
