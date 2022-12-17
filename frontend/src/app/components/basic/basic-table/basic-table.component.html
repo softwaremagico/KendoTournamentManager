@@ -27,6 +27,7 @@
       <tr mat-row *matRowDef="let row; columns: basicTableData.visibleColumns;"
           (click)="basicTableData.selection.toggle(row); setSelectedItem(row)" (mouseover)="row.hovered=true"
           [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
+          [class.disabled]="disableRow(row)"
           (mouseout)="row.hovered=false"></tr>
     </table>
     <mat-paginator [pageSize]="getDefaultPageSize()" [pageSizeOptions]="[10, 20, 50]" (page)="onPaginateChange($event)"
