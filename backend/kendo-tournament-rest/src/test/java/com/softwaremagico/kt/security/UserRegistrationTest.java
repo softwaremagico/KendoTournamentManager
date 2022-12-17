@@ -158,7 +158,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
         request.setName(USER_FIRST_NAME_2);
         request.setLastname(USER_LAST_NAME_2);
         request.setPassword(USER_PASSWORD);
-        request.setAuthorities(new HashSet<>(Arrays.asList(USER_ROLES)));
+        request.setRoles(new HashSet<>(Arrays.asList(USER_ROLES)));
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/auth/register")

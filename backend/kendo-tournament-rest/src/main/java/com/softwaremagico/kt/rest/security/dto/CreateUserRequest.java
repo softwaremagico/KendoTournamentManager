@@ -31,7 +31,7 @@ public class CreateUserRequest {
     private String name;
     private String lastname;
     private String password;
-    private Set<String> authorities;
+    private Set<String> roles;
 
     public String getUsername() {
         if (username == null) {
@@ -77,11 +77,11 @@ public class CreateUserRequest {
         this.password = password;
     }
 
-    public Set<String> getAuthorities() {
-        return authorities;
+    public Set<String> getRoles() {
+        return roles;
     }
 
-    public void setAuthorities(Set<String> authorities) {
-        this.authorities = authorities;
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }
