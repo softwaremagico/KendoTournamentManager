@@ -99,11 +99,13 @@ public class AuthenticatedUserController {
         if (!Objects.equals(user.getUsername(), updater)) {
             user.setRoles(createUserRequest.getAuthorities());
         }
-        KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}'.", user.getUsername(), updater);
+        KendoTournamentLogger.debug(this.getClass(), "Updating user '{}' by '{}' with roles '{}'.", user.getUsername(),
+                updater, user.getRoles());
         try {
             return authenticatedUserProvider.save(user);
         } finally {
-            KendoTournamentLogger.info(this.getClass(), "User '{}' updated by '{}'.", user.getUsername(), updater);
+            KendoTournamentLogger.info(this.getClass(), "User '{}' updated by '{}' with roles '{}'.", user.getUsername(),
+                    updater, user.getRoles());
         }
     }
 
