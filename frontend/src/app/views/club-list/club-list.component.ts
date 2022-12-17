@@ -117,4 +117,8 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
     );
   }
 
+  disableRow(argument: any): boolean {
+    return false;
+  }
+
 }
