@@ -20,6 +20,9 @@ export class BasicTableComponent implements OnInit {
   @Input()
   basicTableData: BasicTableData<any>;
 
+  @Input()
+  disableRow: (argument: () => any) => boolean;
+
   pipe: DatePipe;
 
   constructor(public dialog: MatDialog, private userSession: UserSessionService, private translateService: TranslateService,
