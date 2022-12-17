@@ -172,5 +172,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       this.updateRowData(this.basicTableData.selectedElement);
     }
   }
+
+  disableRow(argument: any): boolean {
+    return (argument as Tournament).locked;
+  }
 }
 
