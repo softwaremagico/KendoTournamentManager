@@ -66,8 +66,8 @@ public class TeamServices {
     @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                                HttpServletRequest request) {
-        return teamController.getAllByTournament(tournamentId);
+                                Authentication authentication, HttpServletRequest request) {
+        return teamController.getAllByTournament(tournamentId, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -75,7 +75,7 @@ public class TeamServices {
     @GetMapping(value = "/tournaments/{tournamentId}/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long countByTournamentId(@Parameter(description = "Id of an existing tournament", required = true)
                                     @PathVariable("tournamentId") Integer tournamentId,
-                                    HttpServletRequest request) {
+                                    Authentication authentication, HttpServletRequest request) {
         return teamController.countByTournament(tournamentId);
     }
 
@@ -83,8 +83,8 @@ public class TeamServices {
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(@RequestBody TournamentDTO tournamentDto,
-                                HttpServletRequest request) {
-        return teamController.getAllByTournament(tournamentDto);
+                                Authentication authentication, HttpServletRequest request) {
+        return teamController.getAllByTournament(tournamentDto, authentication.getName());
     }
 
 
@@ -92,8 +92,8 @@ public class TeamServices {
     @Operation(summary = "Generates default teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> create(@RequestBody TournamentDTO tournamentDto,
-                                HttpServletRequest request) {
-        return teamController.create(tournamentDto);
+                                Authentication authentication, HttpServletRequest request) {
+        return teamController.create(tournamentDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")

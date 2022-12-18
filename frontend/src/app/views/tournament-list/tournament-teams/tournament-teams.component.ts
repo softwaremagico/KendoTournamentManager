@@ -34,6 +34,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   teams: Team[];
   members = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
+  teamSize: number[];
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
@@ -43,6 +44,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
+    console.log(this.tournament.teamSize);
   }
 
   getMembersContainer(team: Team): (Participant | undefined)[] {
@@ -79,6 +81,10 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
         this.userListData.filteredParticipants = this.userListData.participants;
         this.teams = teams;
+        this.teamSize = []
+        for (let i = 0; i < this.tournament.teamSize; i++) {
+          this.teamSize.push(i);
+        }
       }
     });
     //Get tournament groups
