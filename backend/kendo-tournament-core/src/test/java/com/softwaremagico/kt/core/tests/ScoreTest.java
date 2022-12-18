@@ -238,7 +238,7 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
 
         // finish fights.
         groupTest.getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(fight);
         });
 
@@ -279,7 +279,7 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
 
         // finish fights.
         groupTest.getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(fight);
         });
 
@@ -320,7 +320,7 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
 
         // finish fights.
         groupTest.getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(fight);
         });
 
@@ -362,7 +362,7 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
 
         // finish fights.
         groupTest.getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(fight);
         });
 
