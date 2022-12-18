@@ -52,6 +52,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   membersOrder: boolean = false;
   isWizardEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  selectedGroup: number = 0;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -232,7 +233,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
-    const group: Group = this.groups[0];
+    const group: Group = this.groups[this.selectedGroup];
     const fight: Fight = new Fight();
     fight.tournament = group.tournament;
     fight.shiaijo = 0;
@@ -243,7 +244,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   editElement(): void {
     if (this.selectedFight) {
-      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.groups[0], undefined);
+      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.groups[this.selectedGroup], undefined);
     }
   }
 
@@ -262,14 +263,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (result) {
           //Delete the undraw.
           if (this.selectedDuel && this.selectedDuel.type === DuelType.UNDRAW) {
-            this.groups[0].unties.splice(this.groups[0].unties.indexOf(this.selectedDuel), 1);
+            this.groups[this.selectedGroup].unties.splice(this.groups[this.selectedGroup].unties.indexOf(this.selectedDuel), 1);
             //Delete the fight.
           } else {
             if (this.selectedFight) {
-              this.groups[0].fights.splice(this.groups[0].fights.indexOf(this.selectedFight), 1);
+              this.groups[this.selectedGroup].fights.splice(this.groups[this.selectedGroup].fights.indexOf(this.selectedFight), 1);
             }
           }
-          this.groupService.update(this.groups[0]).subscribe(group => {
+          this.groupService.update(this.groups[this.selectedGroup]).subscribe(group => {
             this.messageService.infoMessage("fightDeleted");
             this.refreshFights();
             this.refreshUnties();
@@ -311,12 +312,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   createGroupFight(teams: Team[]) {
     if (this.tournamentId) {
       this.groupService.setTeams(teams).subscribe(_group => {
-        this.groups[0] = _group;
+        this.groups[this.selectedGroup] = _group;
         this.fights = [];
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0).subscribe(fights => {
             this.fights = fights;
-            this.groups[0].fights = fights;
+            this.groups[this.selectedGroup].fights = fights;
             this.messageService.infoMessage("infoFightCreated");
           });
         }
@@ -352,6 +353,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectFight(fight: Fight) {
     this.selectedFight = fight;
+    this.selectedGroup = this.groups.findIndex(group => group.fights.indexOf(fight) >= 0);
   }
 
   isFightOver(fight: Fight): boolean {
@@ -373,7 +375,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.groups.length > 0 && this.fights.length > 0) {
       this.dialog.open(TeamRankingComponent, {
         width: '85vw',
-        data: {tournament: this.tournament, groupId: this.groups[0].id, finished: fightsFinished}
+        data: {tournament: this.tournament, groupId: this.groups[this.selectedGroup].id, finished: fightsFinished}
       });
     }
   }
