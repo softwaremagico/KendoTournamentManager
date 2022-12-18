@@ -193,6 +193,10 @@ public class FightServices {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
+        fightDto = fightController.update(fightDto, authentication.getName());
+        if (!fightDto.getDuels().isEmpty()) {
+            return fightDto;
+        }
         return fightController.generateDuels(fightDto, authentication.getName());
     }
 
@@ -221,7 +225,7 @@ public class FightServices {
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(value = "/create/tournaments/{tournamentId}/next", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> createNext(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
-                                         Integer tournamentId,
+                                     Integer tournamentId,
                                      Authentication authentication, HttpServletRequest request) {
         return fightController.createNextFights(tournamentId, authentication.getName());
     }
