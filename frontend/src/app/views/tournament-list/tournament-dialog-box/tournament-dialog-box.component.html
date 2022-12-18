@@ -1,51 +1,57 @@
-<h1 mat-dialog-title>{{title}}</h1>
-<div mat-dialog-content>
-  <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-    <input placeholder="{{'competitionName' | translate}}" matInput [(ngModel)]="tournament.name"
-           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-  </mat-form-field>
-  <mat-form-field *ngIf="actionName != 'Delete'">
-    <mat-label>{{'tournamentType' | translate}}</mat-label>
-    <mat-select [(value)]="tournament.type" [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-      <mat-option *ngFor="let type of tournamentType" [value]="type">
-        {{type.toLowerCase() | translate}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'tournamentShiaijos' | translate}}" matInput [(ngModel)]="tournament.shiaijos"
-           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-  </mat-form-field>
-  <mat-form-field *ngIf="actionName != 'Delete'">
-    <input placeholder="{{'tournamentTeamSize' | translate}}" matInput [(ngModel)]="tournament.teamSize"
-           [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-  </mat-form-field>
-  <mat-form-field *ngIf="actionName != 'Delete'">
-    <mat-label>{{'scoreRules' | translate}}</mat-label>
-    <mat-select [(value)]="tournament.tournamentScore.scoreType"
-                [matTooltipShowDelay]="500" matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}"
-                [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-      <mat-option *ngFor="let type of scoreTypes" [value]="type"
-                  [matTooltipShowDelay]="500" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
-        {{type.toLowerCase() | translate}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field *ngIf="actionName != 'Delete'">
-    <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
-    <mat-select [(value)]="tournament.duelsDuration" [disabled]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
-      <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
-        {{number}} {{'seconds' | translate}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <ng-template #elseTemplate>
-    <span [innerHTML]="'tournamentDeleteQuestion' | translate : {name: tournament.name}"></span>
-  </ng-template>
-</div>
-<div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="doAction()" mat-flat-button
-          color="primary"
-          *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)">{{actionName.toLowerCase() | translate}}</button>
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="warn">{{'cancel' | translate}}</button>
+<link rel="stylesheet" href="tournament-dialog-box.component.scss"><h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content class="form-layout">
+  <form [formGroup]="registerForm" (ngSubmit)="doAction()">
+    <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
+      <input formControlName="tournamentName" placeholder="{{'competitionName' | translate}}" matInput required
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <mat-label>{{'tournamentType' | translate}}</mat-label>
+      <mat-select [(value)]="tournament.type">
+        <mat-option *ngFor="let type of tournamentType" [value]="type">
+          {{type.toLowerCase() | translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <input formControlName="shiaijos" placeholder="{{'tournamentShiaijos' | translate}}" matInput required
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <input formControlName="teamSize" placeholder="{{'tournamentTeamSize' | translate}}" matInput
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <mat-label>{{'scoreRules' | translate}}</mat-label>
+      <mat-select formControlName="scoreTypes" [(value)]="tournament.tournamentScore.scoreType"
+                  [matTooltipShowDelay]="500"
+                  matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
+        <mat-option *ngFor="let type of scoreTypes" [value]="type"
+                    [matTooltipShowDelay]="500" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
+          {{type.toLowerCase() | translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="actionName != 'Delete'">
+      <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
+      <mat-select formControlName="duelsDuration" [(value)]="tournament.duelsDuration">
+        <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
+          {{number}} {{'seconds' | translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <ng-template #elseTemplate>
+      <span [innerHTML]="'tournamentDeleteQuestion' | translate : {name: tournament.name}"></span>
+    </ng-template>
+
+    <div mat-dialog-actions class="button-container">
+      <button mat-raised-button type="submit" value="Submit"
+              [disabled]="registerForm.invalid" mat-flat-button
+              color="primary" *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)">
+        <mat-icon>done</mat-icon>
+        {{actionName.toLowerCase() | translate}}</button>
+      <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
+              color="warn">{{'cancel' | translate}}</button>
+    </div>
+  </form>
 </div>

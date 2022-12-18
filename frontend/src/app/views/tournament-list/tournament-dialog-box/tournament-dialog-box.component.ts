@@ -6,6 +6,8 @@ import {Action} from "../../../action";
 import {ScoreType} from "../../../models/score-type";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -21,6 +23,8 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   tournamentType: TournamentType[];
   scoreTypes: ScoreType[];
 
+  registerForm: FormGroup;
+
   constructor(
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
@@ -32,9 +36,44 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.actionName = Action[data.action];
     this.tournamentType = TournamentType.toArray();
     this.scoreTypes = ScoreType.toArray();
+
+    this.registerForm = new FormGroup({
+      tournamentName: new FormControl({
+        value: this.tournament.name,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
+      }, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
+      shiaijos: new FormControl({
+        value: this.tournament.shiaijos,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
+      }, [Validators.required, Validators.pattern("^[0-9]*$")]),
+      tournamentType: new FormControl({
+        value: this.tournament.type,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
+      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      teamSize: new FormControl({
+        value: this.tournament.teamSize,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
+      }, [Validators.required, Validators.pattern("^[0-9]*$")]),
+      duelsDuration: new FormControl({
+        value: this.tournament.duelsDuration,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
+      }, [Validators.required, Validators.maxLength(20)]),
+      scoreTypes: new FormControl({
+        value: this.tournament.tournamentScore?.scoreType,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
+      }, [Validators.required])
+    },);
   }
 
   doAction() {
+    this.tournament.name = this.registerForm.get('tournamentName')!.value;
+    this.tournament.shiaijos = this.registerForm.get('shiaijos')!.value;
+    this.tournament.type = this.registerForm.get('tournamentType')!.value;
+    this.tournament.teamSize = this.registerForm.get('teamSize')!.value;
+    this.tournament.duelsDuration = this.registerForm.get('duelsDuration')!.value;
+    if (this.tournament.tournamentScore) {
+      this.tournament.tournamentScore.scoreType = this.registerForm.get('scoreTypes')!.value;
+    }
     this.dialogRef.close({data: this.tournament, action: this.action});
   }
 
