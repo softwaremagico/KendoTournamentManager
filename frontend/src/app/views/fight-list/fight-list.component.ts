@@ -289,7 +289,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         action: Action.Add,
         entity: fight,
         group: group,
-        afterFight: Fight,
+        previousFight: afterFight,
         tournament: this.tournament,
         swappedColors: this.swappedColors,
         swappedTeams: this.swappedTeams
@@ -310,11 +310,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   createGroupFight(teams: Team[]) {
     if (this.tournamentId) {
-      this.groupService.setTeams(teams).subscribe(() => {
+      this.groupService.setTeams(teams).subscribe(_group => {
+        this.groups[0] = _group;
         this.fights = [];
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0).subscribe(fights => {
             this.fights = fights;
+            this.groups[0].fights = fights;
             this.messageService.infoMessage("infoFightCreated");
           });
         }

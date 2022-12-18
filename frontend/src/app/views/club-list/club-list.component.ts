@@ -113,6 +113,7 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
     this.clubService.delete(club).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
         this.messageService.infoMessage('infoClubDeleted');
+        this.basicTableData.selectedElement = undefined;
       }
     );
   }

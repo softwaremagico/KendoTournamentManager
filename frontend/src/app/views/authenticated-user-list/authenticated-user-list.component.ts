@@ -118,6 +118,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
     this.userService.delete(authenticatedUser).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_authenticatedUser => existing_authenticatedUser !== authenticatedUser);
         this.messageService.infoMessage('infoAuthenticatedUserDeleted');
+        this.basicTableData.selectedElement = undefined;
       }
     );
   }
