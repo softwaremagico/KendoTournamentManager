@@ -122,6 +122,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.resetVariables(this.minutes, this.seconds, false);
     this.alarmOn = false;
     this.elapsedSeconds = 0;
+    //Removing focus from the button for finishing timer, or space key will also finish the duel.
+    if (document.activeElement) {
+      (document.activeElement as HTMLElement).blur();
+    }
   };
 
   restoreTimer() {
