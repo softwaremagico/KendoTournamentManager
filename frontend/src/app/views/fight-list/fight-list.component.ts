@@ -357,7 +357,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         return false;
       }
       for (const duel of fight.duels) {
-        if (!duel.duration) {
+        if (!duel.finished) {
           return false;
         }
       }
@@ -416,10 +416,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return duel !== undefined && duel.competitor1 !== null && duel.competitor2 !== null;
   }
 
-  finishDuel(durationInSeconds: number) {
+  finishDuel(finished: boolean) {
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
-      this.selectedDuel.duration = durationInSeconds;
+      this.selectedDuel.finished = finished;
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
@@ -466,20 +466,20 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   isOver(duel: Duel): boolean {
-    return !!duel.duration;
+    return duel.finished;
   }
 
   areAllDuelsOver(): boolean {
     if (this.fights) {
       for (const fight of this.fights) {
         for (const duel of fight.duels) {
-          if (!duel.duration) {
+          if (!duel.finished) {
             return false;
           }
         }
       }
       for (const duel of this.unties) {
-        if (!duel.duration) {
+        if (!duel.finished) {
           return false;
         }
       }
@@ -491,7 +491,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.fights) {
       for (const fight of this.fights) {
         for (const duel of fight.duels) {
-          if (!duel.duration) {
+          if (!duel.finished) {
             this.selectedFight = fight;
             this.selectDuel(duel);
             return true;
@@ -499,7 +499,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       }
       for (const duel of this.unties) {
-        if (!duel.duration) {
+        if (!duel.finished) {
           this.selectedFight = undefined;
           this.selectDuel(duel);
           return true;

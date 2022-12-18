@@ -239,7 +239,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             // First duel won
             currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
-            currentFight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            currentFight.getDuels().forEach(duel -> duel.setFinished(true));
 
             fightProvider.save(currentFight);
         }
@@ -276,7 +276,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
-            currentFight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            currentFight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(currentFight);
         }
 
@@ -332,7 +332,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
                     .equals(teamProvider.get(tournament, "Team06").get())) {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
-            currentFight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            currentFight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(currentFight);
         }
 

@@ -192,7 +192,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     public void testSimpleWinner() {
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         tournamentFights.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
-        tournamentFights.forEach(fight -> fight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION)));
+        tournamentFights.forEach(fight -> fight.getDuels().forEach(duel -> duel.setFinished(true)));
         fightProvider.save(tournamentFights.get(0));
 
         List<ScoreOfTeam> teamsScore = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
@@ -216,7 +216,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
         //Finish the fight
         tournamentFights.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
-        tournamentFights.get(1).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        tournamentFights.get(1).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(tournamentFights.get(1));
     }
 
@@ -235,7 +235,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
         //Finish the fight
         tournamentFights.get(2).getDuels().get(0).addCompetitor1Score(Score.DO);
-        tournamentFights.get(2).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        tournamentFights.get(2).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(tournamentFights.get(2));
 
     }
@@ -255,7 +255,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
         //Finish the fight. Team1 loose now
         tournamentFights.get(3).getDuels().get(0).addCompetitor2Score(Score.KOTE);
-        tournamentFights.get(3).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        tournamentFights.get(3).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(tournamentFights.get(3));
     }
 
@@ -274,7 +274,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentFights.get(4).getTeam1().getName(), "Team03");
 
         //No winner
-        tournamentFights.get(4).getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+        tournamentFights.get(4).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(tournamentFights.get(4));
     }
 

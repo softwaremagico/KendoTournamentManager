@@ -67,7 +67,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   }
 
   isOver(duel: Duel): boolean {
-    return !!duel.duration;
+    return duel.finished;
   }
 
 }
