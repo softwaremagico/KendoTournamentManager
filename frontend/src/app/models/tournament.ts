@@ -16,6 +16,10 @@ export class Tournament extends Element {
   public tournamentScore: TournamentScore;
   public locked: boolean;
 
+  public get scoreRules(): string {
+    return this.tournamentScore ? this.tournamentScore.scoreType.toLowerCase() + 'Hint' + 'Hint' : "";
+  }
+
   constructor() {
     super();
     this.tournamentScore = new TournamentScore();
@@ -28,7 +32,9 @@ export class Tournament extends Element {
     target.teamSize = source.teamSize;
     target.type = source.type;
     target.duelsDuration = source.duelsDuration;
-    target.tournamentScore = source.tournamentScore;
+    if (source.tournamentScore !== undefined) {
+      target.tournamentScore = TournamentScore.clone(source.tournamentScore);
+    }
     target.locked = source.locked;
   }
 
