@@ -283,6 +283,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '90vw',
       height: '95vh',
+      maxWidth: '1000px',
       data: {
         title: 'Add a new Fight',
         action: Action.Add,
