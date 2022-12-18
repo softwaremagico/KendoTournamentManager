@@ -70,23 +70,23 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
         return new TeamConverterRequest(entity);
     }
 
-    public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO) {
+    public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO, String createdBy) {
         final List<TeamDTO> teams = converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
                 .map(this::createConverterRequest).collect(Collectors.toList()));
         if (teams.isEmpty()) {
-            return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO)).stream()
+            return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy).stream()
                     .map(this::createConverterRequest).collect(Collectors.toList()));
         }
         return teams;
     }
 
-    public List<TeamDTO> getAllByTournament(Integer tournamentId) {
+    public List<TeamDTO> getAllByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
         final List<TeamDTO> teams = converter.convertAll(provider.getAll(tournament)
                 .stream().map(this::createConverterRequest).collect(Collectors.toList()));
         if (teams.isEmpty()) {
-            return converter.convertAll(provider.createDefaultTeams(tournament).stream()
+            return converter.convertAll(provider.createDefaultTeams(tournament, createdBy).stream()
                     .map(this::createConverterRequest).collect(Collectors.toList()));
         }
         return teams;
@@ -105,8 +105,8 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
         return super.create(teamDTO, username);
     }
 
-    public List<TeamDTO> create(TournamentDTO tournamentDTO) {
-        return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO)).stream()
+    public List<TeamDTO> create(TournamentDTO tournamentDTO, String createdBy) {
+        return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy).stream()
                 .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
