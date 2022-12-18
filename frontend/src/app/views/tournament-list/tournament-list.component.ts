@@ -122,6 +122,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.tournamentService.delete(tournament).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
         this.messageService.infoMessage('infoTournamentDeleted');
+        this.basicTableData.selectedElement = undefined;
       }
     );
   }

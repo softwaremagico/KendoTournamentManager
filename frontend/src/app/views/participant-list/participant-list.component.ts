@@ -121,6 +121,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     this.participantService.delete(participant).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
         this.messageService.infoMessage('infoParticipantDeleted');
+        this.basicTableData.selectedElement = undefined;
       }
     );
   }
