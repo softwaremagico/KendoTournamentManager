@@ -100,6 +100,10 @@ public class Duel extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer duration;
 
+    @Column(name = "finished")
+    @Convert(converter = BooleanCryptoConverter.class)
+    private boolean finished = false;
+
     @Column(name = "total_duration")
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer totalDuration;
@@ -190,7 +194,7 @@ public class Duel extends Element {
      * @return true if the round is over.
      */
     public boolean isOver() {
-        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || (getDuration() != null && getDuration() > 0);
+        return getCompetitor1ScoreValue() >= POINTS_TO_WIN || getCompetitor2ScoreValue() >= POINTS_TO_WIN || finished;
     }
 
     /**
@@ -273,5 +277,13 @@ public class Duel extends Element {
 
     public void setCompetitor2FaultTime(Integer competitor2FaultTime) {
         this.competitor2FaultTime = competitor2FaultTime;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
