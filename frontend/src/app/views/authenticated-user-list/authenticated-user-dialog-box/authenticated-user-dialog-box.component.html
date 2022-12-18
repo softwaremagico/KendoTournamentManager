@@ -27,9 +27,9 @@
              [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
       <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | translate}}</mat-error>
       <mat-icon matSuffix
-                (click)="hidePassword = !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                (click)="setHidePassword(!hidePassword)">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
     </mat-form-field>
-    <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update' && hidePassword">
+    <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
       <input formControlName="repeatPassword" name="repeatPassword" placeholder="{{'repeatPassword' | translate}}"
              [type]="'password'" required pattern="{{registerForm.value.password}}" matInput
              [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
@@ -43,6 +43,7 @@
       <button mat-raised-button type="submit" value="Submit"
               [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" mat-flat-button
               color="primary" *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)">
+        <mat-icon>done</mat-icon>
         {{actionName.toLowerCase() | translate}}</button>
       <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
               color="warn">{{'cancel' | translate}}</button>

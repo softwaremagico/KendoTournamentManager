@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Participant} from "../../../models/participant";
 import {Club} from "../../../models/club";
-import {FormControl} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
 import {Action} from "../../../action";
@@ -26,6 +26,8 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   actionName: string;
   clubs: Club[];
 
+  registerForm: FormGroup;
+
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
@@ -36,6 +38,13 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.action = data.action;
     this.actionName = Action[data.action];
     this.clubs = data.clubs;
+
+    this.registerForm = new FormGroup({
+      name: new FormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
+      lastname: new FormControl(this.participant.lastname, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      idCard: new FormControl(this.participant.idCard, [Validators.required, Validators.maxLength(20)]),
+      club: new FormControl(this.participant.club?.name, [Validators.required])
+    },);
   }
 
   ngOnInit() {
@@ -51,11 +60,15 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   private _filter(name: string): Club[] {
-      const filterValue = name.toLowerCase();
-      return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
+    const filterValue = name.toLowerCase();
+    return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
   }
 
   doAction() {
+    this.participant.name = this.registerForm.get('name')!.value;
+    this.participant.lastname = this.registerForm.get('lastname')!.value;
+    this.participant.idCard = this.registerForm.get('idCard')!.value;
+    this.participant.club = this.registerForm.get('club')!.value;
     this.dialogRef.close({data: this.participant, action: this.action});
   }
 

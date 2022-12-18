@@ -127,7 +127,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   disableRow(argument: any): boolean {
-    return (argument as Tournament).locked;
+    return false;
   }
 
 }
