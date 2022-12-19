@@ -37,8 +37,8 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
               private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
               private messageService: MessageService, rbacService: RbacService) {
     super(rbacService);
-    this.basicTableData.columns = ['id', 'name', 'type', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
-    this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+    this.basicTableData.columns = ['id', 'name', 'type', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+    this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
     this.basicTableData.dataSource = new MatTableDataSource<Tournament>();
   }
@@ -89,6 +89,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log("--" , result.action)
       if (result == undefined) {
         //Do nothing
       } else if (result.action == Action.Add) {
@@ -122,6 +123,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.tournamentService.delete(tournament).subscribe(() => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
         this.messageService.infoMessage('infoTournamentDeleted');
+        this.basicTableData.selectedElement = undefined;
       }
     );
   }

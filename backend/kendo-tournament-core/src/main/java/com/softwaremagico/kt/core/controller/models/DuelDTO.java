@@ -47,6 +47,7 @@ public class DuelDTO extends ElementDTO {
     private Integer competitor1FaultTime;
     private Integer competitor2FaultTime;
     private DuelType type;
+    private boolean finished;
 
     private Integer duration;
 
@@ -195,7 +196,7 @@ public class DuelDTO extends ElementDTO {
 
     public boolean isOver() {
         return getCompetitor1ScoreValue() >= Duel.POINTS_TO_WIN || getCompetitor2ScoreValue() >= Duel.POINTS_TO_WIN ||
-                (getDuration() != null && getDuration() > 0);
+                finished;
     }
 
     public TournamentDTO getTournament() {
@@ -257,5 +258,13 @@ public class DuelDTO extends ElementDTO {
 
     public void setCompetitor2FaultTime(Integer competitor2FaultTime) {
         this.competitor2FaultTime = competitor2FaultTime;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

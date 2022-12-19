@@ -20,6 +20,7 @@ export class Participant extends Element {
     if (source.club !== undefined) {
       target.club = Club.clone(source.club);
     }
+    target.locked = source.locked;
   }
 
   public static clone(data: Participant): Participant {
