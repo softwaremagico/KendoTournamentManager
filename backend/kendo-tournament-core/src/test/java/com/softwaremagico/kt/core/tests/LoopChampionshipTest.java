@@ -242,7 +242,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
                 currentFight.getDuels().get(0).addCompetitor1Score(Score.MEN);
             }
-            currentFight.getDuels().forEach(duel -> duel.setDuration(Duel.DEFAULT_DURATION));
+            currentFight.getDuels().forEach(duel -> duel.setFinished(true));
             fightProvider.save(currentFight);
             if (i % TEAMS == TEAMS - 1) {
                 counter++;

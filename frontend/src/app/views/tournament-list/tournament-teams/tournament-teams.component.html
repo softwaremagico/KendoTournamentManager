@@ -24,7 +24,7 @@
         <div class="input-padding" *ngIf="team.editing"></div>
         <div class="team" [class.small]="this.tournament.teamSize===1"
              [attr.data-tournament-size]="tournament.teamSize" [attr.data-team]="team">
-          <div class="team-member-room" *ngFor="let teamRoom of [].constructor(tournament.teamSize); let i = index"
+          <div class="team-member-room" *ngFor="let i of teamSize"
                cdkDropList
                [cdkDropListData]="getMembersContainer(team)"
                (cdkDropListDropped)="dropMember($event, team, i)"
