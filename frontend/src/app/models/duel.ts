@@ -17,6 +17,7 @@ export class Duel extends Element {
   public type: DuelType;
   public duration?: number;
   public totalDuration?: number;
+  public finished: boolean;
 
   public static override copy(source: Duel, target: Duel): void {
     Element.copy(source, target);
@@ -44,6 +45,7 @@ export class Duel extends Element {
 
     target.competitor1FaultTime = source.competitor1FaultTime;
     target.competitor2FaultTime = source.competitor2FaultTime;
+    target.finished = source.finished;
   }
 
   public static clone(data: Duel): Duel {

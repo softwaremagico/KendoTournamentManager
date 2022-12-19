@@ -27,7 +27,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.seconds = value;
   }
 
-  @Output() onTimerFinished: EventEmitter<any> = new EventEmitter();
+  @Output() onTimerFinished: EventEmitter<boolean[]> = new EventEmitter();
   @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
   @Output() timerClosed: EventEmitter<any> = new EventEmitter();
@@ -118,10 +118,14 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     if (!this.elapsedSeconds) {
       this.elapsedSeconds = 1;
     }
-    this.onTimerFinished.emit([this.elapsedSeconds]);
+    this.onTimerFinished.emit([true]);
     this.resetVariables(this.minutes, this.seconds, false);
     this.alarmOn = false;
     this.elapsedSeconds = 0;
+    //Removing focus from the button for finishing timer, or space key will also finish the duel.
+    if (document.activeElement) {
+      (document.activeElement as HTMLElement).blur();
+    }
   };
 
   restoreTimer() {
@@ -144,7 +148,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   timerComplete() {
-    this.onTimerFinished.emit([this.elapsedSeconds]);
+    this.onTimerFinished.emit([true]);
     this.started = false;
   }
 
@@ -203,6 +207,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
     this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
     this.onTimerChanged.emit([this.elapsedSeconds]);
+    this.alarmOn = false;
   }
 
   setMinutesEditable(editable: boolean): void {

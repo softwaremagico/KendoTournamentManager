@@ -62,7 +62,7 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
         return team;
     }
 
-    public List<Team> createDefaultTeams(Tournament tournament) {
+    public List<Team> createDefaultTeams(Tournament tournament, String createdBy) {
         final List<Team> newTeams = new ArrayList<>();
         if ((tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED ||
                 tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
@@ -71,6 +71,7 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
                 final Team team = new Team();
                 team.setName(String.format("Team %d", i));
                 team.setTournament(tournament);
+                team.setCreatedBy(createdBy);
                 newTeams.add(team);
             }
         }

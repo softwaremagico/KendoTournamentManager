@@ -52,6 +52,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   membersOrder: boolean = false;
   isWizardEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  selectedGroup: number = 0;
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -232,7 +233,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
-    const group: Group = this.groups[0];
+    const group: Group = this.groups[this.selectedGroup];
     const fight: Fight = new Fight();
     fight.tournament = group.tournament;
     fight.shiaijo = 0;
@@ -243,7 +244,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   editElement(): void {
     if (this.selectedFight) {
-      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.groups[0], undefined);
+      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.groups[this.selectedGroup], undefined);
     }
   }
 
@@ -262,14 +263,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (result) {
           //Delete the undraw.
           if (this.selectedDuel && this.selectedDuel.type === DuelType.UNDRAW) {
-            this.groups[0].unties.splice(this.groups[0].unties.indexOf(this.selectedDuel), 1);
+            this.groups[this.selectedGroup].unties.splice(this.groups[this.selectedGroup].unties.indexOf(this.selectedDuel), 1);
             //Delete the fight.
           } else {
             if (this.selectedFight) {
-              this.groups[0].fights.splice(this.groups[0].fights.indexOf(this.selectedFight), 1);
+              this.groups[this.selectedGroup].fights.splice(this.groups[this.selectedGroup].fights.indexOf(this.selectedFight), 1);
             }
           }
-          this.groupService.update(this.groups[0]).subscribe(group => {
+          this.groupService.update(this.groups[this.selectedGroup]).subscribe(group => {
             this.messageService.infoMessage("fightDeleted");
             this.refreshFights();
             this.refreshUnties();
@@ -283,12 +284,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '90vw',
       height: '95vh',
+      maxWidth: '1000px',
       data: {
         title: 'Add a new Fight',
         action: Action.Add,
         entity: fight,
         group: group,
-        afterFight: Fight,
+        previousFight: afterFight,
         tournament: this.tournament,
         swappedColors: this.swappedColors,
         swappedTeams: this.swappedTeams
@@ -309,11 +311,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   createGroupFight(teams: Team[]) {
     if (this.tournamentId) {
-      this.groupService.setTeams(teams).subscribe(() => {
+      this.groupService.setTeams(teams).subscribe(_group => {
+        this.groups[this.selectedGroup] = _group;
         this.fights = [];
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0).subscribe(fights => {
             this.fights = fights;
+            this.groups[this.selectedGroup].fights = fights;
             this.messageService.infoMessage("infoFightCreated");
           });
         }
@@ -349,6 +353,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectFight(fight: Fight) {
     this.selectedFight = fight;
+    this.selectedGroup = this.groups.findIndex(group => group.fights.indexOf(fight) >= 0);
   }
 
   isFightOver(fight: Fight): boolean {
@@ -357,7 +362,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         return false;
       }
       for (const duel of fight.duels) {
-        if (!duel.duration) {
+        if (!duel.finished) {
           return false;
         }
       }
@@ -370,7 +375,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.groups.length > 0 && this.fights.length > 0) {
       this.dialog.open(TeamRankingComponent, {
         width: '85vw',
-        data: {tournament: this.tournament, groupId: this.groups[0].id, finished: fightsFinished}
+        data: {tournament: this.tournament, groupId: this.groups[this.selectedGroup].id, finished: fightsFinished}
       });
     }
   }
@@ -416,10 +421,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return duel !== undefined && duel.competitor1 !== null && duel.competitor2 !== null;
   }
 
-  finishDuel(durationInSeconds: number) {
+  finishDuel(finished: boolean) {
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
-      this.selectedDuel.duration = durationInSeconds;
+      this.selectedDuel.finished = finished;
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
@@ -466,20 +471,20 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   isOver(duel: Duel): boolean {
-    return !!duel.duration;
+    return duel.finished;
   }
 
   areAllDuelsOver(): boolean {
     if (this.fights) {
       for (const fight of this.fights) {
         for (const duel of fight.duels) {
-          if (!duel.duration) {
+          if (!duel.finished) {
             return false;
           }
         }
       }
       for (const duel of this.unties) {
-        if (!duel.duration) {
+        if (!duel.finished) {
           return false;
         }
       }
@@ -491,7 +496,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.fights) {
       for (const fight of this.fights) {
         for (const duel of fight.duels) {
-          if (!duel.duration) {
+          if (!duel.finished) {
             this.selectedFight = fight;
             this.selectDuel(duel);
             return true;
@@ -499,7 +504,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       }
       for (const duel of this.unties) {
-        if (!duel.duration) {
+        if (!duel.finished) {
           this.selectedFight = undefined;
           this.selectDuel(duel);
           return true;
