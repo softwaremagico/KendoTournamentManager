@@ -82,7 +82,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     }
 
     public boolean isValid() {
-        return getName().length() > 0 && getIdCard().length() > 0;
+        return getName().length() > 0 && getIdCard() != null && getIdCard().length() > 0;
     }
 
     public void setName(String value) {

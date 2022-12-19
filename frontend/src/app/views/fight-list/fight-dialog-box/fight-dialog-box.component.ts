@@ -96,7 +96,8 @@ export class FightDialogBoxComponent implements OnInit {
 
     this.fightService.generateDuels(this.fight).subscribe(_fight => {
       if (this.previousFight !== undefined) {
-        this.group.fights.splice(this.group.fights.indexOf(this.previousFight) + 1, 0, _fight);
+        this.group.fights.splice(this.group.fights.findIndex(fight => this.previousFight?.id === fight.id
+        ) + 1, 0, _fight);
       } else if (!this.group.fights.includes(_fight)) {
         this.group.fights.push(_fight);
       }
