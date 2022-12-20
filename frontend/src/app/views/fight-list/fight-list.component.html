@@ -94,7 +94,7 @@
     <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [disabled]="true"></app-filter>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" [editable]="tournament && !tournament.locked" (onTimerFinished)="finishDuel($event[0])"
-               (onTimerChanged)="updateDuelElapsedTime($event[0])"
+               (onTimerChanged)="updateDuelElapsedTime($event[0])" [resetTimerPosition]="resetTimerPosition"
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
       <div class="fight-list">
