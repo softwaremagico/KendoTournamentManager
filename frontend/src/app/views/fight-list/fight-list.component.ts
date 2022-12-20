@@ -25,7 +25,7 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
-import {takeUntil} from "rxjs";
+import {Subject, takeUntil} from "rxjs";
 import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -53,6 +53,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   isWizardEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
   selectedGroup: number = 0;
+
+  resetTimerPosition: Subject<boolean> = new Subject();
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -402,6 +404,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showTimer(show: boolean) {
     this.timer = show;
+    this.resetTimerPosition.next(show);
   }
 
   setIpponScores(duel: Duel) {
