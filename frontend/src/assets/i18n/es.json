@@ -586,7 +586,8 @@
   "tournamentLock": "Evita realizar cambios en el torneo",
   "tournamentUnlock": "Permite realizar cambios en el torneo",
   "yes": "Si",
-  "no": "No"
+  "no": "No",
+  "scoreNotAdded": "¡El punto no ha sido añadido!"
 }
 
 

@@ -3,7 +3,7 @@ import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {MessageService} from "../../../../../services/message.service";
 import {Score} from "../../../../../models/score";
-import {TranslateService} from "@ngx-translate/core";
+import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
 
 @Component({
   selector: 'fault',
@@ -21,14 +21,14 @@ export class FaultComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
-  constructor(private duelService: DuelService, private messageService: MessageService) {
+  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
     // This is intentional
   }
 
-  private setFault(fault: boolean) {
+  private setFault(fault: boolean): boolean {
     if ((this.left && !this.swapTeams) || (!this.left && this.swapTeams)) {
       if (!fault || !this.duel.competitor1Fault) {
         this.duel.competitor1Fault = fault;
@@ -38,6 +38,10 @@ export class FaultComponent implements OnInit {
         if (this.duel.competitor2Score.length < 2) {
           this.duel.competitor2Score.push(Score.HANSOKU);
           this.duel.competitor2ScoreTime.push(this.duel.duration!);
+          this.scoreUpdatedService.isScoreUpdated.next(this.duel);
+        } else {
+          this.messageService.warningMessage("scoreNotAdded");
+          return false;
         }
       }
     } else {
@@ -49,15 +53,22 @@ export class FaultComponent implements OnInit {
         if (this.duel.competitor1Score.length < 2) {
           this.duel.competitor1Score.push(Score.HANSOKU);
           this.duel.competitor1ScoreTime.push(this.duel.duration!);
+          this.scoreUpdatedService.isScoreUpdated.next(this.duel);
+        } else {
+          this.messageService.warningMessage("scoreNotAdded");
+          return false;
         }
       }
     }
+    return true;
   }
 
   updateFault(fault: boolean) {
-    this.setFault(fault);
+    const faultAdded: boolean = this.setFault(fault);
     this.duelService.update(this.duel).subscribe(duel => {
-      this.messageService.infoMessage('infoFaultUpdated');
+      if (faultAdded) {
+        this.messageService.infoMessage('infoFaultUpdated');
+      }
       return duel;
     });
   }
