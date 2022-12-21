@@ -1,17 +1,26 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Subject} from "rxjs";
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.scss']
 })
-export class FilterComponent {
+export class FilterComponent implements OnInit {
 
   filterString: string;
 
   @Output() filterChanged: EventEmitter<string> = new EventEmitter();
 
   @Input() disabled: boolean;
+
+  @Input() resetValue: Subject<boolean>;
+
+  ngOnInit() {
+    this.resetValue.subscribe(value => {
+      this.reset();
+    });
+  }
 
   filter(event: Event) {
     const filter: string = (event.target as HTMLInputElement).value.toLowerCase();
