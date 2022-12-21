@@ -567,7 +567,13 @@
   "tournamentUnlock": "Ermöglicht es Ihnen, Änderungen am Turnier vorzunehmen",
   "yes": "Ja",
   "no": "Nein",
-  "scoreNotAdded": "Punktzahl wurde nicht hinzugefügt"
+  "scoreNotAdded": "Punktzahl wurde nicht hinzugefügt",
+  "bothEliminated": "Beide eliminiert",
+  "bothEliminatedHint": "Beide Teams scheiden aus",
+  "oldestEliminated": "Die erste Mannschaft scheidet aus",
+  "oldestEliminatedHint": "Das Team, das am längsten gekämpft hat, scheidet aus.",
+  "newestEliminated": "Das letzte Team scheidet aus",
+  "newestEliminatedHint": "Das Team, das am wenigsten gekämpft hat, scheidet aus."
 }
 
 

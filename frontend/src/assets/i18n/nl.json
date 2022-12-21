@@ -567,7 +567,13 @@
   "tournamentUnlock": "Hiermee kunt u wijzigingen aanbrengen in het toernooi",
   "yes": "Ja",
   "no": "Niet",
-  "scoreNotAdded": "Het punt is niet toegevoegd!"
+  "scoreNotAdded": "Het punt is niet toegevoegd!",
+  "bothEliminated": "Beide geëlimineerd",
+  "bothEliminatedHint": "Beide teams zijn uitgeschakeld",
+  "oldestEliminated": "Het eerste team is uitgeschakeld",
+  "oldestEliminatedHint": "Het team dat het langst heeft gevochten, wordt geëlimineerd.",
+  "newestEliminated": "Het laatste team is uitgeschakeld",
+  "newestEliminatedHint": "Het team dat de minste tijd heeft gevochten, wordt geëlimineerd."
 }
 
 

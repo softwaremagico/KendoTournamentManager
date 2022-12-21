@@ -595,6 +595,12 @@
   "tournamentUnlock": "Allow changes on the tournament",
   "yes": "Yes",
   "no": "No",
-  "scoreNotAdded": "Score value not added!"
+  "scoreNotAdded": "Score value not added!",
+  "bothEliminated": "Both eliminated",
+  "bothEliminatedHint": "Both teams are eliminated.",
+  "oldestEliminated": "First team is eliminated",
+  "oldestEliminatedHint": "The team that is fighting for a longer time is eliminated.",
+  "newestEliminated": "Latest team is eliminated",
+  "newestEliminatedHint": "The team that is fighting for a shorten time is eliminated."
 }
 
