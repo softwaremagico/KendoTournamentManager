@@ -574,7 +574,13 @@
   "tournamentUnlock": "Consente di apportare modifiche al torneo",
   "yes": "Sì",
   "no": "No",
-  "scoreNotAdded": "Il punto non è stato aggiunto!"
+  "scoreNotAdded": "Il punto non è stato aggiunto!",
+  "bothEliminated": "Entrambi eliminati",
+  "bothEliminatedHint": "Entrambe le squadre vengono eliminate",
+  "oldestEliminated": "La prima squadra viene eliminata",
+  "oldestEliminatedHint": "La squadra che ha combattuto più a lungo viene eliminata.",
+  "newestEliminated": "L'ultima squadra viene eliminata",
+  "newestEliminatedHint": "La squadra che ha combattuto per meno tempo viene eliminata."
 }
 
 
