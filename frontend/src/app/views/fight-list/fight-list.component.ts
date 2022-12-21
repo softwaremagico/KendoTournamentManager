@@ -40,7 +40,9 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
   fights: Fight[];
+  filteredFights: Fight[];
   unties: Duel[];
+  filteredUnties: Duel[];
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
   tournament: Tournament;
@@ -53,6 +55,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   isWizardEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
   selectedGroup: number = 0;
+
+  resetFilterValue: Subject<boolean> = new Subject();
 
   resetTimerPosition: Subject<boolean> = new Subject();
 
@@ -94,6 +98,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       let onlyNewFights: boolean = false;
       let updatedFights: boolean = false;
       if (_fight && this.fights) {
+        this.resetFilter();
         for (const fight of this.fights) {
           if (onlyNewFights && fight.team1.id === _fight.team1.id) {
             for (let i = 0; i < this.tournament.teamSize; i++) {
@@ -127,12 +132,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   private replaceGroup(group: Group) {
     if (group && this.groups) {
-      const selectedFightIndex: number | undefined = this.fights.indexOf(this.selectedFight!);
+      const selectedFightIndex: number | undefined = this.filteredFights.indexOf(this.selectedFight!);
       const selectedDuelIndex: number | undefined = this.selectedFight?.duels.indexOf(this.selectedDuel!);
       const groupIndex = this.groups.map(group => group.id).indexOf(group.id);
       this.groups.splice(groupIndex, 1, group);
       this.fights = this.groups.flatMap((group) => group.fights);
-      this.selectFight(this.fights[selectedFightIndex]);
+      this.resetFilter();
+      this.selectFight(this.filteredFights[selectedFightIndex]);
       this.selectDuel(this.selectedFight?.duels[selectedDuelIndex!]!);
     }
   }
@@ -152,6 +158,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               return a.level - b.level;
             });
             this.fights = groups.flatMap((group) => group.fights);
+            this.resetFilter();
             //Use a timeout or refresh before the components are drawn.
             setTimeout(() => {
               if (!this.selectFirstUnfinishedDuel() && this.unties.length === 0) {
@@ -168,6 +175,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId) {
       this.duelService.getUntiesFromTournament(this.tournamentId).subscribe(duels => {
         this.unties = duels;
+        this.filteredUnties = this.unties;
         //Use a timeout or refresh before the components are drawn.
         setTimeout(() => {
           if (!this.selectFirstUnfinishedDuel() && this.unties.length > 0) {
@@ -316,9 +324,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.groupService.setTeams(teams).subscribe(_group => {
         this.groups[this.selectedGroup] = _group;
         this.fights = [];
+        this.filteredFights = [];
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0).subscribe(fights => {
             this.fights = fights;
+            this.resetFilter();
             this.groups[this.selectedGroup].fights = fights;
             this.messageService.infoMessage("infoFightCreated");
           });
@@ -329,7 +339,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   addRowData(fights: Fight[]) {
     this.fightService.addCollection(fights).subscribe(_fights => {
-      this.fights.push(..._fights)
+      this.fights.push(..._fights);
+      this.filteredFights.push(..._fights);
       this.messageService.infoMessage("fightStored");
     });
   }
@@ -344,6 +355,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
         this.fights = this.fights.filter(existing_fight => existing_fight !== fight);
+        this.filteredFights = this.filteredFights.filter(existing_fight => existing_fight !== fight);
         this.messageService.infoMessage("fightDeleted");
       }
     );
@@ -497,6 +509,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   selectFirstUnfinishedDuel(): boolean {
+    this.resetFilter();
     if (this.fights) {
       for (const fight of this.fights) {
         for (const duel of fight.duels) {
@@ -559,6 +572,31 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   filter(filter: string) {
-    //Ignored now.
+    filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+    this.filteredFights = this.fights!.filter(fight =>
+      fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+      fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+      fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+        user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+        (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) ||
+      fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+        user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+        (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "")))
+    );
+
+    this.filteredUnties = this.unties!.filter(duel =>
+      duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+      duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+      (duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+
+      duel.competitor2!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+      duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
+      (duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "")
+    );
+  }
+
+  resetFilter(){
+    this.filter('');
+    this.resetFilterValue.next(true);
   }
 }

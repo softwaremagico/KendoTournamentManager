@@ -566,7 +566,8 @@
   "tournamentLock": "Vermeiden Sie Änderungen im Turnier",
   "tournamentUnlock": "Ermöglicht es Ihnen, Änderungen am Turnier vorzunehmen",
   "yes": "Ja",
-  "no": "Nein"
+  "no": "Nein",
+  "scoreNotAdded": "Punktzahl wurde nicht hinzugefügt"
 }
 
 
