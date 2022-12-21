@@ -1,6 +1,6 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="fight-view">
-  <div class="kendo-table">
+  <div class="fights-table">
     <div class="upper-menu">
       <div class="cell">
         <button mat-button color="secondary" (click)="goBackToTournament()" [matTooltipShowDelay]="500"
@@ -91,20 +91,20 @@
         </button>
       </div>
     </div>
-    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [disabled]="true"></app-filter>
+    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" [editable]="tournament && !tournament.locked" (onTimerFinished)="finishDuel($event[0])"
                (onTimerChanged)="updateDuelElapsedTime($event[0])" [resetTimerPosition]="resetTimerPosition"
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
       <div class="fight-list">
-        <fight *ngFor="let fight of fights" [fight]="fight" [selected]="fight === selectedFight"
+        <fight *ngFor="let fight of filteredFights" [fight]="fight" [selected]="fight === selectedFight"
                [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
                (click)="selectFight(fight)"
                (onSelectedDuel)="selectDuel($event[0])"></fight>
       </div>
       <div class="unties-list">
-        <untie-fight *ngFor="let duel of unties" [duel]="duel" (click)="selectDuel(duel)"
+        <untie-fight *ngFor="let duel of filteredUnties" [duel]="duel" (click)="selectDuel(duel)"
                      [selected]="duel === selectedDuel" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
                      [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></untie-fight>
       </div>

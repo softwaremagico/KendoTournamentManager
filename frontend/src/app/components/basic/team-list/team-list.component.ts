@@ -10,7 +10,6 @@ export class TeamListComponent implements OnInit {
 
   @Input()
   teamListData: TeamListData;
-  filterString: string;
 
   ngOnInit(): void {
     // This is intentional
@@ -21,7 +20,6 @@ export class TeamListComponent implements OnInit {
   }
 
   reset() {
-    this.filterString = '';
     this.teamListData.filter('');
   }
 
