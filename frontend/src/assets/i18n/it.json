@@ -573,7 +573,8 @@
   "tournamentLock": "Evita i cambiamenti nel torneo",
   "tournamentUnlock": "Consente di apportare modifiche al torneo",
   "yes": "Sì",
-  "no": "No"
+  "no": "No",
+  "scoreNotAdded": "Il punto non è stato aggiunto!"
 }
 
 

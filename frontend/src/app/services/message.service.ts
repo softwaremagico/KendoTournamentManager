@@ -29,7 +29,7 @@ export class MessageService {
   }
 
   warningMessage(message: string) {
-    this.openSnackBar(message, 'warning-snackbar', this.getDuration(message, 2));
+    this.openSnackBar(message, 'warning-snackbar', this.getDuration(message, 3));
   }
 
   private getDuration(message: string, minDuration: number): number {
