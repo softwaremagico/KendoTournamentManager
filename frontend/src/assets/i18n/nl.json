@@ -566,7 +566,8 @@
   "tournamentLock": "Vermijd veranderingen in het toernooi",
   "tournamentUnlock": "Hiermee kunt u wijzigingen aanbrengen in het toernooi",
   "yes": "Ja",
-  "no": "Niet"
+  "no": "Niet",
+  "scoreNotAdded": "Het punt is niet toegevoegd!"
 }
 
 
