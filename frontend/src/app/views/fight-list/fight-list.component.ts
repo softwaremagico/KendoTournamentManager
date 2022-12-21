@@ -394,10 +394,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
-        let pwa = window.open(downloadURL);
-        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
-          alert(this.translateService.instant('disablePopUpBlocker'));
-        }
+
+        const anchor = document.createElement("a");
+        anchor.download = "Fight List - " + this.tournament!.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
       });
     }
   }
