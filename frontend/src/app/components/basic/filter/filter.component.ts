@@ -14,10 +14,10 @@ export class FilterComponent implements OnInit {
 
   @Input() disabled: boolean;
 
-  @Input() resetValue: Subject<boolean>;
+  @Input() resetValue: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit() {
-    this.resetValue.subscribe(value => {
+    this.resetValue.subscribe(() => {
       this.reset();
     });
   }
