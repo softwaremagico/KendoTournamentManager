@@ -89,7 +89,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log("--" , result.action)
+      console.log("--", result.action)
       if (result == undefined) {
         //Do nothing
       } else if (result.action == Action.Add) {
@@ -160,10 +160,11 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
         const blob = new Blob([html], {type: 'txt/plain'});
         const downloadURL = window.URL.createObjectURL(blob);
-        let pwa = window.open(downloadURL);
-        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
-          alert(this.translateService.instant('disablePopUpBlocker'));
-        }
+
+        const anchor = document.createElement("a");
+        anchor.download = "Code - " + this.basicTableData.selectedElement!.name + ".txt";
+        anchor.href = downloadURL;
+        anchor.click();
       });
     }
   }

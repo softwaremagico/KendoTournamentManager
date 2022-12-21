@@ -158,10 +158,11 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
-        let pwa = window.open(downloadURL);
-        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
-          alert(this.translateService.instant('disablePopUpBlocker'));
-        }
+
+        const anchor = document.createElement("a");
+        anchor.download = "Role List - " + this.tournament.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
       });
     }
   }

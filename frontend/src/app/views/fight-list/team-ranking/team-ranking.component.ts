@@ -67,10 +67,10 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
-        let pwa = window.open(downloadURL);
-        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
-          alert(this.translateService.instant('disablePopUpBlocker'));
-        }
+        const anchor = document.createElement("a");
+        anchor.download = "Team Ranking - " + this.tournament!.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
       });
     }
   }
