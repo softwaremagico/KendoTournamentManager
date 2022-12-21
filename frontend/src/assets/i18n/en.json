@@ -594,6 +594,7 @@
   "tournamentLock": "Protect the tournament from changes",
   "tournamentUnlock": "Allow changes on the tournament",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "scoreNotAdded": "Score value not added!"
 }
 

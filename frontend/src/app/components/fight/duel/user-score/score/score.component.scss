@@ -4,15 +4,15 @@
   border-width: 1px;
   border-color: var(--primay-color);
   border-style: solid;
-  margin: 2px 0px;
+  margin: 2px 0;
   justify-content: center;
   align-items: center;
 }
 
 .point {
   border-radius: 50%;
-  border: 3px solid var(--primay-color);
-  color: var(--primay-color);
+  border: 3px solid var(--score-color);
+  color: var(--score-color);
   padding: 12px;
   display: flex;
   justify-content: center;
