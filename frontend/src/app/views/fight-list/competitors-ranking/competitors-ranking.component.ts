@@ -41,10 +41,11 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
       this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
-        let pwa = window.open(downloadURL);
-        if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
-          alert(this.translateService.instant('disablePopUpBlocker'));
-        }
+
+        const anchor = document.createElement("a");
+        anchor.download = "Competitors Ranking - " + this.tournament!.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
       });
     }
   }
