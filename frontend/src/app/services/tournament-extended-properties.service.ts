@@ -68,7 +68,7 @@ export class TournamentExtendedPropertiesService {
     return this.http.put<TournamentExtendedProperty>(url, tournamentExtendedProperty, this.loginService.httpOptions)
       .pipe(
         tap({
-          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`updating team ${newTournamentExtendedProperty.value}`),
+          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`updating property ${newTournamentExtendedProperty.value}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
