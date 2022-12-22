@@ -1,6 +1,7 @@
 export enum TournamentExtraPropertyKey {
   MAXIMIZE_FIGHTS = 'MAXIMIZE_FIGHTS',
-  KING_INDEX = 'KING_INDEX'
+  KING_INDEX = 'KING_INDEX',
+  KING_DRAW_RESOLUTION = 'KING_DRAW_RESOLUTION'
 }
 
 export namespace TournamentExtraPropertyKey {
