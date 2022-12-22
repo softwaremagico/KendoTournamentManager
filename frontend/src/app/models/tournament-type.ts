@@ -8,10 +8,10 @@ export enum TournamentType {
 }
 
 export namespace TournamentType {
-  export function getByKey(key: string) {
+  export function getByKey(key: string): TournamentType | undefined {
     for (const valueKey in TournamentType) {
       if ((TournamentType as any)[valueKey] === key) {
-        return valueKey;
+        return (TournamentType as any)[valueKey];
       }
     }
     return undefined;
@@ -33,7 +33,23 @@ export namespace TournamentType {
 }
 
 export namespace TournamentType {
+  export function toCamel(tournamentType: TournamentType) {
+    return tournamentType.toLowerCase()
+      .replace(/_(.)/g, function ($1) {
+        return $1.toUpperCase();
+      })
+      .replace(/_/g, '');
+  }
+}
+
+export namespace TournamentType {
   export function canHaveDuplicates(type: TournamentType | undefined): boolean {
     return type === TournamentType.LOOP;
+  }
+}
+
+export namespace TournamentType {
+  export function needsDrawResolution(type: TournamentType | undefined): boolean {
+    return type === TournamentType.KING_OF_THE_MOUNTAIN;
   }
 }
