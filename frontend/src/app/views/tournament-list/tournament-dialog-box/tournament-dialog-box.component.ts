@@ -8,6 +8,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
+import {DrawResolution} from "../../../models/draw-resolution";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -79,6 +80,14 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
 
   closeDialog() {
     this.dialogRef.close({action: Action.Cancel});
+  }
+
+  getTournamentTypeTranslationTag(tournamentType: TournamentType): string {
+    if (!tournamentType) {
+      return "";
+    }
+    console.log(TournamentType.toCamel(tournamentType))
+    return TournamentType.toCamel(tournamentType);
   }
 
 }
