@@ -298,10 +298,10 @@
   "league": "League",
   "tree": "Poule",
   "customized": "Custom",
-  "custom_championship": "Custom",
+  "customChampionship": "Custom",
   "loop": "Loop",
   "maxFightsCheckBox": "Create all possible fights.",
-  "king_of_the_mountain": "King of the Mountain",
+  "kingOfTheMountain": "King of the Mountain",
   "redTeamButton": "Red Team",
   "whiteTeamButton": "Witte Team",
   "kingEliminateOldest": "Eliminate oldest",
@@ -567,7 +567,14 @@
   "tournamentUnlock": "Hiermee kunt u wijzigingen aanbrengen in het toernooi",
   "yes": "Ja",
   "no": "Niet",
-  "scoreNotAdded": "Het punt is niet toegevoegd!"
+  "scoreNotAdded": "Het punt is niet toegevoegd!",
+  "drawResolution": "Resolutie van banden",
+  "bothEliminated": "Beide geëlimineerd",
+  "bothEliminatedHint": "Beide teams zijn uitgeschakeld",
+  "oldestEliminated": "Het eerste team is uitgeschakeld",
+  "oldestEliminatedHint": "Het team dat het langst heeft gevochten, wordt geëlimineerd.",
+  "newestEliminated": "Het laatste team is uitgeschakeld",
+  "newestEliminatedHint": "Het team dat de minste tijd heeft gevochten, wordt geëlimineerd."
 }
 
 
