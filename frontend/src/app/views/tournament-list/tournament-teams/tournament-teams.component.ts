@@ -44,7 +44,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
-    console.log(this.tournament.teamSize);
   }
 
   getMembersContainer(team: Team): (Participant | undefined)[] {

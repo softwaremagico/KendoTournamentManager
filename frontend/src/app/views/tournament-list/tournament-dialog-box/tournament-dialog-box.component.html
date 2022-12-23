@@ -7,9 +7,9 @@
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentType' | translate}}</mat-label>
-      <mat-select [(value)]="tournament.type">
+      <mat-select  formControlName="tournamentType" [(value)]="tournament.type">
         <mat-option *ngFor="let type of tournamentType" [value]="type">
-          {{type.toLowerCase() | translate}}
+          {{getTournamentTypeTranslationTag(type) | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>

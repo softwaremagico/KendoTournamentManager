@@ -89,7 +89,6 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log("--", result.action)
       if (result == undefined) {
         //Do nothing
       } else if (result.action == Action.Add) {
