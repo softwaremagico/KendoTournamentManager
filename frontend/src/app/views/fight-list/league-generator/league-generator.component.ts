@@ -15,6 +15,7 @@ import {TournamentExtendedPropertiesService} from "../../../services/tournament-
 import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
 import {MessageService} from "../../../services/message.service";
+import {DrawResolution} from "../../../models/draw-resolution";
 
 @Component({
   selector: 'app-league-generator',
@@ -30,7 +31,10 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   teamsOrder: Team[] = [];
   canHaveDuplicated: boolean;
   tournament: Tournament;
+  drawResolution: DrawResolution[];
+  selectedDrawResolution: DrawResolution;
   avoidDuplicates = new FormControl('', []);
+  needsDrawResolution: boolean;
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
               private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
@@ -42,18 +46,32 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
+    this.drawResolution = DrawResolution.toArray();
     this.canHaveDuplicated = TournamentType.canHaveDuplicates(this.tournament.type);
+    this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
   }
 
   ngOnInit(): void {
-    this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
-      .subscribe(_tournamentProperty => {
-        if (_tournamentProperty) {
-          this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() !== "true");
-        } else {
-          this.avoidDuplicates.setValue(false);
-        }
-      });
+    if (this.canHaveDuplicated) {
+      this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
+        .subscribe(_tournamentProperty => {
+          if (_tournamentProperty) {
+            this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() !== "true");
+          } else {
+            this.avoidDuplicates.setValue(false);
+          }
+        });
+    }
+    if (this.needsDrawResolution) {
+      this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.KING_DRAW_RESOLUTION)
+        .subscribe(_tournamentProperty => {
+          if (_tournamentProperty) {
+            this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.value);
+          } else {
+            this.selectedDrawResolution = DrawResolution.BOTH_ELIMINATED;
+          }
+        });
+    }
     this.teamService.getFromTournament(this.tournament).subscribe(teams => {
       if (teams) {
         teams.sort(function (a, b) {
@@ -138,4 +156,28 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     return team;
   }
 
+  getDrawResolutionTranslationTag(drawResolution: DrawResolution): string {
+    if (!drawResolution) {
+      return "";
+    }
+    return DrawResolution.toCamel(drawResolution);
+  }
+
+  getDrawResolutionHintTag(drawResolution: DrawResolution): string {
+    if (!drawResolution) {
+      return "";
+    }
+    return DrawResolution.toCamel(drawResolution) + "Hint";
+  }
+
+  select(drawResolution: DrawResolution) {
+    this.selectedDrawResolution = drawResolution;
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.value = drawResolution;
+    tournamentProperty.property = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
 }

@@ -301,7 +301,6 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   dragEnd($event: CdkDragEnd) {
-    console.log($event.source.getFreeDragPosition());
     this.timerPosition = $event.source.getFreeDragPosition();
     this.correctTimerPosition();
   }

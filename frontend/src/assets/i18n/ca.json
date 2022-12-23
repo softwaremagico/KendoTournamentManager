@@ -302,10 +302,10 @@
   "league": "Lliga",
   "tree": "Campeonat en Arbre",
   "customized": "Personalizat",
-  "custom_championship": "Personalizat",
+  "customChampionship": "Personalizat",
   "loop": "Roda",
   "maxFightsCheckBox": "Crea tots els combats possibles",
-  "king_of_the_mountain": "Crea tots els combats possibles",
+  "kingOfTheMountain": "Crea tots els combats possibles",
   "redTeamButton": "Equip Roig",
   "whiteTeamButton": "Equipo Blanc",
   "kingEliminateOldest": "Elimina el més antic",
@@ -582,7 +582,14 @@
   "tournamentUnlock": "Permet realitzar canvis al torneig",
   "yes": "Yes",
   "no": "No",
-  "scoreNotAdded": "El punt no ha estat afegit!"
+  "scoreNotAdded": "El punt no ha estat afegit!",
+  "drawResolution": "Resolució d'empats",
+  "bothEliminated": "Tots dos eliminats",
+  "bothEliminatedHint": "Tots dos equips són eliminats",
+  "oldestEliminated": "Primer equip és eliminat",
+  "oldestEliminatedHint": "L'equip que porta més temps lluitant és eliminat",
+  "newestEliminated": "L'últim equip és eliminat",
+  "newestEliminatedHint": "L'equip que fa menys temps que lluita és eliminat"
 }
 
 
