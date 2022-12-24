@@ -30,10 +30,18 @@ import java.util.Objects;
 
 public class ScoreOfTeamWinOverDraws implements Comparator<ScoreOfTeam> {
 
+    private final boolean checkLevel;
+
+    public ScoreOfTeamWinOverDraws(boolean checkLevel) {
+        this.checkLevel = checkLevel;
+    }
+
     @Override
     public int compare(ScoreOfTeam scoreOfTeam1, ScoreOfTeam scoreOfTeam2) {
-        if (!Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
-            return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
+        if (checkLevel) {
+            if (!Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
+                return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
+            }
         }
 
         if (!Objects.equals(scoreOfTeam1.getWonFights(), scoreOfTeam2.getWonFights())) {
