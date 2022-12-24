@@ -93,7 +93,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     public List<Fight> createNextFights(Tournament tournament, String createdBy) {
         //Generates next group.
         final int level = getNextLevel(tournament);
-        final Group group = addGroup(tournament, getGroupTeams(tournament, level), getNextLevel(tournament), 0);
+        final Group group = addGroup(tournament, getGroupTeams(tournament, level), level, 0);
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, group.getTeams(),
                 level, createdBy));
         group.setFights(fights);
@@ -107,10 +107,10 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         final List<Group> groups = groupProvider.getGroupsByLevel(tournament, level - 1);
         //Repository OrderByIndex not working well...
         groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
-        final Group lastGroup = groups.get(groups.size() - 1);
+        final Group lastGroup = !groups.isEmpty() ? groups.get(groups.size() - 1) : null;
         final HashMap<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
         //Previous winner with no draw
-        if (ranking.get(0) != null && ranking.get(0).size() == 1) {
+        if (lastGroup != null && ranking.get(0) != null && ranking.get(0).size() == 1) {
             final Team previousWinner = teamConverter.reverse(ranking.get(0).get(0));
             final Team previousLooser = teamConverter.reverse(ranking.get(1).get(0));
             //Next team on the list. Looser is the other team on the previous group.
@@ -137,7 +137,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                         bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
                     } else {
                         final List<Team> previousLastGroupTeams = previousLastGroup.getTeams();
-                        previousLastGroupTeams.retainAll(lastGroup.getTeams());
+                        if (lastGroup != null) {
+                            previousLastGroupTeams.retainAll(lastGroup.getTeams());
+                        }
                         oldestEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), previousLastGroupTeams, tournament, lastGroup);
                     }
                     break;
@@ -146,7 +148,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                         bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
                     } else {
                         final List<Team> previousLastGroupTeams = previousLastGroup.getTeams();
-                        previousLastGroupTeams.retainAll(lastGroup.getTeams());
+                        if (lastGroup != null) {
+                            previousLastGroupTeams.retainAll(lastGroup.getTeams());
+                        }
                         newestEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), previousLastGroupTeams, tournament, lastGroup);
                     }
                     break;
@@ -172,7 +176,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         //Remove the winner that has been on the previous group.
         previousWinners.removeAll(previousLastGroupWinners);
         //Include the newest winner on the same position.
-        nextTeams.add(lastGroup.getTeams().indexOf(previousWinners.get(0)), previousWinners.get(0));
+        if (lastGroup != null) {
+            nextTeams.add(lastGroup.getTeams().indexOf(previousWinners.get(0)), previousWinners.get(0));
+        }
     }
 
     private void newestEliminated(final List<Team> existingTeams, final List<Team> nextTeams, List<Team> previousWinners, List<Team> previousLastGroupWinners,
@@ -183,7 +189,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         //Remove the winner that has been on the previous group.
         previousWinners.retainAll(previousLastGroupWinners);
         //Include the newest winner on the same position.
-        nextTeams.add(lastGroup.getTeams().indexOf(previousWinners.get(0)), previousWinners.get(0));
+        if (lastGroup != null) {
+            nextTeams.add(lastGroup.getTeams().indexOf(previousWinners.get(0)), previousWinners.get(0));
+        }
     }
 
     private Team getNextTeam(List<Team> teams, List<Team> winners, List<Team> loosers, Tournament tournament) {
