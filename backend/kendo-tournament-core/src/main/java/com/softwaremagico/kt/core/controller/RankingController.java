@@ -79,6 +79,10 @@ public class RankingController {
         this.duelConverter = duelConverter;
     }
 
+    private boolean checkLevel(TournamentDTO tournament) {
+        return tournament == null || tournament.getType() != TournamentType.KING_OF_THE_MOUNTAIN;
+    }
+
     public List<TeamDTO> getTeamsRanking(Integer groupId) {
         final Group group = groupProvider.getGroup(groupId);
         if (group == null) {
@@ -115,15 +119,16 @@ public class RankingController {
             return new ArrayList<>();
         }
         return getTeamsScoreRanking(groupDTO.getTournament().getTournamentScore().getScoreType(),
-                groupDTO.getTeams(), groupDTO.getFights(), groupDTO.getUnties());
+                groupDTO.getTeams(), groupDTO.getFights(), groupDTO.getUnties(), checkLevel(groupDTO.getTournament()));
     }
 
-    public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<TeamDTO> teams, List<FightDTO> fights, List<DuelDTO> unties) {
+    public List<ScoreOfTeam> getTeamsScoreRanking(ScoreType type, List<TeamDTO> teams, List<FightDTO> fights, List<DuelDTO> unties,
+                                                  boolean checkLevel) {
         final List<ScoreOfTeam> scores = new ArrayList<>();
         for (final TeamDTO team : teams) {
             scores.add(new ScoreOfTeam(team, fights, unties));
         }
-        sortTeamsScores(type, scores);
+        sortTeamsScores(type, scores, checkLevel);
         if (scores.isEmpty()) {
             return scores;
         }
@@ -131,7 +136,7 @@ public class RankingController {
         int sortingIndex = 0;
         scores.get(0).setSortingIndex(sortingIndex);
         for (int i = 1; i < scores.size(); i++) {
-            if (getTeamsSorter(type).compare(scores.get(i - 1), scores.get(i)) != 0) {
+            if (getTeamsSorter(type, checkLevel).compare(scores.get(i - 1), scores.get(i)) != 0) {
                 sortingIndex++;
             }
             scores.get(i).setSortingIndex(sortingIndex);
@@ -148,7 +153,8 @@ public class RankingController {
                         .map(FightConverterRequest::new).collect(Collectors.toList())),
                 duelConverter.convertAll(groupProvider.getGroups(tournament).stream()
                         .flatMap(group -> group.getUnties().stream())
-                        .collect(Collectors.toList()).stream().map(DuelConverterRequest::new).collect(Collectors.toList())));
+                        .collect(Collectors.toList()).stream().map(DuelConverterRequest::new).collect(Collectors.toList())),
+                checkLevel(tournamentDTO));
     }
 
     /**
@@ -166,7 +172,8 @@ public class RankingController {
             // Put team in position.
             teamsByPosition.get(position).add(scores.get(i).getTeam());
             // Different score with next team.
-            if ((i < scores.size() - 1) && getTeamsSorter(groupDTO.getTournament().getTournamentScore().getScoreType())
+            if ((i < scores.size() - 1) && getTeamsSorter(groupDTO.getTournament().getTournamentScore().getScoreType(),
+                    checkLevel(groupDTO.getTournament()))
                     .compare(scores.get(i), scores.get(i + 1)) != 0) {
                 position++;
             }
@@ -315,26 +322,26 @@ public class RankingController {
         return null;
     }
 
-    private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores) {
+    private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores, boolean checkLevel) {
         if (scores == null) {
             return;
         }
-        scores.sort(getTeamsSorter(type));
+        scores.sort(getTeamsSorter(type, checkLevel));
     }
 
-    private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type) {
+    private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type, boolean checkLevel) {
         switch (type) {
             case CUSTOM:
-                return new ScoreOfTeamCustom();
+                return new ScoreOfTeamCustom(checkLevel);
             case EUROPEAN:
-                return new ScoreOfTeamEuropean();
+                return new ScoreOfTeamEuropean(checkLevel);
             case INTERNATIONAL:
-                return new ScoreOfTeamInternational();
+                return new ScoreOfTeamInternational(checkLevel);
             case WIN_OVER_DRAWS:
-                return new ScoreOfTeamWinOverDraws();
+                return new ScoreOfTeamWinOverDraws(checkLevel);
             case CLASSIC:
             default:
-                return new ScoreOfTeamClassic();
+                return new ScoreOfTeamClassic(checkLevel);
         }
     }
 
