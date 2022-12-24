@@ -93,7 +93,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     public List<Fight> createNextFights(Tournament tournament, String createdBy) {
         //Generates next group.
         final int level = getNextLevel(tournament);
-        final Group group = addGroup(tournament, getGroupTeams(tournament, level), getNextLevel(tournament), 0);
+        final Group group = addGroup(tournament, getGroupTeams(tournament, level), level, 0);
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament, group.getTeams(),
                 level, createdBy));
         group.setFights(fights);
