@@ -12,17 +12,19 @@
          (cdkDropListDropped)="dropTeam($event)">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
-    <mat-slide-toggle *ngIf="canHaveDuplicated"
-                      [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}</mat-slide-toggle>
-    <mat-form-field *ngIf="needsDrawResolution">
-      <mat-label>{{'drawResolution' | translate}}</mat-label>
-      <mat-select [(value)]="selectedDrawResolution" (selectionChange)="select($event.value)">
-        <mat-option *ngFor="let resolution of drawResolution" [value]="resolution"
-                    [matTooltipShowDelay]="500" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
-          {{getDrawResolutionTranslationTag(resolution) | translate}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="extra-properties" *ngIf="canHaveDuplicated || needsDrawResolution">
+      <mat-slide-toggle *ngIf="canHaveDuplicated"
+                        [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}</mat-slide-toggle>
+      <mat-form-field *ngIf="needsDrawResolution">
+        <mat-label>{{'drawResolution' | translate}}</mat-label>
+        <mat-select [(value)]="selectedDrawResolution" (selectionChange)="select($event.value)">
+          <mat-option *ngFor="let resolution of drawResolution" [value]="resolution"
+                      [matTooltipShowDelay]="500" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
+            {{getDrawResolutionTranslationTag(resolution) | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
