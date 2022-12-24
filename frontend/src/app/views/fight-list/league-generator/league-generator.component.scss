@@ -23,7 +23,7 @@
 
 //Padding between roles
 .ng-star-inserted {
-  padding-bottom: 20px;
+ // padding-bottom: 20px;
 }
 
 .final-team-list{
@@ -46,5 +46,10 @@
 }
 
 .fight-button {
-  padding-bottom: 0px;
+  padding-bottom: 0;
+}
+
+.extra-properties{
+  margin: 20px;
+  padding-bottom: 0;
 }
