@@ -111,6 +111,9 @@ public class RankingController {
     }
 
     public List<ScoreOfTeam> getTeamsScoreRanking(GroupDTO groupDTO) {
+        if (groupDTO == null) {
+            return new ArrayList<>();
+        }
         return getTeamsScoreRanking(groupDTO.getTournament().getTournamentScore().getScoreType(),
                 groupDTO.getTeams(), groupDTO.getFights(), groupDTO.getUnties());
     }
