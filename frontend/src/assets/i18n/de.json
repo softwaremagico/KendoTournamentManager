@@ -574,7 +574,8 @@
   "oldestEliminated": "Die erste Mannschaft scheidet aus",
   "oldestEliminatedHint": "Das Team, das am längsten gekämpft hat, scheidet aus.",
   "newestEliminated": "Das letzte Team scheidet aus",
-  "newestEliminatedHint": "Das Team, das am wenigsten gekämpft hat, scheidet aus."
+  "newestEliminatedHint": "Das Team, das am wenigsten gekämpft hat, scheidet aus.",
+  "picture": "Foto"
 }
 
 
