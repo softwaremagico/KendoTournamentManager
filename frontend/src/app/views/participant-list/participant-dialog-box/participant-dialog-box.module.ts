@@ -10,6 +10,7 @@ import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatInputModule} from "@angular/material/input";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import { ParticipantPictureComponent } from './participant-picture/participant-picture.component';
 
 
 

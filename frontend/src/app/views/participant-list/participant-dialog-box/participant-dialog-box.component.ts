@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Participant} from "../../../models/participant";
 import {Club} from "../../../models/club";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
@@ -8,6 +8,7 @@ import {map} from "rxjs/operators";
 import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {ParticipantPictureComponent} from "./participant-picture/participant-picture.component";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -31,7 +32,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,) {
     super(rbacService);
     this.participant = data.entity;
     this.title = data.title;
@@ -76,4 +77,29 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.dialogRef.close({action: Action.Cancel});
   }
 
+  addPicture() {
+    this.openDialog("", Action.Add, this.participant);
+  }
+
+  openDialog(title: string, action: Action, participant: Participant) {
+    const dialogRef = this.dialog.open(ParticipantPictureComponent, {
+      width: '700px',
+      data: {
+        title: title, action: action, entity: participant,
+        clubs: this.clubs
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == undefined) {
+        //Do nothing
+      } else if (result.action == Action.Add) {
+        // this.addRowData(result.data);
+      } else if (result.action == Action.Update) {
+        // this.updateRowData(result.data);
+      } else if (result.action == Action.Delete) {
+        // this.deleteRowData(result.data);
+      }
+    });
+  }
 }
