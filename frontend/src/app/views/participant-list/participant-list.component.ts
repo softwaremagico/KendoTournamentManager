@@ -81,7 +81,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   openDialog(title: string, action: Action, participant: Participant) {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
-      width: '400px',
+      width: '700px',
       data: {
         title: title, action: action, entity: participant,
         clubs: this.clubs

@@ -594,7 +594,8 @@
   "oldestEliminated": "El primer equipo es eliminado",
   "oldestEliminatedHint": "El equipo que lleva más tiempo luchando es eliminado",
   "newestEliminated": "El último equipo es eliminado",
-  "newestEliminatedHint": "El equipo que lleva menos tiempo luchando es eliminado"
+  "newestEliminatedHint": "El equipo que lleva menos tiempo luchando es eliminado",
+  "picture": "Foto"
 }
 
 
