@@ -589,7 +589,8 @@
   "oldestEliminated": "Primer equip és eliminat",
   "oldestEliminatedHint": "L'equip que porta més temps lluitant és eliminat",
   "newestEliminated": "L'últim equip és eliminat",
-  "newestEliminatedHint": "L'equip que fa menys temps que lluita és eliminat"
+  "newestEliminatedHint": "L'equip que fa menys temps que lluita és eliminat",
+  "picture": "Foto"
 }
 
 
