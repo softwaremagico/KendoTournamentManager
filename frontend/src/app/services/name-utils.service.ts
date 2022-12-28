@@ -43,6 +43,11 @@ export class NameUtilsService {
   }
 
   getLastnameName(participant: Participant | undefined): string {
+    if (!participant) return "";
+    return this.spacesToCamel(participant.lastname + " " + this.getShortName(participant));
+  }
+
+  getLastnameNameNoSpaces(participant: Participant | undefined): string {
     return this.getLastname(participant) + ", " + this.getShortName(participant);
   }
 
@@ -63,5 +68,14 @@ export class NameUtilsService {
     } else {
       return this.getAcronym(participant);
     }
+  }
+
+
+  spacesToCamel(value: string) {
+    return value.toLowerCase()
+      .replace(/ (.)/g, function ($1) {
+        return $1.toUpperCase();
+      })
+      .replace(/ /g, '');
   }
 }
