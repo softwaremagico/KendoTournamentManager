@@ -16,9 +16,15 @@
   width: 150px;
 }
 
+.camera-frame {
+  border: 2px solid #012354;
+  padding: 5px;
+}
+
 .picture-engine {
   overflow: auto;
   max-height: 60vh;
+  padding-right: 15px;
 }
 
 .gallery {
@@ -33,7 +39,7 @@
 }
 
 .selected-image {
-  border: 2px solid red;
+  border: 2px solid #ff2a2a;
 }
 
 img {
