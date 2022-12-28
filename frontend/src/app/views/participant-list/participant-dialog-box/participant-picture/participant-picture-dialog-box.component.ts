@@ -1,12 +1,14 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {ImageService} from "../../../../services/image.service";
 import {RbacService} from "../../../../services/rbac/rbac.service";
 import {WebcamImage, WebcamInitError} from "ngx-webcam";
 import {Observable, Subject} from 'rxjs';
 import {Action} from "../../../../action";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../../services/message.service";
+import {FileService} from "../../../../services/file.service";
+import {Participant} from "../../../../models/participant";
 
 @Component({
   selector: 'app-participant-picture',
@@ -16,14 +18,17 @@ import {MessageService} from "../../../../services/message.service";
 export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent implements OnInit {
   pictures: Array<string> = [];
   selectedPicture: number | undefined = undefined;
+  participant: Participant;
 
   @Output()
   public imageClicked = new EventEmitter<WebcamImage>();
   private pictureGenerated: Subject<void> = new Subject<void>();
 
-  constructor(public dialogRef: MatDialogRef<ParticipantPictureDialogBoxComponent>, rbacService: RbacService,
-              private imageService: ImageService, public messageService: MessageService) {
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { participant: Participant },
+              public dialogRef: MatDialogRef<ParticipantPictureDialogBoxComponent>, rbacService: RbacService,
+              private imageService: ImageService, public messageService: MessageService, private fileService: FileService) {
     super(rbacService);
+    this.participant = data.participant;
   }
 
   ngOnInit(): void {
@@ -49,10 +54,10 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   }
 
   public saveImage() {
-    if (this.pictures.length > 0) {
-      let imageData = this.pictures[this.pictures.length - 1].split('base64,');
+    if (this.pictures.length > 0 && this.selectedPicture !== undefined) {
+      const imageData : string[] = this.pictures[this.selectedPicture].split('base64,');
       if (imageData.length > 1) {
-        this.imageService.createBlobImageFileAndSave(imageData[1]);
+        this.fileService.addPicture(this.participant).subscribe();
       }
     }
   }
