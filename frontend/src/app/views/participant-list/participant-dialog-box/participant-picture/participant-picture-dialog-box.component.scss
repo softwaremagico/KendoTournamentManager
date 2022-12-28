@@ -1,0 +1,42 @@
+.mat-dialog-content {
+  overflow: initial;
+}
+
+.mat-picture {
+  background-color: green;
+  color: #fff;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
+
+.picture-engine {
+  overflow: auto;
+  max-height: 60vh;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-container {
+  height: 110px;
+  width: 100px;
+  padding: 5px;
+}
+
+.selected-image {
+  border: 2px solid red;
+}
+
+img {
+  border-radius: 8px;
+  height: 100px;
+}
