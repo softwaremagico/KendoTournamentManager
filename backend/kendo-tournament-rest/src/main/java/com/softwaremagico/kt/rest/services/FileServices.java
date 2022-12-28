@@ -49,16 +49,15 @@ public class FileServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void upload(@RequestParam("file") MultipartFile file,
-                       @RequestParam("participant") int participantId, HttpServletRequest request) {
+                       @RequestParam("participantId") int participantId, HttpServletRequest request) {
         participantImageController.add(file, participantId);
-
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantImageDTO getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {
         // return fileProvider.get(type, participantProvider.get(participantId));
         return null;

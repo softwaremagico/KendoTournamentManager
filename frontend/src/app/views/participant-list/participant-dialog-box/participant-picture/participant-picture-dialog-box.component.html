@@ -1,6 +1,6 @@
 <div mat-dialog-content>
   <div class="picture-engine">
-    <div class="d-flex flex-column align-items-center camera-frame">
+    <div class="camera-frame">
       <webcam [height]="512" [width]="512" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
               (initError)="errorHandler($event)"></webcam>
     </div>
@@ -21,7 +21,7 @@
     <button mat-raised-button type="button" (click)="saveImage()" [disabled]="selectedPicture == undefined"
             mat-flat-button
             color="primary" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
-      <mat-icon>done</mat-icon>
+      <mat-icon>photo_album</mat-icon>
       {{'selectButton' | translate}}</button>
     <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">
       <mat-icon>cancel</mat-icon>
