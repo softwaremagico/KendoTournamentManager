@@ -8,7 +8,7 @@ import {map} from "rxjs/operators";
 import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
-import {ParticipantPictureComponent} from "./participant-picture/participant-picture.component";
+import {ParticipantPictureDialogBoxComponent} from "./participant-picture/participant-picture-dialog-box.component";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -82,8 +82,8 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   openDialog(title: string, action: Action, participant: Participant) {
-    const dialogRef = this.dialog.open(ParticipantPictureComponent, {
-      width: '700px',
+    const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
+      width: '650px',
       data: {
         title: title, action: action, entity: participant,
         clubs: this.clubs

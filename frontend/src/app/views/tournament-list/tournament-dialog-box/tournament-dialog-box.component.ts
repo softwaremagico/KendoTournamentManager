@@ -86,7 +86,6 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     if (!tournamentType) {
       return "";
     }
-    console.log(TournamentType.toCamel(tournamentType))
     return TournamentType.toCamel(tournamentType);
   }
 
