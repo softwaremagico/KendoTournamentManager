@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,6 +53,15 @@ public class FileServices {
     @PostMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void upload(@RequestParam("file") MultipartFile file,
                        @RequestParam("participantId") int participantId, HttpServletRequest request) {
+        participantImageController.add(file, participantId);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/participants/{participantId}/base64", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
+    public void upload(@RequestBody String file,
+                       @RequestParam("participantId") int participantId,
+                       Authentication authentication,  HttpServletRequest request) {
         participantImageController.add(file, participantId);
     }
 
