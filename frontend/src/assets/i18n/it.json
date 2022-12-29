@@ -582,7 +582,8 @@
   "oldestEliminatedHint": "La squadra che ha combattuto più a lungo viene eliminata.",
   "newestEliminated": "L'ultima squadra viene eliminata",
   "newestEliminatedHint": "La squadra che ha combattuto per meno tempo viene eliminata.",
-  "picture": "Foto"
+  "picture": "Foto",
+  "infoPictureStored": "L'immagine è stata salvata ed è assegnata al partecipante."
 }
 
 

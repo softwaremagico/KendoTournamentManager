@@ -51,18 +51,18 @@ public class FileServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void upload(@RequestParam("file") MultipartFile file,
-                       @RequestParam("participantId") int participantId, HttpServletRequest request) {
-        participantImageController.add(file, participantId);
+    public ParticipantImageDTO upload(@RequestParam("file") MultipartFile file,
+                                      @RequestParam("participantId") int participantId,
+                                      Authentication authentication, HttpServletRequest request) {
+        return participantImageController.add(file, participantId, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/participants/{participantId}/base64", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void upload(@RequestBody String file,
-                       @RequestParam("participantId") int participantId,
-                       Authentication authentication,  HttpServletRequest request) {
-        participantImageController.add(file, participantId);
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantImageDTO upload(@RequestBody ParticipantImageDTO participantImageDTO,
+                                      Authentication authentication, HttpServletRequest request) {
+        return participantImageController.add(participantImageDTO, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
