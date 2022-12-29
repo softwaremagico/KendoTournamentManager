@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.converters;
  */
 
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
+import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantImageConverterRequest;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import org.springframework.beans.BeanUtils;
@@ -33,11 +34,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ParticipantImageConverter extends ElementConverter<ParticipantImage, ParticipantImageDTO, ParticipantImageConverterRequest> {
-    private final ClubConverter clubConverter;
+    private final ParticipantConverter participantConverter;
 
     @Autowired
-    public ParticipantImageConverter(ClubConverter clubConverter) {
-        this.clubConverter = clubConverter;
+    public ParticipantImageConverter(ParticipantConverter participantConverter) {
+        this.participantConverter = participantConverter;
     }
 
 
@@ -45,6 +46,8 @@ public class ParticipantImageConverter extends ElementConverter<ParticipantImage
     protected ParticipantImageDTO convertElement(ParticipantImageConverterRequest from) {
         final ParticipantImageDTO participantImageDTO = new ParticipantImageDTO();
         BeanUtils.copyProperties(from.getEntity(), participantImageDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
+        participantImageDTO.setImageFormat(from.getEntity().getImageFormat());
+        participantImageDTO.setParticipant(participantConverter.convertElement(new ParticipantConverterRequest(from.getEntity().getParticipant())));
         return participantImageDTO;
     }
 
@@ -55,6 +58,8 @@ public class ParticipantImageConverter extends ElementConverter<ParticipantImage
         }
         final ParticipantImage participantImage = new ParticipantImage();
         BeanUtils.copyProperties(to, participantImage, ConverterUtils.getNullPropertyNames(to));
+        participantImage.setImageFormat(to.getImageFormat());
+        participantImage.setParticipant(participantConverter.reverse(to.getParticipant()));
         return participantImage;
     }
 }

@@ -9,6 +9,8 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {Participant} from "../../../../models/participant";
+import {ParticipantImage} from "../../../../models/participant-image.model";
+import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
   selector: 'app-participant-picture',
@@ -55,9 +57,15 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   public saveImage() {
     if (this.pictures.length > 0 && this.selectedPicture !== undefined) {
-      const imageData : string[] = this.pictures[this.selectedPicture].split('base64,');
-      if (imageData.length > 1) {
-        this.fileService.addPicture(this.participant).subscribe();
+      const imageDataAsBase64: string = this.pictures[this.selectedPicture];
+      if (imageDataAsBase64.length > 1) {
+        const image: ParticipantImage = new ParticipantImage();
+        image.imageFormat = ImageFormat.BASE64;
+        image.participant = this.participant;
+        image.base64 = imageDataAsBase64;
+        this.fileService.addPicture(image).subscribe(() => {
+          this.messageService.infoMessage('infoPictureStored');
+        });
       }
     }
   }
