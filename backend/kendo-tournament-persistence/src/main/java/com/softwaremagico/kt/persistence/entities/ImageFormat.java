@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.utils;
+package com.softwaremagico.kt.persistence.entities;
 
 /*-
  * #%L
@@ -24,23 +24,16 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
-import org.springframework.stereotype.Service;
+public enum ImageFormat {
+    RAW,
+    BASE64;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-@Service
-public class UserImageFactory {
-
-    public ParticipantImage createUserImage(String resource, Participant participant) throws Exception {
-        byte[] image = Files.readAllBytes(Paths.get(getClass().getClassLoader()
-                .getResource(resource).toURI()));
-        ParticipantImage participantImage = new ParticipantImage();
-        participantImage.setParticipant(participant);
-        participantImage.setData(image);
-
-        return participantImage;
+    public static ImageFormat getFormat(String name) {
+        for (final ImageFormat format : ImageFormat.values()) {
+            if (format.name().equalsIgnoreCase(name)) {
+                return format;
+            }
+        }
+        return null;
     }
 }

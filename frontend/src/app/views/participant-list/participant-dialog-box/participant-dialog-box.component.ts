@@ -78,6 +78,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   addPicture() {
+    console.log(this.participant);
     this.openDialog("", Action.Add, this.participant);
   }
 
@@ -85,7 +86,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
       width: '650px',
       data: {
-        title: title, action: action, entity: participant,
+        title: title, action: action, participant: participant,
         clubs: this.clubs
       }
     });

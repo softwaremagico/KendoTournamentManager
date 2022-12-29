@@ -24,19 +24,23 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import java.util.Arrays;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.softwaremagico.kt.persistence.entities.ImageFormat;
+
+import java.nio.charset.StandardCharsets;
 
 public class ParticipantImageDTO extends ElementDTO {
-    private Integer participantId;
+    private ParticipantDTO participant;
     private byte[] data;
+    private ImageFormat imageFormat;
 
-    public Integer getParticipantId() {
-        return participantId;
+    public ParticipantDTO getParticipant() {
+        return participant;
     }
 
-    public void setParticipantId(Integer participantId) {
-        this.participantId = participantId;
+    public void setParticipant(ParticipantDTO participant) {
+        this.participant = participant;
     }
 
     public byte[] getData() {
@@ -47,25 +51,23 @@ public class ParticipantImageDTO extends ElementDTO {
         this.data = data;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        final ParticipantImageDTO that = (ParticipantImageDTO) o;
-        return participantId.equals(that.participantId) && Arrays.equals(data, that.data);
+    @JsonSetter
+    public String getBase64() {
+        return new String(data, StandardCharsets.UTF_8);
     }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(super.hashCode(), participantId);
-        result = 31 * result + Arrays.hashCode(data);
-        return result;
+    @JsonGetter
+    public void setBase64(String base64) {
+        if (base64 != null) {
+            this.data = base64.getBytes(StandardCharsets.UTF_8);
+        }
+    }
+
+    public ImageFormat getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(ImageFormat imageFormat) {
+        this.imageFormat = imageFormat;
     }
 }
