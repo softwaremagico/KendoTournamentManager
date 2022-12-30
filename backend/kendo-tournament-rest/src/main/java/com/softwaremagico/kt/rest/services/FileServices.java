@@ -61,7 +61,8 @@ public class FileServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantImageDTO upload(@Parameter(description = "Id of an existing participant", required = true) @RequestBody ParticipantImageDTO participantImageDTO,
+    public ParticipantImageDTO upload(@Parameter(description = "Id of an existing participant", required = true)
+                                      @RequestBody ParticipantImageDTO participantImageDTO,
                                       Authentication authentication, HttpServletRequest request) {
         return participantImageController.add(participantImageDTO, authentication.getName());
     }
@@ -70,7 +71,6 @@ public class FileServices {
     @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantImageDTO getParticipantImage(@PathVariable("participantId") int participantId, HttpServletRequest request) {
-        // return fileProvider.get(type, participantProvider.get(participantId));
-        return null;
+        return participantImageController.get(participantId);
     }
 }

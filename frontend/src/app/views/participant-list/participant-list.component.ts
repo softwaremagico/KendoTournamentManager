@@ -103,7 +103,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   addRowData(participant: Participant) {
     this.participantService.add(participant).subscribe(_participant => {
-      this.basicTableData.dataSource.data.push(_participant);
+      this.basicTableData.dataSource.data.push(Participant.clone(_participant));
       this.basicTableData.dataSource._updateChangeSubscription();
       this.basicTableData.selectItem(_participant);
       this.messageService.infoMessage('infoParticipantStored');

@@ -36,14 +36,14 @@
       [innerHTML]="'participantDeleteQuestion' | translate : {name: participant.name, lastname: participant.lastname}"></span>
         </ng-template>
       </div>
-      <div class="picture">
-        <img src="{{ participantPicture }}"/>
+      <div class="picture-container" *ngIf="participantPicture">
+        <img class="picture" src="{{ participantPicture }}"/>
       </div>
     </div>
     <div mat-dialog-actions class="button-container">
       <button mat-raised-button type="button" (click)="addPicture()"
               mat-flat-button
-              color="picture" *ngIf="(RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
+              color="picture" *ngIf="actionName != 'Delete' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
         <mat-icon>add_a_photo</mat-icon>
         {{'photo' | translate}}</button>
       <button mat-raised-button type="submit" value="Submit"

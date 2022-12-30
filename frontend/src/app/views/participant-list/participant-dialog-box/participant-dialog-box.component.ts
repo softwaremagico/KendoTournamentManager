@@ -51,11 +51,12 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       name: new FormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
       lastname: new FormControl(this.participant.lastname, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
       idCard: new FormControl(this.participant.idCard, [Validators.required, Validators.maxLength(20)]),
-      club: new FormControl(this.participant.club?.name, [Validators.required])
+      club: new FormControl(this.participant.club, [Validators.required])
     },);
   }
 
   ngOnInit() {
+    this.participantPicture = undefined;
     this.filteredOptions = this.formControl.valueChanges.pipe(
       startWith(''),
       map(value => (typeof value === 'string' ? value : value.name)),
@@ -64,15 +65,17 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.pictureUpdatedService.isPictureUpdated.subscribe(_picture => {
       this.participantPicture = _picture;
     });
-    this.fileService.getPicture(this.participant).subscribe(_picture => {
-      if (_picture) {
-        if (_picture.imageFormat == ImageFormat.BASE64) {
-          this.participantPicture = "data:image/jpeg;base64," + _picture.data;
-        } else {
-          this.participantPicture = _picture.data;
+    if (this.participant && this.participant.id) {
+      this.fileService.getPicture(this.participant).subscribe(_picture => {
+        if (_picture) {
+          if (_picture.imageFormat == ImageFormat.BASE64) {
+            this.participantPicture = "data:image/jpeg;base64," + _picture.data;
+          } else {
+            this.participantPicture = _picture.data;
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   displayClub(club: Club): string {
@@ -104,8 +107,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
       width: '650px',
       data: {
-        title: title, action: action, participant: participant,
-        clubs: this.clubs
+        title: title, action: action, participant: participant
       }
     });
 
