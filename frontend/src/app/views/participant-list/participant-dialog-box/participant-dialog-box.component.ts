@@ -9,6 +9,9 @@ import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {ParticipantPictureDialogBoxComponent} from "./participant-picture/participant-picture-dialog-box.component";
+import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
+import {FileService} from "../../../services/file.service";
+import {ImageFormat} from "../../../models/image-format";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -29,16 +32,20 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
 
   registerForm: FormGroup;
 
+  participantPicture: string | undefined;
+
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,
+    private pictureUpdatedService: PictureUpdatedService, private fileService: FileService) {
     super(rbacService);
     this.participant = data.entity;
     this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
     this.clubs = data.clubs;
+    this.participantPicture = undefined;
 
     this.registerForm = new FormGroup({
       name: new FormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
@@ -54,6 +61,18 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       map(value => (typeof value === 'string' ? value : value.name)),
       map(name => (name ? this._filter(name) : this.clubs.slice())),
     );
+    this.pictureUpdatedService.isPictureUpdated.subscribe(_picture => {
+      this.participantPicture = _picture;
+    });
+    this.fileService.getPicture(this.participant).subscribe(_picture => {
+      if (_picture) {
+        if (_picture.imageFormat == ImageFormat.BASE64) {
+          this.participantPicture = "data:image/jpeg;base64," + _picture.data;
+        } else {
+          this.participantPicture = _picture.data;
+        }
+      }
+    });
   }
 
   displayClub(club: Club): string {
@@ -78,7 +97,6 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   addPicture() {
-    console.log(this.participant);
     this.openDialog("", Action.Add, this.participant);
   }
 
