@@ -38,4 +38,6 @@ public interface ParticipantImageRepository extends JpaRepository<ParticipantIma
 
     Optional<ParticipantImage> findByParticipant(Participant participant);
 
+    int deleteByParticipant(Participant participant);
+
 }
