@@ -22,7 +22,7 @@ export class FileService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  addPicture(image: ParticipantImage): Observable<ParticipantImage> {
+  setPicture(image: ParticipantImage): Observable<ParticipantImage> {
     const url: string = `${this.baseUrl}/participants`;
     return this.http.post<ParticipantImage>(url, image, this.loginService.httpOptions)
       .pipe(
