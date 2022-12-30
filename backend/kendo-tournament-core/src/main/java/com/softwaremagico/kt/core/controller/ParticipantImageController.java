@@ -35,6 +35,7 @@ import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.providers.ParticipantImageProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.ImageFormat;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import com.softwaremagico.kt.persistence.repositories.ParticipantImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,12 @@ public class ParticipantImageController extends BasicInsertableController<Partic
         return new ParticipantImageConverterRequest(participantImage);
     }
 
+    public ParticipantImageDTO get(Integer participantId) {
+        final Participant participant = participantProvider.get(participantId)
+                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
+        return converter.convert(new ParticipantImageConverterRequest(provider.get(null, participant).orElse(null)));
+    }
+
     public ParticipantImageDTO add(MultipartFile file, Integer participantId, String username) {
         final ParticipantDTO participantDTO = participantConverter.convert(new ParticipantConverterRequest(participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."))));
@@ -71,6 +78,7 @@ public class ParticipantImageController extends BasicInsertableController<Partic
 
     public ParticipantImageDTO add(MultipartFile file, ParticipantDTO participantDTO, String username) throws DataInputException {
         try {
+            delete(participantDTO);
             final ParticipantImage participantImage = new ParticipantImage();
             participantImage.setParticipant(participantConverter.reverse(participantDTO));
             participantImage.setData(file.getBytes());
@@ -83,7 +91,12 @@ public class ParticipantImageController extends BasicInsertableController<Partic
     }
 
     public ParticipantImageDTO add(ParticipantImageDTO participantImageDTO, String username) throws DataInputException {
+        delete(participantImageDTO.getParticipant());
         participantImageDTO.setCreatedBy(username);
         return converter.convert(new ParticipantImageConverterRequest(provider.save(converter.reverse(participantImageDTO))));
+    }
+
+    public int delete(ParticipantDTO participantDTO) {
+        return provider.delete(null, participantConverter.reverse(participantDTO));
     }
 }
