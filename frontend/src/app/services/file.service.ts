@@ -22,16 +22,29 @@ export class FileService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  addPicture(image: ParticipantImage): Observable<void> {
-    const url: string = `${this.baseUrl}`;
-    return this.http.post<void>(url, image, this.loginService.httpOptions)
+  addPicture(image: ParticipantImage): Observable<ParticipantImage> {
+    const url: string = `${this.baseUrl}/participants`;
+    return this.http.post<ParticipantImage>(url, image, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding picture to participant`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<void>(`adding picture to ${image}`))
+        catchError(this.messageService.handleError<ParticipantImage>(`adding picture to ${image}`))
+      );
+  }
+
+  getPicture(participant: Participant): Observable<ParticipantImage> {
+    const url: string = `${this.baseUrl}/participants/${participant!.id}`;
+    return this.http.get<ParticipantImage>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Getting picture from participant`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<ParticipantImage>(`getting picture from ${participant}`))
       );
   }
 }
