@@ -65,6 +65,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
         image.imageFormat = ImageFormat.BASE64;
         image.participant = this.participant;
         image.base64 = imageDataAsBase64;
+        console.log(image.base64);
         this.fileService.setPicture(image).subscribe(_picture => {
           this.messageService.infoMessage('infoPictureStored');
           this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
