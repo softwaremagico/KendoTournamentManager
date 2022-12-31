@@ -51,12 +51,12 @@ public class ParticipantImageDTO extends ElementDTO {
         this.data = data;
     }
 
-    @JsonSetter
+    @JsonGetter
     public String getBase64() {
         return new String(data, StandardCharsets.UTF_8);
     }
 
-    @JsonGetter
+    @JsonSetter
     public void setBase64(String base64) {
         if (base64 != null) {
             this.data = base64.getBytes(StandardCharsets.UTF_8);
