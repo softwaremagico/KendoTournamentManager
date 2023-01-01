@@ -31,6 +31,7 @@ import com.softwaremagico.kt.persistence.entities.ImageFormat;
 import java.nio.charset.StandardCharsets;
 
 public class ParticipantImageDTO extends ElementDTO {
+    private static final String BASE64_PREFIX = "data:image/jpeg;base64,";
     private ParticipantDTO participant;
     private byte[] data;
     private ImageFormat imageFormat;
@@ -53,13 +54,16 @@ public class ParticipantImageDTO extends ElementDTO {
 
     @JsonGetter
     public String getBase64() {
-        return new String(data, StandardCharsets.UTF_8);
+        if (data == null) {
+            return null;
+        }
+        return BASE64_PREFIX + new String(data, StandardCharsets.UTF_8);
     }
 
     @JsonSetter
     public void setBase64(String base64) {
         if (base64 != null) {
-            this.data = base64.getBytes(StandardCharsets.UTF_8);
+            this.data = base64.replaceFirst(BASE64_PREFIX, "").getBytes(StandardCharsets.UTF_8);
         }
     }
 
