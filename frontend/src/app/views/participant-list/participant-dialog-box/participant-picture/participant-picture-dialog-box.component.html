@@ -2,7 +2,7 @@
   <div class="picture-engine">
     <div class="camera-frame">
       <webcam [height]="512" [width]="512" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
-              (initError)="errorHandler($event)" [imageType]="imageType"></webcam>
+              (initError)="errorHandler($event)" [imageType]="imageType" [videoOptions]="videoOptions"></webcam>
     </div>
 
     <div class="gallery">
@@ -18,6 +18,11 @@
             color="picture" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
       <mat-icon>add_a_photo</mat-icon>
       {{'photo' | translate}}</button>
+    <button mat-raised-button type="button" (click)="switchCamera()"
+            mat-flat-button
+            *ngIf="availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
+      <mat-icon>switch_camera</mat-icon>
+      {{'switch' | translate}}</button>
     <button mat-raised-button type="button" (click)="saveImage()" [disabled]="selectedPicture == undefined"
             mat-flat-button
             color="primary" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
