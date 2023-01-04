@@ -591,7 +591,8 @@
   "newestEliminated": "L'últim equip és eliminat",
   "newestEliminatedHint": "L'equip que fa menys temps que lluita és eliminat",
   "picture": "Foto",
-  "infoPictureStored": "La imatge ha estat guardada i està assignada al parcipant."
+  "infoPictureStored": "La imatge ha estat guardada i està assignada al parcipant.",
+  "switch": "Canvia"
 }
 
 

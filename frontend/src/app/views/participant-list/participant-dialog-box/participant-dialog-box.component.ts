@@ -102,7 +102,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
 
   openDialog(title: string, action: Action, participant: Participant) {
     const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
-      width: '650px',
+      width: '700px',
       data: {
         title: title, action: action, participant: participant
       }

@@ -21,6 +21,22 @@
   padding: 5px;
 }
 
+:host ::ng-deep {
+  .webcam-container .webcam-wrapper, .webcam-wrapper video {
+    width: 100% !important;
+    margin: auto;
+  }
+
+  .webcam-container .webcam-wrapper, .webcam-wrapper {
+    width: 100% !important;
+    margin: auto;
+  }
+}
+
+video {
+  width: 100%;
+}
+
 .picture-engine {
   overflow: auto;
   max-height: 60vh;
