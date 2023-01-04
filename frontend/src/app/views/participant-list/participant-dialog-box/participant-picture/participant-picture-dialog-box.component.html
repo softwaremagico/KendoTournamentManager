@@ -1,8 +1,12 @@
 <div mat-dialog-content>
   <div class="picture-engine">
-    <div class="camera-frame">
-      <webcam [height]="512" [width]="512" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
-              (initError)="errorHandler($event)" [imageType]="imageType" [videoOptions]="videoOptions"></webcam>
+    <div class="canvas">
+      <div class="camera-frame">
+        <webcam [height]="512" [width]="512" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
+                (initError)="errorHandler($event)" [imageType]="imageType" [videoOptions]="videoOptions"></webcam>
+      </div>
+      <div class="rectangle"></div>
+      <div class="circle"></div>
     </div>
 
     <div class="gallery">

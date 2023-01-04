@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.softwaremagico.kt.persistence.entities.ImageFormat;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class ParticipantImageDTO extends ElementDTO {
     private static final String BASE64_PREFIX = "data:image/png;base64,";
@@ -57,13 +58,13 @@ public class ParticipantImageDTO extends ElementDTO {
         if (data == null) {
             return null;
         }
-        return BASE64_PREFIX + new String(data, StandardCharsets.UTF_8);
+        return BASE64_PREFIX + Base64.getEncoder().encodeToString(data);
     }
 
     @JsonSetter
     public void setBase64(String base64) {
         if (base64 != null) {
-            this.data = base64.replaceFirst(BASE64_PREFIX, "").getBytes(StandardCharsets.UTF_8);
+            this.data = Base64.getDecoder().decode(base64.replaceFirst(BASE64_PREFIX, "").getBytes(StandardCharsets.UTF_8));
         }
     }
 
