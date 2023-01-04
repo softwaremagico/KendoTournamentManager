@@ -12,6 +12,7 @@ import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
 import {ImageFormat} from "../../../../models/image-format";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
+import {calcPossibleSecurityContexts} from "@angular/compiler/src/template_parser/binding_parser";
 
 @Component({
   selector: 'app-participant-picture',
@@ -23,6 +24,10 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   selectedPicture: number | undefined = undefined;
   participant: Participant;
   imageType: string = "image/png";
+  modes: string[] = ["environment", "user"];
+  facingMode: number = 0;  //Set back camera
+  videoOptions: MediaTrackConstraints = {};
+  availableCameras: number;
 
   @Output()
   public imageClicked = new EventEmitter<WebcamImage>();
@@ -37,7 +42,10 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   }
 
   ngOnInit(): void {
-
+    this.selectCamera();
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      this.availableCameras = devices.filter((device) => device.kind === "videoinput").length;
+    })
   }
 
   @HostListener('document:keydown.space', ['$event']) onSpace(event: KeyboardEvent) {
@@ -51,6 +59,15 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   public takePicture(): void {
     this.pictureGenerated.next();
     this.selectedPicture = this.pictures.length - 1;
+  }
+
+  public switchCamera(): void {
+    this.facingMode = (this.facingMode + 1) % this.modes.length;
+    this.selectCamera();
+  }
+
+  private selectCamera(): void {
+    this.videoOptions.facingMode = {ideal: this.modes[this.facingMode]};
   }
 
   public errorHandler(error: WebcamInitError): void {
