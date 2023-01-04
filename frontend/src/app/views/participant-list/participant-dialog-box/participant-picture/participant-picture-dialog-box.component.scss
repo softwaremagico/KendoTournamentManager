@@ -19,6 +19,8 @@
 .camera-frame {
   border: 2px solid #012354;
   padding: 5px;
+  height: 384px;
+  width: 623px;
 }
 
 :host ::ng-deep {
@@ -60,4 +62,27 @@ video {
 img {
   border-radius: 8px;
   height: 100px;
+}
+
+.rectangle {
+  border: 2px solid #ff2a2a;
+  height: 384px;
+  width: 312px;
+  position: absolute;
+  margin-left: 156px;
+  margin-top: -392px;
+}
+
+.circle {
+  border: 2px solid #ff2a2a;
+  height: 310px;
+  width: 310px;
+  position: absolute;
+  margin-left: 156px;
+  margin-top: -354px;
+  border-radius: 50%;
+}
+
+.canvas {
+  max-height: 400px;
 }
