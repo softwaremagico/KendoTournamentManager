@@ -32,8 +32,10 @@ import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantImageConverterRequest;
 import com.softwaremagico.kt.core.exceptions.DataInputException;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
+import com.softwaremagico.kt.core.images.ImageUtils;
 import com.softwaremagico.kt.core.providers.ParticipantImageProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.ImageFormat;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
@@ -93,6 +95,11 @@ public class ParticipantImageController extends BasicInsertableController<Partic
     public ParticipantImageDTO add(ParticipantImageDTO participantImageDTO, String username) throws DataInputException {
         delete(participantImageDTO.getParticipant());
         participantImageDTO.setCreatedBy(username);
+        try {
+            participantImageDTO.setData(ImageUtils.cropImage(participantImageDTO.getData()));
+        } catch (IOException e) {
+            KendoTournamentLogger.warning(this.getClass(), "Image cannot be cropped");
+        }
         return converter.convert(new ParticipantImageConverterRequest(provider.save(converter.reverse(participantImageDTO))));
     }
 
