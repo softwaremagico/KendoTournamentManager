@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Inject, OnInit, Optional, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {ImageService} from "../../../../services/image.service";
 import {RbacService} from "../../../../services/rbac/rbac.service";
@@ -22,6 +22,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   pictures: Array<string> = [];
   selectedPicture: number | undefined = undefined;
   participant: Participant;
+  imageType: string = "image/png";
 
   @Output()
   public imageClicked = new EventEmitter<WebcamImage>();
@@ -37,6 +38,10 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   ngOnInit(): void {
 
+  }
+
+  @HostListener('document:keydown.space', ['$event']) onSpace(event: KeyboardEvent) {
+    this.clickOnCamera;
   }
 
   closeDialog() {
