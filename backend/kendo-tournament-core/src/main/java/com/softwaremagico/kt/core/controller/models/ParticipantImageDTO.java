@@ -31,7 +31,7 @@ import com.softwaremagico.kt.persistence.entities.ImageFormat;
 import java.nio.charset.StandardCharsets;
 
 public class ParticipantImageDTO extends ElementDTO {
-    private static final String BASE64_PREFIX = "data:image/jpeg;base64,";
+    private static final String BASE64_PREFIX = "data:image/png;base64,";
     private ParticipantDTO participant;
     private byte[] data;
     private ImageFormat imageFormat;
