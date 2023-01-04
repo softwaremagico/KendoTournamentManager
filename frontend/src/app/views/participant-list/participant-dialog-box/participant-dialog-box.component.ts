@@ -36,7 +36,6 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
 
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
-    //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,
     private pictureUpdatedService: PictureUpdatedService, private fileService: FileService) {
     super(rbacService);

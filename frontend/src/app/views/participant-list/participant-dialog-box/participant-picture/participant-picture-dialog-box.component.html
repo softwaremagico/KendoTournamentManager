@@ -2,7 +2,7 @@
   <div class="picture-engine">
     <div class="camera-frame">
       <webcam [height]="512" [width]="512" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
-              (initError)="errorHandler($event)"></webcam>
+              (initError)="errorHandler($event)" [imageType]="imageType"></webcam>
     </div>
 
     <div class="gallery">
