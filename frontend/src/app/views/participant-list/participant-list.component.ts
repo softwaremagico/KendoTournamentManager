@@ -15,7 +15,6 @@ import {Action} from "../../action";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
-import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'app-participant-list',

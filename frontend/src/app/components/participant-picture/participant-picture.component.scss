@@ -1,0 +1,20 @@
+.container {
+  border-radius: 50%;
+  height: 200px;
+  width: 200px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px #012354;
+}
+
+.initials {
+  font-size: 22px;
+  color: red;
+}
+
+img {
+  flex: none; /* keep aspect ratio */
+}
