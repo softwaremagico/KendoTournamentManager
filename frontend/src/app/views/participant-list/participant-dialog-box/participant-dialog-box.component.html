@@ -43,7 +43,8 @@
     <div mat-dialog-actions class="button-container">
       <button mat-raised-button type="button" (click)="addPicture()"
               mat-flat-button
-              color="picture" *ngIf="actionName != 'Delete' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
+              color="picture"
+              *ngIf="actionName != 'Delete' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
         <mat-icon>add_a_photo</mat-icon>
         {{'photo' | translate}}</button>
       <button mat-raised-button type="submit" value="Submit"
@@ -56,4 +57,5 @@
         {{'cancel' | translate}}</button>
     </div>
   </form>
+  <app-participant-picture [participant]="participant"></app-participant-picture>
 </div>

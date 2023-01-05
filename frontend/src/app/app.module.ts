@@ -77,8 +77,9 @@ import {FightStatisticsPanelModule} from "./components/fight-statistics-panel/fi
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {WebcamModule} from "ngx-webcam";
 import {
-  ParticipantPictureModule
-} from "./views/participant-list/participant-dialog-box/participant-picture/participant-picture.module";
+  ParticipantPictureDialogModule
+} from "./views/participant-list/participant-dialog-box/participant-picture/participant-picture-dialog.module";
+import {ParticipantPictureModule} from "./components/participant-picture/participant-picture.module";
 
 
 registerLocaleData(localeES, "es");
@@ -154,7 +155,7 @@ registerLocaleData(localeNL, "nl");
     LeagueGeneratorModule,
     TeamRankingModule,
     ParticipantDialogBoxModule,
-    ParticipantPictureModule,
+    ParticipantPictureDialogModule,
     TournamentTeamsModule,
     TournamentRolesModule,
     TournamentDialogBoxModule,
@@ -162,7 +163,8 @@ registerLocaleData(localeNL, "nl");
     FightListModule,
     FightStatisticsPanelModule,
     MatSlideToggleModule,
-    WebcamModule
+    WebcamModule,
+    ParticipantPictureModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,

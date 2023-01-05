@@ -12,6 +12,9 @@ import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [ParticipantPictureDialogBoxComponent],
+  exports: [
+    ParticipantPictureDialogBoxComponent
+  ],
   imports: [
     CommonModule,
     WebcamModule,
@@ -22,4 +25,4 @@ import {MatButtonModule} from "@angular/material/button";
     MatButtonModule
   ]
 })
-export class ParticipantPictureModule { }
+export class ParticipantPictureDialogModule { }
