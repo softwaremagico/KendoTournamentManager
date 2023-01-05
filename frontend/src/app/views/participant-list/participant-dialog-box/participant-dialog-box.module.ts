@@ -11,6 +11,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import { ParticipantPictureDialogBoxComponent } from './participant-picture/participant-picture-dialog-box.component';
+import {ParticipantPictureModule} from "../../../components/participant-picture/participant-picture.module";
 
 
 
@@ -27,7 +28,8 @@ import { ParticipantPictureDialogBoxComponent } from './participant-picture/part
     RbacModule,
     MatInputModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    ParticipantPictureModule
   ]
 })
 export class ParticipantDialogBoxModule { }

@@ -11,7 +11,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {ParticipantPictureDialogBoxComponent} from "./participant-picture/participant-picture-dialog-box.component";
 import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
 import {FileService} from "../../../services/file.service";
-import {ImageFormat} from "../../../models/image-format";
+import {ParticipantPictureComponent} from "../../../components/participant-picture/participant-picture.component";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -67,7 +67,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     if (this.participant && this.participant.id) {
       this.fileService.getPicture(this.participant).subscribe(_picture => {
         if (_picture) {
-            this.participantPicture = _picture.base64;
+          this.participantPicture = _picture.base64;
         } else {
           this.participantPicture = undefined;
         }

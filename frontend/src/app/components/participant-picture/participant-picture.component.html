@@ -1,0 +1,8 @@
+<div class="">
+  <div class="container" *ngIf="participantPicture">
+    <img class="picture" src="{{ participantPicture }}"/>
+  </div>
+  <div class="container" *ngIf="!participantPicture">
+    <span class="initials">{{this.participantInitials}}</span>
+  </div>
+</div>
