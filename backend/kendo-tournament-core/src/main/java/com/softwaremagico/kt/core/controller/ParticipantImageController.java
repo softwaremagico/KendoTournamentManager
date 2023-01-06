@@ -96,7 +96,8 @@ public class ParticipantImageController extends BasicInsertableController<Partic
         delete(participantImageDTO.getParticipant());
         participantImageDTO.setCreatedBy(username);
         try {
-            participantImageDTO.setData(ImageUtils.cropImage(participantImageDTO.getData()));
+            participantImageDTO.setData(ImageUtils.getBytes(ImageUtils.cropImage(
+                    ImageUtils.resizeImage(ImageUtils.getImage(participantImageDTO.getData())))));
         } catch (IOException e) {
             KendoTournamentLogger.warning(this.getClass(), "Image cannot be cropped");
         }
