@@ -20,13 +20,17 @@ export class ParticipantPictureComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fileService.getPicture(this.participant).subscribe(_picture => {
-      if (_picture) {
-        this.participantPicture = _picture.base64;
-      } else {
-        this.participantPicture = undefined;
-      }
-    });
+    if (this.participant! && this.participant.hasAvatar) {
+      this.fileService.getPicture(this.participant).subscribe(_picture => {
+        if (_picture) {
+          this.participantPicture = _picture.base64;
+        } else {
+          this.participantPicture = undefined;
+        }
+      });
+    } else {
+      this.participantPicture = undefined;
+    }
     this.participantInitials = this.nameUtils.getInitials(this.participant);
   }
 
@@ -39,8 +43,8 @@ export class ParticipantPictureComponent implements OnInit {
     if (participant.id) {
       const seed = Math.abs(participant.id);
       const mainColor = seed % 135 + 120;
-      const secondaryColor = mainColor > 170 && mainColor < 205 ? mainColor - 50 + seed % 100 :
-        (mainColor < 205 ? mainColor + seed % 50 : mainColor - seed % 50);
+      const secondaryColor = mainColor > 170 && mainColor < 205 ? (mainColor % 2 == 0 ? mainColor - 50 + seed % 30 : mainColor + 20 + seed % 30) :
+        (mainColor < 205 ? mainColor + 50 - seed % 30 : mainColor - 50 + seed % 30);
       const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 == 0 || seed > 230 ? -1 : 1));
       color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
       color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
@@ -56,9 +60,9 @@ export class ParticipantPictureComponent implements OnInit {
     let color = 'rgb(';
     if (participant.id) {
       const seed = Math.abs(participant.id);
-      const mainColor = seed % 90;
-      const secondaryColor = 90 - seed % 90;
-      const thirdColor = mainColor > 10 ? mainColor - 10 + seed % 20 : mainColor + seed % 20;
+      const mainColor = seed % 100;
+      const secondaryColor = 100 - seed % 100;
+      const thirdColor = mainColor > 10 ? mainColor - 10 + seed % 30 : mainColor + seed % 30;
       color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
       color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
       color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);

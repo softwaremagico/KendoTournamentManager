@@ -7,6 +7,7 @@ export class Participant extends Element {
   public lastname: string;
   public club?: Club;
   public locked: boolean = false;
+  public hasAvatar: boolean = false;
 
   public get clubName(): string {
     return this.club ? this.club.name : "";
@@ -21,6 +22,7 @@ export class Participant extends Element {
       target.club = Club.clone(source.club);
     }
     target.locked = source.locked;
+    target.hasAvatar = source.hasAvatar;
   }
 
   public static clone(data: Participant): Participant {
