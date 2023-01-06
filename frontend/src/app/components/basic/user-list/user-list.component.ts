@@ -12,6 +12,9 @@ export class UserListComponent implements OnInit {
   @Input()
   userListData: UserListData;
 
+  @Input()
+  showAvatars: boolean = false;
+
   constructor(private filterResetService: FilterResetService) {
   }
 
