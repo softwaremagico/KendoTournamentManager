@@ -12,7 +12,6 @@ import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
 import {ImageFormat} from "../../../../models/image-format";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
-import {calcPossibleSecurityContexts} from "@angular/compiler/src/template_parser/binding_parser";
 
 @Component({
   selector: 'app-participant-picture',
@@ -76,6 +75,10 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   public pictureHandler(webcamImage: WebcamImage): void {
     this.pictures.push(webcamImage.imageAsDataUrl);
+    //Only store last 5 pictures.
+    if (this.pictures.length > 5) {
+      this.pictures.splice(0, 1);
+    }
     this.imageClicked.emit(webcamImage);
   }
 
@@ -105,6 +108,15 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
       this.selectedPicture = index;
     } else {
       this.selectedPicture = undefined;
+    }
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      console.log("file --> ", file);
     }
   }
 }
