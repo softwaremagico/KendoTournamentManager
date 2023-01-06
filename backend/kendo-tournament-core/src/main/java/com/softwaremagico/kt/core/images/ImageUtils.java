@@ -50,20 +50,29 @@ public class ImageUtils {
         Files.write(destinationFile, decodedImg);
     }
 
-    public static byte[] cropImage(byte[] data) throws IOException {
-        final InputStream inputStream = new ByteArrayInputStream(data);
-        final BufferedImage bufferedImage = ImageIO.read(inputStream);
-
-        final BufferedImage croppedImage = cropImage(bufferedImage);
-
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(croppedImage, "png", byteArrayOutputStream);
-        try {
-            return byteArrayOutputStream.toByteArray();
-        } finally {
-            inputStream.close();
-            byteArrayOutputStream.close();
+    public static BufferedImage getImage(byte[] data) throws IOException {
+        try (final InputStream inputStream = new ByteArrayInputStream(data)) {
+            return ImageIO.read(inputStream);
         }
+    }
+
+    public static byte[] getBytes(BufferedImage bufferedImage) throws IOException {
+        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        }
+    }
+
+    public static byte[] resizeImage(byte[] data) throws IOException {
+        return getBytes(resizeImage(getImage(data)));
+    }
+
+    public static BufferedImage resizeImage(BufferedImage bufferedImage) {
+        return resizeImage(bufferedImage, 680, 480);
+    }
+
+    public static byte[] cropImage(byte[] data) throws IOException {
+        return getBytes(cropImage(getImage(data)));
     }
 
     /**
@@ -87,5 +96,25 @@ public class ImageUtils {
         final Graphics graphics = copyOfImage.createGraphics();
         graphics.drawImage(bufferedImage, 0, 0, null);
         return copyOfImage;
+    }
+
+    public static BufferedImage resizeImage(BufferedImage inputImage, int maxWidth, int maxHeight) {
+        final int sourceWidth = inputImage.getWidth();
+        final int sourceHeight = inputImage.getHeight();
+        final int targetWidth;
+        final int targetHeight;
+        if (sourceWidth <= maxWidth && sourceHeight <= maxHeight) {
+            return inputImage;
+        } else if (sourceWidth > sourceHeight) {
+            targetWidth = maxWidth;
+            targetHeight = targetWidth * sourceHeight / sourceWidth;
+        } else {
+            targetHeight = maxHeight;
+            targetWidth = targetHeight * sourceWidth / sourceHeight;
+        }
+        final Image scaledImage = inputImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+        final BufferedImage targetImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        targetImage.getGraphics().drawImage(scaledImage, 0, 0, null);
+        return targetImage;
     }
 }
