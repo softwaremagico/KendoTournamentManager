@@ -39,6 +39,8 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
 
     private ClubDTO club;
 
+    private Boolean hasAvatar = false;
+
     public ParticipantDTO() {
     }
 
@@ -81,6 +83,14 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
 
     public void setClub(ClubDTO club) {
         this.club = club;
+    }
+
+    public Boolean getHasAvatar() {
+        return hasAvatar;
+    }
+
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
     }
 
     @Override
