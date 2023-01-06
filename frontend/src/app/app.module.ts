@@ -78,7 +78,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {WebcamModule} from "ngx-webcam";
 import {
   ParticipantPictureDialogModule
-} from "./views/participant-list/participant-dialog-box/participant-picture/participant-picture-dialog.module";
+} from "./views/participant-list/participant-dialog-box/participant-picture/participant-picture-dialog-box.module";
 import {ParticipantPictureModule} from "./components/participant-picture/participant-picture.module";
 
 
