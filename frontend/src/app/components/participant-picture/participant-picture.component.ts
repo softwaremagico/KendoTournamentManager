@@ -31,18 +31,37 @@ export class ParticipantPictureComponent implements OnInit {
   }
 
   public get circleStyle(): string {
-    return "background-color: " + this.getParticipantColor(this.participant);
+    return "background-color: " + this.getBackgroundColor(this.participant) + " color:" + this.getFontColor(this.participant);
   }
 
-  getParticipantColor(participant: Participant): string {
+  private getBackgroundColor(participant: Participant): string {
     let color = 'rgb(';
     if (participant.id) {
-      const minR = participant.id % 2 == 0 ? 200 : 128;
-      const minG = participant.id % 3 == 0 ? 128 : 200;
-      const minB = participant.id % 2 == 1 ? 200 : 128;
-      color += ((Math.abs(participant.id)) % minR + (256 - minR)) + ", ";
-      color += ((Math.abs((participant.id * 31) + participant.id * (participant.id % 2 == 0 ? 1 : -1)) % minG + (256 - minG))) + ", ";
-      color += ((Math.abs(participant.id) + participant.id * (participant.id % 2 == 0 ? -1 : 1)) % minB + (256 - minB));
+      const seed = Math.abs(participant.id);
+      const mainColor = seed % 135 + 120;
+      const secondaryColor = mainColor > 170 && mainColor < 205 ? mainColor - 50 + seed % 100 :
+        (mainColor < 205 ? mainColor + seed % 50 : mainColor - seed % 50);
+      const thirdColor = mainColor + ((participant.id % 25) * (seed % 2 == 0 || seed > 230 ? -1 : 1));
+      color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);
+    } else {
+      color += "255, 255, 255";
+    }
+    color += ');';
+    return color;
+  }
+
+  private getFontColor(participant: Participant): string {
+    let color = 'rgb(';
+    if (participant.id) {
+      const seed = Math.abs(participant.id);
+      const mainColor = seed % 90;
+      const secondaryColor = 90 - seed % 90;
+      const thirdColor = mainColor > 10 ? mainColor - 10 + seed % 20 : mainColor + seed % 20;
+      color += (seed % 3 == 0 ? mainColor : seed % 3 == 1 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 == 1 ? mainColor : seed % 3 == 2 ? secondaryColor : thirdColor) + ", ";
+      color += (seed % 3 == 2 ? mainColor : seed % 3 == 0 ? secondaryColor : thirdColor);
     } else {
       color += "255, 255, 255";
     }
