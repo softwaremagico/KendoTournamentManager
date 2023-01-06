@@ -3,7 +3,7 @@
   <div cdkDropList class="users-container"
        [cdkDropListData]="userListData.filteredParticipants"
        (cdkDropListDropped)="removeRole($event)">
-    <user-list [userListData]="userListData"></user-list>
+    <user-list [userListData]="userListData" [showAvatars]="showAvatars"></user-list>
   </div>
   <div class="right-panel">
     <app-fight-statistics-panel [tournament]="tournament" [teams]="false"></app-fight-statistics-panel>
@@ -16,7 +16,7 @@
         <div class="role" cdkDropList
              [cdkDropListData]="getParticipantsContainer(roleType)"
              (cdkDropListDropped)="dropParticipant($event, roleType)">
-          <app-user-card *ngFor="let user of participants.get(roleType)" [user]="user"
+          <app-user-card *ngFor="let user of participants.get(roleType)" [user]="user" [showAvatar]="showAvatars"
                          [activity]="RbacActivity.EDIT_ROLE" [dragDisabled]="user.locked"></app-user-card>
         </div>
       </div>

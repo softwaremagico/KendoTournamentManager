@@ -28,6 +28,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   roleTypes: RoleType[] = RoleType.toArray();
   participants = new Map<RoleType, Participant[]>();
+  showAvatars: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
               public participantService: ParticipantService, public roleService: RoleService,
@@ -66,10 +67,13 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       participants.sort(function (a, b) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
-      //Block participants.
-      if (this.tournament.locked) {
-        for (let participant of participants) {
+      //Block participants and avatars.
+      for (let participant of participants) {
+        if (this.tournament.locked) {
           participant.locked = participant.locked || this.tournament.locked;
+        }
+        if (participant.hasAvatar) {
+          this.showAvatars = true;
         }
       }
       this.userListData.participants = participants;
