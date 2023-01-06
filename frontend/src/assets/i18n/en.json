@@ -605,6 +605,7 @@
   "newestEliminatedHint": "The team that is fighting for a shorten time is eliminated.",
   "picture": "Picture",
   "infoPictureStored": "The picture has been stored and assigned to the participant.",
-  "switch": "Switch"
+  "switch": "Switch",
+  "upload": "Upload"
 }
 
