@@ -27,6 +27,12 @@
             *ngIf="availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
       <mat-icon>switch_camera</mat-icon>
       {{'switch' | translate}}</button>
+    <button mat-raised-button type="button" (click)="fileInput.click()" mat-flat-button
+            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.activities)">
+      <mat-icon>upload_file</mat-icon>
+      {{'upload' | translate}}
+      <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event)" style="display:none;"/>
+    </button>
     <button mat-raised-button type="button" (click)="saveImage()" [disabled]="selectedPicture == undefined"
             mat-flat-button
             color="primary" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
