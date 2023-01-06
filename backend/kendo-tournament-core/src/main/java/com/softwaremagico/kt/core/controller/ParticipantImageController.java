@@ -100,10 +100,16 @@ public class ParticipantImageController extends BasicInsertableController<Partic
         } catch (IOException e) {
             KendoTournamentLogger.warning(this.getClass(), "Image cannot be cropped");
         }
+        final Participant participant = participantConverter.reverse(participantImageDTO.getParticipant());
+        participant.setHasAvatar(participantImageDTO.getData() != null);
+        participantProvider.save(participant);
         return converter.convert(new ParticipantImageConverterRequest(provider.save(converter.reverse(participantImageDTO))));
     }
 
     public int delete(ParticipantDTO participantDTO) {
-        return provider.delete(null, participantConverter.reverse(participantDTO));
+        final Participant participant = participantConverter.reverse(participantDTO);
+        participant.setHasAvatar(false);
+        participantProvider.save(participant);
+        return provider.delete(null, participant);
     }
 }
