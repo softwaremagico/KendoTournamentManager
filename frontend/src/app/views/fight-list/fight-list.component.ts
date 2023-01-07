@@ -55,6 +55,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   isWizardEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
   selectedGroup: number = 0;
+  showAvatars: boolean = false;
 
   resetFilterValue: Subject<boolean> = new Subject();
 
@@ -158,6 +159,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               return a.level - b.level;
             });
             this.fights = groups.flatMap((group) => group.fights);
+            for (let fight of this.fights) {
+              for (let duel of fight.duels) {
+                if (duel.competitor1!.hasAvatar || duel.competitor2!.hasAvatar) {
+                  this.showAvatars = true;
+                }
+              }
+            }
             this.resetFilter();
             //Use a timeout or refresh before the components are drawn.
             setTimeout(() => {
@@ -595,7 +603,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     );
   }
 
-  resetFilter(){
+  resetFilter() {
     this.filter('');
     this.resetFilterValue.next(true);
   }
