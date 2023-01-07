@@ -51,7 +51,7 @@ public class FileServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ParticipantImageDTO upload(@RequestParam("file") MultipartFile file,
                                       @PathVariable("participantId") int participantId,
                                       Authentication authentication, HttpServletRequest request) {

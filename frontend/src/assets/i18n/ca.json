@@ -593,7 +593,8 @@
   "picture": "Foto",
   "infoPictureStored": "La imatge ha estat guardada i està assignada al parcipant.",
   "switch": "Canvia",
-  "upload": "Carregar"
+  "upload": "Carregar",
+  "invalidFileSize": "Només es permeten fitxers amb una grandària entre {{minSize}} i {{maxSize}}."
 }
 
 

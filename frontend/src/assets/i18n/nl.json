@@ -578,7 +578,8 @@
   "picture": "Foto",
   "infoPictureStored": "De afbeelding is opgeslagen en toegewezen aan de deelnemer.",
   "switch": "Wissel",
-  "upload": "Uploaden"
+  "upload": "Uploaden",
+  "invalidFileSize": "Alleen bestanden met een grootte tussen {{minSize}} en {{maxSize}} zijn toegestaan."
 }
 
 

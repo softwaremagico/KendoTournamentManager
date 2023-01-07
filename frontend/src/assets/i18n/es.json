@@ -598,7 +598,8 @@
   "picture": "Foto",
   "infoPictureStored": "La imagen ha sido guardada y está asignada al parcipante.",
   "switch": "Cambiar",
-  "upload": "Subir"
+  "upload": "Subir",
+  "invalidFileSize": "Solo se permiten archivos con un tamaño entre {{minSize}} y {{maxSize}}."
 }
 
 
