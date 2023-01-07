@@ -11,7 +11,7 @@ import {NameUtilsService} from "../../services/name-utils.service";
 export class ParticipantPictureComponent implements OnInit {
 
   @Input()
-  participant: Participant;
+  participant: Participant | undefined;
 
   participantPicture: string | undefined;
   participantInitials: string;
@@ -31,11 +31,17 @@ export class ParticipantPictureComponent implements OnInit {
     } else {
       this.participantPicture = undefined;
     }
-    this.participantInitials = this.nameUtils.getInitials(this.participant);
+    if (this.participant) {
+      this.participantInitials = this.nameUtils.getInitials(this.participant);
+    }
   }
 
   public get circleStyle(): string {
-    return "background-color: " + this.getBackgroundColor(this.participant) + " color:" + this.getFontColor(this.participant);
+    if (this.participant) {
+      return "background-color: " + this.getBackgroundColor(this.participant) + " color:" + this.getFontColor(this.participant);
+    } else {
+      return "";
+    }
   }
 
   private getBackgroundColor(participant: Participant): string {

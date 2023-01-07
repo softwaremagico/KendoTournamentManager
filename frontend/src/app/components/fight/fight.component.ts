@@ -33,6 +33,10 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
+
+  @Input()
+  showAvatars: boolean = false;
+
   constructor(private duelChangedService: DuelChangedService, rbacService: RbacService) {
     super(rbacService);
   }

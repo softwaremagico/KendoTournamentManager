@@ -2,8 +2,10 @@
   <score *ngIf="!left" [index]="0" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></score>
   <score *ngIf="!left" [index]="1" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [hidden]="isUntie()"></score>
   <fault *ngIf="!left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></fault>
+  <app-participant-picture class="participant-picture" *ngIf="showAvatar && !left" [participant]="getParticipant()"></app-participant-picture>
   <user-name class="user-name" [participant]="getParticipant()" [duel]="duel" [memberIndex]="duelIndex" [swapTeams]="swapTeams"
              [left]="left"></user-name>
+  <app-participant-picture class="participant-picture" *ngIf="showAvatar && left" [participant]="getParticipant()"></app-participant-picture>
   <fault *ngIf="left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></fault>
   <score *ngIf="left" [index]="1" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [hidden]="isUntie()"></score>
   <score *ngIf="left" [index]="0" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></score>
