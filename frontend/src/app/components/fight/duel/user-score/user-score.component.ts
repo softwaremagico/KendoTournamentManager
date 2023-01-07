@@ -22,6 +22,9 @@ export class UserScoreComponent {
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  showAvatar: boolean = false;
+
   isUntie(): boolean {
     return this.duel.type === DuelType.UNDRAW;
   }

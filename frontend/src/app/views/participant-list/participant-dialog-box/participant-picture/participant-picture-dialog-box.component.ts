@@ -117,8 +117,8 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     let fileList: FileList | null = element.files;
     if (fileList) {
       const file: File | null = fileList.item(0);
-      if (!file || file.size < 4096 || file.size > 4194304) {
-        const parameters: object = {minSize: '4096', maxSize: '4194304'};
+      if (!file || file.size < 4096 || file.size > 2097152) {
+        const parameters: object = {minSize: '4096', maxSize: '' + (2097152/(1024 * 1024))};
         this.translateService.get('invalidFileSize', parameters).subscribe((res: string) => {
           this.messageService.errorMessage(res);
         });

@@ -586,7 +586,7 @@
   "infoPictureStored": "L'immagine è stata salvata ed è assegnata al partecipante.",
   "switch": "Cambia",
   "upload": "Caricare",
-  "invalidFileSize": "Sono consentiti solo i file con una dimensione compresa tra {{minSize}} e {{maxSize}}."
+  "invalidFileSize": "Sono consentiti solo i file con una dimensione compresa tra {{minSize}} B e {{maxSize}} MB."
 }
 
 

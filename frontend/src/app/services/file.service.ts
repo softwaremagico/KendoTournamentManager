@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -27,7 +27,12 @@ export class FileService {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");
-    return this.http.post<ParticipantImage>(url, formData, this.loginService.httpOptions)
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    };
+    return this.http.post<ParticipantImage>(url, formData, httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding picture to participant`),
