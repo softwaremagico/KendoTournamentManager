@@ -30,6 +30,9 @@ export class DuelComponent extends KendoComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  showAvatars: boolean = false;
+
   constructor(private duelChangedService: DuelChangedService, private membersOrderChangedService: MembersOrderChangedService) {
     super();
   }

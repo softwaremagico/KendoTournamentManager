@@ -100,7 +100,7 @@
       <div class="fight-list">
         <fight *ngFor="let fight of filteredFights" [fight]="fight" [selected]="fight === selectedFight"
                [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
-               (click)="selectFight(fight)"
+               (click)="selectFight(fight)" [showAvatars]="showAvatars"
                (onSelectedDuel)="selectDuel($event[0])"></fight>
       </div>
       <div class="unties-list">
