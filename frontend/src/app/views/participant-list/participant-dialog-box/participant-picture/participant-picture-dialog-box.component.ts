@@ -12,6 +12,7 @@ import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
 import {ImageFormat} from "../../../../models/image-format";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-participant-picture',
@@ -35,7 +36,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { participant: Participant },
               public dialogRef: MatDialogRef<ParticipantPictureDialogBoxComponent>, rbacService: RbacService,
               private imageService: ImageService, public messageService: MessageService, private fileService: FileService,
-              private pictureUpdatedService: PictureUpdatedService) {
+              private translateService: TranslateService, private pictureUpdatedService: PictureUpdatedService) {
     super(rbacService);
     this.participant = data.participant;
   }
@@ -90,7 +91,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
         image.imageFormat = ImageFormat.BASE64;
         image.participant = this.participant;
         image.base64 = imageDataAsBase64;
-        this.fileService.setPicture(image).subscribe(_picture => {
+        this.fileService.setBase64Picture(image).subscribe(_picture => {
           this.messageService.infoMessage('infoPictureStored');
           this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
           this.closeDialog();
@@ -116,7 +117,18 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     let fileList: FileList | null = element.files;
     if (fileList) {
       const file: File | null = fileList.item(0);
-      console.log("file --> ", file);
+      if (!file || file.size < 4096 || file.size > 4194304) {
+        const parameters: object = {minSize: '4096', maxSize: '4194304'};
+        this.translateService.get('invalidFileSize', parameters).subscribe((res: string) => {
+          this.messageService.errorMessage(res);
+        });
+      } else {
+        this.fileService.setFilePicture(file, this.participant).subscribe(_picture => {
+          this.messageService.infoMessage('infoPictureStored');
+          this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
+          this.closeDialog();
+        });
+      }
     }
   }
 }

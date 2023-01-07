@@ -606,6 +606,7 @@
   "picture": "Picture",
   "infoPictureStored": "The picture has been stored and assigned to the participant.",
   "switch": "Switch",
-  "upload": "Upload"
+  "upload": "Upload",
+  "invalidFileSize": "Only files with a size between {{minSize}} and {{maxSize}} are allowed."
 }
 

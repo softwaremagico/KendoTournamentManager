@@ -22,7 +22,23 @@ export class FileService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  setPicture(image: ParticipantImage): Observable<ParticipantImage> {
+  setFilePicture(file: File, participant: Participant): Observable<ParticipantImage> {
+    const url: string = `${this.baseUrl}/participants/${participant.id}`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("reportProgress", "true");
+    return this.http.post<ParticipantImage>(url, formData, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Adding picture to participant`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<ParticipantImage>(`adding file to participant ${participant.id}`))
+      );
+  }
+
+  setBase64Picture(image: ParticipantImage): Observable<ParticipantImage> {
     const url: string = `${this.baseUrl}/participants`;
     return this.http.post<ParticipantImage>(url, image, this.loginService.httpOptions)
       .pipe(
