@@ -87,6 +87,8 @@ public class ParticipantImageController extends BasicInsertableController<Partic
                     ImageUtils.resizeImage(ImageUtils.getImage(file.getBytes())))));
             participantImage.setImageFormat(ImageFormat.BASE64);
             participantImage.setCreatedBy(username);
+            participantDTO.setHasAvatar(true);
+            participantProvider.save(participantConverter.reverse(participantDTO));
             return converter.convert(new ParticipantImageConverterRequest(provider.save(participantImage)));
         } catch (IOException e) {
             throw new DataInputException(this.getClass(), "File creation failed.");
