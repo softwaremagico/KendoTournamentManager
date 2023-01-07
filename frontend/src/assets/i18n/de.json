@@ -578,7 +578,8 @@
   "picture": "Foto",
   "infoPictureStored": "Das Bild wurde gespeichert und dem Teilnehmer zugeordnet.",
   "switch": "Wechseln",
-  "upload": "Hochladen"
+  "upload": "Hochladen",
+  "invalidFileSize": "Es sind nur Dateien mit einer Größe zwischen {{minSize}} und {{maxSize}} erlaubt."
 }
 
 
