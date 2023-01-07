@@ -83,8 +83,9 @@ public class ParticipantImageController extends BasicInsertableController<Partic
             delete(participantDTO);
             final ParticipantImage participantImage = new ParticipantImage();
             participantImage.setParticipant(participantConverter.reverse(participantDTO));
-            participantImage.setData(file.getBytes());
-            participantImage.setImageFormat(ImageFormat.RAW);
+            participantImage.setData(ImageUtils.getBytes(ImageUtils.cropImage(
+                    ImageUtils.resizeImage(ImageUtils.getImage(file.getBytes())))));
+            participantImage.setImageFormat(ImageFormat.BASE64);
             participantImage.setCreatedBy(username);
             return converter.convert(new ParticipantImageConverterRequest(provider.save(participantImage)));
         } catch (IOException e) {
