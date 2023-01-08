@@ -25,10 +25,7 @@ package com.softwaremagico.kt.pdf.accreditations;
  */
 
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Rectangle;
+import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -40,6 +37,7 @@ import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.events.TableBackgroundEvent;
 import org.springframework.context.MessageSource;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 
@@ -54,16 +52,18 @@ public class TournamentAccreditationCards extends PdfDocument {
     private final TournamentDTO tournament;
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
     private final byte[] banner;
+    private final byte[] background;
     private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
 
 
     public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
-                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner) {
+                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner, byte[] background) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
         this.competitorsRoles = competitorsRoles;
         this.banner = banner;
+        this.background = background;
         this.participantImages = participantImages;
     }
 
@@ -97,7 +97,11 @@ public class TournamentAccreditationCards extends PdfDocument {
                     entry.getKey(), entry.getValue(), participantImageDTO != null ? participantImageDTO.getData() : null, banner);
             final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2,
                     document.getPageSize().getHeight() / 2);
-            competitorTable.setTableEvent(new TableBackgroundEvent());
+            try {
+                competitorTable.setTableEvent(new TableBackgroundEvent(Image.getInstance(background)));
+            } catch (NullPointerException | IOException e) {
+                competitorTable.setTableEvent(new TableBackgroundEvent());
+            }
             cell = new PdfPCell(competitorTable);
             cell.setBorderWidth(BORDER);
             cell.setColspan(1);

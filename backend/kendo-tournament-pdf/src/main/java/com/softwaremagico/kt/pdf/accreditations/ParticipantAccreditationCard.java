@@ -37,7 +37,6 @@ import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.PdfTheme;
-import com.softwaremagico.kt.pdf.events.TableBackgroundEvent;
 import com.softwaremagico.kt.pdf.events.TransparentBackgroundCell;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
@@ -78,12 +77,12 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     public Image getDefaultPhoto() {
         if (defaultPhoto == null) {
-            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/default-photo.png")) {
+            try (InputStream inputStream = ParticipantAccreditationCard.class.getResourceAsStream("/images/default-photo.png")) {
                 if (inputStream != null) {
                     defaultPhoto = Image.getInstance(inputStream.readAllBytes());
                 }
             } catch (NullPointerException | BadElementException | IOException ex) {
-                KendoTournamentLogger.severe(TableBackgroundEvent.class.getName(), "No photo image found!");
+                KendoTournamentLogger.severe(ParticipantAccreditationCard.class.getName(), "No photo image found!");
             }
         }
         return defaultPhoto;
@@ -91,12 +90,12 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     public Image getDefaultBanner() {
         if (defaultBanner == null) {
-            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/default-banner.png")) {
+            try (InputStream inputStream = ParticipantAccreditationCard.class.getResourceAsStream("/images/default-banner.png")) {
                 if (inputStream != null) {
                     defaultBanner = Image.getInstance(inputStream.readAllBytes());
                 }
             } catch (NullPointerException | BadElementException | IOException ex) {
-                KendoTournamentLogger.severe(TableBackgroundEvent.class.getName(), "No banner image found!");
+                KendoTournamentLogger.severe(ParticipantAccreditationCard.class.getName(), "No banner image found!");
             }
         }
         return defaultBanner;
@@ -136,6 +135,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         cell = new PdfPCell(accreditationImage, true);
         cell.setBorderWidth(BORDER);
+        cell.setBackgroundColor(Color.WHITE);
         cell.setColspan(1);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -325,10 +325,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
         PdfPCell cell;
         final float[] widths = {0.90f, 0.10f};
         final PdfPTable mainTable = new PdfPTable(widths);
-        mainTable.setTableEvent(new TableBackgroundEvent()); //Add background image to the table.
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
         mainTable.setTotalWidth(width + 30);
-
 
         cell = new PdfPCell(mainTable(width, height));
         cell.setBorderWidth(BORDER);

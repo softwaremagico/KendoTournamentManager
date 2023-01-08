@@ -90,12 +90,15 @@ public class PdfController {
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO) {
         final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
-        final TournamentImageDTO tournamentImageDTO = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
+        final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
+        final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
         final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
         final Map<ParticipantDTO, ParticipantImageDTO> participantImages = participantImageDTOS.stream()
                 .collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
         return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
-                .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages, tournamentImageDTO.getData());
+                .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages,
+                banner != null ? banner.getData() : null,
+                accreditationBackground != null ? accreditationBackground.getData() : null);
     }
 }
