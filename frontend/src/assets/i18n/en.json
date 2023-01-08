@@ -607,6 +607,7 @@
   "infoPictureStored": "The picture has been stored and assigned to the participant.",
   "switch": "Switch",
   "upload": "Upload",
-  "invalidFileSize": "Only files with a size between {{minSize}} B and {{maxSize}} MB are allowed."
+  "invalidFileSize": "Only files with a size between {{minSize}} B and {{maxSize}} MB are allowed.",
+  "pictureDeleted": "The picture has been deleted!"
 }
 
