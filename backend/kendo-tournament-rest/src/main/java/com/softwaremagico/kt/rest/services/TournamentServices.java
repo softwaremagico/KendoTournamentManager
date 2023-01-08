@@ -26,10 +26,17 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
+import com.softwaremagico.kt.pdf.InvalidXmlElementException;
+import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,15 +44,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/tournaments")
 public class TournamentServices {
     private final TournamentController tournamentController;
+    private final PdfController pdfController;
 
-    public TournamentServices(TournamentController tournamentController) {
+    public TournamentServices(TournamentController tournamentController, PdfController pdfController) {
         this.tournamentController = tournamentController;
+        this.pdfController = pdfController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -112,5 +123,23 @@ public class TournamentServices {
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentDTO update(@RequestBody TournamentDTO tournament, Authentication authentication, HttpServletRequest request) {
         return tournamentController.update(tournament, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all accreditations from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "{tournamentId}/accreditations", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                            Integer tournamentId,
+                                            Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + " - accreditations.pdf").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        try {
+            return pdfController.generateTournamentAccreditations(locale, tournament).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
     }
 }

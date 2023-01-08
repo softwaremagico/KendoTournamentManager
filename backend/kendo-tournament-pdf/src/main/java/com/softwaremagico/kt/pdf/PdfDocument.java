@@ -24,9 +24,8 @@ package com.softwaremagico.kt.pdf;
  * #L%
  */
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.logger.PdfExporterLog;
 import com.softwaremagico.kt.pdf.events.FooterEvent;
@@ -35,10 +34,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
 public abstract class PdfDocument {
-    private int rightMargin = 30;
-    private int leftMargin = 30;
-    private int topMargin = 30;
-    private int bottomMargin = 30;
+    private final int rightMargin = 30;
+    private final int leftMargin = 30;
+    private final int topMargin = 30;
+    private final int bottomMargin = 30;
 
     protected Document addMetaData(Document document) {
         document.addTitle("List Report");
@@ -73,11 +72,11 @@ public abstract class PdfDocument {
      */
     public final byte[] generate() throws EmptyPdfBodyException, DocumentException, InvalidXmlElementException {
         final Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final PdfWriter writer = PdfWriter.getInstance(document, baos);
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
         addEvent(writer);
         generatePDF(document, writer);
-        return baos.toByteArray();
+        return byteArrayOutputStream.toByteArray();
 
     }
 
@@ -104,5 +103,17 @@ public abstract class PdfDocument {
     }
 
     protected abstract Rectangle getPageSize();
+
+    public PdfPCell getEmptyCell() {
+        return getEmptyCell(1);
+    }
+
+    protected PdfPCell getEmptyCell(int colspan) {
+        final Paragraph p = new Paragraph(" ", new Font(PdfTheme.getBasicFont(), PdfTheme.FONT_SIZE));
+        final PdfPCell cell = new PdfPCell(p);
+        cell.setColspan(colspan);
+        cell.setBorder(0);
+        return cell;
+    }
 
 }
