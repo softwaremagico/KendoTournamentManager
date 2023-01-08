@@ -26,10 +26,15 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.InvalidXmlElementException;
 import com.softwaremagico.kt.pdf.controller.PdfController;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,40 +50,17 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Locale;
 
 @RestController
 @RequestMapping("/tournaments")
-public class TournamentServices {
-    private final TournamentController tournamentController;
+public class TournamentServices extends BasicServices<Tournament, TournamentDTO, TournamentRepository,
+        TournamentProvider, TournamentConverterRequest, TournamentConverter, TournamentController> {
     private final PdfController pdfController;
 
     public TournamentServices(TournamentController tournamentController, PdfController pdfController) {
-        this.tournamentController = tournamentController;
+        super(tournamentController);
         this.pdfController = pdfController;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TournamentDTO> getAll(HttpServletRequest request) {
-        return tournamentController.get();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public long count(HttpServletRequest request) {
-        return tournamentController.count();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
-                             HttpServletRequest request) {
-        return tournamentController.get(id);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -90,39 +72,7 @@ public class TournamentServices {
                              @Parameter(description = "Members by team") @RequestParam(name = "teamSize") Integer teamSize,
                              @Parameter(description = "Type of tournament") @RequestParam(name = "type") TournamentType type,
                              Authentication authentication, HttpServletRequest request) {
-        return tournamentController.create(name, shiaijos, teamSize, type, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates a tournament with full information.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentDTO add(@RequestBody TournamentDTO tournamentDTO, Authentication authentication, HttpServletRequest request) {
-        return tournamentController.create(tournamentDTO, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        tournamentController.deleteById(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TournamentDTO tournamentDTO, HttpServletRequest request) {
-        tournamentController.delete(tournamentDTO);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentDTO update(@RequestBody TournamentDTO tournament, Authentication authentication, HttpServletRequest request) {
-        return tournamentController.update(tournament, authentication.getName());
+        return getController().create(name, shiaijos, teamSize, type, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -131,7 +81,7 @@ public class TournamentServices {
     public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
                                             Integer tournamentId,
                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
-        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final TournamentDTO tournament = getController().get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + " - accreditations.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());

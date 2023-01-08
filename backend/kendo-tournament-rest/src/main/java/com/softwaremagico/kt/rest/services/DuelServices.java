@@ -26,36 +26,31 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
-import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.core.converters.DuelConverter;
+import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
 @RequestMapping("/duels")
-public class DuelServices {
-    private final DuelController duelController;
+public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
+        DuelProvider, DuelConverterRequest, DuelConverter, DuelController> {
 
     public DuelServices(DuelController duelController) {
-        this.duelController = duelController;
-    }
-
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a duel.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/fights", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DuelDTO update(@RequestBody DuelDTO duelDTO, Authentication authentication, HttpServletRequest request) {
-        if (duelDTO == null) {
-            throw new BadRequestException(getClass(), "Duel data is missing");
-        }
-        return duelController.update(duelDTO, authentication.getName());
+        super(duelController);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -63,7 +58,7 @@ public class DuelServices {
     @GetMapping(value = "/groups/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromGroup(@Parameter(description = "Id of the group.", required = true) @PathVariable("groupId") Integer groupId,
                                             HttpServletRequest request) {
-        return duelController.getUntiesFromGroup(groupId);
+        return getController().getUntiesFromGroup(groupId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -72,7 +67,7 @@ public class DuelServices {
     public List<DuelDTO> getUntiesFromTournament(@Parameter(description = "Id of the tournament.", required = true) @PathVariable("tournamentId")
                                                  Integer tournamentId,
                                                  HttpServletRequest request) {
-        return duelController.getUntiesFromTournament(tournamentId);
+        return getController().getUntiesFromTournament(tournamentId);
     }
 
 
