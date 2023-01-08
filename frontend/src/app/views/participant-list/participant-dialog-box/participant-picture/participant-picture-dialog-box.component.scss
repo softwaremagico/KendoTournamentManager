@@ -27,16 +27,19 @@
   .webcam-container .webcam-wrapper, .webcam-wrapper video {
     width: 100% !important;
     margin: auto;
+    height: 390px;
   }
 
   .webcam-container .webcam-wrapper, .webcam-wrapper {
     width: 100% !important;
     margin: auto;
+    height: 390px;
   }
 }
 
 video {
   width: 100%;
+  height: 390px;
 }
 
 .picture-engine {
