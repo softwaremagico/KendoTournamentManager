@@ -599,7 +599,8 @@
   "infoPictureStored": "La imagen ha sido guardada y está asignada al parcipante.",
   "switch": "Cambiar",
   "upload": "Subir",
-  "invalidFileSize": "Solo se permiten archivos con un tamaño entre {{minSize}} B y {{maxSize}} MB."
+  "invalidFileSize": "Solo se permiten archivos con un tamaño entre {{minSize}} B y {{maxSize}} MB.",
+  "pictureDeleted": "¡La imagen ha sido eliminada!"
 }
 
 
