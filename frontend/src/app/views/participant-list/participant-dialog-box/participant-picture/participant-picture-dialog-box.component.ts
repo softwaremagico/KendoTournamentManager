@@ -1,4 +1,4 @@
-import {Component, EventEmitter, HostListener, Inject, OnInit, Optional, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {ImageService} from "../../../../services/image.service";
 import {RbacService} from "../../../../services/rbac/rbac.service";
@@ -46,10 +46,6 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     navigator.mediaDevices.enumerateDevices().then(devices => {
       this.availableCameras = devices.filter((device) => device.kind === "videoinput").length;
     })
-  }
-
-  @HostListener('document:keydown.space', ['$event']) onSpace(event: KeyboardEvent) {
-    this.clickOnCamera;
   }
 
   closeDialog() {
@@ -118,7 +114,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     if (fileList) {
       const file: File | null = fileList.item(0);
       if (!file || file.size < 4096 || file.size > 2097152) {
-        const parameters: object = {minSize: '4096', maxSize: '' + (2097152/(1024 * 1024))};
+        const parameters: object = {minSize: '4096', maxSize: '' + (2097152 / (1024 * 1024))};
         this.translateService.get('invalidFileSize', parameters).subscribe((res: string) => {
           this.messageService.errorMessage(res);
         });
