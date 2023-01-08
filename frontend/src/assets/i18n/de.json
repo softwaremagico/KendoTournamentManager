@@ -579,7 +579,8 @@
   "infoPictureStored": "Das Bild wurde gespeichert und dem Teilnehmer zugeordnet.",
   "switch": "Wechseln",
   "upload": "Hochladen",
-  "invalidFileSize": "Es sind nur Dateien mit einer Größe zwischen {{minSize}} B und {{maxSize}} MB erlaubt."
+  "invalidFileSize": "Es sind nur Dateien mit einer Größe zwischen {{minSize}} B und {{maxSize}} MB erlaubt.",
+  "pictureDeleted": "Das Bild wurde gelöscht!"
 }
 
 
