@@ -49,7 +49,7 @@
   "random": "Casuale",
   "SortedButton": "Ordinato",
   "ExploreButton": "Esplorare",
-  "SelectButton": "Selecionare",
+  "selectButton": "Selecionare",
   "ServerLabel": "Server",
   "TreeButton": "Albero",
   "PreviousButton": "Incontro anteriore",
@@ -58,8 +58,8 @@
   "DeleteFightButton": "Cancellare incontro",
   "AddFightButton": "Aggiungere incontro",
   "GenerateButton": "Generare lista",
-  "SaveButton": "Salvare",
-  "SaveImageButton": "Salvare come PNG",
+  "saveButton": "Salvare",
+  "saveImageButton": "Salvare come PNG",
   "Clean": "Cancellare",
   "CleanButton": "Cancellare squadra",
   "CleanAllButton": "Cancellare tutto",
@@ -581,7 +581,12 @@
   "oldestEliminated": "La prima squadra viene eliminata",
   "oldestEliminatedHint": "La squadra che ha combattuto più a lungo viene eliminata.",
   "newestEliminated": "L'ultima squadra viene eliminata",
-  "newestEliminatedHint": "La squadra che ha combattuto per meno tempo viene eliminata."
+  "newestEliminatedHint": "La squadra che ha combattuto per meno tempo viene eliminata.",
+  "picture": "Foto",
+  "infoPictureStored": "L'immagine è stata salvata ed è assegnata al partecipante.",
+  "switch": "Cambia",
+  "upload": "Caricare",
+  "invalidFileSize": "Sono consentiti solo i file con una dimensione compresa tra {{minSize}} B e {{maxSize}} MB."
 }
 
 

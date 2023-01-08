@@ -29,7 +29,7 @@ import com.softwaremagico.kt.logger.LoggedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class DataInputException extends LoggedException {
     private static final long serialVersionUID = -1399325226733756592L;
 

@@ -15,7 +15,6 @@ import {Action} from "../../action";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
-import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'app-participant-list',
@@ -81,7 +80,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   openDialog(title: string, action: Action, participant: Participant) {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
-      width: '400px',
+      width: '700px',
       data: {
         title: title, action: action, entity: participant,
         clubs: this.clubs
@@ -103,7 +102,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   addRowData(participant: Participant) {
     this.participantService.add(participant).subscribe(_participant => {
-      this.basicTableData.dataSource.data.push(_participant);
+      this.basicTableData.dataSource.data.push(Participant.clone(_participant));
       this.basicTableData.dataSource._updateChangeSubscription();
       this.basicTableData.selectItem(_participant);
       this.messageService.infoMessage('infoParticipantStored');

@@ -1,39 +1,52 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <form [formGroup]="registerForm" (ngSubmit)="doAction()">
-    <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-      <input formControlName="name" placeholder="{{ 'participantName' | translate}}"
-             matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
-    </mat-form-field>
-    <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="lastname" placeholder="{{ 'lastname' | translate}}"
-             matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
-    </mat-form-field>
-    <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="idCard" placeholder="{{ 'idCard' | translate}}" matInput
-             required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
-    </mat-form-field>
-    <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-label>{{ 'club' | translate}}</mat-label>
-      <input formControlName="club" type="text" placeholder="{{ 'filter' | translate}}"
-             attr.aria-label="{{ 'club' | translate}}" matInput required
-             [formControl]="formControl"
-             [matAutocomplete]="auto"
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClub">
-        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-          {{option.name}}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
-    <ng-template #elseTemplate>
+    <div class="content">
+      <div class="data">
+        <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
+          <input formControlName="name" placeholder="{{ 'participantName' | translate}}"
+                 matInput required
+                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+        </mat-form-field>
+        <mat-form-field *ngIf="actionName != 'Delete'">
+          <input formControlName="lastname" placeholder="{{ 'lastname' | translate}}"
+                 matInput required
+                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+        </mat-form-field>
+        <mat-form-field *ngIf="actionName != 'Delete'">
+          <input formControlName="idCard" placeholder="{{ 'idCard' | translate}}" matInput
+                 required
+                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+        </mat-form-field>
+        <mat-form-field *ngIf="actionName != 'Delete'">
+          <mat-label>{{ 'club' | translate}}</mat-label>
+          <input formControlName="club" type="text" placeholder="{{ 'filter' | translate}}"
+                 attr.aria-label="{{ 'club' | translate}}" matInput required
+                 [formControl]="formControl"
+                 [matAutocomplete]="auto"
+                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClub">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+              {{option.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <ng-template #elseTemplate>
     <span
       [innerHTML]="'participantDeleteQuestion' | translate : {name: participant.name, lastname: participant.lastname}"></span>
-    </ng-template>
+        </ng-template>
+      </div>
+      <div class="picture-container" *ngIf="participantPicture">
+        <img class="picture" src="{{ participantPicture }}"/>
+      </div>
+    </div>
     <div mat-dialog-actions class="button-container">
+      <button mat-raised-button type="button" (click)="addPicture()"
+              mat-flat-button
+              color="picture"
+              *ngIf="actionName != 'Delete' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
+        <mat-icon>add_a_photo</mat-icon>
+        {{'photo' | translate}}</button>
       <button mat-raised-button type="submit" value="Submit"
               [disabled]="registerForm.invalid" mat-flat-button
               color="primary" *ngIf="(RbacActivity.EDIT_PARTICIPANT | rbac : this.rbacService.activities)">
