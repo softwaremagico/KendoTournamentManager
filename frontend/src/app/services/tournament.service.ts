@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
 import {Observable} from "rxjs";
@@ -103,5 +103,15 @@ export class TournamentService {
         }),
         catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
       );
+  }
+
+  getAccreditations(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    });
   }
 }

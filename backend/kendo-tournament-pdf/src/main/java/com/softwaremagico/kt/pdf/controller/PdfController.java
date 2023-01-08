@@ -31,6 +31,7 @@ import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.lists.*;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
@@ -76,5 +78,11 @@ public class PdfController {
 
     public FightSummaryPDF generateFightsSummaryList(Locale locale, TournamentDTO tournamentDTO) {
         return new FightSummaryPDF(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO), null);
+    }
+
+    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO) {
+        final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+        return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
+                .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())));
     }
 }

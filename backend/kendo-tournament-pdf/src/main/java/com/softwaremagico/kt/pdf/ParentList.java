@@ -117,14 +117,6 @@ public abstract class ParentList extends PdfDocument {
         return cell;
     }
 
-    protected PdfPCell getEmptyCell(int colspan) {
-        final Paragraph p = new Paragraph(" ", new Font(PdfTheme.getBasicFont(), PdfTheme.FONT_SIZE));
-        final PdfPCell cell = new PdfPCell(p);
-        cell.setColspan(colspan);
-        cell.setBorder(0);
-        return cell;
-    }
-
     public PdfPCell getCell(String text, int colspan, int align) {
         return getCell(text, PdfTheme.getBasicFont(), colspan, align);
     }
