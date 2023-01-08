@@ -39,7 +39,7 @@ public class TableBackgroundEvent implements PdfPTableEvent {
     private static Image bgImage;
 
     static {
-        try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("images/accreditation-background.png");) {
+        try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/accreditation-background.png");) {
             if (inputStream != null) {
                 bgImage = Image.getInstance(inputStream.readAllBytes());
             }
