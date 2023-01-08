@@ -39,7 +39,6 @@ import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.pdf.events.TableBackgroundEvent;
 import com.softwaremagico.kt.pdf.events.TransparentBackgroundCell;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
@@ -58,7 +57,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     private final TournamentDTO tournament;
     private final ParticipantDTO participant;
-    private final ParticipantImage participantImage;
+    private final byte[] participantImage;
     private final RoleDTO role;
     private final byte[] banner;
 
@@ -67,7 +66,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     public ParticipantAccreditationCard(MessageSource messageSource, Locale locale,
                                         TournamentDTO tournament, ParticipantDTO participant, RoleDTO role,
-                                        ParticipantImage participantImage, byte[] banner) {
+                                        byte[] participantImage, byte[] banner) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
@@ -124,7 +123,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         if (participantImage != null) {
             try {
-                accreditationImage = Image.getInstance(participantImage.getData());
+                accreditationImage = Image.getInstance(participantImage);
             } catch (IOException | NullPointerException npe) {
                 accreditationImage = getDefaultPhoto();
             }
