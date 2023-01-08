@@ -8,7 +8,8 @@
                 *ngIf="(RbacActivity.CREATE_TOURNAMENT | rbac : this.rbacService.activities)">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
+        <button mat-button color="primary"
+                [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
                 (click)="editElement()"
                 [matTooltipShowDelay]="500" matTooltip="{{'tournamentEdit' | translate}}"
                 *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | rbac : this.rbacService.activities)">
@@ -24,21 +25,6 @@
                 *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)">
           <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
         </button>
-        <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
-        <!--          <mat-icon>emoji_events</mat-icon>-->
-        <!--        </button>-->
-        <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
-        <!--          <mat-icon>badge</mat-icon>-->
-        <!--        </button>-->
-        <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
-        <!--          <mat-icon>contact_page</mat-icon>-->
-        <!--        </button>-->
-        <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
-        <!--          <mat-icon>summarize</mat-icon>-->
-        <!--        </button>-->
-        <!--        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="addElement()">-->
-        <!--          <mat-icon>integration_instructions</mat-icon>-->
-        <!--        </button>-->
         <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="openFights()"
                 [matTooltipShowDelay]="500" matTooltip="{{'fights' | translate}}"
                 *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.activities)">
@@ -58,19 +44,34 @@
                 *ngIf="(RbacActivity.EDIT_LOCKED_TOURNAMENT | rbac : this.rbacService.activities) && this.basicTableData.selectedElement && this.basicTableData.selectedElement!.locked">
           <mat-icon>no_encryption</mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked" (click)="deleteElement()"
+        <button mat-button color="warn"
+                [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
+                (click)="deleteElement()"
                 [matTooltipShowDelay]="500" matTooltip="{{'delete' | translate}}"
                 *ngIf="(RbacActivity.DELETE_TOURNAMENT | rbac : this.rbacService.activities)">
           <mat-icon>clear</mat-icon>
         </button>
-        <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()"
-                [matTooltipShowDelay]="500" matTooltip="{{'bloggerStatistics' | translate}}"
-                *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.activities)">
-          <mat-icon svgIcon="tournament-blog" class="kendo-icon"></mat-icon>
-        </button>
       </div>
     </div>
     <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
+    <div class="bottom-menu">
+      <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="downloadBlogCode()"
+              [matTooltipShowDelay]="500" matTooltip="{{'bloggerStatistics' | translate}}"
+              *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.activities)">
+        <mat-icon svgIcon="tournament-blog" class="kendo-icon"></mat-icon>
+      </button>
+      <button mat-button color="primary"
+              [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
+              [matTooltipShowDelay]="500" matTooltip="{{'diplomasHint' | translate}}"
+              *ngIf="false && (RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.activities)">
+        <mat-icon>badge</mat-icon>
+      </button>
+      <button mat-button color="primary"
+              [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
+              [matTooltipShowDelay]="500" matTooltip="{{'accreditationsHint' | translate}}"
+              *ngIf="false && (RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.activities)">
+        <mat-icon svgIcon="diplomas" class="kendo-icon"></mat-icon>
+      </button>
+    </div>
   </div>
 </div>
