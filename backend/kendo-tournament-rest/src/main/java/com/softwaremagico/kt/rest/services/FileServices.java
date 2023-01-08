@@ -71,7 +71,7 @@ public class FileServices {
     @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantImageDTO getParticipantImage(@PathVariable("participantId") int participantId, HttpServletRequest request) {
-        return participantImageController.get(participantId);
+        return participantImageController.getByParticipantId(participantId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
