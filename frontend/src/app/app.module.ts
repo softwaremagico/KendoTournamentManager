@@ -80,6 +80,7 @@ import {
   ParticipantPictureDialogModule
 } from "./views/participant-list/participant-dialog-box/participant-picture/participant-picture-dialog-box.module";
 import {ParticipantPictureModule} from "./components/participant-picture/participant-picture.module";
+import {PictureDialogBoxModule} from "./components/participant-picture/picture-dialog-box/picture-dialog-box.module";
 
 
 registerLocaleData(localeES, "es");
@@ -164,7 +165,8 @@ registerLocaleData(localeNL, "nl");
     FightStatisticsPanelModule,
     MatSlideToggleModule,
     WebcamModule,
-    ParticipantPictureModule
+    ParticipantPictureModule,
+    PictureDialogBoxModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
