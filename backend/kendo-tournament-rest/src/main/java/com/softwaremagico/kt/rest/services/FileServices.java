@@ -73,4 +73,11 @@ public class FileServices {
     public ParticipantImageDTO getParticipantImage(@PathVariable("participantId") int participantId, HttpServletRequest request) {
         return participantImageController.get(participantId);
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Deletes the image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteParticipantImage(@PathVariable("participantId") int participantId, HttpServletRequest request) {
+        participantImageController.deleteByParticipantId(participantId);
+    }
 }

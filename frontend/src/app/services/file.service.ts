@@ -68,4 +68,17 @@ export class FileService {
         catchError(this.messageService.handleError<ParticipantImage>(`getting picture from ${participant}`))
       );
   }
+
+  deletePicture(participant: Participant): Observable<void> {
+    const url: string = `${this.baseUrl}/participants/${participant!.id}`;
+    return this.http.delete<void>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Deleting picture from participant`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Deleting picture from ${participant}`))
+      );
+  }
 }
