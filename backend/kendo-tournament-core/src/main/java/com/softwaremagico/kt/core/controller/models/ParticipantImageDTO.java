@@ -24,19 +24,27 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import java.util.Arrays;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.softwaremagico.kt.core.exceptions.DataInputException;
+import com.softwaremagico.kt.persistence.entities.ImageFormat;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class ParticipantImageDTO extends ElementDTO {
-    private Integer participantId;
+    private static final String IMAGE_PNG_BASE_64 = "data:image/png;base64,";
+    private static final String IMAGE_JPG_BASE_64 = "data:image/jpeg;base64,";
+    private ParticipantDTO participant;
     private byte[] data;
+    private ImageFormat imageFormat;
 
-    public Integer getParticipantId() {
-        return participantId;
+    public ParticipantDTO getParticipant() {
+        return participant;
     }
 
-    public void setParticipantId(Integer participantId) {
-        this.participantId = participantId;
+    public void setParticipant(ParticipantDTO participant) {
+        this.participant = participant;
     }
 
     public byte[] getData() {
@@ -47,25 +55,32 @@ public class ParticipantImageDTO extends ElementDTO {
         this.data = data;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    @JsonGetter
+    public String getBase64() {
+        if (data == null) {
+            return null;
         }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        final ParticipantImageDTO that = (ParticipantImageDTO) o;
-        return participantId.equals(that.participantId) && Arrays.equals(data, that.data);
+        return IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
     }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(super.hashCode(), participantId);
-        result = 31 * result + Arrays.hashCode(data);
-        return result;
+    @JsonSetter
+    public void setBase64(String base64) {
+        if (base64 != null) {
+            if (base64.startsWith(IMAGE_PNG_BASE_64)) {
+                this.data = Base64.getDecoder().decode(base64.replaceFirst(IMAGE_PNG_BASE_64, "").getBytes(StandardCharsets.UTF_8));
+            } else if (base64.startsWith(IMAGE_JPG_BASE_64)) {
+                this.data = Base64.getDecoder().decode(base64.replaceFirst(IMAGE_JPG_BASE_64, "").getBytes(StandardCharsets.UTF_8));
+            } else {
+                throw new DataInputException(this.getClass(), "Invalid image format.");
+            }
+        }
+    }
+
+    public ImageFormat getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(ImageFormat imageFormat) {
+        this.imageFormat = imageFormat;
     }
 }

@@ -49,7 +49,7 @@
   "random": "Zufällig",
   "SortedButton": "Sortiert",
   "ExploreButton": "Untersuchen",
-  "SelectButton": "Auswahl",
+  "selectButton": "Auswahl",
   "ServerLabel": "Server",
   "TreeButton": "Baum",
   "PreviousButton": "Vorheriger Kampf",
@@ -58,8 +58,8 @@
   "DeleteFightButton": "Lösche Kampf",
   "AddFightButton": "Kampf hinzufügen",
   "GenerateButton": "Liste erstellen",
-  "SaveButton": "Speichern",
-  "SaveImageButton": "Speichern (PNG)",
+  "saveButton": "Speichern",
+  "saveImageButton": "Speichern (PNG)",
   "Clean": "Aufräumen",
   "CleanButton": "Lösche Teams",
   "CleanAllButton": "Lösche alles",
@@ -574,7 +574,12 @@
   "oldestEliminated": "Die erste Mannschaft scheidet aus",
   "oldestEliminatedHint": "Das Team, das am längsten gekämpft hat, scheidet aus.",
   "newestEliminated": "Das letzte Team scheidet aus",
-  "newestEliminatedHint": "Das Team, das am wenigsten gekämpft hat, scheidet aus."
+  "newestEliminatedHint": "Das Team, das am wenigsten gekämpft hat, scheidet aus.",
+  "picture": "Foto",
+  "infoPictureStored": "Das Bild wurde gespeichert und dem Teilnehmer zugeordnet.",
+  "switch": "Wechseln",
+  "upload": "Hochladen",
+  "invalidFileSize": "Es sind nur Dateien mit einer Größe zwischen {{minSize}} B und {{maxSize}} MB erlaubt."
 }
 
 

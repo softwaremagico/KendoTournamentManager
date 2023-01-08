@@ -20,6 +20,9 @@ export class UserCardComponent extends RbacBasedComponent {
   @Input()
   dragDisabled: boolean = false;
 
+  @Input()
+  showAvatar: boolean = false;
+
   constructor(rbacService: RbacService) {
     super(rbacService);
   }

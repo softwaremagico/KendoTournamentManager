@@ -49,7 +49,7 @@
   "random": "Willekeurig",
   "SortedButton": "Gesorteerd",
   "ExploreButton": "Onderzoek",
-  "SelectButton": "Selecteer",
+  "selectButton": "Selecteer",
   "ServerLabel": "Server",
   "TreeButton": "Lijst",
   "PreviousButton": "Vorige wedstrijd",
@@ -58,8 +58,8 @@
   "DeleteFightButton": "Verwijder wedstrijd",
   "AddFightButton": "Voeg wedstrijd toe",
   "GenerateButton": "Genereer overzicht",
-  "SaveButton": "Opslaan",
-  "SaveImageButton": "Opslaan (PNG)",
+  "saveButton": "Opslaan",
+  "saveImageButton": "Opslaan (PNG)",
   "Clean": "Opruimen",
   "CleanButton": "Wis teams",
   "CleanAllButton": "Alles verwijderen",
@@ -574,7 +574,12 @@
   "oldestEliminated": "Het eerste team is uitgeschakeld",
   "oldestEliminatedHint": "Het team dat het langst heeft gevochten, wordt geëlimineerd.",
   "newestEliminated": "Het laatste team is uitgeschakeld",
-  "newestEliminatedHint": "Het team dat de minste tijd heeft gevochten, wordt geëlimineerd."
+  "newestEliminatedHint": "Het team dat de minste tijd heeft gevochten, wordt geëlimineerd.",
+  "picture": "Foto",
+  "infoPictureStored": "De afbeelding is opgeslagen en toegewezen aan de deelnemer.",
+  "switch": "Wissel",
+  "upload": "Uploaden",
+  "invalidFileSize": "Alleen bestanden met een grootte tussen {{minSize}} B en {{maxSize}} MB zijn toegestaan."
 }
 
 

@@ -1,10 +1,10 @@
 <user-score class="user-score" [left]="true" [duel]="duel" [duelIndex]="duelIndex" [swapTeams]="swapTeams"
             [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, true)"
-            (cdkDropListDropped)="drop($event, true)"
+            (cdkDropListDropped)="drop($event, true)" [showAvatar]="showAvatars"
             cdkDropList></user-score>
 <draw class="draw-score" [duel]="duel"></draw>
 <user-score class="user-score" [left]="false" [duel]="duel" [duelIndex]="duelIndex" [swapTeams]="swapTeams"
             [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)"
-            (cdkDropListDropped)="drop($event, false)"
+            (cdkDropListDropped)="drop($event, false)" [showAvatar]="showAvatars"
             cdkDropList></user-score>
 
