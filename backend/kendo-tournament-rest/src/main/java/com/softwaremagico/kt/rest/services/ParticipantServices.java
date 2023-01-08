@@ -26,78 +26,20 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/participants")
-public class ParticipantServices {
-    private final ParticipantController participantController;
+public class ParticipantServices extends BasicServices<Participant, ParticipantDTO, ParticipantRepository,
+        ParticipantProvider, ParticipantConverterRequest, ParticipantConverter, ParticipantController> {
 
     public ParticipantServices(ParticipantController participantController) {
-        this.participantController = participantController;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all participants.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ParticipantDTO> getAll(HttpServletRequest request) {
-        return participantController.get();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Counts all participants.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public long count(HttpServletRequest request) {
-        return participantController.count();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets a participant.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantDTO get(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
-                              HttpServletRequest request) {
-        return participantController.get(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantDTO add(@RequestBody ParticipantDTO participantDTO, Authentication authentication, HttpServletRequest request) {
-        return participantController.create(participantDTO, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@Parameter(description = "Id of an existing participant", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        participantController.deleteById(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a participant.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody ParticipantDTO participantDTO, HttpServletRequest request) {
-        participantController.delete(participantDTO);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a participant.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantDTO update(@RequestBody ParticipantDTO participantDTO, Authentication authentication, HttpServletRequest request) {
-        return participantController.update(participantDTO, authentication.getName());
+        super(participantController);
     }
 }

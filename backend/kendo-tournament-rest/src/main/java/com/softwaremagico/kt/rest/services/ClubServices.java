@@ -26,6 +26,11 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.converters.ClubConverter;
+import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
+import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.repositories.ClubRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -36,37 +41,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/clubs")
-public class ClubServices {
-    private final ClubController clubController;
+public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, ClubProvider, ClubConverterRequest, ClubConverter, ClubController> {
 
     public ClubServices(ClubController clubController) {
-        this.clubController = clubController;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all clubs.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<ClubDTO> getAll(HttpServletRequest request) {
-        return clubController.get();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Count all clubs.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public long count(HttpServletRequest request) {
-        return clubController.count();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets a club.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ClubDTO get(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        return clubController.get(id);
+        super(clubController);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -77,38 +58,6 @@ public class ClubServices {
                        @Parameter(description = "Country where the club is located", required = true) @RequestParam(name = "country") String country,
                        @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
                        Authentication authentication, HttpServletRequest request) {
-        return clubController.create(name, country, city, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates a club with full information.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ClubDTO add(@RequestBody ClubDTO club, Authentication authentication, HttpServletRequest request) {
-        return clubController.create(club, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a club.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@Parameter(description = "Id of an existing club", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        clubController.deleteById(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a club.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody ClubDTO club, HttpServletRequest request) {
-        clubController.delete(club);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a club.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ClubDTO update(@RequestBody ClubDTO club, Authentication authentication, HttpServletRequest request) {
-        return clubController.update(club, authentication.getName());
+        return getController().create(name, country, city, authentication.getName());
     }
 }
