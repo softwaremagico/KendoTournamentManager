@@ -11,7 +11,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {ParticipantPictureDialogBoxComponent} from "./participant-picture/participant-picture-dialog-box.component";
 import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
 import {FileService} from "../../../services/file.service";
-import {ParticipantPictureComponent} from "../../../components/participant-picture/participant-picture.component";
+import {MessageService} from "../../../services/message.service";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -37,7 +37,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,
-    private pictureUpdatedService: PictureUpdatedService, private fileService: FileService) {
+    private pictureUpdatedService: PictureUpdatedService, private fileService: FileService, private messageService: MessageService) {
     super(rbacService);
     this.participant = data.entity;
     this.title = data.title;
@@ -118,6 +118,13 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       } else if (result.action == Action.Delete) {
         // this.deleteRowData(result.data);
       }
+    });
+  }
+
+  deletePicture() {
+    this.fileService.deletePicture(this.participant).subscribe(() => {
+      this.messageService.infoMessage("pictureDeleted");
+      this.participantPicture = undefined;
     });
   }
 }
