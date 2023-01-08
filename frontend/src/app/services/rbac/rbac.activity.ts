@@ -73,6 +73,9 @@ export enum RbacActivity {
   CAN_LOGOUT = 'CAN_LOGOUT',
   CHANGE_LANGUAGE = 'CHANGE_LANGUAGE',
 
+  PRINT_ACCREDITATIONS = 'PRINT_ACCREDITATIONS',
+  PRINT_DIPLOMAS = 'PRINT_DIPLOMAS',
+
 }
 
 export namespace RbacActivity {
