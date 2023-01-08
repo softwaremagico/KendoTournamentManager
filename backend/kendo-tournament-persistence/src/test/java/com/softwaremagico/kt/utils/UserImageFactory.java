@@ -38,7 +38,7 @@ public class UserImageFactory {
         byte[] image = Files.readAllBytes(Paths.get(getClass().getClassLoader()
                 .getResource(resource).toURI()));
         ParticipantImage participantImage = new ParticipantImage();
-        participantImage.setUser(participant);
+        participantImage.setParticipant(participant);
         participantImage.setData(image);
 
         return participantImage;

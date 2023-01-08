@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
@@ -60,6 +61,10 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "club", nullable = false)
     private Club club;
+
+    @Column(name = "has_avatar")
+    @Convert(converter = BooleanCryptoConverter.class)
+    private Boolean hasAvatar = false;
 
     public Participant() {
         super();
@@ -113,6 +118,13 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         return club;
     }
 
+    public Boolean getHasAvatar() {
+        return hasAvatar;
+    }
+
+    public void setHasAvatar(Boolean hasAvatar) {
+        this.hasAvatar = hasAvatar;
+    }
 
     @Override
     public boolean equals(Object object) {

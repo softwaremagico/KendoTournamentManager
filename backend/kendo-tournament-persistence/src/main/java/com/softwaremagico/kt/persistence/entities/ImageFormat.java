@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.persistence.repositories;
+package com.softwaremagico.kt.persistence.entities;
 
 /*-
  * #%L
@@ -24,20 +24,16 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public enum ImageFormat {
+    RAW,
+    BASE64;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
-
-@Repository
-@Transactional
-public interface ParticipantImageRepository extends JpaRepository<ParticipantImage, Integer> {
-
-    Optional<ParticipantImage> findByParticipant(Participant participant);
-
-    int deleteByParticipant(Participant participant);
-
+    public static ImageFormat getFormat(String name) {
+        for (final ImageFormat format : ImageFormat.values()) {
+            if (format.name().equalsIgnoreCase(name)) {
+                return format;
+            }
+        }
+        return null;
+    }
 }

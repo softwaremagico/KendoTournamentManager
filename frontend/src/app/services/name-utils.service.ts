@@ -43,6 +43,11 @@ export class NameUtilsService {
   }
 
   getLastnameName(participant: Participant | undefined): string {
+    if (!participant) return "";
+    return this.spacesToCamel(participant.lastname + " " + this.getShortName(participant));
+  }
+
+  getLastnameNameNoSpaces(participant: Participant | undefined): string {
     return this.getLastname(participant) + ", " + this.getShortName(participant);
   }
 
@@ -51,7 +56,32 @@ export class NameUtilsService {
     return participant.lastname.slice(0, 1) + ". " + participant.name.slice(0, 1) + ".";
   }
 
-  getDisplayName(participant: Participant | undefined, resolution: number): string {
+  getInitials(participant: Participant | undefined): string {
+    if (!participant) return "";
+    let nameUpperIndex: number = 0;
+    let lastnameUpperIndex: number = 0;
+    for (let i = 0; i < participant.name.length; i++) {
+      if (participant.name[i] >= 'A' && participant.name[i] <= 'Z') {
+        nameUpperIndex = i;
+        break;
+      }
+    }
+    for (let i = 0; i < participant.lastname.length; i++) {
+      if (participant.lastname[i] >= 'A' && participant.lastname[i] <= 'Z') {
+        lastnameUpperIndex = i;
+        break;
+      }
+    }
+    return participant.name.slice(nameUpperIndex, 1) + participant.lastname.slice(lastnameUpperIndex, 1);
+  }
+
+  getDisplayName(participant
+                   :
+                   Participant | undefined, resolution
+                   :
+                   number
+  ):
+    string {
     if (resolution > 1500) {
       return this.getLastname(participant) + ', ' + this.getName(participant);
     } else if (resolution > 1200) {
@@ -63,5 +93,17 @@ export class NameUtilsService {
     } else {
       return this.getAcronym(participant);
     }
+  }
+
+
+  spacesToCamel(value
+                  :
+                  string
+  ) {
+    return value.toLowerCase()
+      .replace(/ (.)/g, function ($1) {
+        return $1.toUpperCase();
+      })
+      .replace(/ /g, '');
   }
 }

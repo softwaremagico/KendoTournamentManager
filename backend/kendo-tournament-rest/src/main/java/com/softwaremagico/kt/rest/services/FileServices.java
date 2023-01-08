@@ -27,10 +27,12 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.ParticipantImageController;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,18 +51,26 @@ public class FileServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void upload(@RequestParam("file") MultipartFile file,
-                       @RequestParam("participant") int participantId, HttpServletRequest request) {
-        participantImageController.add(file, participantId);
+    @PostMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ParticipantImageDTO upload(@RequestParam("file") MultipartFile file,
+                                      @PathVariable("participantId") int participantId,
+                                      Authentication authentication, HttpServletRequest request) {
+        return participantImageController.add(file, participantId, authentication.getName());
+    }
 
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantImageDTO upload(@Parameter(description = "Id of an existing participant", required = true)
+                                      @RequestBody ParticipantImageDTO participantImageDTO,
+                                      Authentication authentication, HttpServletRequest request) {
+        return participantImageController.add(participantImageDTO, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets an image from a participant", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantImageDTO getParticipantImage(@RequestParam("participant") int participantId, HttpServletRequest request) {
-        // return fileProvider.get(type, participantProvider.get(participantId));
-        return null;
+    @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantImageDTO getParticipantImage(@PathVariable("participantId") int participantId, HttpServletRequest request) {
+        return participantImageController.get(participantId);
     }
 }

@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Participant} from "../../../models/participant";
 import {Club} from "../../../models/club";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
@@ -8,6 +8,10 @@ import {map} from "rxjs/operators";
 import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {ParticipantPictureDialogBoxComponent} from "./participant-picture/participant-picture-dialog-box.component";
+import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
+import {FileService} from "../../../services/file.service";
+import {ParticipantPictureComponent} from "../../../components/participant-picture/participant-picture.component";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -28,31 +32,47 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
 
   registerForm: FormGroup;
 
+  participantPicture: string | undefined;
+
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
-    //@Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,
+    private pictureUpdatedService: PictureUpdatedService, private fileService: FileService) {
     super(rbacService);
     this.participant = data.entity;
     this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
     this.clubs = data.clubs;
+    this.participantPicture = undefined;
 
     this.registerForm = new FormGroup({
       name: new FormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
       lastname: new FormControl(this.participant.lastname, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
       idCard: new FormControl(this.participant.idCard, [Validators.required, Validators.maxLength(20)]),
-      club: new FormControl(this.participant.club?.name, [Validators.required])
+      club: new FormControl(this.participant.club, [Validators.required])
     },);
   }
 
   ngOnInit() {
+    this.participantPicture = undefined;
     this.filteredOptions = this.formControl.valueChanges.pipe(
       startWith(''),
       map(value => (typeof value === 'string' ? value : value.name)),
       map(name => (name ? this._filter(name) : this.clubs.slice())),
     );
+    this.pictureUpdatedService.isPictureUpdated.subscribe(_picture => {
+      this.participantPicture = _picture;
+    });
+    if (this.participant && this.participant.id) {
+      this.fileService.getPicture(this.participant).subscribe(_picture => {
+        if (_picture) {
+          this.participantPicture = _picture.base64;
+        } else {
+          this.participantPicture = undefined;
+        }
+      });
+    }
   }
 
   displayClub(club: Club): string {
@@ -76,4 +96,28 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.dialogRef.close({action: Action.Cancel});
   }
 
+  addPicture() {
+    this.openDialog("", Action.Add, this.participant);
+  }
+
+  openDialog(title: string, action: Action, participant: Participant) {
+    const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
+      width: '700px',
+      data: {
+        title: title, action: action, participant: participant
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == undefined) {
+        //Do nothing
+      } else if (result.action == Action.Add) {
+        // this.addRowData(result.data);
+      } else if (result.action == Action.Update) {
+        // this.updateRowData(result.data);
+      } else if (result.action == Action.Delete) {
+        // this.deleteRowData(result.data);
+      }
+    });
+  }
 }
