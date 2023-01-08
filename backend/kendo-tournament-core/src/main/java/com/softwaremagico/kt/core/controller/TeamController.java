@@ -32,6 +32,7 @@ import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
@@ -143,6 +144,13 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     public long count(TournamentDTO tournament) {
         return provider.count(tournamentConverter.reverse(tournament));
+    }
+
+    @Override
+    public void validate(TeamDTO teamDTO) throws ValidateBadRequestException {
+        if (teamDTO == null || teamDTO.getTournament() == null) {
+            throw new ValidateBadRequestException(getClass(), "Team data is missing");
+        }
     }
 
 }
