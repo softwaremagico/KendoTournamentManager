@@ -24,6 +24,7 @@ export class IconModule {
       .addSvgIcon("member-order", this.setPath(`${this.path}/member-order.svg`))
       .addSvgIcon("member-order-disable", this.setPath(`${this.path}/member-order-disable.svg`))
       .addSvgIcon("competitors-classification", this.setPath(`${this.path}/competitors-classification.svg`))
+      .addSvgIcon("diplomas", this.setPath(`${this.path}/diploma.svg`))
       .addSvgIcon("match", this.setPath(`${this.path}/match.svg`));
   }
 
