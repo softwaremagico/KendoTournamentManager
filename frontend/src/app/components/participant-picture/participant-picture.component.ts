@@ -2,6 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Participant} from "../../models/participant";
 import {FileService} from "../../services/file.service";
 import {NameUtilsService} from "../../services/name-utils.service";
+import {PictureDialogBoxComponent} from "./picture-dialog-box/picture-dialog-box.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-participant-picture',
@@ -16,7 +18,7 @@ export class ParticipantPictureComponent implements OnInit {
   participantPicture: string | undefined;
   participantInitials: string;
 
-  constructor(private fileService: FileService, private nameUtils: NameUtilsService) {
+  constructor(private fileService: FileService, private nameUtils: NameUtilsService, public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -79,4 +81,18 @@ export class ParticipantPictureComponent implements OnInit {
     return color;
   }
 
+  openImage() {
+    if (this.participantPicture) {
+      this.openDialog("", this.participantPicture);
+    }
+  }
+
+  openDialog(title: string, image: string) {
+    const dialogRef = this.dialog.open(PictureDialogBoxComponent, {
+      width: '435px',
+      data: {
+        image: image
+      }
+    });
+  }
 }

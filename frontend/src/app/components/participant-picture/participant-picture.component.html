@@ -1,5 +1,5 @@
 <div class="participant-picture">
-  <div class="container" *ngIf="participantPicture">
+  <div class="container" *ngIf="participantPicture" (dblclick)="openImage()">
     <img class="picture" src="{{ participantPicture }}"/>
   </div>
   <div class="container" *ngIf="!participantPicture" [style]="circleStyle">
