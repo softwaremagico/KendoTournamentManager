@@ -44,6 +44,12 @@ public abstract class PdfTheme {
 
     public static final int HEADER_FONT_SIZE = FONT_SIZE + 15;
 
+    public static final int ACCREDITATION_IDENTIFICATION_FONT_SIZE = 32;
+    public static final int ACCREDITATION_NAME_FONT_SIZE = 12;
+    public static final int ACCREDITATION_ROLE_FONT_SIZE = 10;
+    public static final int ACCREDITATION_LASTNAME_FONT_SIZE = 18;
+    public static final int ACCREDITATION_CLUBNAME_FONT_SIZE = 10;
+
     private static BaseFont footerFont;
     private static BaseFont lineFont;
     private static BaseFont lineItalicFont;

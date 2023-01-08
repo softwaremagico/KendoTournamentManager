@@ -45,6 +45,8 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     List<Role> findByTournamentAndRoleTypeIn(Tournament tournament, Collection<RoleType> roleTypes);
 
+    List<Role> findByTournamentAndParticipantIn(Tournament tournament, Collection<Participant> participants);
+
     long countByTournament(Tournament tournament);
 
     long countByTournamentAndRoleType(Tournament tournament, RoleType roleType);
