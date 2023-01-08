@@ -25,7 +25,10 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.ParticipantImageController;
+import com.softwaremagico.kt.core.controller.TournamentImageController;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
+import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -43,10 +46,12 @@ import javax.servlet.http.HttpServletRequest;
 public class FileServices {
 
     private final ParticipantImageController participantImageController;
+    private final TournamentImageController tournamentImageController;
 
     @Autowired
-    public FileServices(ParticipantImageController participantImageController) {
+    public FileServices(ParticipantImageController participantImageController, TournamentImageController tournamentImageController) {
         this.participantImageController = participantImageController;
+        this.tournamentImageController = tournamentImageController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -79,5 +84,32 @@ public class FileServices {
     @DeleteMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteParticipantImage(@PathVariable("participantId") int participantId, HttpServletRequest request) {
         participantImageController.deleteByParticipantId(participantId);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Uploads an image to a tournament", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public TournamentImageDTO upload(@Parameter(description = "Id of an existing participant", required = true)
+                                     @RequestBody TournamentImageDTO tournamentImageDTO,
+                                     Authentication authentication, HttpServletRequest request) {
+        return tournamentImageController.add(tournamentImageDTO, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets an image from a tournament", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/type/{imageType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TournamentImageDTO getTournamentImage(@PathVariable("tournamentId") int tournamentId,
+                                                 @PathVariable("imageType") TournamentImageType tournamentImageType,
+                                                 HttpServletRequest request) {
+        return tournamentImageController.get(tournamentId, tournamentImageType);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Deletes the image from a tournament", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(value = "/tournaments/{tournamentId}/type/{imageType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteParticipantImage(@PathVariable("tournamentId") int tournamentId,
+                                       @PathVariable("imageType") TournamentImageType tournamentImageType,
+                                       HttpServletRequest request) {
+        tournamentImageController.deleteByTournamentId(tournamentId, tournamentImageType);
     }
 }
