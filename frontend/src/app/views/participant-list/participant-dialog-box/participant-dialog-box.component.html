@@ -37,7 +37,7 @@
         </ng-template>
       </div>
       <div class="picture-container" *ngIf="participantPicture">
-        <img class="picture" src="{{ participantPicture }}"/>
+        <img class="picture" alt="Participant's Picture" src="{{ participantPicture }}"/>
         <button class="floating-button" mat-mini-fab type="button" (click)="deletePicture()" mat-flat-button color="warn">
           <mat-icon>cancel</mat-icon></button>
       </div>
