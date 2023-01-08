@@ -2,7 +2,7 @@
   <div class="picture-engine">
     <div class="canvas">
       <div class="camera-frame">
-        <webcam [height]="512" [width]="512" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
+        <webcam [height]="512" [width]="390" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
                 (initError)="errorHandler($event)" [imageType]="imageType" [videoOptions]="videoOptions"></webcam>
       </div>
       <div class="rectangle"></div>
@@ -10,8 +10,8 @@
     </div>
 
     <div class="gallery">
-      <div class="image-container" *ngFor="let image of pictures; let i = index" (click)="selectImage(i)">
-        <img [class.selected-image]="i === selectedPicture" src="{{ image }}"/>
+      <div class="image-container" *ngFor="let image of pictures; let i = index">
+        <img [class.selected-image]="i === selectedPicture" src="{{ image }}" alt="Participant's Picture" (click)="selectImage(i)"/>
       </div>
     </div>
   </div>
