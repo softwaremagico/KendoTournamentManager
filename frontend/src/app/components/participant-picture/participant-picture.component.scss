@@ -1,0 +1,22 @@
+.container {
+  border-radius: 50%;
+  height: 45px;
+  width: 45px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px #012354 solid;
+}
+
+.initials {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+img {
+  flex: none; /* keep aspect ratio */
+  border-radius: 50%;
+  width: 100%;
+}

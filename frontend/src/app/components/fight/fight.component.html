@@ -9,7 +9,7 @@
   </div>
   <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}" cdkDropListGroup>
     <duel class="duel" *ngFor="let duel of fight.duels; let i = index" [duel]="duel" [duelIndex]="i" [fight]="fight"
-          (click)="selectDuel(duel)"
+          (click)="selectDuel(duel)" [showAvatars]="showAvatars"
           [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.activities)" [swapTeams]="swapTeams"
           [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.activities), over: isOver(duel)}"></duel>
   </div>

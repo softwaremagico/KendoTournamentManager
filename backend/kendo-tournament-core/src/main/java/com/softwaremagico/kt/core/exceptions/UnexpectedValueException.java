@@ -27,7 +27,9 @@ package com.softwaremagico.kt.core.exceptions;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.logger.LoggedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class UnexpectedValueException extends LoggedException {
 
     public UnexpectedValueException(Class<?> clazz, String message, ExceptionType type) {

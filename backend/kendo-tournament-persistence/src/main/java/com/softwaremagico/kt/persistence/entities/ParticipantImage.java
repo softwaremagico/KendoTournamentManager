@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.ImageFormatCryptoConverter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -41,9 +42,14 @@ public class ParticipantImage extends Element {
 
 
     @Lob
-    @Column(length = MAX_FILE_SIZE, nullable = false)
+    @Column(name = "data", length = MAX_FILE_SIZE, nullable = false)
     @Convert(converter = ByteArrayCryptoConverter.class)
     private byte[] data;
+
+    @Column(name = "format", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = ImageFormatCryptoConverter.class)
+    private ImageFormat imageFormat;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "participant", nullable = false)
@@ -51,6 +57,7 @@ public class ParticipantImage extends Element {
 
     public ParticipantImage() {
         super();
+        imageFormat = ImageFormat.RAW;
     }
 
     public byte[] getData() {
@@ -61,12 +68,20 @@ public class ParticipantImage extends Element {
         this.data = (data == null) ? null : data.clone();
     }
 
-    public Participant getUser() {
+    public Participant getParticipant() {
         return participant;
     }
 
-    public void setUser(Participant participant) {
+    public void setParticipant(Participant participant) {
         this.participant = participant;
+    }
+
+    public ImageFormat getImageFormat() {
+        return imageFormat;
+    }
+
+    public void setImageFormat(ImageFormat imageFormat) {
+        this.imageFormat = imageFormat;
     }
 
     @Override
