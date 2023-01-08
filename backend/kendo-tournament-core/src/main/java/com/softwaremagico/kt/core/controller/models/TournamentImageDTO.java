@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.persistence.repositories;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,24 +24,34 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.softwaremagico.kt.persistence.values.TournamentImageType;
 
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+public class TournamentImageDTO extends ElementDTO {
+    private TournamentDTO tournament;
+    private byte[] data;
+    private TournamentImageType imageType;
 
-@Repository
-@Transactional
-public interface ParticipantImageRepository extends JpaRepository<ParticipantImage, Integer> {
+    public TournamentDTO getTournament() {
+        return tournament;
+    }
 
-    Optional<ParticipantImage> findByParticipant(Participant participant);
+    public void setTournament(TournamentDTO tournament) {
+        this.tournament = tournament;
+    }
 
-    List<ParticipantImage> findByParticipantIn(Collection<Participant> participants);
+    public byte[] getData() {
+        return data;
+    }
 
-    int deleteByParticipant(Participant participant);
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 
+    public TournamentImageType getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(TournamentImageType imageType) {
+        this.imageType = imageType;
+    }
 }

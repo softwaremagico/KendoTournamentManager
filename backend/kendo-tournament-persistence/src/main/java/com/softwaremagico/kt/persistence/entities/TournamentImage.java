@@ -26,7 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.TournamentImageTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -41,11 +41,6 @@ public class TournamentImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Convert(converter = IntegerCryptoConverter.class)
-    private Integer id;
-
     @Lob
     @Column(length = MAX_FILE_SIZE, nullable = false)
     @Convert(converter = ByteArrayCryptoConverter.class)
@@ -55,12 +50,14 @@ public class TournamentImage extends Element {
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
 
+    @Column(name = "image_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = TournamentImageTypeCryptoConverter.class)
+    private TournamentImageType imageType;
+
     public TournamentImage() {
         super();
     }
-
-    private TournamentImageType imageType;
-
 
     public byte[] getData() {
         return (data == null) ? null : data.clone();

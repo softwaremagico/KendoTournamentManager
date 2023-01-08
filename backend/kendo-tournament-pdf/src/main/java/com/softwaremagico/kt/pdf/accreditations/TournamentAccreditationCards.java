@@ -33,6 +33,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.PdfDocument;
@@ -45,18 +46,25 @@ import java.util.Map;
 
 public class TournamentAccreditationCards extends PdfDocument {
 
+    private static final int BORDER = 1;
+
     private final MessageSource messageSource;
     private final Locale locale;
 
     private final TournamentDTO tournament;
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
-    private final int border = 1;
+    private final byte[] banner;
+    private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
 
-    public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles) {
+
+    public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
+                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
         this.competitorsRoles = competitorsRoles;
+        this.banner = banner;
+        this.participantImages = participantImages;
     }
 
     @Override
@@ -84,13 +92,14 @@ public class TournamentAccreditationCards extends PdfDocument {
         mainTable.setTotalWidth(document.getPageSize().getWidth());
 
         for (final Map.Entry<ParticipantDTO, RoleDTO> entry : competitorsRoles.entrySet()) {
+            final ParticipantImageDTO participantImageDTO = participantImages.get(entry.getKey());
             final ParticipantAccreditationCard competitorPDF = new ParticipantAccreditationCard(messageSource, locale, tournament,
-                    entry.getKey(), entry.getValue(), null, null);
+                    entry.getKey(), entry.getValue(), participantImageDTO != null ? participantImageDTO.getData() : null, banner);
             final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2,
                     document.getPageSize().getHeight() / 2);
             competitorTable.setTableEvent(new TableBackgroundEvent());
             cell = new PdfPCell(competitorTable);
-            cell.setBorderWidth(border);
+            cell.setBorderWidth(BORDER);
             cell.setColspan(1);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.addElement(competitorTable);

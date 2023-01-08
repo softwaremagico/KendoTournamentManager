@@ -25,14 +25,15 @@ package com.softwaremagico.kt.pdf.controller;
  */
 
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ParticipantImageController;
 import com.softwaremagico.kt.core.controller.RoleController;
-import com.softwaremagico.kt.core.controller.models.ClubDTO;
-import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.TournamentImageController;
+import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.lists.*;
+import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
@@ -50,10 +51,17 @@ public class PdfController {
 
     private final GroupController groupController;
 
-    public PdfController(MessageSource messageSource, RoleController roleController, GroupController groupController) {
+    private final TournamentImageController tournamentImageController;
+
+    private final ParticipantImageController participantImageController;
+
+    public PdfController(MessageSource messageSource, RoleController roleController, GroupController groupController,
+                         TournamentImageController tournamentImageController, ParticipantImageController participantImageController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
         this.groupController = groupController;
+        this.tournamentImageController = tournamentImageController;
+        this.participantImageController = participantImageController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
@@ -82,7 +90,12 @@ public class PdfController {
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO) {
         final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+        final TournamentImageDTO tournamentImageDTO = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
+        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
+        final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
+        final Map<ParticipantDTO, ParticipantImageDTO> participantImages = participantImageDTOS.stream()
+                .collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
         return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
-                .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())));
+                .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages, tournamentImageDTO.getData());
     }
 }

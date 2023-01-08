@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.persistence.repositories;
+package com.softwaremagico.kt.core.converters.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2022 Softwaremagico
  * %%
@@ -24,24 +24,10 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.softwaremagico.kt.persistence.entities.TournamentImage;
 
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-@Repository
-@Transactional
-public interface ParticipantImageRepository extends JpaRepository<ParticipantImage, Integer> {
-
-    Optional<ParticipantImage> findByParticipant(Participant participant);
-
-    List<ParticipantImage> findByParticipantIn(Collection<Participant> participants);
-
-    int deleteByParticipant(Participant participant);
-
+public class TournamentImageConverterRequest extends ConverterRequest<TournamentImage> {
+    public TournamentImageConverterRequest(TournamentImage entity) {
+        super(entity);
+    }
 }
