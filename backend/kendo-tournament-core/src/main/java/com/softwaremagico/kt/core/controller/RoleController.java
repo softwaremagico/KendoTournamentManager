@@ -32,6 +32,7 @@ import com.softwaremagico.kt.core.converters.RoleConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.RoleConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Role;
@@ -112,6 +113,14 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
         delete(roleDTO.getParticipant(), roleDTO.getTournament());
         //Add the new role.
         return super.create(roleDTO, username);
+    }
+
+    @Override
+    public void validate(RoleDTO roleDTO) throws ValidateBadRequestException {
+        if (roleDTO == null || roleDTO.getTournament() == null || roleDTO.getParticipant() == null ||
+                roleDTO.getRoleType() == null) {
+            throw new ValidateBadRequestException(getClass(), "Role data is missing");
+        }
     }
 
 }
