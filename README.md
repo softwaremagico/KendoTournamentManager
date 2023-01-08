@@ -6,7 +6,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-300.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-301.5h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -25,7 +25,7 @@ tool [Kendo Tournament Generator](https://sourceforge.net/projects/kendotourname
 it to more modern technologies. The new architecture allows the deployment of this tool as a web application -rather than
 a desktop application- allowing some advantages such as better compatibility between devices, as now can be used in any
 Android/iOS through the browser, or better scoring synchronization between multiple devices as now everything
-is centralized on the cloudbb.
+is centralized on the cloud.
 
 ## Installation
 
