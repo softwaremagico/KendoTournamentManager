@@ -182,6 +182,20 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
+  downloadDiplomas() {
+    if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+      this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
+        const blob = new Blob([html], {type: 'application/pdf'});
+        const downloadURL = window.URL.createObjectURL(blob);
+
+        const anchor = document.createElement("a");
+        anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
+      });
+    }
+  }
+
   lockElement(locked: boolean): void {
     if (this.basicTableData.selectedElement) {
       this.basicTableData.selectedElement.locked = locked;
