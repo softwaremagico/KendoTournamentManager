@@ -98,7 +98,7 @@ public class TournamentAccreditationCards extends PdfDocument {
             final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2,
                     document.getPageSize().getHeight() / 2);
             try {
-                competitorTable.setTableEvent(new TableBackgroundEvent(Image.getInstance(background)));
+                competitorTable.setTableEvent(new TableBackgroundEvent(Image.getInstance(background), document));
             } catch (NullPointerException | IOException e) {
                 competitorTable.setTableEvent(new TableBackgroundEvent());
             }
