@@ -32,6 +32,7 @@ import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
+import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.*;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
@@ -100,5 +101,12 @@ public class PdfController {
                 .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages,
                 banner != null ? banner.getData() : null,
                 accreditationBackground != null ? accreditationBackground.getData() : null);
+    }
+
+    public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO) {
+        final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+        final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
+        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
+        return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null);
     }
 }

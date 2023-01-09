@@ -8,11 +8,15 @@
         <groups>
             <run>
                 <include name="scoreListPdf"/>
+                <include name="accreditationPdf"/>
+                <include name="diplomaPdf"/>
                 <include name="blogTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.pdf.ListTests"/>
+            <class name="com.softwaremagico.kt.pdf.AccreditationTests"/>
+            <class name="com.softwaremagico.kt.pdf.DiplomaTests"/>
             <class name="com.softwaremagico.kt.html.HtmlTests"/>
         </classes>
     </test>
