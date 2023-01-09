@@ -25,6 +25,7 @@ package com.softwaremagico.kt.pdf.events;
  */
 
 import com.lowagie.text.BadElementException;
+import com.lowagie.text.Document;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -38,14 +39,16 @@ import java.io.InputStream;
 public class TableBackgroundEvent implements PdfPTableEvent {
     private Image backgroundImage;
     private static Image defaultBackgroundImage;
+    private Document document;
 
     public TableBackgroundEvent() {
         super();
     }
 
-    public TableBackgroundEvent(Image backgroundImage) {
+    public TableBackgroundEvent(Image backgroundImage, Document document) {
         this();
         this.backgroundImage = backgroundImage;
+        this.document = document;
     }
 
     private Image getBackgroundImage() {
@@ -54,6 +57,9 @@ public class TableBackgroundEvent implements PdfPTableEvent {
                 try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/accreditation-background.png");) {
                     if (inputStream != null) {
                         defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
+                        defaultBackgroundImage.setAlignment(Image.UNDERLYING);
+                        defaultBackgroundImage.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
+                        defaultBackgroundImage.setAbsolutePosition(0, 0);
                     }
                 } catch (NullPointerException | BadElementException | IOException ex) {
                     KendoTournamentLogger.severe(TableBackgroundEvent.class.getName(), "No background image found!");
