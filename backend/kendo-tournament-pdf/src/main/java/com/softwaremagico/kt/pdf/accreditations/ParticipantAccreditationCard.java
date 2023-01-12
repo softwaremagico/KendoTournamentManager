@@ -103,7 +103,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     @Override
     protected void createContent(Document document, PdfWriter writer) throws DocumentException {
-        final PdfPTable table = pageTable(document.getPageSize().getWidth(), document.getPageSize().getHeight());
+        final PdfPTable table = pageTable(document.getPageSize().getWidth(), document.getPageSize().getHeight()+20);
         table.setWidthPercentage(100);
         document.add(table);
     }
