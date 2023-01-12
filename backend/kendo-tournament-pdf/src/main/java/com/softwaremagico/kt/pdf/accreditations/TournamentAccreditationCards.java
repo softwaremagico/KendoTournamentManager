@@ -95,10 +95,10 @@ public class TournamentAccreditationCards extends PdfDocument {
             final ParticipantImageDTO participantImageDTO = participantImages.get(entry.getKey());
             final ParticipantAccreditationCard competitorPDF = new ParticipantAccreditationCard(messageSource, locale, tournament,
                     entry.getKey(), entry.getValue(), participantImageDTO != null ? participantImageDTO.getData() : null, banner);
-            final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2,
-                    document.getPageSize().getHeight() / 2);
+            final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2 - 40,
+                    document.getPageSize().getHeight() / 2 + 150);
             try {
-                competitorTable.setTableEvent(new TableBackgroundEvent(Image.getInstance(background)));
+                competitorTable.setTableEvent(new TableBackgroundEvent(Image.getInstance(background), document));
             } catch (NullPointerException | IOException e) {
                 competitorTable.setTableEvent(new TableBackgroundEvent());
             }
@@ -106,7 +106,9 @@ public class TournamentAccreditationCards extends PdfDocument {
             cell.setBorderWidth(BORDER);
             cell.setColspan(1);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.addElement(competitorTable);
+            //cell.setMinimumHeight(document.getPageSize().getHeight() / 2 - 50);
             mainTable.addCell(cell);
         }
         mainTable.completeRow();

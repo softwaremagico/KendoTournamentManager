@@ -78,15 +78,33 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all accreditations from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "{tournamentId}/accreditations", produces = MediaType.APPLICATION_PDF_VALUE)
-    public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
-                                            Integer tournamentId,
-                                            Locale locale, HttpServletResponse response, HttpServletRequest request) {
+    public byte[] getAllAccreditationsFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
+                                                          @PathVariable("tournamentId") Integer tournamentId,
+                                                          Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = getController().get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + " - accreditations.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
             return pdfController.generateTournamentAccreditations(locale, tournament).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all diplomas from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "{tournamentId}/diplomas", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getAllDiplomasFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
+                                                    @PathVariable("tournamentId") Integer tournamentId,
+                                                    Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = getController().get(tournamentId);
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + " - diplomas.pdf").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        try {
+            return pdfController.generateTournamentDiplomas(tournament).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());

@@ -114,4 +114,14 @@ export class TournamentService {
       })
     });
   }
+
+  getDiplomas(tournamentId: number): Observable<Blob> {
+    const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    });
+  }
 }
