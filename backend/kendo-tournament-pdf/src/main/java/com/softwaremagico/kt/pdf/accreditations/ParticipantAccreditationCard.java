@@ -242,6 +242,9 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 case VOLUNTEER:
                     cell.setBackgroundColor(new Color(155, 0, 255));
                     break;
+                case PRESS:
+                    cell.setBackgroundColor(new Color(255, 0, 127));
+                    break;
             }
         } catch (NullPointerException npe) {
             cell.setBackgroundColor(new Color(167, 239, 190));
