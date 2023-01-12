@@ -29,10 +29,15 @@ import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.ParticipantInTournamentDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.RoleConverter;
+import com.softwaremagico.kt.core.converters.models.RoleConverterRequest;
+import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.InvalidXmlElementException;
 import com.softwaremagico.kt.pdf.controller.PdfController;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.repositories.RoleRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +48,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,47 +58,32 @@ import java.util.Locale;
 
 @RestController
 @RequestMapping("/roles")
-public class RoleServices {
-    private final RoleController roleController;
-
+public class RoleServices extends BasicServices<Role, RoleDTO, RoleRepository,
+        RoleProvider, RoleConverterRequest, RoleConverter, RoleController> {
     private final PdfController pdfController;
 
     private final TournamentController tournamentController;
 
     public RoleServices(RoleController roleController, PdfController pdfController, TournamentController tournamentController) {
-        this.roleController = roleController;
+        super(roleController);
         this.pdfController = pdfController;
         this.tournamentController = tournamentController;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all roles.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RoleDTO> getAll(HttpServletRequest request) {
-        return roleController.get();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Counts all roles.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public long count(HttpServletRequest request) {
-        return roleController.count();
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all roles from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RoleDTO> getAllFromTournament(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
-                                                  Integer tournamentId,
+                                              Integer tournamentId,
                                               HttpServletRequest request) {
-        return roleController.getByTournamentId(tournamentId);
+        return getController().getByTournamentId(tournamentId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all roles from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
-                                                Integer tournamentId,
+                                            Integer tournamentId,
                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
@@ -114,45 +103,7 @@ public class RoleServices {
     public List<RoleDTO> getAllFromTournament(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
                                               @Parameter(description = "Type of role") @PathVariable("roleTypes") Collection<RoleType> roleTypes,
                                               HttpServletRequest request) {
-        return roleController.get(id, roleTypes);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets a role.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RoleDTO get(@Parameter(description = "Id of an existing role", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        return roleController.get(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates a role.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RoleDTO add(@RequestBody RoleDTO roleDto, Authentication authentication, HttpServletRequest request) {
-        if (roleDto == null || roleDto.getTournament() == null || roleDto.getParticipant() == null ||
-                roleDto.getRoleType() == null) {
-            throw new BadRequestException(getClass(), "Role data is missing");
-        }
-        return roleController.create(roleDto, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@Parameter(description = "Id of an existing role", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        roleController.deleteById(id);
-    }
-
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a role.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody RoleDTO role, HttpServletRequest request) {
-        roleController.delete(role);
+        return getController().get(id, roleTypes);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -160,13 +111,6 @@ public class RoleServices {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
-        roleController.delete(participantInTournament.getParticipant(), participantInTournament.getTournament());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a role.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public RoleDTO update(@RequestBody RoleDTO roleDto, Authentication authentication, HttpServletRequest request) {
-        return roleController.update(roleDto, authentication.getName());
+        getController().delete(participantInTournament.getParticipant(), participantInTournament.getTournament());
     }
 }

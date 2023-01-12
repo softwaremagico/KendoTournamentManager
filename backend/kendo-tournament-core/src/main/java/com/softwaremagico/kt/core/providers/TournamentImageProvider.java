@@ -24,33 +24,28 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.ParticipantImage;
-import com.softwaremagico.kt.persistence.repositories.ParticipantImageRepository;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentImage;
+import com.softwaremagico.kt.persistence.repositories.TournamentImageRepository;
+import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Component
-public class ParticipantImageProvider extends CrudProvider<ParticipantImage, Integer, ParticipantImageRepository> {
+public class TournamentImageProvider extends CrudProvider<TournamentImage, Integer, TournamentImageRepository> {
 
     @Autowired
-    public ParticipantImageProvider(ParticipantImageRepository repository) {
+    public TournamentImageProvider(TournamentImageRepository repository) {
         super(repository);
     }
 
-    public Optional<ParticipantImage> get(Participant participant) {
-        return repository.findByParticipant(participant);
+    public Optional<TournamentImage> get(Tournament tournament, TournamentImageType imageType) {
+        return repository.findByTournamentAndImageType(tournament, imageType);
     }
 
-    public List<ParticipantImage> get(Collection<Participant> participants) {
-        return repository.findByParticipantIn(participants);
-    }
-
-    public int delete(Participant participant) {
-        return repository.deleteByParticipant(participant);
+    public int delete(Tournament tournament, TournamentImageType imageType) {
+        return repository.deleteByTournamentAndImageType(tournament, imageType);
     }
 }
