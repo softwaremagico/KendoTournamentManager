@@ -28,6 +28,11 @@ import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -41,25 +46,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/groups")
-public class GroupServices {
-    private final GroupController groupController;
+public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepository, GroupProvider, GroupConverterRequest, GroupConverter, GroupController> {
 
     public GroupServices(GroupController groupController) {
-        this.groupController = groupController;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<GroupDTO> getAll(HttpServletRequest request) {
-        return groupController.get();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a group.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public GroupDTO update(@RequestBody GroupDTO group, Authentication authentication, HttpServletRequest request) {
-        return groupController.update(group, authentication.getName());
+        super(groupController);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -67,7 +57,7 @@ public class GroupServices {
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  HttpServletRequest request) {
-        return groupController.getFromTournament(tournamentId);
+        return getController().getFromTournament(tournamentId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -77,27 +67,27 @@ public class GroupServices {
                                @RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
                                HttpServletRequest request) {
-        return groupController.setTeams(groupId, teamsDto, authentication.getName());
+        return getController().setTeams(groupId, teamsDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/add", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                               @RequestBody List<TeamDTO> teamsDto,
-                               Authentication authentication,
-                               HttpServletRequest request) {
-        return groupController.addTeams(groupId, teamsDto, authentication.getName());
+                            @RequestBody List<TeamDTO> teamsDto,
+                            Authentication authentication,
+                            HttpServletRequest request) {
+        return getController().addTeams(groupId, teamsDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO deleteTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                            @RequestBody List<TeamDTO> teamsDto,
-                            Authentication authentication,
-                            HttpServletRequest request) {
-        return groupController.deleteTeams(groupId, teamsDto, authentication.getName());
+                               @RequestBody List<TeamDTO> teamsDto,
+                               Authentication authentication,
+                               HttpServletRequest request) {
+        return getController().deleteTeams(groupId, teamsDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -106,7 +96,7 @@ public class GroupServices {
     public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
                                HttpServletRequest request) {
-        return groupController.setTeams(teamsDto, authentication.getName());
+        return getController().setTeams(teamsDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -116,6 +106,6 @@ public class GroupServices {
                               @RequestBody List<DuelDTO> duelDTOs,
                               Authentication authentication,
                               HttpServletRequest request) {
-        return groupController.addUnties(groupId, duelDTOs, authentication.getName());
+        return getController().addUnties(groupId, duelDTOs, authentication.getName());
     }
 }
