@@ -24,34 +24,26 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.entities.TournamentImage;
+import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
-public interface RoleRepository extends JpaRepository<Role, Integer> {
+public interface TournamentImageRepository extends JpaRepository<TournamentImage, Integer> {
 
-    List<Role> findByTournament(Tournament tournament);
+    List<TournamentImage> findByTournament(Tournament tournament);
 
-    List<Role> findByTournamentAndRoleType(Tournament tournament, RoleType roleType);
+    Optional<TournamentImage> findByTournamentAndImageType(Tournament tournament, TournamentImageType imageType);
 
-    List<Role> findByTournamentAndRoleTypeIn(Tournament tournament, Collection<RoleType> roleTypes);
+    int deleteByTournament(Tournament tournament);
 
-    List<Role> findByTournamentAndParticipantIn(Tournament tournament, Collection<Participant> participants);
+    int deleteByTournamentAndImageType(Tournament tournament, TournamentImageType imageType);
 
-    long countByTournament(Tournament tournament);
-
-    long countByTournamentAndRoleType(Tournament tournament, RoleType roleType);
-
-    void deleteByParticipantAndTournament(Participant participant, Tournament tournament);
-
-    long deleteByTournament(Tournament tournament);
 }
