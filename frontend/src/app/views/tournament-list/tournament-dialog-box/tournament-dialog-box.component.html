@@ -45,6 +45,12 @@
     </ng-template>
 
     <div mat-dialog-actions class="button-container">
+      <button mat-raised-button type="button" (click)="addPicture()"
+              mat-flat-button
+              color="picture"
+              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
+        <mat-icon>image</mat-icon>
+        {{'images' | translate}}</button>
       <button mat-raised-button type="submit" value="Submit"
               [disabled]="registerForm.invalid" mat-flat-button
               color="primary" *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)">
