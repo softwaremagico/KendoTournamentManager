@@ -224,7 +224,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 + "-" + Math.abs(participant.getId());
         p = new Paragraph(identification, new Font(PdfTheme.getLineFont(), PdfTheme.ACCREDITATION_IDENTIFICATION_FONT_SIZE));
         cell = new PdfPCell(p);
-        cell.setBorderWidth(BORDER + 2);
+        cell.setBorderWidth(BORDER + 2f);
         cell.setColspan(1);
         //cell.setFixedHeight(height);
         cell.setFixedHeight(height * 0.15f);
