@@ -66,10 +66,10 @@
               *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.activities)">
         <mat-icon>badge</mat-icon>
       </button>
-      <button mat-button color="primary"
+      <button mat-button color="primary" (click)="downloadDiplomas()"
               [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
               [matTooltipShowDelay]="500" matTooltip="{{'diplomasHint' | translate}}"
-              *ngIf="false && (RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.activities)">
+              *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.activities)">
         <mat-icon svgIcon="diplomas" class="kendo-icon"></mat-icon>
       </button>
     </div>
