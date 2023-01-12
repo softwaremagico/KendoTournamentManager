@@ -82,7 +82,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   openDialog(title: string, action: Action, tournament: Tournament) {
     const dialogRef = this.dialog.open(TournamentDialogBoxComponent, {
-      width: '400px',
+      width: '600px',
       data: {
         title: title, action: action, entity: tournament
       }
