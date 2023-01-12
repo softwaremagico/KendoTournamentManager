@@ -1,6 +1,6 @@
 import {Component, Inject, Optional} from '@angular/core';
 import {Tournament} from "../../../models/tournament";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {TournamentType} from "../../../models/tournament-type";
 import {Action} from "../../../action";
 import {ScoreType} from "../../../models/score-type";
@@ -8,7 +8,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
-import {DrawResolution} from "../../../models/draw-resolution";
+import {TournamentImageSelectorComponent} from "./tournament-image-selector/tournament-image-selector.component";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -29,7 +29,8 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   constructor(
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>, rbacService: RbacService,
     //@Optional() is used to prevent error if no data is passed
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Tournament }) {
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Tournament },
+    public dialog: MatDialog,) {
     super(rbacService)
     this.tournament = data.entity;
     this.title = data.title;
@@ -89,4 +90,32 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     return TournamentType.toCamel(tournamentType);
   }
 
+  addPicture() {
+    this.openDialog("", Action.Add, this.tournament);
+  }
+
+  openDialog(title: string, action: Action, tournament: Tournament) {
+    const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
+      width: '700px',
+      data: {
+        title: title, action: action, tournament: Tournament
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == undefined) {
+        //Do nothing
+      } else if (result.action == Action.Add) {
+        // this.addRowData(result.data);
+      } else if (result.action == Action.Update) {
+        // this.updateRowData(result.data);
+      } else if (result.action == Action.Delete) {
+        // this.deleteRowData(result.data);
+      }
+    });
+  }
+
+  deletePicture() {
+
+  }
 }
