@@ -28,11 +28,16 @@ import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.FightConverter;
+import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.InvalidXmlElementException;
 import com.softwaremagico.kt.pdf.controller.PdfController;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,30 +52,22 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 @RestController
 @RequestMapping("/fights")
-public class FightServices {
-    private final FightController fightController;
+public class FightServices extends BasicServices<Fight, FightDTO, FightRepository,
+        FightProvider, FightConverterRequest, FightConverter, FightController> {
 
     private final PdfController pdfController;
 
     private final TournamentController tournamentController;
 
-    public FightServices(FightController fightProvider, PdfController pdfController, TournamentController tournamentController) {
-        this.fightController = fightProvider;
+    public FightServices(FightController fightController, PdfController pdfController, TournamentController tournamentController) {
+        super(fightController);
         this.pdfController = pdfController;
         this.tournamentController = tournamentController;
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<FightDTO> getAll(HttpServletRequest request) {
-        return fightController.get();
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -78,15 +75,15 @@ public class FightServices {
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  HttpServletRequest request) {
-        return fightController.getByTournamentId(tournamentId);
+        return getController().getByTournamentId(tournamentId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FightDTO> getAll(@RequestBody TournamentDTO tournamentDto,
+    public List<FightDTO> getAll(@RequestBody TournamentDTO tournamentDTO,
                                  HttpServletRequest request) {
-        return fightController.get(tournamentDto);
+        return getController().get(tournamentDTO);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -108,41 +105,11 @@ public class FightServices {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO get(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
-                        HttpServletRequest request) {
-        return fightController.get(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets current fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public FightDTO getCurrent(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                HttpServletRequest request) {
-        return fightController.getCurrent(tournamentId);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO add(@RequestBody FightDTO newFightDTO, Authentication authentication, HttpServletRequest request) {
-        if (newFightDTO == null) {
-            throw new BadRequestException(getClass(), "Fight data is missing");
-        }
-        return fightController.create(newFightDTO, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates a set of fights.", security = @SecurityRequirement(name = "bearerAuth"))
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FightDTO> add(@RequestBody Collection<FightDTO> fightDTOs, Authentication authentication, HttpServletRequest request) {
-        if (fightDTOs == null || fightDTOs.isEmpty()) {
-            throw new BadRequestException(getClass(), "Fight data is missing");
-        }
-        return fightController.create(fightDTOs, authentication.getName());
+        return getController().getCurrent(tournamentId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -151,39 +118,15 @@ public class FightServices {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
                        HttpServletRequest request) {
-        fightController.deleteById(id);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody FightDTO fightDto, HttpServletRequest request) {
-        fightController.delete(fightDto);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Deletes a collection of fights.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/delete/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody Collection<FightDTO> fightDtos, HttpServletRequest request) {
-        fightController.delete(fightDtos);
+        getController().deleteById(id);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes all fights from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody TournamentDTO tournamentDto, HttpServletRequest request) {
-        fightController.delete(tournamentDto);
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightDTO update(@RequestBody FightDTO fightDto, Authentication authentication, HttpServletRequest request) {
-        if (fightDto == null) {
-            throw new BadRequestException(getClass(), "Fight data is missing");
-        }
-        return fightController.update(fightDto, authentication.getName());
+    public void delete(@RequestBody TournamentDTO tournamentDTO, HttpServletRequest request) {
+        getController().delete(tournamentDTO);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -193,21 +136,11 @@ public class FightServices {
         if (fightDto == null) {
             throw new BadRequestException(getClass(), "Fight data is missing");
         }
-        fightDto = fightController.update(fightDto, authentication.getName());
+        fightDto = getController().update(fightDto, authentication.getName());
         if (!fightDto.getDuels().isEmpty()) {
             return fightDto;
         }
-        return fightController.generateDuels(fightDto, authentication.getName());
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Updates a list of fights.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PutMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FightDTO> update(@RequestBody List<FightDTO> fightDTOs, Authentication authentication, HttpServletRequest request) {
-        if (fightDTOs == null) {
-            throw new BadRequestException(getClass(), "Fight data is missing");
-        }
-        return fightController.updateAll(fightDTOs, authentication.getName());
+        return getController().generateDuels(fightDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -216,7 +149,7 @@ public class FightServices {
     public List<FightDTO> create(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  @Parameter(description = "Level of the tournament", required = true) @PathVariable("levelId") Integer levelId,
                                  Authentication authentication, HttpServletRequest request) {
-        return fightController.createFights(tournamentId, TeamsOrder.NONE, levelId, authentication.getName());
+        return getController().createFights(tournamentId, TeamsOrder.NONE, levelId, authentication.getName());
     }
 
 
@@ -227,7 +160,7 @@ public class FightServices {
     public List<FightDTO> createNext(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
                                      Integer tournamentId,
                                      Authentication authentication, HttpServletRequest request) {
-        return fightController.createNextFights(tournamentId, authentication.getName());
+        return getController().createNextFights(tournamentId, authentication.getName());
     }
 
 
