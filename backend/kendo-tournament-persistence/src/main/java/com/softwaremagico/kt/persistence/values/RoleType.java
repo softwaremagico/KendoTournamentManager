@@ -30,7 +30,9 @@ public enum RoleType {
 
     COMPETITOR,
 
-    VOLUNTEER;
+    VOLUNTEER,
+
+    PRESS;
 
     public static RoleType getType(String name) {
         for (final RoleType type : RoleType.values()) {
