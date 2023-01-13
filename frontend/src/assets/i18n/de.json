@@ -462,6 +462,8 @@
   "name": "Name",
   "competitor": "Teilnehmer",
   "referee": "Kampfrichter",
+  "volunteer": "Volunteer",
+  "press": "Drücken",
   "disablePopUpBlocker": "Bitte deaktivieren Sie Ihren Popup-Blocker und versuchen Sie es erneut.",
   "undraw": "Entscheiden",
   "seconds": "sekunden",
