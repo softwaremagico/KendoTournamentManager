@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.ImageCompressionCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentImageTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.hibernate.annotations.Cache;
@@ -55,6 +56,11 @@ public class TournamentImage extends Element {
     @Convert(converter = TournamentImageTypeCryptoConverter.class)
     private TournamentImageType imageType;
 
+    @Column(name = "image_format", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = ImageCompressionCryptoConverter.class)
+    private ImageCompression imageCompression;
+
     public TournamentImage() {
         super();
     }
@@ -81,6 +87,14 @@ public class TournamentImage extends Element {
 
     public void setImageType(TournamentImageType imageType) {
         this.imageType = imageType;
+    }
+
+    public ImageCompression getImageCompression() {
+        return imageCompression;
+    }
+
+    public void setImageCompression(ImageCompression imageCompression) {
+        this.imageCompression = imageCompression;
     }
 
     @Override

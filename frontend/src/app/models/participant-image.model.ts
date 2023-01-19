@@ -1,6 +1,6 @@
-import {ImageFormat} from "./image-format";
 import {Participant} from "./participant";
 import {Element} from "./element";
+import {ImageFormat} from "./image-format";
 
 export class ParticipantImage extends Element {
 
