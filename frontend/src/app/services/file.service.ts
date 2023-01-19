@@ -48,6 +48,7 @@ export class FileService {
   }
 
   setTournamentFilePicture(file: File, tournament: Tournament, imageType: TournamentImageType, imageCompression: ImageCompression): Observable<TournamentImage> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}/compression/${imageCompression}`;
     const formData = new FormData();
     formData.append("file", file);
@@ -69,6 +70,7 @@ export class FileService {
   }
 
   setBase64Picture(image: ParticipantImage): Observable<ParticipantImage> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants`;
     return this.http.post<ParticipantImage>(url, image, this.loginService.httpOptions)
       .pipe(
@@ -82,6 +84,7 @@ export class FileService {
   }
 
   getPicture(participant: Participant): Observable<ParticipantImage> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant!.id}`;
     return this.http.get<ParticipantImage>(url, this.loginService.httpOptions)
       .pipe(
@@ -95,6 +98,7 @@ export class FileService {
   }
 
   deleteParticipantPicture(participant: Participant): Observable<void> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant!.id}`;
     return this.http.delete<void>(url, this.loginService.httpOptions)
       .pipe(
@@ -108,6 +112,7 @@ export class FileService {
   }
 
   deleteTournamentPicture(tournament: Tournament, imageType: TournamentImageType): Observable<void> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
     return this.http.delete<void>(url, this.loginService.httpOptions)
       .pipe(
