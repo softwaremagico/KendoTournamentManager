@@ -6,6 +6,7 @@ import {RbacModule} from "../../../../pipes/rbac-pipe/rbac.module";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatSpinnerOverlayModule} from "../../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 
 
 @NgModule({
@@ -13,14 +14,15 @@ import {MatDialogModule} from "@angular/material/dialog";
   exports: [
     TournamentImageSelectorComponent
   ],
-  imports: [
-    CommonModule,
-    MatIconModule,
-    RbacModule,
-    TranslateModule,
-    MatButtonModule,
-    MatDialogModule
-  ]
+    imports: [
+        CommonModule,
+        MatIconModule,
+        RbacModule,
+        TranslateModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatSpinnerOverlayModule
+    ]
 })
 export class TournamentImageSelectorModule {
 }
