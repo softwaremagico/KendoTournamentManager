@@ -98,7 +98,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
       width: '700px',
       data: {
-        title: title, action: action, tournament: Tournament
+        title: title, action: action, tournament: tournament
       }
     });
 

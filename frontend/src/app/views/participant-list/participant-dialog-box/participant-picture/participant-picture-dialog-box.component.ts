@@ -119,7 +119,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
           this.messageService.errorMessage(res);
         });
       } else {
-        this.fileService.setFilePicture(file, this.participant).subscribe(_picture => {
+        this.fileService.setParticipantFilePicture(file, this.participant).subscribe(_picture => {
           this.messageService.infoMessage('infoPictureStored');
           this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
           this.closeDialog();
