@@ -66,9 +66,9 @@ public class FileServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a participant profile", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ParticipantImageDTO upload(@Parameter(description = "Id of an existing participant", required = true)
-                                      @RequestBody ParticipantImageDTO participantImageDTO,
-                                      Authentication authentication, HttpServletRequest request) {
+    public ParticipantImageDTO uploadParticipantPicture(@Parameter(description = "Participant picture object", required = true)
+                                                        @RequestBody ParticipantImageDTO participantImageDTO,
+                                                        Authentication authentication, HttpServletRequest request) {
         return participantImageController.add(participantImageDTO, authentication.getName());
     }
 
@@ -89,10 +89,20 @@ public class FileServices {
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads an image to a tournament", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TournamentImageDTO upload(@Parameter(description = "Id of an existing participant", required = true)
+    public TournamentImageDTO upload(@Parameter(description = "Tournament Image Object", required = true)
                                      @RequestBody TournamentImageDTO tournamentImageDTO,
                                      Authentication authentication, HttpServletRequest request) {
         return tournamentImageController.add(tournamentImageDTO, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Uploads a photo to a tournament profile", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/tournaments/{tournamentId}/type/{imageType}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public TournamentImageDTO uploadTournamentImage(@RequestParam("file") MultipartFile file,
+                                                    @PathVariable("tournamentId") int tournamentId,
+                                                    @PathVariable("imageType") TournamentImageType tournamentImageType,
+                                                    Authentication authentication, HttpServletRequest request) {
+        return tournamentImageController.add(file, tournamentId, tournamentImageType, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -107,9 +117,9 @@ public class FileServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes the image from a tournament", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/tournaments/{tournamentId}/type/{imageType}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteParticipantImage(@PathVariable("tournamentId") int tournamentId,
-                                       @PathVariable("imageType") TournamentImageType tournamentImageType,
-                                       HttpServletRequest request) {
+    public void deleteTournamentImage(@PathVariable("tournamentId") int tournamentId,
+                                      @PathVariable("imageType") TournamentImageType tournamentImageType,
+                                      HttpServletRequest request) {
         tournamentImageController.deleteByTournamentId(tournamentId, tournamentImageType);
     }
 }
