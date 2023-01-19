@@ -109,6 +109,7 @@ export class RankingService {
   }
 
   getTournamentSummaryAsHtml(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/summary/' + tournamentId + '/html';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({

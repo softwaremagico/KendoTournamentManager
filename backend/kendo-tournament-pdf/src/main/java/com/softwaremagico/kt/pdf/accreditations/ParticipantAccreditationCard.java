@@ -300,7 +300,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createNameTable());
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height * 2f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_TOP);
         mainTable.addCell(cell);
@@ -308,7 +308,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createIdentificationTable(height));
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height * 2f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         mainTable.addCell(cell);
@@ -316,7 +316,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createBannerTable(width));
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
         mainTable.addCell(cell);
