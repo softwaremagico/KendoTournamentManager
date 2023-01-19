@@ -12,6 +12,7 @@ import {ParticipantImage} from "../models/participant-image.model";
 import {Tournament} from "../models/tournament";
 import {TournamentImageType} from "../models/tournament-image-type";
 import {TournamentImage} from "../models/tournament-image.model";
+import {ImageCompression} from "../models/image-compression";
 
 @Injectable({
   providedIn: 'root'
@@ -46,8 +47,8 @@ export class FileService {
       );
   }
 
-  setTournamentFilePicture(file: File, tournament: Tournament, imageType: TournamentImageType): Observable<TournamentImage> {
-    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
+  setTournamentFilePicture(file: File, tournament: Tournament, imageType: TournamentImageType, imageCompression: ImageCompression): Observable<TournamentImage> {
+    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}/compression/${imageCompression}`;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");

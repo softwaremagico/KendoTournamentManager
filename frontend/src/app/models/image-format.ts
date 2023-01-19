@@ -4,13 +4,13 @@ export enum ImageFormat {
 }
 
 export namespace ImageFormat {
-  export function getByKey(key: string): string {
+  export function getByKey(key: string): ImageFormat | undefined {
     for (const valueKey in ImageFormat) {
       if ((ImageFormat as any)[valueKey] === key) {
-        return valueKey;
+        return (ImageFormat as any)[valueKey];
       }
     }
-    return ImageFormat.RAW;
+    return undefined;
   }
 }
 

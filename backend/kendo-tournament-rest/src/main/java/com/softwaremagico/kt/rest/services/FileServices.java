@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.controller.ParticipantImageController;
 import com.softwaremagico.kt.core.controller.TournamentImageController;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
+import com.softwaremagico.kt.persistence.entities.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -97,12 +98,13 @@ public class FileServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Uploads a photo to a tournament profile", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "/tournaments/{tournamentId}/type/{imageType}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/tournaments/{tournamentId}/type/{imageType}/compression/{imageCompression}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public TournamentImageDTO uploadTournamentImage(@RequestParam("file") MultipartFile file,
                                                     @PathVariable("tournamentId") int tournamentId,
                                                     @PathVariable("imageType") TournamentImageType tournamentImageType,
+                                                    @PathVariable("imageCompression") ImageCompression imageCompression,
                                                     Authentication authentication, HttpServletRequest request) {
-        return tournamentImageController.add(file, tournamentId, tournamentImageType, authentication.getName());
+        return tournamentImageController.add(file, tournamentId, tournamentImageType, imageCompression, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")

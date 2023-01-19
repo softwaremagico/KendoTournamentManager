@@ -8,6 +8,7 @@ import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {Action} from "../../../../action";
 import {TournamentImageType} from "../../../../models/tournament-image-type";
+import {ImageCompression} from "../../../../models/image-compression";
 
 @Component({
   selector: 'app-tournament-image-selector',
@@ -19,6 +20,8 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   bannerType: TournamentImageType = TournamentImageType.BANNER;
   accreditationType: TournamentImageType = TournamentImageType.ACCREDITATION;
   diplomaType: TournamentImageType = TournamentImageType.DIPLOMA;
+  image: string;
+  insertedTournamentImageType: TournamentImageType;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService, public translateService: TranslateService,
@@ -41,9 +44,17 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
           this.messageService.errorMessage(res);
         });
       } else {
-        this.fileService.setTournamentFilePicture(file, this.tournament, imageType).subscribe(_picture => {
-          this.messageService.infoMessage('infoPictureStored');
-        });
+        const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file!.type);
+        if (imageCompression) {
+          this.fileService.setTournamentFilePicture(file, this.tournament, imageType, imageCompression).subscribe(_picture => {
+            this.messageService.infoMessage('infoPictureStored');
+            this.image = _picture.base64;
+            this.insertedTournamentImageType = _picture.imageType;
+          });
+        } else {
+          this.messageService.errorMessage('invalidFileSize');
+
+        }
       }
     }
   }
