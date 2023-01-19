@@ -11,7 +11,6 @@ export class ParticipantImage extends Element {
 
   public static override copy(source: ParticipantImage, target: ParticipantImage): void {
     Element.copy(source, target);
-    target.imageFormat = source.imageFormat;
     if (source.participant !== undefined) {
       target.participant = Participant.clone(source.participant);
     }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -9,6 +9,9 @@ import {Participant} from "../models/participant";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {ParticipantImage} from "../models/participant-image.model";
+import {Tournament} from "../models/tournament";
+import {TournamentImageType} from "../models/tournament-image-type";
+import {TournamentImage} from "../models/tournament-image.model";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +25,7 @@ export class FileService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  setFilePicture(file: File, participant: Participant): Observable<ParticipantImage> {
+  setParticipantFilePicture(file: File, participant: Participant): Observable<ParticipantImage> {
     const url: string = `${this.baseUrl}/participants/${participant.id}`;
     const formData = new FormData();
     formData.append("file", file);
@@ -40,6 +43,27 @@ export class FileService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<ParticipantImage>(`adding file to participant ${participant.id}`))
+      );
+  }
+
+  setTournamentFilePicture(file: File, tournament: Tournament, imageType: TournamentImageType): Observable<TournamentImage> {
+    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("reportProgress", "true");
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    };
+    return this.http.post<TournamentImage>(url, formData, httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Adding file ${imageType} to tournament ${tournament.id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<TournamentImage>(`adding file ${imageType} to tournament ${tournament.id}`))
       );
   }
 

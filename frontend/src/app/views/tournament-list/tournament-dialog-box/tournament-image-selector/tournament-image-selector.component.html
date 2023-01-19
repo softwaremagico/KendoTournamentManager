@@ -1,1 +1,28 @@
-<p>tournament-image-selector works!</p>
+<div mat-dialog-content>
+  <div mat-dialog-actions>
+    <button mat-raised-button color="picture" type="button" (click)="fileInput.click()" mat-flat-button
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)">
+      <mat-icon>upload_file</mat-icon>
+      {{'accreditation' | translate}}
+      <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event, accreditationType)"
+             style="display:none;"/>
+    </button>
+    <button mat-raised-button color="picture" type="button" (click)="fileInput.click()" mat-flat-button
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | rbac : this.rbacService.activities)">
+      <mat-icon>upload_file</mat-icon>
+      {{'diplomas' | translate}}
+      <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event, diplomaType)"
+             style="display:none;"/>
+    </button>
+    <button mat-raised-button color="picture" type="button" (click)="fileInput.click()" mat-flat-button
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | rbac : this.rbacService.activities)">
+      <mat-icon>upload_file</mat-icon>
+      {{'banner' | translate}}
+      <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event, bannerType)"
+             style="display:none;"/>
+    </button>
+    <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">
+      <mat-icon>cancel</mat-icon>
+      {{'close' | translate}}</button>
+  </div>
+</div>
