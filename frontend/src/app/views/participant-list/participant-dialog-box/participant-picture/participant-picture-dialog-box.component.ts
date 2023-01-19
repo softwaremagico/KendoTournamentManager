@@ -10,9 +10,9 @@ import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
-import {ImageFormat} from "../../../../models/image-format";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
 import {TranslateService} from "@ngx-translate/core";
+import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
   selector: 'app-participant-picture',

@@ -1,4 +1,11 @@
 <div mat-dialog-content>
+  <div class="picture-uploaded" *ngIf="image">
+    <img class="image-preview"
+         [class.accreditation-size] = "insertedTournamentImageType === accreditationType"
+         [class.diploma-size] = "insertedTournamentImageType === diplomaType"
+         [class.banner-size] = "insertedTournamentImageType === bannerType"
+         src="{{ image }}" alt="Uploaded Picture"/>
+  </div>
   <div mat-dialog-actions>
     <button mat-raised-button color="picture" type="button" (click)="fileInput.click()" mat-flat-button
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)">

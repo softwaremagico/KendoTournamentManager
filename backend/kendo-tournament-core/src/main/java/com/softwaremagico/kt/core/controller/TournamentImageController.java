@@ -35,6 +35,7 @@ import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.ImageCompression;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentImageRepository;
@@ -82,13 +83,15 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         return converter.convert(new TournamentImageConverterRequest(provider.get(tournament, type).orElse(null)));
     }
 
-    public TournamentImageDTO add(MultipartFile file, Integer tournamentId, TournamentImageType type, String username) {
+    public TournamentImageDTO add(MultipartFile file, Integer tournamentId, TournamentImageType type, ImageCompression imageCompression,
+                                  String username) {
         final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
-        return add(file, tournamentDTO, type, username);
+        return add(file, tournamentDTO, type, imageCompression, username);
     }
 
-    public TournamentImageDTO add(MultipartFile file, TournamentDTO tournamentDTO, TournamentImageType type, String username) throws DataInputException {
+    public TournamentImageDTO add(MultipartFile file, TournamentDTO tournamentDTO, TournamentImageType type, ImageCompression imageCompression,
+                                  String username) throws DataInputException {
         try {
             delete(tournamentDTO, type);
             final TournamentImage tournamentImage = new TournamentImage();
@@ -96,6 +99,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
             tournamentImage.setData(file.getBytes());
             tournamentImage.setCreatedBy(username);
             tournamentImage.setImageType(type);
+            tournamentImage.setImageCompression(imageCompression);
             tournamentProvider.save(tournamentConverter.reverse(tournamentDTO));
             return converter.convert(new TournamentImageConverterRequest(provider.save(tournamentImage)));
         } catch (IOException e) {
