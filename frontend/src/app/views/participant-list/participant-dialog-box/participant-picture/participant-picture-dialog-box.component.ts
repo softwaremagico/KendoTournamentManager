@@ -10,9 +10,9 @@ import {MessageService} from "../../../../services/message.service";
 import {FileService} from "../../../../services/file.service";
 import {Participant} from "../../../../models/participant";
 import {ParticipantImage} from "../../../../models/participant-image.model";
-import {ImageFormat} from "../../../../models/image-format";
 import {PictureUpdatedService} from "../../../../services/notifications/picture-updated.service";
 import {TranslateService} from "@ngx-translate/core";
+import {ImageFormat} from "../../../../models/image-format";
 
 @Component({
   selector: 'app-participant-picture',
@@ -119,7 +119,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
           this.messageService.errorMessage(res);
         });
       } else {
-        this.fileService.setFilePicture(file, this.participant).subscribe(_picture => {
+        this.fileService.setParticipantFilePicture(file, this.participant).subscribe(_picture => {
           this.messageService.infoMessage('infoPictureStored');
           this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
           this.closeDialog();

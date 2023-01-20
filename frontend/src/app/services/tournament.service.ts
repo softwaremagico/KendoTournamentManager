@@ -94,6 +94,7 @@ export class TournamentService {
 
   update(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
+    this.systemOverloadService.isBusy.next(true);
     return this.http.put<Tournament>(url, tournament, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -106,22 +107,38 @@ export class TournamentService {
   }
 
   getAccreditations(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.loginService.getJwtValue()
       })
-    });
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting tournament accreditations`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting tournament accreditations`))
+    );
   }
 
   getDiplomas(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.loginService.getJwtValue()
       })
-    });
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting tournament diplomas`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting tournament diplomas`))
+    );
   }
 }
