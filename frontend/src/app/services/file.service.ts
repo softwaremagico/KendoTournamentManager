@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -9,6 +9,10 @@ import {Participant} from "../models/participant";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {ParticipantImage} from "../models/participant-image.model";
+import {Tournament} from "../models/tournament";
+import {TournamentImageType} from "../models/tournament-image-type";
+import {TournamentImage} from "../models/tournament-image.model";
+import {ImageCompression} from "../models/image-compression";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +26,7 @@ export class FileService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  setFilePicture(file: File, participant: Participant): Observable<ParticipantImage> {
+  setParticipantFilePicture(file: File, participant: Participant): Observable<ParticipantImage> {
     const url: string = `${this.baseUrl}/participants/${participant.id}`;
     const formData = new FormData();
     formData.append("file", file);
@@ -43,7 +47,30 @@ export class FileService {
       );
   }
 
+  setTournamentFilePicture(file: File, tournament: Tournament, imageType: TournamentImageType, imageCompression: ImageCompression): Observable<TournamentImage> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}/compression/${imageCompression}`;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("reportProgress", "true");
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    };
+    return this.http.post<TournamentImage>(url, formData, httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Adding file ${imageType} to tournament ${tournament.id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<TournamentImage>(`adding file ${imageType} to tournament ${tournament.id}`))
+      );
+  }
+
   setBase64Picture(image: ParticipantImage): Observable<ParticipantImage> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants`;
     return this.http.post<ParticipantImage>(url, image, this.loginService.httpOptions)
       .pipe(
@@ -57,6 +84,7 @@ export class FileService {
   }
 
   getPicture(participant: Participant): Observable<ParticipantImage> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant!.id}`;
     return this.http.get<ParticipantImage>(url, this.loginService.httpOptions)
       .pipe(
@@ -69,7 +97,8 @@ export class FileService {
       );
   }
 
-  deletePicture(participant: Participant): Observable<void> {
+  deleteParticipantPicture(participant: Participant): Observable<void> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant!.id}`;
     return this.http.delete<void>(url, this.loginService.httpOptions)
       .pipe(
@@ -79,6 +108,20 @@ export class FileService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<void>(`Deleting picture from ${participant}`))
+      );
+  }
+
+  deleteTournamentPicture(tournament: Tournament, imageType: TournamentImageType): Observable<void> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
+    return this.http.delete<void>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Deleting picture ${imageType} from tournament ${tournament.id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Deleting picture ${imageType} from tournament ${tournament.id}`))
       );
   }
 }
