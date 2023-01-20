@@ -94,7 +94,7 @@ export class FileService {
       );
   }
 
-  deletePicture(participant: Participant): Observable<void> {
+  deleteParticipantPicture(participant: Participant): Observable<void> {
     const url: string = `${this.baseUrl}/participants/${participant!.id}`;
     return this.http.delete<void>(url, this.loginService.httpOptions)
       .pipe(
@@ -104,6 +104,19 @@ export class FileService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<void>(`Deleting picture from ${participant}`))
+      );
+  }
+
+  deleteTournamentPicture(tournament: Tournament, imageType: TournamentImageType): Observable<void> {
+    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
+    return this.http.delete<void>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Deleting picture ${imageType} from tournament ${tournament.id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<void>(`Deleting picture ${imageType} from tournament ${tournament.id}`))
       );
   }
 }

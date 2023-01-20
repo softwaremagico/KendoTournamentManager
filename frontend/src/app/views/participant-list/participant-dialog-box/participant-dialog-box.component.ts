@@ -122,7 +122,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   deletePicture() {
-    this.fileService.deletePicture(this.participant).subscribe(() => {
+    this.fileService.deleteParticipantPicture(this.participant).subscribe(() => {
       this.messageService.infoMessage("pictureDeleted");
       this.participantPicture = undefined;
     });
