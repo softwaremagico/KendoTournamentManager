@@ -81,6 +81,9 @@ import {
 } from "./views/participant-list/participant-dialog-box/participant-picture/participant-picture-dialog-box.module";
 import {ParticipantPictureModule} from "./components/participant-picture/participant-picture.module";
 import {PictureDialogBoxModule} from "./components/participant-picture/picture-dialog-box/picture-dialog-box.module";
+import {
+  TournamentImageSelectorModule
+} from "./views/tournament-list/tournament-dialog-box/tournament-image-selector/tournament-image-selector.module";
 
 
 registerLocaleData(localeES, "es");
@@ -166,7 +169,8 @@ registerLocaleData(localeNL, "nl");
     MatSlideToggleModule,
     WebcamModule,
     ParticipantPictureModule,
-    PictureDialogBoxModule
+    PictureDialogBoxModule,
+    TournamentImageSelectorModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
