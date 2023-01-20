@@ -20,7 +20,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   bannerType: TournamentImageType = TournamentImageType.BANNER;
   accreditationType: TournamentImageType = TournamentImageType.ACCREDITATION;
   diplomaType: TournamentImageType = TournamentImageType.DIPLOMA;
-  image: string;
+  image: string | null;
   insertedTournamentImageType: TournamentImageType;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
@@ -61,5 +61,12 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
 
   closeDialog() {
     this.dialogRef.close({action: Action.Cancel});
+  }
+
+  deletePicture(imageType: TournamentImageType) {
+    this.fileService.deleteTournamentPicture(this.tournament, imageType).subscribe(_picture => {
+      this.messageService.infoMessage('pictureDeleted');
+      this.image = null;
+    });
   }
 }
