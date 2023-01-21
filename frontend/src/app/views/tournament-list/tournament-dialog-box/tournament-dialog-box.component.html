@@ -8,15 +8,16 @@
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentType' | translate}}</mat-label>
-      <mat-select  formControlName="tournamentType" [(value)]="tournament.type">
-        <mat-option *ngFor="let type of tournamentType" [value]="type">
+      <mat-select formControlName="tournamentType" [(value)]="tournament.type">
+        <mat-option *ngFor="let type of tournamentType" [value]="type" (click)="select(type)">
           {{getTournamentTypeTranslationTag(type) | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input formControlName="shiaijos" placeholder="{{'tournamentShiaijos' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
+             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
+          || this.selectedType == typeLeague || this.selectedType == typeKing">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input formControlName="teamSize" placeholder="{{'tournamentTeamSize' | translate}}" matInput
