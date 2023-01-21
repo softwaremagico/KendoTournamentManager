@@ -35,21 +35,21 @@
             [class.selected-button]="insertedTournamentImageType === accreditationType"
             (click)="selectType(accreditationType)" mat-flat-button
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)">
-      <mat-icon>image</mat-icon>
+      <mat-icon>badge</mat-icon>
       {{'accreditation' | translate}}
     </button>
     <button mat-raised-button color="picture" type="button"
             [class.selected-button]="insertedTournamentImageType === diplomaType"
             (click)="selectType(diplomaType)" mat-flat-button
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | rbac : this.rbacService.activities)">
-      <mat-icon>image</mat-icon>
+      <mat-icon svgIcon="diplomas" class="kendo-icon"></mat-icon>
       {{'diplomas' | translate}}
     </button>
     <button mat-raised-button color="picture" type="button"
             [class.selected-button]="insertedTournamentImageType ===  bannerType"
             (click)="selectType(bannerType)" mat-flat-button
             *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | rbac : this.rbacService.activities)">
-      <mat-icon>image</mat-icon>
+      <mat-icon>featured_video</mat-icon>
       {{'banner' | translate}}
     </button>
     <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">
