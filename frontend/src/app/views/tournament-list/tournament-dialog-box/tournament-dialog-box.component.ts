@@ -23,6 +23,10 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   actionName: string;
   tournamentType: TournamentType[];
   scoreTypes: ScoreType[];
+  selectedType: TournamentType | undefined;
+  typeLoop: TournamentType = TournamentType.LOOP;
+  typeLeague: TournamentType = TournamentType.LEAGUE;
+  typeKing: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
 
   registerForm: FormGroup;
 
@@ -38,6 +42,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.actionName = Action[data.action];
     this.tournamentType = TournamentType.toArray();
     this.scoreTypes = ScoreType.toArray();
+    this.selectedType = this.tournament.type;
 
     this.registerForm = new FormGroup({
       tournamentName: new FormControl({
@@ -65,6 +70,8 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required])
     },);
+
+    this.disableShiaijos();
   }
 
   doAction() {
@@ -114,7 +121,17 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     });
   }
 
-  deletePicture() {
+  disableShiaijos() {
+    if (this.selectedType == TournamentType.KING_OF_THE_MOUNTAIN || this.selectedType == TournamentType.LEAGUE || this.selectedType == TournamentType.LOOP) {
+      this.registerForm.controls['shiaijos'].disable();
+      this.registerForm.controls['shiaijos'].setValue(1);
+    } else {
+      this.registerForm.controls['shiaijos'].enable();
+    }
+  }
 
+  select(type: TournamentType) {
+    this.selectedType = type;
+    this.disableShiaijos();
   }
 }
