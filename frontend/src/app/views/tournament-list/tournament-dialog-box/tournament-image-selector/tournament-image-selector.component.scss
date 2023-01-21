@@ -1,6 +1,5 @@
 .picture-uploaded {
   overflow: hidden;
-  max-height: 60vh;
   padding-right: 15px;
 }
 
@@ -61,4 +60,27 @@
 .cancel-banner {
   margin-left: 620px;
   margin-top: -105px;
+}
+
+.upload-accreditation {
+  margin-left: 10px;
+  margin-top: -505px;
+}
+
+.upload-diploma {
+  margin-left: 10px;
+  margin-top: -342px;
+}
+
+.upload-banner {
+  margin-left: 10px;
+  margin-top: -105px;
+}
+
+.selected-button {
+  border: red 2px solid;
+}
+
+.empty-image {
+  border: #012a5f 2px solid;
 }

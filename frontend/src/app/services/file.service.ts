@@ -83,7 +83,7 @@ export class FileService {
       );
   }
 
-  getPicture(participant: Participant): Observable<ParticipantImage> {
+  getParticipantPicture(participant: Participant): Observable<ParticipantImage> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant!.id}`;
     return this.http.get<ParticipantImage>(url, this.loginService.httpOptions)
@@ -94,6 +94,20 @@ export class FileService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<ParticipantImage>(`getting picture from ${participant}`))
+      );
+  }
+
+  getTournamentPicture(tournament: Tournament, imageType: TournamentImageType): Observable<TournamentImage> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
+    return this.http.get<TournamentImage>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Getting picture ${imageType} from tournament ${tournament.id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<TournamentImage>(`getting picture ${imageType} from tournament ${tournament.id}`))
       );
   }
 
