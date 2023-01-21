@@ -65,7 +65,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       this.participantPicture = _picture;
     });
     if (this.participant && this.participant.id) {
-      this.fileService.getPicture(this.participant).subscribe(_picture => {
+      this.fileService.getParticipantPicture(this.participant).subscribe(_picture => {
         if (_picture) {
           this.participantPicture = _picture.base64;
         } else {
