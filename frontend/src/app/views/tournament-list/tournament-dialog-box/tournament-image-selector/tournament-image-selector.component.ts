@@ -28,12 +28,15 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
               public messageService: MessageService, public fileService: FileService) {
     super(rbacService);
     this.tournament = data.tournament;
+    this.insertedTournamentImageType = this.accreditationType;
+    this.refreshImage();
   }
 
   ngOnInit(): void {
+
   }
 
-  handleFileInput(event: Event, imageType: TournamentImageType) {
+  handleFileInput(event: Event) {
     const element = event.currentTarget as HTMLInputElement;
     let fileList: FileList | null = element.files;
     if (fileList) {
@@ -46,7 +49,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
       } else {
         const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file!.type);
         if (imageCompression) {
-          this.fileService.setTournamentFilePicture(file, this.tournament, imageType, imageCompression).subscribe(_picture => {
+          this.fileService.setTournamentFilePicture(file, this.tournament, this.insertedTournamentImageType, imageCompression).subscribe(_picture => {
             this.messageService.infoMessage('infoPictureStored');
             this.image = _picture.base64;
             this.insertedTournamentImageType = _picture.imageType;
@@ -59,6 +62,16 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
     }
   }
 
+  private refreshImage() {
+    this.fileService.getTournamentPicture(this.tournament, this.insertedTournamentImageType).subscribe(_picture => {
+      if (_picture) {
+        this.image = _picture.base64;
+      } else {
+        this.image = null;
+      }
+    });
+  }
+
   closeDialog() {
     this.dialogRef.close({action: Action.Cancel});
   }
@@ -68,5 +81,11 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
       this.messageService.infoMessage('pictureDeleted');
       this.image = null;
     });
+  }
+
+  selectType(selectedType: TournamentImageType) {
+    this.image = null;
+    this.insertedTournamentImageType = selectedType;
+    this.refreshImage();
   }
 }
