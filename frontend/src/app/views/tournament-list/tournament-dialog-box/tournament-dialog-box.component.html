@@ -14,6 +14,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input formControlName="shiaijos" placeholder="{{'tournamentShiaijos' | translate}}" matInput required
              [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
@@ -23,17 +24,25 @@
       <input formControlName="teamSize" placeholder="{{'tournamentTeamSize' | translate}}" matInput
              [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)">
     </mat-form-field>
-    <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-label>{{'scoreRules' | translate}}</mat-label>
-      <mat-select formControlName="scoreTypes" [(value)]="tournament.tournamentScore.scoreType"
-                  [matTooltipShowDelay]="500"
-                  matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
-        <mat-option *ngFor="let type of scoreTypes" [value]="type"
-                    [matTooltipShowDelay]="500" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
-          {{type.toLowerCase() | translate}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="types">
+      <mat-form-field *ngIf="actionName != 'Delete'">
+        <mat-label>{{'scoreRules' | translate}}</mat-label>
+        <mat-select formControlName="scoreTypes" [(value)]="tournament.tournamentScore.scoreType"
+                    [matTooltipShowDelay]="500"
+                    matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
+          <mat-option *ngFor="let type of scoreTypes" [value]="type" (click)="selectScore(type)"
+                      [matTooltipShowDelay]="500" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
+            {{type.toLowerCase() | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button *ngIf="selectedScore==scoreTypeCustom" class="edit-score-button" mat-raised-button
+              type="button" (click)="openScoreDefinition()"
+              mat-flat-button
+              color="primary">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
       <mat-select formControlName="duelsDuration" [(value)]="tournament.duelsDuration">

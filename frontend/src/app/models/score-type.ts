@@ -2,8 +2,8 @@ export enum ScoreType {
   CLASSIC = 'CLASSIC',
   WIN_OVER_DRAWS = 'WIN_OVER_DRAWS',
   EUROPEAN = 'EUROPEAN',
-  //CUSTOM = 'CUSTOM',
-  INTERNATIONAL = 'INTERNATIONAL'
+  INTERNATIONAL = 'INTERNATIONAL',
+  CUSTOM = 'CUSTOM',
 }
 
 export namespace Score {
