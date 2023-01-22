@@ -5,7 +5,7 @@
          [class.accreditation-size]="insertedTournamentImageType === accreditationType"
          [class.diploma-size]="insertedTournamentImageType === diplomaType"
          [class.banner-size]="insertedTournamentImageType === bannerType"
-         src="{{ image }}"/>
+         src="{{ image }}" alt="Image preview"/>
     <div *ngIf="!image" class="empty-image image-preview"
       [class.accreditation-size]="insertedTournamentImageType === accreditationType"
       [class.diploma-size]="insertedTournamentImageType === diplomaType"
