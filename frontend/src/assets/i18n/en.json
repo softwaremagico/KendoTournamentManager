@@ -610,6 +610,8 @@
   "switch": "Switch",
   "upload": "Upload",
   "invalidFileSize": "Only files with a size between {{minSize}} B and {{maxSize}} MB are allowed.",
-  "pictureDeleted": "The picture has been deleted!"
+  "pictureDeleted": "The picture has been deleted!",
+  "pointsByVictory": "Points by Victory",
+  "pointsByDraw": "Points by Tie"
 }
 
