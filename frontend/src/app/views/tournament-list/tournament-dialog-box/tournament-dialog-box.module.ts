@@ -16,6 +16,9 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
 
 @NgModule({
   declarations: [TournamentDialogBoxComponent],
+  exports: [
+    TournamentDialogBoxComponent
+  ],
   imports: [
     CommonModule,
     MatFormFieldModule,
