@@ -84,6 +84,9 @@ import {PictureDialogBoxModule} from "./components/participant-picture/picture-d
 import {
   TournamentImageSelectorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-image-selector/tournament-image-selector.module";
+import {
+  TournamentScoreEditorModule
+} from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 
 
 registerLocaleData(localeES, "es");
@@ -170,7 +173,8 @@ registerLocaleData(localeNL, "nl");
     WebcamModule,
     ParticipantPictureModule,
     PictureDialogBoxModule,
-    TournamentImageSelectorModule
+    TournamentImageSelectorModule,
+    TournamentScoreEditorModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
