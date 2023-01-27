@@ -597,7 +597,9 @@
   "switch": "Canvia",
   "upload": "Carregar",
   "invalidFileSize": "Només es permeten fitxers amb una grandària entre {{minSize}} B i {{maxSize}} MB.",
-  "pictureDeleted": "La imatge ha estat esborrada!"
+  "pictureDeleted": "La imatge ha estat esborrada!",
+  "pointsByVictory": "Punts per victòria",
+  "pointsByDraw": "Punts per empat"
 }
 
 
