@@ -43,9 +43,9 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
                 return -1;
             }
 
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() +
-                    scoreOfCompetitor1.getDrawDuels()
-                            * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+                    + scoreOfCompetitor1.getDrawDuels()
+                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
                     * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
                     * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return 1;
