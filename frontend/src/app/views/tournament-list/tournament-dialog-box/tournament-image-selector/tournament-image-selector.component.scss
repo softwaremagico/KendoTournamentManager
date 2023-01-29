@@ -4,7 +4,7 @@
 }
 
 .image-preview {
-  height: 95%;
+  height: 99%;
 }
 
 .alone {
@@ -14,9 +14,15 @@
 .name-line {
   position: absolute;
   height: 1px;
-  background: black;
-  margin-left: 40px;
-  margin-top: -505px;
+  background: red;
+  width: 100%;
+}
+
+.name{
+  position: absolute;
+  width: 100%;
+  font-size: 36px;
+  text-align: center;
 }
 
 .content {
@@ -33,22 +39,31 @@
 
 .name-position-selector {
   margin-left: auto;
-  margin-bottom: 8px;
+  margin-bottom: -6px;
   margin-top: -6px;
 }
 
-.accreditation-size {
+.accreditation-height {
   height: 535px;
+}
+
+.diploma-height {
+  height: 372px;
+}
+
+.banner-height {
+  height: 135px;
+}
+
+.accreditation-width {
   width: 380px;
 }
 
-.diploma-size {
-  height: 372px;
+.diploma-width {
   width: 514px;
 }
 
-.banner-size {
-  height: 135px;
+.banner-width {
   width: 672px;
 }
 

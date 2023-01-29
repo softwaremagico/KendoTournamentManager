@@ -50,7 +50,7 @@ public abstract class PdfTheme {
     public static final int ACCREDITATION_LASTNAME_FONT_SIZE = 18;
     public static final int ACCREDITATION_CLUBNAME_FONT_SIZE = 10;
 
-    public static final int DIPLOMA_FONT_SIZE = 37;
+    public static final int DIPLOMA_FONT_SIZE = 36;
 
     private static BaseFont footerFont;
     private static BaseFont lineFont;
