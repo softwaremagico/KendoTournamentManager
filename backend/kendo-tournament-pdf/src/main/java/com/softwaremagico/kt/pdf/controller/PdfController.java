@@ -93,6 +93,7 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
+        final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
         final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
         final Map<ParticipantDTO, ParticipantImageDTO> participantImages = participantImageDTOS.stream()
@@ -100,7 +101,8 @@ public class PdfController {
         return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
                 .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages,
                 banner != null ? banner.getData() : null,
-                accreditationBackground != null ? accreditationBackground.getData() : null);
+                accreditationBackground != null ? accreditationBackground.getData() : null,
+                defaultPhoto != null ? defaultPhoto.getData() : null);
     }
 
     public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO) {

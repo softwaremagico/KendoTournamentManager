@@ -32,11 +32,9 @@ import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.PdfTheme;
-import com.softwaremagico.kt.pdf.events.TableBackgroundEvent;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public class DiplomaPDF extends PdfDocument {
@@ -107,18 +105,6 @@ public class DiplomaPDF extends PdfDocument {
                 document.add(background);
             } catch (IOException e) {
                 KendoTournamentLogger.warning(this.getClass(), "No background image found!");
-            }
-        } else {
-            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/default-diploma.png");) {
-                if (inputStream != null) {
-                    final Image defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
-                    defaultBackgroundImage.setAlignment(Image.UNDERLYING);
-                    defaultBackgroundImage.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
-                    defaultBackgroundImage.setAbsolutePosition(0, 0);
-                    document.add(defaultBackgroundImage);
-                }
-            } catch (NullPointerException | BadElementException | IOException ex) {
-                KendoTournamentLogger.severe(TableBackgroundEvent.class.getName(), "No default diploma image found!");
             }
         }
     }

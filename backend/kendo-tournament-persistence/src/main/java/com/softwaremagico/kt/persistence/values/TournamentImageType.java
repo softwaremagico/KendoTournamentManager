@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.values;
 
 public enum TournamentImageType {
 
+    PHOTO,
     BANNER,
     DIPLOMA,
     ACCREDITATION;
