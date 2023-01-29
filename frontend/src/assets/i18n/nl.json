@@ -583,7 +583,8 @@
   "switch": "Wissel",
   "upload": "Uploaden",
   "invalidFileSize": "Alleen bestanden met een grootte tussen {{minSize}} B en {{maxSize}} MB zijn toegestaan.",
-  "pictureDeleted": "De foto is verwijderd!"
+  "pictureDeleted": "De foto is verwijderd!",
+  "nameExample": "Emma De vries "
 }
 
 
