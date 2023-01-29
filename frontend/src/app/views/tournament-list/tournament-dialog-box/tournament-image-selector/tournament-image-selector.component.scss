@@ -4,13 +4,25 @@
 }
 
 .image-preview {
+  height: 95%;
+}
+
+.alone {
+  margin-left: auto;
+}
+
+.name-line {
+  position: absolute;
+  height: 1px;
+  background: black;
+  margin-left: 40px;
+  margin-top: -505px;
+}
+
+.content {
   display: block;
   margin-right: auto;
   object-fit: fill;
-}
-
-.alone{
-  margin-left: auto;
 }
 
 .image-editor {
@@ -19,8 +31,10 @@
   justify-content: space-between;
 }
 
-.name-position-selector{
+.name-position-selector {
   margin-left: auto;
+  margin-bottom: 8px;
+  margin-top: -6px;
 }
 
 .accreditation-size {
@@ -61,32 +75,32 @@
 }
 
 .cancel-accreditation {
-  margin-left: 550px;
+  margin-left: 350px;
   margin-top: -505px;
 }
 
 .cancel-diploma {
-  margin-left: 540px;
+  margin-left: 490px;
   margin-top: -342px;
 }
 
 .cancel-banner {
-  margin-left: 610px;
+  margin-left: 650px;
   margin-top: -105px;
 }
 
 .upload-accreditation {
-  margin-left: 40px;
+  margin-left: -10px;
   margin-top: -505px;
 }
 
 .upload-diploma {
-  margin-left: 40px;
+  margin-left: -10px;
   margin-top: -342px;
 }
 
 .upload-banner {
-  margin-left: 40px;
+  margin-left: -10px;
   margin-top: -105px;
 }
 
