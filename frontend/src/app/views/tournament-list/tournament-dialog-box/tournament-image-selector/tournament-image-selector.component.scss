@@ -5,9 +5,22 @@
 
 .image-preview {
   display: block;
-  margin-left: auto;
   margin-right: auto;
   object-fit: fill;
+}
+
+.alone{
+  margin-left: auto;
+}
+
+.image-editor {
+  width: 100%; /* Your element needs a fixed width */
+  display: flex;
+  justify-content: space-between;
+}
+
+.name-position-selector{
+  margin-left: auto;
 }
 
 .accreditation-size {

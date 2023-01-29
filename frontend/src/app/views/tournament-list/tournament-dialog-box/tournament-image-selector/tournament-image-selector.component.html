@@ -1,34 +1,40 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div mat-dialog-content>
   <div class="picture-uploaded">
-    <img class="image-preview" *ngIf="image"
-         [class.accreditation-size]="insertedTournamentImageType === accreditationType"
-         [class.diploma-size]="insertedTournamentImageType === diplomaType"
-         [class.banner-size]="insertedTournamentImageType === bannerType"
-         src="{{ image }}" alt="Image preview"/>
-    <div *ngIf="!image" class="empty-image image-preview"
-      [class.accreditation-size]="insertedTournamentImageType === accreditationType"
-      [class.diploma-size]="insertedTournamentImageType === diplomaType"
-      [class.banner-size]="insertedTournamentImageType === bannerType">
+    <div class="image-editor">
+      <img class="image-preview" *ngIf="image"
+           [class.alone] = "insertedTournamentImageType !== diplomaType"
+           [class.accreditation-size]="insertedTournamentImageType === accreditationType"
+           [class.diploma-size]="insertedTournamentImageType === diplomaType"
+           [class.banner-size]="insertedTournamentImageType === bannerType"
+           src="{{ image }}" alt="Image preview"/>
+      <mat-slider class="name-position-selector" *ngIf="insertedTournamentImageType === diplomaType"
+                  thumbLabel tickInterval="1" min="1" [vertical]="true" max="100"></mat-slider>
+      <div *ngIf="!image" class="empty-image image-preview"
+           [class.alone] = "insertedTournamentImageType !== diplomaType"
+           [class.accreditation-size]="insertedTournamentImageType === accreditationType"
+           [class.diploma-size]="insertedTournamentImageType === diplomaType"
+           [class.banner-size]="insertedTournamentImageType === bannerType">
+      </div>
+      <button class="floating-button" mat-mini-fab color="picture" type="button" (click)="fileInput.click()"
+              [class.upload-accreditation]="insertedTournamentImageType === accreditationType"
+              [class.upload-diploma]="insertedTournamentImageType === diplomaType"
+              [class.upload-banner]="insertedTournamentImageType === bannerType"
+              mat-flat-button
+              *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)">
+        <mat-icon>upload_file</mat-icon>
+        <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event)"
+               style="display:none;"/>
+      </button>
+      <button class="floating-button"
+              [class.cancel-accreditation]="insertedTournamentImageType === accreditationType"
+              [class.cancel-diploma]="insertedTournamentImageType === diplomaType"
+              [class.cancel-banner]="insertedTournamentImageType === bannerType"
+              mat-mini-fab type="button" (click)="deletePicture(insertedTournamentImageType)" mat-flat-button
+              color="warn">
+        <mat-icon>cancel</mat-icon>
+      </button>
     </div>
-    <button class="floating-button" mat-mini-fab color="picture" type="button" (click)="fileInput.click()"
-            [class.upload-accreditation]="insertedTournamentImageType === accreditationType"
-            [class.upload-diploma]="insertedTournamentImageType === diplomaType"
-            [class.upload-banner]="insertedTournamentImageType === bannerType"
-            mat-flat-button
-            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)">
-      <mat-icon>upload_file</mat-icon>
-      <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event)"
-             style="display:none;"/>
-    </button>
-    <button class="floating-button"
-            [class.cancel-accreditation]="insertedTournamentImageType === accreditationType"
-            [class.cancel-diploma]="insertedTournamentImageType === diplomaType"
-            [class.cancel-banner]="insertedTournamentImageType === bannerType"
-            mat-mini-fab type="button" (click)="deletePicture(insertedTournamentImageType)" mat-flat-button
-            color="warn">
-      <mat-icon>cancel</mat-icon>
-    </button>
   </div>
   <div mat-dialog-actions>
     <button mat-raised-button color="picture" type="button"
