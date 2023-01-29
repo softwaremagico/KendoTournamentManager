@@ -2,14 +2,26 @@
 <div mat-dialog-content>
   <div class="picture-uploaded">
     <div class="image-editor">
-      <mat-slider class="name-position-selector" *ngIf="insertedTournamentImageType === diplomaType"
-                  thumbLabel tickInterval="1" min="1" [vertical]="true" max="100"></mat-slider>
+      <mat-slider #mySlider class="name-position-selector" *ngIf="insertedTournamentImageType === diplomaType"
+                  thumbLabel tickInterval="1" min="1" [vertical]="true" max="100" [(ngModel)]="sliderValue"
+                  (valueChange)="sliderOnChange(mySlider.value)"></mat-slider>
       <div class="content"
            [class.alone]="insertedTournamentImageType !== diplomaType"
-           [class.accreditation-size]="insertedTournamentImageType === accreditationType"
-           [class.diploma-size]="insertedTournamentImageType === diplomaType"
-           [class.banner-size]="insertedTournamentImageType === bannerType">
-        <div class="name-line"></div>
+           [style.height]="getHeight()+'px'"
+           [class.accreditation-width]="insertedTournamentImageType === accreditationType"
+           [class.diploma-width]="insertedTournamentImageType === diplomaType"
+           [class.banner-width]="insertedTournamentImageType === bannerType">
+        <div class="name-line" *ngIf="insertedTournamentImageType === diplomaType"
+             [class.accreditation-width]="insertedTournamentImageType === accreditationType"
+             [class.diploma-width]="insertedTournamentImageType === diplomaType"
+             [class.banner-width]="insertedTournamentImageType === bannerType"
+             [style.margin-top]="getLinePosition()+'px'"></div>
+        <span class="name" *ngIf="insertedTournamentImageType === diplomaType"
+              [class.accreditation-width]="insertedTournamentImageType === accreditationType"
+              [class.diploma-width]="insertedTournamentImageType === diplomaType"
+              [class.banner-width]="insertedTournamentImageType === bannerType"
+              [style.margin-top]="(getLinePosition()-10)+'px'">
+          {{'nameExample' | translate}}</span>
         <img class="image-preview" *ngIf="image"
              src="{{ image }}" alt="Image preview"/>
         <div *ngIf="!image" class="empty-image image-preview">

@@ -602,7 +602,8 @@
   "switch": "Cambiar",
   "upload": "Subir",
   "invalidFileSize": "Solo se permiten archivos con un tamaño entre {{minSize}} B y {{maxSize}} MB.",
-  "pictureDeleted": "¡La imagen ha sido eliminada!"
+  "pictureDeleted": "¡La imagen ha sido eliminada!",
+  "nameExample": "Francisco Garcia"
 }
 
 
