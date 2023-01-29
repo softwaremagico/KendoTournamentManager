@@ -53,17 +53,19 @@ public class TournamentAccreditationCards extends PdfDocument {
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
     private final byte[] banner;
     private final byte[] background;
+    private final byte[] defaultPhoto;
     private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
 
 
     public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
-                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner, byte[] background) {
+                                        Map<ParticipantDTO, ParticipantImageDTO> participantImages, byte[] banner, byte[] background, byte[] defaultPhoto) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
         this.competitorsRoles = competitorsRoles;
         this.banner = banner;
         this.background = background;
+        this.defaultPhoto = defaultPhoto;
         this.participantImages = participantImages;
     }
 
@@ -94,7 +96,7 @@ public class TournamentAccreditationCards extends PdfDocument {
         for (final Map.Entry<ParticipantDTO, RoleDTO> entry : competitorsRoles.entrySet()) {
             final ParticipantImageDTO participantImageDTO = participantImages.get(entry.getKey());
             final ParticipantAccreditationCard competitorPDF = new ParticipantAccreditationCard(messageSource, locale, tournament,
-                    entry.getKey(), entry.getValue(), participantImageDTO != null ? participantImageDTO.getData() : null, banner);
+                    entry.getKey(), entry.getValue(), participantImageDTO != null ? participantImageDTO.getData() : defaultPhoto, banner);
             final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2 - 40,
                     document.getPageSize().getHeight() / 2 + 150);
             try {
