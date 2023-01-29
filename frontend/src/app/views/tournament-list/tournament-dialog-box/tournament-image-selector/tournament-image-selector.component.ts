@@ -20,6 +20,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   bannerType: TournamentImageType = TournamentImageType.BANNER;
   accreditationType: TournamentImageType = TournamentImageType.ACCREDITATION;
   diplomaType: TournamentImageType = TournamentImageType.DIPLOMA;
+  photoType: TournamentImageType = TournamentImageType.PHOTO;
   image: string | null;
   insertedTournamentImageType: TournamentImageType;
   sliderValue: number = 50;
@@ -104,10 +105,17 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
     if (this.insertedTournamentImageType === TournamentImageType.BANNER) {
       return 135;
     }
+    if (this.insertedTournamentImageType === TournamentImageType.PHOTO) {
+      return 266;
+    }
     return 0;
   }
 
   getLinePosition(): number {
     return Math.ceil(this.getHeight() * 0.99 - (this.getHeight() * 0.99 * (this.sliderValue / 100)));
+  }
+
+  downloadPreview(insertedTournamentImageType: TournamentImageType) {
+    
   }
 }
