@@ -11,6 +11,9 @@ import {TournamentImageType} from "../../../../models/tournament-image-type";
 import {ImageCompression} from "../../../../models/image-compression";
 import {TournamentService} from "../../../../services/tournament.service";
 import {Participant} from "../../../../models/participant";
+import {TournamentExtendedPropertiesService} from "../../../../services/tournament-extended-properties.service";
+import {TournamentExtraPropertyKey} from "../../../../models/tournament-extra-property-key";
+import {TournamentExtendedProperty} from "../../../../models/tournament-extended-property.model";
 
 @Component({
   selector: 'app-tournament-image-selector',
@@ -30,7 +33,8 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService,
               public translateService: TranslateService, private tournamentService: TournamentService,
-              public messageService: MessageService, public fileService: FileService) {
+              public messageService: MessageService, public fileService: FileService,
+              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService) {
     super(rbacService);
     this.tournament = data.tournament;
     this.insertedTournamentImageType = this.accreditationType;
@@ -38,7 +42,13 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   }
 
   ngOnInit(): void {
-
+    this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT).subscribe(_tournamentProperty => {
+      if (_tournamentProperty) {
+        this.sliderValue = parseFloat(_tournamentProperty.value) * 100;
+      } else {
+        this.sliderValue = 50;
+      }
+    });
   }
 
   handleFileInput(event: Event) {
@@ -97,6 +107,12 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
 
   sliderOnChange(value: number) {
     this.sliderValue = value;
+
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.value = (value / 100).toString();
+    tournamentProperty.property = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe();
   }
 
   getHeight(): number {
@@ -127,13 +143,13 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
         participant.name = names[0];
         participant.lastname = names[1];
       });
-      if (this.insertedTournamentImageType === TournamentImageType.DIPLOMA) {
+      if (insertedTournamentImageType === TournamentImageType.DIPLOMA) {
         this.tournamentService.getParticipantDiploma(this.tournament.id, participant).subscribe((html: Blob) => {
           const blob = new Blob([html], {type: 'application/pdf'});
           const downloadURL = window.URL.createObjectURL(blob);
 
           const anchor = document.createElement("a");
-          anchor.download = this.insertedTournamentImageType + ".pdf";
+          anchor.download = insertedTournamentImageType + ".pdf";
           anchor.href = downloadURL;
           anchor.click();
         });
@@ -143,7 +159,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
           const downloadURL = window.URL.createObjectURL(blob);
 
           const anchor = document.createElement("a");
-          anchor.download = this.insertedTournamentImageType + ".pdf";
+          anchor.download = insertedTournamentImageType + ".pdf";
           anchor.href = downloadURL;
           anchor.click();
         });

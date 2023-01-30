@@ -41,10 +41,12 @@ public class DiplomaPDF extends PdfDocument {
     private static final int BORDER = 0;
     private final List<ParticipantDTO> participants;
     private final byte[] backgroundImage;
+    private final float nameHeight;
 
-    public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage) {
+    public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage, float nameHeight) {
         this.participants = participants;
         this.backgroundImage = backgroundImage;
+        this.nameHeight = nameHeight;
     }
 
     @Override
@@ -88,7 +90,7 @@ public class DiplomaPDF extends PdfDocument {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.addCell(cell);
 
-        mainTable.writeSelectedRows(0, -1, (float) 0, (float) (document.getPageSize().getHeight() / 2.0 + PdfTheme.DIPLOMA_FONT_SIZE + 10),
+        mainTable.writeSelectedRows(0, -1, (float) 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2,
                 writer.getDirectContent());
         mainTable.flushContent();
         mainTable.setWidthPercentage(100);
