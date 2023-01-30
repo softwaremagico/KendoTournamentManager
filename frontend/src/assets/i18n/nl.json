@@ -584,6 +584,8 @@
   "upload": "Uploaden",
   "invalidFileSize": "Alleen bestanden met een grootte tussen {{minSize}} B en {{maxSize}} MB zijn toegestaan.",
   "pictureDeleted": "De foto is verwijderd!",
+  "pointsByVictory": "Punten voor de overwinning",
+  "pointsByDraw": "Punten voor een gelijkspel",
   "nameExample": "Emma De vries "
 }
 
