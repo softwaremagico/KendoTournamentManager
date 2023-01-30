@@ -590,6 +590,8 @@
   "upload": "Caricare",
   "invalidFileSize": "Sono consentiti solo i file con una dimensione compresa tra {{minSize}} B e {{maxSize}} MB.",
   "pictureDeleted": "L'immagine è stata eliminata!",
+  "pointsByVictory": "Punti per la vittoria",
+  "pointsByDraw": "Punti per il pareggio",
   "nameExample": "Giuseppe Rossi"
 }
 
