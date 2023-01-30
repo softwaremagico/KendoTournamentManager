@@ -1,7 +1,9 @@
 export enum RoleType {
   COMPETITOR = 'COMPETITOR',
   REFEREE = 'REFEREE',
-  VOLUNTEER = 'VOLUNTEER'
+  ORGANIZER = 'ORGANIZER',
+  VOLUNTEER = 'VOLUNTEER',
+  PRESS = 'PRESS'
 }
 
 export namespace RoleType {

@@ -467,6 +467,7 @@
   "competitor": "Competidor",
   "referee": "Árbitro",
   "volunteer": "Voluntario",
+  "organizer": "Organizador",
   "press": "Prensa",
   "deniedUserError": "Usuario o contraseña inválidos.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",

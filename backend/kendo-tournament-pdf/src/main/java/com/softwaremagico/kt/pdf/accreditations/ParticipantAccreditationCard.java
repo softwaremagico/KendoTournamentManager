@@ -42,7 +42,6 @@ import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
 import java.awt.*;
-import java.io.IOException;
 import java.sql.Time;
 import java.util.Date;
 import java.util.Locale;
@@ -55,13 +54,13 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
     private final TournamentDTO tournament;
     private final ParticipantDTO participant;
-    private final byte[] participantImage;
+    private final Image participantImage;
     private final RoleDTO role;
-    private final byte[] banner;
+    private final Image banner;
 
     public ParticipantAccreditationCard(MessageSource messageSource, Locale locale,
                                         TournamentDTO tournament, ParticipantDTO participant, RoleDTO role,
-                                        byte[] participantImage, byte[] banner) {
+                                        Image participantImage, Image banner) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
@@ -90,8 +89,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
         final PdfPTable table = new PdfPTable(widths);
         Image accreditationImage = null;
         try {
-            accreditationImage = Image.getInstance(participantImage);
-        } catch (IOException | NullPointerException e) {
+            accreditationImage = participantImage;
+        } catch (NullPointerException e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
 
@@ -208,6 +207,9 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 case PRESS:
                     cell.setBackgroundColor(new Color(255, 0, 127));
                     break;
+                case ORGANIZER:
+                    cell.setBackgroundColor(new Color(0, 187, 127));
+                    break;
             }
         } catch (NullPointerException npe) {
             cell.setBackgroundColor(new Color(167, 239, 190));
@@ -233,9 +235,9 @@ public class ParticipantAccreditationCard extends PdfDocument {
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         table.setTotalWidth(width);
 
-        try {
-            cell = new PdfPCell(Image.getInstance(banner), true);
-        } catch (IOException e) {
+        if (banner != null) {
+            cell = new PdfPCell(banner, true);
+        } else {
             cell = getEmptyCell();
         }
 
