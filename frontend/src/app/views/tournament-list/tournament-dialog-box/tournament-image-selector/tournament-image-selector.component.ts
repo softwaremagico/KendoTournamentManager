@@ -85,6 +85,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
     this.fileService.deleteTournamentPicture(this.tournament, imageType).subscribe(_picture => {
       this.messageService.infoMessage('pictureDeleted');
       this.image = null;
+      this.refreshImage();
     });
   }
 
