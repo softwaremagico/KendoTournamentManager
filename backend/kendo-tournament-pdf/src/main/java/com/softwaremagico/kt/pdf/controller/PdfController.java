@@ -24,16 +24,14 @@ package com.softwaremagico.kt.pdf.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.GroupController;
-import com.softwaremagico.kt.core.controller.ParticipantImageController;
-import com.softwaremagico.kt.core.controller.RoleController;
-import com.softwaremagico.kt.core.controller.TournamentImageController;
+import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.*;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
@@ -55,13 +53,17 @@ public class PdfController {
 
     private final ParticipantImageController participantImageController;
 
+    private final TournamentExtraPropertyController tournamentExtraPropertyController;
+
     public PdfController(MessageSource messageSource, RoleController roleController, GroupController groupController,
-                         TournamentImageController tournamentImageController, ParticipantImageController participantImageController) {
+                         TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
+                         TournamentExtraPropertyController tournamentExtraPropertyController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
         this.groupController = groupController;
         this.tournamentImageController = tournamentImageController;
         this.participantImageController = participantImageController;
+        this.tournamentExtraPropertyController = tournamentExtraPropertyController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
@@ -138,11 +140,24 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
-        return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null);
+        return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
     }
 
     public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO, ParticipantDTO participantDTO) {
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
-        return new DiplomaPDF(Collections.singletonList(participantDTO), diploma != null ? diploma.getData() : null);
+        return new DiplomaPDF(Collections.singletonList(participantDTO), diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
+    }
+
+    private float getNamePosition(TournamentDTO tournamentDTO) {
+        final TournamentExtraPropertyDTO tournamentExtraPropertyDTO = tournamentExtraPropertyController
+                .getByTournamentAndProperty(tournamentDTO.getId(), TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT);
+        if (tournamentExtraPropertyDTO == null) {
+            return 0.5f;
+        }
+        try {
+            return Float.parseFloat(tournamentExtraPropertyDTO.getValue());
+        } catch (Exception e) {
+            return 0.5f;
+        }
     }
 }
