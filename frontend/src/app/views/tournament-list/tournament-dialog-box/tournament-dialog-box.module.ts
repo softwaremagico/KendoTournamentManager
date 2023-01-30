@@ -16,21 +16,24 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
 
 @NgModule({
   declarations: [TournamentDialogBoxComponent],
-    imports: [
-        CommonModule,
-        MatFormFieldModule,
-        TranslateModule,
-        MatSelectModule,
-        FormsModule,
-        MatTooltipModule,
-        RbacModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatInputModule,
-        MatIconModule,
-        ReactiveFormsModule,
-        MatSpinnerOverlayModule
-    ]
+  exports: [
+    TournamentDialogBoxComponent
+  ],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    TranslateModule,
+    MatSelectModule,
+    FormsModule,
+    MatTooltipModule,
+    RbacModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatSpinnerOverlayModule
+  ]
 })
 export class TournamentDialogBoxModule {
 }
