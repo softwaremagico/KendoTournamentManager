@@ -185,12 +185,11 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         final String identification = messageSource.getMessage("role.type." +
                 role.getRoleType().toString().toLowerCase(locale) + ".abbreviation", null, locale)
-                + (participant.getId() != null ? "-" + Math.abs(participant.getId()) : "");
+                + (participant.getId() != null ? " - " + String.format("%05d", Math.abs(participant.getId())) : " - 00000");
         p = new Paragraph(identification, new Font(PdfTheme.getLineFont(), PdfTheme.ACCREDITATION_IDENTIFICATION_FONT_SIZE));
         cell = new PdfPCell(p);
         cell.setBorderWidth(BORDER + 2f);
         cell.setColspan(1);
-        //cell.setFixedHeight(height);
         cell.setFixedHeight(height * 0.15f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -233,7 +232,6 @@ public class ParticipantAccreditationCard extends PdfDocument {
         final PdfPTable table = new PdfPTable(1);
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         table.setTotalWidth(width);
-        table.getTotalWidth();
 
         try {
             cell = new PdfPCell(Image.getInstance(banner), true);
@@ -244,6 +242,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell.setBorderWidth(BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+        cell.setPaddingBottom(5);
+        cell.setPaddingLeft(20);
         table.addCell(cell);
 
         return table;
@@ -261,7 +261,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createNameTable());
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height * 0.17f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_TOP);
         mainTable.addCell(cell);
