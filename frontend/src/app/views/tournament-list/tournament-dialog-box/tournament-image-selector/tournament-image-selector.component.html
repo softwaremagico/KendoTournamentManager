@@ -40,7 +40,7 @@
           <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event)"
                  style="display:none;"/>
         </button>
-        <button class="floating-button"
+        <button class="floating-button" *ngIf="image!==undefined"
                 [class.preview-accreditation]="insertedTournamentImageType === accreditationType"
                 [class.preview-diploma]="insertedTournamentImageType === diplomaType"
                 [class.preview-banner]="insertedTournamentImageType === bannerType"
@@ -49,7 +49,7 @@
                 color="primary">
           <mat-icon>preview</mat-icon>
         </button>
-        <button class="floating-button"
+        <button class="floating-button" *ngIf="image!==undefined"
                 [class.cancel-accreditation]="insertedTournamentImageType === accreditationType"
                 [class.cancel-diploma]="insertedTournamentImageType === diplomaType"
                 [class.cancel-banner]="insertedTournamentImageType === bannerType"
