@@ -22,6 +22,14 @@ export namespace RoleType {
 }
 
 export namespace RoleType {
+  export function getRandom(): RoleType {
+    const values = getKeys();
+    const enumKey = values[Math.floor(Math.random() * values.length)];
+    return <RoleType>(<any>RoleType)[enumKey];
+  }
+}
+
+export namespace RoleType {
   export function toArray(): RoleType[] {
     return RoleType.getKeys().map(key => {
       return <RoleType>(<any>RoleType)[key];
