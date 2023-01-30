@@ -8,6 +8,7 @@ import {catchError, tap} from "rxjs/operators";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
+import {Participant} from "../models/participant";
 
 @Injectable({
   providedIn: 'root'
@@ -124,6 +125,24 @@ export class TournamentService {
     );
   }
 
+  getParticipantAccreditation(tournamentId: number, participant: Participant): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
+    return this.http.post<Blob>(url, participant, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting participant accreditations`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting participant accreditations`))
+    );
+  }
+
   getDiplomas(tournamentId: number): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
@@ -139,6 +158,24 @@ export class TournamentService {
         complete: () => this.systemOverloadService.isBusy.next(false),
       }),
       catchError(this.messageService.handleError<Blob>(`getting tournament diplomas`))
+    );
+  }
+
+  getParticipantDiploma(tournamentId: number, participant: Participant): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
+    return this.http.post<Blob>(url, participant, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting participant diplomas`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting participant diplomas`))
     );
   }
 }

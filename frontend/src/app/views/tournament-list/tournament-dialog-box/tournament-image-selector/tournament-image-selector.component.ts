@@ -9,6 +9,8 @@ import {FileService} from "../../../../services/file.service";
 import {Action} from "../../../../action";
 import {TournamentImageType} from "../../../../models/tournament-image-type";
 import {ImageCompression} from "../../../../models/image-compression";
+import {TournamentService} from "../../../../services/tournament.service";
+import {Participant} from "../../../../models/participant";
 
 @Component({
   selector: 'app-tournament-image-selector',
@@ -26,7 +28,8 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   sliderValue: number = 50;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
-              public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService, public translateService: TranslateService,
+              public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService,
+              public translateService: TranslateService, private tournamentService: TournamentService,
               public messageService: MessageService, public fileService: FileService) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -116,6 +119,34 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   }
 
   downloadPreview(insertedTournamentImageType: TournamentImageType) {
-    
+    if (this.tournament && this.tournament.id) {
+      const participant: Participant = new Participant();
+      this.translateService.get('nameExample').subscribe((res: string) => {
+        const names: string[] = res.split(' ');
+        participant.name = names[0];
+        participant.lastname = names[1];
+      });
+      if (this.insertedTournamentImageType === TournamentImageType.DIPLOMA) {
+        this.tournamentService.getParticipantDiploma(this.tournament.id, participant).subscribe((html: Blob) => {
+          const blob = new Blob([html], {type: 'application/pdf'});
+          const downloadURL = window.URL.createObjectURL(blob);
+
+          const anchor = document.createElement("a");
+          anchor.download = this.insertedTournamentImageType + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+        });
+      } else {
+        this.tournamentService.getParticipantAccreditation(this.tournament.id, participant).subscribe((html: Blob) => {
+          const blob = new Blob([html], {type: 'application/pdf'});
+          const downloadURL = window.URL.createObjectURL(blob);
+
+          const anchor = document.createElement("a");
+          anchor.download = this.insertedTournamentImageType + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+        });
+      }
+    }
   }
 }
