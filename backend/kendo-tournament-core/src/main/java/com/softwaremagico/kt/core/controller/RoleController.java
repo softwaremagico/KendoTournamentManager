@@ -78,6 +78,11 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
                 .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
+    public RoleDTO get(TournamentDTO tournamentDTO, ParticipantDTO participantsDTO) {
+        return converter.convert(new RoleConverterRequest(provider
+                .get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(participantsDTO))));
+    }
+
     public List<RoleDTO> get(TournamentDTO tournamentDTO) {
         return converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
                 .map(this::createConverterRequest).collect(Collectors.toList()));

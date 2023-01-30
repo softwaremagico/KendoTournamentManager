@@ -9,6 +9,7 @@ import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Participant} from "../models/participant";
+import {RoleType} from "../models/role-type";
 
 @Injectable({
   providedIn: 'root'
@@ -125,9 +126,12 @@ export class TournamentService {
     );
   }
 
-  getParticipantAccreditation(tournamentId: number, participant: Participant): Observable<Blob> {
+  getParticipantAccreditation(tournamentId: number, participant: Participant, roleType: RoleType | undefined): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
+    if (roleType === undefined) {
+      roleType = RoleType.getRandom();
+    }
+    const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations/' + roleType;
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',

@@ -34,6 +34,7 @@ import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.*;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -103,14 +104,21 @@ public class PdfController {
                 defaultPhoto != null ? defaultPhoto.getData() : null);
     }
 
-    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO, ParticipantDTO participantDTO) {
+    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
+                                                                         ParticipantDTO participantDTO, RoleType type) {
+        if (type == null) {
+            type = RoleType.COMPETITOR;
+        }
+        return generateTournamentAccreditations(locale, tournamentDTO, participantDTO, new RoleDTO(tournamentDTO, participantDTO, type));
+    }
 
+    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
+                                                                         ParticipantDTO participantDTO, RoleDTO roleDTO) {
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
         final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
         final List<ParticipantDTO> participantDTOS = Collections.singletonList(participantDTO);
         final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
-        final List<RoleDTO> roleDTOS
         if (participantDTO.getId() != null) {
             final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
             participantImages = participantImageDTOS.stream()
@@ -118,8 +126,9 @@ public class PdfController {
         } else {
             participantImages = new HashMap<>();
         }
-        return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
-                .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages,
+        final Map<ParticipantDTO, RoleDTO> competitorsRoles = new HashMap<>();
+        competitorsRoles.put(participantDTO, roleDTO);
+        return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, competitorsRoles, participantImages,
                 banner != null ? banner.getData() : null,
                 accreditationBackground != null ? accreditationBackground.getData() : null,
                 defaultPhoto != null ? defaultPhoto.getData() : null);
