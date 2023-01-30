@@ -40,12 +40,17 @@ import java.util.List;
 public class DiplomaPDF extends PdfDocument {
     private static final int BORDER = 0;
     private final List<ParticipantDTO> participants;
-    private final byte[] backgroundImage;
+    private Image backgroundImage;
     private final float nameHeight;
 
     public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage, float nameHeight) {
         this.participants = participants;
-        this.backgroundImage = backgroundImage;
+        try {
+            this.backgroundImage = Image.getInstance(backgroundImage);
+        } catch (IOException e) {
+            KendoTournamentLogger.severe(this.getClass().getName(), "No background image found");
+            backgroundImage = null;
+        }
         this.nameHeight = nameHeight;
     }
 
@@ -99,15 +104,11 @@ public class DiplomaPDF extends PdfDocument {
 
     void addBackGroundImage(Document document) {
         if (backgroundImage != null) {
-            try {
-                final Image background = Image.getInstance(backgroundImage);
-                background.setAlignment(Image.UNDERLYING);
-                background.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
-                background.setAbsolutePosition(0, 0);
-                document.add(background);
-            } catch (IOException e) {
-                KendoTournamentLogger.warning(this.getClass(), "No background image found!");
-            }
+            final Image background = backgroundImage;
+            background.setAlignment(Image.UNDERLYING);
+            background.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
+            background.setAbsolutePosition(0, 0);
+            document.add(background);
         }
     }
 
