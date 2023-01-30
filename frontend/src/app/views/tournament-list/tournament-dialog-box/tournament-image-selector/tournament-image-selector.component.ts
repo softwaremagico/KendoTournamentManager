@@ -137,7 +137,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
           anchor.click();
         });
       } else {
-        this.tournamentService.getParticipantAccreditation(this.tournament.id, participant).subscribe((html: Blob) => {
+        this.tournamentService.getParticipantAccreditation(this.tournament.id, participant, undefined).subscribe((html: Blob) => {
           const blob = new Blob([html], {type: 'application/pdf'});
           const downloadURL = window.URL.createObjectURL(blob);
 

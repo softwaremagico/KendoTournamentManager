@@ -185,7 +185,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         final String identification = messageSource.getMessage("role.type." +
                 role.getRoleType().toString().toLowerCase(locale) + ".abbreviation", null, locale)
-                + "-" + Math.abs(participant.getId());
+                + (participant.getId() != null ? "-" + Math.abs(participant.getId()) : "");
         p = new Paragraph(identification, new Font(PdfTheme.getLineFont(), PdfTheme.ACCREDITATION_IDENTIFICATION_FONT_SIZE));
         cell = new PdfPCell(p);
         cell.setBorderWidth(BORDER + 2f);
