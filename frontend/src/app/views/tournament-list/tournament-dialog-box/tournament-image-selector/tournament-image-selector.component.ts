@@ -22,6 +22,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   diplomaType: TournamentImageType = TournamentImageType.DIPLOMA;
   image: string | null;
   insertedTournamentImageType: TournamentImageType;
+  sliderValue: number = 50;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService, public translateService: TranslateService,
@@ -87,5 +88,26 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
     this.image = null;
     this.insertedTournamentImageType = selectedType;
     this.refreshImage();
+  }
+
+  sliderOnChange(value: number) {
+    this.sliderValue = value;
+  }
+
+  getHeight(): number {
+    if (this.insertedTournamentImageType === TournamentImageType.ACCREDITATION) {
+      return 535;
+    }
+    if (this.insertedTournamentImageType === TournamentImageType.DIPLOMA) {
+      return 372;
+    }
+    if (this.insertedTournamentImageType === TournamentImageType.BANNER) {
+      return 135;
+    }
+    return 0;
+  }
+
+  getLinePosition(): number {
+    return Math.ceil(this.getHeight() * 0.99 - (this.getHeight() * 0.99 * (this.sliderValue / 100)));
   }
 }
