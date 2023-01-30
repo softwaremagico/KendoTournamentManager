@@ -27,7 +27,8 @@ package com.softwaremagico.kt.persistence.entities;
 public enum TournamentExtraPropertyKey {
     MAXIMIZE_FIGHTS,
     KING_INDEX,
-    KING_DRAW_RESOLUTION;
+    KING_DRAW_RESOLUTION,
+    DIPLOMA_NAME_HEIGHT;
 
 
     public static TournamentExtraPropertyKey getType(String name) {
