@@ -585,7 +585,8 @@
   "invalidFileSize": "Es sind nur Dateien mit einer Größe zwischen {{minSize}} B und {{maxSize}} MB erlaubt.",
   "pictureDeleted": "Das Bild wurde gelöscht!",
   "pointsByVictory": "Punkte für den Sieg",
-  "pointsByDraw": "Punkte für ein Unentschieden"
+  "pointsByDraw": "Punkte für ein Unentschieden",
+  "nameExample": "Hanna Müller"
 }
 
 

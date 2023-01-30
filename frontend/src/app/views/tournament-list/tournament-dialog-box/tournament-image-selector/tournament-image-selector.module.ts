@@ -7,6 +7,8 @@ import {TranslateModule} from "@ngx-translate/core";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSpinnerOverlayModule} from "../../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
+import {MatSliderModule} from "@angular/material/slider";
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -14,15 +16,17 @@ import {MatSpinnerOverlayModule} from "../../../../components/mat-spinner-overla
   exports: [
     TournamentImageSelectorComponent
   ],
-    imports: [
-        CommonModule,
-        MatIconModule,
-        RbacModule,
-        TranslateModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatSpinnerOverlayModule
-    ]
+  imports: [
+    CommonModule,
+    MatIconModule,
+    RbacModule,
+    TranslateModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatSpinnerOverlayModule,
+    MatSliderModule,
+    FormsModule
+  ]
 })
 export class TournamentImageSelectorModule {
 }
