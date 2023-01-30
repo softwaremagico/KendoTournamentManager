@@ -604,7 +604,8 @@
   "invalidFileSize": "Solo se permiten archivos con un tamaño entre {{minSize}} B y {{maxSize}} MB.",
   "pictureDeleted": "¡La imagen ha sido eliminada!",
   "pointsByVictory": "Puntos por victoria",
-  "pointsByDraw": "Puntos por empate"
+  "pointsByDraw": "Puntos por empate",
+  "nameExample": "Francisco Garcia"
 }
 
 

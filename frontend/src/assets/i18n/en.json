@@ -612,6 +612,7 @@
   "invalidFileSize": "Only files with a size between {{minSize}} B and {{maxSize}} MB are allowed.",
   "pictureDeleted": "The picture has been deleted!",
   "pointsByVictory": "Points by Victory",
-  "pointsByDraw": "Points by Tie"
+  "pointsByDraw": "Points by Tie",
+  "nameExample": "John Smith"
 }
 
