@@ -21,7 +21,7 @@
 .name{
   position: absolute;
   width: 100%;
-  font-size: 36px;
+  font-size: 26px;
   text-align: center;
 }
 
@@ -55,6 +55,10 @@
   height: 135px;
 }
 
+.photo-height {
+  height: 266px;
+}
+
 .accreditation-width {
   width: 380px;
 }
@@ -65,6 +69,10 @@
 
 .banner-width {
   width: 672px;
+}
+
+.photo-width {
+  width: 223px;
 }
 
 .mat-raised-button {
@@ -90,33 +98,51 @@
 }
 
 .cancel-accreditation {
-  margin-left: 350px;
-  margin-top: -505px;
+  margin-left: 50px;
 }
 
 .cancel-diploma {
-  margin-left: 490px;
-  margin-top: -342px;
+  margin-left: 50px;
 }
 
 .cancel-banner {
-  margin-left: 650px;
-  margin-top: -105px;
+  margin-left: 50px;
+}
+
+.cancel-photo {
+  margin-left: 50px;
+}
+
+.preview-accreditation {
+  margin-left: 0;
+}
+
+.preview-diploma {
+  margin-left: 0;
+}
+
+.preview-banner {
+  margin-left: 0;
+}
+
+.preview-photo {
+  margin-left: 0;
 }
 
 .upload-accreditation {
-  margin-left: -10px;
-  margin-top: -505px;
+  margin-left: -50px;
 }
 
 .upload-diploma {
-  margin-left: -10px;
-  margin-top: -342px;
+  margin-left: -50px;
 }
 
 .upload-banner {
-  margin-left: -10px;
-  margin-top: -105px;
+  margin-left: -50px;
+}
+
+.upload-photo {
+  margin-left: -50px;
 }
 
 .selected-button {
