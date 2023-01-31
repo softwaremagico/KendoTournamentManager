@@ -57,7 +57,7 @@ public class AccreditationTests extends BasicDataTest {
 
     @Test
     public void generateAccreditations() {
-        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament)
+        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, null, null)
                 // No clue why are 3 pages and not 2.
                 .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
     }

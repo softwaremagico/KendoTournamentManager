@@ -25,6 +25,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 
+import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.RoleTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.hibernate.annotations.Cache;
@@ -54,6 +55,14 @@ public class Role extends Element {
     @Enumerated(EnumType.STRING)
     @Convert(converter = RoleTypeCryptoConverter.class)
     private RoleType roleType;
+
+    @Column(name = "diploma_printed", nullable = false)
+    @Convert(converter = BooleanCryptoConverter.class)
+    private boolean diplomaPrinted = false;
+
+    @Column(name = "accreditation_printed", nullable = false)
+    @Convert(converter = BooleanCryptoConverter.class)
+    private boolean accreditationPrinted = false;
 
     public Role() {
         super();
@@ -88,6 +97,22 @@ public class Role extends Element {
 
     public void setRoleType(RoleType roleType) {
         this.roleType = roleType;
+    }
+
+    public boolean isDiplomaPrinted() {
+        return diplomaPrinted;
+    }
+
+    public void setDiplomaPrinted(boolean diplomaPrinted) {
+        this.diplomaPrinted = diplomaPrinted;
+    }
+
+    public boolean isAccreditationPrinted() {
+        return accreditationPrinted;
+    }
+
+    public void setAccreditationPrinted(boolean accreditationPrinted) {
+        this.accreditationPrinted = accreditationPrinted;
     }
 
     @Override
