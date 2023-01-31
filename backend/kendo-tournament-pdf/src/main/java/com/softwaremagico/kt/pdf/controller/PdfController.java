@@ -91,10 +91,11 @@ public class PdfController {
     }
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO, RoleType... roleTypes) {
-        List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+        List<RoleDTO> roleDTOS;
         if (roleTypes != null) {
-            final List<RoleType> allowedRoles = Arrays.asList(roleTypes);
-            roleDTOS = roleDTOS.stream().filter(roleDTO -> allowedRoles.contains(roleDTO.getRoleType())).collect(Collectors.toList());
+            roleDTOS = roleController.get(tournamentDTO, Arrays.asList(roleTypes));
+        } else {
+            roleDTOS = roleController.get(tournamentDTO);
         }
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
@@ -140,8 +141,13 @@ public class PdfController {
                 defaultPhoto != null ? defaultPhoto.getData() : null);
     }
 
-    public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO) {
-        final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+    public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO, RoleType... roleTypes) {
+        List<RoleDTO> roleDTOS;
+        if (roleTypes != null) {
+            roleDTOS = roleController.get(tournamentDTO, Arrays.asList(roleTypes));
+        } else {
+            roleDTOS = roleController.get(tournamentDTO);
+        }
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
         return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
