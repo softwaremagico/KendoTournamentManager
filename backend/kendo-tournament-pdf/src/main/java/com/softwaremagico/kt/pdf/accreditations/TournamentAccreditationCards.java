@@ -33,6 +33,7 @@ import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.events.TableBackgroundEvent;
 import org.springframework.context.MessageSource;
@@ -51,9 +52,9 @@ public class TournamentAccreditationCards extends PdfDocument {
 
     private final TournamentDTO tournament;
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
-    private final byte[] banner;
-    private final byte[] background;
-    private final byte[] defaultPhoto;
+    private Image banner;
+    private Image background;
+    private Image defaultPhoto;
     private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
 
 
@@ -63,9 +64,24 @@ public class TournamentAccreditationCards extends PdfDocument {
         this.locale = locale;
         this.tournament = tournament;
         this.competitorsRoles = competitorsRoles;
-        this.banner = banner;
-        this.background = background;
-        this.defaultPhoto = defaultPhoto;
+        try {
+            this.banner = Image.getInstance(banner);
+        } catch (IOException e) {
+            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid banner found!");
+            this.banner = null;
+        }
+        try {
+            this.background = Image.getInstance(background);
+        } catch (IOException e) {
+            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid background image found!");
+            this.background = null;
+        }
+        try {
+            this.defaultPhoto = Image.getInstance(defaultPhoto);
+        } catch (IOException e) {
+            KendoTournamentLogger.severe(this.getClass().getName(), "Invalid default photo found!");
+            this.defaultPhoto = null;
+        }
         this.participantImages = participantImages;
     }
 
@@ -95,13 +111,21 @@ public class TournamentAccreditationCards extends PdfDocument {
 
         for (final Map.Entry<ParticipantDTO, RoleDTO> entry : competitorsRoles.entrySet()) {
             final ParticipantImageDTO participantImageDTO = participantImages.get(entry.getKey());
+
+            Image participantImage;
+            try {
+                participantImage = participantImageDTO != null ? Image.getInstance(participantImageDTO.getData()) : defaultPhoto;
+            } catch (IOException e) {
+                participantImage = defaultPhoto;
+            }
+
             final ParticipantAccreditationCard competitorPDF = new ParticipantAccreditationCard(messageSource, locale, tournament,
-                    entry.getKey(), entry.getValue(), participantImageDTO != null ? participantImageDTO.getData() : defaultPhoto, banner);
+                    entry.getKey(), entry.getValue(), participantImage, banner);
             final PdfPTable competitorTable = competitorPDF.pageTable(document.getPageSize().getWidth() / 2 - 40,
                     document.getPageSize().getHeight() / 2 + 150);
             try {
-                competitorTable.setTableEvent(new TableBackgroundEvent(Image.getInstance(background), document));
-            } catch (NullPointerException | IOException e) {
+                competitorTable.setTableEvent(new TableBackgroundEvent(background, document));
+            } catch (NullPointerException e) {
                 competitorTable.setTableEvent(new TableBackgroundEvent());
             }
             cell = new PdfPCell(competitorTable);

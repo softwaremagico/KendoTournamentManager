@@ -30,6 +30,8 @@ public enum RoleType {
 
     COMPETITOR,
 
+    ORGANIZER,
+
     VOLUNTEER,
 
     PRESS;
