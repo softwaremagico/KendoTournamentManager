@@ -1,5 +1,7 @@
 <img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2" align="middle"> 
 
+---
+
 [![Languages](https://img.shields.io/badge/languages-%F0%9F%87%AA%F0%9F%87%B8%20%F0%9F%87%AC%F0%9F%87%A7%20%F0%9F%87%AE%F0%9F%87%B9%20-blue.svg)]()
 [![GNU GPL 3.0 License](https://img.shields.io/badge/license-GNU_GPL_3.0-brightgreen.svg)](https://github.com/softwaremagico/KendoTournamentManager/blob/main/LICENSE)
 [![Issues](https://img.shields.io/github/issues/softwaremagico/KendoTournamentManager.svg)](https://github.com/softwaremagico/KendoTournamentManager/issues)
