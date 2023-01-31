@@ -1,4 +1,4 @@
-# Kendo Tournament Manager v2
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2" align="middle"> 
 
 [![Languages](https://img.shields.io/badge/languages-%F0%9F%87%AA%F0%9F%87%B8%20%F0%9F%87%AC%F0%9F%87%A7%20%F0%9F%87%AE%F0%9F%87%B9%20-blue.svg)]()
 [![GNU GPL 3.0 License](https://img.shields.io/badge/license-GNU_GPL_3.0-brightgreen.svg)](https://github.com/softwaremagico/KendoTournamentManager/blob/main/LICENSE)
@@ -20,7 +20,7 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
-Kendo Tournament Manager v2 is a complete rebuild of the old
+Kendo Tournament Manager v2 is the final tool for handling all your kendo leagues information in one place. A complete rebuild from the old
 tool [Kendo Tournament Generator](https://sourceforge.net/projects/kendotournament/files/) with the effort of adapting
 it to more modern technologies. The new architecture allows the deployment of this tool as a web application -rather than
 a desktop application- allowing some advantages such as better compatibility between devices, as now can be used in any
@@ -56,7 +56,30 @@ The application can also be deployed as a [docker](https://www.docker.com/) cont
 docker, please read the [docker guide](./docker/README.md) of this project. This is the preferred way of deploying the
 application and probably the easiest way if you feel comfortable using docker
 
-# Default credentials.
+# Using the application
+
+## Default credentials.
 
 The default user is `admin@test` with password `asd123`. This user is an admin user that can create new users. Remember
 to change the password or remove this account. 
+
+# Contributing to Kendo Tournament Manager v2
+You can contribute to this project in different way, as a programmer if you want to include new features or fixing bugs, or you can translate the application to your own language.
+
+To contribute to Kendo Tournament Manager v2, follow these steps:
+
+    Fork this repository.
+    Create a branch: git checkout -b <branch_name>.
+    Make your changes and commit them: git commit -m '<commit_message>'
+    Push to the original branch: git push origin <project_name>/<location>
+    Create the pull request.
+
+Alternatively see the GitHub documentation on creating a pull request.
+
+# Contact
+
+If you want to contact me you can reach me at ![email address image](./documents/email-address.gif)
+
+# License
+
+This project uses the following license: [AGPL License v3.0](https://github.com/softwaremagico/KendoTournamentManager/blob/main/LICENSE). Please take a look on it before using this application. 
