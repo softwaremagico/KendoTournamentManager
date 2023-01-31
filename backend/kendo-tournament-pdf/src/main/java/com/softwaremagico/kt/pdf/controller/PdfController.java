@@ -24,23 +24,20 @@ package com.softwaremagico.kt.pdf.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.GroupController;
-import com.softwaremagico.kt.core.controller.ParticipantImageController;
-import com.softwaremagico.kt.core.controller.RoleController;
-import com.softwaremagico.kt.core.controller.TournamentImageController;
+import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.*;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,13 +53,17 @@ public class PdfController {
 
     private final ParticipantImageController participantImageController;
 
+    private final TournamentExtraPropertyController tournamentExtraPropertyController;
+
     public PdfController(MessageSource messageSource, RoleController roleController, GroupController groupController,
-                         TournamentImageController tournamentImageController, ParticipantImageController participantImageController) {
+                         TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
+                         TournamentExtraPropertyController tournamentExtraPropertyController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
         this.groupController = groupController;
         this.tournamentImageController = tournamentImageController;
         this.participantImageController = participantImageController;
+        this.tournamentExtraPropertyController = tournamentExtraPropertyController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
@@ -93,6 +94,7 @@ public class PdfController {
         final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
+        final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
         final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
         final Map<ParticipantDTO, ParticipantImageDTO> participantImages = participantImageDTOS.stream()
@@ -100,13 +102,62 @@ public class PdfController {
         return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, roleDTOS.stream()
                 .collect(Collectors.toMap(RoleDTO::getParticipant, Function.identity())), participantImages,
                 banner != null ? banner.getData() : null,
-                accreditationBackground != null ? accreditationBackground.getData() : null);
+                accreditationBackground != null ? accreditationBackground.getData() : null,
+                defaultPhoto != null ? defaultPhoto.getData() : null);
+    }
+
+    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
+                                                                         ParticipantDTO participantDTO, RoleType type) {
+        if (type == null) {
+            type = RoleType.COMPETITOR;
+        }
+        return generateTournamentAccreditations(locale, tournamentDTO, participantDTO, new RoleDTO(tournamentDTO, participantDTO, type));
+    }
+
+    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
+                                                                         ParticipantDTO participantDTO, RoleDTO roleDTO) {
+        final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
+        final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
+        final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
+        final List<ParticipantDTO> participantDTOS = Collections.singletonList(participantDTO);
+        final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
+        if (participantDTO.getId() != null) {
+            final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
+            participantImages = participantImageDTOS.stream()
+                    .collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
+        } else {
+            participantImages = new HashMap<>();
+        }
+        final Map<ParticipantDTO, RoleDTO> competitorsRoles = new HashMap<>();
+        competitorsRoles.put(participantDTO, roleDTO);
+        return new TournamentAccreditationCards(messageSource, locale, tournamentDTO, competitorsRoles, participantImages,
+                banner != null ? banner.getData() : null,
+                accreditationBackground != null ? accreditationBackground.getData() : null,
+                defaultPhoto != null ? defaultPhoto.getData() : null);
     }
 
     public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO) {
         final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
         final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
-        return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null);
+        return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
+    }
+
+    public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO, ParticipantDTO participantDTO) {
+        final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
+        return new DiplomaPDF(Collections.singletonList(participantDTO), diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
+    }
+
+    private float getNamePosition(TournamentDTO tournamentDTO) {
+        final TournamentExtraPropertyDTO tournamentExtraPropertyDTO = tournamentExtraPropertyController
+                .getByTournamentAndProperty(tournamentDTO.getId(), TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT);
+        if (tournamentExtraPropertyDTO == null) {
+            return 0.5f;
+        }
+        try {
+            return Float.parseFloat(tournamentExtraPropertyDTO.getValue());
+        } catch (Exception e) {
+            return 0.5f;
+        }
     }
 }

@@ -9,6 +9,11 @@ import {FileService} from "../../../../services/file.service";
 import {Action} from "../../../../action";
 import {TournamentImageType} from "../../../../models/tournament-image-type";
 import {ImageCompression} from "../../../../models/image-compression";
+import {TournamentService} from "../../../../services/tournament.service";
+import {Participant} from "../../../../models/participant";
+import {TournamentExtendedPropertiesService} from "../../../../services/tournament-extended-properties.service";
+import {TournamentExtraPropertyKey} from "../../../../models/tournament-extra-property-key";
+import {TournamentExtendedProperty} from "../../../../models/tournament-extended-property.model";
 
 @Component({
   selector: 'app-tournament-image-selector',
@@ -20,13 +25,16 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   bannerType: TournamentImageType = TournamentImageType.BANNER;
   accreditationType: TournamentImageType = TournamentImageType.ACCREDITATION;
   diplomaType: TournamentImageType = TournamentImageType.DIPLOMA;
+  photoType: TournamentImageType = TournamentImageType.PHOTO;
   image: string | null;
   insertedTournamentImageType: TournamentImageType;
   sliderValue: number = 50;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
-              public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService, public translateService: TranslateService,
-              public messageService: MessageService, public fileService: FileService) {
+              public dialogRef: MatDialogRef<TournamentImageSelectorComponent>, rbacService: RbacService,
+              public translateService: TranslateService, private tournamentService: TournamentService,
+              public messageService: MessageService, public fileService: FileService,
+              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService) {
     super(rbacService);
     this.tournament = data.tournament;
     this.insertedTournamentImageType = this.accreditationType;
@@ -34,7 +42,13 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   }
 
   ngOnInit(): void {
-
+    this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT).subscribe(_tournamentProperty => {
+      if (_tournamentProperty) {
+        this.sliderValue = parseFloat(_tournamentProperty.value) * 100;
+      } else {
+        this.sliderValue = 50;
+      }
+    });
   }
 
   handleFileInput(event: Event) {
@@ -81,6 +95,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
     this.fileService.deleteTournamentPicture(this.tournament, imageType).subscribe(_picture => {
       this.messageService.infoMessage('pictureDeleted');
       this.image = null;
+      this.refreshImage();
     });
   }
 
@@ -92,6 +107,12 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
 
   sliderOnChange(value: number) {
     this.sliderValue = value;
+
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.value = (value / 100).toString();
+    tournamentProperty.property = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe();
   }
 
   getHeight(): number {
@@ -104,10 +125,45 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
     if (this.insertedTournamentImageType === TournamentImageType.BANNER) {
       return 135;
     }
+    if (this.insertedTournamentImageType === TournamentImageType.PHOTO) {
+      return 266;
+    }
     return 0;
   }
 
   getLinePosition(): number {
     return Math.ceil(this.getHeight() * 0.99 - (this.getHeight() * 0.99 * (this.sliderValue / 100)));
+  }
+
+  downloadPreview(insertedTournamentImageType: TournamentImageType) {
+    if (this.tournament && this.tournament.id) {
+      const participant: Participant = new Participant();
+      this.translateService.get('nameExample').subscribe((res: string) => {
+        const names: string[] = res.split(' ');
+        participant.name = names[0];
+        participant.lastname = names[1];
+      });
+      if (insertedTournamentImageType === TournamentImageType.DIPLOMA) {
+        this.tournamentService.getParticipantDiploma(this.tournament.id, participant).subscribe((html: Blob) => {
+          const blob = new Blob([html], {type: 'application/pdf'});
+          const downloadURL = window.URL.createObjectURL(blob);
+
+          const anchor = document.createElement("a");
+          anchor.download = insertedTournamentImageType + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+        });
+      } else {
+        this.tournamentService.getParticipantAccreditation(this.tournament.id, participant, undefined).subscribe((html: Blob) => {
+          const blob = new Blob([html], {type: 'application/pdf'});
+          const downloadURL = window.URL.createObjectURL(blob);
+
+          const anchor = document.createElement("a");
+          anchor.download = insertedTournamentImageType + ".pdf";
+          anchor.href = downloadURL;
+          anchor.click();
+        });
+      }
+    }
   }
 }
