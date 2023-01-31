@@ -132,7 +132,7 @@
   "NameTournamentLabel": "Name",
   "NumberLabel": "Num Competitors",
   "banner": "Banner",
-  "PhotoLabel": "Photo",
+  "photo": "Photo",
   "DrawGame": "There is a draw match.",
   "fightsWon": "Won matches",
   "fightsDraw": "Draw matches",

@@ -32,21 +32,21 @@ import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.pdf.PdfDocument;
 import com.softwaremagico.kt.pdf.PdfTheme;
-import com.softwaremagico.kt.pdf.events.TableBackgroundEvent;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public class DiplomaPDF extends PdfDocument {
     private static final int BORDER = 0;
     private final List<ParticipantDTO> participants;
     private final byte[] backgroundImage;
+    private final float nameHeight;
 
-    public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage) {
+    public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage, float nameHeight) {
         this.participants = participants;
         this.backgroundImage = backgroundImage;
+        this.nameHeight = nameHeight;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class DiplomaPDF extends PdfDocument {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.addCell(cell);
 
-        mainTable.writeSelectedRows(0, -1, (float) 0, (float) (document.getPageSize().getHeight() / 2.0 + PdfTheme.DIPLOMA_FONT_SIZE + 10),
+        mainTable.writeSelectedRows(0, -1, (float) 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2,
                 writer.getDirectContent());
         mainTable.flushContent();
         mainTable.setWidthPercentage(100);
@@ -107,18 +107,6 @@ public class DiplomaPDF extends PdfDocument {
                 document.add(background);
             } catch (IOException e) {
                 KendoTournamentLogger.warning(this.getClass(), "No background image found!");
-            }
-        } else {
-            try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/default-diploma.png");) {
-                if (inputStream != null) {
-                    final Image defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
-                    defaultBackgroundImage.setAlignment(Image.UNDERLYING);
-                    defaultBackgroundImage.scaleToFit(document.getPageSize().getWidth(), document.getPageSize().getHeight());
-                    defaultBackgroundImage.setAbsolutePosition(0, 0);
-                    document.add(defaultBackgroundImage);
-                }
-            } catch (NullPointerException | BadElementException | IOException ex) {
-                KendoTournamentLogger.severe(TableBackgroundEvent.class.getName(), "No default diploma image found!");
             }
         }
     }

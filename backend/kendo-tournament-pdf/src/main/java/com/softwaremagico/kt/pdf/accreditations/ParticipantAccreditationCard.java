@@ -43,7 +43,6 @@ import org.springframework.context.MessageSource;
 
 import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Time;
 import java.util.Date;
 import java.util.Locale;
@@ -60,9 +59,6 @@ public class ParticipantAccreditationCard extends PdfDocument {
     private final RoleDTO role;
     private final byte[] banner;
 
-    private static Image defaultPhoto;
-    private static Image defaultBanner;
-
     public ParticipantAccreditationCard(MessageSource messageSource, Locale locale,
                                         TournamentDTO tournament, ParticipantDTO participant, RoleDTO role,
                                         byte[] participantImage, byte[] banner) {
@@ -73,32 +69,6 @@ public class ParticipantAccreditationCard extends PdfDocument {
         this.participantImage = participantImage;
         this.role = role;
         this.banner = banner;
-    }
-
-    public Image getDefaultPhoto() {
-        if (defaultPhoto == null) {
-            try (InputStream inputStream = ParticipantAccreditationCard.class.getResourceAsStream("/images/default-photo.png")) {
-                if (inputStream != null) {
-                    defaultPhoto = Image.getInstance(inputStream.readAllBytes());
-                }
-            } catch (NullPointerException | BadElementException | IOException ex) {
-                KendoTournamentLogger.severe(ParticipantAccreditationCard.class.getName(), "No photo image found!");
-            }
-        }
-        return defaultPhoto;
-    }
-
-    public Image getDefaultBanner() {
-        if (defaultBanner == null) {
-            try (InputStream inputStream = ParticipantAccreditationCard.class.getResourceAsStream("/images/default-banner.png")) {
-                if (inputStream != null) {
-                    defaultBanner = Image.getInstance(inputStream.readAllBytes());
-                }
-            } catch (NullPointerException | BadElementException | IOException ex) {
-                KendoTournamentLogger.severe(ParticipantAccreditationCard.class.getName(), "No banner image found!");
-            }
-        }
-        return defaultBanner;
     }
 
     @Override
@@ -118,18 +88,12 @@ public class ParticipantAccreditationCard extends PdfDocument {
         Paragraph p;
         final float[] widths = {0.03f, 0.35f, 0.03f, 0.64f};
         final PdfPTable table = new PdfPTable(widths);
-        Image accreditationImage;
-
-        if (participantImage != null) {
-            try {
-                accreditationImage = Image.getInstance(participantImage);
-            } catch (IOException | NullPointerException npe) {
-                accreditationImage = getDefaultPhoto();
-            }
-        } else {
-            accreditationImage = getDefaultPhoto();
+        Image accreditationImage = null;
+        try {
+            accreditationImage = Image.getInstance(participantImage);
+        } catch (IOException | NullPointerException e) {
+            KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
-
 
         table.addCell(this.getEmptyCell(1));
 
@@ -221,12 +185,11 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         final String identification = messageSource.getMessage("role.type." +
                 role.getRoleType().toString().toLowerCase(locale) + ".abbreviation", null, locale)
-                + "-" + Math.abs(participant.getId());
+                + (participant.getId() != null ? " - " + String.format("%05d", Math.abs(participant.getId())) : " - 00000");
         p = new Paragraph(identification, new Font(PdfTheme.getLineFont(), PdfTheme.ACCREDITATION_IDENTIFICATION_FONT_SIZE));
         cell = new PdfPCell(p);
         cell.setBorderWidth(BORDER + 2f);
         cell.setColspan(1);
-        //cell.setFixedHeight(height);
         cell.setFixedHeight(height * 0.15f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -269,20 +232,18 @@ public class ParticipantAccreditationCard extends PdfDocument {
         final PdfPTable table = new PdfPTable(1);
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         table.setTotalWidth(width);
-        table.getTotalWidth();
 
-        if (banner != null) {
-            try {
-                cell = new PdfPCell(Image.getInstance(banner), true);
-            } catch (IOException e) {
-                cell = new PdfPCell(getDefaultBanner(), true);
-            }
-        } else {
-            cell = new PdfPCell(getDefaultBanner(), true);
+        try {
+            cell = new PdfPCell(Image.getInstance(banner), true);
+        } catch (IOException e) {
+            cell = getEmptyCell();
         }
+
         cell.setBorderWidth(BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+        cell.setPaddingBottom(5);
+        cell.setPaddingLeft(20);
         table.addCell(cell);
 
         return table;
@@ -300,7 +261,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createNameTable());
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height * 0.17f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_TOP);
         mainTable.addCell(cell);

@@ -2,6 +2,7 @@ export enum TournamentImageType {
   BANNER = 'BANNER',
   DIPLOMA = 'DIPLOMA',
   ACCREDITATION = 'ACCREDITATION',
+  PHOTO = 'PHOTO'
 }
 
 export namespace TournamentImageType {

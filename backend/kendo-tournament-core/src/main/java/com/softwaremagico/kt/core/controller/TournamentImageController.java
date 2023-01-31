@@ -35,6 +35,7 @@ import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.ImageCompression;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
@@ -45,12 +46,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Controller
 public class TournamentImageController extends BasicInsertableController<TournamentImage, TournamentImageDTO, TournamentImageRepository,
         TournamentImageProvider, TournamentImageConverterRequest, TournamentImageConverter> {
+    private static final String DEFAULT_BANNER_IMAGE = "/images/default-banner.png";
+    private static final String DEFAULT_DIPLOMA_IMAGE = "/images/default-diploma.png";
+    private static final String DEFAULT_PHOTO_IMAGE = "/images/default-photo.png";
+    private static final String DEFAULT_ACCREDITATION_IMAGE = "/images/accreditation-background.png";
+
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
+
+    private static byte[] defaultAccreditation;
+    private static byte[] defaultBanner;
+    private static byte[] defaultDiploma;
+    private static byte[] defaultPhoto;
 
 
     @Autowired
@@ -75,12 +87,90 @@ public class TournamentImageController extends BasicInsertableController<Tournam
     public TournamentImageDTO get(Integer tournamentId, TournamentImageType type) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        return converter.convert(new TournamentImageConverterRequest(provider.get(tournament, type).orElse(null)));
+        return get(tournamentConverter.convert(new TournamentConverterRequest(tournament)), type);
+    }
+
+    private TournamentImageDTO getDefaultImage(TournamentDTO tournamentDTO, TournamentImageType type) {
+        final TournamentImageDTO tournamentImageDTO = new TournamentImageDTO();
+        tournamentImageDTO.setTournament(tournamentDTO);
+        tournamentImageDTO.setImageType(type);
+        tournamentImageDTO.setImageCompression(ImageCompression.PNG);
+        switch (type) {
+            case ACCREDITATION:
+                tournamentImageDTO.setData(getDefaultAccreditation());
+                break;
+            case BANNER:
+                tournamentImageDTO.setData(getDefaultBanner());
+                break;
+            case DIPLOMA:
+                tournamentImageDTO.setData(getDefaultDiploma());
+                break;
+            case PHOTO:
+                tournamentImageDTO.setData(getDefaultPhoto());
+                break;
+        }
+        return tournamentImageDTO;
+    }
+
+    private byte[] getDefaultBanner() {
+        if (defaultBanner == null) {
+            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_BANNER_IMAGE)) {
+                if (inputStream != null) {
+                    defaultBanner = inputStream.readAllBytes();
+                }
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default banner found!");
+            }
+        }
+        return defaultBanner;
+    }
+
+    private byte[] getDefaultAccreditation() {
+        if (defaultAccreditation == null) {
+            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_ACCREDITATION_IMAGE)) {
+                if (inputStream != null) {
+                    defaultAccreditation = inputStream.readAllBytes();
+                }
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default accreditation found!");
+            }
+        }
+        return defaultAccreditation;
+    }
+
+    private byte[] getDefaultDiploma() {
+        if (defaultDiploma == null) {
+            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_DIPLOMA_IMAGE)) {
+                if (inputStream != null) {
+                    defaultDiploma = inputStream.readAllBytes();
+                }
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
+            }
+        }
+        return defaultDiploma;
+    }
+
+    private byte[] getDefaultPhoto() {
+        if (defaultPhoto == null) {
+            try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_PHOTO_IMAGE)) {
+                if (inputStream != null) {
+                    defaultPhoto = inputStream.readAllBytes();
+                }
+            } catch (NullPointerException | IOException ex) {
+                KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No default diploma found!");
+            }
+        }
+        return defaultPhoto;
     }
 
     public TournamentImageDTO get(TournamentDTO tournamentDTO, TournamentImageType type) {
         final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
-        return converter.convert(new TournamentImageConverterRequest(provider.get(tournament, type).orElse(null)));
+        final TournamentImageDTO result = converter.convert(new TournamentImageConverterRequest(provider.get(tournament, type).orElse(null)));
+        if (result != null) {
+            return result;
+        }
+        return getDefaultImage(tournamentConverter.convert(new TournamentConverterRequest(tournament)), type);
     }
 
     public TournamentImageDTO add(MultipartFile file, Integer tournamentId, TournamentImageType type, ImageCompression imageCompression,
