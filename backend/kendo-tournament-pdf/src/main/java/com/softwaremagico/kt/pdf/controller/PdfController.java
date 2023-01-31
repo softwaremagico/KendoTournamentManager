@@ -90,8 +90,12 @@ public class PdfController {
         return new FightSummaryPDF(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO), null);
     }
 
-    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO) {
-        final List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+    public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO, RoleType... roleTypes) {
+        List<RoleDTO> roleDTOS = roleController.get(tournamentDTO);
+        if (roleTypes != null) {
+            final List<RoleType> allowedRoles = Arrays.asList(roleTypes);
+            roleDTOS = roleDTOS.stream().filter(roleDTO -> allowedRoles.contains(roleDTO.getRoleType())).collect(Collectors.toList());
+        }
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
         final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
