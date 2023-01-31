@@ -24,6 +24,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
@@ -61,9 +62,11 @@ public class Tournament extends Element {
     private TournamentScore tournamentScore;
 
     @Column(name = "duels_duration", nullable = false)
+    @Convert(converter = IntegerCryptoConverter.class)
     private Integer duelsDuration = 180;
 
     @Column(name = "locked", nullable = false)
+    @Convert(converter = BooleanCryptoConverter.class)
     private boolean locked = false;
 
     public Tournament() {
