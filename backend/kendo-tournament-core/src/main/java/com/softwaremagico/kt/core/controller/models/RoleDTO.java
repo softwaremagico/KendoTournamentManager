@@ -36,9 +36,9 @@ public class RoleDTO extends ElementDTO {
 
     private RoleType roleType;
 
-    private boolean diplomaPrinted;
+    private boolean diplomaPrinted = false;
 
-    private boolean accreditationPrinted;
+    private boolean accreditationPrinted = false;
 
 
     public RoleDTO() {
