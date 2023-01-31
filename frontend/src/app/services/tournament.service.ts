@@ -152,13 +152,18 @@ export class TournamentService {
     );
   }
 
-  getDiplomas(tournamentId: number): Observable<Blob> {
+  getDiplomas(tournamentId: number, roles: RoleType[]): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      }),
+      params: new HttpParams({
+        fromObject: {
+          'roles': roles
+        }
       })
     }).pipe(
       tap({
