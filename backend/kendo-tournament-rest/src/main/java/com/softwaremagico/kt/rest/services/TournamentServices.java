@@ -83,7 +83,8 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     @GetMapping(value = "{tournamentId}/accreditations", produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] getAllAccreditationsFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
-                                                          @Parameter(description = "Filter by roles") @RequestParam(name = "roles") RoleType[] roles,
+                                                          @Parameter(description = "Filter by roles")
+                                                          @RequestParam(name = "roles", required = false) RoleType[] roles,
                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = getController().get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
@@ -125,13 +126,15 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     @GetMapping(value = "{tournamentId}/diplomas", produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] getAllDiplomasFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                     @PathVariable("tournamentId") Integer tournamentId,
+                                                    @Parameter(description = "Filter by roles")
+                                                    @RequestParam(name = "roles", required = false) RoleType[] roles,
                                                     Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = getController().get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + " - diplomas.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentDiplomas(tournament).generate();
+            return pdfController.generateTournamentDiplomas(tournament, roles).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
