@@ -162,7 +162,7 @@
   "fightsWon": "Gewonnene Kämpfe",
   "duelsWon": "Gewonnene Duelle",
   "histsWon": "Treffer",
-  "All": "Alle",
+  "all": "Alle",
   "PerformedHitStatistics": "Erteilte Treffer",
   "ReceivedHitStatistics": "Erhaltene Treffer",
   "WonStatistics": "Gewonnene/Verlorene Kämpfe",
@@ -587,7 +587,8 @@
   "pictureDeleted": "Das Bild wurde gelöscht!",
   "pointsByVictory": "Punkte für den Sieg",
   "pointsByDraw": "Punkte für ein Unentschieden",
-  "nameExample": "Hanna Müller"
+  "nameExample": "Hanna Müller",
+  "onlyNews": "Neuartig"
 }
 
 

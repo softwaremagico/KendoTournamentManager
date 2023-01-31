@@ -104,6 +104,16 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
                 .map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
+    public List<RoleDTO> getForAccreditations(TournamentDTO tournamentDTO, Boolean onlyNewAccreditations, Collection<RoleType> roleTypes) {
+        return converter.convertAll(provider.getAllForAccreditations(tournamentConverter.reverse(tournamentDTO), onlyNewAccreditations, roleTypes).stream()
+                .map(this::createConverterRequest).collect(Collectors.toList()));
+    }
+
+    public List<RoleDTO> getForDiplomas(TournamentDTO tournamentDTO, Boolean onlyNewDiplomas, Collection<RoleType> roleTypes) {
+        return converter.convertAll(provider.getAllForDiplomas(tournamentConverter.reverse(tournamentDTO), onlyNewDiplomas, roleTypes).stream()
+                .map(this::createConverterRequest).collect(Collectors.toList()));
+    }
+
     public long count(TournamentDTO tournamentDTO) {
         return provider.count(tournamentConverter.reverse(tournamentDTO));
     }
