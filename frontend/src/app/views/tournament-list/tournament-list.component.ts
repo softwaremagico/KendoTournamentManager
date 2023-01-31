@@ -19,6 +19,9 @@ import {RankingService} from "../../services/ranking.service";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {
+  RoleSelectorDialogBoxComponent
+} from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 
 @Component({
   selector: 'app-tournament-list',
@@ -169,15 +172,27 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   downloadAccreditations() {
-    if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
-      this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
-        const blob = new Blob([html], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+    if (this.basicTableData.selectedElement) {
+      const dialogRef = this.dialog.open(RoleSelectorDialogBoxComponent, {
+        data: {
+          tournament: this.basicTableData.selectedElement
+        }
+      });
 
-        const anchor = document.createElement("a");
-        anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
-        anchor.href = downloadURL;
-        anchor.click();
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.action !== Action.Cancel) {
+          if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.data).subscribe((html: Blob) => {
+              const blob = new Blob([html], {type: 'application/pdf'});
+              const downloadURL = window.URL.createObjectURL(blob);
+
+              const anchor = document.createElement("a");
+              anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
+              anchor.href = downloadURL;
+              anchor.click();
+            });
+          }
+        }
       });
     }
   }
