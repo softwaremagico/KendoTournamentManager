@@ -24,7 +24,9 @@ package com.softwaremagico.kt.pdf;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
+import com.softwaremagico.kt.core.controller.RoleController;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.utils.BasicDataTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"diplomaPdf"})
@@ -46,7 +49,7 @@ public class DiplomaTests extends BasicDataTest {
     private PdfController pdfController;
 
     @Autowired
-    private RankingController rankingController;
+    private RoleController roleController;
 
     @BeforeClass
     public void prepareData() {
@@ -56,6 +59,24 @@ public class DiplomaTests extends BasicDataTest {
 
     @Test
     public void generateDiplomas() {
+        List<RoleDTO> roles = roleController.get(tournament);
+        roles.forEach(roleDTO -> Assert.assertFalse(roleDTO.isDiplomaPrinted()));
+
+        Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, true, null)
+                // No clue why are 7 pages and not 6.
+                .createFile(PDF_PATH_OUTPUT + "Diplomas.pdf"), roles.size() + 1);
+
+        roles = roleController.get(tournament);
+        roles.forEach(roleDTO -> Assert.assertTrue(roleDTO.isDiplomaPrinted()));
+    }
+
+    @Test(dependsOnMethods = "generateDiplomas", expectedExceptions = NoContentException.class)
+    public void generateNewDiplomas() {
+        pdfController.generateTournamentDiplomas(tournament, true, null);
+    }
+
+    @Test(dependsOnMethods = "generateNewDiplomas")
+    public void generateDiplomasAgain() {
         Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, false, null)
                 // No clue why are 7 pages and not 6.
                 .createFile(PDF_PATH_OUTPUT + "Diplomas.pdf"), roles.size() + 1);
