@@ -1,0 +1,19 @@
+<div mat-dialog-content class="form-layout">
+  <span class="example-list-section">
+    <ul>
+     <li *ngFor="let roleType of roleTypes">
+      <mat-checkbox (change)="select($event.checked, roleType)">
+      {{roleType.toLowerCase() | translate}}
+      </mat-checkbox>
+     </li>
+    </ul>
+  </span>
+  <div mat-dialog-actions class="button-container">
+    <button mat-raised-button type="button"  (click)="setRoles()"
+            mat-flat-button color="primary">
+      <mat-icon>done</mat-icon>
+      {{'accept' | translate}}</button>
+    <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
+            color="warn">{{'cancel' | translate}}</button>
+  </div>
+</div>
