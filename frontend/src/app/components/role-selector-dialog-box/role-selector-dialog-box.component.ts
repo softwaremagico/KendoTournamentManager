@@ -28,8 +28,8 @@ export class RoleSelectorDialogBoxComponent implements OnInit {
 
   }
 
-  setRoles() {
-    this.dialogRef.close({data: this.roles, action: Action.Selected});
+  setRoles(newOnes: boolean) {
+    this.dialogRef.close({data: this.roles, newOnes: newOnes, action: Action.Selected});
   }
 
   closeDialog() {

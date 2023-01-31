@@ -139,7 +139,7 @@
   "duelsWon": "Won fights",
   "duelsDraw": "Draw fights",
   "histsWon": "Hits",
-  "All": "All",
+  "all": "All",
   "PerformedHitStatistics": "Performed hits",
   "ReceivedHitStatistics": "Received hits",
   "WonStatistics": "Won/lost matches",
@@ -614,6 +614,7 @@
   "pictureDeleted": "The picture has been deleted!",
   "pointsByVictory": "Points by Victory",
   "pointsByDraw": "Points by Tie",
-  "nameExample": "John Smith"
+  "nameExample": "John Smith",
+  "onlyNews": "New Ones"
 }
 

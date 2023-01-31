@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
@@ -85,13 +86,17 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           @Parameter(description = "Filter by roles")
                                                           @RequestParam(name = "roles", required = false) RoleType[] roles,
-                                                          Locale locale, HttpServletResponse response, HttpServletRequest request) {
+                                                          @Parameter(description = "Not printed before")
+                                                          @RequestParam(name = "onlyNew", required = false) Boolean onlyNew,
+                                                          Locale locale, HttpServletResponse response, Authentication authentication,
+                                                          HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + " - accreditations.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentAccreditations(locale, tournament, roles).generate();
+            return pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null ? onlyNew : false, authentication.getName(),
+                    roles).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -99,13 +104,14 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets all accreditations from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets an accreditations from a participant of a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "{tournamentId}/accreditations/{roleType}", produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] getParticipantAccreditationFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                                  @PathVariable("tournamentId") Integer tournamentId,
                                                                  @PathVariable("roleType") RoleType roleType,
                                                                  @RequestBody ParticipantDTO participant,
-                                                                 Locale locale, HttpServletResponse response, HttpServletRequest request) {
+                                                                 Locale locale, HttpServletResponse response, Authentication authentication,
+                                                                 HttpServletRequest request) {
         if (participant == null) {
             throw new InvalidRequestException(this.getClass(), "No participant provided!");
         }
@@ -114,7 +120,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                 .filename(tournament.getName() + " - accreditations.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType).generate();
+            return pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType, authentication.getName()).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -128,13 +134,16 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                     @PathVariable("tournamentId") Integer tournamentId,
                                                     @Parameter(description = "Filter by roles")
                                                     @RequestParam(name = "roles", required = false) RoleType[] roles,
-                                                    Locale locale, HttpServletResponse response, HttpServletRequest request) {
+                                                    @Parameter(description = "Not printed before")
+                                                    @RequestParam(name = "onlyNew", required = false) Boolean onlyNew,
+                                                    Locale locale, HttpServletResponse response, Authentication authentication,
+                                                    HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + " - diplomas.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentDiplomas(tournament, roles).generate();
+            return pdfController.generateTournamentDiplomas(tournament, onlyNew != null ? onlyNew : false, authentication.getName(), roles).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -142,7 +151,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets a diploma from a participant.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets a diploma from a participant of a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "{tournamentId}/diplomas", produces = MediaType.APPLICATION_PDF_VALUE)
     public byte[] getParticipantDiplomaFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                            @PathVariable("tournamentId") Integer tournamentId,
@@ -156,7 +165,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                 .filename(participant.getName() + " " + participant.getLastname() + " - diplomas.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentDiplomas(tournament, participant).generate();
+            return pdfController.generateTournamentDiploma(tournament, participant).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());

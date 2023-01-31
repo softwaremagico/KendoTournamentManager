@@ -36,6 +36,11 @@ public class RoleDTO extends ElementDTO {
 
     private RoleType roleType;
 
+    private boolean diplomaPrinted;
+
+    private boolean accreditationPrinted;
+
+
     public RoleDTO() {
         super();
     }
@@ -69,6 +74,22 @@ public class RoleDTO extends ElementDTO {
 
     public void setRoleType(RoleType roleType) {
         this.roleType = roleType;
+    }
+
+    public boolean isDiplomaPrinted() {
+        return diplomaPrinted;
+    }
+
+    public void setDiplomaPrinted(boolean diplomaPrinted) {
+        this.diplomaPrinted = diplomaPrinted;
+    }
+
+    public boolean isAccreditationPrinted() {
+        return accreditationPrinted;
+    }
+
+    public void setAccreditationPrinted(boolean accreditationPrinted) {
+        this.accreditationPrinted = accreditationPrinted;
     }
 
     @Override

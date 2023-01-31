@@ -160,7 +160,7 @@
   "duelsWon": "Combates ganados",
   "duelsDraw": "Combates empatados",
   "histsWon": "Puntos realizados",
-  "All": "Todos",
+  "all": "Todos",
   "PerformedHitStatistics": "Golpes dados",
   "ReceivedHitStatistics": "Golpes recibidos",
   "WonStatistics": "Partidos ganados/perdidos",
@@ -606,7 +606,8 @@
   "pictureDeleted": "¡La imagen ha sido eliminada!",
   "pointsByVictory": "Puntos por victoria",
   "pointsByDraw": "Puntos por empate",
-  "nameExample": "Francisco Garcia"
+  "nameExample": "Francisco Garcia",
+  "onlyNews": "Nuevos"
 }
 
 
