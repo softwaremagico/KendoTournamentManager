@@ -74,7 +74,7 @@ To contribute to Kendo Tournament Manager v2, follow these steps:
     Push to the original branch: git push origin <project_name>/<location>
     Create the pull request.
 
-Alternatively see the GitHub documentation on creating a pull request.
+Alternatively see the GitHub documentation on [creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
 # Contact
 
