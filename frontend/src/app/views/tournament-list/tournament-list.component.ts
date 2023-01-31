@@ -182,14 +182,18 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
           if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
-            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.data).subscribe((html: Blob) => {
-              const blob = new Blob([html], {type: 'application/pdf'});
-              const downloadURL = window.URL.createObjectURL(blob);
+            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
+              if (html !== null) {
+                const blob = new Blob([html], {type: 'application/pdf'});
+                const downloadURL = window.URL.createObjectURL(blob);
 
-              const anchor = document.createElement("a");
-              anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
-              anchor.href = downloadURL;
-              anchor.click();
+                const anchor = document.createElement("a");
+                anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
+                anchor.href = downloadURL;
+                anchor.click();
+              } else {
+                this.messageService.warningMessage('noResults');
+              }
             });
           }
         }
@@ -208,14 +212,18 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
           if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
-            this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.data).subscribe((html: Blob) => {
-              const blob = new Blob([html], {type: 'application/pdf'});
-              const downloadURL = window.URL.createObjectURL(blob);
+            this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
+              if (html !== null) {
+                const blob = new Blob([html], {type: 'application/pdf'});
+                const downloadURL = window.URL.createObjectURL(blob);
 
-              const anchor = document.createElement("a");
-              anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
-              anchor.href = downloadURL;
-              anchor.click();
+                const anchor = document.createElement("a");
+                anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
+                anchor.href = downloadURL;
+                anchor.click();
+              } else {
+                this.messageService.warningMessage('noResults');
+              }
             });
           }
         }

@@ -166,7 +166,7 @@
   "duelsWon": "Combats guanyats",
   "duelsDraw": "Combats empatats",
   "histsWon": "Punts realitzats",
-  "All": "Tots",
+  "all": "Tots",
   "PerformedHitStatistics": "Cops donats",
   "ReceivedHitStatistics": "Cops rebuts",
   "WonStatistics": "Partits guanyats/perduts",
@@ -601,7 +601,8 @@
   "pictureDeleted": "La imatge ha estat esborrada!",
   "pointsByVictory": "Punts per victòria",
   "pointsByDraw": "Punts per empat",
-  "nameExample": "Antonio Garcia"
+  "nameExample": "Antonio Garcia",
+  "onlyNews": "Nous"
 }
 
 

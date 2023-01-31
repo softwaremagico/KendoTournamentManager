@@ -9,10 +9,14 @@
     </ul>
   </span>
   <div mat-dialog-actions class="button-container">
-    <button mat-raised-button type="button"  (click)="setRoles()"
+    <button mat-raised-button type="button"  (click)="setRoles(false)"
             mat-flat-button color="primary">
       <mat-icon>done</mat-icon>
-      {{'accept' | translate}}</button>
+      {{'all' | translate}}</button>
+    <button mat-raised-button type="button"  (click)="setRoles(true)"
+            mat-flat-button color="picture">
+      <mat-icon>done</mat-icon>
+      {{'onlyNews' | translate}}</button>
     <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
             color="warn">{{'cancel' | translate}}</button>
   </div>
