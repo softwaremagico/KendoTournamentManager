@@ -9,6 +9,7 @@ import {catchError, tap} from "rxjs/operators";
 import {ScoreOfTeam} from "../models/score-of-team";
 import {ScoreOfCompetitor} from "../models/score-of-competitor";
 import {SystemOverloadService} from "./notifications/system-overload.service";
+import {Participant} from "../models/participant";
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +49,22 @@ export class RankingService {
       );
   }
 
+  getCompetitorsGlobalScoreRanking(participants: Participant[]): Observable<ScoreOfCompetitor[]> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/competitors';
+    return this.http.post<ScoreOfCompetitor[]>(url, participants, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting competitors ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<ScoreOfCompetitor[]>(`getting competitors ranking`))
+      );
+  }
+
   getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
@@ -92,6 +108,7 @@ export class RankingService {
   }
 
   getTeamsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({

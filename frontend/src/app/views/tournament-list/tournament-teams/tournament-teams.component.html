@@ -55,7 +55,7 @@
   </div>
 </div>
 <div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="generateTeams()" [style.display]="this.tournament.teamSize!==1? 'none':''"
+  <button mat-raised-button (click)="generateTeams()"
           *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)"
           mat-flat-button>
     <mat-icon>auto_fix_high</mat-icon>
