@@ -12,6 +12,8 @@
                 <include name="encryptedData"/>
                 <include name="teamRepository"/>
                 <include name="groupRepository"/>
+                <include name="fightRepository"/>
+                <include name="duelRepository"/>
             </run>
         </groups>
         <classes>
@@ -19,6 +21,8 @@
             <class name="com.softwaremagico.kt.persistence.repositories.ParticipantImageRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.TeamRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.GroupRepositoryTests"/>
+            <class name="com.softwaremagico.kt.persistence.repositories.FightRepositoryTests"/>
+            <class name="com.softwaremagico.kt.persistence.repositories.DuelRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptedDataStorage"/>
         </classes>
     </test>
