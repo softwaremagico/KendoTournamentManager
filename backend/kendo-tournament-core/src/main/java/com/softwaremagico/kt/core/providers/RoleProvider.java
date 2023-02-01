@@ -61,6 +61,44 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         return roles;
     }
 
+    public List<Role> getAllForDiplomas(Tournament tournament, Boolean onlyNewDiplomas, Collection<RoleType> roleTypes) {
+        final List<Role> roles;
+        if (onlyNewDiplomas != null && onlyNewDiplomas) {
+            if (!roleTypes.isEmpty()) {
+                roles = repository.findByTournamentAndDiplomaPrintedAndRoleTypeIn(tournament, false, roleTypes);
+            } else {
+                roles = repository.findByTournamentAndDiplomaPrinted(tournament, false);
+            }
+        } else {
+            if (!roleTypes.isEmpty()) {
+                roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+            } else {
+                roles = repository.findByTournament(tournament);
+            }
+        }
+        roles.forEach(role -> role.setTournament(tournament));
+        return roles;
+    }
+
+    public List<Role> getAllForAccreditations(Tournament tournament, Boolean onlyNewAccreditations, Collection<RoleType> roleTypes) {
+        final List<Role> roles;
+        if (onlyNewAccreditations != null && onlyNewAccreditations) {
+            if (!roleTypes.isEmpty()) {
+                roles = repository.findByTournamentAndAccreditationPrintedAndRoleTypeIn(tournament, false, roleTypes);
+            } else {
+                roles = repository.findByTournamentAndAccreditationPrinted(tournament, false);
+            }
+        } else {
+            if (!roleTypes.isEmpty()) {
+                roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+            } else {
+                roles = repository.findByTournament(tournament);
+            }
+        }
+        roles.forEach(role -> role.setTournament(tournament));
+        return roles;
+    }
+
     public List<Role> get(Tournament tournament, List<Participant> participants) {
         return repository.findByTournamentAndParticipantIn(tournament, participants);
     }

@@ -24,7 +24,9 @@ package com.softwaremagico.kt.pdf;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
+import com.softwaremagico.kt.core.controller.RoleController;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.utils.BasicDataTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
 @SpringBootTest
@@ -47,7 +50,7 @@ public class AccreditationTests extends BasicDataTest {
     private PdfController pdfController;
 
     @Autowired
-    private RankingController rankingController;
+    private RoleController roleController;
 
     @BeforeClass
     public void prepareData() {
@@ -57,7 +60,25 @@ public class AccreditationTests extends BasicDataTest {
 
     @Test
     public void generateAccreditations() {
-        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament)
+        List<RoleDTO> roles = roleController.get(tournament);
+        roles.forEach(roleDTO -> Assert.assertFalse(roleDTO.isAccreditationPrinted()));
+
+        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null)
+                // No clue why are 3 pages and not 2.
+                .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
+
+        roles = roleController.get(tournament);
+        roles.forEach(roleDTO -> Assert.assertTrue(roleDTO.isAccreditationPrinted()));
+    }
+
+    @Test(dependsOnMethods = "generateAccreditations", expectedExceptions = NoContentException.class)
+    public void generateNewAccreditations() {
+        pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null);
+    }
+
+    @Test(dependsOnMethods = "generateNewAccreditations")
+    public void generateAccreditationsAgain() {
+        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, null, null)
                 // No clue why are 3 pages and not 2.
                 .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
     }

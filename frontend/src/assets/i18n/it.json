@@ -164,7 +164,7 @@
   "duelsWon": "Duelli vinti",
   "duelsDraw": "Duelli pari",
   "histsWon": "Punti realizzati",
-  "All": "Tutti",
+  "all": "Tutti",
   "PerformedHitStatistics": "Colpi dati",
   "ReceivedHitStatistics": "Colpi ricevuti",
   "WonStatistics": "Incontri vinti/persi",
@@ -593,7 +593,8 @@
   "pictureDeleted": "L'immagine è stata eliminata!",
   "pointsByVictory": "Punti per la vittoria",
   "pointsByDraw": "Punti per il pareggio",
-  "nameExample": "Giuseppe Rossi"
+  "nameExample": "Giuseppe Rossi",
+  "onlyNews": "Nuovi"
 }
 
 
