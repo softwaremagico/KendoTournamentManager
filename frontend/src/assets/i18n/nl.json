@@ -162,7 +162,7 @@
   "fightsWon": "Wedstrijd gewonnen door",
   "duelsWon": "Aantal wedstrijden gewonnen",
   "histsWon": "Behaalde punten",
-  "All": "Totaal",
+  "all": "Totaal",
   "PerformedHitStatistics": "Geplaatste terffers",
   "ReceivedHitStatistics": "Ontvangen treffers",
   "WonStatistics": "Gewonnen/verloren wedtsrijden",
@@ -587,7 +587,8 @@
   "pictureDeleted": "De foto is verwijderd!",
   "pointsByVictory": "Punten voor de overwinning",
   "pointsByDraw": "Punten voor een gelijkspel",
-  "nameExample": "Emma De vries "
+  "nameExample": "Emma De vries",
+  "onlyNews": "Nieuwe"
 }
 
 
