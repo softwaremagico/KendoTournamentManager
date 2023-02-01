@@ -33,7 +33,6 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
-import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -53,17 +52,14 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
 
-    private final GroupProvider groupProvider;
-
 
     @Autowired
     public TeamController(TeamProvider provider, TeamConverter converter, TournamentProvider tournamentProvider,
-                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter, GroupProvider groupProvider) {
+                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter) {
         super(provider, converter);
         this.tournamentProvider = tournamentProvider;
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
-        this.groupProvider = groupProvider;
     }
 
     @Override

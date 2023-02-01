@@ -1,10 +1,10 @@
-package com.softwaremagico.kt.persistence.entities;
+package com.softwaremagico.kt.persistence.repositories;
 
 /*-
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
@@ -24,36 +24,28 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-public enum ScoreType {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-    CLASSIC("classic"),
+@SpringBootTest
+@Test(groups = {"duelRepository"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+public class DuelRepositoryTests extends BasicDataTest {
 
-    WIN_OVER_DRAWS("winOverDraws"),
+    @Autowired
+    private DuelRepository duelRepository;
 
-    EUROPEAN("european"),
-
-    CUSTOM("custom"),
-
-    INTERNATIONAL("international");
-
-
-    public static final ScoreType DEFAULT = ScoreType.INTERNATIONAL;
-    private String tag;
-
-    ScoreType(String tag) {
-        this.tag = tag;
+    @BeforeClass
+    public void prepareData() {
+        populateData();
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public static ScoreType getScoreType(String tag) {
-        for (final ScoreType scoreType : ScoreType.values()) {
-            if (scoreType.getTag().equals(tag.toLowerCase())) {
-                return scoreType;
-            }
-        }
-        return DEFAULT;
+    @Test
+    private void getAllUntiesFromParticipants() {
+        Assert.assertEquals(duelRepository.findUntiesByParticipantIn(members).size(), 0);
     }
 }
