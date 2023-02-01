@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
 import org.modelmapper.spi.ErrorMessage;
@@ -103,6 +104,11 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> notFoundException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoContentException.class)
+    public ResponseEntity<Object> noContent(Exception ex) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

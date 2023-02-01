@@ -2,5 +2,6 @@ export enum Action {
   Add,
   Update,
   Delete,
-  Cancel
+  Cancel,
+  Selected
 }
