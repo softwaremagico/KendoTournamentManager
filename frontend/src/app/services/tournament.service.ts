@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
-import {Observable} from "rxjs";
+import {Observable, throwError} from "rxjs";
 import {Tournament} from "../models/tournament";
 import {catchError, tap} from "rxjs/operators";
 import {MessageService} from "./message.service";
@@ -108,13 +108,19 @@ export class TournamentService {
       );
   }
 
-  getAccreditations(tournamentId: number): Observable<Blob> {
+  getAccreditations(tournamentId: number, newOnes: boolean | undefined, roles: RoleType[]): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      }),
+      params: new HttpParams({
+        fromObject: {
+          'roles': roles,
+          'onlyNew': newOnes!
+        }
       })
     }).pipe(
       tap({
@@ -147,13 +153,19 @@ export class TournamentService {
     );
   }
 
-  getDiplomas(tournamentId: number): Observable<Blob> {
+  getDiplomas(tournamentId: number, newOnes: boolean | undefined, roles: RoleType[]): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      }),
+      params: new HttpParams({
+        fromObject: {
+          'roles': roles,
+          'onlyNew': newOnes!
+        }
       })
     }).pipe(
       tap({
@@ -181,5 +193,25 @@ export class TournamentService {
       }),
       catchError(this.messageService.handleError<Blob>(`getting participant diplomas`))
     );
+  }
+
+  errorHandler(error: HttpErrorResponse): Observable<never> {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      console.log(error.status)
+      // The backend returned an unsuccessful response code.
+      if (error.status == 404) {
+        this.messageService.warningMessage('noResults');
+      } else {
+        // The response body may contain clues as to what went wrong,
+        console.error(
+          `Backend returned code ${error.status}, ` +
+          `body was: ${error.error}`);
+      }
+    }
+    // return an observable with a user-facing error message
+    return throwError(() => new Error(error.message));
   }
 }

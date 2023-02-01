@@ -87,6 +87,8 @@ import {
 import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
+import { RoleSelectorDialogBoxComponent } from './components/role-selector-dialog-box/role-selector-dialog-box.component';
+import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
 
 
 registerLocaleData(localeES, "es");
@@ -174,7 +176,8 @@ registerLocaleData(localeNL, "nl");
     ParticipantPictureModule,
     PictureDialogBoxModule,
     TournamentImageSelectorModule,
-    TournamentScoreEditorModule
+    TournamentScoreEditorModule,
+    RoleSelectorDialogBoxModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
