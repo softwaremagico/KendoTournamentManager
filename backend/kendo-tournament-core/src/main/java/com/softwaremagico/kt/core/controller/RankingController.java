@@ -29,10 +29,7 @@ import com.softwaremagico.kt.core.converters.*;
 import com.softwaremagico.kt.core.converters.models.*;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.FightProvider;
-import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TeamProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.*;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.ScoreType;
@@ -64,10 +61,14 @@ public class RankingController {
 
     private final DuelConverter duelConverter;
 
+    private final DuelProvider duelProvider;
+
+    private final ParticipantConverter participantConverter;
+
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter, FightProvider fightProvider,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
                              TeamProvider teamProvider, TeamConverter teamConverter, TournamentProvider tournamentProvider,
-                             DuelConverter duelConverter) {
+                             DuelConverter duelConverter, DuelProvider duelProvider, ParticipantConverter participantConverter) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
         this.fightProvider = fightProvider;
@@ -77,6 +78,8 @@ public class RankingController {
         this.teamConverter = teamConverter;
         this.tournamentProvider = tournamentProvider;
         this.duelConverter = duelConverter;
+        this.duelProvider = duelProvider;
+        this.participantConverter = participantConverter;
     }
 
     private boolean checkLevel(TournamentDTO tournament) {
@@ -268,6 +271,23 @@ public class RankingController {
         return scores;
     }
 
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors) {
+        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.INTERNATIONAL);
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
+        final List<ScoreOfCompetitor> scores = new ArrayList<>();
+        final List<FightDTO> fights = fightConverter.convertAll(fightProvider.get(participantConverter.reverseAll(competitors)).stream()
+                .map(FightConverterRequest::new).collect(Collectors.toList()));
+        final List<DuelDTO> unties = duelConverter.convertAll(duelProvider.getUnties(participantConverter.reverseAll(competitors)).stream()
+                .map(DuelConverterRequest::new).collect(Collectors.toList()));
+        for (final ParticipantDTO competitor : competitors) {
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
+        }
+        sortCompetitorsScores(scoreType, scores);
+        return scores;
+    }
+
     public ScoreOfCompetitor getScoreRanking(GroupDTO groupDTO, ParticipantDTO competitor) {
         final List<ScoreOfCompetitor> scoreRanking = getCompetitorsScoreRanking(groupDTO);
         for (final ScoreOfCompetitor score : scoreRanking) {
@@ -372,7 +392,7 @@ public class RankingController {
      * On some leagues, we need to count the fights not finished for the score.
      *
      * @param tournamentDTO
-     * @return if must be counted.
+     * @return if it must be counted.
      */
     private boolean countNotOver(TournamentDTO tournamentDTO) {
         return tournamentDTO.getType() == TournamentType.KING_OF_THE_MOUNTAIN;

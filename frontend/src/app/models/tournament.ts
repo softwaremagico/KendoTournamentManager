@@ -22,6 +22,7 @@ export class Tournament extends Element {
 
   constructor() {
     super();
+    this.tournamentScore = new TournamentScore();
   }
 
   public static override copy(source: Tournament, target: Tournament): void {
