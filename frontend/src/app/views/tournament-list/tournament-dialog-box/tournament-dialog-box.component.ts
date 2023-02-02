@@ -47,7 +47,11 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.tournamentType = TournamentType.toArray();
     this.scoreTypes = ScoreType.toArray();
     this.selectedType = this.tournament.type;
-    this.selectedScore = this.tournament.tournamentScore.scoreType;
+    if (this.tournament.tournamentScore && this.tournament.tournamentScore.scoreType) {
+      this.selectedScore = this.tournament.tournamentScore.scoreType;
+    } else {
+      this.selectedScore = ScoreType.INTERNATIONAL
+    }
 
     this.registerForm = new FormGroup({
       tournamentName: new FormControl({
