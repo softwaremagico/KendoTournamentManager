@@ -21,7 +21,7 @@ export class DuelService {
   }
 
   update(duel: Duel): Observable<Duel> {
-    const url: string = `${this.baseUrl}/fights`;
+    const url: string = `${this.baseUrl}`;
     return this.http.put<Duel>(url, duel, this.loginService.httpOptions)
       .pipe(
         tap((_updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
