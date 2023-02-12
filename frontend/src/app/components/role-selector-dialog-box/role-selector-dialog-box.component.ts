@@ -40,7 +40,7 @@ export class RoleSelectorDialogBoxComponent implements OnInit {
     if (checked) {
       this.roles.push(roleType);
     } else {
-      this.roles.filter(item => item !== roleType);
+      this.roles = this.roles.filter(item => item !== roleType);
     }
   }
 }

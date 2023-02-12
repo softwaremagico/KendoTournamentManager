@@ -25,11 +25,15 @@ package com.softwaremagico.kt.persistence.repositories;
  */
 
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +46,9 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
     List<Fight> findByTournamentAndLevel(Tournament tournament, Integer level);
 
     List<Fight> findByTournamentAndFinishedAtIsNotNull(Tournament tournament);
+
+    @Query("SELECT f FROM Fight f LEFT JOIN f.duels d WHERE d.competitor1 IN :participants or d.competitor2 IN :participants")
+    List<Fight> findByParticipantIn(@Param("participants") Collection<Participant> participants);
 
     long countByTournamentAndFinishedAtIsNull(Tournament tournament);
 
