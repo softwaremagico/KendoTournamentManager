@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,10 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         fight.getTeam1().setTournament(tournament);
         fight.getTeam2().setTournament(tournament);
         return fight;
+    }
+
+    public List<Fight> get(List<Participant> participants) {
+        return repository.findByParticipantIn(participants);
     }
 
     public long delete(Tournament tournament) {
