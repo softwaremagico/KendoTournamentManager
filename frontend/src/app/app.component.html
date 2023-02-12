@@ -22,7 +22,7 @@
           <mat-icon *ngIf="selectedRow !== 'Registry'">expand_more</mat-icon>
           <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
         </a>
-        <a mat-button routerLink="/tournaments"
+        <a mat-button (click)="toggleMenu('')" routerLink="/tournaments"
            *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)" [matTooltipShowDelay]="500"
            matTooltip="{{'competitions' | translate}}">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
@@ -56,12 +56,13 @@
     <mat-toolbar-row *ngIf="selectedRow === 'Registry'" class="toolbar-submenu">
       <span class="menu-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
-        <a mat-button routerLink="/clubs" *ngIf="(RbacActivity.READ_ALL_CLUBS | rbac : this.rbacService.activities)"
+        <a mat-button (click)="toggleMenu('')" routerLink="/clubs"
+           *ngIf="(RbacActivity.READ_ALL_CLUBS | rbac : this.rbacService.activities)"
            [matTooltipShowDelay]="500" matTooltip="{{'clubs' | translate}}">
           <mat-icon>home</mat-icon>
           <span class="upper-menu-title">{{'clubs' | translate}} </span>
         </a>
-        <a mat-button routerLink="/participants"
+        <a mat-button (click)="toggleMenu('')" routerLink="/participants"
            *ngIf="(RbacActivity.READ_ALL_PARTICIPANTS | rbac : this.rbacService.activities)"
            [matTooltipShowDelay]="500" matTooltip="{{'participants' | translate}}">
           <mat-icon>people</mat-icon>
@@ -78,16 +79,17 @@
           <span class="upper-menu-title">{{'language' | translate}}</span>
         </a>
         <mat-menu #languageMenu="matMenu" backdropClass="kendo-mat-menu">
-          <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);">
+          <a *ngFor="let language of translate.getLangs()" mat-button (click)="switchLanguage(language);toggleMenu('')">
             <mat-icon class="menu-text">flag</mat-icon>
             <span class="menu-text">{{language}}</span></a>
         </mat-menu>
-        <a mat-button routerLink="/passwords" [matTooltipShowDelay]="500" matTooltip="{{'password' | translate}}"
+        <a mat-button (click)="toggleMenu('')" routerLink="/passwords" [matTooltipShowDelay]="500"
+           matTooltip="{{'password' | translate}}"
            *ngIf="(RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.activities)">
           <mat-icon>key</mat-icon>
           <span class="upper-menu-title">{{'password' | translate}}</span>
         </a>
-        <a mat-button (click)="logout();" *ngIf="(RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)"
+        <a mat-button (click)="logout();toggleMenu('')" *ngIf="(RbacActivity.CAN_LOGOUT | rbac : this.rbacService.activities)"
            [matTooltipShowDelay]="500" matTooltip="{{'logout' | translate}}">
           <mat-icon>logout</mat-icon>
           <span class="upper-menu-title">{{'logout' | translate}}</span>
@@ -105,7 +107,8 @@
     <mat-toolbar-row *ngIf="selectedRow === 'Admin'" class="toolbar-submenu">
       <span class="menu-spacer"></span>
       <div fxShow="true" fxHide.lt-md="true">
-        <a mat-button routerLink="/users" *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities)"
+        <a mat-button (click)="toggleMenu('')" routerLink="/users"
+           *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities)"
            [matTooltipShowDelay]="500" matTooltip="{{'users' | translate}}">
           <mat-icon>person</mat-icon>
           <span class="upper-menu-title">{{'users' | translate}}</span>
