@@ -21,6 +21,7 @@ import {GroupService} from "../../../services/group.service";
 import {Group} from "../../../models/group";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 import {FightService} from "../../../services/fight.service";
+import {RankingService} from "../../../services/ranking.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -37,10 +38,10 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   teamSize: number[];
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
-              private loggerService: LoggerService, public teamService: TeamService, public roleService: RoleService,
+              private loggerService: LoggerService, private teamService: TeamService, private roleService: RoleService,
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
               rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
-              private statisticsChangedService: StatisticsChangedService,
+              private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -359,6 +360,34 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     this.members.delete(team);
   }
 
+  balancedTeams(): void {
+    let participants: Participant[];
+    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+
+    this.rankingService.getCompetitorsGlobalScoreRanking(participants).subscribe(_scoreRanking => {
+      for (let team of this.teams) {
+        team.members = [];
+        for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
+          const participant: Participant = this.getBalancedMember(participants, team.members.length,
+            (this.tournament.teamSize ? this.tournament.teamSize : 1));
+          if (participant) {
+            team.members[i] = participant;
+          }
+        }
+        this.members.set(team, team.members);
+        this.teamService.update(team).pipe(
+          tap((newTeam: Team) => {
+            this.loggerService.info("Team '" + newTeam.name + "' updated.");
+          }),
+          catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
+        ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
+      }
+      //Remaining one on left column.
+      this.userListData.participants = participants;
+      this.userListData.filteredParticipants = this.userListData.participants;
+    });
+  }
+
   randomTeams(): void {
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
@@ -390,31 +419,56 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return participant;
   }
 
+  getBalancedMember(participants: Participant[], selectFromSector: number, availableSectors: number): Participant {
+    let selected: number = Math.floor(Math.random() * (participants.length / availableSectors));
+    let participant: Participant;
+    if (selectFromSector == 0) {
+      participant = participants[selected];
+      participants.splice(selected, 1);
+    } else if (selectFromSector == availableSectors - 1) {
+      selected = participants.length - selected - 1;
+      participant = participants[selected];
+      participants.splice(selected, 1);
+    } else {
+      selected = Math.floor((participants.length / availableSectors)) * selectFromSector + selected;
+      console.log(selected)
+      participant = participants[selected];
+      participants.splice(selected, 1);
+    }
+    return participant;
+  }
+
   generateTeams() {
     if (this.tournament.teamSize === 1) {
-      this.teams = [];
-      let participants: Participant[];
-      participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
-      this.members = new Map<Team, Participant[]>();
-      for (const member of participants) {
-        const team: Team = new Team();
-        team.tournament = this.tournament;
-        team.name = this.nameUtilsService.getLastnameName(member);
-        team.members = [];
-        team.members[0] = member;
-        this.teams.push(team);
-      }
-      this.teamService.setAll(this.teams).subscribe(_teams => {
-        this.messageService.infoMessage("infoTeamsAdded");
-        this.teams = _teams
-        this.userListData.participants = [];
-        this.userListData.filteredParticipants = this.userListData.participants;
-        for (const team of _teams) {
-          this.members.set(team, team.members);
-        }
-        this.systemOverloadService.isBusy.next(false);
-        this.statisticsChangedService.areStatisticsChanged.next(true);
-      });
+      this.assignTeamByParticipant();
+    } else {
+      this.balancedTeams();
     }
+  }
+
+  assignTeamByParticipant() {
+    this.teams = [];
+    let participants: Participant[];
+    participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
+    this.members = new Map<Team, Participant[]>();
+    for (const member of participants) {
+      const team: Team = new Team();
+      team.tournament = this.tournament;
+      team.name = this.nameUtilsService.getLastnameName(member);
+      team.members = [];
+      team.members[0] = member;
+      this.teams.push(team);
+    }
+    this.teamService.setAll(this.teams).subscribe(_teams => {
+      this.messageService.infoMessage("infoTeamsAdded");
+      this.teams = _teams
+      this.userListData.participants = [];
+      this.userListData.filteredParticipants = this.userListData.participants;
+      for (const team of _teams) {
+        this.members.set(team, team.members);
+      }
+      this.systemOverloadService.isBusy.next(false);
+      this.statisticsChangedService.areStatisticsChanged.next(true);
+    });
   }
 }
