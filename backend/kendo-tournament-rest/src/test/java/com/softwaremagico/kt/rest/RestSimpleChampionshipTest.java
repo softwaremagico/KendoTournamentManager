@@ -115,6 +115,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     private String jwtToken;
 
     private ClubDTO clubDTO;
+
     private TournamentDTO tournamentDTO;
 
     public static int getNumberOfCombats(Integer numberOfTeams) {
@@ -492,11 +493,11 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        Assert.assertEquals(fightController.count(tournamentDTO),0);
-        Assert.assertEquals(duelController.count(tournamentDTO),0);
-        Assert.assertEquals(groupController.count(tournamentDTO),0);
-        Assert.assertEquals(roleController.count(tournamentDTO),0);
-        Assert.assertEquals(teamController.count(tournamentDTO),0);
+        Assert.assertEquals(fightController.count(tournamentDTO), 0);
+        Assert.assertEquals(duelController.count(tournamentDTO), 0);
+        Assert.assertEquals(groupController.count(tournamentDTO), 0);
+        Assert.assertEquals(roleController.count(tournamentDTO), 0);
+        Assert.assertEquals(teamController.count(tournamentDTO), 0);
 
     }
 
