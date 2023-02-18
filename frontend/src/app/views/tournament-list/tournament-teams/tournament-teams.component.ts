@@ -22,6 +22,7 @@ import {Group} from "../../../models/group";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 import {FightService} from "../../../services/fight.service";
 import {RankingService} from "../../../services/ranking.service";
+import {random} from "../../../utils/random/random";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -413,7 +414,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   getRandomMember(participants: Participant[]): Participant {
-    const selected: number = Math.floor(Math.random() * participants.length);
+    const selected: number = Math.floor(random() * participants.length);
     const participant: Participant = participants[selected];
     participants.splice(selected, 1);
     return participant;
