@@ -7,7 +7,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
@@ -87,8 +87,8 @@ import {
 import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
-import { RoleSelectorDialogBoxComponent } from './components/role-selector-dialog-box/role-selector-dialog-box.component';
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
+import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
 
 
 registerLocaleData(localeES, "es");
@@ -187,7 +187,12 @@ registerLocaleData(localeNL, "nl");
       return service;
     },
     deps: [TranslateService]
-  }],
+  },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InvalidJwtInterceptor,
+      multi: true
+    },],
   bootstrap: [AppComponent]
 })
 export class AppModule {
