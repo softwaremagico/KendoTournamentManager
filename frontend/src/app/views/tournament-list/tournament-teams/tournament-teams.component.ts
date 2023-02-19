@@ -180,6 +180,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.updateTeam(sourceTeam, undefined);
         //Add to user list.
         this.userListData.participants.push(movedParticipant);
+        this.userListData.filteredParticipants.push(movedParticipant);
 
         this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
         this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
