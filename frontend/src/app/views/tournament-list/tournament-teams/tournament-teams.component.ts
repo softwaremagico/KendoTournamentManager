@@ -23,6 +23,7 @@ import {StatisticsChangedService} from "../../../services/notifications/statisti
 import {FightService} from "../../../services/fight.service";
 import {RankingService} from "../../../services/ranking.service";
 import {random} from "../../../utils/random/random";
+import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -43,6 +44,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
               rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
               private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
+              private filterResetService: FilterResetService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -228,6 +230,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       //Updated destination team.
       this.updateTeam(team, participant);
     }
+    //Reset filter
+    this.filterResetService.resetFilter.next(true);
     //Set default name as the member.
     if (this.tournament.teamSize === 1) {
       team.name = participant.lastname + ", " + participant.name
