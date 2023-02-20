@@ -48,6 +48,8 @@ public class PdfController {
 
     private final RoleController roleController;
 
+    private final TeamController teamController;
+
     private final GroupController groupController;
 
     private final TournamentImageController tournamentImageController;
@@ -56,11 +58,12 @@ public class PdfController {
 
     private final TournamentExtraPropertyController tournamentExtraPropertyController;
 
-    public PdfController(MessageSource messageSource, RoleController roleController, GroupController groupController,
+    public PdfController(MessageSource messageSource, RoleController roleController, TeamController teamController, GroupController groupController,
                          TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
                          TournamentExtraPropertyController tournamentExtraPropertyController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
+        this.teamController = teamController;
         this.groupController = groupController;
         this.tournamentImageController = tournamentImageController;
         this.participantImageController = participantImageController;
@@ -81,6 +84,12 @@ public class PdfController {
                 Collectors.groupingBy(roleDTO -> roleDTO.getParticipant().getClub())
         );
         return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
+    }
+
+    public TeamListPDF generateTeamList(Locale locale, TournamentDTO tournamentDTO) {
+        final List<TeamDTO> teams = teamController.getAllByTournament(tournamentDTO, null);
+        teams.sort(Comparator.comparing(TeamDTO::getName));
+        return new TeamListPDF(messageSource, locale, tournamentDTO, teams);
     }
 
     public FightsList generateFightsList(Locale locale, TournamentDTO tournamentDTO) {

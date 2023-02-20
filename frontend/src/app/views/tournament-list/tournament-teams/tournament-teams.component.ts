@@ -477,4 +477,18 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       this.statisticsChangedService.areStatisticsChanged.next(true);
     });
   }
+
+  downloadPDF() {
+    if (this.tournament && this.tournament.id) {
+      this.teamService.getTeamsByTournament(this.tournament.id).subscribe((pdf: Blob) => {
+        const blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL = window.URL.createObjectURL(blob);
+
+        const anchor = document.createElement("a");
+        anchor.download = "Team List - " + this.tournament.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
+      });
+    }
+  }
 }
