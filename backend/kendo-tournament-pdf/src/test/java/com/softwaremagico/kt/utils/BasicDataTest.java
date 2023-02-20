@@ -100,6 +100,11 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         return roles;
     }
 
+    protected RoleDTO createReferee() {
+        ParticipantDTO referee = participantController.create(new ParticipantDTO("Ref001", "Referee", "Referee", club), null);
+        return roleController.create(new RoleDTO(tournament, referee, RoleType.REFEREE), null);
+    }
+
     protected List<TeamDTO> createTeams(List<ParticipantDTO> members, TournamentDTO tournament) {
         List<TeamDTO> teams = new ArrayList<>();
         int teamIndex = 0;
@@ -174,6 +179,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         members = createParticipants(club);
         tournament = createTournament();
         roles = createRoles(members, tournament);
+        createReferee();
         teams = createTeams(members, tournament);
         group = createGroup(tournament, teams);
         fights = createFights(tournament, teams, group);
