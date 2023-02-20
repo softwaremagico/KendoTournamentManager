@@ -78,7 +78,7 @@ public class DiplomaTests extends BasicDataTest {
     @Test(dependsOnMethods = "generateNewDiplomas")
     public void generateDiplomasAgain() {
         Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, false, null)
-                // No clue why are 7 pages and not 6.
-                .createFile(PDF_PATH_OUTPUT + "Diplomas.pdf"), roles.size() + 1);
+                // No clue why are 7 pages and not 6. 6 Members + 1 referee
+                .createFile(PDF_PATH_OUTPUT + "Diplomas.pdf"), roles.size() + 1 + 1);
     }
 }
