@@ -157,7 +157,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
                 .filename(tournament.getName() + " - teams list.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTeamList(locale, tournament).generate();
+            return pdfController.generateTeamList(tournament).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());

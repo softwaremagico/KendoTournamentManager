@@ -93,9 +93,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @BeforeMethod
     public void clearDatabase() {
-        authenticatedUserController.findAll().forEach(authenticatedUser -> {
-            authenticatedUserController.delete(authenticatedUser);
-        });
+        authenticatedUserController.findAll().forEach(authenticatedUser -> authenticatedUserController.delete(authenticatedUser));
         bruteForceService.reset();
     }
 

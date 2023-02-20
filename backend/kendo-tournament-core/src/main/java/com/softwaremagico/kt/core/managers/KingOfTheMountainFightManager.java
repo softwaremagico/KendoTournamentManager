@@ -24,8 +24,6 @@ package com.softwaremagico.kt.core.managers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -36,14 +34,6 @@ import java.util.List;
 
 @Service
 public class KingOfTheMountainFightManager {
-    private final FightProvider fightProvider;
-    private final DuelProvider duelProvider;
-
-
-    public KingOfTheMountainFightManager(FightProvider fightProvider, DuelProvider duelProvider) {
-        this.fightProvider = fightProvider;
-        this.duelProvider = duelProvider;
-    }
 
     public List<Fight> createFights(Tournament tournament, List<Team> teams, Integer level, String createdBy) {
         return createOneFightsForEachTeam(tournament, teams, level, createdBy);
@@ -55,7 +45,7 @@ public class KingOfTheMountainFightManager {
 
     private List<Fight> createOneFightsForEachTeam(Tournament tournament, List<Team> teams, int level, String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
-            return null;
+            return new ArrayList<>();
         }
         final List<Fight> fights = new ArrayList<>();
 

@@ -37,23 +37,17 @@ import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.utils.NameUtils;
-import org.springframework.context.MessageSource;
 
 import java.util.List;
-import java.util.Locale;
 
 public class TeamListPDF extends ParentList {
 
-    private final MessageSource messageSource;
-    private final Locale locale;
+    private static final int BORDER = 0;
     private final TournamentDTO tournament;
 
     private final List<TeamDTO> teams;
-    private final int border = 0;
 
-    public TeamListPDF(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<TeamDTO> teams) {
-        this.messageSource = messageSource;
-        this.locale = locale;
+    public TeamListPDF(TournamentDTO tournament, List<TeamDTO> teams) {
         this.tournament = tournament;
         this.teams = teams;
     }
@@ -110,7 +104,7 @@ public class TeamListPDF extends ParentList {
             if (i % 2 == 0) {
                 p = new Paragraph(" ");
                 cell = new PdfPCell(p);
-                cell.setBorderWidth(border);
+                cell.setBorderWidth(BORDER);
                 cell.setColspan(1);
                 mainTable.addCell(cell);
             }
