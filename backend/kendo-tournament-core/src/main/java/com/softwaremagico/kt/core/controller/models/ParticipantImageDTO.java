@@ -27,7 +27,7 @@ package com.softwaremagico.kt.core.controller.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.softwaremagico.kt.core.exceptions.DataInputException;
-import com.softwaremagico.kt.persistence.entities.ImageFormat;
+import com.softwaremagico.kt.persistence.values.ImageFormat;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

@@ -28,6 +28,7 @@ package com.softwaremagico.kt.persistence.entities;
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.ImageCompressionCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentImageTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -37,7 +38,9 @@ import javax.persistence.*;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournament_image")
+@Table(name = "tournament_image", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+})
 public class TournamentImage extends Element {
     // 2mb
     private static final int MAX_FILE_SIZE = 2 * 1024 * 1024;

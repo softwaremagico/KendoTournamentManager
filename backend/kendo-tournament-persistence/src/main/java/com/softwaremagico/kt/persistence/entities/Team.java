@@ -40,7 +40,9 @@ import java.util.Locale;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}))
+@Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}), indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+})
 public class Team extends Element implements Comparable<Team>, ITeamName {
 
     @Column(name = "name", nullable = false)
