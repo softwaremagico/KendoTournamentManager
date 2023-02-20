@@ -393,7 +393,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<FightDTO> tournamentFights = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<List<FightDTO>>() {
+        List<FightDTO> tournamentFights = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
 
         createResult = this.mockMvc
@@ -404,7 +404,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<List<GroupDTO>>() {
+        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
 
         //Check group has been created.

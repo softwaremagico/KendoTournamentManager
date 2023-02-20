@@ -38,7 +38,7 @@ import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseE
 
 public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
-    private CipherInitializer cipherInitializer;
+    private final CipherInitializer cipherInitializer;
 
     public AbstractCryptoConverter() {
         this(new CipherInitializer());

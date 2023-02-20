@@ -34,7 +34,7 @@ public class TeamSelector {
     private final Random randomGenerator = new Random();
 
     private final List<Team> teams;
-    private Map<Team, List<Team>> combination;
+    private final Map<Team, List<Team>> combination;
 
     protected TeamSelector(List<Team> teams, TeamsOrder teamsOrder) {
         this.teams = teams;
@@ -43,7 +43,9 @@ public class TeamSelector {
                 Collections.sort(this.teams);
                 break;
             case RANDOM:
-                Collections.shuffle(teams);
+                Collections.shuffle(this.teams);
+                break;
+            case NONE:
                 break;
         }
         combination = getAdversaries();

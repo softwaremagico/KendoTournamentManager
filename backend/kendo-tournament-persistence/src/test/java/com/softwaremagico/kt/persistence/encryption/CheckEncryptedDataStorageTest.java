@@ -35,7 +35,7 @@ import java.util.Set;
 
 @SpringBootTest
 @Test(groups = "encryptedData")
-public class CheckEncryptedDataStorage extends AbstractTransactionalTestNGSpringContextTests {
+public class CheckEncryptedDataStorageTest extends AbstractTransactionalTestNGSpringContextTests {
     private static final int NUMBER_OF_ENTITIES = 1000;
 
     private Set<TestEntity> entities = new HashSet<>();

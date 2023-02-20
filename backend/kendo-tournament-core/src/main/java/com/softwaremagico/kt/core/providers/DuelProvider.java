@@ -64,6 +64,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})
     @Scheduled(fixedDelay = 60 * 10 * 1000)
     public void reportCacheEvict() {
+        //Only for handling Spring cache.
     }
 
 }

@@ -38,7 +38,7 @@ public enum ScoreType {
 
 
     public static final ScoreType DEFAULT = ScoreType.INTERNATIONAL;
-    private String tag;
+    private final String tag;
 
     ScoreType(String tag) {
         this.tag = tag;

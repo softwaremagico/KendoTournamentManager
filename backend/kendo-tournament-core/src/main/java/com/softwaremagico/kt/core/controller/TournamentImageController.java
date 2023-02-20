@@ -112,7 +112,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         return tournamentImageDTO;
     }
 
-    private byte[] getDefaultBanner() {
+    private static byte[] getDefaultBanner() {
         if (defaultBanner == null) {
             try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_BANNER_IMAGE)) {
                 if (inputStream != null) {
@@ -125,7 +125,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         return defaultBanner;
     }
 
-    private byte[] getDefaultAccreditation() {
+    private static byte[] getDefaultAccreditation() {
         if (defaultAccreditation == null) {
             try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_ACCREDITATION_IMAGE)) {
                 if (inputStream != null) {
@@ -138,7 +138,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         return defaultAccreditation;
     }
 
-    private byte[] getDefaultDiploma() {
+    private static byte[] getDefaultDiploma() {
         if (defaultDiploma == null) {
             try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_DIPLOMA_IMAGE)) {
                 if (inputStream != null) {
@@ -151,7 +151,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         return defaultDiploma;
     }
 
-    private byte[] getDefaultPhoto() {
+    private static byte[] getDefaultPhoto() {
         if (defaultPhoto == null) {
             try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(DEFAULT_PHOTO_IMAGE)) {
                 if (inputStream != null) {

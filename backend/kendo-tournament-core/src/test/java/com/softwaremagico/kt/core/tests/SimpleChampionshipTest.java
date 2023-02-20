@@ -203,7 +203,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals((int) TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
     }
 
     @Test(dependsOnMethods = {"addTeams"})

@@ -24,8 +24,6 @@ package com.softwaremagico.kt.core.managers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +34,11 @@ import java.util.List;
 
 @Service
 public class LoopGroupFightManager {
-    private final FightProvider fightProvider;
-    private final DuelProvider duelProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 
     @Autowired
-    public LoopGroupFightManager(FightProvider fightProvider, DuelProvider duelProvider,
-                                 TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        this.fightProvider = fightProvider;
-        this.duelProvider = duelProvider;
+    public LoopGroupFightManager(TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 

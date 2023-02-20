@@ -44,7 +44,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>>
         extends StandardController<ENTITY, DTO, REPOSITORY, PROVIDER> {
 
-    protected CONVERTER converter;
+    protected final CONVERTER converter;
 
     protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
         super(provider);

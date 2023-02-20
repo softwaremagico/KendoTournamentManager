@@ -86,10 +86,10 @@ public class PdfController {
         return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
     }
 
-    public TeamListPDF generateTeamList(Locale locale, TournamentDTO tournamentDTO) {
+    public TeamListPDF generateTeamList(TournamentDTO tournamentDTO) {
         final List<TeamDTO> teams = teamController.getAllByTournament(tournamentDTO, null);
         teams.sort(Comparator.comparing(TeamDTO::getName));
-        return new TeamListPDF(messageSource, locale, tournamentDTO, teams);
+        return new TeamListPDF(tournamentDTO, teams);
     }
 
     public FightsList generateFightsList(Locale locale, TournamentDTO tournamentDTO) {

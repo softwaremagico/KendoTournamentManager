@@ -38,7 +38,7 @@ public class TestEntity {
     private static final String STRING_CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int STRING_LENGTH = 1000;
     private static final int BYTES_LENGTH = 1000;
-    private static SecureRandom random = new SecureRandom();
+    private static final SecureRandom random = new SecureRandom();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
