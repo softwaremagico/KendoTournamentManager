@@ -116,6 +116,10 @@ public abstract class ParentList extends PdfDocument {
         cell.setMinimumHeight(height);
         return cell;
     }
+    public PdfPCell getCell(String text) {
+        return getCell(text, PdfTheme.getBasicFont(), 1, Element.ALIGN_LEFT);
+    }
+
 
     public PdfPCell getCell(String text, int colspan, int align) {
         return getCell(text, PdfTheme.getBasicFont(), colspan, align);
