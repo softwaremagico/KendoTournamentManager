@@ -165,7 +165,7 @@ public class RankingController {
      *
      * @return classification of the teams
      */
-    public HashMap<Integer, List<TeamDTO>> getTeamsByPosition(GroupDTO groupDTO) {
+    public Map<Integer, List<TeamDTO>> getTeamsByPosition(GroupDTO groupDTO) {
         final HashMap<Integer, List<TeamDTO>> teamsByPosition = new HashMap<>();
         final List<ScoreOfTeam> scores = getTeamsScoreRanking(groupDTO);
 
@@ -186,14 +186,14 @@ public class RankingController {
     }
 
     public List<TeamDTO> getFirstTeamsWithDrawScore(GroupDTO groupDTO, Integer maxWinners) {
-        final HashMap<Integer, List<TeamDTO>> teamsByPosition = getTeamsByPosition(groupDTO);
+        final Map<Integer, List<TeamDTO>> teamsByPosition = getTeamsByPosition(groupDTO);
         for (int i = 0; i < maxWinners; i++) {
             final List<TeamDTO> teamsInDraw = teamsByPosition.get(i);
             if (teamsInDraw.size() > 1) {
                 return teamsInDraw;
             }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public TeamDTO getTeam(GroupDTO groupDTO, Integer order) {

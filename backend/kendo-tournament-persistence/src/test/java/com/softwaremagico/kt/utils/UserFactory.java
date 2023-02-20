@@ -36,8 +36,7 @@ public class UserFactory {
     public static final String DEFAULT_USER_ID_CARD = "11111111A";
 
     public Participant createDefaultUser(Club club) {
-        final Participant participant = new Participant(DEFAULT_USER_ID_CARD, DEFAULT_USER_FIRSTNAME, DEFAULT_USER_LASTNAME, club);
-        return participant;
+        return new Participant(DEFAULT_USER_ID_CARD, DEFAULT_USER_FIRSTNAME, DEFAULT_USER_LASTNAME, club);
     }
 
     public void checkDefaultUser(Participant participant) {

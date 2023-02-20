@@ -39,6 +39,10 @@ import java.util.Base64;
 public class ImageUtils {
     private static final double DNI_PROPORTIONS = 26d / 32d;
 
+    private ImageUtils() {
+
+    }
+
     public static byte[] decodeFromBase64(byte[] data) {
         return Base64.getDecoder().decode(data);
     }

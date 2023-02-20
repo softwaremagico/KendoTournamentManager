@@ -46,6 +46,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
                 type != null ? type : TournamentType.LEAGUE, createdBy));
     }
 
+    @Override
     public void delete(Tournament tournament) {
         tournamentExtraPropertyRepository.deleteByTournament(tournament);
         repository.delete(tournament);

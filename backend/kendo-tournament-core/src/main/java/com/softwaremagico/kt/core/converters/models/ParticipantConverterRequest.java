@@ -31,6 +31,7 @@ public class ParticipantConverterRequest extends ConverterRequest<Participant> {
         super(entity);
     }
 
+    @Override
     public Participant getEntity() {
         return super.entity;
     }

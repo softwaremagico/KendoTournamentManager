@@ -95,7 +95,7 @@ public class NameUtils {
                     return lastnameShort.trim() + ", " + nameShort.trim();
                 }
             } else {
-                return lastnameShort.trim() + ", " + name.substring(0, 1) + ".";
+                return lastnameShort.trim() + ", " + name.charAt(0) + ".";
             }
         } else {
             return " ***REMOVED*** ***REMOVED*** ";

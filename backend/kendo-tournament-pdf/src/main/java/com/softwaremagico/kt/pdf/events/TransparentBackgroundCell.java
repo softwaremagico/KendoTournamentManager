@@ -34,7 +34,7 @@ import java.awt.*;
  */
 public class TransparentBackgroundCell implements PdfPCellEvent {
 
-    public PdfGState documentGs = new PdfGState();
+    public final PdfGState documentGs = new PdfGState();
 
     public TransparentBackgroundCell() {
         documentGs.setFillOpacity(0.6f);
