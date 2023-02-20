@@ -38,7 +38,10 @@ import javax.persistence.*;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "roles")
+@Table(name = "roles", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_type", columnList = "role_type"),
+})
 public class Role extends Element {
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -33,6 +33,7 @@ import com.softwaremagico.kt.core.managers.KingOfTheMountainFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

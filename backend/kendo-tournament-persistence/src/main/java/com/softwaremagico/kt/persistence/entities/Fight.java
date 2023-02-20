@@ -39,7 +39,11 @@ import java.util.stream.Collectors;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "fights")
+@Table(name = "fights", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_team1", columnList = "team1"),
+        @Index(name = "ind_team2", columnList = "team2")
+})
 public class Fight extends Element {
 
     @ManyToOne(fetch = FetchType.EAGER)

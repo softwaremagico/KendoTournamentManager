@@ -36,7 +36,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
-import com.softwaremagico.kt.persistence.entities.ImageCompression;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentImageRepository;

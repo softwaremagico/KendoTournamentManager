@@ -36,7 +36,7 @@ import com.softwaremagico.kt.core.images.ImageUtils;
 import com.softwaremagico.kt.core.providers.ParticipantImageProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
-import com.softwaremagico.kt.persistence.entities.ImageFormat;
+import com.softwaremagico.kt.persistence.values.ImageFormat;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.ParticipantImage;
 import com.softwaremagico.kt.persistence.repositories.ParticipantImageRepository;
