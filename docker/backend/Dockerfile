@@ -10,6 +10,7 @@ ARG database_dialect
 ARG database_port
 ARG database_encryption_key
 ARG jwt_secret
+ARG jwt_ip_check
 
 ENV project_name kendo-tournament-backend
 ENV EXTERNAL_CONFIG_FILE /opt/${project_name}/application.properties
@@ -37,6 +38,7 @@ RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
     #Update properties
     sed -i "s|database\.encryption\.key.*|database\.encryption\.key=${database_encryption_key}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|jwt\.secret.*|jwt.secret=${jwt_secret}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|jwt\.ip\.check.*|jwt.ip.check=${jwt_ip_check}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.platform.*|spring.kendo.datasource.platform=${database_type}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.jpa\.hibernate\.ddl-auto.*|spring.kendo.datasource.jpa.hibernate.ddl-auto=update|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.datasource\.data\.*||g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
