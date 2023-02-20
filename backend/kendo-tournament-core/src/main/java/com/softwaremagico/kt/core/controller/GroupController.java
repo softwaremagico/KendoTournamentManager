@@ -34,6 +34,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentInvalidException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.logger.ExceptionType;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -85,6 +86,16 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return get(tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)))));
+    }
+
+    @Override
+    public GroupDTO create(GroupDTO groupDTO, String username) {
+        //Check that this group does not collide with another one.
+        if (provider.deleteGroupByLevelAndIndex(
+                tournamentConverter.reverse(groupDTO.getTournament()), groupDTO.getLevel(), groupDTO.getIndex())) {
+            KendoTournamentLogger.warning(this.getClass(), "Old group removed!");
+        }
+        return super.create(groupDTO, username);
     }
 
     public List<GroupDTO> get(TournamentDTO tournament) {
