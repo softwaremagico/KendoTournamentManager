@@ -66,5 +66,10 @@
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
+  <button mat-raised-button (click)="downloadPDF()" mat-flat-button
+          *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)">
+    <mat-icon>file_download</mat-icon>
+    {{'download' | translate}}
+  </button>
   <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
 </div>
