@@ -59,6 +59,26 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return repository.findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
     }
 
+    public Group getGroupByLevelAndIndex(Tournament tournament, Integer level, Integer index) {
+        if (level == null) {
+            level = 0;
+        }
+        if (index == null) {
+            index = 0;
+        }
+        return repository.findByTournamentAndLevelAndIndex(tournament, level, index);
+    }
+
+    public boolean deleteGroupByLevelAndIndex(Tournament tournament, Integer level, Integer index) {
+        if (level == null) {
+            level = 0;
+        }
+        if (index == null) {
+            index = 0;
+        }
+        return repository.deleteByTournamentAndLevelAndIndex(tournament, level, index) > 0;
+    }
+
     public Group getGroup(Integer groupId) {
         return repository.getById(groupId);
     }

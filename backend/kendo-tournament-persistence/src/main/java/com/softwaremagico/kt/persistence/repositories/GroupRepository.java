@@ -42,6 +42,10 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findByTournamentAndLevelOrderByLevelAscIndexAsc(Tournament tournament, Integer level);
 
+    Group findByTournamentAndLevelAndIndex(Tournament tournament, Integer level, Integer index);
+
+    int deleteByTournamentAndLevelAndIndex(Tournament tournament, Integer level, Integer index);
+
     List<Group> findByTournamentAndShiaijoOrderByLevelAscIndexAsc(Tournament tournament, Integer shiaijo);
 
     Optional<Group> findByFightsId(Integer fightId);
