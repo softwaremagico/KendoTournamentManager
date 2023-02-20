@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.ScoreType;
+import com.softwaremagico.kt.persistence.values.ScoreType;
 
 import java.util.Objects;
 

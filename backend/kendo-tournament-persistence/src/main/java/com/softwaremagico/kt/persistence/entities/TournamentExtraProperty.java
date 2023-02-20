@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentExtraPropertyKeyTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -34,7 +35,10 @@ import javax.persistence.*;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournament_extra_properties", uniqueConstraints = {@UniqueConstraint(columnNames = {"tournament", "property"})})
+@Table(name = "tournament_extra_properties", uniqueConstraints = {@UniqueConstraint(columnNames = {"tournament", "property"})},
+        indexes = {
+                @Index(name = "ind_tournament", columnList = "tournament"),
+        })
 public class TournamentExtraProperty extends Element {
 
     @ManyToOne(fetch = FetchType.LAZY)

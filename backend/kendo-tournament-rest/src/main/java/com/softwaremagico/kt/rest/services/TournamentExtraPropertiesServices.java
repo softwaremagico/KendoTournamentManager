@@ -26,7 +26,7 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
-import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

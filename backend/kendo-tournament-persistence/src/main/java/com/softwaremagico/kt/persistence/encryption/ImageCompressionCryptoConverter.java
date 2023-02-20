@@ -25,7 +25,7 @@ package com.softwaremagico.kt.persistence.encryption;
  */
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
-import com.softwaremagico.kt.persistence.entities.ImageCompression;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

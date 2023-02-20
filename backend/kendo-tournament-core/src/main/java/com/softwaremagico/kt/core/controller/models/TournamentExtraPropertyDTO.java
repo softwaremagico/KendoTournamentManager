@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 
 public class TournamentExtraPropertyDTO extends ElementDTO {
 

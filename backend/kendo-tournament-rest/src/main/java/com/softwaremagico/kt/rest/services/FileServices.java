@@ -28,7 +28,7 @@ import com.softwaremagico.kt.core.controller.ParticipantImageController;
 import com.softwaremagico.kt.core.controller.TournamentImageController;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
-import com.softwaremagico.kt.persistence.entities.ImageCompression;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

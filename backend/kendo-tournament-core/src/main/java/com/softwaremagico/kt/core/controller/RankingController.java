@@ -32,7 +32,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.*;
 import com.softwaremagico.kt.persistence.entities.Group;
-import com.softwaremagico.kt.persistence.entities.ScoreType;
+import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Controller;
