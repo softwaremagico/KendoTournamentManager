@@ -74,7 +74,7 @@ public class ListTests extends BasicDataTest {
 
     @Test
     public void generateClubListPdf() {
-        Assert.assertEquals(pdfController.generateClubList(Locale.getDefault(), tournament)
+        Assert.assertEquals(pdfController.generateClubList(new Locale("es", "ES"), tournament)
                 .createFile(PDF_PATH_OUTPUT + "ClubList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
 
