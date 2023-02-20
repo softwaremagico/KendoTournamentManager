@@ -36,7 +36,7 @@ public abstract class BasePool<ElementId, Type> {
     private Map<ElementId, Long> elementsTime; // id -> time.
     private Map<ElementId, Type> elementsById;
 
-    public BasePool() {
+    protected BasePool() {
         reset();
     }
 

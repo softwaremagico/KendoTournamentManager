@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TestLogging extends BasicLogger {
 
-    private static Logger logger = LoggerFactory.getLogger(TestLogging.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestLogging.class);
 
     /**
      * Events that have business meaning (i.e. creating category, deleting form,

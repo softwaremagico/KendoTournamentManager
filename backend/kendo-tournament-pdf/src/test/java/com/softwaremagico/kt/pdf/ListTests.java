@@ -80,7 +80,7 @@ public class ListTests extends BasicDataTest {
 
     @Test
     public void generateTeamListPdf() {
-        Assert.assertEquals(pdfController.generateTeamList(new Locale("es", "ES"), tournament)
+        Assert.assertEquals(pdfController.generateTeamList(tournament)
                 .createFile(PDF_PATH_OUTPUT + "TeamList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
 

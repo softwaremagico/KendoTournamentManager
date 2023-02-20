@@ -178,7 +178,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     @Test
     public void testRegisterNotAuthorized() throws Exception {
         CreateUserRequest goodRequest = new CreateUserRequest();
-        goodRequest.setUsername(String.format(USER_NAME + " A", System.currentTimeMillis()));
+        goodRequest.setUsername(String.format("%s_%d", USER_NAME + " A", System.currentTimeMillis()));
         goodRequest.setName(USER_NAME);
         goodRequest.setLastname(USER_LAST_NAME);
         goodRequest.setPassword(USER_PASSWORD);

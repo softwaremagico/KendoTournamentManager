@@ -105,9 +105,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
 
-        authenticatedUserController.findAll().forEach(authenticatedUser -> {
-            authenticatedUserController.delete(authenticatedUser);
-        });
+        authenticatedUserController.findAll().forEach(authenticatedUser -> authenticatedUserController.delete(authenticatedUser));
     }
 
     @Test

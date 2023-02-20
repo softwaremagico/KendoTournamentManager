@@ -34,7 +34,7 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
 
     protected final REPOSITORY repository;
 
-    public CrudProvider(REPOSITORY repository) {
+    protected CrudProvider(REPOSITORY repository) {
         this.repository = repository;
     }
 

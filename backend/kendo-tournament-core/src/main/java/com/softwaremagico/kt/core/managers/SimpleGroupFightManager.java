@@ -24,12 +24,9 @@ package com.softwaremagico.kt.core.managers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,15 +34,6 @@ import java.util.List;
 
 @Service
 public class SimpleGroupFightManager {
-    private final FightProvider fightProvider;
-    private final DuelProvider duelProvider;
-
-    @Autowired
-    public SimpleGroupFightManager(FightProvider fightProvider, DuelProvider duelProvider) {
-        this.fightProvider = fightProvider;
-        this.duelProvider = duelProvider;
-    }
-
 
     public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, String createdBy) {
         return createCompleteFightList(tournament, teams, teamsOrder, level, createdBy);
@@ -66,13 +54,14 @@ public class SimpleGroupFightManager {
     protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
                                                   String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
-            return null;
+            return new ArrayList<>();
         }
         final List<Fight> fights = new ArrayList<>();
         final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
 
         Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
-        Fight fight, lastFight = null;
+        Fight fight = null;
+        Fight lastFight = null;
         while (teamSelector.remainFights()) {
             final Team team2 = teamSelector.getNextAdversary(team1, teamsOrder);
             // Team1 has no more adversaries. Use another one.

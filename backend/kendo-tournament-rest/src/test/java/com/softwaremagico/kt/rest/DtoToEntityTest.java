@@ -31,7 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @Test(groups = "dtoToEntity")
-public class DtoToEntity {
+public class DtoToEntityTest {
     private static final String CLUB_NAME = "Club1";
     private static final String CLUB_EMAIL = "Club1@email.com";
     private static final String CLUB_WEB = "http://web.com";
@@ -40,7 +40,7 @@ public class DtoToEntity {
     private static final String CLUB_PHONE = "+3433366699";
     private static final String CLUB_ADDRESS = "C/baja 1";
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Test
     public void whenConvertClubEntityToClubDto_thenCorrect() {
