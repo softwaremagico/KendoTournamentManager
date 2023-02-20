@@ -43,7 +43,10 @@ import java.util.Locale;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "participants")
+@Table(name = "participants",
+        indexes = {
+                @Index(name = "ind_club", columnList = "club"),
+        })
 public class Participant extends Element implements Comparable<Participant>, IParticipantName {
 
     @Column(name = "id_card", unique = true)

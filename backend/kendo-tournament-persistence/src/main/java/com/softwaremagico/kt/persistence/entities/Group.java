@@ -37,7 +37,9 @@ import java.util.List;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournament_groups")
+@Table(name = "tournament_groups", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+})
 public class Group extends Element {
 
     @ManyToOne

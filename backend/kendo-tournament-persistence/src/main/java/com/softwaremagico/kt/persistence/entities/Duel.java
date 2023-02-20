@@ -40,7 +40,11 @@ import java.util.List;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "duels")
+@Table(name = "duels", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_competitor1", columnList = "competitor1"),
+        @Index(name = "ind_competitor2", columnList = "competitor2")
+})
 public class Duel extends Element {
     public static final int DEFAULT_DURATION = 1;
     public static final int POINTS_TO_WIN = 2;

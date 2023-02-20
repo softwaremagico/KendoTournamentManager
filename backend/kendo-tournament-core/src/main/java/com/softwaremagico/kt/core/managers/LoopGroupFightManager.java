@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.managers;
 
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

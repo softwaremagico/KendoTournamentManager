@@ -25,7 +25,7 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.softwaremagico.kt.persistence.entities.ImageCompression;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 
 import java.util.Base64;

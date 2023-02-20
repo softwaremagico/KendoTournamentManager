@@ -32,7 +32,7 @@ import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.*;
-import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;

@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.persistence.entities;
+package com.softwaremagico.kt.persistence.values;
 
 /*-
  * #%L
@@ -24,19 +24,36 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-public enum TournamentExtraPropertyKey {
-    MAXIMIZE_FIGHTS,
-    KING_INDEX,
-    KING_DRAW_RESOLUTION,
-    DIPLOMA_NAME_HEIGHT;
+public enum ScoreType {
+
+    CLASSIC("classic"),
+
+    WIN_OVER_DRAWS("winOverDraws"),
+
+    EUROPEAN("european"),
+
+    CUSTOM("custom"),
+
+    INTERNATIONAL("international");
 
 
-    public static TournamentExtraPropertyKey getType(String name) {
-        for (final TournamentExtraPropertyKey type : TournamentExtraPropertyKey.values()) {
-            if (type.name().equalsIgnoreCase(name)) {
-                return type;
+    public static final ScoreType DEFAULT = ScoreType.INTERNATIONAL;
+    private final String tag;
+
+    ScoreType(String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public static ScoreType getScoreType(String tag) {
+        for (final ScoreType scoreType : ScoreType.values()) {
+            if (scoreType.getTag().equals(tag.toLowerCase())) {
+                return scoreType;
             }
         }
-        return null;
+        return DEFAULT;
     }
 }

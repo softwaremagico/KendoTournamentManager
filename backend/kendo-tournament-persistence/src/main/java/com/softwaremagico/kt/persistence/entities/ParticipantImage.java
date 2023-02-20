@@ -27,6 +27,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.ImageFormatCryptoConverter;
+import com.softwaremagico.kt.persistence.values.ImageFormat;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
