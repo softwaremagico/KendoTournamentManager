@@ -42,7 +42,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"converterTests"})
-public class ConverterTests extends AbstractTestNGSpringContextTests {
+public class ConverterTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "Name";
     private static final String CLUB_COUNTRY = "Country";
     private static final String CLUB_CITY = "City";

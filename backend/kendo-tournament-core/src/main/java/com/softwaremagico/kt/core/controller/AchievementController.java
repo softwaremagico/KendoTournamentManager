@@ -187,4 +187,14 @@ public class AchievementController extends BasicInsertableController<Achievement
     private void generateTheTowerAchievement(Tournament tournament) {
 
     }
+
+    /**
+     * When somebody has participated on a tournament and nobody has scored a hit against him/her and
+     * he does neither score a hit against his opponents.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateEntrenchedAchievement(Tournament tournament) {
+
+    }
 }

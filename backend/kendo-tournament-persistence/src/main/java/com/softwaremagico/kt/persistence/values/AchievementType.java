@@ -42,6 +42,8 @@ public enum AchievementType {
 
     THE_TOWER,
 
+    ENTRENCHED,
+
     BILLY_THE_KID;
 
 
