@@ -25,16 +25,23 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.TeamController;
+import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
+import com.softwaremagico.kt.pdf.InvalidXmlElementException;
+import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,15 +49,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/teams")
 public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         TeamProvider, TeamConverterRequest, TeamConverter, TeamController> {
 
-    public TeamServices(TeamController teamController) {
+    private final TournamentController tournamentController;
+
+    private final PdfController pdfController;
+
+    public TeamServices(TeamController teamController, TournamentController tournamentController, PdfController pdfController) {
         super(teamController);
+        this.tournamentController = tournamentController;
+        this.pdfController = pdfController;
     }
 
 
@@ -128,6 +143,24 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
     public void delete(@RequestBody ParticipantsInTournamentDTO participantsInTournaments, HttpServletRequest request) {
         for (final ParticipantDTO participantInTournament : participantsInTournaments.getParticipant()) {
             getController().delete(participantsInTournaments.getTournament(), participantInTournament);
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                            Integer tournamentId,
+                                            Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + " - teams list.pdf").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        try {
+            return pdfController.generateTeamList(locale, tournament).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
 }
