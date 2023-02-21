@@ -180,6 +180,22 @@ public class AuthApi {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(path = "/{username}/password")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void updateUserPassword(@Parameter(description = "username", required = true)
+                                   @PathVariable("username") String username,
+                                   @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
+            throws InterruptedException {
+        Thread.sleep(random.nextInt(10) * 1000L);
+        try {
+            authenticatedUserController.updatePassword(username, request.getOldPassword(), request.getNewPassword());
+        } catch (Exception e) {
+            KendoTournamentLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
