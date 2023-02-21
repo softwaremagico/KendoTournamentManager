@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
@@ -172,7 +173,11 @@ public class AuthApi {
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
         Thread.sleep(random.nextInt(10) * 1000L);
-        authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
+        try {
+            authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
+        } catch (Exception e) {
+            KendoTournamentLogger.errorMessage(this.getClass(), e);
+        }
     }
 
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
