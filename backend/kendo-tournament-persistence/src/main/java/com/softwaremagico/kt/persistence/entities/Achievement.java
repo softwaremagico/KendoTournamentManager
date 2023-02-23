@@ -25,6 +25,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.AchievementTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,6 +53,11 @@ public class Achievement extends Element {
     @Enumerated(EnumType.STRING)
     @Convert(converter = AchievementTypeCryptoConverter.class)
     private AchievementType achievementType;
+
+    @Column(name = "achievement_grade", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = AchievementTypeCryptoConverter.class)
+    private AchievementGrade achievementGrade;
 
     public Achievement() {
         super();

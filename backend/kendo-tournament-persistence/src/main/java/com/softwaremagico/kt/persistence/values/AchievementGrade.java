@@ -24,33 +24,16 @@ package com.softwaremagico.kt.persistence.values;
  * #L%
  */
 
-public enum AchievementType {
+public enum AchievementGrade {
 
-    BILLY_THE_KID,
-
-    LETHAL_WEAPON,
-
-    TERMINATOR,
-
-    JUGGERNAUT,
-
-    THE_KING,
-
-    LOOKS_GOOD_FROM_FAR_AWAY_BUT,
-
-    I_LOVE_THE_FLAGS,
-
-    THE_TOWER,
-
-    ENTRENCHED,
-
-    A_LITTLE_OF_EVERYTHING,
-
-    DIRTY_HARRY;
+    NORMAL,
+    BRONZE,
+    SILVER,
+    GOLD;
 
 
-    public static AchievementType getType(String name) {
-        for (final AchievementType type : AchievementType.values()) {
+    public static AchievementGrade getType(String name) {
+        for (final AchievementGrade type : AchievementGrade.values()) {
             if (type.name().equalsIgnoreCase(name)) {
                 return type;
             }

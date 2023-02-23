@@ -88,6 +88,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Generate new ones.
         generateBillyTheKidAchievement(tournament);
         generateLethalWeaponAchievement(tournament);
+        generateTerminatorAchievement(tournament);
+        generateJuggernautAchievement(tournament);
         generateTheKingAchievement(tournament);
         generateLooksGoodFromFarAwayButAchievementBronze(tournament);
         generateLooksGoodFromFarAwayButAchievementSilver(tournament);
