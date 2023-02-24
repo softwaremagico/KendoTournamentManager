@@ -6,6 +6,9 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {Achievement} from "../../models/achievement.model";
+import {AchievementType} from "../../models/achievement-type.model";
+import {AchievementGrade} from "../../models/achievement-grade.model";
 
 const {version: appVersion} = require('../../../../package.json')
 
@@ -19,6 +22,8 @@ export class LoginComponent {
   password: string;
   loginForm: FormGroup;
   appVersion: string;
+  achievement: Achievement;
+  achievement2: Achievement;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
               private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
@@ -27,6 +32,14 @@ export class LoginComponent {
       username: ['', Validators.email],
       password: ['', Validators.required]
     });
+
+    this.achievement = new Achievement();
+    this.achievement.achievementType = AchievementType.BILLY_THE_KID;
+    this.achievement.achievementGrade = AchievementGrade.BRONZE;
+
+    this.achievement2 = new Achievement();
+    this.achievement2.achievementType = AchievementType.JUGGERNAUT;
+    this.achievement2.achievementGrade = AchievementGrade.BRONZE;
   }
 
   login() {
