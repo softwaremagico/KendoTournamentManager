@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Achievement} from "../../models/achievement.model";
 
 @Component({
   selector: 'app-achievement-tile',
@@ -7,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AchievementTileComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  achievement: Achievement;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
+  }
+
+  getAchievementImage(): String {
+    return "assets/achievements/" + this.achievement.achievementType.toLowerCase() + ".svg";
+  }
+
+  getAchievementAlt(): String {
+    return this.achievement.achievementType.toLowerCase();
   }
 
 }
