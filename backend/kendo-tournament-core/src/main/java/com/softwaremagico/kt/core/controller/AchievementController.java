@@ -97,7 +97,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         generateILoveTheFlagsAchievementBronze(tournament);
         generateILoveTheFlagsAchievementSilver(tournament);
         generateILoveTheFlagsAchievementGold(tournament);
+        generateTheRockAchievement(tournament);
         generateTheTowerAchievement(tournament);
+        generateTheCastleAchievement(tournament);
         generateEntrenchedAchievement(tournament);
         generateALittleOfEverythingAchievement(tournament);
         generateALittleOfEverythingSilverAchievement(tournament);
@@ -209,7 +211,25 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
+    private void generateTheRockAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * When somebody has participated on two consecutive tournaments and nobody has scored a hit against him/her.
+     *
+     * @param tournament The tournament to check.
+     */
     private void generateTheTowerAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * When somebody has participated on three consecutive tournaments and nobody has scored a hit against him/her.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateTheCastleAchievement(Tournament tournament) {
 
     }
 
