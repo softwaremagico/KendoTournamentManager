@@ -94,5 +94,11 @@ public class Achievement extends Element {
         this.achievementType = achievementType;
     }
 
+    public AchievementGrade getAchievementGrade() {
+        return achievementGrade;
+    }
 
+    public void setAchievementGrade(AchievementGrade achievementGrade) {
+        this.achievementGrade = achievementGrade;
+    }
 }
