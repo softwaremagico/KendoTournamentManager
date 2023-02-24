@@ -87,7 +87,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
         //Generate new ones.
         generateBillyTheKidAchievement(tournament);
-        generateBullsEyeAchievement(tournament);
+        generateLethalWeaponAchievement(tournament);
         generateTheKingAchievement(tournament);
         generateLooksGoodFromFarAwayButAchievementBronze(tournament);
         generateLooksGoodFromFarAwayButAchievementSilver(tournament);
@@ -96,6 +96,11 @@ public class AchievementController extends BasicInsertableController<Achievement
         generateILoveTheFlagsAchievementSilver(tournament);
         generateILoveTheFlagsAchievementGold(tournament);
         generateTheTowerAchievement(tournament);
+        generateEntrenchedAchievement(tournament);
+        generateALittleOfEverythingAchievement(tournament);
+        generateALittleOfEverythingSilverAchievement(tournament);
+        generateALittleOfEverythingGoldenAchievement(tournament);
+        generateDirtyHarryAchievement(tournament);
     }
 
     /**
@@ -112,7 +117,25 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateBullsEyeAchievement(Tournament tournament) {
+    private void generateLethalWeaponAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * If somebody has done the maximum score on two consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateTerminatorAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * If somebody has done the maximum score on three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateJuggernautAchievement(Tournament tournament) {
 
     }
 
@@ -195,6 +218,42 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateEntrenchedAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * When all points are scored: Men, Kote, Do.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateALittleOfEverythingAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * When all points are scored: Men, Kote, Do and Hansoku.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateALittleOfEverythingSilverAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * When all points are scored: Men, Kote, Do and Hansoku and Ippon.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateALittleOfEverythingGoldenAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * When somebody loose a combat only by Hansokus.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateDirtyHarryAchievement(Tournament tournament) {
 
     }
 }
