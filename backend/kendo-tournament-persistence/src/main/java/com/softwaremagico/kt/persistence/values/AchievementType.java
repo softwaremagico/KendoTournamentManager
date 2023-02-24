@@ -42,6 +42,8 @@ public enum AchievementType {
 
     THE_TOWER,
 
+    THE_CASTLE,
+
     ENTRENCHED,
 
     A_LITTLE_OF_EVERYTHING,
