@@ -104,7 +104,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         generateALittleOfEverythingAchievement(tournament);
         generateALittleOfEverythingSilverAchievement(tournament);
         generateALittleOfEverythingGoldenAchievement(tournament);
-        generateDirtyHarryAchievement(tournament);
+        generateBoneBreakerAchievement(tournament);
     }
 
     /**
@@ -275,7 +275,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateDirtyHarryAchievement(Tournament tournament) {
+    private void generateBoneBreakerAchievement(Tournament tournament) {
 
     }
 }
