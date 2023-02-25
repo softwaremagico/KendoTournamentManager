@@ -48,7 +48,7 @@ public enum AchievementType {
 
     A_LITTLE_OF_EVERYTHING,
 
-    DIRTY_HARRY;
+    BONE_BREAKER;
 
 
     public static AchievementType getType(String name) {
