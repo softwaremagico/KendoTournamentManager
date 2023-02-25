@@ -9,7 +9,8 @@ import {Achievement} from "../../models/achievement.model";
 export class AchievementTileComponent implements OnInit {
 
   @Input()
-  achievement: Achievement;
+  achievements: Achievement[] | undefined;
+
 
   constructor() {
   }
@@ -17,12 +18,18 @@ export class AchievementTileComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getAchievementImage(): String {
-    return "assets/achievements/" + this.achievement.achievementType.toLowerCase() + ".svg";
+  getAchievementImage(): string {
+    if (this.achievements && this.achievements.length > 0) {
+      return "assets/achievements/" + this.achievements[0].achievementType.toLowerCase() + ".svg";
+    }
+    return "assets/achievements/default.svg";
   }
 
-  getAchievementAlt(): String {
-    return this.achievement.achievementType.toLowerCase();
+  getAchievementAlt(): string {
+    if (this.achievements && this.achievements.length > 0) {
+      return this.achievements[0].achievementType.toLowerCase();
+    }
+    return "";
   }
 
 }
