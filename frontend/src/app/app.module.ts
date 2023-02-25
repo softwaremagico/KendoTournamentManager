@@ -90,6 +90,8 @@ import {
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
 import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
+import { AchievementWallComponent } from './components/achievement-wall/achievement-wall.component';
+import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 
 
 registerLocaleData(localeES, "es");
@@ -179,7 +181,8 @@ registerLocaleData(localeNL, "nl");
     TournamentImageSelectorModule,
     TournamentScoreEditorModule,
     RoleSelectorDialogBoxModule,
-    AchievementTileModule
+    AchievementTileModule,
+    AchievementWallModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
