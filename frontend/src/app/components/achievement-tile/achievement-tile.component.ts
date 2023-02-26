@@ -33,11 +33,9 @@ export class AchievementTileComponent implements OnInit {
   }
 
   isNewAchievement(): boolean {
-    console.log(new Date().setDate(new Date().getDate() - 2))
-    for(const a of this.achievements!){
-      console.log(a.achievementType, '****REMOVED***>', a.createdAt);
-    }
-    return this.achievements?.find(a => a.createdAt > new Date(new Date().setDate(new Date().getDate() - 2))) !== undefined;
+    const today: Date = new Date();
+    today.setDate(today.getDate() - 2);
+    return this.achievements?.find(a => a.createdAt > today) !== undefined;
   }
 
   totalAchievements(): number {

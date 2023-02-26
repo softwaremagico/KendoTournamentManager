@@ -1,5 +1,7 @@
 <div class="achievement">
   <img class="" [src]="getAchievementImage()" [alt]="getAchievementAlt()">
-  <div *ngIf="isNewAchievement()" class="achievement-info new-achievement">!</div>
+  <div class="achievement-border"></div>
+  <div *ngIf="isNewAchievement()" class="start-12">!</div>
+  <div *ngIf="isNewAchievement()" class="new-achievement">!</div>
   <div *ngIf="totalAchievements()>1" class="achievement-info total-achievement">{{totalAchievements()}}</div>
 </div>
