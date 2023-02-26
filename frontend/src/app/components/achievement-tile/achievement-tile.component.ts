@@ -32,4 +32,12 @@ export class AchievementTileComponent implements OnInit {
     return "";
   }
 
+  isNewAchievement(): boolean {
+    return true;
+  }
+
+  totalAchievements(): number | undefined {
+    return this.achievements?.length;
+  }
+
 }
