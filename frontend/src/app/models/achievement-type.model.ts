@@ -22,7 +22,7 @@ export enum AchievementType {
 
   A_LITTLE_OF_EVERYTHING = 'A_LITTLE_OF_EVERYTHING',
 
-  DIRTY_HARRY = 'DIRTY_HARRY'
+  BONE_BREAKER = 'BONE_BREAKER'
 }
 
 export namespace AchievementType {

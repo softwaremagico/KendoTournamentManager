@@ -51,6 +51,12 @@ export class LoginComponent {
     achievement2.achievementGrade = AchievementGrade.NORMAL;
     achievement2.createdAt = new Date(2023, 1, today.getDate() - 4, 12);
     this.achievements.push(achievement2);
+
+    const achievement3: Achievement = new Achievement();
+    achievement3.achievementType = AchievementType.TERMINATOR;
+    achievement3.achievementGrade = AchievementGrade.NORMAL;
+    achievement3.createdAt = new Date(2023, 1, today.getDate() - 1, 12);
+    this.achievements.push(achievement3);
   }
 
   login() {
