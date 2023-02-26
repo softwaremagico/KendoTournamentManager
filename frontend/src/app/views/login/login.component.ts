@@ -22,8 +22,7 @@ export class LoginComponent {
   password: string;
   loginForm: FormGroup;
   appVersion: string;
-  achievement: Achievement;
-  achievement2: Achievement;
+  achievements: Achievement[];
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
               private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
@@ -33,13 +32,25 @@ export class LoginComponent {
       password: ['', Validators.required]
     });
 
-    this.achievement = new Achievement();
-    this.achievement.achievementType = AchievementType.BILLY_THE_KID;
-    this.achievement.achievementGrade = AchievementGrade.BRONZE;
+    this.achievements = [];
+    const today = new Date();
+    let achievement: Achievement = new Achievement();
+    achievement.achievementType = AchievementType.BILLY_THE_KID;
+    achievement.achievementGrade = AchievementGrade.NORMAL;
+    achievement.createdAt.setDate(today.getDate() - 5);
+    this.achievements.push(achievement);
 
-    this.achievement2 = new Achievement();
-    this.achievement2.achievementType = AchievementType.JUGGERNAUT;
-    this.achievement2.achievementGrade = AchievementGrade.BRONZE;
+    achievement = new Achievement();
+    achievement.achievementType = AchievementType.BILLY_THE_KID;
+    achievement.achievementGrade = AchievementGrade.NORMAL;
+    achievement.createdAt.setDate(today.getDate());
+    this.achievements.push(achievement);
+
+    const achievement2: Achievement = new Achievement();
+    achievement2.achievementType = AchievementType.JUGGERNAUT;
+    achievement2.achievementGrade = AchievementGrade.NORMAL;
+    achievement.createdAt.setDate(today.getDate());
+    this.achievements.push(achievement2);
   }
 
   login() {
