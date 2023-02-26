@@ -105,6 +105,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         generateALittleOfEverythingSilverAchievement(tournament);
         generateALittleOfEverythingGoldenAchievement(tournament);
         generateBoneBreakerAchievement(tournament);
+        generateFlexibleAsBambooAchievement(tournament);
+        generateSweatyTenuguiAchievement(tournament);
     }
 
     /**
@@ -278,4 +280,24 @@ public class AchievementController extends BasicInsertableController<Achievement
     private void generateBoneBreakerAchievement(Tournament tournament) {
 
     }
+
+    /**
+     * When somebody has performed all the roles
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateFlexibleAsBambooAchievement(Tournament tournament) {
+
+    }
+
+    /**
+     * First tournament as a competitor
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateSweatyTenuguiAchievement(Tournament tournament) {
+
+    }
+
+
 }
