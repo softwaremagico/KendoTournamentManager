@@ -37,19 +37,19 @@ export class LoginComponent {
     let achievement: Achievement = new Achievement();
     achievement.achievementType = AchievementType.BILLY_THE_KID;
     achievement.achievementGrade = AchievementGrade.NORMAL;
-    achievement.createdAt.setDate(today.getDate() - 5);
+    achievement.createdAt.setDate(new Date().setDate(today.getDate() - 2));
     this.achievements.push(achievement);
 
     achievement = new Achievement();
     achievement.achievementType = AchievementType.BILLY_THE_KID;
     achievement.achievementGrade = AchievementGrade.NORMAL;
-    achievement.createdAt.setDate(today.getDate());
+    achievement.createdAt.setDate(new Date().setDate(new Date().getDate()));
     this.achievements.push(achievement);
 
     const achievement2: Achievement = new Achievement();
     achievement2.achievementType = AchievementType.JUGGERNAUT;
     achievement2.achievementGrade = AchievementGrade.NORMAL;
-    achievement.createdAt.setDate(today.getDate());
+    achievement.createdAt.setDate(new Date().setDate(today.getDate() - 5));
     this.achievements.push(achievement2);
   }
 
