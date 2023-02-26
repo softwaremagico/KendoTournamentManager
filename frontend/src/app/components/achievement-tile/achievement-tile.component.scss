@@ -22,6 +22,28 @@
 
 }
 
+.achievement-info {
+  border-radius: 50%;
+  background-color: red;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  margin-top: -12px;
+}
+
+.new-achievement {
+  margin-left: 10px;
+}
+
+.total-achievement {
+  margin-left: 45px;
+}
+
 img {
   width: 100%; /* or any custom size */
   height: 100%;
@@ -35,23 +57,11 @@ img {
 
 @keyframes animate {
   0% {
-    filter:
-    invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%)
-    drop-shadow(0px 0px 1px #fff)
-    drop-shadow(0px 0px 3px #add8e6)
-    drop-shadow(0px 0px 10px #8097b3)
-    drop-shadow(0px 0px 30px #274e7e)
-    drop-shadow(0px 0px 50px #012f67)
+    filter: invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%) drop-shadow(0px 0px 1px #fff) drop-shadow(0px 0px 2px #add8e6) drop-shadow(0px 0px 3px #8097b3) drop-shadow(0px 0px 10px #274e7e) drop-shadow(0px 0px 15px #012f67)
   }
 
   100% {
-    filter:
-    invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%)
-    drop-shadow(0px 0px 5px #fff)
-    drop-shadow(0px 0px 6px #add8e6)
-    drop-shadow(0px 0px 15px #8097b3)
-    drop-shadow(0px 0px 40px #274e7e)
-    drop-shadow(0px 0px 60px #012f67)
+    filter: invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%) drop-shadow(0px 0px 1px #fff) drop-shadow(0px 0px 4px #add8e6) drop-shadow(0px 0px 6px #8097b3) drop-shadow(0px 0px 20px #274e7e) drop-shadow(0px 0px 30px #012f67)
   }
 }
 
