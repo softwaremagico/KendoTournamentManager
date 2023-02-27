@@ -85,10 +85,9 @@ to change the password or remove this account.
 
 # Contributing to Kendo Tournament Manager v2
 
-You can contribute to this project in different way: as a programmer if you want to include new features or fixing bugs,
-or you can translate the application to your own language. Also improving the design is welcome.
+You can contribute to this project in different way: the most basic way to show your support is to star the project, or to raise issues. But as a programmer you can also include new features or fixing bugs. If you skeak a different language, you can translate the application to your own language. Also any way of improving the design is welcome.
 
-To contribute to Kendo Tournament Manager v2, follow these steps:
+To contribute to the code of Kendo Tournament Manager v2, follow these steps:
 
     Fork this repository.
     Create a branch: git checkout -b <branch_name>.
