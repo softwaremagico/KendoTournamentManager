@@ -31,6 +31,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Cacheable
@@ -61,6 +62,14 @@ public class Achievement extends Element {
 
     public Achievement() {
         super();
+    }
+
+    public Achievement(Participant participant, Tournament tournament, AchievementType achievementType, AchievementGrade achievementGrade) {
+        this();
+        setParticipant(participant);
+        setTournament(tournament);
+        setAchievementType(achievementType);
+        setAchievementGrade(achievementGrade);
     }
 
     public Achievement(Participant participant, Tournament tournament, AchievementType achievementType) {
@@ -99,6 +108,6 @@ public class Achievement extends Element {
     }
 
     public void setAchievementGrade(AchievementGrade achievementGrade) {
-        this.achievementGrade = achievementGrade;
+        this.achievementGrade = Objects.requireNonNullElse(achievementGrade, AchievementGrade.NORMAL);
     }
 }
