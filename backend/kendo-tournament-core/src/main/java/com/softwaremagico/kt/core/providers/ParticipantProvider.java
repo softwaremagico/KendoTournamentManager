@@ -25,7 +25,10 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import com.softwaremagico.kt.persistence.values.AchievementType;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +49,23 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
     public List<Participant> get(List<Integer> ids) {
         return repository.findByIdIn(ids);
     }
+
+    public List<Participant> get(Tournament tournament) {
+        return repository.findByTournament(tournament);
+    }
+
+    public List<Participant> get(Tournament tournament, RoleType roleType) {
+        return repository.findByTournamentAndRoleType(tournament, roleType);
+    }
+
+    public List<Participant> get(Tournament tournament, int differentRoleTypes) {
+        return repository.findParticipantsWithMoreRoleTypesThan(tournament, differentRoleTypes);
+    }
+
+    public List<Participant> getParticipantsWithAchievementFromList(AchievementType achievementType, List<Participant> participants) {
+        return repository.findParticipantsWithAchievementFromList(achievementType, participants);
+    }
+
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
         final List<Participant> databaseParticipants = repository.findByIdIn(ids);

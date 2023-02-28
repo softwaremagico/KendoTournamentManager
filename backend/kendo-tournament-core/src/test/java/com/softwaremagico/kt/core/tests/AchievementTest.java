@@ -1,13 +1,39 @@
 package com.softwaremagico.kt.core.tests;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2023 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -30,6 +56,8 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     private static final int ORGANIZER = 2;
 
     private static final int VOLUNTEER = 2;
+
+    private static final int BAMBOO_ACHIEVEMENT_PARTICIPANTS = 1;
 
     private static final String TOURNAMENT1_NAME = "Tournament 1";
 
@@ -58,11 +86,16 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private FightController fightController;
 
+    @Autowired
+    private AchievementController achievementController;
+
     private List<ParticipantDTO> participantsDTOs;
 
     private TournamentDTO tournament1DTO;
     private TournamentDTO tournament2DTO;
     private TournamentDTO tournament3DTO;
+
+    private ParticipantDTO bambooAchievementParticipant;
 
     private void generateRoles(TournamentDTO tournamentDTO) {
         //Add Competitors Roles
@@ -127,9 +160,12 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
         //Add participants
         participantsDTOs = new ArrayList<>();
-        for (int i = 0; i < MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER; i++) {
+        for (int i = 0; i < MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + BAMBOO_ACHIEVEMENT_PARTICIPANTS; i++) {
             participantsDTOs.add(participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i),
                     String.format("lastname%s", i), clubDTO), null));
+            if (i == MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + BAMBOO_ACHIEVEMENT_PARTICIPANTS - 1) {
+                bambooAchievementParticipant = participantsDTOs.get(i);
+            }
         }
     }
 
@@ -138,8 +174,10 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         //Create Tournament
         tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament1DTO);
+        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
         addTeams(tournament1DTO);
         fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        achievementController.generateAchievements(tournament1DTO);
     }
 
     @BeforeTest(dependsOnMethods = "prepareData")
@@ -147,8 +185,10 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         //Create Tournament
         tournament2DTO = tournamentController.create(new TournamentDTO(TOURNAMENT2_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament2DTO);
+        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
         addTeams(tournament2DTO);
         fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        achievementController.generateAchievements(tournament2DTO);
     }
 
     @BeforeTest(dependsOnMethods = "prepareData")
@@ -156,7 +196,17 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         //Create Tournament
         tournament3DTO = tournamentController.create(new TournamentDTO(TOURNAMENT3_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament3DTO);
+        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
         addTeams(tournament3DTO);
         fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
+        achievementController.generateAchievements(tournament3DTO);
+    }
+
+    @Test
+    public void checkBambooAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(bambooAchievementParticipant);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), bambooAchievementParticipant);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);
     }
 }
