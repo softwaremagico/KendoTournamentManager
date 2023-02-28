@@ -25,21 +25,29 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.AchievementDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.AchievementConverter;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.AchievementProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import com.softwaremagico.kt.persistence.values.AchievementType;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,14 +60,28 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final ParticipantProvider participantProvider;
 
+    private final ParticipantConverter participantConverter;
+
+    private final RoleProvider roleProvider;
+
+    private final AchievementProvider achievementProvider;
+
+    private List<Role> rolesFromTournament;
+
+    private List<Participant> participantsFromTournament;
+
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
                                     TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                                    ParticipantProvider participantProvider) {
+                                    ParticipantProvider participantProvider, ParticipantConverter participantConverter,
+                                    RoleProvider roleProvider, AchievementProvider achievementProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
+        this.participantConverter = participantConverter;
+        this.roleProvider = roleProvider;
+        this.achievementProvider = achievementProvider;
     }
 
     @Override
@@ -67,11 +89,40 @@ public class AchievementController extends BasicInsertableController<Achievement
         return new AchievementConverterRequest(achievement);
     }
 
+    private List<Role> getRolesFromTournament(Tournament tournament) {
+        if (rolesFromTournament == null) {
+            rolesFromTournament = roleProvider.getAll(tournament);
+        }
+        return rolesFromTournament;
+    }
+
+    private List<Participant> getParticipantsFromTournament(Tournament tournament) {
+        if (participantsFromTournament == null) {
+            participantsFromTournament = participantProvider.get(tournament);
+        }
+        return participantsFromTournament;
+    }
+
 
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
         return converter.convertAll(provider.get(participant).stream().map(this::createConverterRequest).collect(Collectors.toList()));
+    }
+
+    public List<AchievementDTO> getParticipantAchievements(ParticipantDTO participantDTO) {
+        return converter.convertAll(provider.get(participantConverter.reverse(participantDTO))
+                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+    }
+
+    public List<AchievementDTO> getAchievements(TournamentDTO tournamentDTO, AchievementType achievementType) {
+        return converter.convertAll(provider.get(tournamentConverter.reverse(tournamentDTO), achievementType)
+                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+    }
+
+    public List<AchievementDTO> getAchievements(AchievementType achievementType) {
+        return converter.convertAll(provider.get(achievementType)
+                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
     public List<AchievementDTO> getTournamentAchievements(Integer tournamentId) {
@@ -287,7 +338,12 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateFlexibleAsBambooAchievement(Tournament tournament) {
-
+        //Get all participants from a tournament that has almost all roles in any tournament,
+        final List<Participant> participants = participantProvider.get(tournament, RoleType.values().length / 2 + 1);
+        //Remove the ones already have the achievement.
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        //Create new achievement for the participants.
+        generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
     }
 
     /**
@@ -299,5 +355,13 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     }
 
+    private void generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
+                                     List<Participant> participants, Tournament tournament) {
+        final List<Achievement> achievements = new ArrayList<>();
+        participants.forEach(participant -> {
+            achievements.add(new Achievement(participant, tournament, achievementType, achievementGrade));
+        });
+        achievementProvider.saveAll(achievements);
+    }
 
 }
