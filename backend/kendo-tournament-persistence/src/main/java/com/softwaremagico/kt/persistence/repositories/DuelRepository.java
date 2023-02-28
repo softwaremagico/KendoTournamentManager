@@ -27,6 +27,7 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,9 +45,21 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     long countByTournament(Tournament tournament);
 
-    @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u WHERE u.competitor1 IN :participants or u.competitor2 IN :participants")
+    @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u WHERE u.competitor1 IN :participants OR u.competitor2 IN :participants")
     List<Duel> findUntiesByParticipantIn(@Param("participants") Collection<Participant> participants);
 
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
+
+    @Query("Select d FROM Duel d WHERE d.tournament=:tournament AND (" +
+            "(size(d.competitor1Score)=2 AND d.competitor1Score IN :scores) OR " +
+            "(size(d.competitor2Score)=2 AND d.competitor2Score IN :scores)" +
+            ") ")
+    List<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
+
+    @Query("Select d FROM Duel d WHERE d.tournament=:tournament AND (" +
+            "(size(d.competitor1Score)=2 AND d.competitor1Score NOT IN :forbiddenScores) OR " +
+            "(size(d.competitor2Score)=2 AND d.competitor2Score NOT IN :forbiddenScores)" +
+            ") ")
+    List<Duel> findByNotUsingForbiddenScores(@Param("tournament") Tournament tournament, @Param("forbiddenScores") Collection<Score> forbiddenScores);
 }

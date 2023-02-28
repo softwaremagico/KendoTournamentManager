@@ -52,7 +52,9 @@ public enum AchievementType {
 
     FLEXIBLE_AS_BAMBOO,
 
-    SWEATY_TENUGUI;
+    SWEATY_TENUGUI,
+
+    WOODCUTTER;
 
 
     public static AchievementType getType(String name) {
