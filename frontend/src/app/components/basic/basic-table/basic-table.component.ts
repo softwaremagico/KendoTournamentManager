@@ -25,7 +25,7 @@ export class BasicTableComponent implements OnInit {
 
   pipe: DatePipe;
 
-  constructor(public dialog: MatDialog, private userSession: UserSessionService, private translateService: TranslateService,
+  constructor(public dialog: MatDialog, private translateService: TranslateService,
               private userSessionService: UserSessionService) {
     this.setLocale();
   }
@@ -97,12 +97,12 @@ export class BasicTableComponent implements OnInit {
   }
 
   getDefaultPageSize(): number {
-    return this.userSession.getItemsPerPage();
+    return this.userSessionService.getItemsPerPage();
   }
 
 
   onPaginateChange($event: PageEvent) {
-    this.userSession.setItemsPerPage($event.pageSize);
+    this.userSessionService.setItemsPerPage($event.pageSize);
   }
 
   getColumnData(column: any): any {
