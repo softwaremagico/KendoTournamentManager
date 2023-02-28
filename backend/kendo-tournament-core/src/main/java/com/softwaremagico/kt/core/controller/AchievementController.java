@@ -33,22 +33,16 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.AchievementProvider;
-import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.RoleProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.persistence.entities.Achievement;
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.Role;
-import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -66,6 +60,8 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final AchievementProvider achievementProvider;
 
+    private final DuelProvider duelProvider;
+
     private List<Role> rolesFromTournament;
 
     private List<Participant> participantsFromTournament;
@@ -74,7 +70,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
                                     TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
                                     ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                                    RoleProvider roleProvider, AchievementProvider achievementProvider) {
+                                    RoleProvider roleProvider, AchievementProvider achievementProvider, DuelProvider duelProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -82,6 +78,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.participantConverter = participantConverter;
         this.roleProvider = roleProvider;
         this.achievementProvider = achievementProvider;
+        this.duelProvider = duelProvider;
     }
 
     @Override
@@ -329,8 +326,44 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateBoneBreakerAchievement(Tournament tournament) {
-
+        final List<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.HANSOKU);
+        final Set<Participant> participants = new HashSet<>();
+        duels.forEach(duel -> {
+            if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().get(0) == Score.HANSOKU
+                    && duel.getCompetitor1Score().get(1) == Score.HANSOKU) {
+                participants.add(duel.getCompetitor2());
+            }
+            if (duel.getCompetitor2Score().size() == 2 && duel.getCompetitor2Score().get(0) == Score.HANSOKU
+                    && duel.getCompetitor2Score().get(1) == Score.HANSOKU) {
+                participants.add(duel.getCompetitor1());
+            }
+        });
+        //Create new achievement for the participants.
+        generateAchievement(AchievementType.BONE_BREAKER, AchievementGrade.NORMAL, participants, tournament);
     }
+
+    /**
+     * When somebody only perform 'do' scores and win a duel.
+     *
+     * @param tournament The tournament to check.
+     */
+    private void generateWoodcutterAchievement(Tournament tournament) {
+        final List<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.DO);
+        final Set<Participant> woodcutters = new HashSet<>();
+        duels.forEach(duel -> {
+            if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().get(0) == Score.DO
+                    && duel.getCompetitor1Score().get(1) == Score.DO) {
+                woodcutters.add(duel.getCompetitor1());
+            }
+            if (duel.getCompetitor2Score().size() == 2 && duel.getCompetitor2Score().get(0) == Score.DO
+                    && duel.getCompetitor2Score().get(1) == Score.DO) {
+                woodcutters.add(duel.getCompetitor2());
+            }
+        });
+        //Create new achievement for the participants.
+        generateAchievement(AchievementType.WOODCUTTER, AchievementGrade.NORMAL, woodcutters, tournament);
+    }
+
 
     /**
      * When somebody has performed all the roles
@@ -356,7 +389,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     private void generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
-                                     List<Participant> participants, Tournament tournament) {
+                                     Collection<Participant> participants, Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();
         participants.forEach(participant -> {
             achievements.add(new Achievement(participant, tournament, achievementType, achievementGrade));

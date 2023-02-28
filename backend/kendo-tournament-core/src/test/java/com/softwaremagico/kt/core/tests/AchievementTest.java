@@ -29,13 +29,13 @@ import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -97,6 +97,10 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     private TournamentDTO tournament3DTO;
 
     private ParticipantDTO bambooAchievementParticipant;
+
+    private ParticipantDTO woodCutter;
+
+    private ParticipantDTO boneBreaker;
 
     private void generateRoles(TournamentDTO tournamentDTO) {
         //Add Competitors Roles
@@ -177,7 +181,19 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         generateRoles(tournament1DTO);
         roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
         addTeams(tournament1DTO);
-        fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+
+        //Woodcutter
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
+        woodCutter = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
+
+        //BoneBreaker
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
+        boneBreaker = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
+
         achievementController.generateAchievements(tournament1DTO);
     }
 
@@ -209,5 +225,21 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), bambooAchievementParticipant);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);
+    }
+
+    @Test
+    public void checkWoodCutterAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.WOODCUTTER);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), woodCutter);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.WOODCUTTER).size(), 1);
+    }
+
+    @Test
+    public void checkBoneBreakerAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.BONE_BREAKER);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), boneBreaker);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.BONE_BREAKER).size(), 1);
     }
 }
