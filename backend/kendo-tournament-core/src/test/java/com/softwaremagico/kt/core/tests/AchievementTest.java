@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -110,12 +111,12 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
         //Add Organizer Roles
         for (int i = 0; i < ORGANIZER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(participantsDTOs.size() + REFEREES + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.COMPETITOR), null);
         }
 
         //Add Volunteer Roles
         for (int i = 0; i < VOLUNTEER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(participantsDTOs.size() + REFEREES + ORGANIZER + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.COMPETITOR), null);
         }
     }
 
@@ -153,7 +154,7 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         }
     }
 
-    @BeforeTest
+    @BeforeClass
     public void prepareData() {
         //Add club
         final ClubDTO clubDTO = clubController.create(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY, null);
@@ -169,7 +170,7 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         }
     }
 
-    @BeforeTest(dependsOnMethods = "prepareData")
+    @BeforeClass(dependsOnMethods = "prepareData")
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
@@ -180,23 +181,23 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         achievementController.generateAchievements(tournament1DTO);
     }
 
-    @BeforeTest(dependsOnMethods = "prepareData")
+    @BeforeClass(dependsOnMethods = "prepareTournament1")
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = tournamentController.create(new TournamentDTO(TOURNAMENT2_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament2DTO);
-        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
         addTeams(tournament2DTO);
         fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
         achievementController.generateAchievements(tournament2DTO);
     }
 
-    @BeforeTest(dependsOnMethods = "prepareData")
+    @BeforeClass(dependsOnMethods = "prepareTournament2")
     public void prepareTournament3() {
         //Create Tournament
         tournament3DTO = tournamentController.create(new TournamentDTO(TOURNAMENT3_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament3DTO);
-        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
         addTeams(tournament3DTO);
         fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
         achievementController.generateAchievements(tournament3DTO);
