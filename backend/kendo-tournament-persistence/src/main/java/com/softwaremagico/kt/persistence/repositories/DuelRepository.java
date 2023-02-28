@@ -52,14 +52,8 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     Long getDurationAverage();
 
     @Query("Select d FROM Duel d WHERE d.tournament=:tournament AND (" +
-            "(size(d.competitor1Score)=2 AND d.competitor1Score IN :scores) OR " +
-            "(size(d.competitor2Score)=2 AND d.competitor2Score IN :scores)" +
+            "(size(d.competitor1Score)=2 AND d.competitor1Score[0] IN :scores AND d.competitor1Score[1] IN :scores) OR " +
+            "(size(d.competitor2Score)=2 AND d.competitor2Score[0] IN :scores AND d.competitor2Score[1] IN :scores)" +
             ") ")
     List<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
-
-    @Query("Select d FROM Duel d WHERE d.tournament=:tournament AND (" +
-            "(size(d.competitor1Score)=2 AND d.competitor1Score NOT IN :forbiddenScores) OR " +
-            "(size(d.competitor2Score)=2 AND d.competitor2Score NOT IN :forbiddenScores)" +
-            ") ")
-    List<Duel> findByNotUsingForbiddenScores(@Param("tournament") Tournament tournament, @Param("forbiddenScores") Collection<Score> forbiddenScores);
 }
