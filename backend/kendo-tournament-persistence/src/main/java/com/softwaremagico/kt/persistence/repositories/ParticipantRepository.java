@@ -54,7 +54,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
             "(SELECT rl.participant FROM Role rl WHERE rl.tournament = :tournament) " +
             "GROUP BY r.participant " +
             "HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes")
-    List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournament") Tournament tournament, @Param("differentRoleTypes") int differentRoleTypes);
+    List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournament") Tournament tournament, @Param("differentRoleTypes") long differentRoleTypes);
 
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);
