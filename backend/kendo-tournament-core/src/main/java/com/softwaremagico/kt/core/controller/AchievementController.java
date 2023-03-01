@@ -153,6 +153,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         generateALittleOfEverythingSilverAchievement(tournament);
         generateALittleOfEverythingGoldenAchievement(tournament);
         generateBoneBreakerAchievement(tournament);
+        generateWoodcutterAchievement(tournament);
         generateFlexibleAsBambooAchievement(tournament);
         generateSweatyTenuguiAchievement(tournament);
     }
@@ -326,7 +327,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateBoneBreakerAchievement(Tournament tournament) {
-        final List<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.HANSOKU);
+        final Set<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.HANSOKU);
         final Set<Participant> participants = new HashSet<>();
         duels.forEach(duel -> {
             if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().get(0) == Score.HANSOKU
@@ -348,7 +349,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateWoodcutterAchievement(Tournament tournament) {
-        final List<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.DO);
+        final Set<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.DO);
         final Set<Participant> woodcutters = new HashSet<>();
         duels.forEach(duel -> {
             if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().get(0) == Score.DO
@@ -385,7 +386,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateSweatyTenuguiAchievement(Tournament tournament) {
-
+        final List<Participant> participants = participantProvider.getParticipantFirstTimeCompetitors(tournament);
+        generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
     private void generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,

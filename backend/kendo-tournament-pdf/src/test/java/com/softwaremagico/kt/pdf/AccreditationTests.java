@@ -55,7 +55,6 @@ public class AccreditationTests extends BasicDataTest {
     @BeforeClass
     public void prepareData() {
         populateData();
-        resolveFights();
     }
 
     @Test
