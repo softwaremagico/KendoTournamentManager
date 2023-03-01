@@ -35,8 +35,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
@@ -63,8 +62,11 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.getDurationAverage();
     }
 
-    public List<Duel> findByOnlyScore(Tournament tournament, Score score) {
-        return repository.findByOnlyScore(tournament, Collections.singleton(score));
+    public Set<Duel> findByOnlyScore(Tournament tournament, Score score) {
+        final List<Score> forbiddenScores = new ArrayList<>(Arrays.asList(Score.values()));
+        forbiddenScores.remove(score);
+        forbiddenScores.remove(Score.EMPTY);
+        return repository.findByOnlyScore(tournament, Collections.singleton(score), forbiddenScores);
     }
 
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})
