@@ -100,6 +100,10 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
     private ParticipantDTO woodCutter;
 
+    private ParticipantDTO noWoodCutter1;
+
+    private ParticipantDTO noWoodCutter2;
+
     private ParticipantDTO boneBreaker;
 
     private void generateRoles(TournamentDTO tournamentDTO) {
@@ -110,17 +114,17 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
         //Add Referee Roles
         for (int i = 0; i < REFEREES; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.REFEREE), null);
         }
 
         //Add Organizer Roles
         for (int i = 0; i < ORGANIZER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.ORGANIZER), null);
         }
 
         //Add Volunteer Roles
         for (int i = 0; i < VOLUNTEER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.VOLUNTEER), null);
         }
     }
 
@@ -179,7 +183,7 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         //Create Tournament
         tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament1DTO);
-        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
+        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
         addTeams(tournament1DTO);
         List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
 
@@ -187,12 +191,25 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(0).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
         woodCutter = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
 
+        //No Woodcutter
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor2Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(1).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        noWoodCutter1 = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
+        noWoodCutter2 = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
+
         //BoneBreaker
-        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
-        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
-        boneBreaker = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.HANSOKU);
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.HANSOKU);
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        boneBreaker = fightDTOs.get(0).getDuels().get(2).getCompetitor2();
 
         achievementController.generateAchievements(tournament1DTO);
     }
@@ -202,7 +219,7 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         //Create Tournament
         tournament2DTO = tournamentController.create(new TournamentDTO(TOURNAMENT2_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         generateRoles(tournament2DTO);
-        roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
         addTeams(tournament2DTO);
         fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
         achievementController.generateAchievements(tournament2DTO);
@@ -236,10 +253,26 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
+    public void checkNoWoodCutter() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.WOODCUTTER);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        // noWoodCutter1 has 'D' and 'M'.
+        Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noWoodCutter1);
+        // noWoodCutter2 has only one 'D'.
+        Assert.assertNotEquals(achievementsDTOs.get(0).getParticipant(), noWoodCutter2);
+    }
+
+    @Test
     public void checkBoneBreakerAchievement() {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.BONE_BREAKER);
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), boneBreaker);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.BONE_BREAKER).size(), 1);
+    }
+
+    @Test
+    public void checkSweatyTenuguiAchievement() {
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.SWEATY_TENUGUI).size(), MEMBERS * TEAMS);
+        Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.SWEATY_TENUGUI).size(), 1);
     }
 }
