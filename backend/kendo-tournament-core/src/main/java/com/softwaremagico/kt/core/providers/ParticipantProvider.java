@@ -66,6 +66,10 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return repository.findParticipantsWithAchievementFromList(achievementType, participants);
     }
 
+    public List<Participant> getParticipantFirstTimeCompetitors(Tournament tournament) {
+        return repository.findParticipantsWithFirstRoleAs(tournament, RoleType.COMPETITOR);
+    }
+
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
         final List<Participant> databaseParticipants = repository.findByIdIn(ids);

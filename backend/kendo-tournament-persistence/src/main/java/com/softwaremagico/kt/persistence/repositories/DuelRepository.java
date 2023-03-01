@@ -36,6 +36,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @Transactional
@@ -51,9 +52,9 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
 
-    @Query("Select d FROM Duel d WHERE d.tournament=:tournament AND (" +
-            "(size(d.competitor1Score)=2 AND d.competitor1Score[0] IN :scores AND d.competitor1Score[1] IN :scores) OR " +
-            "(size(d.competitor2Score)=2 AND d.competitor2Score[0] IN :scores AND d.competitor2Score[1] IN :scores)" +
+    @Query("SELECT d FROM Duel d JOIN d.competitor1Score s1 JOIN d.competitor2Score s2 WHERE d.tournament=:tournament AND (" +
+            "(size(d.competitor1Score)=2 AND s1 IN :scores AND s1 NOT IN :forbiddenScores) OR " +
+            "(size(d.competitor2Score)=2 AND s2 IN :scores AND s2 NOT IN :forbiddenScores)" +
             ") ")
-    List<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
+    Set<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores, @Param("forbiddenScores") Collection<Score> forbiddenScores);
 }

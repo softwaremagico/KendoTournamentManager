@@ -66,10 +66,10 @@ public class ListTests extends BasicDataTest {
     }
 
     @Test
-    public void generateTeamsListPdf() {
+    public void generateTeamsScoreListPdf() {
         List<ScoreOfTeam> teamsTopTen = rankingController.getTeamsScoreRanking(tournament);
         Assert.assertEquals(pdfController.generateTeamsScoreList(Locale.getDefault(), tournament, teamsTopTen)
-                .createFile(PDF_PATH_OUTPUT + "TeamsList.pdf"), 2); // No clue why are 2 pages and not 1.
+                .createFile(PDF_PATH_OUTPUT + "TeamsScoreList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
 
     @Test
