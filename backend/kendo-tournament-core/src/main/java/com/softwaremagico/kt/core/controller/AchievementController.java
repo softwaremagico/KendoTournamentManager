@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 @Controller
 public class AchievementController extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository,
         AchievementProvider, AchievementConverterRequest, AchievementConverter> {
+    private static final int BILL_THE_KID_MAX_TIME = 10;
     private final TournamentConverter tournamentConverter;
 
     private final TournamentProvider tournamentProvider;
@@ -164,7 +165,23 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateBillyTheKidAchievement(Tournament tournament) {
+        final Set<Duel> duels = duelProvider.findByScorePerformedInLessThan(tournament, BILL_THE_KID_MAX_TIME);
+        final Set<Participant> billies = new HashSet<>();
+        duels.forEach(duel -> {
+            duel.getCompetitor1ScoreTime().forEach(time -> {
+                if (time <= BILL_THE_KID_MAX_TIME) {
+                    billies.add(duel.getCompetitor1());
+                }
+            });
+            duel.getCompetitor2ScoreTime().forEach(time -> {
+                if (time <= BILL_THE_KID_MAX_TIME) {
+                    billies.add(duel.getCompetitor2());
+                }
+            });
 
+        });
+        //Create new achievement for the participants.
+        generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, billies, tournament);
     }
 
     /**
