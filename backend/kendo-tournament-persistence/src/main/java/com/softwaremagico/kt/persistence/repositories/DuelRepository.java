@@ -57,4 +57,10 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
             "(size(d.competitor2Score)=2 AND s2 IN :scores AND s2 NOT IN :forbiddenScores)" +
             ") ")
     Set<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores, @Param("forbiddenScores") Collection<Score> forbiddenScores);
+
+    @Query("SELECT d FROM Duel d WHERE d.tournament=:tournament AND (" +
+            "d.competitor1ScoreTime <=:maxSeconds OR " +
+            "d.competitor2ScoreTime <=:maxSeconds " +
+            ") ")
+    Set<Duel> findByScoreOnTimeLess(@Param("tournament") Tournament tournament, @Param("maxSeconds") int maxSeconds);
 }
