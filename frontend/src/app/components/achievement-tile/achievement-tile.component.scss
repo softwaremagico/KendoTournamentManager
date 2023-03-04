@@ -8,6 +8,9 @@
 
   background: rgb(1, 16, 64);
   background: linear-gradient(135deg, rgba(1, 16, 64, 1) 0%, rgba(64, 77, 141, 1) 50%, rgba(36, 18, 28, 1) 88%, rgba(255, 42, 42, 1) 100%);
+
+  position: relative;
+  display: inline-block;
 }
 
 .achievement-border {
@@ -112,4 +115,45 @@ img {
 
 .start-12:after {
   transform: rotate(60deg);
+}
+
+/* Tooltip text */
+.achievement .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 14px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.achievement .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.achievement:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }

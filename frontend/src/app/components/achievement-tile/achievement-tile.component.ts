@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
+import {TranslateService} from "@ngx-translate/core";
+import {AchievementType} from "../../models/achievement-type.model";
 
 @Component({
   selector: 'app-achievement-tile',
@@ -14,7 +16,7 @@ export class AchievementTileComponent implements OnInit {
   grade: AchievementGrade;
 
 
-  constructor() {
+  constructor(private translateService: TranslateService) {
 
   }
 
@@ -66,6 +68,14 @@ export class AchievementTileComponent implements OnInit {
 
   public get AchievementGrade() {
     return AchievementGrade;
+  }
+
+  tooltipText(): string {
+    if (!this.achievements || this.achievements.length == 0) {
+      return "";
+    }
+    const parameters: object = {achievementType: this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType))};
+    return this.translateService.instant('achievementToolTip', parameters);
   }
 
 }
