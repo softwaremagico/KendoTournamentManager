@@ -67,6 +67,11 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.findByOnlyScore(tournament, Collections.singleton(score));
     }
 
+    public List<Duel> findByScoreDuration(Tournament tournament, int scoreMaxDuration) {
+        return repository.findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
+                tournament, scoreMaxDuration, scoreMaxDuration);
+    }
+
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})
     @Scheduled(fixedDelay = 60 * 10 * 1000)
     public void reportCacheEvict() {
