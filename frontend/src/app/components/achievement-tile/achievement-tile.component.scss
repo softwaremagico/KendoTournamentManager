@@ -20,17 +20,20 @@
   margin-left: -5px;
 }
 
-
-.achievement.bronze {
-
+.achievement-border.normal {
+  border-color: black;
 }
 
-.achievement.silver {
-
+.achievement-border.bronze {
+  border-color: #CD7F32;
 }
 
-.achievement.gold {
+.achievement-border.silver {
+  border-color: #C0C0C0;
+}
 
+.achievement-border.gold {
+  border-color: #FFD700;
 }
 
 .achievement-info {
