@@ -48,6 +48,9 @@ import java.util.stream.Collectors;
 @Controller
 public class AchievementController extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository,
         AchievementProvider, AchievementConverterRequest, AchievementConverter> {
+
+    private final static int QUICK_SCORE = 10;
+
     private final TournamentConverter tournamentConverter;
 
     private final TournamentProvider tournamentProvider;
@@ -163,7 +166,22 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private void generateBillyTheKidAchievement(Tournament tournament) {
-
+        final List<Duel> duels = duelProvider.findByScoreDuration(tournament, QUICK_SCORE);
+        final Set<Participant> participants = new HashSet<>();
+        duels.forEach(duel -> {
+            duel.getCompetitor1ScoreTime().forEach(time -> {
+                if (time < QUICK_SCORE && time > Duel.DEFAULT_DURATION) {
+                    participants.add(duel.getCompetitor1());
+                }
+            });
+            duel.getCompetitor2ScoreTime().forEach(time -> {
+                if (time < QUICK_SCORE && time > Duel.DEFAULT_DURATION) {
+                    participants.add(duel.getCompetitor2());
+                }
+            });
+        });
+        //Create new achievement for the participants.
+        generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, participants, tournament);
     }
 
     /**
