@@ -36,7 +36,7 @@ export class LoginComponent {
     const today = new Date();
     let achievement: Achievement = new Achievement();
     achievement.achievementType = AchievementType.BILLY_THE_KID;
-    achievement.achievementGrade = AchievementGrade.NORMAL;
+    achievement.achievementGrade = AchievementGrade.BRONZE;
     achievement.createdAt = new Date(2023, 1, today.getDate() - 1, 12);
     this.achievements.push(achievement);
 
@@ -48,15 +48,21 @@ export class LoginComponent {
 
     const achievement2: Achievement = new Achievement();
     achievement2.achievementType = AchievementType.JUGGERNAUT;
-    achievement2.achievementGrade = AchievementGrade.NORMAL;
+    achievement2.achievementGrade = AchievementGrade.GOLD;
     achievement2.createdAt = new Date(2023, 1, today.getDate() - 4, 12);
     this.achievements.push(achievement2);
 
     const achievement3: Achievement = new Achievement();
     achievement3.achievementType = AchievementType.TERMINATOR;
-    achievement3.achievementGrade = AchievementGrade.NORMAL;
+    achievement3.achievementGrade = AchievementGrade.SILVER;
     achievement3.createdAt = new Date(2023, 1, today.getDate() - 1, 12);
     this.achievements.push(achievement3);
+
+    const achievement4: Achievement = new Achievement();
+    achievement4.achievementType = AchievementType.ENTRENCHED;
+    achievement4.achievementGrade = AchievementGrade.BRONZE;
+    achievement4.createdAt = new Date(2023, 1, today.getDate() - 1, 12);
+    this.achievements.push(achievement4);
   }
 
   login() {

@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
+import {AchievementGrade} from "../../models/achievement-grade.model";
 
 @Component({
   selector: 'app-achievement-tile',
@@ -10,12 +11,30 @@ export class AchievementTileComponent implements OnInit {
 
   @Input()
   achievements: Achievement[] | undefined;
+  grade: AchievementGrade;
 
 
   constructor() {
+
   }
 
   ngOnInit(): void {
+    this.grade = AchievementGrade.NORMAL;
+    if (this.achievements) {
+      for (const achievement of this.achievements) {
+        if (achievement.achievementGrade == AchievementGrade.BRONZE &&
+          this.grade != AchievementGrade.SILVER) {
+          this.grade = AchievementGrade.BRONZE;
+        }
+        if (achievement.achievementGrade == AchievementGrade.SILVER) {
+          this.grade = AchievementGrade.SILVER;
+        }
+        if (achievement.achievementGrade == AchievementGrade.GOLD) {
+          this.grade = AchievementGrade.GOLD;
+          break;
+        }
+      }
+    }
   }
 
   getAchievementImage(): string {
@@ -43,6 +62,10 @@ export class AchievementTileComponent implements OnInit {
       return 0;
     }
     return this.achievements?.length;
+  }
+
+  public get AchievementGrade() {
+    return AchievementGrade;
   }
 
 }
