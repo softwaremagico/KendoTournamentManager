@@ -1,6 +1,11 @@
 <div class="achievement">
   <img class="" [src]="getAchievementImage()" [alt]="getAchievementAlt()">
-  <div class="achievement-border"></div>
+  <div class="achievement-border"
+       [ngClass]="{
+       'normal': grade === AchievementGrade.NORMAL,
+       'bronze': grade === AchievementGrade.BRONZE,
+       'silver': grade === AchievementGrade.SILVER,
+        'gold': grade === AchievementGrade.GOLD}"></div>
   <div *ngIf="isNewAchievement()" class="start-12">!</div>
   <div *ngIf="isNewAchievement()" class="new-achievement">!</div>
   <div *ngIf="totalAchievements()>1" class="achievement-info total-achievement">{{totalAchievements()}}</div>
