@@ -51,3 +51,13 @@ export namespace AchievementType {
     });
   }
 }
+
+export namespace AchievementType {
+  export function toCamel(achievementType: AchievementType) {
+    return achievementType.toLowerCase()
+      .replace(/_(.)/g, function ($1) {
+        return $1.toUpperCase();
+      })
+      .replace(/_/g, '');
+  }
+}
