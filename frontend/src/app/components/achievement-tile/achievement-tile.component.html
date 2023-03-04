@@ -1,5 +1,6 @@
 <div class="achievement">
   <img class="" [src]="getAchievementImage()" [alt]="getAchievementAlt()">
+  <span class="tooltiptext" *ngIf="achievements!.length>0">{{tooltipText()}}</span>
   <div class="achievement-border"
        [ngClass]="{
        'normal': grade === AchievementGrade.NORMAL,
