@@ -102,6 +102,8 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
     private ParticipantDTO boneBreaker;
 
+    private ParticipantDTO billyTheKid;
+
     private void generateRoles(TournamentDTO tournamentDTO) {
         //Add Competitors Roles
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
@@ -185,14 +187,19 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
         //Woodcutter
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1ScoreTime(11);
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
         woodCutter = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
 
         //BoneBreaker
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
+        fightDTOs.get(0).getDuels().get(1).addCompetitor1ScoreTime(6);
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
         boneBreaker = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
+        billyTheKid = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
 
         achievementController.generateAchievements(tournament1DTO);
     }
@@ -241,5 +248,13 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), boneBreaker);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.BONE_BREAKER).size(), 1);
+    }
+
+    @Test
+    public void checkBillyTheKidAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.BILLY_THE_KID);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), billyTheKid);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.BILLY_THE_KID).size(), 1);
     }
 }
