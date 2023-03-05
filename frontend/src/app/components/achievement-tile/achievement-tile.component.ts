@@ -49,16 +49,7 @@ export class AchievementTileComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-    this.onLeftBorder = false;
-    this.onRightBorder = false;
-    if (this.mouseX! - 150 < 0) {
-      this.onLeftBorder = true;
-    }
-    if (this.mouseX! + 150 > this.screenWidth!) {
-      this.onRightBorder = true;
-    }
+    this.calculateTooltipMargin();
   }
 
   getAchievementImage(): string {
@@ -133,10 +124,25 @@ export class AchievementTileComponent implements OnInit {
   updateCoordinates($event: MouseEvent) {
     this.mouseX = $event.clientX;
     this.mouseY = $event.clientY;
+    this.calculateTooltipMargin();
   }
 
   clearCoordinates($event: MouseEvent) {
     this.mouseX = undefined;
     this.mouseY = undefined;
+  }
+
+
+  calculateTooltipMargin() {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    this.onLeftBorder = false;
+    this.onRightBorder = false;
+    if (this.mouseX! - 150 < 0) {
+      this.onLeftBorder = true;
+    }
+    if (this.mouseX! + 150 > this.screenWidth!) {
+      this.onRightBorder = true;
+    }
   }
 }
