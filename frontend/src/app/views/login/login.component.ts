@@ -73,6 +73,13 @@ export class LoginComponent {
     achievement4.createdAt = new Date(2023, 1, today.getDate() - 1, 12);
     achievement4.tournament=tournament;
     this.achievements.push(achievement4);
+
+    const achievement5: Achievement = new Achievement();
+    achievement5.achievementType = AchievementType.FLEXIBLE_AS_BAMBOO;
+    achievement5.achievementGrade = AchievementGrade.BRONZE;
+    achievement5.createdAt = new Date(2023, 1, today.getDate() - 1, 12);
+    achievement5.tournament=tournament;
+    this.achievements.push(achievement5);
   }
 
   login() {
