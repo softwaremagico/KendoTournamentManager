@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, HostListener, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
 import {TranslateService} from "@ngx-translate/core";
@@ -17,7 +17,12 @@ export class AchievementTileComponent implements OnInit {
   @Input()
   achievements: Achievement[] | undefined;
   grade: AchievementGrade;
-
+  mouseX: number | undefined;
+  mouseY: number | undefined;
+  screenHeight: number | undefined;
+  screenWidth: number | undefined;
+  onLeftBorder: boolean;
+  onRightBorder: boolean;
 
   constructor(private translateService: TranslateService) {
 
@@ -39,6 +44,20 @@ export class AchievementTileComponent implements OnInit {
           break;
         }
       }
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    this.onLeftBorder = false;
+    this.onRightBorder = false;
+    if (this.mouseX! - 150 < 0) {
+      this.onLeftBorder = true;
+    }
+    if (this.mouseX! + 150 > this.screenWidth!) {
+      this.onRightBorder = true;
     }
   }
 
@@ -77,11 +96,6 @@ export class AchievementTileComponent implements OnInit {
     if (!this.achievements || this.achievements.length == 0) {
       return "";
     }
-    // const parameters: object = {
-    //   achievementType: this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)),
-    //   achievementDescription: this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)+'Description')
-    // };
-    // return this.translateService.instant('achievementToolTip', parameters);
     let tooltipText: string = '<b>' + this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)) + '</b><br>' +
       this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType) + 'Description') + '<br>';
     if (this.achievements) {
@@ -116,4 +130,13 @@ export class AchievementTileComponent implements OnInit {
     return tooltipText;
   }
 
+  updateCoordinates($event: MouseEvent) {
+    this.mouseX = $event.clientX;
+    this.mouseY = $event.clientY;
+  }
+
+  clearCoordinates($event: MouseEvent) {
+    this.mouseX = undefined;
+    this.mouseY = undefined;
+  }
 }

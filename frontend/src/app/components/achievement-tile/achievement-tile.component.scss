@@ -28,15 +28,15 @@
 }
 
 .achievement-border.bronze {
-  border-color: #CD7F32;
+  border-color: hsl(28, 31%, 52%);
 }
 
 .achievement-border.silver {
-  border-color: #C0C0C0;
+  border-color: hsl(210, 3%, 61%);
 }
 
 .achievement-border.gold {
-  border-color: #FFD700;
+  border-color: hsl(45, 100%, 47%);
 }
 
 .achievement-info {
@@ -122,11 +122,11 @@ img {
   visibility: hidden;
   width: 300px;
   background-color: #555;
-  color: #fff;
+  color: #ffffff;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 12px;
 
   /* Position the tooltip text */
   position: absolute;
@@ -138,6 +138,18 @@ img {
   /* Fade in tooltip */
   opacity: 0;
   transition: opacity 0.3s;
+}
+
+.achievement .tooltiptext .left-border {
+  margin-left: 0;
+}
+
+.achievement .tooltiptext .right-border {
+  margin-left: -300px;
+}
+
+.achievement .tooltiptext .center {
+  margin-left: -150px;
 }
 
 /* Tooltip arrow */
@@ -180,15 +192,15 @@ img {
 
 .circle.bronze {
   border-color: #CD7F32;
-  background-color: #CD7F32;
+  background-color: hsl(28, 31%, 52%);
 }
 
 .circle.silver {
   border-color: #C0C0C0;
-  background-color: #C0C0C0;
+  background-color: hsl(210, 3%, 61%);
 }
 
 .circle.gold {
   border-color: #FFD700;
-  background-color: #FFD700;
+  background-color: hsl(45, 100%, 47%);
 }
