@@ -120,7 +120,7 @@ img {
 /* Tooltip text */
 .achievement .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 300px;
   background-color: #555;
   color: #fff;
   text-align: center;
@@ -133,7 +133,7 @@ img {
   z-index: 1;
   bottom: 125%;
   left: 50%;
-  margin-left: -60px;
+  margin-left: -150px;
 
   /* Fade in tooltip */
   opacity: 0;
@@ -156,4 +156,39 @@ img {
 .achievement:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.tournament-item {
+  display: flex;
+  vertical-align: center;
+}
+
+.circle {
+  border-radius: 50%;
+  border: 2px solid;
+  width: 5px;
+  height: 5px;
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.circle.normal {
+  border-color: black;
+  background-color: black;
+}
+
+.circle.bronze {
+  border-color: #CD7F32;
+  background-color: #CD7F32;
+}
+
+.circle.silver {
+  border-color: #C0C0C0;
+  background-color: #C0C0C0;
+}
+
+.circle.gold {
+  border-color: #FFD700;
+  background-color: #FFD700;
 }
