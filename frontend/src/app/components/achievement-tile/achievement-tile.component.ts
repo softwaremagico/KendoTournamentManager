@@ -1,13 +1,16 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
 import {TranslateService} from "@ngx-translate/core";
+import {formatDate} from "@angular/common";
 import {AchievementType} from "../../models/achievement-type.model";
 
 @Component({
   selector: 'app-achievement-tile',
   templateUrl: './achievement-tile.component.html',
-  styleUrls: ['./achievement-tile.component.scss']
+  styleUrls: ['./achievement-tile.component.scss'],
+  // tooltip style not applied without this:
+  encapsulation: ViewEncapsulation.None,
 })
 export class AchievementTileComponent implements OnInit {
 
@@ -74,8 +77,43 @@ export class AchievementTileComponent implements OnInit {
     if (!this.achievements || this.achievements.length == 0) {
       return "";
     }
-    const parameters: object = {achievementType: this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType))};
-    return this.translateService.instant('achievementToolTip', parameters);
+    // const parameters: object = {
+    //   achievementType: this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)),
+    //   achievementDescription: this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)+'Description')
+    // };
+    // return this.translateService.instant('achievementToolTip', parameters);
+    let tooltipText: string = '<b>' + this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)) + '</b><br>' +
+      this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType) + 'Description') + '<br>';
+    if (this.achievements) {
+      tooltipText += '<br>Obtained at:<br>';
+      tooltipText += '<div class="tournament-list">';
+      for (const achievement of this.achievements) {
+        if (achievement.tournament) {
+          tooltipText += '<div class="tournament-item">';
+          tooltipText += '<div class="circle ';
+          if (achievement.achievementGrade == AchievementGrade.NORMAL) {
+            tooltipText += ' normal"></div>';
+          }
+          if (achievement.achievementGrade == AchievementGrade.BRONZE) {
+            tooltipText += ' bronze"></div>';
+          }
+          if (achievement.achievementGrade == AchievementGrade.SILVER) {
+            tooltipText += ' silver"></div>';
+          }
+          if (achievement.achievementGrade == AchievementGrade.GOLD) {
+            tooltipText += ' gold"></div>';
+          }
+          tooltipText += achievement.tournament.name;
+          const formattedDate: string = formatDate(achievement.tournament.createdAt, 'dd/MM/yyyy', navigator.language)
+          tooltipText += ' (' + formattedDate + ')';
+
+          //End of tournament item.
+          tooltipText += '</div>';
+        }
+      }
+      tooltipText += '</div>';
+    }
+    return tooltipText;
   }
 
 }
