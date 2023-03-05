@@ -121,7 +121,7 @@ img {
 .achievement .tooltiptext {
   visibility: hidden;
   width: 300px;
-  background-color: #555;
+  background-color: #555555;
   color: #ffffff;
   text-align: center;
   padding: 5px 0;
@@ -140,15 +140,15 @@ img {
   transition: opacity 0.3s;
 }
 
-.achievement .tooltiptext .left-border {
-  margin-left: 0;
+.achievement .tooltiptext.left-border {
+  margin-left: -40px;
 }
 
-.achievement .tooltiptext .right-border {
-  margin-left: -300px;
+.achievement .tooltiptext.right-border {
+  margin-left: -260px;
 }
 
-.achievement .tooltiptext .center {
+.achievement .tooltiptext.center {
   margin-left: -150px;
 }
 
@@ -161,8 +161,17 @@ img {
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: #555555 transparent transparent transparent;
 }
+
+.achievement .tooltiptext.left-border::after{
+  margin-left: -115px;
+}
+
+.achievement .tooltiptext.right-border::after{
+  margin-left: 105px;
+}
+
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .achievement:hover .tooltiptext {
