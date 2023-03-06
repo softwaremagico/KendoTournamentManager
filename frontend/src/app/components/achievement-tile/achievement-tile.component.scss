@@ -8,6 +8,9 @@
 
   background: rgb(1, 16, 64);
   background: linear-gradient(135deg, rgba(1, 16, 64, 1) 0%, rgba(64, 77, 141, 1) 50%, rgba(36, 18, 28, 1) 88%, rgba(255, 42, 42, 1) 100%);
+
+  position: relative;
+  display: inline-block;
 }
 
 .achievement-border {
@@ -20,17 +23,20 @@
   margin-left: -5px;
 }
 
-
-.achievement.bronze {
-
+.achievement-border.normal {
+  border-color: black;
 }
 
-.achievement.silver {
-
+.achievement-border.bronze {
+  border-color: hsl(28, 31%, 52%);
 }
 
-.achievement.gold {
+.achievement-border.silver {
+  border-color: hsl(210, 3%, 61%);
+}
 
+.achievement-border.gold {
+  border-color: hsl(45, 100%, 47%);
 }
 
 .achievement-info {
@@ -109,4 +115,101 @@ img {
 
 .start-12:after {
   transform: rotate(60deg);
+}
+
+/* Tooltip text */
+.achievement .tooltiptext {
+  visibility: hidden;
+  width: 300px;
+  background-color: #555555;
+  color: #ffffff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 12px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -150px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.achievement .tooltiptext.left-border {
+  margin-left: -40px;
+}
+
+.achievement .tooltiptext.right-border {
+  margin-left: -260px;
+}
+
+.achievement .tooltiptext.center {
+  margin-left: -150px;
+}
+
+/* Tooltip arrow */
+.achievement .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555555 transparent transparent transparent;
+}
+
+.achievement .tooltiptext.left-border::after{
+  margin-left: -115px;
+}
+
+.achievement .tooltiptext.right-border::after{
+  margin-left: 105px;
+}
+
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.achievement:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tournament-item {
+  display: flex;
+  vertical-align: center;
+}
+
+.circle {
+  border-radius: 50%;
+  border: 2px solid;
+  width: 5px;
+  height: 5px;
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.circle.normal {
+  border-color: black;
+  background-color: black;
+}
+
+.circle.bronze {
+  border-color: #CD7F32;
+  background-color: hsl(28, 31%, 52%);
+}
+
+.circle.silver {
+  border-color: #C0C0C0;
+  background-color: hsl(210, 3%, 61%);
+}
+
+.circle.gold {
+  border-color: #FFD700;
+  background-color: hsl(45, 100%, 47%);
 }

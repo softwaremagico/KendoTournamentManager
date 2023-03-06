@@ -46,6 +46,8 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     long countByTournament(Tournament tournament);
 
+    List<Duel> findByTournament(Tournament tournament);
+
     @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u WHERE u.competitor1 IN :participants OR u.competitor2 IN :participants")
     List<Duel> findUntiesByParticipantIn(@Param("participants") Collection<Participant> participants);
 
@@ -63,4 +65,8 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
             "d.competitor2ScoreTime <=:maxSeconds " +
             ") ")
     Set<Duel> findByScoreOnTimeLess(@Param("tournament") Tournament tournament, @Param("maxSeconds") int maxSeconds);
+    List<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
+
+    List<Duel> findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(Tournament tournament,
+                                                                                                       int score1MaxDuration, int score2MaxDuration);
 }
