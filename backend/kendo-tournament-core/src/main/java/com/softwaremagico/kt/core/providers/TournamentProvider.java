@@ -29,7 +29,12 @@ import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRep
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
@@ -50,6 +55,11 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     public void delete(Tournament tournament) {
         tournamentExtraPropertyRepository.deleteByTournament(tournament);
         repository.delete(tournament);
+    }
+
+    public List<Tournament> getPreviousTo(Tournament tournament, int elementsToRetrieve) {
+        Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "id");
+        return repository.findByCreatedAtLessThanEqual(tournament.getCreatedAt(), pageable);
     }
 
 }
