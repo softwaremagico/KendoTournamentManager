@@ -70,7 +70,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         final List<Score> forbiddenScores = new ArrayList<>(Arrays.asList(Score.values()));
         forbiddenScores.remove(score);
         forbiddenScores.remove(Score.EMPTY);
-        return repository.findByOnlyScore(tournament, Collections.singleton(score), forbiddenScores);
+        return repository.findByOnlyScore(tournament, forbiddenScores);
     }
 
     public Set<Duel> findByScorePerformedInLessThan(Tournament tournament, int maxSeconds) {
