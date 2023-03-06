@@ -38,6 +38,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -184,6 +185,8 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
+        tournament1DTO.setCreatedAt(LocalDateTime.now().minusMinutes(2));
+        tournamentController.update(tournament1DTO, null);
         generateRoles(tournament1DTO);
         roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
         addTeams(tournament1DTO);
@@ -228,6 +231,8 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = tournamentController.create(new TournamentDTO(TOURNAMENT2_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
+        tournament2DTO.setCreatedAt(LocalDateTime.now().minusMinutes(1));
+        tournamentController.update(tournament2DTO, null);
         generateRoles(tournament2DTO);
         roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
         addTeams(tournament2DTO);
