@@ -49,8 +49,6 @@ import java.util.stream.Collectors;
 public class AchievementController extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository,
         AchievementProvider, AchievementConverterRequest, AchievementConverter> {
 
-    private final static int QUICK_SCORE = 10;
-
     private static final int BILL_THE_KID_MAX_TIME = 10;
 
     private final TournamentConverter tournamentConverter;
