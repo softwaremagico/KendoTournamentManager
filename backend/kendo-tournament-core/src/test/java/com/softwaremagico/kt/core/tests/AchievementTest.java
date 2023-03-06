@@ -191,10 +191,9 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
 
         //Woodcutter
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
-        fightDTOs.get(0).getDuels().get(1).addCompetitor1ScoreTime(11);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1ScoreTime(11);
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
         fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
         woodCutter = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
@@ -209,17 +208,18 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         noWoodCutter2 = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
 
         //BoneBreaker
-        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
-        fightDTOs.get(0).getDuels().get(1).addCompetitor1ScoreTime(6);
-        fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.HANSOKU);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
-        boneBreaker = fightDTOs.get(0).getDuels().get(1).getCompetitor2();
-        billyTheKid = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.HANSOKU);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.HANSOKU);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
         fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
         boneBreaker = fightDTOs.get(0).getDuels().get(2).getCompetitor2();
+
+        //BillyTheKid
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(6);
+        fightDTOs.get(1).getDuels().get(0).setFinished(true);
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        billyTheKid = fightDTOs.get(1).getDuels().get(0).getCompetitor1();
 
         achievementController.generateAchievements(tournament1DTO);
     }
@@ -249,7 +249,8 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     @Test
     public void checkBambooAchievement() {
         List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(bambooAchievementParticipant);
-        Assert.assertEquals(achievementsDTOs.size(), 1);
+        //Flexible  + Sweaty Tenugui
+        Assert.assertEquals(achievementsDTOs.size(), 2);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), bambooAchievementParticipant);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);
     }
