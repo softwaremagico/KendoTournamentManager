@@ -244,6 +244,8 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     public void prepareTournament3() {
         //Create Tournament
         tournament3DTO = tournamentController.create(new TournamentDTO(TOURNAMENT3_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
+        tournament3DTO.setCreatedAt(LocalDateTime.now());
+        tournamentController.update(tournament3DTO, null);
         generateRoles(tournament3DTO);
         roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
         addTeams(tournament3DTO);
@@ -298,5 +300,23 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
     public void checkSweatyTenuguiAchievement() {
         Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.SWEATY_TENUGUI).size(), MEMBERS * TEAMS);
         Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.SWEATY_TENUGUI).size(), 1);
+    }
+
+    @Test
+    public void searchLastTournaments() {
+        List<TournamentDTO> tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 1);
+        Assert.assertEquals(tournamentDTOS.size(), 1);
+        Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
+
+        tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 2);
+        Assert.assertEquals(tournamentDTOS.size(), 2);
+        Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
+        Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
+
+        tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 3);
+        Assert.assertEquals(tournamentDTOS.size(), 3);
+        Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
+        Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
+        Assert.assertTrue(tournamentDTOS.contains(tournament1DTO));
     }
 }
