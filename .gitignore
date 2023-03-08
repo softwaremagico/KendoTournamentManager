@@ -21,3 +21,4 @@ release.properties
 *.iml
 default_data.sql
 *.bak
+.attach_*

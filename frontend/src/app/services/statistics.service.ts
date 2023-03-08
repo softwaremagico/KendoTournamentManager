@@ -21,8 +21,8 @@ export class StatisticsService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  get(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<FightStatistics> {
-    let url: string = `${this.baseUrl}/tournament/${tournamentId}`;
+  getFightStatistics(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<FightStatistics> {
+    let url: string = `${this.baseUrl}/tournament/${tournamentId}/fights`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

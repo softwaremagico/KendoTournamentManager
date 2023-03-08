@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.statistics.models;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.statistics.models;
  * #L%
  */
 
-public class FightStatisticsDTO {
+public class FightStatisticsDTO extends ElementDTO {
     private Integer fightsNumber;
     private Integer fightsByTeam;
     private Integer duelsNumber;
