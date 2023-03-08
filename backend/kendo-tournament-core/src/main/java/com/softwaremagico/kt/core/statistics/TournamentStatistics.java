@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.controller.models;
+package com.softwaremagico.kt.core.statistics;
 
 /*-
  * #%L
@@ -24,9 +24,9 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-public class TournamentStatisticsDTO extends ElementDTO {
+public class TournamentStatistics {
 
-    private FightStatisticsDTO fightStatisticsDTO;
+    private FightStatistics fightStatistics;
 
     private int menNumber;
 
@@ -38,12 +38,12 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     private int hansokuNumber;
 
-    public FightStatisticsDTO getFightStatisticsDTO() {
-        return fightStatisticsDTO;
+    public FightStatistics getFightStatistics() {
+        return fightStatistics;
     }
 
-    public void setFightStatisticsDTO(FightStatisticsDTO fightStatisticsDTO) {
-        this.fightStatisticsDTO = fightStatisticsDTO;
+    public void setFightStatistics(FightStatistics fightStatistics) {
+        this.fightStatistics = fightStatistics;
     }
 
     public int getMenNumber() {

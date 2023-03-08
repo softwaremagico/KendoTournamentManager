@@ -157,8 +157,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = selectedManager.createFights(tournament, teamsOrder, level, createdBy);
-            provider.saveAll(createdFights);
+            final List<Fight> createdFights = provider.saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
             return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
         }
         return new ArrayList<>();
@@ -170,8 +169,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = selectedManager.createNextFights(tournament, createdBy);
-            provider.saveAll(createdFights);
+            final List<Fight> createdFights = provider.saveAll(selectedManager.createNextFights(tournament, createdBy));
             return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
         }
         return new ArrayList<>();
