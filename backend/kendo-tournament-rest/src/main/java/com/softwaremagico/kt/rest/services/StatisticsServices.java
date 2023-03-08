@@ -24,9 +24,9 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
-import com.softwaremagico.kt.core.statistics.FightStatisticsProvider;
-import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,16 +43,16 @@ import java.util.Optional;
 public class StatisticsServices {
 
     private final TournamentController tournamentController;
-    private final FightStatisticsProvider fightStatisticsProvider;
+    private final FightStatisticsController fightStatisticsController;
 
-    public StatisticsServices(TournamentController tournamentController, FightStatisticsProvider fightStatisticsProvider) {
+    public StatisticsServices(TournamentController tournamentController, FightStatisticsController fightStatisticsController) {
         this.tournamentController = tournamentController;
-        this.fightStatisticsProvider = fightStatisticsProvider;
+        this.fightStatisticsController = fightStatisticsController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/tournament/{tournamentId}/fights", produces = MediaType.APPLICATION_JSON_VALUE)
     public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
@@ -60,12 +60,21 @@ public class StatisticsServices {
                                                           HttpServletRequest request) {
         if (checkByMembers.isPresent() && checkByMembers.get()) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by members.");
-            return fightStatisticsProvider.calculateByMembers(tournamentController.get(tournamentId));
+            return fightStatisticsController.estimateByMembers(tournamentController.get(tournamentId));
         }
         if (checkByTeams.isPresent() && checkByTeams.get()) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by teams.");
-            return fightStatisticsProvider.calculateByTeams(tournamentController.get(tournamentId));
+            return fightStatisticsController.estimateByTeams(tournamentController.get(tournamentId));
         }
-        return fightStatisticsProvider.calculate(tournamentController.get(tournamentId));
+        return fightStatisticsController.estimate(tournamentController.get(tournamentId));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                          @PathVariable("tournamentId") Integer tournamentId,
+                                                          HttpServletRequest request) {
+        return fightStatisticsController.estimate(tournamentController.get(tournamentId));
     }
 }
