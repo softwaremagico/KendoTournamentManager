@@ -25,6 +25,7 @@ package com.softwaremagico.kt.core.tests;
  */
 
 
+import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
@@ -36,8 +37,7 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.statistics.FightStatisticsProvider;
-import com.softwaremagico.kt.core.statistics.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
 import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -107,7 +107,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private RankingController rankingController;
 
     @Autowired
-    private FightStatisticsProvider fightStatisticsProvider;
+    private FightStatisticsController fightStatisticsController;
 
     private Club club;
 
@@ -225,7 +225,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights"})
     public void checkStatistics() {
         final Group group = groupProvider.getGroups(tournament).get(0);
-        FightStatisticsDTO fightStatisticsDTO = fightStatisticsProvider.calculate(tournamentConverter.convert(new TournamentConverterRequest(tournament)), MEMBERS,
+        FightStatisticsDTO fightStatisticsDTO = fightStatisticsController.estimate(tournamentConverter.convert(new TournamentConverterRequest(tournament)), MEMBERS,
                 teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
         Assert.assertEquals(fightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
         Assert.assertEquals(fightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);

@@ -54,23 +54,23 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
 
     @Override
     protected AchievementDTO convertElement(AchievementConverterRequest from) {
-        final AchievementDTO AchievementDTO = new AchievementDTO();
-        BeanUtils.copyProperties(from.getEntity(), AchievementDTO);
+        final AchievementDTO achievementDTO = new AchievementDTO();
+        BeanUtils.copyProperties(from.getEntity(), achievementDTO);
         try {
-            AchievementDTO.setTournament(tournamentConverter.convert(
+            achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
         } catch (LazyInitializationException | InvalidPropertyException e) {
-            AchievementDTO.setTournament(tournamentConverter.convert(
+            achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
-            AchievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
         } catch (LazyInitializationException | InvalidPropertyException e) {
-            AchievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }
-        return AchievementDTO;
+        return achievementDTO;
     }
 
     @Override
