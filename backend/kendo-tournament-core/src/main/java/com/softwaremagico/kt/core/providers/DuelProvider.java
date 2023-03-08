@@ -28,6 +28,7 @@ import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
+import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -59,6 +60,14 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @Cacheable("duelsDurationAverage")
     public Long getDurationAverage() {
         return repository.getDurationAverage();
+    }
+
+    public Long getDurationAverage(Tournament tournament) {
+        return repository.getDurationAverage(tournament);
+    }
+
+    public Long countScore(Tournament tournament, Score score) {
+        return repository.countScore(tournament, score);
     }
 
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})

@@ -26,7 +26,9 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
 import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentStatisticsDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,9 +47,13 @@ public class StatisticsServices {
     private final TournamentController tournamentController;
     private final FightStatisticsController fightStatisticsController;
 
-    public StatisticsServices(TournamentController tournamentController, FightStatisticsController fightStatisticsController) {
+    private final TournamentStatisticsController tournamentStatisticsController;
+
+    public StatisticsServices(TournamentController tournamentController, FightStatisticsController fightStatisticsController,
+                              TournamentStatisticsController tournamentStatisticsController) {
         this.tournamentController = tournamentController;
         this.fightStatisticsController = fightStatisticsController;
+        this.tournamentStatisticsController = tournamentStatisticsController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -72,9 +78,9 @@ public class StatisticsServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                          @PathVariable("tournamentId") Integer tournamentId,
-                                                          HttpServletRequest request) {
-        return fightStatisticsController.estimate(tournamentController.get(tournamentId));
+    public TournamentStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                               @PathVariable("tournamentId") Integer tournamentId,
+                                                               HttpServletRequest request) {
+        return tournamentStatisticsController.get(tournamentController.get(tournamentId));
     }
 }
