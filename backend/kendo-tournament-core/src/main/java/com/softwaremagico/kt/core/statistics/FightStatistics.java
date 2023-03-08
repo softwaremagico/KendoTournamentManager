@@ -26,17 +26,17 @@ package com.softwaremagico.kt.core.statistics;
 
 public class FightStatistics {
 
-    private Integer fightsNumber;
-    private Integer fightsByTeam;
-    private Integer duelsNumber;
+    private Long fightsNumber;
+    private Long fightsByTeam;
+    private Long duelsNumber;
     //In seconds.
     private Long time;
 
-    public Integer getFightsNumber() {
+    public Long getFightsNumber() {
         return fightsNumber;
     }
 
-    public void setFightsNumber(Integer fightsNumber) {
+    public void setFightsNumber(Long fightsNumber) {
         if (fightsNumber != null && fightsNumber >= 0) {
             this.fightsNumber = fightsNumber;
         } else {
@@ -44,19 +44,19 @@ public class FightStatistics {
         }
     }
 
-    public Integer getFightsByTeam() {
+    public Long getFightsByTeam() {
         return fightsByTeam;
     }
 
-    public void setFightsByTeam(Integer fightsByTeam) {
+    public void setFightsByTeam(Long fightsByTeam) {
         this.fightsByTeam = fightsByTeam;
     }
 
-    public Integer getDuelsNumber() {
+    public Long getDuelsNumber() {
         return duelsNumber;
     }
 
-    public void setDuelsNumber(Integer duelsNumber) {
+    public void setDuelsNumber(Long duelsNumber) {
         if (duelsNumber != null && duelsNumber >= 0) {
             this.duelsNumber = duelsNumber;
         } else {
