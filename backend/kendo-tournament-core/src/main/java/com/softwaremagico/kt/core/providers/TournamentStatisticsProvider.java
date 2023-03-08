@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.converters.models;
+package com.softwaremagico.kt.core.providers;
 
 /*-
  * #%L
@@ -24,11 +24,13 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
+import com.softwaremagico.kt.core.statistics.TournamentStatistics;
+import com.softwaremagico.kt.core.statistics.TournamentStatisticsRepository;
+import org.springframework.stereotype.Service;
 
-import com.softwaremagico.kt.core.statistics.FightStatistics;
-
-public class FightStatisticsConverterRequest extends ConverterRequest<FightStatistics> {
-    public FightStatisticsConverterRequest(FightStatistics entity) {
-        super(entity);
+@Service
+public class TournamentStatisticsProvider extends CrudProvider<TournamentStatistics, Integer, TournamentStatisticsRepository> {
+    protected TournamentStatisticsProvider(TournamentStatisticsRepository repository) {
+        super(repository);
     }
 }

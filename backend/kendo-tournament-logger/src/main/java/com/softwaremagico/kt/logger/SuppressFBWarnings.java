@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.core.converters.models;
+package com.softwaremagico.kt.logger;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Core)
+ * Kendo Tournament Manager (Logger)
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
@@ -24,11 +24,19 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-import com.softwaremagico.kt.core.statistics.FightStatistics;
+@Retention(RetentionPolicy.CLASS)
+public @interface SuppressFBWarnings {
+    /**
+     * The set of FindBugs warnings that are to be suppressed in
+     * annotated element. The value can be a bug category, kind or pattern.
+     */
+    String[] value() default {};
 
-public class FightStatisticsConverterRequest extends ConverterRequest<FightStatistics> {
-    public FightStatisticsConverterRequest(FightStatistics entity) {
-        super(entity);
-    }
+    /**
+     * Optional documentation of the reason why the warning is suppressed
+     */
+    String justification() default "";
 }
