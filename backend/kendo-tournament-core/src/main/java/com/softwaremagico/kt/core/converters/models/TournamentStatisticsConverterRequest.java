@@ -25,10 +25,10 @@ package com.softwaremagico.kt.core.converters.models;
  */
 
 
-import com.softwaremagico.kt.core.statistics.FightStatistics;
+import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 
-public class FightStatisticsConverterRequest extends ConverterRequest<FightStatistics> {
-    public FightStatisticsConverterRequest(FightStatistics entity) {
+public class TournamentStatisticsConverterRequest extends ConverterRequest<TournamentStatistics> {
+    public TournamentStatisticsConverterRequest(TournamentStatistics entity) {
         super(entity);
     }
 }

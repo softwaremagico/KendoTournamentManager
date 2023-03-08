@@ -43,32 +43,29 @@ import java.util.function.Function;
  * Statistics are not stored into database, but to keep the data structure, this dummy class is needed for now.
  */
 @Repository
-@SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-public class FightStatisticsRepository implements JpaRepository<FightStatistics, Integer> {
+public class TournamentStatisticsRepository implements JpaRepository<TournamentStatistics, Integer> {
     @Override
-    public List<FightStatistics> findAll() {
+    public List<TournamentStatistics> findAll() {
         return new ArrayList<>();
     }
 
     @Override
-    public List<FightStatistics> findAll(Sort sort) {
+    public List<TournamentStatistics> findAll(Sort sort) {
         return new ArrayList<>();
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public Page<FightStatistics> findAll(Pageable pageable) {
+    public Page<TournamentStatistics> findAll(Pageable pageable) {
         return null;
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public List<FightStatistics> findAllById(Iterable<Integer> integers) {
+    public List<TournamentStatistics> findAllById(Iterable<Integer> integers) {
         return new ArrayList<>();
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public long count() {
         return 0;
     }
@@ -79,7 +76,7 @@ public class FightStatisticsRepository implements JpaRepository<FightStatistics,
     }
 
     @Override
-    public void delete(FightStatistics entity) {
+    public void delete(TournamentStatistics entity) {
 
     }
 
@@ -89,7 +86,7 @@ public class FightStatisticsRepository implements JpaRepository<FightStatistics,
     }
 
     @Override
-    public void deleteAll(Iterable<? extends FightStatistics> entities) {
+    public void deleteAll(Iterable<? extends TournamentStatistics> entities) {
 
     }
 
@@ -100,24 +97,23 @@ public class FightStatisticsRepository implements JpaRepository<FightStatistics,
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> S save(S entity) {
+    public <S extends TournamentStatistics> S save(S entity) {
         return null;
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> List<S> saveAll(Iterable<S> entities) {
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
+    public <S extends TournamentStatistics> List<S> saveAll(Iterable<S> entities) {
         return new ArrayList<>();
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public Optional<FightStatistics> findById(Integer integer) {
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
+    public Optional<TournamentStatistics> findById(Integer integer) {
         return Optional.empty();
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public boolean existsById(Integer integer) {
         return false;
     }
@@ -129,18 +125,18 @@ public class FightStatisticsRepository implements JpaRepository<FightStatistics,
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> S saveAndFlush(S entity) {
+    public <S extends TournamentStatistics> S saveAndFlush(S entity) {
         return null;
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> List<S> saveAllAndFlush(Iterable<S> entities) {
+    public <S extends TournamentStatistics> List<S> saveAllAndFlush(Iterable<S> entities) {
         return null;
     }
 
     @Override
-    public void deleteAllInBatch(Iterable<FightStatistics> entities) {
+    public void deleteAllInBatch(Iterable<TournamentStatistics> entities) {
 
     }
 
@@ -156,55 +152,52 @@ public class FightStatisticsRepository implements JpaRepository<FightStatistics,
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public FightStatistics getOne(Integer integer) {
+    public TournamentStatistics getOne(Integer integer) {
         return null;
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public FightStatistics getById(Integer integer) {
+    public TournamentStatistics getById(Integer integer) {
         return null;
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> Optional<S> findOne(Example<S> example) {
+    public <S extends TournamentStatistics> Optional<S> findOne(Example<S> example) {
         return Optional.empty();
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> List<S> findAll(Example<S> example) {
+    public <S extends TournamentStatistics> List<S> findAll(Example<S> example) {
         return null;
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> List<S> findAll(Example<S> example, Sort sort) {
+    public <S extends TournamentStatistics> List<S> findAll(Example<S> example, Sort sort) {
         return null;
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> Page<S> findAll(Example<S> example, Pageable pageable) {
+    public <S extends TournamentStatistics> Page<S> findAll(Example<S> example, Pageable pageable) {
         return null;
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> long count(Example<S> example) {
+    public <S extends TournamentStatistics> long count(Example<S> example) {
         return 0;
     }
 
     @Override
-    @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics> boolean exists(Example<S> example) {
+    public <S extends TournamentStatistics> boolean exists(Example<S> example) {
         return false;
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
-    public <S extends FightStatistics, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends TournamentStatistics, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
         return null;
     }
 }
