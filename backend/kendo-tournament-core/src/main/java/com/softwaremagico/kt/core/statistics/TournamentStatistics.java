@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.statistics;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -28,15 +28,15 @@ public class TournamentStatistics {
 
     private FightStatistics fightStatistics;
 
-    private int menNumber;
+    private long menNumber;
 
-    private int koteNumber;
+    private long koteNumber;
 
-    private int doNumber;
+    private long doNumber;
 
-    private int tsukiNumber;
+    private long tsukiNumber;
 
-    private int hansokuNumber;
+    private long hansokuNumber;
 
     public FightStatistics getFightStatistics() {
         return fightStatistics;
@@ -46,43 +46,43 @@ public class TournamentStatistics {
         this.fightStatistics = fightStatistics;
     }
 
-    public int getMenNumber() {
+    public long getMenNumber() {
         return menNumber;
     }
 
-    public void setMenNumber(int menNumber) {
+    public void setMenNumber(long menNumber) {
         this.menNumber = menNumber;
     }
 
-    public int getKoteNumber() {
+    public long getKoteNumber() {
         return koteNumber;
     }
 
-    public void setKoteNumber(int koteNumber) {
+    public void setKoteNumber(long koteNumber) {
         this.koteNumber = koteNumber;
     }
 
-    public int getDoNumber() {
+    public long getDoNumber() {
         return doNumber;
     }
 
-    public void setDoNumber(int doNumber) {
+    public void setDoNumber(long doNumber) {
         this.doNumber = doNumber;
     }
 
-    public int getTsukiNumber() {
+    public long getTsukiNumber() {
         return tsukiNumber;
     }
 
-    public void setTsukiNumber(int tsukiNumber) {
+    public void setTsukiNumber(long tsukiNumber) {
         this.tsukiNumber = tsukiNumber;
     }
 
-    public int getHansokuNumber() {
+    public long getHansokuNumber() {
         return hansokuNumber;
     }
 
-    public void setHansokuNumber(int hansokuNumber) {
+    public void setHansokuNumber(long hansokuNumber) {
         this.hansokuNumber = hansokuNumber;
     }
 }

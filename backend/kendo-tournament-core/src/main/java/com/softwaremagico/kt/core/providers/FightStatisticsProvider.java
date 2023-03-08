@@ -8,25 +8,22 @@ package com.softwaremagico.kt.core.providers;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.converters.RoleConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
-import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.statistics.FightStatistics;
 import com.softwaremagico.kt.core.statistics.FightStatisticsRepository;
 import com.softwaremagico.kt.persistence.entities.*;
@@ -38,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,23 +45,20 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
     private static final int TIME_BETWEEN_DUELS = 10;
 
     private final DuelProvider duelProvider;
+
+    private final FightProvider fightProvider;
     private final TeamProvider teamProvider;
-    private final TeamConverter teamConverter;
-    private final TournamentConverter tournamentConverter;
     private final RoleProvider roleProvider;
-    private final RoleConverter roleConverter;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
-    public FightStatisticsProvider(FightStatisticsRepository fightStatisticsRepository, DuelProvider duelProvider, TeamProvider teamProvider,
-                                   TeamConverter teamConverter, TournamentConverter tournamentConverter, RoleProvider roleProvider,
-                                   RoleConverter roleConverter, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+    public FightStatisticsProvider(FightStatisticsRepository fightStatisticsRepository, DuelProvider duelProvider,
+                                   FightProvider fightProvider, TeamProvider teamProvider, RoleProvider roleProvider,
+                                   TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(fightStatisticsRepository);
         this.duelProvider = duelProvider;
+        this.fightProvider = fightProvider;
         this.teamProvider = teamProvider;
-        this.teamConverter = teamConverter;
-        this.tournamentConverter = tournamentConverter;
         this.roleProvider = roleProvider;
-        this.roleConverter = roleConverter;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
@@ -120,8 +114,8 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
 
     public FightStatistics estimateLeagueStatistics(int teamSize, Collection<Team> teams) {
         final FightStatistics fightStatistics = new FightStatistics();
-        fightStatistics.setFightsNumber((teams.size() * (teams.size() - 1)) / 2);
-        fightStatistics.setFightsByTeam((teams.size() - 1));
+        fightStatistics.setFightsNumber((((long) teams.size() * (teams.size() - 1)) / 2));
+        fightStatistics.setFightsByTeam(((long) teams.size() - 1));
         fightStatistics.setDuelsNumber(getDuels(fightStatistics.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null && fightStatistics.getDuelsNumber() != null) {
             fightStatistics.setTime(fightStatistics.getDuelsNumber() * (duelProvider.getDurationAverage() + TIME_BETWEEN_DUELS) +
@@ -136,11 +130,11 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
         final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
         if (maximizeFights) {
-            fightStatistics.setFightsNumber((teams.size() * (teams.size() - 1)));
-            fightStatistics.setFightsByTeam((teams.size() - 1) * 2);
+            fightStatistics.setFightsNumber(((long) teams.size() * (teams.size() - 1)));
+            fightStatistics.setFightsByTeam(((long) teams.size() - 1) * 2);
         } else {
-            fightStatistics.setFightsNumber((teams.size() * teams.size() - 1) / 2);
-            fightStatistics.setFightsByTeam((teams.size() - 1));
+            fightStatistics.setFightsNumber(((long) teams.size() * teams.size() - 1) / 2);
+            fightStatistics.setFightsByTeam(((long) teams.size() - 1));
         }
         fightStatistics.setDuelsNumber(getDuels(fightStatistics.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
@@ -149,9 +143,9 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         return fightStatistics;
     }
 
-    private int getDuels(int fightByTeam, int teamSize, Collection<Team> teams) {
-        final AtomicInteger counter = new AtomicInteger();
-        final AtomicInteger missingMembers = new AtomicInteger();
+    private long getDuels(long fightByTeam, int teamSize, Collection<Team> teams) {
+        final AtomicLong counter = new AtomicLong();
+        final AtomicLong missingMembers = new AtomicLong();
 
         teams.forEach(team -> {
             counter.addAndGet((team.getMembers().size() * fightByTeam) - missingMembers.get());
@@ -200,4 +194,14 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         }
         return teams;
     }
+
+    public FightStatistics get(Tournament tournament) {
+        final FightStatistics fightStatistics = new FightStatistics();
+        fightStatistics.setFightsNumber(fightProvider.count(tournament));
+        fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teamProvider.count(tournament));
+        fightStatistics.setDuelsNumber(duelProvider.count(tournament));
+        fightStatistics.setTime(duelProvider.getDurationAverage(tournament));
+        return fightStatistics;
+    }
+
 }

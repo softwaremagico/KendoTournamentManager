@@ -28,15 +28,15 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     private FightStatisticsDTO fightStatisticsDTO;
 
-    private int menNumber;
+    private long menNumber;
 
-    private int koteNumber;
+    private long koteNumber;
 
-    private int doNumber;
+    private long doNumber;
 
-    private int tsukiNumber;
+    private long tsukiNumber;
 
-    private int hansokuNumber;
+    private long hansokuNumber;
 
     public FightStatisticsDTO getFightStatisticsDTO() {
         return fightStatisticsDTO;
@@ -46,43 +46,43 @@ public class TournamentStatisticsDTO extends ElementDTO {
         this.fightStatisticsDTO = fightStatisticsDTO;
     }
 
-    public int getMenNumber() {
+    public long getMenNumber() {
         return menNumber;
     }
 
-    public void setMenNumber(int menNumber) {
+    public void setMenNumber(long menNumber) {
         this.menNumber = menNumber;
     }
 
-    public int getKoteNumber() {
+    public long getKoteNumber() {
         return koteNumber;
     }
 
-    public void setKoteNumber(int koteNumber) {
+    public void setKoteNumber(long koteNumber) {
         this.koteNumber = koteNumber;
     }
 
-    public int getDoNumber() {
+    public long getDoNumber() {
         return doNumber;
     }
 
-    public void setDoNumber(int doNumber) {
+    public void setDoNumber(long doNumber) {
         this.doNumber = doNumber;
     }
 
-    public int getTsukiNumber() {
+    public long getTsukiNumber() {
         return tsukiNumber;
     }
 
-    public void setTsukiNumber(int tsukiNumber) {
+    public void setTsukiNumber(long tsukiNumber) {
         this.tsukiNumber = tsukiNumber;
     }
 
-    public int getHansokuNumber() {
+    public long getHansokuNumber() {
         return hansokuNumber;
     }
 
-    public void setHansokuNumber(int hansokuNumber) {
+    public void setHansokuNumber(long hansokuNumber) {
         this.hansokuNumber = hansokuNumber;
     }
 }
