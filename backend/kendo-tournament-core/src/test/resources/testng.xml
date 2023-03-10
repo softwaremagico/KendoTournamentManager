@@ -9,6 +9,7 @@
                 <include name="converterTests"/>
                 <include name="scoreTests"/>
                 <include name="achievementTests"/>
+                <include name="statisticsTests"/>
             </run>
         </groups>
         <classes>
@@ -18,6 +19,7 @@
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.AchievementTest"/>
+            <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
         </classes>
     </test>
 </suite>

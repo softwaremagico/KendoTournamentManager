@@ -58,7 +58,7 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
             "((size(d.competitor1Score)=2 AND NOT EXISTS (SELECT s1 FROM d.competitor1Score s1 WHERE s1 IN :forbiddenScores)) OR " +
             "(size(d.competitor2Score)=2 AND NOT EXISTS (SELECT s2 FROM d.competitor2Score s2 WHERE s2 IN :forbiddenScores)))" +
             ") ")
-    Set<Duel> findByOnlyScore(@Param("tournament") Tournament tournament,  @Param("forbiddenScores") Collection<Score> forbiddenScores);
+    Set<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("forbiddenScores") Collection<Score> forbiddenScores);
 
     @Query("SELECT d FROM Duel d LEFT JOIN d.competitor1ScoreTime t1 LEFT JOIN d.competitor2ScoreTime t2 WHERE d.tournament=:tournament " +
             "AND (t1<=:maxSeconds OR t2<=:maxSeconds)")
@@ -67,10 +67,9 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION + " AND d.tournament=:tournament")
     Long getDurationAverage(@Param("tournament") Tournament tournament);
 
-    //@Query("SELECT COUNT(*) FROM Duel d JOIN d.competitor1Score JOIN d.competitor2ScoreTime WHERE d.tournament=:tournament AND ")
-    Long countScore(@Param("tournament") Tournament tournament, @Param("score") Score score);
-
-}
+    @Query("SELECT COUNT(*) FROM Duel d LEFT JOIN d.competitor1Score s1 LEFT JOIN d.competitor2Score s2 WHERE d.tournament=:tournament AND " +
+            "(s1 IN (:scores) OR  s2 IN (:scores))")
+    Long countScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
 
     List<Duel> findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(Tournament tournament,
                                                                                                        int score1MaxDuration, int score2MaxDuration);

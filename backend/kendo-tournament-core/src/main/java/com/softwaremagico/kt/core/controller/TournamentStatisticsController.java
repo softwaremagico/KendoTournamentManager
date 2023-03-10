@@ -32,7 +32,9 @@ import com.softwaremagico.kt.core.converters.models.TournamentStatisticsConverte
 import com.softwaremagico.kt.core.providers.TournamentStatisticsProvider;
 import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentStatisticsRepository;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class TournamentStatisticsController extends BasicInsertableController<TournamentStatistics, TournamentStatisticsDTO, TournamentStatisticsRepository,
         TournamentStatisticsProvider, TournamentStatisticsConverterRequest, TournamentStatisticsConverter> {
 

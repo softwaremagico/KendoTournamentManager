@@ -38,6 +38,8 @@ public class TournamentStatistics {
 
     private long hansokuNumber;
 
+    private long ipponNumber;
+
     public FightStatistics getFightStatistics() {
         return fightStatistics;
     }
@@ -84,5 +86,13 @@ public class TournamentStatistics {
 
     public void setHansokuNumber(long hansokuNumber) {
         this.hansokuNumber = hansokuNumber;
+    }
+
+    public long getIpponNumber() {
+        return ipponNumber;
+    }
+
+    public void setIpponNumber(long ipponNumber) {
+        this.ipponNumber = ipponNumber;
     }
 }
