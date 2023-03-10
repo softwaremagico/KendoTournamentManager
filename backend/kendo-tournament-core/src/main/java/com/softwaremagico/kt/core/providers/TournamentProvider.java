@@ -58,7 +58,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
     public List<Tournament> getPreviousTo(Tournament tournament, int elementsToRetrieve) {
-        Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "id");
+        final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "id");
         return repository.findByCreatedAtLessThanEqual(tournament.getCreatedAt(), pageable);
     }
 
