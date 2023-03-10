@@ -71,7 +71,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     }
 
     public Long countScore(Tournament tournament, Score score) {
-        return repository.countScore(tournament, score);
+        return repository.countScore(tournament, Collections.singletonList(score));
     }
 
     public Set<Duel> findByOnlyScore(Tournament tournament, Score score) {

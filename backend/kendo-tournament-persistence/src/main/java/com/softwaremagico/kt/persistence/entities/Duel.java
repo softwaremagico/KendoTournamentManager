@@ -61,26 +61,26 @@ public class Duel extends Element {
     @CollectionTable(name = "competitor_1_score")
     @Fetch(value = FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "score_index")
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score")
     @Fetch(value = FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "score_index")
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "score_index")
     private List<Integer> competitor1ScoreTime = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
-    @OrderColumn(name = "index")
+    @OrderColumn(name = "score_index")
     private List<Integer> competitor2ScoreTime = new ArrayList<>();
 
     @Column(name = "competitor_1_fault_time")
