@@ -241,5 +241,12 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   disableRow(argument: any): boolean {
     return (argument as Tournament).locked;
   }
+
+  openStatistics() {
+    if (this.basicTableData.selectedElement) {
+      this.userSessionService.setTournament(this.basicTableData.selectedElement.id + "");
+      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
+    }
+  }
 }
 
