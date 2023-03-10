@@ -267,4 +267,32 @@ public class DuelDTO extends ElementDTO {
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
+
+    public void addCompetitor1Score(Score score) {
+        if (this.competitor1Score == null) {
+            this.competitor1Score = new ArrayList<>();
+        }
+        this.competitor1Score.add(score);
+    }
+
+    public void addCompetitor2Score(Score score) {
+        if (this.competitor2Score == null) {
+            this.competitor2Score = new ArrayList<>();
+        }
+        this.competitor2Score.add(score);
+    }
+
+    public void addCompetitor1ScoreTime(int time) {
+        if (this.getCompetitor1ScoreTime() == null) {
+            this.competitor1ScoreTime = new ArrayList<>();
+        }
+        this.competitor1ScoreTime.add(time);
+    }
+
+    public void addCompetitor2ScoreTime(int time) {
+        if (this.getCompetitor2ScoreTime() == null) {
+            this.competitor2ScoreTime = new ArrayList<>();
+        }
+        this.competitor2ScoreTime.add(time);
+    }
 }
