@@ -35,6 +35,9 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
         TournamentProvider, TournamentConverterRequest, TournamentConverter> {
@@ -101,4 +104,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         provider.delete(tournament);
     }
 
+    public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
+        return converter.convertAll(provider.getPreviousTo(converter.reverse(tournamentDTO), elementsToRetrieve).stream()
+                .map(this::createConverterRequest).collect(Collectors.toList()));
+    }
 }

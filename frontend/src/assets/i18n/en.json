@@ -615,6 +615,7 @@
   "pointsByVictory": "Points by Victory",
   "pointsByDraw": "Points by Tie",
   "nameExample": "John Smith",
-  "onlyNews": "New Ones"
+  "onlyNews": "New Ones",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:"
 }
 

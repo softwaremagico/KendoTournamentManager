@@ -25,11 +25,13 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.AchievementTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Cacheable
@@ -53,8 +55,21 @@ public class Achievement extends Element {
     @Convert(converter = AchievementTypeCryptoConverter.class)
     private AchievementType achievementType;
 
+    @Column(name = "achievement_grade", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = AchievementTypeCryptoConverter.class)
+    private AchievementGrade achievementGrade;
+
     public Achievement() {
         super();
+    }
+
+    public Achievement(Participant participant, Tournament tournament, AchievementType achievementType, AchievementGrade achievementGrade) {
+        this();
+        setParticipant(participant);
+        setTournament(tournament);
+        setAchievementType(achievementType);
+        setAchievementGrade(achievementGrade);
     }
 
     public Achievement(Participant participant, Tournament tournament, AchievementType achievementType) {
@@ -88,5 +103,11 @@ public class Achievement extends Element {
         this.achievementType = achievementType;
     }
 
+    public AchievementGrade getAchievementGrade() {
+        return achievementGrade;
+    }
 
+    public void setAchievementGrade(AchievementGrade achievementGrade) {
+        this.achievementGrade = Objects.requireNonNullElse(achievementGrade, AchievementGrade.NORMAL);
+    }
 }

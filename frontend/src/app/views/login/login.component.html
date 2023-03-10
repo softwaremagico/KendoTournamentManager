@@ -8,7 +8,8 @@
             <div class="login-field">
               <mat-icon class="input-icon" color="primary">mail</mat-icon>
               <mat-form-field class="form-input">
-                <input class="login-input" matInput placeholder="{{'email' | translate}}" formControlName="username" required>
+                <input class="login-input" matInput placeholder="{{'email' | translate}}" formControlName="username"
+                       required>
                 <mat-error>
                   {{'invalidEmail' | translate}}
                 </mat-error>
@@ -17,7 +18,8 @@
             <div class="login-field">
               <mat-icon class="input-icon" color="primary">lock</mat-icon>
               <mat-form-field class="form-input">
-                <input class="login-input" matInput type="password" placeholder="{{'password' | translate}}" formControlName="password"
+                <input class="login-input" matInput type="password" placeholder="{{'password' | translate}}"
+                       formControlName="password"
                        required>
                 <mat-error>
                   {{'invalidPassword' | translate}}
@@ -36,6 +38,7 @@
     </div>
   </div>
 </div>
+<app-achievement-wall [achievements]="achievements"></app-achievement-wall>
 <div class="app-version">
   v{{appVersion}}
 </div>
