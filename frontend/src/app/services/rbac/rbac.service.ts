@@ -89,7 +89,9 @@ export class RbacService {
       RbacActivity.READ_ONE_RANKING,
       RbacActivity.CHANGE_PASSWORD,
       RbacActivity.CAN_LOGOUT,
-      RbacActivity.CHANGE_LANGUAGE,];
+      RbacActivity.CHANGE_LANGUAGE,
+      RbacActivity.VIEW_TOURNAMENT_STATISTICS,
+    ];
   }
 
   private getGuestActivities(): RbacActivity[] {
