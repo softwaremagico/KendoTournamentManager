@@ -8,6 +8,7 @@ import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 import {FightStatistics} from "../models/fight-statistics.model";
+import {TournamentStatistics} from "../models/tournament-statistics.model";
 
 @Injectable({
   providedIn: 'root'
@@ -29,9 +30,9 @@ export class StatisticsService {
         'Authorization': 'Bearer ' + this.loginService.getJwtValue()
       }),
       params: new HttpParams({
-        fromObject : {
-          'calculateByMembers' : calculateByMembers,
-          'calculateByTeams' : calculateByTeams
+        fromObject: {
+          'calculateByMembers': calculateByMembers,
+          'calculateByTeams': calculateByTeams
         }
       })
     };
@@ -43,6 +44,20 @@ export class StatisticsService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.logOnlyError<FightStatistics>(`get id=${tournamentId}`))
+      );
+  }
+
+  getTournamentStatistics(tournamentId: number): Observable<TournamentStatistics> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/tournament/${tournamentId}`;
+    return this.http.get<TournamentStatistics>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched statistics from tournament id=${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.logOnlyError<TournamentStatistics>(`get id=${tournamentId}`))
       );
   }
 }
