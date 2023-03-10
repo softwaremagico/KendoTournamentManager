@@ -34,7 +34,9 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -45,7 +47,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"achievementTests"})
-public class AchievementTest extends AbstractTestNGSpringContextTests {
+public class AchievementTest extends AbstractTransactionalTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
@@ -318,5 +320,19 @@ public class AchievementTest extends AbstractTestNGSpringContextTests {
         Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
         Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
         Assert.assertTrue(tournamentDTOS.contains(tournament1DTO));
+    }
+
+    @AfterClass
+    public void deleteTournament() {
+        deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
+                "achievements", "duels_by_fight");
+        deleteFromTables("duels", "fights_by_group");
+        deleteFromTables("fights", "members_of_team", "teams_by_group");
+        deleteFromTables("teams");
+        deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("tournaments");
+        deleteFromTables("participant_image");
+        deleteFromTables("participants");
+        deleteFromTables("clubs");
     }
 }
