@@ -38,6 +38,8 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     private long hansokuNumber;
 
+    private long ipponNumber;
+
     public FightStatisticsDTO getFightStatisticsDTO() {
         return fightStatisticsDTO;
     }
@@ -84,5 +86,13 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     public void setHansokuNumber(long hansokuNumber) {
         this.hansokuNumber = hansokuNumber;
+    }
+
+    public long getIpponNumber() {
+        return ipponNumber;
+    }
+
+    public void setIpponNumber(long ipponNumber) {
+        this.ipponNumber = ipponNumber;
     }
 }

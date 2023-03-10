@@ -52,6 +52,7 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
         tournamentStatistics.setKoteNumber(duelProvider.countScore(tournament, Score.KOTE));
         tournamentStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
         tournamentStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
+        tournamentStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
         tournamentStatistics.setFightStatistics(fightStatisticsProvider.get(tournament));
         return tournamentStatistics;
     }
