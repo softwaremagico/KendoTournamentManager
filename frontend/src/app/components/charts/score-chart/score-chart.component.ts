@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import * as d3 from "d3";
-import {color} from "d3";
+import {Score} from "../../../models/score";
 
 @Component({
   selector: 'app-score-chart',
@@ -10,22 +10,19 @@ import {color} from "d3";
 export class ScoreChartComponent implements OnInit {
 
   @Input()
-  private data = [
-    {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
-    {"Framework": "React", "Stars": "150793", "Released": "2013"},
-    {"Framework": "Angular", "Stars": "62342", "Released": "2016"},
-    {"Framework": "Backbone", "Stars": "27647", "Released": "2010"},
-    {"Framework": "Ember", "Stars": "21471", "Released": "2011"},
-  ];
+  private scores: { "score": Score; "value": number }[] =
+    [
+      {"score": Score.MEN, "value": 5},
+      {"score": Score.KOTE, "value": 5},
+      {"score": Score.DO, "value": 3},
+    ];
+
   @Input()
-  private width = 700;
+  public width = 700;
   @Input()
-  private height = 700;
+  public height = 700;
 
   private margin = 50;
-
-  // The radius of the pie chart is half the smallest side
-  private radius = Math.min(this.width, this.height) / 2 - this.margin;
 
   public chartId;
 
@@ -39,11 +36,17 @@ export class ScoreChartComponent implements OnInit {
 
   ngOnInit() {
     this.createSvg();
-    this.drawBars(this.data);
+    this.drawBars(this.scores);
+  }
+
+  private getMaxY(): number {
+    return Math.max(...this.scores.map(function (s) {
+      return s.value;
+    })) + 1;
   }
 
   private createSvg(): void {
-    this.svg = d3.select("figure#bar")
+    this.svg = d3.select("figure#bar-chart")
       .append("svg")
       .attr("width", this.width)
       .attr("height", this.height)
@@ -55,7 +58,7 @@ export class ScoreChartComponent implements OnInit {
     // Create the X-axis band scale
     const x = d3.scaleBand()
       .range([0, this.width])
-      .domain(data.map(d => d.Framework))
+      .domain(data.map(d => d.score))
       .padding(0.2);
 
     // Draw the X-axis on the DOM
@@ -68,7 +71,7 @@ export class ScoreChartComponent implements OnInit {
 
     // Create the Y-axis band scale
     const y = d3.scaleLinear()
-      .domain([0, 200000])
+      .domain([0, this.getMaxY()])
       .range([this.height, 0]);
 
     // Draw the Y-axis on the DOM
@@ -80,10 +83,10 @@ export class ScoreChartComponent implements OnInit {
       .data(data)
       .enter()
       .append("rect")
-      .attr("x", (d: any) => x(d.Framework))
-      .attr("y", (d: any) => y(d.Stars))
+      .attr("x", (d: any) => x(d.score))
+      .attr("y", (d: any) => y(d.value))
       .attr("width", x.bandwidth())
-      .attr("height", (d: any) => this.height - y(d.Stars))
+      .attr("height", (d: any) => this.height - y(d.value))
       .attr("fill", "#d04a35");
   }
 }
