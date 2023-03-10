@@ -1,0 +1,17 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<div class="statistics-view">
+  <div class="statistics-layout">
+    <div class="upper-menu">
+      <div class="cell">
+        <button mat-button color="secondary" (click)="goBackToTournament()" [matTooltipShowDelay]="500"
+                matTooltip="{{'back' | translate}}"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="statistics-container">
+      <app-score-chart></app-score-chart>
+    </div>
+  </div>
+</div>
