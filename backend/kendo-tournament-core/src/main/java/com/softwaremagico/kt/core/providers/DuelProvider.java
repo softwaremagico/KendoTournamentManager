@@ -35,7 +35,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
@@ -53,6 +53,10 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.countByTournament(tournament);
     }
 
+    public List<Duel> get(Tournament tournament) {
+        return repository.findByTournament(tournament);
+    }
+
     public List<Duel> getUnties(List<Participant> participants) {
         return repository.findUntiesByParticipantIn(participants);
     }
@@ -68,6 +72,22 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
 
     public Long countScore(Tournament tournament, Score score) {
         return repository.countScore(tournament, score);
+    }
+
+    public Set<Duel> findByOnlyScore(Tournament tournament, Score score) {
+        final List<Score> forbiddenScores = new ArrayList<>(Arrays.asList(Score.values()));
+        forbiddenScores.remove(score);
+        forbiddenScores.remove(Score.EMPTY);
+        return repository.findByOnlyScore(tournament, forbiddenScores);
+    }
+
+    public Set<Duel> findByScorePerformedInLessThan(Tournament tournament, int maxSeconds) {
+        return repository.findByScoreOnTimeLess(tournament, maxSeconds);
+    }
+
+    public List<Duel> findByScoreDuration(Tournament tournament, int scoreMaxDuration) {
+        return repository.findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
+                tournament, scoreMaxDuration, scoreMaxDuration);
     }
 
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})

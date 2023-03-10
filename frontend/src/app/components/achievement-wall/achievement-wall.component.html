@@ -1,0 +1,5 @@
+<div class="achievement-wall">
+  <div class="achievement-container" *ngFor="let achievementType of totalAchievementsTypes; let i = index">
+    <app-achievement-tile [achievements]="getAchievements(achievementType)"></app-achievement-tile>
+  </div>
+</div>
