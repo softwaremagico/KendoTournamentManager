@@ -129,6 +129,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/database/*-users.sql</exclude>
+                        <exclude>**/database/default-data.sql</exclude>
                     </excludes>
                 </configuration>
             </plugin>
