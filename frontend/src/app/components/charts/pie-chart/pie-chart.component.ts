@@ -34,12 +34,20 @@ export class PieChartComponent implements AfterViewInit {
     "#fdcce5",
     "#8bd3c7"
   ];
+
+  //Separation between pie slices.
   @Input()
   public strokeColor: string = "#121926";
   @Input()
   public strokeWidth: number = 2;
+
+  //How separated are the labels from the center.
   @Input()
   public labelRadius: number = 100;
+
+  //Inner Radius is for creating a donut chart.
+  @Input()
+  public innerRadius: number = 0;
 
   public uniqueId: string = "id" + uuid();
 
@@ -81,7 +89,7 @@ export class PieChartComponent implements AfterViewInit {
       .enter()
       .append('path')
       .attr('d', d3.arc()
-        .innerRadius(0)
+        .innerRadius(this.innerRadius)
         .outerRadius(this.radius)
       )
       .attr('fill', (pieChartData: PieChartData, index: string) => {
