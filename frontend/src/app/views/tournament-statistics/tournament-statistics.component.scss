@@ -3,6 +3,8 @@
 }
 
 .statistics-container {
+  display: flex;
+  flex-wrap: wrap;
   height: 83vh;
   max-height: 83vh;
   min-height: 50vh;
