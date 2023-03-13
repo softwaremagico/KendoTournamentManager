@@ -92,8 +92,8 @@ import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import { AchievementWallComponent } from './components/achievement-wall/achievement-wall.component';
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
-import { ScoreChartComponent } from './components/charts/score-chart/score-chart.component';
-import {ScoreChartModule} from "./components/charts/score-chart/score-chart.module";
+import { BarChartComponent } from './components/charts/bar-chart/bar-chart.component';
+import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
 import { TournamentStatisticsComponent } from './views/tournament-statistics/tournament-statistics.component';
 
 
@@ -187,7 +187,7 @@ registerLocaleData(localeNL, "nl");
     RoleSelectorDialogBoxModule,
     AchievementTileModule,
     AchievementWallModule,
-    ScoreChartModule
+    BarChartModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
