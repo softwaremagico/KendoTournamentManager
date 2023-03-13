@@ -65,10 +65,15 @@ export class StackedBarsChartComponent implements AfterViewInit {
   private drawBars(data: StackedBarsChartData[]): void {
     // List of keys -> I show them on the X axis
     const keys = data.map(d => (d.key));
+    // A, B, C, D
+    const subgroups = data[0].groups;
+    // Men, Kote, Do
+    const groups = data.map(d => (d.key));
+
 
     // Create the X-axis band scale
     const x = d3.scaleBand()
-      .domain(keys)
+      .domain(subgroups)
       .range([0, this.width])
       .padding(0.2);
 
@@ -90,10 +95,11 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .call(d3.axisLeft(y));
 
     //stack the data? --> stack per subgroup
-    const dataMatrix: any[][] = data.map(element => element.values);
-    const stackGen: Function = d3.stack().keys(Object.keys(data));
+    const dataMatrix: any[][] = transpose(data.map(element => element.values));
+    console.log("***REMOVED***>",dataMatrix, subgroups);
+    const stackGen: Function = d3.stack().keys(subgroups);
     const stackedData = stackGen(dataMatrix);
-    console.log(stackedData)
+    console.log("%% ",stackedData)
 
     // Create and fill the bars
     const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
