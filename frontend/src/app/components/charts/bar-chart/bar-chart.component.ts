@@ -2,23 +2,19 @@ import {Component, Input, OnInit} from '@angular/core';
 import * as d3 from "d3";
 import {Score} from "../../../models/score";
 import {ScaleOrdinal} from "d3-scale";
+import {BarChartData} from "./bar-chart-data";
 
 @Component({
-  selector: 'app-score-chart',
-  templateUrl: './score-chart.component.html',
-  styleUrls: ['./score-chart.component.scss']
+  selector: 'app-bar-chart',
+  templateUrl: './bar-chart.component.html',
+  styleUrls: ['./bar-chart.component.scss']
 })
-export class ScoreChartComponent implements OnInit {
+export class BarChartComponent implements OnInit {
 
   @Input()
   public title: string = "Bar Chart";
   @Input()
-  private scores: { "key": string; "value": number }[] =
-    [
-      {"key": Score.MEN, "value": 5},
-      {"key": Score.KOTE, "value": 5},
-      {"key": Score.DO, "value": 3},
-    ];
+  public barChartData: BarChartData[];
   @Input()
   private margin: number = 30;
   @Input()
@@ -44,12 +40,12 @@ export class ScoreChartComponent implements OnInit {
 
   ngOnInit() {
     this.createSvg();
-    this.drawBars(this.scores);
+    this.drawBars(this.barChartData);
   }
 
   private getMaxY(): number {
-    return Math.max(...this.scores.map(function (s) {
-      return s.value;
+    return Math.max(...this.barChartData.map(function (barChartData) {
+      return barChartData.value;
     })) + 1;
   }
 
@@ -62,11 +58,11 @@ export class ScoreChartComponent implements OnInit {
       .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
   }
 
-  private drawBars(data: any[]): void {
+  private drawBars(data: BarChartData[]): void {
     // Create the X-axis band scale
     const x = d3.scaleBand()
       .range([0, this.width])
-      .domain(data.map(d => d.key))
+      .domain(data.map(barChartData => barChartData.key))
       .padding(0.2);
 
     // Draw the X-axis on the DOM
@@ -93,12 +89,12 @@ export class ScoreChartComponent implements OnInit {
       .data(data)
       .enter()
       .append("rect")
-      .attr("x", (d: any) => x(d.key))
-      .attr("y", (d: any) => y(d.value))
+      .attr("x", (barChartData: BarChartData) => x(barChartData.key))
+      .attr("y", (barChartData: BarChartData) => y(barChartData.value))
       .attr("width", x.bandwidth())
-      .attr("height", (d: any) => this.height - y(d.value))
-      .attr("fill", (d: any, i: string) => {
-        return scaleOrdinal(i);
+      .attr("height", (barChartData: BarChartData) => this.height - y(barChartData.value))
+      .attr("fill", (barChartData: BarChartData, index: string) => {
+        return scaleOrdinal(index);
       });
   }
 }
