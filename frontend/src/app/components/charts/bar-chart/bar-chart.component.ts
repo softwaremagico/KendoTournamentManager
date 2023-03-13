@@ -1,20 +1,20 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import * as d3 from "d3";
-import {Score} from "../../../models/score";
 import {ScaleOrdinal} from "d3-scale";
 import {BarChartData} from "./bar-chart-data";
+import {v4 as uuid} from 'uuid';
 
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements OnInit {
+export class BarChartComponent implements AfterViewInit {
 
   @Input()
   public title: string = "Bar Chart";
   @Input()
-  public barChartData: BarChartData[];
+  public chartData: BarChartData[];
   @Input()
   private margin: number = 30;
   @Input()
@@ -34,23 +34,23 @@ export class BarChartComponent implements OnInit {
     "#8bd3c7"
   ];
 
+  public uniqueId: string = "id" + uuid();
 
   private svg: any;
 
-
-  ngOnInit() {
+  ngAfterViewInit() {
     this.createSvg();
-    this.drawBars(this.barChartData);
+    this.drawBars(this.chartData);
   }
 
   private getMaxY(): number {
-    return Math.max(...this.barChartData.map(function (barChartData) {
+    return Math.max(...this.chartData.map(function (barChartData) {
       return barChartData.value;
     })) + 1;
   }
 
   private createSvg(): void {
-    this.svg = d3.select("figure#content-chart")
+    this.svg = d3.select("figure#" + this.uniqueId)
       .append("svg")
       .attr("width", this.width + (this.margin * 2))
       .attr("height", this.height + (this.margin * 2))
