@@ -65,7 +65,7 @@ export class PieChartComponent implements AfterViewInit {
       .attr("width", this.width + (this.margin * 2))
       .attr("height", this.height + (this.margin * 2))
       .append("g")
-      .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
+      .attr("transform", "translate(" + ((this.width / 2) + this.margin) + "," + ((this.height / 2) + this.margin) + ")");
   }
 
   private drawPie(data: PieChartData[]): void {
