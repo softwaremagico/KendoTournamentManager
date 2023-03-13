@@ -38,6 +38,8 @@ export class PieChartComponent implements AfterViewInit {
   public strokeColor: string = "#121926";
   @Input()
   public strokeWidth: number = 2;
+  @Input()
+  public labelRadius: number = 100;
 
   public uniqueId: string = "id" + uuid();
 
@@ -90,7 +92,7 @@ export class PieChartComponent implements AfterViewInit {
 
     // Add labels
     const labelLocation = d3.arc()
-      .innerRadius(100)
+      .innerRadius(this.labelRadius)
       .outerRadius(this.radius);
 
     this.svg

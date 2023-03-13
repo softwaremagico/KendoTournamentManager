@@ -33,6 +33,10 @@ export class BarChartComponent implements AfterViewInit {
     "#fdcce5",
     "#8bd3c7"
   ];
+  @Input()
+  public strokeColor: string = "#121926";
+  @Input()
+  public strokeWidth: number = 2;
 
   public uniqueId: string = "id" + uuid();
 
@@ -83,7 +87,6 @@ export class BarChartComponent implements AfterViewInit {
       .call(d3.axisLeft(y));
 
     // Create and fill the bars
-
     const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
     this.svg.selectAll("bars")
       .data(data)
@@ -95,6 +98,8 @@ export class BarChartComponent implements AfterViewInit {
       .attr("height", (barChartData: BarChartData) => this.height - y(barChartData.value))
       .attr("fill", (barChartData: BarChartData, index: string) => {
         return scaleOrdinal(index);
-      });
+      })
+      .attr("stroke", this.strokeColor)
+      .style("stroke-width", this.strokeWidth + "px");
   }
 }
