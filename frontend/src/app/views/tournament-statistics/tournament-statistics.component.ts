@@ -37,13 +37,12 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     for (const key of this.keys) {
       this.values.set(key, new Map());
       for (const score of Score.getKeys()) {
-        if (score !== Score.KOTE || i % 2 == 1) {
+        if (score === Score.KOTE || score === Score.DO || score === Score.MEN) {
           this.values.get(key)!.set(score, i);
         }
         i++;
       }
     }
-    console.log(this.values);
     this.scoresStacked = new StackedBarsChartData(this.values, Score.getKeys());
   }
 
