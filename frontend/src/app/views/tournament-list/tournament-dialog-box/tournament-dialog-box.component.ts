@@ -137,7 +137,6 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.tournament = result.data;
-      console.log(this.tournament)
     });
   }
 
