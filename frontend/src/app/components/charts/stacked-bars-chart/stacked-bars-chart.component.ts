@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, Input} from '@angular/core';
 import {v4 as uuid} from "uuid";
 import * as d3 from "d3";
+import {select} from "d3";
 import {ScaleOrdinal} from "d3-scale";
 import {StackedBarsChartData} from "./stacked-bars-chart-data";
-import {select} from "d3";
 
 @Component({
   selector: 'app-stacked-bars-chart',
@@ -38,6 +38,8 @@ export class StackedBarsChartComponent implements AfterViewInit {
   public strokeColor: string = "#121926";
   @Input()
   public strokeWidth: number = 2;
+  @Input()
+  private showLegend: boolean = true;
 
   public uniqueId: string = "id" + uuid();
 
@@ -46,12 +48,9 @@ export class StackedBarsChartComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.createSvg();
     this.drawBars(this.chartData);
-    this.createLegend(this.chartData);
-  }
-
-  private getMaxY(data: StackedBarsChartData): number {
-    // const sums = data.values.map((_, i) => d3.sum(data.map(({ values }) => values[i])));
-    return data.getMax() + 1;
+    if (this.showLegend) {
+      this.createLegend(this.chartData);
+    }
   }
 
   private createSvg(): void {
@@ -66,13 +65,13 @@ export class StackedBarsChartComponent implements AfterViewInit {
   private createLegend(data: StackedBarsChartData) {
     const legendItems = select("#legend")
       .selectAll("li")
-      .data(data.subgroups);
+      .data(data.getSubgroupsWithValues());
 
     legendItems
       .enter()
       .append("li")
       .attr("class", "legend-list")
-      .style("--gen-color", ( color ) => this.colors[data.subgroups.indexOf(color)])
+      .style("--gen-color", (color) => this.colors[data.subgroups.indexOf(color)])
       .text((label) => label);
   }
 
