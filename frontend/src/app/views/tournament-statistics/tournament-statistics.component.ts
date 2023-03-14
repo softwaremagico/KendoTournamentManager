@@ -24,7 +24,9 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     ];
 
   keys: string[] = ["Tournament1", "Tournament2", "Tournament3", "Tournament4"];
-  values: Map<any, Map<any, any>> = new Map();
+  values: Map<string, Map<string, number>> = new Map();
+  dates: Date[] = [new Date('2017-05-03'), new Date('2018-05-03'), new Date('2019-05-03'), new Date('2020-05-03')];
+  lineValues: Map<Date, Map<string, number>> = new Map();
 
   public scoresStacked: StackedBarsChartData;
   public lineScoresStacked: LineChartData;
@@ -44,7 +46,19 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       }
     }
     this.scoresStacked = new StackedBarsChartData(this.values, Score.getKeys());
-    this.lineScoresStacked = new LineChartData(this.values, Score.getKeys());
+
+    this.lineValues = new Map();
+    i = 1;
+    for (const date of this.dates) {
+      this.lineValues.set(date, new Map());
+      for (const score of Score.getKeys()) {
+        if (score === Score.KOTE || score === Score.DO || score === Score.MEN) {
+          this.lineValues.get(date)!.set(score, i);
+        }
+        i++;
+      }
+    }
+    this.lineScoresStacked = new LineChartData(this.lineValues, Score.getKeys());
   }
 
 
