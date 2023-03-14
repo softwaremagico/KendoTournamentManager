@@ -14,9 +14,6 @@ import {StackedBarsChartData} from "../../components/charts/stacked-bars-chart/s
 })
 export class TournamentStatisticsComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
-  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
-    super(rbacService);
-  }
 
   public scores: BarChartData[] =
     [
@@ -25,12 +22,28 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       new BarChartData(Score.DO, 3)
     ];
 
-  public scoresStacked: StackedBarsChartData[] =
-    [
-      new StackedBarsChartData(Score.MEN, ["A", "B", "C", "D"], [5, 4, 3, 2]),
-      new StackedBarsChartData(Score.KOTE, ["A", "B", "C", "D"], [1, 2, 3, 4]),
-      new StackedBarsChartData(Score.DO, ["A", "B", "C", "D"], [6, 7, 8, 9])
-    ];
+
+  keys: string[] = ["Tournament1", "Tournament2", "Tournament3", "Tournament4"];
+  values: Map<any, Map<any, any>> = new Map();
+
+
+  public scoresStacked: StackedBarsChartData;
+
+  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
+    super(rbacService);
+
+    this.values = new Map();
+    let i: number = 1;
+    for (const key of this.keys) {
+      this.values.set(key, new Map());
+      for (const score of Score.getKeys()) {
+        this.values.get(key)!.set(score, i);
+        i++;
+      }
+    }
+    this.scoresStacked = new StackedBarsChartData(this.values);
+  }
+
 
   ngOnInit(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
