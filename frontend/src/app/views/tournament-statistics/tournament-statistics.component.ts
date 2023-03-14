@@ -6,6 +6,7 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 import {BarChartData} from "../../components/charts/bar-chart/bar-chart-data";
 import {Score} from "../../models/score";
 import {StackedBarsChartData} from "../../components/charts/stacked-bars-chart/stacked-bars-chart-data";
+import {LineChartData} from "../../components/charts/line-chart/line-chart-data";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -22,12 +23,11 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       new BarChartData(Score.DO, 3)
     ];
 
-
   keys: string[] = ["Tournament1", "Tournament2", "Tournament3", "Tournament4"];
   values: Map<any, Map<any, any>> = new Map();
 
-
   public scoresStacked: StackedBarsChartData;
+  public lineScoresStacked: LineChartData;
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
     super(rbacService);
@@ -44,6 +44,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       }
     }
     this.scoresStacked = new StackedBarsChartData(this.values, Score.getKeys());
+    this.lineScoresStacked = new LineChartData(this.values, Score.getKeys());
   }
 
 

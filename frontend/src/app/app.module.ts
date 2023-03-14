@@ -95,6 +95,8 @@ import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
 import {TournamentStatisticsComponent} from './views/tournament-statistics/tournament-statistics.component';
 import {PieChartModule} from "./components/charts/pie-chart/pie-chart.module";
 import {StackedBarsChartModule} from "./components/charts/stacked-bars-chart/stacked-bars-chart.module";
+import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
+import {LineChartModule} from "./components/charts/line-chart/line-chart.module";
 
 
 registerLocaleData(localeES, "es");
@@ -189,7 +191,8 @@ registerLocaleData(localeNL, "nl");
     AchievementWallModule,
     BarChartModule,
     PieChartModule,
-    StackedBarsChartModule
+    StackedBarsChartModule,
+    LineChartModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,

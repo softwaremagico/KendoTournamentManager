@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import {ScaleOrdinal} from "d3-scale";
 import {v4 as uuid} from "uuid";
 import {PieChartData} from "./pie-chart-data";
+import {Colors} from "../colors";
 
 @Component({
   selector: 'app-pie-chart',
@@ -23,17 +24,7 @@ export class PieChartComponent implements AfterViewInit {
   @Input()
   public height: number = 400;
   @Input()
-  public colors: string[] = [
-    "#fd7f6f",
-    "#7eb0d5",
-    "#b2e061",
-    "#bd7ebe",
-    "#ffb55a",
-    "#ffee65",
-    "#beb9db",
-    "#fdcce5",
-    "#8bd3c7"
-  ];
+  public colors: string[] = Colors.defaultPalette;
 
   //Separation between pie slices.
   @Input()

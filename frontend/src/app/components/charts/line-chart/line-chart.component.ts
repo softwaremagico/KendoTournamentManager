@@ -1,22 +1,23 @@
 import {AfterViewInit, Component, Input} from '@angular/core';
+import {BarChartData} from "../bar-chart/bar-chart-data";
+import {Colors} from "../colors";
 import {v4 as uuid} from "uuid";
 import * as d3 from "d3";
-import {select} from "d3";
 import {ScaleOrdinal} from "d3-scale";
-import {StackedBarsChartData} from "./stacked-bars-chart-data";
-import {Colors} from "../colors";
+import {select} from "d3";
+import {LineChartData} from "./line-chart-data";
 
 @Component({
-  selector: 'app-stacked-bars-chart',
-  templateUrl: './stacked-bars-chart.component.html',
-  styleUrls: ['./stacked-bars-chart.component.scss']
+  selector: 'app-line-chart',
+  templateUrl: './line-chart.component.html',
+  styleUrls: ['./line-chart.component.scss']
 })
-export class StackedBarsChartComponent implements AfterViewInit {
+export class LineChartComponent implements AfterViewInit {
 
   @Input()
   public title: string = "Bar Chart";
   @Input()
-  public chartData: StackedBarsChartData;
+  public chartData: LineChartData;
   @Input()
   private margin: number = 30;
   @Input()
@@ -54,7 +55,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
   }
 
-  private createLegend(data: StackedBarsChartData) {
+  private createLegend(data: LineChartData) {
     const legendItems = select("#" + this.legendId)
       .selectAll("li")
       .data(data.getSubgroupsWithValues());
@@ -67,7 +68,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .text((label) => label);
   }
 
-  private drawBars(data: StackedBarsChartData): void {
+  private drawBars(data: LineChartData): void {
     // Tournament1, Tournament2, Tournament3, Tournament4
     const groups = data.getGroups();
     // Men, Kote, Do
