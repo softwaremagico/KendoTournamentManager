@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import {ScaleOrdinal} from "d3-scale";
 import {BarChartData} from "./bar-chart-data";
 import {v4 as uuid} from 'uuid';
+import {Colors} from "../colors";
 
 @Component({
   selector: 'app-bar-chart',
@@ -22,17 +23,7 @@ export class BarChartComponent implements AfterViewInit {
   @Input()
   public height: number = 400;
   @Input()
-  public colors: string[] = [
-    "#fd7f6f",
-    "#7eb0d5",
-    "#b2e061",
-    "#bd7ebe",
-    "#ffb55a",
-    "#ffee65",
-    "#beb9db",
-    "#fdcce5",
-    "#8bd3c7"
-  ];
+  public colors: string[] = Colors.defaultPalette;
   @Input()
   public strokeColor: string = "#121926";
   @Input()
