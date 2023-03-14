@@ -65,7 +65,6 @@ export class StackedBarsChartData {
         if (this.values.get(key) && this.values.get(key)!.get(subgroups[i])) {
           dataMatrix[i][j].push(dataMatrix[i][j][0] + this.values.get(key)!.get(subgroups[i])!);
         } else {
-          console.log(key, subgroups[i], dataMatrix[i][j][0])
           dataMatrix[i][j].push(dataMatrix[i][j][0]);
         }
         j++;

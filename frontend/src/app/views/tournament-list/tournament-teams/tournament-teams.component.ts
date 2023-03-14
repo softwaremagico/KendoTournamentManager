@@ -437,7 +437,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       participants.splice(selected, 1);
     } else {
       selected = Math.floor((participants.length / availableSectors)) * selectFromSector + selected;
-      console.log(selected)
       participant = participants[selected];
       participants.splice(selected, 1);
     }
