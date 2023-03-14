@@ -1,10 +1,9 @@
 import {AfterViewInit, Component, Input} from '@angular/core';
-import {BarChartData} from "../bar-chart/bar-chart-data";
 import {Colors} from "../colors";
 import {v4 as uuid} from "uuid";
 import * as d3 from "d3";
-import {ScaleOrdinal} from "d3-scale";
 import {select} from "d3";
+import {ScaleOrdinal} from "d3-scale";
 import {LineChartData} from "./line-chart-data";
 
 @Component({
@@ -69,17 +68,16 @@ export class LineChartComponent implements AfterViewInit {
   }
 
   private drawBars(data: LineChartData): void {
-    // Tournament1, Tournament2, Tournament3, Tournament4
+    // 2017, 2018, 2019, 2020
     const groups = data.getGroups();
     // Men, Kote, Do
     const subgroups = data.getSubgroups();
 
 
     // Create the X-axis band scale
-    const x = d3.scaleBand()
+    const x = d3.scaleLinear()
       .domain(groups)
-      .range([0, this.width])
-      .padding(0.2);
+      .rangeRound([0, this.width]);
 
     // Draw the X-axis on the DOM
     this.svg.append("g")
@@ -96,33 +94,31 @@ export class LineChartComponent implements AfterViewInit {
       .call(d3.axisLeft(y));
 
     const stackedData: any[][][] = data.getStackedData();
+    console.log(stackedData);
 
     // Create and fill the bars
     const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
-    this.svg.append("g")
-      .selectAll("g")
+    this.svg.selectAll(".line")
       .data(stackedData)
-      .enter().append("g")
-      .attr("fill", (data: any, index: string) => {
+      .join("path")
+      .attr("fill", "none")
+      .attr("stroke", (data: any, index: string) => {
         return scaleOrdinal(index);
       })
-      .selectAll("rect")
-      .data(function (data: any) {
-        return data;
+      .attr("stroke-width", this.strokeWidth)
+      .attr("d", function (line: any[][]) {
+        console.log('-->', line)
+        return d3.line()
+          .x(function (d) {
+            console.log('!! ', d)
+            return x(d[0]);
+          })
+          .y(function (d) {
+            console.log('$$ ', d)
+            return y(d[1]);
+          })
+          (line[1])
       })
-      .enter().append("rect")
-      .attr("x", (d: any, i: any) => {
-        return x(groups[i])
-      })
-      .attr("y", (d: any) => {
-        return y(d[1])
-      })
-      .attr("height", (array1: number[]) => {
-        return y(array1[0]) - y(array1[1])
-      })
-      .attr("width", x.bandwidth())
-      .attr("stroke", this.strokeColor)
-      .style("stroke-width", this.strokeWidth + "px");
   }
 
 }
