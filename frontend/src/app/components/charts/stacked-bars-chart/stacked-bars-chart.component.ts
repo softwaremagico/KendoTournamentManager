@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, Input} from '@angular/core';
 import {v4 as uuid} from "uuid";
 import * as d3 from "d3";
-import {transpose} from "d3";
 import {ScaleOrdinal} from "d3-scale";
 import {StackedBarsChartData} from "./stacked-bars-chart-data";
 
@@ -15,7 +14,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
   @Input()
   public title: string = "Bar Chart";
   @Input()
-  public chartData: StackedBarsChartData[];
+  public chartData: StackedBarsChartData;
   @Input()
   private margin: number = 30;
   @Input()
@@ -48,9 +47,9 @@ export class StackedBarsChartComponent implements AfterViewInit {
     this.drawBars(this.chartData);
   }
 
-  private getMaxY(data: StackedBarsChartData[]): number {
-    const sums = data.map((_, i) => d3.sum(data.map(({ values }) => values[i])));
-    return Math.max(...sums) + 1;
+  private getMaxY(data: StackedBarsChartData): number {
+    // const sums = data.values.map((_, i) => d3.sum(data.map(({ values }) => values[i])));
+    return data.getMax() + 1;
   }
 
   private createSvg(): void {
@@ -62,44 +61,39 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
   }
 
-  private drawBars(data: StackedBarsChartData[]): void {
-    // List of keys -> I show them on the X axis
-    const keys = data.map(d => (d.key));
-    // A, B, C, D
-    const subgroups = data[0].groups;
+  private initScales() {
+
+  }
+
+  private drawBars(data: StackedBarsChartData): void {
+    // Tournament1, Tournament2, Tournament3, Tournament 4
+    const groups = data.getGroups();
     // Men, Kote, Do
-    const groups = data.map(d => (d.key));
+    const subgroups = data.getSubgroups();
 
 
     // Create the X-axis band scale
     const x = d3.scaleBand()
-      .domain(subgroups)
+      .domain(groups)
       .range([0, this.width])
       .padding(0.2);
 
     // Draw the X-axis on the DOM
     this.svg.append("g")
       .attr("transform", "translate(0," + this.height + ")")
-      .call(d3.axisBottom(x).tickPadding(8).tickSize(5))
-      .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end");
+      .call(d3.axisBottom(x).tickPadding(8).tickSize(5));
 
     // Create the Y-axis band scale
     const y = d3.scaleLinear()
-      .domain([0, this.getMaxY(data)])
+      .domain([0, data.getMax()])
       .range([this.height, 0]);
 
     // Draw the Y-axis on the DOM
     this.svg.append("g")
       .call(d3.axisLeft(y));
 
-    //stack the data? --> stack per subgroup
-    const dataMatrix: any[][] = transpose(data.map(element => element.values));
-    console.log("***REMOVED***>",dataMatrix, subgroups);
-    const stackGen: Function = d3.stack().keys(subgroups);
-    const stackedData = stackGen(dataMatrix);
-    console.log("%% ",stackedData)
+    const stackedData: any[][][] = data.getStackedData();
+    console.log('%%%' , stackedData)
 
     // Create and fill the bars
     const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
@@ -107,18 +101,23 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .selectAll("g")
       .data(stackedData)
       .enter().append("g")
-      .attr("fill", (StackedBarsChartData: StackedBarsChartData, index: string) => {
+      .attr("fill", (data: any, index: string) => {
         return scaleOrdinal(index);
       })
       .selectAll("rect")
-      // enter a second time = loop subgroup per subgroup to add all rectangles
-      .data(function (d: any) {
-        return d;
+      .data(function (data: any) {
+        return data;
       })
       .enter().append("rect")
-      .attr("x", (element: StackedBarsChartData, index: number) => x(data.map(element => element.key)[index]))
-      .attr("y", (array1: number[]) => y(array1[1]))
-      .attr("height", (array1: number[]) => {console.log(array1); return y(array1[0]) - y(array1[1])})
+      .attr("x", (d: any, i: any) => {
+        return x(groups[i])
+      })
+      .attr("y", (d: any) => {
+        return y(d[1])
+      })
+      .attr("height", (array1: number[]) => {
+        return y(array1[0]) - y(array1[1])
+      })
       .attr("width", x.bandwidth())
       .attr("stroke", this.strokeColor)
       .style("stroke-width", this.strokeWidth + "px");
