@@ -66,7 +66,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
   }
 
   private drawBars(data: StackedBarsChartData): void {
-    // Tournament1, Tournament2, Tournament3, Tournament 4
+    // Tournament1, Tournament2, Tournament3, Tournament4
     const groups = data.getGroups();
     // Men, Kote, Do
     const subgroups = data.getSubgroups();
@@ -93,7 +93,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .call(d3.axisLeft(y));
 
     const stackedData: any[][][] = data.getStackedData();
-    console.log('%%%' , stackedData)
+    console.log(stackedData);
 
     // Create and fill the bars
     const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);

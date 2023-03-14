@@ -1,10 +1,17 @@
 export class StackedBarsChartData {
   // X Group -> Property -> Value. For example (2010 -> Men -> 5)
   values: Map<string, Map<string, number>>;
+  subgroups: string[];
+  stackedData: any[][][];
 
-  constructor(values: Map<string, Map<string, number>>) {
+  /**
+   * Create a dataset for the stacked bars chart.
+   * @param values Map of groups, with subgroups and values.
+   * @param subgroups if not defined, subgroups will be calculated from previous parameter. Use this for forcing the order on the chart.
+   */
+  constructor(values: Map<string, Map<string, number>>, subgroups?: string[]) {
     this.values = values;
-    console.log(values);
+    this.subgroups = subgroups!;
   }
 
   /* gets the max grouped data by group */
@@ -26,16 +33,23 @@ export class StackedBarsChartData {
   }
 
   getSubgroups(): string[] {
+    if (this.subgroups) {
+      return this.subgroups;
+    }
     const subgroups: Set<string> = new Set();
     for (const key of this.values.keys()) {
       for (const value of this.values.get(key)!.keys()) {
         subgroups.add(value);
       }
     }
-    return Array.from(subgroups);
+    this.subgroups = Array.from(subgroups);
+    return this.subgroups;
   }
 
   getStackedData(): any[][][] {
+    if (this.stackedData) {
+      return this.stackedData;
+    }
     const dataMatrix: any[][][] = [];
     const subgroups: string[] = this.getSubgroups();
     for (let i: number = 0; i < subgroups.length; i++) {
@@ -48,11 +62,17 @@ export class StackedBarsChartData {
         } else {
           dataMatrix[i][j].push(dataMatrix[i - 1][j][1]);
         }
-        dataMatrix[i][j].push(dataMatrix[i][j][0] + this.values.get(key)!.get(subgroups[i])!);
+        if (this.values.get(key) && this.values.get(key)!.get(subgroups[i])) {
+          dataMatrix[i][j].push(dataMatrix[i][j][0] + this.values.get(key)!.get(subgroups[i])!);
+        } else {
+          console.log(key, subgroups[i], dataMatrix[i][j][0])
+          dataMatrix[i][j].push(dataMatrix[i][j][0]);
+        }
         j++;
       }
     }
-    return dataMatrix;
+    this.stackedData = dataMatrix;
+    return this.stackedData;
   }
 
 }
