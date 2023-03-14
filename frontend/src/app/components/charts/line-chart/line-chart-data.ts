@@ -17,20 +17,19 @@ export class LineChartData {
 
   /* gets the max grouped data by group */
   getMax(): number {
-    const data: any[][][] = this.getStackedData();
     let max: number = 0;
-    for (let i: number = 0; i < data.length; i++) {
-      for (let j: number = 0; j < data[i].length; j++) {
-        if (data[i][j][1]! > max) {
-          max = data[i][j][1];
+    for (const key of this.values.keys()) {
+      for (const subgroup of this.values.get(key)!.keys()) {
+        if (this.values.get(key)!.get(subgroup)! > max) {
+          max = this.values.get(key)!.get(subgroup)!;
         }
       }
     }
     return max;
   }
 
-  getGroups(): Date[] {
-    return Array.from(this.values.keys());
+  getGroups(): number[] {
+    return Array.from(this.values.keys()).map(d => d.getFullYear());
   }
 
   getSubgroups(): string[] {
@@ -79,16 +78,8 @@ export class LineChartData {
       let j = 0;
       for (const key of this.values.keys()) {
         dataMatrix[i][j] = [];
-        if (i == 0) {
-          dataMatrix[i][j].push(0);
-        } else {
-          dataMatrix[i][j].push(dataMatrix[i - 1][j][1]);
-        }
-        if (this.values.get(key) && this.values.get(key)!.get(subgroups[i])) {
-          dataMatrix[i][j].push(dataMatrix[i][j][0] + this.values.get(key)!.get(subgroups[i])!);
-        } else {
-          dataMatrix[i][j].push(dataMatrix[i][j][0]);
-        }
+        dataMatrix[i][j][0] = key.getFullYear();
+        dataMatrix[i][j][1] = this.values.get(key)!.get(subgroups[i])!;
         j++;
       }
     }
