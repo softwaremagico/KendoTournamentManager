@@ -6,3 +6,36 @@
   font-size: 22px;
   font-weight: bold;
 }
+
+.figure {
+  display: flex;
+  align-items: center;
+}
+
+.caption {
+  flex: 0 0 auto;
+  font-size: 10px;
+}
+
+#legend {
+  list-style: none;
+  text-align: left;
+  line-height: 1.5;
+  padding: 0 0 0 1em;
+}
+
+::ng-deep li {
+  font-size: 14px;
+}
+
+::ng-deep li::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 1em;
+  background: var(--gen-color);
+  vertical-align: -0.2em;
+  margin-right: 0.25em;
+}

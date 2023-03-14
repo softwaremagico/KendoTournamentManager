@@ -1,4 +1,9 @@
 <div class="stacked-bar-chart">
   <span class="title">{{title}}</span>
-  <figure [id]="uniqueId"></figure>
+  <figure class="figure">
+    <div [id]="uniqueId"></div>
+    <caption>
+      <ul id="legend"></ul>
+    </caption>
+  </figure>
 </div>

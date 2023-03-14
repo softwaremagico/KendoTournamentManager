@@ -3,6 +3,7 @@ import {v4 as uuid} from "uuid";
 import * as d3 from "d3";
 import {ScaleOrdinal} from "d3-scale";
 import {StackedBarsChartData} from "./stacked-bars-chart-data";
+import {select} from "d3";
 
 @Component({
   selector: 'app-stacked-bars-chart',
@@ -45,6 +46,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.createSvg();
     this.drawBars(this.chartData);
+    this.createLegend(this.chartData);
   }
 
   private getMaxY(data: StackedBarsChartData): number {
@@ -53,7 +55,7 @@ export class StackedBarsChartComponent implements AfterViewInit {
   }
 
   private createSvg(): void {
-    this.svg = d3.select("figure#" + this.uniqueId)
+    this.svg = d3.select("div#" + this.uniqueId)
       .append("svg")
       .attr("width", this.width + (this.margin * 2))
       .attr("height", this.height + (this.margin * 2))
@@ -61,8 +63,17 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
   }
 
-  private initScales() {
+  private createLegend(data: StackedBarsChartData) {
+    const legendItems = select("#legend")
+      .selectAll("li")
+      .data(data.subgroups);
 
+    legendItems
+      .enter()
+      .append("li")
+      .attr("class", "legend-list")
+      .style("--gen-color", ( color ) => this.colors[data.subgroups.indexOf(color)])
+      .text((label) => label);
   }
 
   private drawBars(data: StackedBarsChartData): void {
@@ -93,7 +104,6 @@ export class StackedBarsChartComponent implements AfterViewInit {
       .call(d3.axisLeft(y));
 
     const stackedData: any[][][] = data.getStackedData();
-    console.log(stackedData);
 
     // Create and fill the bars
     const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
