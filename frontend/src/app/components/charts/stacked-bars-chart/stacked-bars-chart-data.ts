@@ -2,6 +2,7 @@ export class StackedBarsChartData {
   // X Group -> Property -> Value. For example (2010 -> Men -> 5)
   values: Map<string, Map<string, number>>;
   subgroups: string[];
+  subgroupsWithValues: string[];
   stackedData: any[][][];
 
   /**
@@ -44,6 +45,27 @@ export class StackedBarsChartData {
     }
     this.subgroups = Array.from(subgroups);
     return this.subgroups;
+  }
+
+  getSubgroupsWithValues(): string[] {
+    if (this.subgroupsWithValues) {
+      return this.subgroupsWithValues;
+    }
+    const subgroups: string[] = this.getSubgroups();
+    for (let i = subgroups.length - 1; i > 0; i--) {
+      let remove = true;
+      for (const key of this.values.keys()) {
+        if (this.values.get(key)!.get(subgroups[i])) {
+          remove = false;
+          break;
+        }
+      }
+      if (remove) {
+        subgroups.splice(i, 1);
+      }
+    }
+    this.subgroupsWithValues = subgroups;
+    return subgroups;
   }
 
   getStackedData(): any[][][] {
