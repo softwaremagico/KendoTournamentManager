@@ -115,6 +115,7 @@ export class LineChartComponent implements OnInit {
         title: {
           text: this.xAxisTitle
         }
+        //type: 'datetime'
       },
       yaxis: {
         show: this.showYAxis,

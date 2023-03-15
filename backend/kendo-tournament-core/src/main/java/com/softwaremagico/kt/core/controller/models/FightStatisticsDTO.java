@@ -28,8 +28,9 @@ public class FightStatisticsDTO extends ElementDTO {
     private Long fightsNumber;
     private Integer fightsByTeam;
     private Long duelsNumber;
+    private Long averageTime;
     //In seconds.
-    private Long time;
+    private Long estimatedTime;
 
     public Long getFightsNumber() {
         return fightsNumber;
@@ -55,12 +56,12 @@ public class FightStatisticsDTO extends ElementDTO {
         }
     }
 
-    public Long getTime() {
-        return time;
+    public Long getEstimatedTime() {
+        return estimatedTime;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
+    public void setEstimatedTime(Long estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
     public Integer getFightsByTeam() {
@@ -69,5 +70,13 @@ public class FightStatisticsDTO extends ElementDTO {
 
     public void setFightsByTeam(Integer fightsByTeam) {
         this.fightsByTeam = fightsByTeam;
+    }
+
+    public Long getAverageTime() {
+        return averageTime;
+    }
+
+    public void setAverageTime(Long averageTime) {
+        this.averageTime = averageTime;
     }
 }

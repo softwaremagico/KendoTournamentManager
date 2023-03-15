@@ -36,9 +36,9 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
             _fightStatistics = new FightStatistics();
           }
           this.fightStatistics = _fightStatistics;
-          this.setHours(this.fightStatistics.time);
-          this.setMinutes(this.fightStatistics.time);
-          this.setSeconds(this.fightStatistics.time);
+          this.setHours(this.fightStatistics.estimatedTime);
+          this.setMinutes(this.fightStatistics.estimatedTime);
+          this.setSeconds(this.fightStatistics.estimatedTime);
         });
       }
     });
