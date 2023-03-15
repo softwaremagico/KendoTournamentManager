@@ -1,9 +1,27 @@
-import {AfterViewInit, Component, Input} from '@angular/core';
-import * as d3 from "d3";
-import {ScaleOrdinal} from "d3-scale";
-import {BarChartData} from "./bar-chart-data";
-import {v4 as uuid} from 'uuid';
+import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexGrid,
+  ApexPlotOptions,
+  ApexXAxis,
+  ApexYAxis,
+  ChartComponent
+} from "ng-apexcharts";
 import {Colors} from "../colors";
+import {BarChartData} from "./bar-chart-data";
+
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  colors: string [];
+  chart: ApexChart;
+  labels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+};
 
 @Component({
   selector: 'app-bar-chart',
@@ -12,86 +30,84 @@ import {Colors} from "../colors";
 })
 export class BarChartComponent implements AfterViewInit {
 
+  @ViewChild('chart') chart: ChartComponent;
+  public chartOptions: ChartOptions;
+
   @Input()
-  public title: string = "Bar Chart";
+  public data: BarChartData;
   @Input()
-  public chartData: BarChartData[];
-  @Input()
-  private margin: number = 30;
-  @Input()
-  public width: number = 750;
-  @Input()
-  public height: number = 400;
+  public width: number = 500;
   @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()
-  public strokeColor: string = "#121926";
+  public horizontal: boolean = false;
   @Input()
-  public strokeWidth: number = 2;
+  public showValuesLabels: boolean = true;
+  @Input()
+  public xAxisOnTop: boolean = false;
+  @Input()
+  public xAxisTitle: string | undefined = undefined;
+  @Input()
+  public yAxisTitle: string | undefined = undefined;
+  @Input()
+  public showYAxis: boolean = true;
 
-  public uniqueId: string = "id" + uuid();
+  constructor() {
+    this.chartOptions = {
+      series: [],
+      colors: [],
+      chart: {
+        width: this.width,
+        type: "bar"
+      },
+      labels: {
+        enabled: false
+      },
+      plotOptions: {
+        bar: {
+          horizontal: this.horizontal
+        }
+      },
+      xaxis: {
+        categories: []
+      },
+      yaxis: {
+        show: this.showYAxis,
+      }
+    };
+  }
 
-  private svg: any;
 
   ngAfterViewInit() {
-    this.createSvg();
-    this.drawBars(this.chartData);
-  }
-
-  private getMaxY(): number {
-    return Math.max(...this.chartData.map(function (barChartData) {
-      return barChartData.value;
-    })) + 1;
-  }
-
-  private createSvg(): void {
-    this.svg = d3.select("figure#" + this.uniqueId)
-      .append("svg")
-      .attr("width", this.width + (this.margin * 2))
-      .attr("height", this.height + (this.margin * 2))
-      .append("g")
-      .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
-  }
-
-  private drawBars(data: BarChartData[]): void {
-    // Create the X-axis band scale
-    const x = d3.scaleBand()
-      .range([0, this.width])
-      .domain(data.map(barChartData => barChartData.key))
-      .padding(0.2);
-
-    // Draw the X-axis on the DOM
-    this.svg.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
-      .call(d3.axisBottom(x))
-      .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end");
-
-    // Create the Y-axis band scale
-    const y = d3.scaleLinear()
-      .domain([0, this.getMaxY()])
-      .nice()
-      .range([this.height, 0]);
-
-    // Draw the Y-axis on the DOM
-    this.svg.append("g")
-      .call(d3.axisLeft(y));
-
-    // Create and fill the bars
-    const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
-    this.svg.selectAll("bars")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("x", (barChartData: BarChartData) => x(barChartData.key))
-      .attr("y", (barChartData: BarChartData) => y(barChartData.value))
-      .attr("width", x.bandwidth())
-      .attr("height", (barChartData: BarChartData) => this.height - y(barChartData.value))
-      .attr("fill", (barChartData: BarChartData, index: string) => {
-        return scaleOrdinal(index);
-      })
-      .attr("stroke", this.strokeColor)
-      .style("stroke-width", this.strokeWidth + "px");
+    this.chartOptions = {
+      colors: this.colors,
+      series: this.data.getData(),
+      chart: {
+        width: this.width,
+        type: "bar"
+      },
+      labels: {
+        enabled: this.showValuesLabels
+      },
+      plotOptions: {
+        bar: {
+          distributed: true, // this line is mandatory for using colors
+          horizontal: this.horizontal
+        }
+      },
+      xaxis: {
+        categories: this.data.getLabels(),
+        position: this.xAxisOnTop ? 'top' : 'bottom',
+        title: {
+          text: this.xAxisTitle
+        }
+      },
+      yaxis: {
+        show: this.showYAxis,
+        title: {
+          text: this.yAxisTitle
+        }
+      }
+    };
   }
 }
