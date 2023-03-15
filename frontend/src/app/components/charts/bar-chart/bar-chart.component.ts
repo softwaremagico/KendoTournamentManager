@@ -3,8 +3,8 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexGrid,
   ApexPlotOptions,
+  ApexTitleSubtitle,
   ApexXAxis,
   ApexYAxis,
   ChartComponent
@@ -21,6 +21,7 @@ export type ChartOptions = {
   plotOptions: ApexPlotOptions;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
+  title: ApexTitleSubtitle;
 };
 
 @Component({
@@ -38,9 +39,13 @@ export class BarChartComponent implements AfterViewInit {
   @Input()
   public width: number = 500;
   @Input()
+  public showToolbar: boolean = true;
+  @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()
   public horizontal: boolean = false;
+  @Input()
+  public barThicknessPercentage: number = 75;
   @Input()
   public showValuesLabels: boolean = true;
   @Input()
@@ -51,6 +56,10 @@ export class BarChartComponent implements AfterViewInit {
   public yAxisTitle: string | undefined = undefined;
   @Input()
   public showYAxis: boolean = true;
+  @Input()
+  public title: string | undefined = undefined;
+  @Input()
+  public titleAlignment: "left" | "center" | "right";
 
   constructor() {
     this.chartOptions = {
@@ -73,7 +82,8 @@ export class BarChartComponent implements AfterViewInit {
       },
       yaxis: {
         show: this.showYAxis,
-      }
+      },
+      title: {}
     };
   }
 
@@ -81,18 +91,23 @@ export class BarChartComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.chartOptions = {
       colors: this.colors,
-      series: this.data.getData(),
       chart: {
         width: this.width,
-        type: "bar"
+        type: "bar",
+        toolbar: {
+          show: this.showToolbar,
+        },
       },
+      series: this.data.getData(),
       labels: {
         enabled: this.showValuesLabels
       },
       plotOptions: {
         bar: {
           distributed: true, // this line is mandatory for using colors
-          horizontal: this.horizontal
+          horizontal: this.horizontal,
+          barHeight: this.barThicknessPercentage + '%',
+          columnWidth: this.barThicknessPercentage + '%',
         }
       },
       xaxis: {
@@ -106,8 +121,12 @@ export class BarChartComponent implements AfterViewInit {
         show: this.showYAxis,
         title: {
           text: this.yAxisTitle
-        }
-      }
+        },
+      },
+      title: {
+        text: this.title,
+        align: this.titleAlignment
+      },
     };
   }
 }
