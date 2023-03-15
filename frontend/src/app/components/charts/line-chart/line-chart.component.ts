@@ -82,7 +82,8 @@ export class LineChartComponent implements AfterViewInit {
     // Draw the X-axis on the DOM
     this.svg.append("g")
       .attr("transform", "translate(0," + this.height + ")")
-      .call(d3.axisBottom(x).tickPadding(8).tickSize(5));
+      //Tickformat 0, removed decimals if not needed.
+      .call(d3.axisBottom(x).tickPadding(8).tickSize(5).tickFormat(d3.format('0')));
 
     // Create the Y-axis band scale
     const y = d3.scaleLinear()
@@ -93,7 +94,7 @@ export class LineChartComponent implements AfterViewInit {
     this.svg.append("g")
       .call(d3.axisLeft(y));
 
-    const stackedData: any[][][] = data.getStackedData();
+    const stackedData: Map<string, Map<Date, number>> = data.getStackedData();
     console.log(stackedData);
 
     // Create and fill the bars
@@ -106,15 +107,15 @@ export class LineChartComponent implements AfterViewInit {
         return scaleOrdinal(index);
       })
       .attr("stroke-width", this.strokeWidth)
-      .attr("d", function (line: any[][]) {
+      .attr("d", function (line: any) {
         console.log('-->', line)
         return d3.line()
           .x(function (d) {
-            console.log('!! ', d)
+            console.log('!! ', d[0])
             return x(d[0]);
           })
           .y(function (d) {
-            console.log('$$ ', d)
+            console.log('$$ ', d[1])
             return y(d[1]);
           })
           (line[1])
