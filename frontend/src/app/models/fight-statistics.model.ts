@@ -6,14 +6,16 @@ export class FightStatistics extends Element {
   fightsByTeam?: number;
   duelsNumber: number;
   //In seconds.
-  time: number;
+  estimatedTime: number;
+  averageTime: number;
 
   public static override copy(source: FightStatistics, target: FightStatistics): void {
     Element.copy(source, target);
     target.fightsNumber = source.fightsNumber;
     target.fightsByTeam = source.fightsByTeam;
     target.duelsNumber = source.duelsNumber;
-    target.time = source.time;
+    target.estimatedTime = source.estimatedTime;
+    target.averageTime = source.averageTime;
   }
 
   public static clone(data: FightStatistics): FightStatistics {

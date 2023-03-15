@@ -30,7 +30,8 @@ public class FightStatistics {
     private Long fightsByTeam;
     private Long duelsNumber;
     //In seconds.
-    private Long time;
+    private Long averageTime;
+    private Long estimatedTime;
 
     public Long getFightsNumber() {
         return fightsNumber;
@@ -64,11 +65,19 @@ public class FightStatistics {
         }
     }
 
-    public Long getTime() {
-        return time;
+    public Long getEstimatedTime() {
+        return estimatedTime;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
+    public void setEstimatedTime(Long estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public Long getAverageTime() {
+        return averageTime;
+    }
+
+    public void setAverageTime(Long averageTime) {
+        this.averageTime = averageTime;
     }
 }
