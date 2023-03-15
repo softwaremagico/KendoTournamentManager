@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
-  ApexDataLabels,
+  ApexDataLabels, ApexFill,
   ApexPlotOptions,
   ApexStroke,
   ApexTitleSubtitle,
@@ -19,6 +19,7 @@ export type ChartOptions = {
   colors: string [];
   chart: ApexChart;
   labels: ApexDataLabels;
+  fill: ApexFill;
   plotOptions: ApexPlotOptions;
   stroke: ApexStroke;
   xaxis: ApexXAxis;
@@ -64,6 +65,8 @@ export class LineChartComponent implements OnInit {
   public title: string | undefined = undefined;
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
+  @Input()
+  public fill:  "gradient" | "solid" | "pattern" | "image" = "solid";
 
 
   ngOnInit() {
@@ -80,6 +83,9 @@ export class LineChartComponent implements OnInit {
       },
       labels: {
         enabled: this.showValuesLabels
+      },
+      fill: {
+        type: this.fill,
       },
       plotOptions: {
         bar: {
