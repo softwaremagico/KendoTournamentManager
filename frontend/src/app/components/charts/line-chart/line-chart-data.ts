@@ -3,7 +3,7 @@ export class LineChartData {
   values: Map<Date, Map<string, number>>;
   subgroups: string[];
   subgroupsWithValues: string[];
-  stackedData: any[][][];
+  stackedData: Map<string, Map<Date, number>>;
 
   /**
    * Create a dataset for the stacked bars chart.
@@ -28,8 +28,8 @@ export class LineChartData {
     return max;
   }
 
-  getGroups(): number[] {
-    return Array.from(this.values.keys()).map(d => d.getFullYear());
+  getGroups(): Date[] {
+    return Array.from(this.values.keys()).map(d => d);
   }
 
   getSubgroups(): string[] {
@@ -67,20 +67,18 @@ export class LineChartData {
     return subgroups;
   }
 
-  getStackedData(): any[][][] {
+  getStackedData(): Map<string, Map<Date, number>> {
     if (this.stackedData) {
       return this.stackedData;
     }
-    const dataMatrix: any[][][] = [];
+    const dataMatrix: Map<string, Map<Date, number>> = new Map();
     const subgroups: string[] = this.getSubgroups();
-    for (let i: number = 0; i < subgroups.length; i++) {
-      dataMatrix[i] = [];
-      let j = 0;
+    for (const subgroup of  subgroups) {
+      dataMatrix.set(subgroup, new Map());
       for (const key of this.values.keys()) {
-        dataMatrix[i][j] = [];
-        dataMatrix[i][j][0] = key.getFullYear();
-        dataMatrix[i][j][1] = this.values.get(key)!.get(subgroups[i])!;
-        j++;
+        if(this.values.get(key)!.get(subgroup)) {
+          dataMatrix.get(subgroup)!.set(key, this.values.get(key)!.get(subgroup)!);
+        }
       }
     }
     this.stackedData = dataMatrix;
