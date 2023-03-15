@@ -49,13 +49,13 @@ export class LineChartData {
     const data: Data[] = [];
     const labels: string[] = this.getLabels();
     for (const element of this.elements) {
-      const points: number[] = [];
+      const points: (number | null)[] = [];
       for (const label of labels) {
         const point: [string, number] | undefined = element.points.find(p => p[0] == label);
         if (point) {
           points.push(point[1]);
         } else {
-          points.push(0);
+          points.push(null);
         }
 
       }
@@ -82,5 +82,5 @@ export class LineChartDataElement {
 
 export type Data = {
   name: string,
-  data: number[]
+  data: (number | null)[]
 };
