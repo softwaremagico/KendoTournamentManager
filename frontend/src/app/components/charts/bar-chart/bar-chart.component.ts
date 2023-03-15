@@ -3,6 +3,7 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
+  ApexFill,
   ApexPlotOptions,
   ApexTitleSubtitle,
   ApexXAxis,
@@ -16,6 +17,7 @@ import {BarChartData} from "./bar-chart-data";
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   colors: string [];
+  fill: ApexFill;
   chart: ApexChart;
   labels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
@@ -60,6 +62,8 @@ export class BarChartComponent implements OnInit {
   public title: string | undefined = undefined;
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
+  @Input()
+  public fill:  "gradient" | "solid" | "pattern" | "image" = "solid";
 
 
   ngOnInit() {
@@ -75,6 +79,9 @@ export class BarChartComponent implements OnInit {
       series: this.data.getData(),
       labels: {
         enabled: this.showValuesLabels
+      },
+      fill: {
+        type: this.fill,
       },
       plotOptions: {
         bar: {

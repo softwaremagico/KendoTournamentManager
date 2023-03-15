@@ -1,6 +1,13 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 
-import {ApexChart, ApexNonAxisChartSeries, ApexResponsive, ApexTitleSubtitle, ChartComponent} from "ng-apexcharts";
+import {
+  ApexChart,
+  ApexFill,
+  ApexNonAxisChartSeries,
+  ApexResponsive,
+  ApexTitleSubtitle,
+  ChartComponent
+} from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";
 import {Colors} from "../colors";
 
@@ -9,6 +16,7 @@ export type ChartOptions = {
   series: ApexNonAxisChartSeries;
   colors: string [];
   chart: ApexChart;
+  fill:ApexFill;
   responsive: ApexResponsive[];
   labels: string[];
   title: ApexTitleSubtitle;
@@ -35,16 +43,23 @@ export class PieChartComponent implements OnInit {
   public title: string | undefined = undefined;
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
+  @Input()
+  public isDonut: boolean = false;
+  @Input()
+  public fill:  "gradient" | "solid" | "pattern" | "image" = "solid";
 
   ngOnInit() {
     this.chartOptions = {
       colors: this.colors,
       chart: {
         width: this.width,
-        type: "pie"
+        type: this.isDonut ? "donut" : "pie"
       },
       series: this.data.getValues(),
       labels: this.data.getLabels(),
+      fill: {
+        type: this.fill,
+      },
       responsive: [
         {
           breakpoint: 480,

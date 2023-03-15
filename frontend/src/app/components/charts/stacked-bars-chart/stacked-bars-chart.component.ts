@@ -3,6 +3,7 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
+  ApexFill,
   ApexPlotOptions,
   ApexTitleSubtitle,
   ApexXAxis,
@@ -17,6 +18,7 @@ export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   labels: ApexDataLabels;
+  fill: ApexFill;
   plotOptions: ApexPlotOptions;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
@@ -59,6 +61,8 @@ export class StackedBarsChartComponent implements OnInit {
   public title: string | undefined = undefined;
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
+  @Input()
+  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
 
   ngOnInit() {
     this.chartOptions = {
@@ -73,6 +77,9 @@ export class StackedBarsChartComponent implements OnInit {
       series: this.setColors(this.data.getData()),
       labels: {
         enabled: this.showValuesLabels
+      },
+      fill: {
+        type: this.fill,
       },
       plotOptions: {
         bar: {
