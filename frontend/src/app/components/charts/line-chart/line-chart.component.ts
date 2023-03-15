@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -31,7 +31,7 @@ export type ChartOptions = {
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements AfterViewInit {
+export class LineChartComponent implements OnInit {
 
   @ViewChild('chart') chart: ChartComponent;
   public chartOptions: ChartOptions;
@@ -63,42 +63,10 @@ export class LineChartComponent implements AfterViewInit {
   @Input()
   public title: string | undefined = undefined;
   @Input()
-  public titleAlignment: "left" | "center" | "right";
-
-  constructor() {
-    this.chartOptions = {
-      series: [],
-      colors: [],
-      chart: {
-        height: this.height,
-        width: this.width,
-        type: "line"
-      },
-      labels: {
-        enabled: false
-      },
-      plotOptions: {
-        bar: {
-          horizontal: this.horizontal
-        }
-      },
-      xaxis: {
-        categories: []
-      },
-      yaxis: {
-        show: this.showYAxis,
-      },
-      stroke: {},
-      title: {
-        text: "Product Trends by Month",
-        align: "left"
-      },
-    };
-  }
+  public titleAlignment: "left" | "center" | "right" = "center";
 
 
-  ngAfterViewInit() {
-    console.log(this.data.getData());
+  ngOnInit() {
     this.chartOptions = {
       colors: this.colors,
       series: this.data.getData(),

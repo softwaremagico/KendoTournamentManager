@@ -1,4 +1,4 @@
-<div id="chart">
+<div id="chart" *ngIf="chartOptions">
   <apx-chart
     [series]="chartOptions.series"
     [colors]="chartOptions.colors"
