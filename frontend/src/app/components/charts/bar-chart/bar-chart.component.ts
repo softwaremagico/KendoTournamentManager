@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -29,7 +29,7 @@ export type ChartOptions = {
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements AfterViewInit {
+export class BarChartComponent implements OnInit {
 
   @ViewChild('chart') chart: ChartComponent;
   public chartOptions: ChartOptions;
@@ -59,36 +59,10 @@ export class BarChartComponent implements AfterViewInit {
   @Input()
   public title: string | undefined = undefined;
   @Input()
-  public titleAlignment: "left" | "center" | "right";
-
-  constructor() {
-    this.chartOptions = {
-      series: [],
-      colors: [],
-      chart: {
-        width: this.width,
-        type: "bar"
-      },
-      labels: {
-        enabled: false
-      },
-      plotOptions: {
-        bar: {
-          horizontal: this.horizontal
-        }
-      },
-      xaxis: {
-        categories: []
-      },
-      yaxis: {
-        show: this.showYAxis,
-      },
-      title: {}
-    };
-  }
+  public titleAlignment: "left" | "center" | "right" = "center";
 
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.chartOptions = {
       colors: this.colors,
       chart: {

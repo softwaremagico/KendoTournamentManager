@@ -55,7 +55,7 @@ export class LineChartData {
         if (point) {
           points.push(point[1]);
         } else {
-          points.push(points[points.length - 1]);
+          points.push(0);
         }
 
       }
@@ -66,13 +66,17 @@ export class LineChartData {
 }
 
 export class LineChartDataElement {
-  name: string | undefined;
+  name: string;
   //X,Y
   points: [string, number][];
 
   constructor(points: [string, number][], name?: string) {
     this.points = points;
-    this.name = name;
+    if (name) {
+      this.name = name;
+    } else {
+      this.name = "";
+    }
   }
 }
 
