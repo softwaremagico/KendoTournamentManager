@@ -2,7 +2,8 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
-  ApexDataLabels, ApexFill,
+  ApexDataLabels,
+  ApexFill, ApexMarkers,
   ApexPlotOptions,
   ApexStroke,
   ApexTitleSubtitle,
@@ -25,6 +26,7 @@ export type ChartOptions = {
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
+  markers: ApexMarkers;
 };
 
 @Component({
@@ -66,7 +68,11 @@ export class LineChartComponent implements OnInit {
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
   @Input()
-  public fill:  "gradient" | "solid" | "pattern" | "image" = "solid";
+  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  @Input()
+  public curve: "straight" | "smooth" | "stepline" = "smooth";
+  @Input()
+  public shadow: boolean = true;
 
 
   ngOnInit() {
@@ -79,6 +85,14 @@ export class LineChartComponent implements OnInit {
         type: "line",
         toolbar: {
           show: this.showToolbar,
+        },
+        dropShadow: {
+          enabled: this.shadow,
+          color: '#000',
+          top: 18,
+          left: 7,
+          blur: 10,
+          opacity: 0.2
         },
       },
       labels: {
@@ -106,14 +120,17 @@ export class LineChartComponent implements OnInit {
         show: this.showYAxis,
         title: {
           text: this.yAxisTitle
-        }
+        },
       },
       stroke: {
-        curve: "straight"
+        curve: this.curve
       },
       title: {
         text: this.title,
         align: this.titleAlignment
+      },
+      markers: {
+        size: 0
       },
     };
   }

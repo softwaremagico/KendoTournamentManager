@@ -3,7 +3,8 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill, ApexLegend,
+  ApexFill,
+  ApexLegend,
   ApexPlotOptions,
   ApexTitleSubtitle,
   ApexXAxis,
@@ -70,6 +71,8 @@ export class StackedBarsChartComponent implements OnInit {
   public enableTotals: boolean = true;
   @Input()
   public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
+  @Input()
+  public shadow: boolean = true;
 
   ngOnInit() {
     this.chartOptions = {
@@ -80,6 +83,14 @@ export class StackedBarsChartComponent implements OnInit {
           show: this.showToolbar,
         },
         stacked: true,
+        dropShadow: {
+          enabled: this.shadow,
+          color: '#000',
+          top: 0,
+          left: 7,
+          blur: 10,
+          opacity: 0.2
+        },
       },
       series: this.setColors(this.data.getData()),
       labels: {

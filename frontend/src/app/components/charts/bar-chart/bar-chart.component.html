@@ -1,4 +1,5 @@
 <div id="chart" *ngIf="chartOptions">
+  <div class="box shadow">
   <apx-chart
     [series]="chartOptions.series"
     [colors]="chartOptions.colors"
@@ -11,4 +12,5 @@
     [title]="chartOptions.title"
     [legend]="chartOptions.legend"
   ></apx-chart>
+  </div>
 </div>
