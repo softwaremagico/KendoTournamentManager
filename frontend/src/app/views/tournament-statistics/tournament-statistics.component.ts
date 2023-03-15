@@ -7,6 +7,10 @@ import {PieChartData} from "../../components/charts/pie-chart/pie-chart-data";
 import {Score} from "../../models/score";
 import {BarChartData} from "../../components/charts/bar-chart/bar-chart-data";
 import {LineChartData, LineChartDataElement} from "../../components/charts/line-chart/line-chart-data";
+import {
+  StackedBarChartData,
+  StackedBarChartDataElement
+} from "../../components/charts/stacked-bars-chart/stacked-bars-chart-data";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -18,8 +22,12 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public pieChartData: PieChartData = PieChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
   public barChartData: BarChartData = BarChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
   public lineChartData: LineChartData = LineChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
-  public multipleLineChartData: LineChartData = LineChartData.fromMultipleDataElements([new LineChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
+  public multipleLineChartData: LineChartData = LineChartData.fromMultipleDataElements([
+    new LineChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
     new LineChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2")]);
+  public multipleBarsChartData: StackedBarChartData = StackedBarChartData.fromMultipleDataElements([
+    new StackedBarChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
+    new StackedBarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2")]);
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
     super(rbacService);
