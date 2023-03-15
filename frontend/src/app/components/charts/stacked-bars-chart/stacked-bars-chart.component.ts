@@ -3,7 +3,7 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill,
+  ApexFill, ApexLegend,
   ApexPlotOptions,
   ApexTitleSubtitle,
   ApexXAxis,
@@ -23,6 +23,7 @@ export type ChartOptions = {
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
+  legend: ApexLegend;
 };
 
 @Component({
@@ -63,6 +64,12 @@ export class StackedBarsChartComponent implements OnInit {
   public titleAlignment: "left" | "center" | "right" = "center";
   @Input()
   public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  @Input()
+  public borderRadius: number = 0;
+  @Input()
+  public enableTotals: boolean = true;
+  @Input()
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
   ngOnInit() {
     this.chartOptions = {
@@ -87,6 +94,15 @@ export class StackedBarsChartComponent implements OnInit {
           horizontal: this.horizontal,
           barHeight: this.barThicknessPercentage + '%',
           columnWidth: this.barThicknessPercentage + '%',
+          borderRadius: this.borderRadius,
+          dataLabels: {
+            total: {
+              enabled: this.enableTotals,
+              style: {
+                fontWeight: 900
+              }
+            }
+          }
         }
       },
       xaxis: {
@@ -105,6 +121,9 @@ export class StackedBarsChartComponent implements OnInit {
       title: {
         text: this.title,
         align: this.titleAlignment
+      },
+      legend: {
+        position: "bottom"
       },
     };
   }

@@ -3,7 +3,7 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill,
+  ApexFill, ApexLegend,
   ApexPlotOptions,
   ApexTitleSubtitle,
   ApexXAxis,
@@ -24,6 +24,7 @@ export type ChartOptions = {
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
+  legend: ApexLegend;
 };
 
 @Component({
@@ -63,7 +64,11 @@ export class BarChartComponent implements OnInit {
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
   @Input()
-  public fill:  "gradient" | "solid" | "pattern" | "image" = "solid";
+  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  @Input()
+  public borderRadius: number = 0;
+  @Input()
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
 
   ngOnInit() {
@@ -89,6 +94,7 @@ export class BarChartComponent implements OnInit {
           horizontal: this.horizontal,
           barHeight: this.barThicknessPercentage + '%',
           columnWidth: this.barThicknessPercentage + '%',
+          borderRadius: this.borderRadius
         }
       },
       xaxis: {
@@ -107,6 +113,9 @@ export class BarChartComponent implements OnInit {
       title: {
         text: this.title,
         align: this.titleAlignment
+      },
+      legend: {
+        position: "bottom"
       },
     };
   }
