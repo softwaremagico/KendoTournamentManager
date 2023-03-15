@@ -1,5 +1,11 @@
-<div class="bar-chart">
-  <figure [id]="uniqueId">
-    <figcaption>{{title}}</figcaption>
-  </figure>
+<div id="chart">
+  <apx-chart
+    [series]="chartOptions.series"
+    [colors]="chartOptions.colors"
+    [chart]="chartOptions.chart"
+    [dataLabels]="chartOptions.labels"
+    [plotOptions]="chartOptions.plotOptions"
+    [xaxis]="chartOptions.xaxis"
+    [yaxis]="chartOptions.yaxis"
+  ></apx-chart>
 </div>

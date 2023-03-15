@@ -1,5 +1,9 @@
-<div class="pie-chart">
-  <figure [id]="uniqueId">
-    <figcaption>{{title}}</figcaption>
-  </figure>
+<div id="chart">
+  <apx-chart
+    [series]="chartOptions.series"
+    [colors]="chartOptions.colors" 
+    [chart]="chartOptions.chart"
+    [labels]="chartOptions.labels"
+    [responsive]="chartOptions.responsive"
+  ></apx-chart>
 </div>
