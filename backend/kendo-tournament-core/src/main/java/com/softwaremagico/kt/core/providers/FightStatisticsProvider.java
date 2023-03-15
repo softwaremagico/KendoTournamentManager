@@ -117,8 +117,10 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         fightStatistics.setFightsNumber((((long) teams.size() * (teams.size() - 1)) / 2));
         fightStatistics.setFightsByTeam(((long) teams.size() - 1));
         fightStatistics.setDuelsNumber(getDuels(fightStatistics.getFightsByTeam(), teamSize, teams));
-        if (duelProvider.getDurationAverage() != null && fightStatistics.getDuelsNumber() != null) {
-            fightStatistics.setTime(fightStatistics.getDuelsNumber() * (duelProvider.getDurationAverage() + TIME_BETWEEN_DUELS) +
+        final Long durationAverage = duelProvider.getDurationAverage();
+        if (durationAverage != null && fightStatistics.getDuelsNumber() != null) {
+            fightStatistics.setAverageTime(durationAverage);
+            fightStatistics.setEstimatedTime(fightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS) +
                     (fightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * fightStatistics.getFightsNumber() : 0));
         }
         return fightStatistics;
@@ -138,7 +140,7 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         }
         fightStatistics.setDuelsNumber(getDuels(fightStatistics.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
-            fightStatistics.setTime(fightStatistics.getDuelsNumber() * duelProvider.getDurationAverage());
+            fightStatistics.setEstimatedTime(fightStatistics.getDuelsNumber() * duelProvider.getDurationAverage());
         }
         return fightStatistics;
     }
@@ -200,7 +202,7 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         fightStatistics.setFightsNumber(fightProvider.count(tournament));
         fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teamProvider.count(tournament));
         fightStatistics.setDuelsNumber(duelProvider.count(tournament));
-        fightStatistics.setTime(duelProvider.getDurationAverage(tournament));
+        fightStatistics.setEstimatedTime(duelProvider.getDurationAverage(tournament));
         return fightStatistics;
     }
 
