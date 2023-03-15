@@ -4,10 +4,11 @@ import {
   ApexChart,
   ApexDataLabels,
   ApexPlotOptions,
+  ApexStroke,
+  ApexTitleSubtitle,
   ApexXAxis,
   ApexYAxis,
-  ApexStroke,
-  ChartComponent, ApexTitleSubtitle
+  ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {LineChartData} from "./line-chart-data";
@@ -38,6 +39,8 @@ export class LineChartComponent implements AfterViewInit {
   @Input()
   public data: LineChartData;
   @Input()
+  public height: number = 250;
+  @Input()
   public width: number = 500;
   @Input()
   public showToolbar: boolean = true;
@@ -67,6 +70,7 @@ export class LineChartComponent implements AfterViewInit {
       series: [],
       colors: [],
       chart: {
+        height: this.height,
         width: this.width,
         type: "line"
       },
@@ -94,10 +98,12 @@ export class LineChartComponent implements AfterViewInit {
 
 
   ngAfterViewInit() {
+    console.log(this.data.getData());
     this.chartOptions = {
       colors: this.colors,
       series: this.data.getData(),
       chart: {
+        height: this.height,
         width: this.width,
         type: "line",
         toolbar: {

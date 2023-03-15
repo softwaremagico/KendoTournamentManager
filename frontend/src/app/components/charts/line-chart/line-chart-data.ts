@@ -1,49 +1,78 @@
 export class LineChartData {
-  name: string | undefined;
+  name: string[] | undefined;
   elements: LineChartDataElement[];
 
   public static fromArray(elements: [string, number][]): LineChartData {
     const lineChartData: LineChartData = new LineChartData();
     lineChartData.elements = [];
-    for (const element of elements) {
-      lineChartData.elements.push(new LineChartDataElement(element[0], element[1]));
+    lineChartData.elements.push(new LineChartDataElement(elements));
+    return lineChartData;
+  }
+
+  public static fromMultipleArray(elements: [string, number][][]): LineChartData {
+    const lineChartData: LineChartData = new LineChartData();
+    lineChartData.elements = [];
+    for (let i = 0; i < elements.length; i++) {
+      lineChartData.elements.push(new LineChartDataElement(elements[i]));
     }
     return lineChartData;
   }
 
-  public static fromDataElements(elements: LineChartDataElement[]): LineChartData {
+  public static fromDataElements(element: LineChartDataElement): LineChartData {
+    const lineChartData: LineChartData = new LineChartData();
+    lineChartData.elements = [];
+    lineChartData.elements[0] = element;
+    return lineChartData;
+  }
+
+  public static fromMultipleDataElements(elements: LineChartDataElement[]): LineChartData {
     const lineChartData: LineChartData = new LineChartData();
     lineChartData.elements = elements;
     return lineChartData;
   }
 
-  constructor(name?: string) {
+  constructor(name?: string[]) {
     this.name = name;
   }
 
   getLabels(): string[] {
-    return this.elements.map(e => e.x);
-  }
-
-  getValues(): number[] {
-    return this.elements.map(e => e.y);
+    const labels: Set<string> = new Set();
+    for (const element of this.elements) {
+      for (const point of element.points) {
+        labels.add(point[0]);
+      }
+    }
+    return Array.from(labels);
   }
 
   getData(): Data[] {
-    return [{
-      name: this.name ? this.name : "",
-      data: this.getValues()
-    }]
+    const data: Data[] = [];
+    const labels: string[] = this.getLabels();
+    for (const element of this.elements) {
+      const points: number[] = [];
+      for (const label of labels) {
+        const point: [string, number] | undefined = element.points.find(p => p[0] == label);
+        if (point) {
+          points.push(point[1]);
+        } else {
+          points.push(points[points.length - 1]);
+        }
+
+      }
+      data.push({name: element.name!, data: points});
+    }
+    return data;
   }
 }
 
 export class LineChartDataElement {
-  x: string;
-  y: number;
+  name: string | undefined;
+  //X,Y
+  points: [string, number][];
 
-  constructor(x: string, y: number) {
-    this.x = x;
-    this.y = y;
+  constructor(points: [string, number][], name?: string) {
+    this.points = points;
+    this.name = name;
   }
 }
 
