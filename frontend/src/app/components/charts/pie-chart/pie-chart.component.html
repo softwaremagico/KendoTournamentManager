@@ -1,11 +1,13 @@
 <div id="chart" *ngIf="chartOptions">
-  <apx-chart
-    [series]="chartOptions.series"
-    [colors]="chartOptions.colors"
-    [fill]="chartOptions.fill"
-    [chart]="chartOptions.chart"
-    [labels]="chartOptions.labels"
-    [responsive]="chartOptions.responsive"
-    [title]="chartOptions.title"
-  ></apx-chart>
+  <div class="box shadow">
+    <apx-chart
+      [series]="chartOptions.series"
+      [colors]="chartOptions.colors"
+      [fill]="chartOptions.fill"
+      [chart]="chartOptions.chart"
+      [labels]="chartOptions.labels"
+      [responsive]="chartOptions.responsive"
+      [title]="chartOptions.title"
+    ></apx-chart>
+  </div>
 </div>

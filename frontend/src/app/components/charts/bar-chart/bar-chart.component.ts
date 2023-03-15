@@ -3,7 +3,8 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill, ApexLegend,
+  ApexFill,
+  ApexLegend,
   ApexPlotOptions,
   ApexTitleSubtitle,
   ApexXAxis,
@@ -69,6 +70,8 @@ export class BarChartComponent implements OnInit {
   public borderRadius: number = 0;
   @Input()
   public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
+  @Input()
+  public shadow: boolean = true;
 
 
   ngOnInit() {
@@ -79,6 +82,14 @@ export class BarChartComponent implements OnInit {
         type: "bar",
         toolbar: {
           show: this.showToolbar,
+        },
+        dropShadow: {
+          enabled: this.shadow,
+          color: '#000',
+          top: 18,
+          left: 7,
+          blur: 10,
+          opacity: 0.2
         },
       },
       series: this.data.getData(),

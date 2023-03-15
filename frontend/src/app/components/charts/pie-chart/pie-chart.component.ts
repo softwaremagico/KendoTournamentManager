@@ -16,7 +16,7 @@ export type ChartOptions = {
   series: ApexNonAxisChartSeries;
   colors: string [];
   chart: ApexChart;
-  fill:ApexFill;
+  fill: ApexFill;
   responsive: ApexResponsive[];
   labels: string[];
   title: ApexTitleSubtitle;
@@ -46,14 +46,24 @@ export class PieChartComponent implements OnInit {
   @Input()
   public isDonut: boolean = false;
   @Input()
-  public fill:  "gradient" | "solid" | "pattern" | "image" = "solid";
+  public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
+  @Input()
+  public shadow: boolean = true;
 
   ngOnInit() {
     this.chartOptions = {
       colors: this.colors,
       chart: {
         width: this.width,
-        type: this.isDonut ? "donut" : "pie"
+        type: this.isDonut ? "donut" : "pie",
+        dropShadow: {
+          enabled: this.shadow,
+          color: '#000',
+          top: -5,
+          left: 7,
+          blur: 8,
+          opacity: 0.2
+        },
       },
       series: this.data.getValues(),
       labels: this.data.getLabels(),

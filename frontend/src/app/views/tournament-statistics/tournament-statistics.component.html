@@ -11,14 +11,13 @@
       </div>
     </div>
     <div class="statistics-container">
-      <!--      <app-bar-chart [width]="400" [height]="400" [title]="'Scores'" [chartData]="scores"></app-bar-chart>-->
-      <app-pie-chart [data]="pieChartData" [title]="'Scores'" [width]="400"></app-pie-chart>
+      <div class="dashboard">
+      <app-pie-chart [data]="pieChartData" [title]="'Scores'" [width]="360"></app-pie-chart>
       <app-bar-chart [data]="barChartData" [title]="'Scores'" [width]="400"></app-bar-chart>
       <app-line-chart [data]="lineChartData" [title]="'Scores'" [width]="400"></app-line-chart>
       <app-line-chart [data]="multipleLineChartData" [title]="'Scores'" [width]="400"></app-line-chart>
       <app-stacked-bars-chart [data]="multipleBarsChartData" [title]="'Scores'" [width]="400"></app-stacked-bars-chart>
-      <!--      <app-stacked-bars-chart [width]="400" [height]="400" [title]="'Scores'" [chartData]="scoresStacked"></app-stacked-bars-chart>-->
-      <!--      <app-line-chart [width]="400" [height]="400" [title]="'Scores'" [chartData]="lineScoresStacked"></app-line-chart>-->
+      </div>
     </div>
   </div>
 </div>
