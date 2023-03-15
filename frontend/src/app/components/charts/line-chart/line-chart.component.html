@@ -1,9 +1,12 @@
-<div class="line-chart">
-  <figure class="figure">
-    <figcaption>{{title}}</figcaption>
-    <div [id]="uniqueId"></div>
-    <caption>
-      <ul [id]="legendId" style="list-style: none; text-align: left;line-height: 1.5; padding: 0 0 0 1em"></ul>
-    </caption>
-  </figure>
+<div id="chart">
+  <apx-chart
+    [series]="chartOptions.series"
+    [colors]="chartOptions.colors"
+    [chart]="chartOptions.chart"
+    [dataLabels]="chartOptions.labels"
+    [plotOptions]="chartOptions.plotOptions"
+    [xaxis]="chartOptions.xaxis"
+    [yaxis]="chartOptions.yaxis"
+    [title]="chartOptions.title"
+  ></apx-chart>
 </div>

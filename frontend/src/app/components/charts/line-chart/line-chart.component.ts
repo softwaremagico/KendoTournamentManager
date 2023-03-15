@@ -1,10 +1,29 @@
-import {AfterViewInit, Component, Input} from '@angular/core';
+import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexXAxis,
+  ApexYAxis,
+  ApexStroke,
+  ChartComponent, ApexTitleSubtitle
+} from "ng-apexcharts";
 import {Colors} from "../colors";
-import {v4 as uuid} from "uuid";
-import * as d3 from "d3";
-import {select} from "d3";
-import {ScaleOrdinal} from "d3-scale";
 import {LineChartData} from "./line-chart-data";
+
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  colors: string [];
+  chart: ApexChart;
+  labels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  stroke: ApexStroke;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+  title: ApexTitleSubtitle;
+};
 
 @Component({
   selector: 'app-line-chart',
@@ -13,113 +32,109 @@ import {LineChartData} from "./line-chart-data";
 })
 export class LineChartComponent implements AfterViewInit {
 
+  @ViewChild('chart') chart: ChartComponent;
+  public chartOptions: ChartOptions;
+
   @Input()
-  public title: string = "Bar Chart";
+  public data: LineChartData;
   @Input()
-  public chartData: LineChartData;
+  public width: number = 500;
   @Input()
-  private margin: number = 30;
-  @Input()
-  public width: number = 750;
-  @Input()
-  public height: number = 400;
+  public showToolbar: boolean = true;
   @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()
-  public strokeColor: string = "#121926";
+  public horizontal: boolean = false;
   @Input()
-  public strokeWidth: number = 2;
+  public barThicknessPercentage: number = 75;
   @Input()
-  private showLegend: boolean = true;
+  public showValuesLabels: boolean = true;
+  @Input()
+  public xAxisOnTop: boolean = false;
+  @Input()
+  public xAxisTitle: string | undefined = undefined;
+  @Input()
+  public yAxisTitle: string | undefined = undefined;
+  @Input()
+  public showYAxis: boolean = true;
+  @Input()
+  public title: string | undefined = undefined;
+  @Input()
+  public titleAlignment: "left" | "center" | "right";
 
-  public uniqueId: string = "id" + uuid();
-  public legendId: string = "id" + uuid();
+  constructor() {
+    this.chartOptions = {
+      series: [],
+      colors: [],
+      chart: {
+        width: this.width,
+        type: "line"
+      },
+      labels: {
+        enabled: false
+      },
+      plotOptions: {
+        bar: {
+          horizontal: this.horizontal
+        }
+      },
+      xaxis: {
+        categories: []
+      },
+      yaxis: {
+        show: this.showYAxis,
+      },
+      stroke: {},
+      title: {
+        text: "Product Trends by Month",
+        align: "left"
+      },
+    };
+  }
 
-  private svg: any;
 
   ngAfterViewInit() {
-    this.createSvg();
-    this.drawBars(this.chartData);
-    if (this.showLegend) {
-      this.createLegend(this.chartData);
-    }
+    this.chartOptions = {
+      colors: this.colors,
+      series: this.data.getData(),
+      chart: {
+        width: this.width,
+        type: "line",
+        toolbar: {
+          show: this.showToolbar,
+        },
+      },
+      labels: {
+        enabled: this.showValuesLabels
+      },
+      plotOptions: {
+        bar: {
+          distributed: true, // this line is mandatory for using colors
+          horizontal: this.horizontal,
+          barHeight: this.barThicknessPercentage + '%',
+          columnWidth: this.barThicknessPercentage + '%',
+        }
+      },
+      xaxis: {
+        categories: this.data.getLabels(),
+        position: this.xAxisOnTop ? 'top' : 'bottom',
+        title: {
+          text: this.xAxisTitle
+        }
+      },
+      yaxis: {
+        show: this.showYAxis,
+        title: {
+          text: this.yAxisTitle
+        }
+      },
+      stroke: {
+        curve: "straight"
+      },
+      title: {
+        text: this.title,
+        align: this.titleAlignment
+      },
+    };
   }
-
-  private createSvg(): void {
-    this.svg = d3.select("div#" + this.uniqueId)
-      .append("svg")
-      .attr("width", this.width + (this.margin * 2))
-      .attr("height", this.height + (this.margin * 2))
-      .append("g")
-      .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
-  }
-
-  private createLegend(data: LineChartData) {
-    const legendItems = select("#" + this.legendId)
-      .selectAll("li")
-      .data(data.getSubgroupsWithValues());
-
-    legendItems
-      .enter()
-      .append("li")
-      .attr("class", "legend-list")
-      .style("--gen-color", (color) => this.colors[data.subgroups.indexOf(color)])
-      .text((label) => label);
-  }
-
-  private drawBars(data: LineChartData): void {
-    // 2017, 2018, 2019, 2020
-    const groups = data.getGroups();
-    // Men, Kote, Do
-    const subgroups = data.getSubgroups();
-
-
-    // Create the X-axis band scale
-    const x = d3.scaleLinear()
-      .domain(groups)
-      .rangeRound([0, this.width]);
-
-    // Draw the X-axis on the DOM
-    this.svg.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
-      //Tickformat 0, removed decimals if not needed.
-      .call(d3.axisBottom(x).tickPadding(8).tickSize(5).tickFormat(d3.format('0')));
-
-    // Create the Y-axis band scale
-    const y = d3.scaleLinear()
-      .domain([0, data.getMax()])
-      .range([this.height, 0]);
-
-    // Draw the Y-axis on the DOM
-    this.svg.append("g")
-      .call(d3.axisLeft(y));
-
-    const stackedData: Map<string, Map<Date, number>> = data.getStackedData();
-    console.log(stackedData);
-
-    // Create and fill the bars
-    const scaleOrdinal: ScaleOrdinal<string, any> = d3.scaleOrdinal(this.colors);
-    this.svg.selectAll(".line")
-      .data(stackedData)
-      .join("path")
-      .attr("fill", "none")
-      .attr("stroke", (data: any, index: string) => {
-        return scaleOrdinal(index);
-      })
-      .attr("stroke-width", this.strokeWidth)
-      .attr("d", function (line: any) {
-        console.log('-->', line)
-        return d3.line()
-          .x(function (d) {
-            console.log('!! ', d[0])
-            return x(d[0]);
-          })
-          .y(function (d) {
-            console.log('$$ ', d[1])
-            return y(d[1]);
-          })
-          (line[1])
-      })
-  }
-
 }

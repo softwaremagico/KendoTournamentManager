@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
 
-import {ApexChart, ApexNonAxisChartSeries, ApexResponsive, ChartComponent} from "ng-apexcharts";
+import {ApexChart, ApexNonAxisChartSeries, ApexResponsive, ApexTitleSubtitle, ChartComponent} from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";
 import {Colors} from "../colors";
 
@@ -11,6 +11,7 @@ export type ChartOptions = {
   chart: ApexChart;
   responsive: ApexResponsive[];
   labels: string[];
+  title: ApexTitleSubtitle;
 };
 
 @Component({
@@ -29,6 +30,10 @@ export class PieChartComponent implements AfterViewInit {
   public width: number = 500;
   @Input()
   public colors: string[] = Colors.defaultPalette;
+  @Input()
+  public title: string | undefined = undefined;
+  @Input()
+  public titleAlignment: "left" | "center" | "right";
 
   constructor() {
     this.chartOptions = {
@@ -39,7 +44,8 @@ export class PieChartComponent implements AfterViewInit {
         width: this.width,
         type: "pie"
       },
-      responsive: []
+      responsive: [],
+      title: {}
     };
   }
 
@@ -47,12 +53,11 @@ export class PieChartComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.chartOptions = {
       colors: this.colors,
-      series: this.data.getValues(),
       chart: {
         width: this.width,
         type: "pie"
       },
-
+      series: this.data.getValues(),
       labels: this.data.getLabels(),
       responsive: [
         {
@@ -66,7 +71,11 @@ export class PieChartComponent implements AfterViewInit {
             }
           }
         }
-      ]
+      ],
+      title: {
+        text: this.title,
+        align: this.titleAlignment
+      },
     };
   }
 }
