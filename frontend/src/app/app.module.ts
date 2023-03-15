@@ -97,6 +97,7 @@ import {PieChartModule} from "./components/charts/pie-chart/pie-chart.module";
 import {StackedBarsChartModule} from "./components/charts/stacked-bars-chart/stacked-bars-chart.module";
 import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
 import {LineChartModule} from "./components/charts/line-chart/line-chart.module";
+import {NgApexchartsModule} from "ng-apexcharts";
 
 
 registerLocaleData(localeES, "es");
@@ -192,7 +193,8 @@ registerLocaleData(localeNL, "nl");
     BarChartModule,
     PieChartModule,
     StackedBarsChartModule,
-    LineChartModule
+    LineChartModule,
+    NgApexchartsModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
