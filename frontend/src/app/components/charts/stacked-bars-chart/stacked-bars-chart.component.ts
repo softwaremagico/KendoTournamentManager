@@ -134,7 +134,7 @@ export class StackedBarsChartComponent implements OnInit {
         align: this.titleAlignment
       },
       legend: {
-        position: "bottom"
+        position: this.legendPosition
       },
     };
   }
