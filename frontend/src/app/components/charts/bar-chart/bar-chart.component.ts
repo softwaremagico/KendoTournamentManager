@@ -15,7 +15,7 @@ import {Colors} from "../colors";
 import {BarChartData} from "./bar-chart-data";
 
 
-export type ChartOptions = {
+type BarChartOptions = {
   series: ApexAxisChartSeries;
   colors: string [];
   fill: ApexFill;
@@ -38,7 +38,7 @@ export class BarChartComponent implements OnInit {
   @ViewChild('chart')
   chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: BarChartOptions;
 
   @Input()
   public data: BarChartData;

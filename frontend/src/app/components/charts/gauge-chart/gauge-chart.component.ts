@@ -1,9 +1,9 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexLegend, ApexPlotOptions, ApexTitleSubtitle, ChartComponent} from "ng-apexcharts";
-import {RadialChartData} from "../radial-chart/radial-chart-data";
 import {Colors} from "../colors";
+import {GaugeChartData} from "./gauge-chart-data";
 
-export type ChartOptions = {
+type GaugeChartOptions = {
   series: number[];
   colors: string [];
   labels: string[];
@@ -24,10 +24,10 @@ export class GaugeChartComponent implements OnInit {
   @ViewChild('chart')
   chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: GaugeChartOptions;
 
   @Input()
-  public data: RadialChartData;
+  public data: GaugeChartData;
   @Input()
   public width: number = 500;
   @Input()

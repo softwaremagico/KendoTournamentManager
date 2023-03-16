@@ -12,10 +12,10 @@ import {
   ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
-import {Data, StackedBarChartData} from "./stacked-bars-chart-data";
+import {StackedBarsData, StackedBarChartData} from "./stacked-bars-chart-data";
 
 
-export type ChartOptions = {
+type StackedBarsChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   labels: ApexDataLabels;
@@ -37,7 +37,7 @@ export class StackedBarsChartComponent implements OnInit {
   @ViewChild('chart')
   chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: StackedBarsChartOptions;
 
   @Input()
   public data: StackedBarChartData;
@@ -141,7 +141,7 @@ export class StackedBarsChartComponent implements OnInit {
     };
   }
 
-  setColors(data: Data[]): Data[] {
+  setColors(data: StackedBarsData[]): StackedBarsData[] {
     for (let i = 0; i < data.length; i++) {
       data[i].color = this.colors[i % this.colors.length];
     }
