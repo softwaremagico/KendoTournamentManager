@@ -126,7 +126,7 @@ export class BarChartComponent implements OnInit {
         align: this.titleAlignment
       },
       legend: {
-        position: "bottom"
+        position: this.legendPosition
       },
     };
   }

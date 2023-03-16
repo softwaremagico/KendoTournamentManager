@@ -38,6 +38,8 @@ export class PieChartComponent implements OnInit {
   @Input()
   public width: number = 500;
   @Input()
+  public showToolbar: boolean = true;
+  @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()
   public title: string | undefined = undefined;
@@ -49,6 +51,8 @@ export class PieChartComponent implements OnInit {
   public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
   @Input()
   public shadow: boolean = true;
+  @Input()
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
   ngOnInit() {
     this.chartOptions = {
@@ -64,6 +68,9 @@ export class PieChartComponent implements OnInit {
           blur: 8,
           opacity: 0.2
         },
+        toolbar: {
+          show: this.showToolbar,
+        },
       },
       series: this.data.getValues(),
       labels: this.data.getLabels(),
@@ -78,7 +85,7 @@ export class PieChartComponent implements OnInit {
               width: 200
             },
             legend: {
-              position: "bottom"
+              position: this.legendPosition
             }
           }
         }
