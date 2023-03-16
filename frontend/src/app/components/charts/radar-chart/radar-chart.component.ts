@@ -3,12 +3,16 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill, ApexLegend, ApexMarkers,
-  ApexPlotOptions, ApexStroke, ApexTitleSubtitle,
-  ApexXAxis, ApexYAxis,
+  ApexFill,
+  ApexLegend,
+  ApexMarkers,
+  ApexPlotOptions,
+  ApexStroke,
+  ApexTitleSubtitle,
+  ApexXAxis,
   ChartComponent
 } from "ng-apexcharts";
-import {Data, StackedBarChartData} from "../stacked-bars-chart/stacked-bars-chart-data";
+import {Data} from "../stacked-bars-chart/stacked-bars-chart-data";
 import {Colors} from "../colors";
 import {RadarChartData} from "./radar-chart-data";
 
@@ -19,7 +23,6 @@ export type ChartOptions = {
   fill: ApexFill;
   plotOptions: ApexPlotOptions;
   xaxis: ApexXAxis;
-  yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   legend: ApexLegend;
   markers: ApexMarkers;
@@ -39,15 +42,13 @@ export class RadarChartComponent implements OnInit {
   @Input()
   public data: RadarChartData;
   @Input()
-  public width: number = 500;
+  public width: number = 600;
+  @Input()
+  public radarSize: number = 140;
   @Input()
   public showToolbar: boolean = true;
   @Input()
   public colors: string[] = Colors.defaultPalette;
-  @Input()
-  public horizontal: boolean = false;
-  @Input()
-  public barThicknessPercentage: number = 75;
   @Input()
   public showValuesLabels: boolean = false;
   @Input()
@@ -55,21 +56,11 @@ export class RadarChartComponent implements OnInit {
   @Input()
   public xAxisTitle: string | undefined = undefined;
   @Input()
-  public yAxisTitle: string | undefined = undefined;
-  @Input()
-  public showYAxis: boolean = true;
-  @Input()
   public title: string | undefined = undefined;
   @Input()
   public titleAlignment: "left" | "center" | "right" = "center";
   @Input()
   public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
-  @Input()
-  public borderRadius: number = 0;
-  @Input()
-  public enableTotals: boolean = true;
-  @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
   @Input()
   public shadow: boolean = true;
   @Input()
@@ -78,6 +69,8 @@ export class RadarChartComponent implements OnInit {
   public strokeWidth: number = 5;
   @Input()
   public innerColors: string[] = ["#ffffff"]
+  @Input()
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
   ngOnInit() {
     this.chartOptions = {
@@ -111,7 +104,7 @@ export class RadarChartComponent implements OnInit {
       },
       plotOptions: {
         radar: {
-          size: 140,
+          size: this.radarSize,
           polygons: {
             fill: {
               colors: this.innerColors
@@ -125,12 +118,6 @@ export class RadarChartComponent implements OnInit {
         title: {
           text: this.xAxisTitle
         }
-      },
-      yaxis: {
-        show: this.showYAxis,
-        title: {
-          text: this.yAxisTitle
-        },
       },
       title: {
         text: this.title,
