@@ -13,6 +13,7 @@ import {
 } from "../../components/charts/stacked-bars-chart/stacked-bars-chart-data";
 import {RadarChartData} from "../../components/charts/radar-chart/radar-chart-data";
 import {RadialChartData} from "../../components/charts/radial-chart/radial-chart-data";
+import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -37,6 +38,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     new StackedBarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament4"),
     new StackedBarChartDataElement([[Score.MEN, 6], [Score.DO, 2], [Score.KOTE, 3]], "Tournament5")]);
   public radialChartData: RadialChartData = RadialChartData.fromArray([[Score.MEN, 85], [Score.DO, 49], [Score.KOTE, 36]]);
+  public gaugeChartData: GaugeChartData = GaugeChartData.fromArray([[Score.MEN, 85]]);
 
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
