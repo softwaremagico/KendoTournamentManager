@@ -1,16 +1,16 @@
-export class RadarBarChartData {
+export class RadarChartData {
   name: string[] | undefined;
   elements: RadarBarChartDataElement[];
 
-  public static fromDataElements(elements: RadarBarChartDataElement): RadarBarChartData {
-    const barChartData: RadarBarChartData = new RadarBarChartData();
+  public static fromDataElements(elements: RadarBarChartDataElement): RadarChartData {
+    const barChartData: RadarChartData = new RadarChartData();
     barChartData.elements = [];
     barChartData.elements[0] = elements;
     return barChartData;
   }
 
-  public static fromMultipleDataElements(elements: RadarBarChartDataElement[]): RadarBarChartData {
-    const barChartData: RadarBarChartData = new RadarBarChartData();
+  public static fromMultipleDataElements(elements: RadarBarChartDataElement[]): RadarChartData {
+    const barChartData: RadarChartData = new RadarChartData();
     barChartData.elements = elements;
     return barChartData;
   }
