@@ -3,46 +3,40 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill, ApexMarkers,
-  ApexPlotOptions,
-  ApexStroke,
-  ApexTitleSubtitle,
-  ApexXAxis,
-  ApexYAxis,
+  ApexFill, ApexLegend, ApexMarkers,
+  ApexPlotOptions, ApexStroke, ApexTitleSubtitle,
+  ApexXAxis, ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
+import {Data, StackedBarChartData} from "../stacked-bars-chart/stacked-bars-chart-data";
 import {Colors} from "../colors";
-import {LineChartData} from "./line-chart-data";
-
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
-  colors: string [];
   chart: ApexChart;
   labels: ApexDataLabels;
   fill: ApexFill;
   plotOptions: ApexPlotOptions;
-  stroke: ApexStroke;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
+  legend: ApexLegend;
   markers: ApexMarkers;
+  stroke: ApexStroke;
 };
 
 @Component({
-  selector: 'app-line-chart',
-  templateUrl: './line-chart.component.html',
-  styleUrls: ['./line-chart.component.scss']
+  selector: 'app-radar-chart',
+  templateUrl: './radar-chart.component.html',
+  styleUrls: ['./radar-chart.component.scss']
 })
-export class LineChartComponent implements OnInit {
+export class RadarChartComponent implements OnInit {
 
   @ViewChild('chart') chart: ChartComponent;
   public chartOptions: ChartOptions;
 
   @Input()
-  public data: LineChartData;
-  @Input()
-  public height: number = 250;
+  public data: StackedBarChartData;
   @Input()
   public width: number = 500;
   @Input()
@@ -54,7 +48,7 @@ export class LineChartComponent implements OnInit {
   @Input()
   public barThicknessPercentage: number = 75;
   @Input()
-  public showValuesLabels: boolean = true;
+  public showValuesLabels: boolean = false;
   @Input()
   public xAxisOnTop: boolean = false;
   @Input()
@@ -70,45 +64,58 @@ export class LineChartComponent implements OnInit {
   @Input()
   public fill: "gradient" | "solid" | "pattern" | "image" = "solid";
   @Input()
-  public curve: "straight" | "smooth" | "stepline" = "smooth";
+  public borderRadius: number = 0;
+  @Input()
+  public enableTotals: boolean = true;
+  @Input()
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
   @Input()
   public shadow: boolean = true;
   @Input()
+  public opacity: number = 0.4;
+  @Input()
   public strokeWidth: number = 5;
-
+  @Input()
+  public innerColors: string[] = ["#ffffff"]
 
   ngOnInit() {
     this.chartOptions = {
-      colors: this.colors,
-      series: this.data.getData(),
       chart: {
-        height: this.height,
         width: this.width,
-        type: "line",
+        type: "radar",
         toolbar: {
           show: this.showToolbar,
         },
         dropShadow: {
           enabled: this.shadow,
           color: '#000',
-          top: 18,
-          left: 7,
-          blur: 10,
-          opacity: 0.2
+          blur: 1,
+          left: 1,
+          top: 1
         },
       },
+      series: this.setColors(this.data.getData()),
       labels: {
         enabled: this.showValuesLabels
       },
       fill: {
         type: this.fill,
+        opacity: this.opacity,
+      },
+      markers: {
+        size: 0
+      },
+      stroke: {
+        width: this.strokeWidth
       },
       plotOptions: {
-        bar: {
-          distributed: true, // this line is mandatory for using colors
-          horizontal: this.horizontal,
-          barHeight: this.barThicknessPercentage + '%',
-          columnWidth: this.barThicknessPercentage + '%',
+        radar: {
+          size: 140,
+          polygons: {
+            fill: {
+              colors: this.innerColors
+            }
+          }
         }
       },
       xaxis: {
@@ -117,7 +124,6 @@ export class LineChartComponent implements OnInit {
         title: {
           text: this.xAxisTitle
         }
-        //type: 'datetime'
       },
       yaxis: {
         show: this.showYAxis,
@@ -125,17 +131,20 @@ export class LineChartComponent implements OnInit {
           text: this.yAxisTitle
         },
       },
-      stroke: {
-        curve: this.curve,
-        width: this.strokeWidth,
-      },
       title: {
         text: this.title,
         align: this.titleAlignment
       },
-      markers: {
-        size: 0
+      legend: {
+        position: this.legendPosition
       },
     };
+  }
+
+  setColors(data: Data[]): Data[] {
+    for (let i = 0; i < data.length; i++) {
+      data[i].color = this.colors[i % this.colors.length];
+    }
+    return data;
   }
 }

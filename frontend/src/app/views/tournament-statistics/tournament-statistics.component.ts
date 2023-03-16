@@ -11,6 +11,7 @@ import {
   StackedBarChartData,
   StackedBarChartDataElement
 } from "../../components/charts/stacked-bars-chart/stacked-bars-chart-data";
+import {RadarBarChartData} from "../../components/charts/radar-chart/radar-chart-data";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -28,6 +29,13 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public multipleBarsChartData: StackedBarChartData = StackedBarChartData.fromMultipleDataElements([
     new StackedBarChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
     new StackedBarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2")]);
+  public radarBarsChartData: RadarBarChartData = RadarBarChartData.fromMultipleDataElements([
+    new StackedBarChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
+    new StackedBarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2"),
+    new StackedBarChartDataElement([[Score.MEN, 4], [Score.DO, 3], [Score.KOTE, 3]], "Tournament3"),
+    new StackedBarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament4"),
+    new StackedBarChartDataElement([[Score.MEN, 6], [Score.DO, 2], [Score.KOTE, 3]], "Tournament5")]);
+
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
     super(rbacService);
