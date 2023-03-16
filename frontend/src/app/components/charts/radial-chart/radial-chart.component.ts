@@ -3,7 +3,7 @@ import {ApexChart, ApexFill, ApexLegend, ApexPlotOptions, ApexTitleSubtitle, Cha
 import {Colors} from "../colors";
 import {RadialChartData} from "./radial-chart-data";
 
-export type ChartOptions = {
+type RadialChartOptions = {
   series: number[];
   colors: string [];
   labels: string[];
@@ -25,7 +25,7 @@ export class RadialChartComponent implements OnInit {
   @ViewChild('chart')
   chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: RadialChartOptions;
 
   @Input()
   public data: RadialChartData;

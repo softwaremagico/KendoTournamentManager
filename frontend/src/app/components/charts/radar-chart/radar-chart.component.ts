@@ -12,11 +12,11 @@ import {
   ApexXAxis,
   ChartComponent
 } from "ng-apexcharts";
-import {Data} from "../stacked-bars-chart/stacked-bars-chart-data";
+import {StackedBarsData} from "../stacked-bars-chart/stacked-bars-chart-data";
 import {Colors} from "../colors";
 import {RadarChartData} from "./radar-chart-data";
 
-export type ChartOptions = {
+type RadarChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   labels: ApexDataLabels;
@@ -39,7 +39,7 @@ export class RadarChartComponent implements OnInit {
   @ViewChild('chart')
   chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: RadarChartOptions;
 
   @Input()
   public data: RadarChartData;
@@ -131,7 +131,7 @@ export class RadarChartComponent implements OnInit {
     };
   }
 
-  setColors(data: Data[]): Data[] {
+  setColors(data: StackedBarsData[]): StackedBarsData[] {
     for (let i = 0; i < data.length; i++) {
       data[i].color = this.colors[i % this.colors.length];
     }

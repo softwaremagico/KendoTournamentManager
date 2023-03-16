@@ -15,7 +15,7 @@ import {Colors} from "../colors";
 import {LineChartData} from "./line-chart-data";
 
 
-export type ChartOptions = {
+export type LineChartOptions = {
   series: ApexAxisChartSeries;
   colors: string [];
   chart: ApexChart;
@@ -39,7 +39,7 @@ export class LineChartComponent implements OnInit {
   @ViewChild('chart')
   chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: LineChartOptions;
 
   @Input()
   public data: LineChartData;
