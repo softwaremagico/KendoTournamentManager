@@ -21,7 +21,9 @@ export type ChartOptions = {
 })
 export class GaugeChartComponent implements OnInit {
 
-  @ViewChild('chart') chart: ChartComponent;
+  @ViewChild('chart')
+  chart!: ChartComponent;
+
   public chartOptions: ChartOptions;
 
   @Input()
