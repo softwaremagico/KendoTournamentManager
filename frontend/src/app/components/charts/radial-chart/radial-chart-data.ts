@@ -1,0 +1,50 @@
+export class RadialChartData {
+  name: string | undefined;
+  elements: RadialChartDataElement[];
+
+  public static fromArray(elements: [string, number][]): RadialChartData {
+    const radialChartData: RadialChartData = new RadialChartData();
+    radialChartData.elements = [];
+    for (const element of elements) {
+      radialChartData.elements.push(new RadialChartDataElement(element[0], element[1]));
+    }
+    return radialChartData;
+  }
+
+  public static fromDataElements(elements: RadialChartDataElement[]): RadialChartData {
+    const radialChartData: RadialChartData = new RadialChartData();
+    radialChartData.elements = elements;
+    return radialChartData;
+  }
+
+  constructor(name?: string) {
+    this.name = name;
+  }
+
+  getLabels(): string[] {
+    return this.elements.map(e => e.label);
+  }
+
+  getValues(): number[] {
+    return this.elements.map(e => e.value);
+  }
+
+  getTotal(): number {
+    return this.elements.reduce((sum, e) => sum + e.value, 0);
+  }
+}
+
+export class RadialChartDataElement {
+  label: string;
+  value: number;
+
+  constructor(x: string, y: number) {
+    this.label = x;
+    this.value = y;
+  }
+}
+
+export type Data = {
+  name: string,
+  data: number[]
+};

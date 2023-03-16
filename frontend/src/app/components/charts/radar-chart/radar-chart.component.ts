@@ -10,6 +10,7 @@ import {
 } from "ng-apexcharts";
 import {Data, StackedBarChartData} from "../stacked-bars-chart/stacked-bars-chart-data";
 import {Colors} from "../colors";
+import {RadarChartData} from "./radar-chart-data";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -36,7 +37,7 @@ export class RadarChartComponent implements OnInit {
   public chartOptions: ChartOptions;
 
   @Input()
-  public data: StackedBarChartData;
+  public data: RadarChartData;
   @Input()
   public width: number = 500;
   @Input()
