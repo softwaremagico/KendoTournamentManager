@@ -34,7 +34,9 @@ export type ChartOptions = {
 })
 export class StackedBarsChartComponent implements OnInit {
 
-  @ViewChild('chart') chart: ChartComponent;
+  @ViewChild('chart')
+  chart!: ChartComponent;
+
   public chartOptions: ChartOptions;
 
   @Input()

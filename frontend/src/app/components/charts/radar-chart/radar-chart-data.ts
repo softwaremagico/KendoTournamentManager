@@ -1,15 +1,15 @@
 export class RadarChartData {
   name: string[] | undefined;
-  elements: RadarBarChartDataElement[];
+  elements: RadarChartDataElement[];
 
-  public static fromDataElements(elements: RadarBarChartDataElement): RadarChartData {
+  public static fromDataElements(elements: RadarChartDataElement): RadarChartData {
     const barChartData: RadarChartData = new RadarChartData();
     barChartData.elements = [];
     barChartData.elements[0] = elements;
     return barChartData;
   }
 
-  public static fromMultipleDataElements(elements: RadarBarChartDataElement[]): RadarChartData {
+  public static fromMultipleDataElements(elements: RadarChartDataElement[]): RadarChartData {
     const barChartData: RadarChartData = new RadarChartData();
     barChartData.elements = elements;
     return barChartData;
@@ -38,7 +38,7 @@ export class RadarChartData {
   }
 }
 
-export class RadarBarChartDataElement {
+export class RadarChartDataElement {
   name: string;
   //X,Y
   points: [string, number][];

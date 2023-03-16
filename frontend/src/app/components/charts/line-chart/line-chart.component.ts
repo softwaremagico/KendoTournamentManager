@@ -36,7 +36,9 @@ export type ChartOptions = {
 })
 export class LineChartComponent implements OnInit {
 
-  @ViewChild('chart') chart: ChartComponent;
+  @ViewChild('chart')
+  chart!: ChartComponent;
+
   public chartOptions: ChartOptions;
 
   @Input()
