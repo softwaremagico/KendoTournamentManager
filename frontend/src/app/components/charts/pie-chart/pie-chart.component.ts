@@ -30,7 +30,8 @@ export type ChartOptions = {
 export class PieChartComponent implements OnInit {
 
   @ViewChild('chart')
-  private chart: ChartComponent;
+  private chart!: ChartComponent;
+
   public chartOptions: ChartOptions;
 
   @Input()
