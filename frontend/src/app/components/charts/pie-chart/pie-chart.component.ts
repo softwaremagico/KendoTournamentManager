@@ -12,7 +12,7 @@ import {PieChartData} from "./pie-chart-data";
 import {Colors} from "../colors";
 
 
-export type ChartOptions = {
+type PieChartOptions = {
   series: ApexNonAxisChartSeries;
   colors: string [];
   chart: ApexChart;
@@ -32,7 +32,7 @@ export class PieChartComponent implements OnInit {
   @ViewChild('chart')
   private chart!: ChartComponent;
 
-  public chartOptions: ChartOptions;
+  public chartOptions: PieChartOptions;
 
   @Input()
   public data: PieChartData;

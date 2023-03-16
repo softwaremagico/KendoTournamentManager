@@ -80,7 +80,7 @@ export class LineChartDataElement {
   }
 }
 
-export type Data = {
+type Data = {
   name: string,
   data: (number | null)[]
 };

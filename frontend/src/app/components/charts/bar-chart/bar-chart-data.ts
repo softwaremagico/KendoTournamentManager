@@ -47,7 +47,7 @@ export class BarChartDataElement {
   }
 }
 
-export type Data = {
+type Data = {
   name: string,
   data: number[]
 };

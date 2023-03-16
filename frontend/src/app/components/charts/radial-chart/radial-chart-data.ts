@@ -44,7 +44,7 @@ export class RadialChartDataElement {
   }
 }
 
-export type Data = {
+type Data = {
   name: string,
   data: number[]
 };
