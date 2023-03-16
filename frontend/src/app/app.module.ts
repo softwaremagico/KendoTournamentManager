@@ -98,6 +98,7 @@ import {StackedBarsChartModule} from "./components/charts/stacked-bars-chart/sta
 import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
 import {LineChartModule} from "./components/charts/line-chart/line-chart.module";
 import {NgApexchartsModule} from "ng-apexcharts";
+import {RadarChartModule} from "./components/charts/radar-chart/radar-chart.module";
 
 
 registerLocaleData(localeES, "es");
@@ -194,6 +195,7 @@ registerLocaleData(localeNL, "nl");
     PieChartModule,
     StackedBarsChartModule,
     LineChartModule,
+    RadarChartModule,
     NgApexchartsModule
   ],
   providers: [CookieService, {
