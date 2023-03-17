@@ -54,8 +54,6 @@ export class RadarChartComponent implements OnInit {
   @Input()
   public showValuesLabels: boolean = false;
   @Input()
-  public xAxisOnTop: boolean = false;
-  @Input()
   public xAxisTitle: string | undefined = undefined;
   @Input()
   public title: string | undefined = undefined;
@@ -115,11 +113,7 @@ export class RadarChartComponent implements OnInit {
         }
       },
       xaxis: {
-        categories: this.data.getLabels(),
-        position: this.xAxisOnTop ? 'top' : 'bottom',
-        title: {
-          text: this.xAxisTitle
-        }
+        categories: this.data.getLabels()
       },
       title: {
         text: this.title,
