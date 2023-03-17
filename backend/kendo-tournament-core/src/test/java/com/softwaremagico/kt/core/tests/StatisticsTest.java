@@ -62,7 +62,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
 
     private static final String TOURNAMENT2_NAME = "Tournament 2";
 
-    private static final String TOURNAMENT3_NAME = "Tournament 3";
+    private static final int DUEL_DURATION = 83;
 
     @Autowired
     private ClubController clubController;
@@ -177,6 +177,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
         fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
 
@@ -184,37 +185,44 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(1).addCompetitor2Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(1).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(1).setFinished(true);
         fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
 
 
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
+        fightDTOs.get(0).getDuels().get(2).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
         fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
 
 
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(1).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
         fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         fightDTOs.get(1).getDuels().get(1).addCompetitor2Score(Score.HANSOKU);
         fightDTOs.get(1).getDuels().get(1).addCompetitor2Score(Score.HANSOKU);
+        fightDTOs.get(1).getDuels().get(1).setDuration(DUEL_DURATION);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
         fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.TSUKI);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.TSUKI);
+        fightDTOs.get(1).getDuels().get(2).setDuration(DUEL_DURATION);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
         fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         fightDTOs.get(2).getDuels().get(0).addCompetitor2Score(Score.IPPON);
         fightDTOs.get(2).getDuels().get(0).addCompetitor2Score(Score.IPPON);
+        fightDTOs.get(2).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(2).getDuels().get(0).setFinished(true);
         fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
 
         fightDTOs.get(3).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(3).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(3).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(3).getDuels().get(0).setFinished(true);
         fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
 
@@ -235,6 +243,8 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getFightsNumber(), totalFights);
         Assert.assertNull(tournamentStatisticsDTO.getFightStatisticsDTO().getFightsByTeam());
         Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getDuelsNumber(), totalFights * 3L);
+        Assert.assertNotNull(tournamentStatisticsDTO.getFightStatisticsDTO().getAverageTime());
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getAverageTime(), DUEL_DURATION);
     }
 
     @AfterClass
