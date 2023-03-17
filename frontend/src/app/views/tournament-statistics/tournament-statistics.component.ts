@@ -11,9 +11,11 @@ import {
   StackedBarChartData,
   StackedBarChartDataElement
 } from "../../components/charts/stacked-bars-chart/stacked-bars-chart-data";
-import {RadarChartDataElement, RadarChartData} from "../../components/charts/radar-chart/radar-chart-data";
+import {RadarChartData, RadarChartDataElement} from "../../components/charts/radar-chart/radar-chart-data";
 import {RadialChartData} from "../../components/charts/radial-chart/radial-chart-data";
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
+import {StatisticsService} from "../../services/statistics.service";
+import {TournamentStatistics} from "../../models/tournament-statistics.model";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -40,15 +42,34 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public radialChartData: RadialChartData = RadialChartData.fromArray([[Score.MEN, 85], [Score.DO, 49], [Score.KOTE, 36]]);
   public gaugeChartData: GaugeChartData = GaugeChartData.fromArray([[Score.MEN, 85]]);
 
+  private readonly tournamentId: number | undefined;
 
-  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
+
+  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private statisticsService: StatisticsService) {
     super(rbacService);
+    let state = this.router.getCurrentNavigation()?.extras.state;
+    if (state) {
+      if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
+        this.tournamentId = Number(state['tournamentId']);
+      } else {
+        this.goBackToTournament();
+      }
+    } else {
+      this.goBackToTournament();
+    }
   }
 
 
   ngOnInit(): void {
+    this.generateStatistics();
+  }
+
+  generateStatistics() {
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.systemOverloadService.isTransactionalBusy.next(false);
+    this.statisticsService.getTournamentStatistics(this.tournamentId!).subscribe((tournamentStatistics: TournamentStatistics) => {
+      this.systemOverloadService.isTransactionalBusy.next(false);
+    });
   }
 
   goBackToTournament(): void {
