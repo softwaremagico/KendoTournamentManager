@@ -105,7 +105,6 @@ public class Duel extends Element {
     private DuelType type;
 
     @Column(name = "duration")
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer duration;
 
     @Column(name = "finished")

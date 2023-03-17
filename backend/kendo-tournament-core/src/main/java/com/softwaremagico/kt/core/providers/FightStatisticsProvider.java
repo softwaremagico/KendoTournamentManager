@@ -202,7 +202,7 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         fightStatistics.setFightsNumber(fightProvider.count(tournament));
         fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teamProvider.count(tournament));
         fightStatistics.setDuelsNumber(duelProvider.count(tournament));
-        fightStatistics.setEstimatedTime(duelProvider.getDurationAverage(tournament));
+        fightStatistics.setAverageTime(duelProvider.getDurationAverage(tournament));
         return fightStatistics;
     }
 
