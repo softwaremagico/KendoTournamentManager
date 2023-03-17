@@ -95,6 +95,7 @@
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" [editable]="tournament && !tournament.locked" (onTimerFinished)="finishDuel($event[0])"
                (onTimerChanged)="updateDuelElapsedTime($event[0])" [resetTimerPosition]="resetTimerPosition"
+               (onPlayPressed)="duelStarted($event[0])"
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
       <div class="fight-list">

@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.hibernate.annotations.Cache;
@@ -34,6 +35,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +120,14 @@ public class Duel extends Element {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
+
+    @Column(name = "started_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime startedAt;
+
+    @Column(name = "finished_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime finishedAt;
 
     public Duel() {
         super();
@@ -292,5 +302,21 @@ public class Duel extends Element {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }
