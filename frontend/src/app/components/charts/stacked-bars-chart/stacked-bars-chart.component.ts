@@ -72,9 +72,11 @@ export class StackedBarsChartComponent implements OnInit {
   @Input()
   public enableTotals: boolean = true;
   @Input()
-  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom";
   @Input()
   public shadow: boolean = true;
+  @Input()
+  public stackType: '100%' | 'normal' = "normal";
 
   ngOnInit() {
     this.chartOptions = {
@@ -85,6 +87,7 @@ export class StackedBarsChartComponent implements OnInit {
           show: this.showToolbar,
         },
         stacked: true,
+        stackType: this.stackType,
         dropShadow: {
           enabled: this.shadow,
           color: '#000',
