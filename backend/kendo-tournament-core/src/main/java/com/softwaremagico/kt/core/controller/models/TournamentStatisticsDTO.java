@@ -8,21 +8,23 @@ package com.softwaremagico.kt.core.controller.models;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
+import java.time.LocalDateTime;
 
 public class TournamentStatisticsDTO extends ElementDTO {
 
@@ -39,6 +41,10 @@ public class TournamentStatisticsDTO extends ElementDTO {
     private long hansokuNumber;
 
     private long ipponNumber;
+
+    private LocalDateTime startedAt;
+
+    private LocalDateTime finishedAt;
 
     public FightStatisticsDTO getFightStatisticsDTO() {
         return fightStatisticsDTO;
@@ -94,5 +100,21 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     public void setIpponNumber(long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }
