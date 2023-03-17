@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentStatisticsRepository;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,20 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
         tournamentStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
         tournamentStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
         tournamentStatistics.setFightStatistics(fightStatisticsProvider.get(tournament));
+        final Duel firstDuel = duelProvider.getFirstDuel(tournament);
+        final Duel lastDuel = duelProvider.getLastDuel(tournament);
+        if (firstDuel != null) {
+            if (firstDuel.getStartedAt() != null) {
+                tournamentStatistics.setStartedAt(firstDuel.getStartedAt());
+            } else {
+                if (firstDuel.getFinishedAt() != null) {
+                    tournamentStatistics.setStartedAt(firstDuel.getFinishedAt().minusMinutes(2));
+                }
+            }
+        }
+        if (lastDuel != null) {
+            tournamentStatistics.setFinishedAt(lastDuel.getFinishedAt());
+        }
         return tournamentStatistics;
     }
 }

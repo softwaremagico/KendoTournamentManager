@@ -17,6 +17,10 @@ export class TournamentStatistics extends Element {
 
   public fightStatistics: FightStatistics;
 
+  public startedAt: Date;
+
+  public finishedAt: Date;
+
   public static override copy(source: TournamentStatistics, target: TournamentStatistics): void {
     Element.copy(source, target);
     target.menNumber = source.menNumber;
@@ -28,6 +32,8 @@ export class TournamentStatistics extends Element {
     if (source.fightStatistics !== undefined) {
       target.fightStatistics = FightStatistics.clone(source.fightStatistics);
     }
+    target.startedAt = source.startedAt;
+    target.finishedAt = source.finishedAt;
   }
 
   public static clone(data: TournamentStatistics): TournamentStatistics {

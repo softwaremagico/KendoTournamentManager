@@ -70,6 +70,14 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.getDurationAverage(tournament);
     }
 
+    public Duel getFirstDuel(Tournament tournament){
+        return repository.findFirstByTournamentOrderByStartedAtAsc(tournament);
+    }
+
+    public Duel getLastDuel(Tournament tournament){
+        return repository.findFirstByTournamentOrderByFinishedAtDesc(tournament);
+    }
+
     public Long countScore(Tournament tournament, Score score) {
         return repository.countScore(tournament, Collections.singletonList(score));
     }
