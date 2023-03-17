@@ -24,6 +24,8 @@ package com.softwaremagico.kt.core.statistics;
  * #L%
  */
 
+import java.time.LocalDateTime;
+
 public class TournamentStatistics {
 
     private FightStatistics fightStatistics;
@@ -39,6 +41,10 @@ public class TournamentStatistics {
     private long hansokuNumber;
 
     private long ipponNumber;
+
+    private LocalDateTime startedAt;
+
+    private LocalDateTime finishedAt;
 
     public FightStatistics getFightStatistics() {
         return fightStatistics;
@@ -94,5 +100,21 @@ public class TournamentStatistics {
 
     public void setIpponNumber(long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }
