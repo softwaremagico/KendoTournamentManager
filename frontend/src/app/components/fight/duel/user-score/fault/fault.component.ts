@@ -65,6 +65,7 @@ export class FaultComponent implements OnInit {
 
   updateFault(fault: boolean) {
     const faultAdded: boolean = this.setFault(fault);
+    this.duel.finishedAt = undefined;
     this.duelService.update(this.duel).subscribe(duel => {
       if (faultAdded) {
         this.messageService.infoMessage('infoFaultUpdated');
