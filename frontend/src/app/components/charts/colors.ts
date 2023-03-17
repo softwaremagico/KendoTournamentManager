@@ -1,13 +1,11 @@
 export class Colors {
   public static defaultPalette: string[] = [
-    "#fd7f6f",
-    "#7eb0d5",
-    "#b2e061",
-    "#bd7ebe",
-    "#ffb55a",
-    "#ffee65",
-    "#beb9db",
-    "#fdcce5",
-    "#8bd3c7"
+    "#001239",
+    "#6f8bff",
+    "#8097b3",
+    "#0939ff",
+    "#012f67",
+    "#274e7e",
+    "#4d6d95",
   ];
 }
