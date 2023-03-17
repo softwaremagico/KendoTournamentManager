@@ -35,6 +35,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @Output() onTimerFinished: EventEmitter<boolean[]> = new EventEmitter();
   @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() onPlayPressed: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
   @Output() timerClosed: EventEmitter<any> = new EventEmitter();
 
@@ -129,6 +130,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   startTimer() {
     this.started = true;
+    this.onPlayPressed.emit([this.elapsedSeconds]);
   };
 
   pauseTimer() {

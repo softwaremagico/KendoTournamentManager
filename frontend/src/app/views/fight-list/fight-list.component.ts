@@ -70,9 +70,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private translateService: TranslateService, rbacService: RbacService,
               private systemOverloadService: SystemOverloadService) {
     super(rbacService);
-    let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
+    let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -449,6 +449,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
       this.selectedDuel.finished = finished;
+      if (!this.selectedDuel.finishedAt) {
+        this.selectedDuel.finishedAt = new Date();
+      }
+      console.log(this.selectedDuel)
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
@@ -549,6 +553,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   updateDuelElapsedTime(elapsedTime: number) {
     if (this.selectedDuel) {
       this.selectedDuel.duration = elapsedTime;
+      this.duelService.update(this.selectedDuel).subscribe();
+    }
+  }
+
+  duelStarted(elapsedTime: number) {
+    if (this.selectedDuel && !this.selectedDuel.duration && !this.selectedDuel.startedAt) {
+      this.selectedDuel.duration = elapsedTime;
+      this.selectedDuel.startedAt = new Date();
       this.duelService.update(this.selectedDuel).subscribe();
     }
   }

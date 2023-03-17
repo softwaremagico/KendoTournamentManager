@@ -35,9 +35,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -80,7 +82,11 @@ public class StatisticsServices {
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                                @PathVariable("tournamentId") Integer tournamentId,
+                                                               Authentication authentication,
                                                                HttpServletRequest request) {
-        return tournamentStatisticsController.get(tournamentController.get(tournamentId));
+        final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentController.get(tournamentId));
+        tournamentStatisticsDTO.setCreatedBy(authentication.getName());
+        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        return tournamentStatisticsDTO;
     }
 }
