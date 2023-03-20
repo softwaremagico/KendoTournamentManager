@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.statistics;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -34,23 +34,15 @@ public class TournamentStatistics {
 
     private FightStatistics fightStatistics;
 
-    private Long menNumber;
+    private Integer tournamentId;
 
-    private Long koteNumber;
+    private LocalDateTime tournamentCreatedAt;
 
-    private Long doNumber;
-
-    private Long tsukiNumber;
-
-    private Long hansokuNumber;
-
-    private Long ipponNumber;
-
-    private LocalDateTime startedAt;
-
-    private LocalDateTime finishedAt;
+    private LocalDateTime tournamentLockedAt;
 
     private Long numberOfTeams;
+
+    private Integer teamSize;
 
     private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
 
@@ -60,70 +52,6 @@ public class TournamentStatistics {
 
     public void setFightStatistics(FightStatistics fightStatistics) {
         this.fightStatistics = fightStatistics;
-    }
-
-    public Long getMenNumber() {
-        return menNumber;
-    }
-
-    public void setMenNumber(Long menNumber) {
-        this.menNumber = menNumber;
-    }
-
-    public Long getKoteNumber() {
-        return koteNumber;
-    }
-
-    public void setKoteNumber(Long koteNumber) {
-        this.koteNumber = koteNumber;
-    }
-
-    public Long getDoNumber() {
-        return doNumber;
-    }
-
-    public void setDoNumber(Long doNumber) {
-        this.doNumber = doNumber;
-    }
-
-    public Long getTsukiNumber() {
-        return tsukiNumber;
-    }
-
-    public void setTsukiNumber(Long tsukiNumber) {
-        this.tsukiNumber = tsukiNumber;
-    }
-
-    public Long getHansokuNumber() {
-        return hansokuNumber;
-    }
-
-    public void setHansokuNumber(Long hansokuNumber) {
-        this.hansokuNumber = hansokuNumber;
-    }
-
-    public Long getIpponNumber() {
-        return ipponNumber;
-    }
-
-    public void setIpponNumber(Long ipponNumber) {
-        this.ipponNumber = ipponNumber;
-    }
-
-    public LocalDateTime getStartedAt() {
-        return startedAt;
-    }
-
-    public void setStartedAt(LocalDateTime startedAt) {
-        this.startedAt = startedAt;
-    }
-
-    public LocalDateTime getFinishedAt() {
-        return finishedAt;
-    }
-
-    public void setFinishedAt(LocalDateTime finishedAt) {
-        this.finishedAt = finishedAt;
     }
 
     public Long getNumberOfTeams() {
@@ -147,5 +75,37 @@ public class TournamentStatistics {
             this.numberOfParticipants = new HashMap<>();
         }
         this.numberOfParticipants.put(roleType, number);
+    }
+
+    public Integer getTournamentId() {
+        return tournamentId;
+    }
+
+    public void setTournamentId(Integer tournamentId) {
+        this.tournamentId = tournamentId;
+    }
+
+    public LocalDateTime getTournamentCreatedAt() {
+        return tournamentCreatedAt;
+    }
+
+    public void setTournamentCreatedAt(LocalDateTime startedAt) {
+        this.tournamentCreatedAt = startedAt;
+    }
+
+    public LocalDateTime getTournamentLockedAt() {
+        return tournamentLockedAt;
+    }
+
+    public void setTournamentLockedAt(LocalDateTime finishedAt) {
+        this.tournamentLockedAt = finishedAt;
+    }
+
+    public Integer getTeamSize() {
+        return teamSize;
+    }
+
+    public void setTeamSize(Integer teamsMember) {
+        this.teamSize = teamsMember;
     }
 }

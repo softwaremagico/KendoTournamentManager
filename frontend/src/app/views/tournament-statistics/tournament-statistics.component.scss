@@ -37,7 +37,7 @@
   box-shadow: 0 1px 15px 1px rgba(69, 65, 78, 0.08);
 }
 
-.time-statistics {
+.box-statistics {
   text-align: center;
   padding: 15px;
   margin: 15px;
@@ -49,6 +49,8 @@
   align-content: center;
   text-align: right;
   padding-bottom: 20px;
+  width: 100%;
+  padding: 15px;
 }
 
 .statistics-table-title {
@@ -60,6 +62,15 @@
 
 .statistics-table-title > h3 {
   padding-left: 15px;
+}
+
+.scrollable {
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.statistics-table .ranking {
+  text-align: center;
 }
 
 
