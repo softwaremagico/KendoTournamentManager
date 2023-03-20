@@ -110,7 +110,7 @@
   "diplomas": "Diplomes",
   "SummaryMenuItem": "Resum de partits",
   "ClubListMenuItem": "Llista de clubs",
-  "TournamentHitsStatisticsMenuItem": "Percentatge de cops",
+  "tournamentHitsStatistics": "Percentatge de cops",
   "TeamStatisticsMenu": "Per equip",
   "CompetitorStatisticsMenu": "Per competidor",
   "PerformedHitsStatisticsMenuItem": "Percentatge de cops donats",

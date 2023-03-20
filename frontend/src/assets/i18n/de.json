@@ -108,7 +108,7 @@
   "diplomas": "Urkunden",
   "SummaryMenuItem": "Kampfzusammenfassung",
   "ClubListMenuItem": "Liste der Klubs",
-  "TournamentHitsStatisticsMenuItem": "Prozentuale Treffer",
+  "tournamentHitsStatistics": "Prozentuale Treffer",
   "TeamStatisticsMenu": "pro Team",
   "CompetitorStatisticsMenu": "pro Teilnehmer",
   "PerformedHitsStatisticsMenuItem": "Erteilte Treffer %",

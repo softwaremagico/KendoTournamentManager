@@ -14,6 +14,7 @@ export class FightStatistics extends Element {
   //In seconds.
   estimatedTime: number;
   averageTime: number;
+  fightsFinished: number;
   public fightsStartedAt: Date;
   public fightsFinishedAt: Date;
 
@@ -32,6 +33,7 @@ export class FightStatistics extends Element {
     target.averageTime = source.averageTime;
     target.fightsStartedAt = source.fightsStartedAt;
     target.fightsFinishedAt = source.fightsFinishedAt;
+    target.fightsFinished = source.fightsFinished;
   }
 
   public static clone(data: FightStatistics): FightStatistics {

@@ -48,7 +48,6 @@
   font-size: 12px;
   align-content: center;
   text-align: right;
-  padding-bottom: 20px;
   width: 100%;
   padding: 15px;
 }
@@ -58,6 +57,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
+  margin-bottom: -20px;
 }
 
 .statistics-table-title > h3 {

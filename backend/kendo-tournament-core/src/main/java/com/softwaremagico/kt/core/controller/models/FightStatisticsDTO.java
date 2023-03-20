@@ -51,6 +51,8 @@ public class FightStatisticsDTO extends ElementDTO {
 
     private LocalDateTime fightsFinishedAt;
 
+    private Long fightsFinished;
+
     public Long getFightsNumber() {
         return fightsNumber;
     }
@@ -161,5 +163,13 @@ public class FightStatisticsDTO extends ElementDTO {
 
     public void setIpponNumber(Long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public Long getFightsFinished() {
+        return fightsFinished;
+    }
+
+    public void setFightsFinished(Long fightsFinished) {
+        this.fightsFinished = fightsFinished;
     }
 }
