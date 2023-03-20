@@ -602,7 +602,18 @@
   "pointsByVictory": "Punts per victòria",
   "pointsByDraw": "Punts per empat",
   "nameExample": "Antonio Garcia",
-  "onlyNews": "Nous"
+  "onlyNews": "Nous",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtingut a:",
+  "time": "Temps",
+  "lockedAt": "Bloquejat",
+  "fightsStartedAt": "Inici partits",
+  "fightsFinishedAt": "Final de partits",
+  "fightsDuration": "Duració de partits",
+  "fightsAverage": "Mitjana de partits",
+  "hitsByTournament": "Cops per torneig",
+  "timeByTournament": "Temps per torneig",
+  "fightsFinished": "Partits acabats",
+  "faults": "Faltes"
 }
 
 

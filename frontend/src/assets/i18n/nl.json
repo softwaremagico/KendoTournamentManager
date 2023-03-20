@@ -588,7 +588,18 @@
   "pointsByVictory": "Punten voor de overwinning",
   "pointsByDraw": "Punten voor een gelijkspel",
   "nameExample": "Emma De vries",
-  "onlyNews": "Nieuwe"
+  "onlyNews": "Nieuwe",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Verkregen op:",
+  "time": "Tijd",
+  "lockedAt": "Op slot",
+  "fightsStartedAt": "Begin van wedstrijden",
+  "fightsFinishedAt": "Einde wedstrijden",
+  "fightsDuration": "Duur van de partij",
+  "fightsAverage": "Wedstrijdgemiddelde",
+  "hitsByTournament": "Slagen per toernooi",
+  "timeByTournament": "Tijd per toernooi",
+  "fightsFinished": "Afgewerkte wedstrijden",
+  "faults": "Fouten"
 }
 
 
