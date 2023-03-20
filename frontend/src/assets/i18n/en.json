@@ -618,13 +618,14 @@
   "onlyNews": "New Ones",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:",
   "time": "Time",
-  "lockedAt": "Locked At",
+  "lockedAt": "Locked at",
   "fightsStartedAt": "Matches started at",
   "fightsFinishedAt": "Matches finished at",
   "fightsDuration": "Matches duration",
   "fightsAverage": "Matches average",
   "hitsByTournament": "Hits by Tournament",
   "timeByTournament": "Time by Tournament",
-  "fightsFinished": "Matches finished"
+  "fightsFinished": "Matches finished",
+  "faults": "Faults"
 }
 

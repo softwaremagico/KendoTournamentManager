@@ -71,6 +71,15 @@
               <td>{{convertSeconds(tournamentStatistics?.fightStatistics?.averageTime)}}</td>
             </tr>
           </table>
+          <div class="statistics-table-title">
+            <mat-icon>flag</mat-icon>
+            <h3>{{'faults' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr>
+              <td class="single">{{'faults' | translate}}: {{tournamentStatistics?.fightStatistics?.faults}}</td>
+            </tr>
+          </table>
         </div>
 
         <div class="box-statistics box shadow scrollable" *ngIf="teamScores">
@@ -105,7 +114,8 @@
         <app-line-chart [data]="multipleLineChartData" [title]="'timeByTournament' | translate"
                         [width]="400"></app-line-chart>
 
-        <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [title]="'fightsFinished' | translate" [width]="400"></app-gauge-chart>
+        <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [title]="'fightsFinished' | translate"
+                         [width]="400"></app-gauge-chart>
         <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>
         <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>
       </div>

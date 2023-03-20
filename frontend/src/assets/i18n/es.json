@@ -607,7 +607,18 @@
   "pointsByVictory": "Puntos por victoria",
   "pointsByDraw": "Puntos por empate",
   "nameExample": "Francisco Garcia",
-  "onlyNews": "Nuevos"
+  "onlyNews": "Nuevos",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtenido en:",
+  "time": "Tiempos",
+  "lockedAt": "Bloqueado",
+  "fightsStartedAt": "Inicio partidos",
+  "fightsFinishedAt": "Fin paridos",
+  "fightsDuration": "Duración de partidos",
+  "fightsAverage": "Promedio de partidos",
+  "hitsByTournament": "Golpes por torneo",
+  "timeByTournament": "Tiempo por torneo",
+  "fightsFinished": "Partidos acabados",
+  "faults": "Faltas"
 }
 
 
