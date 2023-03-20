@@ -22,3 +22,45 @@
   display: flex;
   flex-wrap: wrap;
 }
+
+.frame {
+  padding: 15px;
+}
+
+.box {
+  background-color: #fff;
+  padding: 25px 20px;
+
+}
+
+.shadow {
+  box-shadow: 0 1px 15px 1px rgba(69, 65, 78, 0.08);
+}
+
+.time-statistics {
+  text-align: center;
+  padding: 15px;
+  margin: 15px;
+  min-width: 160px;
+}
+
+.statistics-table {
+  font-size: 12px;
+  align-content: center;
+  text-align: right;
+  padding-bottom: 20px;
+}
+
+.statistics-table-title {
+  align-content: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.statistics-table-title > h3 {
+  padding-left: 15px;
+}
+
+
+

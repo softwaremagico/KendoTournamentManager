@@ -233,12 +233,12 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     @Test
     public void basicTournamentStatistics() {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournament1DTO);
-        Assert.assertEquals(tournamentStatisticsDTO.getMenNumber(), 5);
-        Assert.assertEquals(tournamentStatisticsDTO.getKoteNumber(), 3);
-        Assert.assertEquals(tournamentStatisticsDTO.getDoNumber(), 3);
-        Assert.assertEquals(tournamentStatisticsDTO.getHansokuNumber(), 2);
-        Assert.assertEquals(tournamentStatisticsDTO.getTsukiNumber(), 2);
-        Assert.assertEquals(tournamentStatisticsDTO.getIpponNumber(), 2);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getMenNumber(), 5);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getKoteNumber(), 3);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getDoNumber(), 3);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getHansokuNumber(), 2);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getTsukiNumber(), 2);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getIpponNumber(), 2);
 
         Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getFightsNumber(), totalFights);
         Assert.assertNull(tournamentStatisticsDTO.getFightStatisticsDTO().getFightsByTeam());
