@@ -94,6 +94,10 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return repository.countByTournament(tournament);
     }
 
+    public long countByTournamentAndFinished(Tournament tournament) {
+        return repository.countByTournamentAndFinished(tournament);
+    }
+
     public Integer getCurrentLevel(Tournament tournament) {
         final Optional<Fight> fight = repository.findFirstByTournamentOrderByLevelDesc(tournament);
         if (fight.isPresent()) {

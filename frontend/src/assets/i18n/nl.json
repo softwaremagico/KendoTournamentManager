@@ -108,7 +108,7 @@
   "diplomas": "Diploma",
   "SummaryMenuItem": "Samenvatting van de wedtrijden",
   "ClubListMenuItem": "Overzicht van de clubs",
-  "TournamentHitsStatisticsMenuItem": "Percentage treffers",
+  "tournamentHitsStatistics": "Percentage treffers",
   "TeamStatisticsMenu": "Per team",
   "CompetitorStatisticsMenu": "Per deelnemer",
   "PerformedHitsStatisticsMenuItem": "Percentage geplaatste treffers",

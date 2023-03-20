@@ -452,7 +452,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (!this.selectedDuel.finishedAt) {
         this.selectedDuel.finishedAt = new Date();
       }
-      console.log(this.selectedDuel)
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
