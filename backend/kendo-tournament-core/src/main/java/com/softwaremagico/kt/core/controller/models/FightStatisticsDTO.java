@@ -53,6 +53,8 @@ public class FightStatisticsDTO extends ElementDTO {
 
     private Long fightsFinished;
 
+    private long faults;
+
     public Long getFightsNumber() {
         return fightsNumber;
     }
@@ -171,5 +173,13 @@ public class FightStatisticsDTO extends ElementDTO {
 
     public void setFightsFinished(Long fightsFinished) {
         this.fightsFinished = fightsFinished;
+    }
+
+    public long getFaults() {
+        return faults;
+    }
+
+    public void setFaults(long faults) {
+        this.faults = faults;
     }
 }

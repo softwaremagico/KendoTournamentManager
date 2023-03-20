@@ -594,7 +594,18 @@
   "pointsByVictory": "Punti per la vittoria",
   "pointsByDraw": "Punti per il pareggio",
   "nameExample": "Giuseppe Rossi",
-  "onlyNews": "Nuovi"
+  "onlyNews": "Nuovi",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Ottenuto a:",
+  "time": "Tempi",
+  "lockedAt": "Bloccato",
+  "fightsStartedAt": "Inizio delle partite",
+  "fightsFinishedAt": "Fine delle partite",
+  "fightsDuration": "Durata dei partiti",
+  "fightsAverage": "Media delle partite",
+  "hitsByTournament": "Colpi per torneo",
+  "timeByTournament": "Tempo per torneo",
+  "fightsFinished": "Partite finite",
+  "faults": "Falli"
 }
 
 

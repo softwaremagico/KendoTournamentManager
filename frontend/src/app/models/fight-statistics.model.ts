@@ -2,12 +2,12 @@ import {Element} from "./element";
 
 export class FightStatistics extends Element {
 
-  public menNumber: number;
-  public koteNumber: number;
-  public doNumber: number;
-  public tsukiNumber: number;
-  public hansokuNumber: number;
-  public ipponNumber: number;
+  menNumber: number;
+  koteNumber: number;
+  doNumber: number;
+  tsukiNumber: number;
+  hansokuNumber: number;
+  ipponNumber: number;
   fightsNumber: number;
   fightsByTeam?: number;
   duelsNumber: number;
@@ -15,8 +15,9 @@ export class FightStatistics extends Element {
   estimatedTime: number;
   averageTime: number;
   fightsFinished: number;
-  public fightsStartedAt: Date;
-  public fightsFinishedAt: Date;
+  fightsStartedAt: Date;
+  fightsFinishedAt: Date;
+  faults: number;
 
   public static override copy(source: FightStatistics, target: FightStatistics): void {
     Element.copy(source, target);
@@ -34,6 +35,7 @@ export class FightStatistics extends Element {
     target.fightsStartedAt = source.fightsStartedAt;
     target.fightsFinishedAt = source.fightsFinishedAt;
     target.fightsFinished = source.fightsFinished;
+    target.faults = source.faults;
   }
 
   public static clone(data: FightStatistics): FightStatistics {
