@@ -19,6 +19,10 @@ import {TournamentStatistics} from "../../models/tournament-statistics.model";
 import {DatePipe} from "@angular/common";
 import {UserSessionService} from "../../services/user-session.service";
 import {RoleType} from "../../models/role-type";
+import {ScoreOfCompetitor} from "../../models/score-of-competitor";
+import {RankingService} from "../../services/ranking.service";
+import {NameUtilsService} from "../../services/name-utils.service";
+import {ScoreOfTeam} from "../../models/score-of-team";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -51,10 +55,13 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   private readonly tournamentId: number | undefined;
   public tournamentStatistics: TournamentStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
+  competitorsScore: ScoreOfCompetitor[];
+  teamScores: ScoreOfTeam[];
 
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private statisticsService: StatisticsService, private userSessionService: UserSessionService) {
+              private statisticsService: StatisticsService, private userSessionService: UserSessionService,
+              private rankingService: RankingService, private nameUtilsService: NameUtilsService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -86,15 +93,50 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   ngOnInit(): void {
     this.generateStatistics();
+    this.generateCompetitorsRanking();
   }
 
-  generateStatistics() {
+  generateStatistics(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.statisticsService.getTournamentStatistics(this.tournamentId!).subscribe((tournamentStatistics: TournamentStatistics) => {
       this.tournamentStatistics = TournamentStatistics.clone(tournamentStatistics);
       this.initializeScoreStatistics(tournamentStatistics);
+      console.log(tournamentStatistics)
+      if(tournamentStatistics.teamSize>1){
+        this.generateTeamsRanking();
+      }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
+  }
+
+  generateCompetitorsRanking(): void {
+    if (this.tournamentId) {
+      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournamentId).subscribe(competitorsScore => {
+        this.competitorsScore = competitorsScore;
+      });
+    }
+  }
+
+  getCompetitorRanking(scoreOfCompetitor: ScoreOfCompetitor): string {
+    if (scoreOfCompetitor && scoreOfCompetitor.competitor) {
+      return this.nameUtilsService.getDisplayName(scoreOfCompetitor.competitor, 1800);
+    }
+    return "";
+  }
+
+  generateTeamsRanking(): void {
+    if (this.tournamentId) {
+      this.rankingService.getTeamsScoreRankingByTournament(this.tournamentId).subscribe(scoresOfTeams => {
+        this.teamScores = scoresOfTeams;
+      });
+    }
+  }
+
+  getTeamsRanking(scoreOfTeam: ScoreOfTeam): string {
+    if (scoreOfTeam && scoreOfTeam.team) {
+      return scoreOfTeam.team.name;
+    }
+    return "";
   }
 
   goBackToTournament(): void {
@@ -103,20 +145,20 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   initializeScoreStatistics(tournamentStatistics: TournamentStatistics): void {
     const scores: [string, number][] = [];
-    if (tournamentStatistics.menNumber) {
-      scores.push([Score.MEN, tournamentStatistics.menNumber]);
+    if (tournamentStatistics.fightStatistics.menNumber) {
+      scores.push([Score.MEN, tournamentStatistics.fightStatistics.menNumber]);
     }
-    if (tournamentStatistics.koteNumber) {
-      scores.push([Score.KOTE, tournamentStatistics.koteNumber]);
+    if (tournamentStatistics.fightStatistics.koteNumber) {
+      scores.push([Score.KOTE, tournamentStatistics.fightStatistics.koteNumber]);
     }
-    if (tournamentStatistics.doNumber) {
-      scores.push([Score.DO, tournamentStatistics.doNumber]);
+    if (tournamentStatistics.fightStatistics.doNumber) {
+      scores.push([Score.DO, tournamentStatistics.fightStatistics.doNumber]);
     }
-    if (tournamentStatistics.tsukiNumber) {
-      scores.push([Score.TSUKI, tournamentStatistics.tsukiNumber]);
+    if (tournamentStatistics.fightStatistics.tsukiNumber) {
+      scores.push([Score.TSUKI, tournamentStatistics.fightStatistics.tsukiNumber]);
     }
-    if (tournamentStatistics.ipponNumber) {
-      scores.push([Score.IPPON, tournamentStatistics.ipponNumber]);
+    if (tournamentStatistics.fightStatistics.ipponNumber) {
+      scores.push([Score.IPPON, tournamentStatistics.fightStatistics.ipponNumber]);
     }
     this.scoreTypeChartData = PieChartData.fromArray(scores);
   }

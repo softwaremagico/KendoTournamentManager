@@ -34,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -55,6 +56,16 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     public void delete(Tournament tournament) {
         tournamentExtraPropertyRepository.deleteByTournament(tournament);
         repository.delete(tournament);
+    }
+
+    @Override
+    public Tournament update(Tournament tournament) {
+        if (tournament.isLocked() && tournament.getLockedAt() == null) {
+            tournament.setLockedAt(LocalDateTime.now());
+        } else if (!tournament.isLocked()) {
+            tournament.setLockedAt(null);
+        }
+        return super.update(tournament);
     }
 
     public List<Tournament> getPreviousTo(Tournament tournament, int elementsToRetrieve) {

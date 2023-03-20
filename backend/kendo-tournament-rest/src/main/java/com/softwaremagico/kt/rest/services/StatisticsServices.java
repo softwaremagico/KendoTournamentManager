@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
 import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentStatisticsDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +41,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -86,7 +89,30 @@ public class StatisticsServices {
                                                                HttpServletRequest request) {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentController.get(tournamentId));
         tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        tournamentStatisticsDTO.setTournamentCreatedAt(LocalDateTime.now());
         return tournamentStatisticsDTO;
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournament/{tournamentId}/previous/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TournamentStatisticsDTO> getStatisticsFromPreviousTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                             @PathVariable("tournamentId") Integer tournamentId,
+                                                                             @Parameter(description = "Number of tournaments statistics to retrieve")
+                                                                             @PathVariable("number") Integer number,
+                                                                             Authentication authentication,
+                                                                             HttpServletRequest request) {
+        if (number == null) {
+            number = 1;
+        }
+        final List<TournamentStatisticsDTO> statisticsDTOS = new ArrayList<>();
+        final List<TournamentDTO> tournamentsDTO = tournamentController.getPreviousTo(tournamentController.get(tournamentId), number);
+        tournamentsDTO.forEach(tournamentDTO -> {
+            final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentDTO);
+            tournamentStatisticsDTO.setCreatedBy(authentication.getName());
+            tournamentStatisticsDTO.setTournamentCreatedAt(LocalDateTime.now());
+            statisticsDTOS.add(tournamentStatisticsDTO);
+        });
+        return statisticsDTOS;
     }
 }
