@@ -70,8 +70,8 @@ export class GaugeChartComponent implements OnInit {
           opacity: 0.2
         },
       },
-      series: this.data.getValues(),
-      labels: this.data.getLabels(),
+      series: this.data?.getValues(),
+      labels: this.data?.getLabels(),
       fill: {
         type: this.fill,
         opacity: this.opacity,

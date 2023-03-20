@@ -23,6 +23,7 @@ import {ScoreOfCompetitor} from "../../models/score-of-competitor";
 import {RankingService} from "../../services/ranking.service";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {ScoreOfTeam} from "../../models/score-of-team";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -50,7 +51,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     new RadarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament4"),
     new RadarChartDataElement([[Score.MEN, 6], [Score.DO, 2], [Score.KOTE, 3]], "Tournament5")]);
   public radialChartData: RadialChartData = RadialChartData.fromArray([[Score.MEN, 85], [Score.DO, 49], [Score.KOTE, 36]]);
-  public gaugeChartData: GaugeChartData = GaugeChartData.fromArray([[Score.MEN, 85]]);
+  public fightsOverData: GaugeChartData;
 
   private readonly tournamentId: number | undefined;
   public tournamentStatistics: TournamentStatistics | undefined = undefined;
@@ -61,7 +62,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private statisticsService: StatisticsService, private userSessionService: UserSessionService,
-              private rankingService: RankingService, private nameUtilsService: NameUtilsService) {
+              private rankingService: RankingService, private nameUtilsService: NameUtilsService,
+              private translateService: TranslateService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -101,8 +103,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     this.statisticsService.getTournamentStatistics(this.tournamentId!).subscribe((tournamentStatistics: TournamentStatistics) => {
       this.tournamentStatistics = TournamentStatistics.clone(tournamentStatistics);
       this.initializeScoreStatistics(tournamentStatistics);
-      console.log(tournamentStatistics)
-      if(tournamentStatistics.teamSize>1){
+      this.initializeFightsOverStatistics(tournamentStatistics);
+      if (tournamentStatistics.teamSize > 1) {
         this.generateTeamsRanking();
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
@@ -161,6 +163,11 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       scores.push([Score.IPPON, tournamentStatistics.fightStatistics.ipponNumber]);
     }
     this.scoreTypeChartData = PieChartData.fromArray(scores);
+  }
+
+  initializeFightsOverStatistics(tournamentStatistics: TournamentStatistics): void {
+    this.fightsOverData = GaugeChartData.fromArray([[this.translateService.instant('fightsFinished'),
+      (tournamentStatistics.fightStatistics.fightsFinished / tournamentStatistics.fightStatistics.fightsNumber) ]]);
   }
 
   convertSeconds(seconds: number | undefined): string {
