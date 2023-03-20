@@ -13,36 +13,54 @@
     <div class="statistics-container">
       <div class="dashboard">
 
-        <div class="time-statistics box shadow">
+        <div class="box-statistics box shadow">
           <div class="statistics-table-title">
-            <mat-icon svgIcon="men" class="kendo-icon"></mat-icon>
-            <h3>Participants</h3>
+            <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
+            <h3>{{'participants' | translate}}</h3>
           </div>
           <table class="statistics-table" *ngIf="tournamentStatistics">
             <tr *ngFor="let roleType of roleTypes">
               <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>
               <td *ngIf="tournamentStatistics">{{numberOfParticipantsByRole(roleType)}}</td>
             </tr>
+          </table>
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
+            <h3>{{'teams' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
             <tr>
               <td>Teams:</td>
               <td>{{tournamentStatistics?.numberOfTeams}}</td>
             </tr>
+            <tr>
+              <td>{{'tournamentTeamSize' | translate}}:</td>
+              <td>{{tournamentStatistics?.teamSize}}</td>
+            </tr>
           </table>
         </div>
 
-        <div class="time-statistics box shadow">
+        <div class="box-statistics box shadow">
           <div class="statistics-table-title">
             <mat-icon>timer</mat-icon>
             <h3>Time</h3>
           </div>
           <table class="statistics-table" *ngIf="tournamentStatistics">
             <tr>
-              <td>Started At:</td>
-              <td>{{convertDate(tournamentStatistics?.startedAt)}}</td>
+              <td>Created At:</td>
+              <td>{{convertDate(tournamentStatistics?.tournamentCreatedAt)}}</td>
             </tr>
             <tr>
-              <td>Finished At:</td>
-              <td>{{convertDate(tournamentStatistics?.finishedAt)}}</td>
+              <td>Locked At:</td>
+              <td>{{convertDate(tournamentStatistics?.tournamentLockedAt)}}</td>
+            </tr>
+            <tr>
+              <td>Fights Started At:</td>
+              <td>{{convertDate(tournamentStatistics?.fightStatistics?.fightsStartedAt)}}</td>
+            </tr>
+            <tr>
+              <td>Fights Finished At:</td>
+              <td>{{convertDate(tournamentStatistics?.fightStatistics?.fightsFinishedAt)}}</td>
             </tr>
             <tr>
               <td>Matches duration:</td>
@@ -51,6 +69,30 @@
             <tr>
               <td>Matches average:</td>
               <td>{{convertSeconds(tournamentStatistics?.fightStatistics?.averageTime)}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="box-statistics box shadow scrollable" *ngIf="teamScores">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
+            <h3>{{'teamsRanking' | translate}}</h3>
+          </div>
+          <table class="statistics-table">
+            <tr *ngFor="let scoreOfTeam of teamScores">
+              <td class="ranking">{{getTeamsRanking(scoreOfTeam)}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="box-statistics box shadow scrollable" *ngIf="competitorsScore">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
+            <h3>{{'competitorsRanking' | translate}}</h3>
+          </div>
+          <table class="statistics-table">
+            <tr *ngFor="let scoreOfCompetitor of competitorsScore">
+              <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
             </tr>
           </table>
         </div>
