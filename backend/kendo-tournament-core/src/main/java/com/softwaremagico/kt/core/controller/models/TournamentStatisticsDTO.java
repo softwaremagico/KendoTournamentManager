@@ -8,43 +8,51 @@ package com.softwaremagico.kt.core.controller.models;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *
+ *  
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ *  
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *
+ *  
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.values.RoleType;
+
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TournamentStatisticsDTO extends ElementDTO {
 
     private FightStatisticsDTO fightStatisticsDTO;
 
-    private long menNumber;
+    private Long menNumber;
 
-    private long koteNumber;
+    private Long koteNumber;
 
-    private long doNumber;
+    private Long doNumber;
 
-    private long tsukiNumber;
+    private Long tsukiNumber;
 
-    private long hansokuNumber;
+    private Long hansokuNumber;
 
-    private long ipponNumber;
+    private Long ipponNumber;
 
     private LocalDateTime startedAt;
 
     private LocalDateTime finishedAt;
+
+    private Integer numberOfTeams;
+
+    private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
 
     public FightStatisticsDTO getFightStatisticsDTO() {
         return fightStatisticsDTO;
@@ -54,51 +62,51 @@ public class TournamentStatisticsDTO extends ElementDTO {
         this.fightStatisticsDTO = fightStatisticsDTO;
     }
 
-    public long getMenNumber() {
+    public Long getMenNumber() {
         return menNumber;
     }
 
-    public void setMenNumber(long menNumber) {
+    public void setMenNumber(Long menNumber) {
         this.menNumber = menNumber;
     }
 
-    public long getKoteNumber() {
+    public Long getKoteNumber() {
         return koteNumber;
     }
 
-    public void setKoteNumber(long koteNumber) {
+    public void setKoteNumber(Long koteNumber) {
         this.koteNumber = koteNumber;
     }
 
-    public long getDoNumber() {
+    public Long getDoNumber() {
         return doNumber;
     }
 
-    public void setDoNumber(long doNumber) {
+    public void setDoNumber(Long doNumber) {
         this.doNumber = doNumber;
     }
 
-    public long getTsukiNumber() {
+    public Long getTsukiNumber() {
         return tsukiNumber;
     }
 
-    public void setTsukiNumber(long tsukiNumber) {
+    public void setTsukiNumber(Long tsukiNumber) {
         this.tsukiNumber = tsukiNumber;
     }
 
-    public long getHansokuNumber() {
+    public Long getHansokuNumber() {
         return hansokuNumber;
     }
 
-    public void setHansokuNumber(long hansokuNumber) {
+    public void setHansokuNumber(Long hansokuNumber) {
         this.hansokuNumber = hansokuNumber;
     }
 
-    public long getIpponNumber() {
+    public Long getIpponNumber() {
         return ipponNumber;
     }
 
-    public void setIpponNumber(long ipponNumber) {
+    public void setIpponNumber(Long ipponNumber) {
         this.ipponNumber = ipponNumber;
     }
 
@@ -116,5 +124,21 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     public void setFinishedAt(LocalDateTime finishedAt) {
         this.finishedAt = finishedAt;
+    }
+
+    public Integer getNumberOfTeams() {
+        return numberOfTeams;
+    }
+
+    public void setNumberOfTeams(Integer numberOfTeams) {
+        this.numberOfTeams = numberOfTeams;
+    }
+
+    public Map<RoleType, Long> getNumberOfParticipants() {
+        return numberOfParticipants;
+    }
+
+    public void setNumberOfParticipants(Map<RoleType, Long> numberOfParticipants) {
+        this.numberOfParticipants = numberOfParticipants;
     }
 }
