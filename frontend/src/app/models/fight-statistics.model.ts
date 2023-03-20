@@ -23,4 +23,11 @@ export class FightStatistics extends Element {
     this.copy(data, instance);
     return instance;
   }
+
+  public duelsDuration(): number | undefined {
+    if (this.duelsNumber && this.averageTime) {
+      return this.duelsNumber * this.averageTime;
+    }
+    return undefined;
+  }
 }

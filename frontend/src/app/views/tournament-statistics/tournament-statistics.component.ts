@@ -16,6 +16,9 @@ import {RadialChartData} from "../../components/charts/radial-chart/radial-chart
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
 import {StatisticsService} from "../../services/statistics.service";
 import {TournamentStatistics} from "../../models/tournament-statistics.model";
+import {DatePipe} from "@angular/common";
+import {UserSessionService} from "../../services/user-session.service";
+import {RoleType} from "../../models/role-type";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -24,7 +27,10 @@ import {TournamentStatistics} from "../../models/tournament-statistics.model";
 })
 export class TournamentStatisticsComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
-  public pieChartData: PieChartData = PieChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
+  pipe: DatePipe;
+
+  public scoreTypeChartData: PieChartData;
+
   public barChartData: BarChartData = BarChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
   public lineChartData: LineChartData = LineChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
   public multipleLineChartData: LineChartData = LineChartData.fromMultipleDataElements([
@@ -43,10 +49,12 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public gaugeChartData: GaugeChartData = GaugeChartData.fromArray([[Score.MEN, 85]]);
 
   private readonly tournamentId: number | undefined;
+  public tournamentStatistics: TournamentStatistics | undefined = undefined;
+  public roleTypes: RoleType[] = RoleType.toArray();
 
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private statisticsService: StatisticsService) {
+              private statisticsService: StatisticsService, private userSessionService: UserSessionService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -58,6 +66,21 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     } else {
       this.goBackToTournament();
     }
+    this.setLocale();
+  }
+
+  private setLocale() {
+    if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
+      this.pipe = new DatePipe('es');
+    } else if (this.userSessionService.getLanguage() === 'it') {
+      this.pipe = new DatePipe('it');
+    } else if (this.userSessionService.getLanguage() === 'de') {
+      this.pipe = new DatePipe('de');
+    } else if (this.userSessionService.getLanguage() === 'nl') {
+      this.pipe = new DatePipe('nl');
+    } else {
+      this.pipe = new DatePipe('en-US');
+    }
   }
 
 
@@ -68,6 +91,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   generateStatistics() {
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.statisticsService.getTournamentStatistics(this.tournamentId!).subscribe((tournamentStatistics: TournamentStatistics) => {
+      this.tournamentStatistics = TournamentStatistics.clone(tournamentStatistics);
+      this.initializeScoreStatistics(tournamentStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
@@ -75,4 +100,51 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   goBackToTournament(): void {
     this.router.navigate(['/tournaments'], {});
   }
+
+  initializeScoreStatistics(tournamentStatistics: TournamentStatistics): void {
+    const scores: [string, number][] = [];
+    if (tournamentStatistics.menNumber) {
+      scores.push([Score.MEN, tournamentStatistics.menNumber]);
+    }
+    if (tournamentStatistics.koteNumber) {
+      scores.push([Score.KOTE, tournamentStatistics.koteNumber]);
+    }
+    if (tournamentStatistics.doNumber) {
+      scores.push([Score.DO, tournamentStatistics.doNumber]);
+    }
+    if (tournamentStatistics.tsukiNumber) {
+      scores.push([Score.TSUKI, tournamentStatistics.tsukiNumber]);
+    }
+    if (tournamentStatistics.ipponNumber) {
+      scores.push([Score.IPPON, tournamentStatistics.ipponNumber]);
+    }
+    this.scoreTypeChartData = PieChartData.fromArray(scores);
+  }
+
+  convertSeconds(seconds: number | undefined): string {
+    if (seconds) {
+      const minutes = Math.floor(seconds / 60);
+      if (minutes > 0) {
+        return minutes + "m " + seconds % 60 + "s";
+      }
+      return seconds + "s";
+    }
+    return "";
+  }
+
+  convertDate(date: Date | undefined): string | null {
+    if (date) {
+      return this.pipe.transform(date, 'short');
+    }
+    return "";
+  }
+
+  numberOfParticipantsByRole(roleType: RoleType): number {
+    if (this.tournamentStatistics !== undefined) {
+      return this.tournamentStatistics.numberOfParticipantsByRole(roleType);
+    }
+    return 0;
+  }
+
+
 }

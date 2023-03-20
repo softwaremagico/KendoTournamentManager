@@ -12,14 +12,59 @@
     </div>
     <div class="statistics-container">
       <div class="dashboard">
-      <app-pie-chart [data]="pieChartData" [title]="'Scores'" [width]="360"></app-pie-chart>
-      <app-bar-chart [data]="barChartData" [title]="'Scores'" [width]="400"></app-bar-chart>
-      <app-line-chart [data]="lineChartData" [title]="'Scores'" [width]="400"></app-line-chart>
-      <app-line-chart [data]="multipleLineChartData" [title]="'Scores'" [width]="400"></app-line-chart>
-      <app-stacked-bars-chart [data]="multipleBarsChartData" [title]="'Scores'" [width]="400"></app-stacked-bars-chart>
-      <app-gauge-chart [data]="gaugeChartData" [title]="'Scores'" [width]="400"></app-gauge-chart>
-      <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>
-      <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>
+
+        <div class="time-statistics box shadow">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="men" class="kendo-icon"></mat-icon>
+            <h3>Participants</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr *ngFor="let roleType of roleTypes">
+              <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>
+              <td *ngIf="tournamentStatistics">{{numberOfParticipantsByRole(roleType)}}</td>
+            </tr>
+            <tr>
+              <td>Teams:</td>
+              <td>{{tournamentStatistics?.numberOfTeams}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="time-statistics box shadow">
+          <div class="statistics-table-title">
+            <mat-icon>timer</mat-icon>
+            <h3>Time</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr>
+              <td>Started At:</td>
+              <td>{{convertDate(tournamentStatistics?.startedAt)}}</td>
+            </tr>
+            <tr>
+              <td>Finished At:</td>
+              <td>{{convertDate(tournamentStatistics?.finishedAt)}}</td>
+            </tr>
+            <tr>
+              <td>Matches duration:</td>
+              <td>{{convertSeconds(tournamentStatistics?.fightStatistics?.duelsDuration())}}</td>
+            </tr>
+            <tr>
+              <td>Matches average:</td>
+              <td>{{convertSeconds(tournamentStatistics?.fightStatistics?.averageTime)}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <app-pie-chart *ngIf="!!scoreTypeChartData" [data]="scoreTypeChartData" [title]="'Scores'"
+                       [width]="360"></app-pie-chart>
+        <app-bar-chart [data]="barChartData" [title]="'Scores'" [width]="400"></app-bar-chart>
+        <app-line-chart [data]="lineChartData" [title]="'Scores'" [width]="400"></app-line-chart>
+        <app-line-chart [data]="multipleLineChartData" [title]="'Scores'" [width]="400"></app-line-chart>
+        <app-stacked-bars-chart [data]="multipleBarsChartData" [title]="'Scores'"
+                                [width]="400"></app-stacked-bars-chart>
+        <app-gauge-chart [data]="gaugeChartData" [title]="'Scores'" [width]="400"></app-gauge-chart>
+        <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>
+        <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>
       </div>
     </div>
   </div>

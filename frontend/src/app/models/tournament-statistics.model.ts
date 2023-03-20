@@ -1,5 +1,6 @@
 import {FightStatistics} from "./fight-statistics.model";
 import {Element} from "./element";
+import {RoleType} from "./role-type";
 
 export class TournamentStatistics extends Element {
 
@@ -21,6 +22,10 @@ export class TournamentStatistics extends Element {
 
   public finishedAt: Date;
 
+  public numberOfTeams: number;
+
+  public numberOfParticipants: Map<RoleType, number>;
+
   public static override copy(source: TournamentStatistics, target: TournamentStatistics): void {
     Element.copy(source, target);
     target.menNumber = source.menNumber;
@@ -34,12 +39,22 @@ export class TournamentStatistics extends Element {
     }
     target.startedAt = source.startedAt;
     target.finishedAt = source.finishedAt;
+    target.numberOfTeams = source.numberOfTeams;
+    target.numberOfParticipants = new Map();
+    Object.keys(source.numberOfParticipants).forEach(key => target.numberOfParticipants.set((key as RoleType), (source.numberOfParticipants as any)[key]));
   }
 
   public static clone(data: TournamentStatistics): TournamentStatistics {
     const instance: TournamentStatistics = new TournamentStatistics();
     this.copy(data, instance);
     return instance;
+  }
+
+  public numberOfParticipantsByRole(roleType: RoleType): number {
+    if (this.numberOfParticipants.get(roleType)) {
+      return this.numberOfParticipants.get(roleType)!;
+    }
+    return 0;
   }
 
 }
