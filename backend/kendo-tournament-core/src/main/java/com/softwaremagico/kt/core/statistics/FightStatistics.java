@@ -53,6 +53,8 @@ public class FightStatistics {
 
     private LocalDateTime fightsFinishedAt;
 
+    private long faults;
+
     public Long getFightsNumber() {
         return fightsNumber;
     }
@@ -171,5 +173,13 @@ public class FightStatistics {
 
     public void setFightsFinished(Long fightsFinished) {
         this.fightsFinished = fightsFinished;
+    }
+
+    public long getFaults() {
+        return faults;
+    }
+
+    public void setFaults(long faults) {
+        this.faults = faults;
     }
 }
