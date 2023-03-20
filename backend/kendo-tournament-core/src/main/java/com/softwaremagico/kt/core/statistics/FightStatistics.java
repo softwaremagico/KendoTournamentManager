@@ -47,6 +47,8 @@ public class FightStatistics {
     private Long averageTime;
     private Long estimatedTime;
 
+    private Long fightsFinished;
+
     private LocalDateTime fightsStartedAt;
 
     private LocalDateTime fightsFinishedAt;
@@ -161,5 +163,13 @@ public class FightStatistics {
 
     public void setIpponNumber(Long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public Long getFightsFinished() {
+        return fightsFinished;
+    }
+
+    public void setFightsFinished(Long fightsFinished) {
+        this.fightsFinished = fightsFinished;
     }
 }

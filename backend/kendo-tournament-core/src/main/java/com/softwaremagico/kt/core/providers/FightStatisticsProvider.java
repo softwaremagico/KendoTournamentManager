@@ -224,6 +224,7 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         if (lastDuel != null) {
             fightStatistics.setFightsFinishedAt(lastDuel.getFinishedAt());
         }
+        fightStatistics.setFightsFinished(fightProvider.countByTournamentAndFinished(tournament));
         return fightStatistics;
     }
 

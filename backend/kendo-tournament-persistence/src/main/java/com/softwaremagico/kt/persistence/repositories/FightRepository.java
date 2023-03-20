@@ -59,4 +59,8 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
     long deleteByTournament(Tournament tournament);
 
     Optional<Fight> findFirstByTournamentOrderByLevelDesc(Tournament tournament);
+
+    @Query("SELECT COUNT(f) FROM Fight f WHERE f.tournament=:tournament AND NOT EXISTS " +
+            "(SELECT f1 FROM Fight f1 LEFT JOIN f1.duels fd ON fd.finished=false WHERE f1.id=f.id)")
+    long countByTournamentAndFinished(@Param("tournament") Tournament tournament);
 }

@@ -233,18 +233,19 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     @Test
     public void basicTournamentStatistics() {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournament1DTO);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getMenNumber(), 5);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getKoteNumber(), 3);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getDoNumber(), 3);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getHansokuNumber(), 2);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getTsukiNumber(), 2);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getIpponNumber(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getMenNumber(), 5);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getKoteNumber(), 3);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getDoNumber(), 3);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getHansokuNumber(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getTsukiNumber(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getIpponNumber(), 2);
 
         Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getFightsNumber(), totalFights);
         Assert.assertNull(tournamentStatisticsDTO.getFightStatistics().getFightsByTeam());
         Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getDuelsNumber(), totalFights * 3L);
         Assert.assertNotNull(tournamentStatisticsDTO.getFightStatistics().getAverageTime());
         Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getAverageTime(), DUEL_DURATION);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getFightsFinished(), 2);
     }
 
     @AfterClass

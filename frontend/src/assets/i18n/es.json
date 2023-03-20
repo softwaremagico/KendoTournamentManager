@@ -104,7 +104,7 @@
   "diplomas": "Diplomas",
   "SummaryMenuItem": "Resumen de partidos",
   "ClubListMenuItem": "Lista de clubes",
-  "TournamentHitsStatisticsMenuItem": "Porcentaje de golpes",
+  "tournamentHitsStatistics": "Porcentaje de golpes",
   "TeamStatisticsMenu": "Por equipo",
   "CompetitorStatisticsMenu": "Por competidor",
   "PerformedHitsStatisticsMenuItem": "Porcentaje de golpes dados",
