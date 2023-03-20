@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentStatisticsRepository;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.stereotype.Service;
 
@@ -38,11 +39,17 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
 
     private final DuelProvider duelProvider;
 
+    private final TeamProvider teamProvider;
+
+    private final RoleProvider roleProvider;
+
     protected TournamentStatisticsProvider(TournamentStatisticsRepository repository, FightStatisticsProvider fightStatisticsProvider,
-                                           DuelProvider duelProvider) {
+                                           DuelProvider duelProvider, TeamProvider teamProvider, RoleProvider roleProvider) {
         super(repository);
         this.fightStatisticsProvider = fightStatisticsProvider;
         this.duelProvider = duelProvider;
+        this.teamProvider = teamProvider;
+        this.roleProvider = roleProvider;
     }
 
 
@@ -68,6 +75,10 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
         }
         if (lastDuel != null) {
             tournamentStatistics.setFinishedAt(lastDuel.getFinishedAt());
+        }
+        tournamentStatistics.setNumberOfTeams(teamProvider.count(tournament));
+        for (final RoleType roleType : RoleType.values()) {
+            tournamentStatistics.addNumberOfParticipants(roleType, roleProvider.count(tournament, roleType));
         }
         return tournamentStatistics;
     }

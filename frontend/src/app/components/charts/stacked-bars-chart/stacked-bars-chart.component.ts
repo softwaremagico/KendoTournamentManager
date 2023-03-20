@@ -77,6 +77,8 @@ export class StackedBarsChartComponent implements OnInit {
   public shadow: boolean = true;
   @Input()
   public stackType: '100%' | 'normal' = "normal";
+  @Input()
+  public stacked: boolean = true;
 
   ngOnInit() {
     this.chartOptions = {
@@ -86,7 +88,7 @@ export class StackedBarsChartComponent implements OnInit {
         toolbar: {
           show: this.showToolbar,
         },
-        stacked: true,
+        stacked: this.stacked,
         stackType: this.stackType,
         dropShadow: {
           enabled: this.shadow,
