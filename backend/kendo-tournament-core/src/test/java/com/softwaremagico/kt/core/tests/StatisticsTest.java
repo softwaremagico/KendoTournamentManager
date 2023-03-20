@@ -233,18 +233,18 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     @Test
     public void basicTournamentStatistics() {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournament1DTO);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getMenNumber(), 5);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getKoteNumber(), 3);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getDoNumber(), 3);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getHansokuNumber(), 2);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getTsukiNumber(), 2);
-        Assert.assertEquals((long)tournamentStatisticsDTO.getIpponNumber(), 2);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getMenNumber(), 5);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getKoteNumber(), 3);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getDoNumber(), 3);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getHansokuNumber(), 2);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getTsukiNumber(), 2);
+        Assert.assertEquals((long)tournamentStatisticsDTO.getFightStatistics().getIpponNumber(), 2);
 
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getFightsNumber(), totalFights);
-        Assert.assertNull(tournamentStatisticsDTO.getFightStatisticsDTO().getFightsByTeam());
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getDuelsNumber(), totalFights * 3L);
-        Assert.assertNotNull(tournamentStatisticsDTO.getFightStatisticsDTO().getAverageTime());
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatisticsDTO().getAverageTime(), DUEL_DURATION);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getFightsNumber(), totalFights);
+        Assert.assertNull(tournamentStatisticsDTO.getFightStatistics().getFightsByTeam());
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getDuelsNumber(), totalFights * 3L);
+        Assert.assertNotNull(tournamentStatisticsDTO.getFightStatistics().getAverageTime());
+        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getAverageTime(), DUEL_DURATION);
     }
 
     @AfterClass

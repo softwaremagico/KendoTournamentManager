@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.statistics.FightStatistics;
 import com.softwaremagico.kt.core.statistics.FightStatisticsRepository;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
@@ -203,6 +204,26 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teamProvider.count(tournament));
         fightStatistics.setDuelsNumber(duelProvider.count(tournament));
         fightStatistics.setAverageTime(duelProvider.getDurationAverage(tournament));
+        fightStatistics.setMenNumber(duelProvider.countScore(tournament, Score.MEN));
+        fightStatistics.setDoNumber(duelProvider.countScore(tournament, Score.DO));
+        fightStatistics.setKoteNumber(duelProvider.countScore(tournament, Score.KOTE));
+        fightStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
+        fightStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
+        fightStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
+        final Duel firstDuel = duelProvider.getFirstDuel(tournament);
+        final Duel lastDuel = duelProvider.getLastDuel(tournament);
+        if (firstDuel != null) {
+            if (firstDuel.getStartedAt() != null) {
+                fightStatistics.setFightsStartedAt(firstDuel.getStartedAt());
+            } else {
+                if (firstDuel.getFinishedAt() != null) {
+                    fightStatistics.setFightsStartedAt(firstDuel.getFinishedAt().minusMinutes(2));
+                }
+            }
+        }
+        if (lastDuel != null) {
+            fightStatistics.setFightsFinishedAt(lastDuel.getFinishedAt());
+        }
         return fightStatistics;
     }
 

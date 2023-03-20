@@ -45,13 +45,13 @@ public class ElementDTO {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDateTime getTournamentCreatedAt() {
         return createdAt;
     }
 
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setTournamentCreatedAt(LocalDateTime tournamentCreatedAt) {
+        this.createdAt = tournamentCreatedAt;
     }
 
     public String getCreatedBy() {
@@ -87,11 +87,11 @@ public class ElementDTO {
             return false;
         }
         final ElementDTO that = (ElementDTO) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getCreatedAt(), that.getCreatedAt());
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getTournamentCreatedAt(), that.getTournamentCreatedAt());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCreatedAt());
+        return Objects.hash(getId(), getTournamentCreatedAt());
     }
 }

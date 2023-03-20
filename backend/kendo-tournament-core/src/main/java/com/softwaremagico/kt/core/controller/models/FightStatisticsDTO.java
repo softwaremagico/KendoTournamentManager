@@ -24,13 +24,32 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.time.LocalDateTime;
+
 public class FightStatisticsDTO extends ElementDTO {
+
+    private Long menNumber;
+
+    private Long koteNumber;
+
+    private Long doNumber;
+
+    private Long tsukiNumber;
+
+    private Long hansokuNumber;
+
+    private Long ipponNumber;
+
     private Long fightsNumber;
     private Integer fightsByTeam;
     private Long duelsNumber;
     private Long averageTime;
     //In seconds.
     private Long estimatedTime;
+
+    private LocalDateTime fightsStartedAt;
+
+    private LocalDateTime fightsFinishedAt;
 
     public Long getFightsNumber() {
         return fightsNumber;
@@ -78,5 +97,69 @@ public class FightStatisticsDTO extends ElementDTO {
 
     public void setAverageTime(Long averageTime) {
         this.averageTime = averageTime;
+    }
+
+    public LocalDateTime getFightsStartedAt() {
+        return fightsStartedAt;
+    }
+
+    public void setFightsStartedAt(LocalDateTime fightsStartedAt) {
+        this.fightsStartedAt = fightsStartedAt;
+    }
+
+    public LocalDateTime getFightsFinishedAt() {
+        return fightsFinishedAt;
+    }
+
+    public void setFightsFinishedAt(LocalDateTime fightsFinishedAt) {
+        this.fightsFinishedAt = fightsFinishedAt;
+    }
+
+    public Long getMenNumber() {
+        return menNumber;
+    }
+
+    public void setMenNumber(Long menNumber) {
+        this.menNumber = menNumber;
+    }
+
+    public Long getKoteNumber() {
+        return koteNumber;
+    }
+
+    public void setKoteNumber(Long koteNumber) {
+        this.koteNumber = koteNumber;
+    }
+
+    public Long getDoNumber() {
+        return doNumber;
+    }
+
+    public void setDoNumber(Long doNumber) {
+        this.doNumber = doNumber;
+    }
+
+    public Long getTsukiNumber() {
+        return tsukiNumber;
+    }
+
+    public void setTsukiNumber(Long tsukiNumber) {
+        this.tsukiNumber = tsukiNumber;
+    }
+
+    public Long getHansokuNumber() {
+        return hansokuNumber;
+    }
+
+    public void setHansokuNumber(Long hansokuNumber) {
+        this.hansokuNumber = hansokuNumber;
+    }
+
+    public Long getIpponNumber() {
+        return ipponNumber;
+    }
+
+    public void setIpponNumber(Long ipponNumber) {
+        this.ipponNumber = ipponNumber;
     }
 }

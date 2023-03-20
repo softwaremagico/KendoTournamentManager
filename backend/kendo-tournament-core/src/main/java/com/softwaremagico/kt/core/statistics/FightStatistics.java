@@ -8,23 +8,37 @@ package com.softwaremagico.kt.core.statistics;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
+import java.time.LocalDateTime;
+
 public class FightStatistics {
+
+    private Long menNumber;
+
+    private Long koteNumber;
+
+    private Long doNumber;
+
+    private Long tsukiNumber;
+
+    private Long hansokuNumber;
+
+    private Long ipponNumber;
 
     private Long fightsNumber;
     private Long fightsByTeam;
@@ -32,6 +46,10 @@ public class FightStatistics {
     //In seconds.
     private Long averageTime;
     private Long estimatedTime;
+
+    private LocalDateTime fightsStartedAt;
+
+    private LocalDateTime fightsFinishedAt;
 
     public Long getFightsNumber() {
         return fightsNumber;
@@ -79,5 +97,69 @@ public class FightStatistics {
 
     public void setAverageTime(Long averageTime) {
         this.averageTime = averageTime;
+    }
+
+    public LocalDateTime getFightsStartedAt() {
+        return fightsStartedAt;
+    }
+
+    public void setFightsStartedAt(LocalDateTime fightsStartedAt) {
+        this.fightsStartedAt = fightsStartedAt;
+    }
+
+    public LocalDateTime getFightsFinishedAt() {
+        return fightsFinishedAt;
+    }
+
+    public void setFightsFinishedAt(LocalDateTime fightsFinishedAt) {
+        this.fightsFinishedAt = fightsFinishedAt;
+    }
+
+    public Long getMenNumber() {
+        return menNumber;
+    }
+
+    public void setMenNumber(Long menNumber) {
+        this.menNumber = menNumber;
+    }
+
+    public Long getKoteNumber() {
+        return koteNumber;
+    }
+
+    public void setKoteNumber(Long koteNumber) {
+        this.koteNumber = koteNumber;
+    }
+
+    public Long getDoNumber() {
+        return doNumber;
+    }
+
+    public void setDoNumber(Long doNumber) {
+        this.doNumber = doNumber;
+    }
+
+    public Long getTsukiNumber() {
+        return tsukiNumber;
+    }
+
+    public void setTsukiNumber(Long tsukiNumber) {
+        this.tsukiNumber = tsukiNumber;
+    }
+
+    public Long getHansokuNumber() {
+        return hansokuNumber;
+    }
+
+    public void setHansokuNumber(Long hansokuNumber) {
+        this.hansokuNumber = hansokuNumber;
+    }
+
+    public Long getIpponNumber() {
+        return ipponNumber;
+    }
+
+    public void setIpponNumber(Long ipponNumber) {
+        this.ipponNumber = ipponNumber;
     }
 }
