@@ -167,6 +167,9 @@ public class FightStatistics {
         this.ipponNumber = ipponNumber;
     }
 
+    /**
+     * Count fights that has at least one duel finished.
+     */
     public Long getFightsFinished() {
         return fightsFinished;
     }
