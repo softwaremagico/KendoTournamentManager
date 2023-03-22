@@ -171,6 +171,9 @@ public class FightStatisticsDTO extends ElementDTO {
         return fightsFinished;
     }
 
+    /**
+     * Count fights that all duels are finished
+     */
     public void setFightsFinished(Long fightsFinished) {
         this.fightsFinished = fightsFinished;
     }
