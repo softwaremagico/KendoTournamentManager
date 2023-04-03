@@ -6,6 +6,8 @@ export class TournamentStatistics extends Element {
 
   public tournamentId: number;
 
+  public tournamentName: string;
+
   public fightStatistics: FightStatistics;
 
   public tournamentCreatedAt: Date;
@@ -23,6 +25,8 @@ export class TournamentStatistics extends Element {
     if (source.fightStatistics !== undefined) {
       target.fightStatistics = FightStatistics.clone(source.fightStatistics);
     }
+    target.tournamentId = source.tournamentId;
+    target.tournamentName = source.tournamentName;
     target.tournamentCreatedAt = source.tournamentCreatedAt;
     target.tournamentLockedAt = source.tournamentLockedAt;
     target.numberOfTeams = source.numberOfTeams;

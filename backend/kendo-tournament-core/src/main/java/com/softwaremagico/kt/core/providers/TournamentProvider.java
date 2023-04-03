@@ -35,6 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -69,8 +70,11 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
     public List<Tournament> getPreviousTo(Tournament tournament, int elementsToRetrieve) {
-        final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "id");
-        return repository.findByCreatedAtLessThanEqual(tournament.getCreatedAt(), pageable);
+        if (tournament == null || tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
+        final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
+        return repository.findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
     }
 
 }

@@ -55,6 +55,7 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
         final TournamentStatistics tournamentStatistics = new TournamentStatistics();
         tournamentStatistics.setFightStatistics(fightStatisticsProvider.get(tournament));
         tournamentStatistics.setTournamentId(tournament.getId());
+        tournamentStatistics.setTournamentName(tournament.getName());
         tournamentStatistics.setNumberOfTeams(teamProvider.count(tournament));
         tournamentStatistics.setTournamentCreatedAt(tournament.getCreatedAt());
         tournamentStatistics.setTournamentLockedAt(tournament.getLockedAt());

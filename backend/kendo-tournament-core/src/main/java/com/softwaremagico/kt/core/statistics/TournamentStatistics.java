@@ -36,6 +36,8 @@ public class TournamentStatistics {
 
     private Integer tournamentId;
 
+    private String tournamentName;
+
     private LocalDateTime tournamentCreatedAt;
 
     private LocalDateTime tournamentLockedAt;
@@ -83,6 +85,14 @@ public class TournamentStatistics {
 
     public void setTournamentId(Integer tournamentId) {
         this.tournamentId = tournamentId;
+    }
+
+    public String getTournamentName() {
+        return tournamentName;
+    }
+
+    public void setTournamentName(String tournamentName) {
+        this.tournamentName = tournamentName;
     }
 
     public LocalDateTime getTournamentCreatedAt() {
