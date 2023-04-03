@@ -38,12 +38,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   public barChartData: BarChartData = BarChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
   public lineChartData: LineChartData = LineChartData.fromArray([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]]);
-  public multipleLineChartData: LineChartData = LineChartData.fromMultipleDataElements([
-    new LineChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
-    new LineChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2")]);
-  public multipleBarsChartData: StackedBarChartData = StackedBarChartData.fromMultipleDataElements([
-    new StackedBarChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
-    new StackedBarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2")]);
+  public timeByTournament: LineChartData = new LineChartData();
+  public hitsByTournament: StackedBarChartData = new StackedBarChartData();
   public radarBarsChartData: RadarChartData = RadarChartData.fromMultipleDataElements([
     new RadarChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
     new RadarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2"),
@@ -104,11 +100,43 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       this.tournamentStatistics = TournamentStatistics.clone(tournamentStatistics);
       this.initializeScoreStatistics(tournamentStatistics);
       this.initializeFightsOverStatistics(tournamentStatistics);
+      this.generateStackedStatistics(tournamentStatistics);
+      this.generatePreviousTournamentsStatistics(tournamentStatistics.tournamentId);
       if (tournamentStatistics.teamSize > 1) {
         this.generateTeamsRanking();
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
+  }
+
+  generatePreviousTournamentsStatistics(tournamentId: number) {
+    this.statisticsService.getPreviousTournamentStatistics(this.tournamentId!).subscribe((tournamentStatistics: TournamentStatistics[]) => {
+      if (tournamentStatistics) {
+        for (let tournamentStatistic of tournamentStatistics) {
+          if (tournamentStatistic) {
+            this.generateStackedStatistics(tournamentStatistic);
+          }
+        }
+        if (tournamentStatistics[tournamentStatistics.length - 1]) {
+          this.generatePreviousTournamentsStatistics(tournamentStatistics[tournamentStatistics.length - 1].tournamentId);
+        }
+      }
+    });
+  }
+
+  generateStackedStatistics(tournamentStatistics: TournamentStatistics) {
+    this.generateHitsByTournamentStatistics(tournamentStatistics);
+  }
+
+  generateHitsByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+    this.hitsByTournament.elements.unshift(new StackedBarChartDataElement(this.obtainPoints(tournamentStatistics), tournamentStatistics.tournamentName));
+  }
+
+  generateTimeByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+    const times: [string, number][] = [];
+
+
+    this.timeByTournament.elements.unshift(new LineChartDataElement(this.obtainTimes(tournamentStatistics), tournamentStatistics.tournamentName));
   }
 
   generateCompetitorsRanking(): void {
@@ -146,6 +174,10 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   initializeScoreStatistics(tournamentStatistics: TournamentStatistics): void {
+    this.scoreTypeChartData = PieChartData.fromArray(this.obtainPoints(tournamentStatistics));
+  }
+
+  obtainPoints(tournamentStatistics: TournamentStatistics): [string, number][] {
     const scores: [string, number][] = [];
     if (tournamentStatistics.fightStatistics.menNumber) {
       scores.push([Score.MEN, tournamentStatistics.fightStatistics.menNumber]);
@@ -162,12 +194,22 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     if (tournamentStatistics.fightStatistics.ipponNumber) {
       scores.push([Score.IPPON, tournamentStatistics.fightStatistics.ipponNumber]);
     }
-    this.scoreTypeChartData = PieChartData.fromArray(scores);
+    return scores;
+  }
+
+  obtainTimes(tournamentStatistics: TournamentStatistics): [string, number][] {
+    const times: [string, number][] = [];
+    if (tournamentStatistics.fightStatistics.fightsFinishedAt && tournamentStatistics.fightStatistics.fightsStartedAt) {
+      //Time in minutes.
+      times.push([this.translateService.instant('fightsDuration'), (tournamentStatistics.fightStatistics.fightsFinishedAt.getTime() -
+        tournamentStatistics.fightStatistics.fightsStartedAt.getTime()) / (1000 * 60)]);
+    }
+    return times;
   }
 
   initializeFightsOverStatistics(tournamentStatistics: TournamentStatistics): void {
     this.fightsOverData = GaugeChartData.fromArray([[this.translateService.instant('fightsFinished'),
-      (tournamentStatistics.fightStatistics.fightsFinished / tournamentStatistics.fightStatistics.fightsNumber) ]]);
+      (tournamentStatistics.fightStatistics.fightsFinished / tournamentStatistics.fightStatistics.fightsNumber)]]);
   }
 
   convertSeconds(seconds: number | undefined): string {
