@@ -42,6 +42,10 @@
   animation: blinker 1s linear infinite;
 }
 
+.timer.pause {
+  animation: blinker 1s step-start infinite;
+}
+
 @keyframes blinker {
   50% {
     opacity: 0;

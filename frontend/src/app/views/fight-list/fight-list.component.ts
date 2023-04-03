@@ -549,10 +549,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  updateDuelElapsedTime(elapsedTime: number) {
+  updateDuelElapsedTime(elapsedTime: number, updateBackend: boolean) {
     if (this.selectedDuel) {
       this.selectedDuel.duration = elapsedTime;
-      this.duelService.update(this.selectedDuel).subscribe();
+      if (updateBackend) {
+        this.duelService.update(this.selectedDuel).subscribe();
+      }
     }
   }
 
