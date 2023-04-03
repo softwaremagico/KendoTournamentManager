@@ -2,7 +2,8 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 
 import {
   ApexChart,
-  ApexFill, ApexLegend,
+  ApexFill,
+  ApexLegend,
   ApexNonAxisChartSeries,
   ApexResponsive,
   ApexTitleSubtitle,
@@ -101,4 +102,9 @@ export class PieChartComponent implements OnInit {
       },
     };
   }
+
+  update(data: PieChartData) {
+    this.chart.updateSeries(data.getData());
+  }
+
 }

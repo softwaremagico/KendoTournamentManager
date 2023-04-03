@@ -123,4 +123,8 @@ export class GaugeChartComponent implements OnInit {
       }
     };
   }
+
+  update(data: GaugeChartData) {
+    this.chart.updateSeries(data.getData());
+  }
 }

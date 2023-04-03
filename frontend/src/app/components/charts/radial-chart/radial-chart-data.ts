@@ -19,6 +19,7 @@ export class RadialChartData {
 
   constructor(name?: string) {
     this.name = name;
+    this.elements = [];
   }
 
   getLabels(): string[] {
@@ -27,6 +28,13 @@ export class RadialChartData {
 
   getValues(): number[] {
     return this.elements.map(e => e.value);
+  }
+
+  getData(): Data[] {
+    return [{
+      name: this.name ? this.name : "",
+      data: this.getValues()
+    }]
   }
 
   getTotal(): number {

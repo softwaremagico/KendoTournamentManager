@@ -1,5 +1,4 @@
 export class StackedBarChartData {
-  name: string[] | undefined;
   elements: StackedBarChartDataElement[];
 
   public static fromDataElements(elements: StackedBarChartDataElement): StackedBarChartData {
@@ -15,8 +14,8 @@ export class StackedBarChartData {
     return barChartData;
   }
 
-  constructor(name?: string[]) {
-    this.name = name;
+  constructor() {
+    this.elements = [];
   }
 
   getLabels(): string[] {
@@ -35,6 +34,15 @@ export class StackedBarChartData {
       }
     }
     return Array.from(data.values());
+  }
+
+  convert(element: StackedBarChartDataElement): StackedBarsData {
+    const stackedBarsData: StackedBarsData = new StackedBarsData();
+    for (const point of element.points) {
+      stackedBarsData.name = point[0];
+      stackedBarsData.data.push(point[1]);
+    }
+    return stackedBarsData;
   }
 }
 
@@ -57,4 +65,13 @@ export class StackedBarsData {
   name: string;
   data: number[] = [];
   color: string; //Color be set on the chart component
+
+  constructor(data?: number[], name?: string) {
+    if (data) {
+      this.data = data;
+    }
+    if (name) {
+      this.name = name;
+    }
+  }
 }
