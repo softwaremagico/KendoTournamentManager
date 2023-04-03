@@ -3,7 +3,8 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill, ApexMarkers,
+  ApexFill,
+  ApexMarkers,
   ApexPlotOptions,
   ApexStroke,
   ApexTitleSubtitle,
@@ -27,6 +28,10 @@ export type LineChartOptions = {
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   markers: ApexMarkers;
+};
+
+type UpdateLineChartOptions = {
+  xaxis: ApexXAxis;
 };
 
 @Component({
@@ -139,5 +144,19 @@ export class LineChartComponent implements OnInit {
         size: 0
       },
     };
+  }
+
+  update(data: LineChartData) {
+    this.chart.updateSeries(data.getData());
+    const updateOptions: UpdateLineChartOptions = {
+      xaxis: {
+        categories: data.getLabels(),
+        position: this.xAxisOnTop ? 'top' : 'bottom',
+        title: {
+          text: this.xAxisTitle
+        }
+      }
+    }
+    this.chart.updateOptions(updateOptions);
   }
 }

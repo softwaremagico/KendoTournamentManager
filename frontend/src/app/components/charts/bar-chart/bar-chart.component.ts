@@ -13,6 +13,7 @@ import {
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {BarChartData} from "./bar-chart-data";
+import {PieChartData} from "../pie-chart/pie-chart-data";
 
 
 type BarChartOptions = {
@@ -131,5 +132,9 @@ export class BarChartComponent implements OnInit {
         position: this.legendPosition
       },
     };
+  }
+
+  update(data: BarChartData){
+    this.chart.updateSeries(data.getData());
   }
 }

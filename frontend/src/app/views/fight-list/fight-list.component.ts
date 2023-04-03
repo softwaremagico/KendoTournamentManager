@@ -592,7 +592,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   filter(filter: string) {
     filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
-    this.filteredFights = this.fights!.filter(fight =>
+    this.filteredFights = this.fights?.filter(fight =>
       fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
       fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
       fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
@@ -603,7 +603,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "")))
     );
 
-    this.filteredUnties = this.unties!.filter(duel =>
+    this.filteredUnties = this.unties?.filter(duel =>
       duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
       duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
       (duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||

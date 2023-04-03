@@ -17,6 +17,7 @@ export class PieChartData {
   }
 
   constructor() {
+    this.elements = [];
   }
 
   getLabels(): string[] {
@@ -25,6 +26,13 @@ export class PieChartData {
 
   getValues(): number[] {
     return this.elements.map(e => e.value);
+  }
+
+  getData(): Data[] {
+    return [{
+      labels: this.getLabels(),
+      data: this.getValues()
+    }]
   }
 }
 
@@ -37,3 +45,8 @@ export class PieChartDataElement {
     this.value = value;
   }
 }
+
+type Data = {
+  labels: string[],
+  data: number[]
+};
