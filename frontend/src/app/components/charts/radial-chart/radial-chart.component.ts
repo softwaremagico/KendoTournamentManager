@@ -2,6 +2,8 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexLegend, ApexPlotOptions, ApexTitleSubtitle, ChartComponent} from "ng-apexcharts";
 import {Colors} from "../colors";
 import {RadialChartData} from "./radial-chart-data";
+import {StackedBarChartData} from "../stacked-bars-chart/stacked-bars-chart-data";
+import {RadarChartData} from "../radar-chart/radar-chart-data";
 
 type RadialChartOptions = {
   series: number[];
@@ -118,5 +120,9 @@ export class RadialChartComponent implements OnInit {
         position: this.legendPosition
       },
     };
+  }
+
+  update(data: RadialChartData) {
+    this.chart.updateSeries(data.getData());
   }
 }

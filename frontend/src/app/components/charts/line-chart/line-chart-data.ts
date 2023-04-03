@@ -33,6 +33,7 @@ export class LineChartData {
 
   constructor(name?: string[]) {
     this.name = name;
+    this.elements = [];
   }
 
   getLabels(): string[] {
