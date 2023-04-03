@@ -88,11 +88,11 @@ public class TournamentStatisticsDTO extends ElementDTO {
         this.tournamentName = tournamentName;
     }
 
-    public LocalDateTime getTournamentCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return tournamentCreatedAt;
     }
 
-    public void setTournamentCreatedAt(LocalDateTime tournamentCreatedAt) {
+    public void setCreatedAt(LocalDateTime tournamentCreatedAt) {
         this.tournamentCreatedAt = tournamentCreatedAt;
     }
 

@@ -186,7 +186,7 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournament1DTO.setTournamentCreatedAt(LocalDateTime.now().minusMinutes(2));
+        tournament1DTO.setCreatedAt(LocalDateTime.now().minusMinutes(2));
         tournamentController.update(tournament1DTO, null);
         generateRoles(tournament1DTO);
         roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
@@ -232,7 +232,7 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = tournamentController.create(new TournamentDTO(TOURNAMENT2_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournament2DTO.setTournamentCreatedAt(LocalDateTime.now().minusMinutes(1));
+        tournament2DTO.setCreatedAt(LocalDateTime.now().minusMinutes(1));
         tournamentController.update(tournament2DTO, null);
         generateRoles(tournament2DTO);
         roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
@@ -245,7 +245,7 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void prepareTournament3() {
         //Create Tournament
         tournament3DTO = tournamentController.create(new TournamentDTO(TOURNAMENT3_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournament3DTO.setTournamentCreatedAt(LocalDateTime.now());
+        tournament3DTO.setCreatedAt(LocalDateTime.now());
         tournamentController.update(tournament3DTO, null);
         generateRoles(tournament3DTO);
         roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);

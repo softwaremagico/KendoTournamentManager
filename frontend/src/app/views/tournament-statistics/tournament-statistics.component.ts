@@ -126,7 +126,9 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
           }
         }
         if (tournamentStatistics[tournamentStatistics.length - 1]) {
-          this.generatePreviousTournamentsStatistics(tournamentStatistics[tournamentStatistics.length - 1].tournamentId);
+          if (tournamentStatistics[tournamentStatistics.length - 1].tournamentId != tournamentId) {
+            this.generatePreviousTournamentsStatistics(tournamentStatistics[tournamentStatistics.length - 1].tournamentId);
+          }
         }
       }
     });
@@ -145,7 +147,6 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generateTimeByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
     this.timeByTournament.elements.unshift(new LineChartDataElement(this.obtainTimes(tournamentStatistics), this.translateService.instant('fightsDuration')));
-    console.log(this.timeByTournament);
     this.timeByTournamentChart.update(this.timeByTournament);
   }
 
