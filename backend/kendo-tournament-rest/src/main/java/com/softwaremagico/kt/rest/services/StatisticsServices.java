@@ -81,7 +81,7 @@ public class StatisticsServices {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                                @PathVariable("tournamentId") Integer tournamentId,
@@ -89,12 +89,12 @@ public class StatisticsServices {
                                                                HttpServletRequest request) {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentController.get(tournamentId));
         tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-        tournamentStatisticsDTO.setTournamentCreatedAt(LocalDateTime.now());
+        tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
         return tournamentStatisticsDTO;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Gets previous tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}/previous/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentStatisticsDTO> getStatisticsFromPreviousTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                                              @PathVariable("tournamentId") Integer tournamentId,
@@ -110,7 +110,7 @@ public class StatisticsServices {
         tournamentsDTO.forEach(tournamentDTO -> {
             final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournamentDTO);
             tournamentStatisticsDTO.setCreatedBy(authentication.getName());
-            tournamentStatisticsDTO.setTournamentCreatedAt(LocalDateTime.now());
+            tournamentStatisticsDTO.setCreatedAt(LocalDateTime.now());
             statisticsDTOS.add(tournamentStatisticsDTO);
         });
         return statisticsDTOS;
