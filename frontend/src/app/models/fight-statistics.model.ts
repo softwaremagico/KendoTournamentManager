@@ -32,8 +32,8 @@ export class FightStatistics extends Element {
     target.duelsNumber = source.duelsNumber;
     target.estimatedTime = source.estimatedTime;
     target.averageTime = source.averageTime;
-    target.fightsStartedAt = source.fightsStartedAt;
-    target.fightsFinishedAt = source.fightsFinishedAt;
+    target.fightsStartedAt = new Date(source.fightsStartedAt);
+    target.fightsFinishedAt = new Date(source.fightsFinishedAt);
     target.fightsFinished = source.fightsFinished;
     target.faults = source.faults;
   }

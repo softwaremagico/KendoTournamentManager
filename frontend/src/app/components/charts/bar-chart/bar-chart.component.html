@@ -1,6 +1,6 @@
 <div class="frame" *ngIf="chartOptions">
   <div class="box shadow">
-    <apx-chart id="chart"
+    <apx-chart #chart id="chart"
                [series]="chartOptions.series"
                [colors]="chartOptions.colors"
                [fill]="chartOptions.fill"

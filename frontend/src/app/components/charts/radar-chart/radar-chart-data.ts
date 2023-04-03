@@ -17,6 +17,7 @@ export class RadarChartData {
 
   constructor(name?: string[]) {
     this.name = name;
+    this.elements = [];
   }
 
   getLabels(): string[] {

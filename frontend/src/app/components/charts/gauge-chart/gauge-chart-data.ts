@@ -19,6 +19,7 @@ export class GaugeChartData {
 
   constructor(name?: string) {
     this.name = name;
+    this.elements = [];
   }
 
   getLabels(): string[] {
@@ -27,6 +28,13 @@ export class GaugeChartData {
 
   getValues(): number[] {
     return this.elements.map(e => e.value);
+  }
+
+  getData(): Data[] {
+    return [{
+      name: this.name ? this.name : "",
+      data: this.getValues()
+    }]
   }
 
   getTotal(): number {

@@ -125,6 +125,10 @@ export class RadarChartComponent implements OnInit {
     };
   }
 
+  update(data: RadarChartData) {
+    this.chart.updateSeries(data.getData());
+  }
+
   setColors(data: StackedBarsData[]): StackedBarsData[] {
     for (let i = 0; i < data.length; i++) {
       data[i].color = this.colors[i % this.colors.length];
