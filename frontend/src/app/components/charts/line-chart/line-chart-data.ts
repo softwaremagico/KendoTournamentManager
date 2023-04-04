@@ -71,8 +71,12 @@ export class LineChartDataElement {
   //X,Y
   points: [string, number][];
 
-  constructor(points: [string, number][], name?: string) {
-    this.points = points;
+  constructor(points?: [string, number][], name?: string) {
+    if (points) {
+      this.points = points;
+    } else {
+      this.points = [];
+    }
     if (name) {
       this.name = name;
     } else {

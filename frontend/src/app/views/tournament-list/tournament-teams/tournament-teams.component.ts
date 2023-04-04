@@ -459,7 +459,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     for (const member of participants) {
       const team: Team = new Team();
       team.tournament = this.tournament;
-      team.name = this.nameUtilsService.getLastnameName(member);
+      team.name = this.nameUtilsService.getLastnameNameNoSpaces(member);
       team.members = [];
       team.members[0] = member;
       this.teams.push(team);

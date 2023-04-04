@@ -108,7 +108,7 @@
   "diplomas": "Diploma",
   "SummaryMenuItem": "Samenvatting van de wedtrijden",
   "ClubListMenuItem": "Overzicht van de clubs",
-  "tournamentHitsStatistics": "Percentage treffers",
+  "tournamentHitsStatistics": "Percentage Treffers",
   "TeamStatisticsMenu": "Per team",
   "CompetitorStatisticsMenu": "Per deelnemer",
   "PerformedHitsStatisticsMenuItem": "Percentage geplaatste treffers",
@@ -599,7 +599,11 @@
   "hitsByTournament": "Slagen per toernooi",
   "timeByTournament": "Tijd per toernooi",
   "fightsFinished": "Afgewerkte wedstrijden",
-  "faults": "Fouten"
+  "faults": "Fouten",
+  "progress": "Voortgang",
+  "minutes": "Minuten",
+  "participantsByTournament": "Deelnemers per toernooi",
+  "tournamentActiveTime": "Actieve tijd"
 }
 
 
