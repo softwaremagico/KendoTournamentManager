@@ -42,7 +42,7 @@ export class NameUtilsService {
     return finalResult.join(" ");
   }
 
-  getLastnameName(participant: Participant | undefined): string {
+  getLastnameNameCamelCase(participant: Participant | undefined): string {
     if (!participant) return "";
     return this.spacesToCamel(participant.lastname + " " + this.getShortName(participant));
   }

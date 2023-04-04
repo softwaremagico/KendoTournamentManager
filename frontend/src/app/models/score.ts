@@ -79,3 +79,8 @@ export namespace Score {
   }
 }
 
+export namespace Score {
+  export function label(score: Score): string {
+    return score[0].toUpperCase() + score.substring(1).toLowerCase();
+  }
+}

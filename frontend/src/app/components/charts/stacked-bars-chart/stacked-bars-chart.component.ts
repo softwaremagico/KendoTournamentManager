@@ -166,7 +166,7 @@ export class StackedBarsChartComponent implements OnInit {
 
   setColors(data: StackedBarsData[]): StackedBarsData[] {
     for (let i = 0; i < data.length; i++) {
-      data[i].color = this.colors[this.colors.length - i % this.colors.length];
+      data[i].color = this.colors[i % this.colors.length];
     }
     return data;
   }
