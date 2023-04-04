@@ -62,8 +62,8 @@ export class StatisticsService {
   }
 
   getPreviousTournamentStatistics(tournamentId: number): Observable<TournamentStatistics[]> {
-    this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/tournament/${tournamentId}/previous/1`;
+    //this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/tournament/${tournamentId}/previous/10`;
     return this.http.get<TournamentStatistics[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({

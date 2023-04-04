@@ -599,7 +599,11 @@
   "hitsByTournament": "Schläge pro Turnier",
   "timeByTournament": "Zeit pro Turnier",
   "fightsFinished": "Beendete spiele",
-  "faults": "Fouls"
+  "faults": "Fouls",
+  "progress": "Fortschritt",
+  "minutes": "Minuten",
+  "participantsByTournament": "Teilnehmer nach Turnier",
+  "tournamentActiveTime": "Aktive zeit"
 }
 
 

@@ -106,18 +106,24 @@
           </table>
         </div>
 
+        <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [title]="'progress' | translate"
+                         [width]="600" [height]="260"></app-gauge-chart>
         <app-pie-chart *ngIf="!!scoreTypeChartData" [data]="scoreTypeChartData"
                        [title]="'tournamentHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
-        <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [title]="'fightsFinished' | translate"
-                         [width]="400"></app-gauge-chart>
-        <app-stacked-bars-chart #hitsByTournamentChart [data]="hitsByTournament"
-                                [title]="'hitsByTournament' | translate"
+        <app-stacked-bars-chart #participantsByTournamentChart [data]="hitsByTournament"
+                                [title]="'participantsByTournament' | translate"
+                                [width]="400" [stackType]="'normal'" [enableTotals]="false"></app-stacked-bars-chart>
+        <app-stacked-bars-chart #hitsByTournamentPercentageChart [data]="hitsByTournament"
+                                [title]="('hitsByTournament' | translate) + ' (%)'" [yAxisTitle]="'%'"
                                 [width]="400" [stackType]="'100%'" [enableTotals]="false"></app-stacked-bars-chart>
+        <app-stacked-bars-chart #hitsByTournamentChart [data]="hitsByTournament"
+                                [title]="('hitsByTournament' | translate)"
+                                [width]="400" [stackType]="'normal'"></app-stacked-bars-chart>
         <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | translate"
-                        [width]="400"></app-line-chart>
-        <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>
-        <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>
+                        [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
+<!--        <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>-->
+<!--        <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>-->
       </div>
     </div>
   </div>
