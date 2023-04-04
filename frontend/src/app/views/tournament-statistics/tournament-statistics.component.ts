@@ -39,15 +39,9 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public scoreTypeChartData: PieChartData;
 
   public timeByTournament: LineChartData = new LineChartData();
+  public teamSizeByTournament: LineChartData = new LineChartData();
   public participantsByTournament: StackedBarChartData = new StackedBarChartData();
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
-  public radarBarsChartData: RadarChartData = RadarChartData.fromMultipleDataElements([
-    new RadarChartDataElement([[Score.MEN, 5], [Score.DO, 4], [Score.KOTE, 1]], "Tournament1"),
-    new RadarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament2"),
-    new RadarChartDataElement([[Score.MEN, 4], [Score.DO, 3], [Score.KOTE, 3]], "Tournament3"),
-    new RadarChartDataElement([[Score.MEN, 1], [Score.DO, 2], [Score.KOTE, 3]], "Tournament4"),
-    new RadarChartDataElement([[Score.MEN, 6], [Score.DO, 2], [Score.KOTE, 3]], "Tournament5")]);
-  public radialChartData: RadialChartData = RadialChartData.fromArray([[Score.MEN, 85], [Score.DO, 49], [Score.KOTE, 36]]);
   public fightsOverData: GaugeChartData;
 
   private readonly tournamentId: number | undefined;
@@ -67,6 +61,9 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   @ViewChild('hitsByTournamentChart')
   hitsByTournamentChart: StackedBarsChartComponent;
+
+  @ViewChild('timeSizeByTournamentChart')
+  timeSizeByTournamentChart: LineChartComponent;
 
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
@@ -136,6 +133,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generateStackedStatistics(tournamentStatistics: TournamentStatistics) {
     this.generateParticipantsByTournamentStatistics(tournamentStatistics);
+    this.generateTeamSizeByTournamentStatistics(tournamentStatistics);
     this.generateHitsByTournamentStatistics(tournamentStatistics);
     this.generateTimeByTournamentStatistics(tournamentStatistics);
   }
@@ -143,6 +141,24 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   generateParticipantsByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
     this.participantsByTournament.elements.unshift(new StackedBarChartDataElement(this.obtainParticipants(tournamentStatistics), tournamentStatistics.tournamentName));
     this.participantsByTournamentChart.update(this.participantsByTournament);
+  }
+
+  generateTeamSizeByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+    //Team Size
+    if (!this.teamSizeByTournament.elements[0]) {
+      this.teamSizeByTournament.elements[0] = new LineChartDataElement();
+      this.teamSizeByTournament.elements[0].name = this.translateService.instant('teamSize');
+    }
+    this.teamSizeByTournament.elements[0].points.unshift(this.obtainTeamSize(tournamentStatistics));
+
+    //Total Teams
+    if (!this.teamSizeByTournament.elements[1]) {
+      this.teamSizeByTournament.elements[1] = new LineChartDataElement();
+      this.teamSizeByTournament.elements[1].name = this.translateService.instant('teams');
+    }
+    this.teamSizeByTournament.elements[1].points.unshift(this.obtainTeams(tournamentStatistics));
+
+    this.timeSizeByTournamentChart.update(this.teamSizeByTournament);
   }
 
   generateHitsByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
@@ -238,6 +254,28 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       times = [tournamentStatistics.tournamentName, 0];
     }
     return times;
+  }
+
+  obtainTeamSize(tournamentStatistics: TournamentStatistics): [string, number] {
+    let sizes: [string, number];
+    if (tournamentStatistics.teamSize) {
+      //Time in minutes.
+      sizes = [tournamentStatistics.tournamentName, tournamentStatistics.teamSize];
+    } else {
+      sizes = [tournamentStatistics.tournamentName, 0];
+    }
+    return sizes;
+  }
+
+  obtainTeams(tournamentStatistics: TournamentStatistics): [string, number] {
+    let sizes: [string, number];
+    if (tournamentStatistics.teamSize) {
+      //Time in minutes.
+      sizes = [tournamentStatistics.tournamentName, tournamentStatistics.numberOfTeams];
+    } else {
+      sizes = [tournamentStatistics.tournamentName, 0];
+    }
+    return sizes;
   }
 
   obtainTournamentTimes(tournamentStatistics: TournamentStatistics): [string, number] {
