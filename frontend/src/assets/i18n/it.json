@@ -108,7 +108,7 @@
   "diplomas": "Diplomi",
   "SummaryMenuItem": "Riassunto degli incontri",
   "ClubListMenuItem": "Lista dei club",
-  "tournamentHitsStatistics": "Percentuale dei colpi",
+  "tournamentHitsStatistics": "Percentuale dei Colpi",
   "TeamStatisticsMenu": "Per squadra",
   "CompetitorStatisticsMenu": "Per competitore",
   "PerformedHitsStatisticsMenuItem": "Percentuale dei golpi dati",
@@ -605,7 +605,12 @@
   "hitsByTournament": "Colpi per torneo",
   "timeByTournament": "Tempo per torneo",
   "fightsFinished": "Partite finite",
-  "faults": "Falli"
+  "faults": "Falli",
+  "progress": "Progresso",
+  "minutes": "Minuti",
+  "participantsByTournament": "Partecipanti per torneo",
+  "tournamentActiveTime": "Tempo attivo"
+,
 }
 
 

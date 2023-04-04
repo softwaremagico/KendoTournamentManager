@@ -101,7 +101,7 @@
   "diplomas": "Diplomas",
   "SummaryMenuItem": "Matches summary",
   "ClubListMenuItem": "List of clubs",
-  "tournamentHitsStatistics": "Percentage of hits",
+  "tournamentHitsStatistics": "Percentage of Hits",
   "TeamStatisticsMenu": "By team",
   "CompetitorStatisticsMenu": "By competitor",
   "PerformedHitsStatisticsMenuItem": "Percentage of performed hits",
@@ -626,6 +626,10 @@
   "hitsByTournament": "Hits by Tournament",
   "timeByTournament": "Time by Tournament",
   "fightsFinished": "Matches finished",
-  "faults": "Faults"
+  "faults": "Faults",
+  "progress": "Progress",
+  "minutes": "Minutes",
+  "participantsByTournament": "Participants by Tournament",
+  "tournamentActiveTime": "Tournament active time"
 }
 

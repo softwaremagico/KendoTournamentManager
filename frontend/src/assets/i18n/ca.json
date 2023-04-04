@@ -110,7 +110,7 @@
   "diplomas": "Diplomes",
   "SummaryMenuItem": "Resum de partits",
   "ClubListMenuItem": "Llista de clubs",
-  "tournamentHitsStatistics": "Percentatge de cops",
+  "tournamentHitsStatistics": "Percentatge de Cops",
   "TeamStatisticsMenu": "Per equip",
   "CompetitorStatisticsMenu": "Per competidor",
   "PerformedHitsStatisticsMenuItem": "Percentatge de cops donats",
@@ -613,7 +613,11 @@
   "hitsByTournament": "Cops per torneig",
   "timeByTournament": "Temps per torneig",
   "fightsFinished": "Partits acabats",
-  "faults": "Faltes"
+  "faults": "Faltes",
+  "progress": "Progrés",
+  "minutes": "Minuts",
+  "participantsByTournament": "Participants per Torneig",
+  "tournamentActiveTime": "Temps en actiu"
 }
 
 
