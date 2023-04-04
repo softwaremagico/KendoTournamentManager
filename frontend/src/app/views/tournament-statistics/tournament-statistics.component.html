@@ -114,6 +114,8 @@
         <app-stacked-bars-chart #participantsByTournamentChart [data]="hitsByTournament"
                                 [title]="'participantsByTournament' | translate"
                                 [width]="400" [stackType]="'normal'" [enableTotals]="false"></app-stacked-bars-chart>
+        <app-line-chart #timeSizeByTournamentChart [data]="teamSizeByTournament" [title]="'teams' | translate"
+                        [width]="400"></app-line-chart>
         <app-stacked-bars-chart #hitsByTournamentPercentageChart [data]="hitsByTournament"
                                 [title]="('hitsByTournament' | translate) + ' (%)'" [yAxisTitle]="'%'"
                                 [width]="400" [stackType]="'100%'" [enableTotals]="false"></app-stacked-bars-chart>
