@@ -37,5 +37,5 @@ import java.util.List;
 @Transactional
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
 
-    public List<Tournament> findByCreatedAtLessThanEqual(LocalDateTime createdAt, Pageable pageable);
+    public List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt, Pageable pageable);
 }
