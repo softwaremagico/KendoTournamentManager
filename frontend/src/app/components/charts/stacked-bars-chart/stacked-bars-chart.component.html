@@ -1,0 +1,15 @@
+<div class="frame" *ngIf="chartOptions">
+  <div class="box shadow">
+    <apx-chart #chart id="chart"
+               [series]="chartOptions.series"
+               [chart]="chartOptions.chart"
+               [dataLabels]="chartOptions.labels"
+               [plotOptions]="chartOptions.plotOptions"
+               [xaxis]="chartOptions.xaxis"
+               [yaxis]="chartOptions.yaxis"
+               [title]="chartOptions.title"
+               [fill]="chartOptions.fill"
+               [legend]="chartOptions.legend"
+    ></apx-chart>
+  </div>
+</div>

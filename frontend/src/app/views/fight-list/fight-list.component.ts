@@ -70,9 +70,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private translateService: TranslateService, rbacService: RbacService,
               private systemOverloadService: SystemOverloadService) {
     super(rbacService);
-    let state = this.router.getCurrentNavigation()?.extras.state;
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
+    let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -449,6 +449,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
       this.selectedDuel.finished = finished;
+      if (!this.selectedDuel.finishedAt) {
+        this.selectedDuel.finishedAt = new Date();
+      }
       this.duelService.update(this.selectedDuel).subscribe(duel => {
         this.messageService.infoMessage("infoDuelFinished");
         if (!this.selectFirstUnfinishedDuel()) {
@@ -546,9 +549,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  updateDuelElapsedTime(elapsedTime: number) {
+  updateDuelElapsedTime(elapsedTime: number, updateBackend: boolean) {
     if (this.selectedDuel) {
       this.selectedDuel.duration = elapsedTime;
+      if (updateBackend) {
+        this.duelService.update(this.selectedDuel).subscribe();
+      }
+    }
+  }
+
+  duelStarted(elapsedTime: number) {
+    if (this.selectedDuel && !this.selectedDuel.duration && !this.selectedDuel.startedAt) {
+      this.selectedDuel.duration = elapsedTime;
+      this.selectedDuel.startedAt = new Date();
       this.duelService.update(this.selectedDuel).subscribe();
     }
   }
@@ -581,7 +594,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   filter(filter: string) {
     filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
-    this.filteredFights = this.fights!.filter(fight =>
+    this.filteredFights = this.fights?.filter(fight =>
       fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
       fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
       fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
@@ -592,7 +605,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "")))
     );
 
-    this.filteredUnties = this.unties!.filter(duel =>
+    this.filteredUnties = this.unties?.filter(duel =>
       duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
       duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
       (duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||

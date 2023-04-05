@@ -94,6 +94,16 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return repository.countByTournament(tournament);
     }
 
+    /**
+     * Count fights that all duels are finished
+     *
+     * @param tournament
+     * @return
+     */
+    public long countByTournamentAndFinished(Tournament tournament) {
+        return repository.countByTournamentAndFinishedNot(tournament, false);
+    }
+
     public Integer getCurrentLevel(Tournament tournament) {
         final Optional<Fight> fight = repository.findFirstByTournamentOrderByLevelDesc(tournament);
         if (fight.isPresent()) {
