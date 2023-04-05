@@ -24,16 +24,14 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.*;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Cacheable
@@ -69,6 +67,10 @@ public class Tournament extends Element {
     @Column(name = "locked", nullable = false)
     @Convert(converter = BooleanCryptoConverter.class)
     private boolean locked = false;
+
+    @Column(name = "locked_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime lockedAt;
 
     public Tournament() {
         super();
@@ -143,6 +145,14 @@ public class Tournament extends Element {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public LocalDateTime getLockedAt() {
+        return lockedAt;
+    }
+
+    public void setLockedAt(LocalDateTime lockedAt) {
+        this.lockedAt = lockedAt;
     }
 
     @Override
