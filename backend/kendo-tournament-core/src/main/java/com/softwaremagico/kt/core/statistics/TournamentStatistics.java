@@ -24,21 +24,29 @@ package com.softwaremagico.kt.core.statistics;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.values.RoleType;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 public class TournamentStatistics {
 
     private FightStatistics fightStatistics;
 
-    private long menNumber;
+    private Integer tournamentId;
 
-    private long koteNumber;
+    private String tournamentName;
 
-    private long doNumber;
+    private LocalDateTime tournamentCreatedAt;
 
-    private long tsukiNumber;
+    private LocalDateTime tournamentLockedAt;
 
-    private long hansokuNumber;
+    private Long numberOfTeams;
 
-    private long ipponNumber;
+    private Integer teamSize;
+
+    private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
 
     public FightStatistics getFightStatistics() {
         return fightStatistics;
@@ -48,51 +56,66 @@ public class TournamentStatistics {
         this.fightStatistics = fightStatistics;
     }
 
-    public long getMenNumber() {
-        return menNumber;
+    public Long getNumberOfTeams() {
+        return numberOfTeams;
     }
 
-    public void setMenNumber(long menNumber) {
-        this.menNumber = menNumber;
+    public void setNumberOfTeams(Long numberOfTeams) {
+        this.numberOfTeams = numberOfTeams;
     }
 
-    public long getKoteNumber() {
-        return koteNumber;
+    public Map<RoleType, Long> getNumberOfParticipants() {
+        return numberOfParticipants;
     }
 
-    public void setKoteNumber(long koteNumber) {
-        this.koteNumber = koteNumber;
+    public void setNumberOfParticipants(Map<RoleType, Long> numberOfParticipants) {
+        this.numberOfParticipants = numberOfParticipants;
     }
 
-    public long getDoNumber() {
-        return doNumber;
+    public void addNumberOfParticipants(RoleType roleType, Long number) {
+        if (this.numberOfParticipants == null) {
+            this.numberOfParticipants = new HashMap<>();
+        }
+        this.numberOfParticipants.put(roleType, number);
     }
 
-    public void setDoNumber(long doNumber) {
-        this.doNumber = doNumber;
+    public Integer getTournamentId() {
+        return tournamentId;
     }
 
-    public long getTsukiNumber() {
-        return tsukiNumber;
+    public void setTournamentId(Integer tournamentId) {
+        this.tournamentId = tournamentId;
     }
 
-    public void setTsukiNumber(long tsukiNumber) {
-        this.tsukiNumber = tsukiNumber;
+    public String getTournamentName() {
+        return tournamentName;
     }
 
-    public long getHansokuNumber() {
-        return hansokuNumber;
+    public void setTournamentName(String tournamentName) {
+        this.tournamentName = tournamentName;
     }
 
-    public void setHansokuNumber(long hansokuNumber) {
-        this.hansokuNumber = hansokuNumber;
+    public LocalDateTime getTournamentCreatedAt() {
+        return tournamentCreatedAt;
     }
 
-    public long getIpponNumber() {
-        return ipponNumber;
+    public void setTournamentCreatedAt(LocalDateTime startedAt) {
+        this.tournamentCreatedAt = startedAt;
     }
 
-    public void setIpponNumber(long ipponNumber) {
-        this.ipponNumber = ipponNumber;
+    public LocalDateTime getTournamentLockedAt() {
+        return tournamentLockedAt;
+    }
+
+    public void setTournamentLockedAt(LocalDateTime finishedAt) {
+        this.tournamentLockedAt = finishedAt;
+    }
+
+    public Integer getTeamSize() {
+        return teamSize;
+    }
+
+    public void setTeamSize(Integer teamsMember) {
+        this.teamSize = teamsMember;
     }
 }

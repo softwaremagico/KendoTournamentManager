@@ -118,6 +118,7 @@ export class ScoreComponent implements OnInit, OnChanges {
 
   updateScore(score: Score) {
     if (this.updateDuel(score)) {
+      this.duel.finishedAt = undefined;
       this.duelService.update(this.duel).subscribe(duel => {
         this.messageService.infoMessage('infoScoreUpdated');
         return duel;

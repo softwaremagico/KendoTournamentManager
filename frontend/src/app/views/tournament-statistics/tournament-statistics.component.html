@@ -11,7 +11,122 @@
       </div>
     </div>
     <div class="statistics-container">
-      <app-score-chart [width]="400" [height]="400" ></app-score-chart>
+      <div class="dashboard">
+
+        <div class="box-statistics box shadow">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
+            <h3>{{'participants' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr *ngFor="let roleType of roleTypes">
+              <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>
+              <td *ngIf="tournamentStatistics">{{numberOfParticipantsByRole(roleType)}}</td>
+            </tr>
+          </table>
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
+            <h3>{{'teams' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr>
+              <td>{{'teams' | translate}}:</td>
+              <td>{{tournamentStatistics?.numberOfTeams}}</td>
+            </tr>
+            <tr>
+              <td>{{'tournamentTeamSize' | translate}}:</td>
+              <td>{{tournamentStatistics?.teamSize}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="box-statistics box shadow">
+          <div class="statistics-table-title">
+            <mat-icon>timer</mat-icon>
+            <h3>{{'time' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr>
+              <td>{{'createdAt' | translate}}:</td>
+              <td>{{convertDate(tournamentStatistics?.tournamentCreatedAt)}}</td>
+            </tr>
+            <tr>
+              <td>{{'lockedAt' | translate}}:</td>
+              <td>{{convertDate(tournamentStatistics?.tournamentLockedAt)}}</td>
+            </tr>
+            <tr>
+              <td>{{'fightsStartedAt' | translate}}:</td>
+              <td>{{convertDate(tournamentStatistics?.fightStatistics?.fightsStartedAt)}}</td>
+            </tr>
+            <tr>
+              <td>{{'fightsFinishedAt' | translate}}:</td>
+              <td>{{convertDate(tournamentStatistics?.fightStatistics?.fightsFinishedAt)}}</td>
+            </tr>
+            <tr>
+              <td>{{'fightsDuration' | translate}}:</td>
+              <td>{{convertSeconds(tournamentStatistics?.fightStatistics?.duelsDuration())}}</td>
+            </tr>
+            <tr>
+              <td>{{'fightsAverage' | translate}}:</td>
+              <td>{{convertSeconds(tournamentStatistics?.fightStatistics?.averageTime)}}</td>
+            </tr>
+          </table>
+          <div class="statistics-table-title">
+            <mat-icon>flag</mat-icon>
+            <h3>{{'faults' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="tournamentStatistics">
+            <tr>
+              <td class="single">{{'faults' | translate}}: {{tournamentStatistics?.fightStatistics?.faults}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="box-statistics box shadow scrollable" *ngIf="teamScores">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
+            <h3>{{'teamsRanking' | translate}}</h3>
+          </div>
+          <table class="statistics-table">
+            <tr *ngFor="let scoreOfTeam of teamScores">
+              <td class="ranking">{{getTeamsRanking(scoreOfTeam)}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="box-statistics box shadow scrollable" *ngIf="competitorsScore">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
+            <h3>{{'competitorsRanking' | translate}}</h3>
+          </div>
+          <table class="statistics-table">
+            <tr *ngFor="let scoreOfCompetitor of competitorsScore">
+              <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [title]="'progress' | translate"
+                         [width]="600" [height]="260"></app-gauge-chart>
+        <app-pie-chart *ngIf="!!scoreTypeChartData" [data]="scoreTypeChartData"
+                       [title]="'tournamentHitsStatistics' | translate"
+                       [width]="360"></app-pie-chart>
+        <app-stacked-bars-chart #participantsByTournamentChart [data]="hitsByTournament"
+                                [title]="'participantsByTournament' | translate"
+                                [width]="400" [stackType]="'normal'" [enableTotals]="false"></app-stacked-bars-chart>
+        <app-line-chart #timeSizeByTournamentChart [data]="teamSizeByTournament" [title]="'teams' | translate"
+                        [width]="400"></app-line-chart>
+        <app-stacked-bars-chart #hitsByTournamentPercentageChart [data]="hitsByTournament"
+                                [title]="('hitsByTournament' | translate) + ' (%)'" [yAxisTitle]="'%'"
+                                [width]="400" [stackType]="'100%'" [enableTotals]="false"></app-stacked-bars-chart>
+        <app-stacked-bars-chart #hitsByTournamentChart [data]="hitsByTournament"
+                                [title]="('hitsByTournament' | translate)"
+                                [width]="400" [stackType]="'normal'"></app-stacked-bars-chart>
+        <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | translate"
+                        [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
+<!***REMOVED***       <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>-->
+<!***REMOVED***       <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>-->
+      </div>
     </div>
   </div>
 </div>
