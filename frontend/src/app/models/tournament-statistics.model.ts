@@ -21,6 +21,9 @@ export class TournamentStatistics extends Element {
   public numberOfParticipants: Map<RoleType, number>;
 
   public static override copy(source: TournamentStatistics, target: TournamentStatistics): void {
+    if (source == undefined) {
+      return undefined;
+    }
     Element.copy(source, target);
     if (source.fightStatistics !== undefined) {
       target.fightStatistics = FightStatistics.clone(source.fightStatistics);
@@ -42,7 +45,7 @@ export class TournamentStatistics extends Element {
   }
 
   public numberOfParticipantsByRole(roleType: RoleType): number {
-    if (this.numberOfParticipants.get(roleType)) {
+    if (this.numberOfParticipants?.get(roleType)) {
       return this.numberOfParticipants.get(roleType)!;
     }
     return 0;
