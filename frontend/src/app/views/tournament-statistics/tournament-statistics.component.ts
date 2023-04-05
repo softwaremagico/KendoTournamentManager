@@ -119,7 +119,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generatePreviousTournamentsStatistics(tournamentId: number) {
     if (tournamentId) {
-      this.statisticsService.getPreviousTournamentStatistics(tournamentId!).subscribe((tournamentStatistics: TournamentStatistics[]) => {
+      this.statisticsService.getPreviousTournamentStatistics(tournamentId!, 5)
+        .subscribe((tournamentStatistics: TournamentStatistics[]) => {
         if (tournamentStatistics) {
           for (let tournamentStatistic of tournamentStatistics) {
             if (tournamentStatistic && tournamentStatistic.tournamentId != tournamentId) {
