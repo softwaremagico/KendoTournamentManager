@@ -201,7 +201,12 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
     public FightStatistics get(Tournament tournament) {
         final FightStatistics fightStatistics = new FightStatistics();
         fightStatistics.setFightsNumber(fightProvider.count(tournament));
-        fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teamProvider.count(tournament));
+        final long teams = teamProvider.count(tournament);
+        if (teams > 0) {
+            fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teams);
+        } else {
+            fightStatistics.setFightsByTeam(0L);
+        }
         fightStatistics.setDuelsNumber(duelProvider.count(tournament));
         fightStatistics.setAverageTime(duelProvider.getDurationAverage(tournament));
         fightStatistics.setMenNumber(duelProvider.countScore(tournament, Score.MEN));
