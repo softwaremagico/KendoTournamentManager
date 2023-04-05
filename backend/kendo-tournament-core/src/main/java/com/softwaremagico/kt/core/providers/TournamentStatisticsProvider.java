@@ -27,7 +27,7 @@ package com.softwaremagico.kt.core.providers;
 import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentStatisticsRepository;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,23 +37,32 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
 
     private final DuelProvider duelProvider;
 
+    private final TeamProvider teamProvider;
+
+    private final RoleProvider roleProvider;
+
     protected TournamentStatisticsProvider(TournamentStatisticsRepository repository, FightStatisticsProvider fightStatisticsProvider,
-                                           DuelProvider duelProvider) {
+                                           DuelProvider duelProvider, TeamProvider teamProvider, RoleProvider roleProvider) {
         super(repository);
         this.fightStatisticsProvider = fightStatisticsProvider;
         this.duelProvider = duelProvider;
+        this.teamProvider = teamProvider;
+        this.roleProvider = roleProvider;
     }
 
 
     public TournamentStatistics get(Tournament tournament) {
         final TournamentStatistics tournamentStatistics = new TournamentStatistics();
-        tournamentStatistics.setMenNumber(duelProvider.countScore(tournament, Score.MEN));
-        tournamentStatistics.setDoNumber(duelProvider.countScore(tournament, Score.DO));
-        tournamentStatistics.setKoteNumber(duelProvider.countScore(tournament, Score.KOTE));
-        tournamentStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
-        tournamentStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
-        tournamentStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
         tournamentStatistics.setFightStatistics(fightStatisticsProvider.get(tournament));
+        tournamentStatistics.setTournamentId(tournament.getId());
+        tournamentStatistics.setTournamentName(tournament.getName());
+        tournamentStatistics.setNumberOfTeams(teamProvider.count(tournament));
+        tournamentStatistics.setTournamentCreatedAt(tournament.getCreatedAt());
+        tournamentStatistics.setTournamentLockedAt(tournament.getLockedAt());
+        tournamentStatistics.setTeamSize(tournament.getTeamSize());
+        for (final RoleType roleType : RoleType.values()) {
+            tournamentStatistics.addNumberOfParticipants(roleType, roleProvider.count(tournament, roleType));
+        }
         return tournamentStatistics;
     }
 }

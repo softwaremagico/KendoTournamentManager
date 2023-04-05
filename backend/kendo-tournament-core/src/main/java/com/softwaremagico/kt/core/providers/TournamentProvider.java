@@ -34,6 +34,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,9 +59,22 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         repository.delete(tournament);
     }
 
+    @Override
+    public Tournament update(Tournament tournament) {
+        if (tournament.isLocked() && tournament.getLockedAt() == null) {
+            tournament.setLockedAt(LocalDateTime.now());
+        } else if (!tournament.isLocked()) {
+            tournament.setLockedAt(null);
+        }
+        return super.update(tournament);
+    }
+
     public List<Tournament> getPreviousTo(Tournament tournament, int elementsToRetrieve) {
-        final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "id");
-        return repository.findByCreatedAtLessThanEqual(tournament.getCreatedAt(), pageable);
+        if (tournament == null || tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
+        final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
+        return repository.findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
     }
 
 }
