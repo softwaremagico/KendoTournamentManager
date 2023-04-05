@@ -14,7 +14,8 @@
                 *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>add</mat-icon>
         </button>
-        <button class="delete-button" mat-button color="warn" [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
+        <button class="delete-button" mat-button color="warn"
+                [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
                 (click)="deleteElement()" [matTooltipShowDelay]="500" matTooltip="{{'delete' | translate}}"
                 *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>clear</mat-icon>
@@ -26,7 +27,8 @@
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <mat-divider class="timer-divider" [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="!selectedFight || (tournament && tournament.locked)" (click)="finishDuel(true)"
+        <button mat-button color="primary" [disabled]="!selectedFight || (tournament && tournament.locked)"
+                (click)="finishDuel(true)"
                 [matTooltipShowDelay]="500" matTooltip="{{'finishFight' | translate}}"
                 *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
           <mat-icon>check_circle</mat-icon>
@@ -94,7 +96,9 @@
     <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
     <app-timer [startingMinutes]="getDuelDefaultMinutesDuration()" [startingSeconds]="getDuelDefaultSecondsDuration()"
                [hidden]="!timer" [editable]="tournament && !tournament.locked" (onTimerFinished)="finishDuel($event[0])"
-               (onTimerChanged)="updateDuelElapsedTime($event[0])" [resetTimerPosition]="resetTimerPosition"
+               (onTimerChanged)="updateDuelElapsedTime($event[0], true)"
+               (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)" [resetTimerPosition]="resetTimerPosition"
+               (onPlayPressed)="duelStarted($event[0])"
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
       <div class="fight-list">

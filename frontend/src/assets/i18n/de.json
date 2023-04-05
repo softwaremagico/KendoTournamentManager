@@ -108,7 +108,7 @@
   "diplomas": "Urkunden",
   "SummaryMenuItem": "Kampfzusammenfassung",
   "ClubListMenuItem": "Liste der Klubs",
-  "TournamentHitsStatisticsMenuItem": "Prozentuale Treffer",
+  "tournamentHitsStatistics": "Prozentuale Treffer",
   "TeamStatisticsMenu": "pro Team",
   "CompetitorStatisticsMenu": "pro Teilnehmer",
   "PerformedHitsStatisticsMenuItem": "Erteilte Treffer %",
@@ -588,7 +588,22 @@
   "pointsByVictory": "Punkte für den Sieg",
   "pointsByDraw": "Punkte für ein Unentschieden",
   "nameExample": "Hanna Müller",
-  "onlyNews": "Neuartig"
+  "onlyNews": "Neuartig",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Erhalten bei:\n\n",
+  "time": "Zeit",
+  "lockedAt": "Gesperrt",
+  "fightsStartedAt": "Beginn der spiele",
+  "fightsFinishedAt": "Ende der Spiele",
+  "fightsDuration": "Spieldauer",
+  "fightsAverage": "Durchschnitt entsprechen",
+  "hitsByTournament": "Schläge pro Turnier",
+  "timeByTournament": "Zeit pro Turnier",
+  "fightsFinished": "Beendete spiele",
+  "faults": "Fouls",
+  "progress": "Fortschritt",
+  "minutes": "Minuten",
+  "participantsByTournament": "Teilnehmer nach Turnier",
+  "tournamentActiveTime": "Aktive zeit"
 }
 
 

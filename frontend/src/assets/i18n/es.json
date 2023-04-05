@@ -104,7 +104,7 @@
   "diplomas": "Diplomas",
   "SummaryMenuItem": "Resumen de partidos",
   "ClubListMenuItem": "Lista de clubes",
-  "TournamentHitsStatisticsMenuItem": "Porcentaje de golpes",
+  "tournamentHitsStatistics": "Porcentaje de Golpes",
   "TeamStatisticsMenu": "Por equipo",
   "CompetitorStatisticsMenu": "Por competidor",
   "PerformedHitsStatisticsMenuItem": "Porcentaje de golpes dados",
@@ -607,7 +607,22 @@
   "pointsByVictory": "Puntos por victoria",
   "pointsByDraw": "Puntos por empate",
   "nameExample": "Francisco Garcia",
-  "onlyNews": "Nuevos"
+  "onlyNews": "Nuevos",
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtenido en:",
+  "time": "Tiempos",
+  "lockedAt": "Bloqueado",
+  "fightsStartedAt": "Inicio partidos",
+  "fightsFinishedAt": "Fin paridos",
+  "fightsDuration": "Duración de partidos",
+  "fightsAverage": "Promedio de partidos",
+  "hitsByTournament": "Golpes por torneo",
+  "timeByTournament": "Tiempo por torneo",
+  "fightsFinished": "Partidos acabados",
+  "faults": "Faltas",
+  "progress": "Progreso",
+  "minutes": "Minutos",
+  "participantsByTournament": "Participantes por torneo",
+  "tournamentActiveTime": "Tiempo en activo"
 }
 
 

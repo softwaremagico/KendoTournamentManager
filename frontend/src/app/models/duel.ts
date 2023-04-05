@@ -18,6 +18,8 @@ export class Duel extends Element {
   public duration?: number;
   public totalDuration?: number;
   public finished: boolean;
+  public startedAt: Date | undefined;
+  public finishedAt: Date | undefined;
 
   public static override copy(source: Duel, target: Duel): void {
     Element.copy(source, target);
@@ -46,6 +48,8 @@ export class Duel extends Element {
     target.competitor1FaultTime = source.competitor1FaultTime;
     target.competitor2FaultTime = source.competitor2FaultTime;
     target.finished = source.finished;
+    target.startedAt = source.startedAt;
+    target.finishedAt = source.finishedAt;
   }
 
   public static clone(data: Duel): Duel {
