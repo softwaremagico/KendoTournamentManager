@@ -67,9 +67,18 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION + " AND d.tournament=:tournament")
     Long getDurationAverage(@Param("tournament") Tournament tournament);
 
+    Duel findFirstByTournamentOrderByStartedAtAsc(Tournament tournament);
+
+    Duel findFirstByTournamentOrderByFinishedAtDesc(Tournament tournament);
+
     @Query("SELECT COUNT(*) FROM Duel d LEFT JOIN d.competitor1Score s1 LEFT JOIN d.competitor2Score s2 WHERE d.tournament=:tournament AND " +
             "(s1 IN (:scores) OR  s2 IN (:scores))")
     Long countScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
+
+    //    @Query("SELECT COUNT(*) FROM Duel d WHERE d.competitor1Fault=true OR d.competitor2Fault= true AND d.tournament=:tournament")
+    @Query("SELECT SUM(CASE WHEN d.competitor1Fault=:status THEN 1 ELSE 0 END) + SUM(CASE WHEN d.competitor2Fault=:status THEN 1 ELSE 0 END) " +
+            "FROM Duel d WHERE d.tournament=:tournament")
+    Long countFaultsByTournament(@Param("tournament") Tournament tournament, @Param("status") Boolean status);
 
     List<Duel> findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(Tournament tournament,
                                                                                                        int score1MaxDuration, int score2MaxDuration);

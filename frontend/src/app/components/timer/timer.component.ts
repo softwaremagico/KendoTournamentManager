@@ -35,6 +35,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @Output() onTimerFinished: EventEmitter<boolean[]> = new EventEmitter();
   @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() onSoftTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() onPlayPressed: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
   @Output() timerClosed: EventEmitter<any> = new EventEmitter();
 
@@ -129,6 +131,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   startTimer() {
     this.started = true;
+    this.onPlayPressed.emit([this.elapsedSeconds]);
   };
 
   pauseTimer() {
@@ -197,6 +200,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.elapsedSeconds++;
     if (this.seconds % 3 == 0) {
       this.onTimerChanged.emit([this.elapsedSeconds]);
+    } else {
+      this.onSoftTimerChanged.emit([this.elapsedSeconds]);
     }
   }
 
@@ -206,6 +211,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   isAlmostFinished(): boolean {
     return this.minutes == 0 && this.seconds <= 10;
+  }
+
+  isPaused(): boolean {
+    return !this.started && this.elapsedSeconds > 0;
   }
 
   toDoubleDigit(num: number): string {

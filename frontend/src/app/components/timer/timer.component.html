@@ -1,7 +1,7 @@
 <div class="app-timer" cdkDrag [cdkDragFreeDragPosition]="timerPosition" (cdkDragEnded)="dragEnd($event)">
   <div class="container">
     <mat-icon class="drag-icon" cdkDragHandle>drag_handle</mat-icon>
-    <div class="timer" [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished()}">
+    <div class="timer" [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished(), 'pause': isPaused()}">
       <div class="time">
         <span (dblclick)="setMinutesEditable(true)" *ngIf="!minutesEditable">{{toDoubleDigit(minutes)}}</span>
         <input type=number class="timer-edition timer-edition-minutes" *ngIf="minutesEditable" [value]="this.minutes"

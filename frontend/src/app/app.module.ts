@@ -90,11 +90,17 @@ import {
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
 import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
-import { AchievementWallComponent } from './components/achievement-wall/achievement-wall.component';
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
-import { ScoreChartComponent } from './components/charts/score-chart/score-chart.component';
-import {ScoreChartModule} from "./components/charts/score-chart/score-chart.module";
-import { TournamentStatisticsComponent } from './views/tournament-statistics/tournament-statistics.component';
+import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
+import {TournamentStatisticsComponent} from './views/tournament-statistics/tournament-statistics.component';
+import {PieChartModule} from "./components/charts/pie-chart/pie-chart.module";
+import {StackedBarsChartModule} from "./components/charts/stacked-bars-chart/stacked-bars-chart.module";
+import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
+import {LineChartModule} from "./components/charts/line-chart/line-chart.module";
+import {NgApexchartsModule} from "ng-apexcharts";
+import {RadarChartModule} from "./components/charts/radar-chart/radar-chart.module";
+import {RadialChartModule} from "./components/charts/radial-chart/radial-chart.module";
+import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.module";
 
 
 registerLocaleData(localeES, "es");
@@ -187,7 +193,14 @@ registerLocaleData(localeNL, "nl");
     RoleSelectorDialogBoxModule,
     AchievementTileModule,
     AchievementWallModule,
-    ScoreChartModule
+    BarChartModule,
+    PieChartModule,
+    StackedBarsChartModule,
+    LineChartModule,
+    RadarChartModule,
+    NgApexchartsModule,
+    RadialChartModule,
+    GaugeChartModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
