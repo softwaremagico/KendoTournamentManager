@@ -111,10 +111,10 @@ public class ImageUtils {
             return inputImage;
         } else if (sourceWidth > sourceHeight) {
             targetWidth = maxWidth;
-            targetHeight = targetWidth * sourceHeight / sourceWidth;
+            targetHeight = targetWidth * sourceHeight / (sourceWidth > 0 ? sourceWidth : 1);
         } else {
             targetHeight = maxHeight;
-            targetWidth = targetHeight * sourceWidth / sourceHeight;
+            targetWidth = targetHeight * sourceWidth / (sourceHeight > 0 ? sourceHeight : 1);
         }
         final Image scaledImage = inputImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
         final BufferedImage targetImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
