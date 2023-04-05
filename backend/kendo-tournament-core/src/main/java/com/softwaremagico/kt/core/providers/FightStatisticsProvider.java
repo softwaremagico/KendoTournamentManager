@@ -152,7 +152,7 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
 
         teams.forEach(team -> {
             counter.addAndGet((team.getMembers().size() * fightByTeam) - missingMembers.get());
-            missingMembers.addAndGet(teamSize - team.getMembers().size());
+            missingMembers.addAndGet((long) teamSize - team.getMembers().size());
         });
 
         //Duels are counted twice, once for each team
