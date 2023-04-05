@@ -24,12 +24,36 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.time.LocalDateTime;
+
 public class FightStatisticsDTO extends ElementDTO {
+
+    private Long menNumber;
+
+    private Long koteNumber;
+
+    private Long doNumber;
+
+    private Long tsukiNumber;
+
+    private Long hansokuNumber;
+
+    private Long ipponNumber;
+
     private Long fightsNumber;
     private Integer fightsByTeam;
     private Long duelsNumber;
+    private Long averageTime;
     //In seconds.
-    private Long time;
+    private Long estimatedTime;
+
+    private LocalDateTime fightsStartedAt;
+
+    private LocalDateTime fightsFinishedAt;
+
+    private Long fightsFinished;
+
+    private long faults;
 
     public Long getFightsNumber() {
         return fightsNumber;
@@ -55,12 +79,12 @@ public class FightStatisticsDTO extends ElementDTO {
         }
     }
 
-    public Long getTime() {
-        return time;
+    public Long getEstimatedTime() {
+        return estimatedTime;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
+    public void setEstimatedTime(Long estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
     public Integer getFightsByTeam() {
@@ -69,5 +93,96 @@ public class FightStatisticsDTO extends ElementDTO {
 
     public void setFightsByTeam(Integer fightsByTeam) {
         this.fightsByTeam = fightsByTeam;
+    }
+
+    public Long getAverageTime() {
+        return averageTime;
+    }
+
+    public void setAverageTime(Long averageTime) {
+        this.averageTime = averageTime;
+    }
+
+    public LocalDateTime getFightsStartedAt() {
+        return fightsStartedAt;
+    }
+
+    public void setFightsStartedAt(LocalDateTime fightsStartedAt) {
+        this.fightsStartedAt = fightsStartedAt;
+    }
+
+    public LocalDateTime getFightsFinishedAt() {
+        return fightsFinishedAt;
+    }
+
+    public void setFightsFinishedAt(LocalDateTime fightsFinishedAt) {
+        this.fightsFinishedAt = fightsFinishedAt;
+    }
+
+    public Long getMenNumber() {
+        return menNumber;
+    }
+
+    public void setMenNumber(Long menNumber) {
+        this.menNumber = menNumber;
+    }
+
+    public Long getKoteNumber() {
+        return koteNumber;
+    }
+
+    public void setKoteNumber(Long koteNumber) {
+        this.koteNumber = koteNumber;
+    }
+
+    public Long getDoNumber() {
+        return doNumber;
+    }
+
+    public void setDoNumber(Long doNumber) {
+        this.doNumber = doNumber;
+    }
+
+    public Long getTsukiNumber() {
+        return tsukiNumber;
+    }
+
+    public void setTsukiNumber(Long tsukiNumber) {
+        this.tsukiNumber = tsukiNumber;
+    }
+
+    public Long getHansokuNumber() {
+        return hansokuNumber;
+    }
+
+    public void setHansokuNumber(Long hansokuNumber) {
+        this.hansokuNumber = hansokuNumber;
+    }
+
+    public Long getIpponNumber() {
+        return ipponNumber;
+    }
+
+    public void setIpponNumber(Long ipponNumber) {
+        this.ipponNumber = ipponNumber;
+    }
+
+    public Long getFightsFinished() {
+        return fightsFinished;
+    }
+
+    /**
+     * Count fights that all duels are finished
+     */
+    public void setFightsFinished(Long fightsFinished) {
+        this.fightsFinished = fightsFinished;
+    }
+
+    public long getFaults() {
+        return faults;
+    }
+
+    public void setFaults(long faults) {
+        this.faults = faults;
     }
 }

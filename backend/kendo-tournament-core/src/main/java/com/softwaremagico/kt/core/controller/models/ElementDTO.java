@@ -50,8 +50,8 @@ public class ElementDTO {
     }
 
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(LocalDateTime tournamentCreatedAt) {
+        this.createdAt = tournamentCreatedAt;
     }
 
     public String getCreatedBy() {

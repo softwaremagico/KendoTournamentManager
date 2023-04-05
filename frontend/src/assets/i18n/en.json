@@ -101,7 +101,7 @@
   "diplomas": "Diplomas",
   "SummaryMenuItem": "Matches summary",
   "ClubListMenuItem": "List of clubs",
-  "TournamentHitsStatisticsMenuItem": "Percentage of  hits",
+  "tournamentHitsStatistics": "Percentage of Hits",
   "TeamStatisticsMenu": "By team",
   "CompetitorStatisticsMenu": "By competitor",
   "PerformedHitsStatisticsMenuItem": "Percentage of performed hits",
@@ -616,6 +616,20 @@
   "pointsByDraw": "Points by Tie",
   "nameExample": "John Smith",
   "onlyNews": "New Ones",
-  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:"
+  "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:",
+  "time": "Time",
+  "lockedAt": "Locked at",
+  "fightsStartedAt": "Matches started at",
+  "fightsFinishedAt": "Matches finished at",
+  "fightsDuration": "Matches duration",
+  "fightsAverage": "Matches average",
+  "hitsByTournament": "Hits by Tournament",
+  "timeByTournament": "Time by Tournament",
+  "fightsFinished": "Matches finished",
+  "faults": "Faults",
+  "progress": "Progress",
+  "minutes": "Minutes",
+  "participantsByTournament": "Participants by Tournament",
+  "tournamentActiveTime": "Tournament active time"
 }
 

@@ -60,4 +60,18 @@ export class StatisticsService {
         catchError(this.messageService.logOnlyError<TournamentStatistics>(`get id=${tournamentId}`))
       );
   }
+
+  getPreviousTournamentStatistics(tournamentId: number): Observable<TournamentStatistics[]> {
+    //this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/tournament/${tournamentId}/previous/10`;
+    return this.http.get<TournamentStatistics[]>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched statistics from tournament id=${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.logOnlyError<TournamentStatistics[]>(`get id=${tournamentId}`))
+      );
+  }
 }

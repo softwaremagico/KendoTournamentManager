@@ -70,6 +70,14 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.getDurationAverage(tournament);
     }
 
+    public Duel getFirstDuel(Tournament tournament) {
+        return repository.findFirstByTournamentOrderByStartedAtAsc(tournament);
+    }
+
+    public Duel getLastDuel(Tournament tournament) {
+        return repository.findFirstByTournamentOrderByFinishedAtDesc(tournament);
+    }
+
     public Long countScore(Tournament tournament, Score score) {
         return repository.countScore(tournament, Collections.singletonList(score));
     }
@@ -88,6 +96,11 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     public List<Duel> findByScoreDuration(Tournament tournament, int scoreMaxDuration) {
         return repository.findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
                 tournament, scoreMaxDuration, scoreMaxDuration);
+    }
+
+    public long countFaults(Tournament tournament) {
+        return repository.countFaultsByTournament(tournament, true) +
+                repository.countScore(tournament, Collections.singletonList(Score.HANSOKU)) * 2;
     }
 
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})

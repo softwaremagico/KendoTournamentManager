@@ -8,91 +8,107 @@ package com.softwaremagico.kt.core.controller.models;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.values.RoleType;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 public class TournamentStatisticsDTO extends ElementDTO {
 
-    private FightStatisticsDTO fightStatisticsDTO;
+    private FightStatisticsDTO fightStatistics;
 
-    private long menNumber;
+    private Integer tournamentId;
 
-    private long koteNumber;
+    private String tournamentName;
 
-    private long doNumber;
+    private LocalDateTime tournamentCreatedAt;
 
-    private long tsukiNumber;
+    private LocalDateTime tournamentLockedAt;
 
-    private long hansokuNumber;
+    private Long numberOfTeams;
 
-    private long ipponNumber;
+    private Integer teamSize;
 
-    public FightStatisticsDTO getFightStatisticsDTO() {
-        return fightStatisticsDTO;
+    private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
+
+    public FightStatisticsDTO getFightStatistics() {
+        return fightStatistics;
     }
 
-    public void setFightStatisticsDTO(FightStatisticsDTO fightStatisticsDTO) {
-        this.fightStatisticsDTO = fightStatisticsDTO;
+    public void setFightStatistics(FightStatisticsDTO fightStatistics) {
+        this.fightStatistics = fightStatistics;
     }
 
-    public long getMenNumber() {
-        return menNumber;
+    public Long getNumberOfTeams() {
+        return numberOfTeams;
     }
 
-    public void setMenNumber(long menNumber) {
-        this.menNumber = menNumber;
+    public void setNumberOfTeams(Long numberOfTeams) {
+        this.numberOfTeams = numberOfTeams;
     }
 
-    public long getKoteNumber() {
-        return koteNumber;
+    public Map<RoleType, Long> getNumberOfParticipants() {
+        return numberOfParticipants;
     }
 
-    public void setKoteNumber(long koteNumber) {
-        this.koteNumber = koteNumber;
+    public void setNumberOfParticipants(Map<RoleType, Long> numberOfParticipants) {
+        this.numberOfParticipants = numberOfParticipants;
     }
 
-    public long getDoNumber() {
-        return doNumber;
+    public Integer getTournamentId() {
+        return tournamentId;
     }
 
-    public void setDoNumber(long doNumber) {
-        this.doNumber = doNumber;
+    public void setTournamentId(Integer tournamentId) {
+        this.tournamentId = tournamentId;
     }
 
-    public long getTsukiNumber() {
-        return tsukiNumber;
+    public String getTournamentName() {
+        return tournamentName;
     }
 
-    public void setTsukiNumber(long tsukiNumber) {
-        this.tsukiNumber = tsukiNumber;
+    public void setTournamentName(String tournamentName) {
+        this.tournamentName = tournamentName;
     }
 
-    public long getHansokuNumber() {
-        return hansokuNumber;
+    public LocalDateTime getCreatedAt() {
+        return tournamentCreatedAt;
     }
 
-    public void setHansokuNumber(long hansokuNumber) {
-        this.hansokuNumber = hansokuNumber;
+    public void setCreatedAt(LocalDateTime tournamentCreatedAt) {
+        this.tournamentCreatedAt = tournamentCreatedAt;
     }
 
-    public long getIpponNumber() {
-        return ipponNumber;
+    public LocalDateTime getTournamentLockedAt() {
+        return tournamentLockedAt;
     }
 
-    public void setIpponNumber(long ipponNumber) {
-        this.ipponNumber = ipponNumber;
+    public void setTournamentLockedAt(LocalDateTime tournamentLockedAt) {
+        this.tournamentLockedAt = tournamentLockedAt;
+    }
+
+    public Integer getTeamSize() {
+        return teamSize;
+    }
+
+    public void setTeamSize(Integer teamSize) {
+        this.teamSize = teamSize;
     }
 }

@@ -85,7 +85,7 @@ export class FileService {
 
   getParticipantPicture(participant: Participant): Observable<ParticipantImage> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/participants/${participant!.id}`;
+    const url: string = `${this.baseUrl}/participants/${participant.id}`;
     return this.http.get<ParticipantImage>(url, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -113,7 +113,7 @@ export class FileService {
 
   deleteParticipantPicture(participant: Participant): Observable<void> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/participants/${participant!.id}`;
+    const url: string = `${this.baseUrl}/participants/${participant.id}`;
     return this.http.delete<void>(url, this.loginService.httpOptions)
       .pipe(
         tap({

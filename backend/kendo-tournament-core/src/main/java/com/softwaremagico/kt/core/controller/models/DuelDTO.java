@@ -29,6 +29,7 @@ import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.utils.NameUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,10 +49,11 @@ public class DuelDTO extends ElementDTO {
     private Integer competitor2FaultTime;
     private DuelType type;
     private boolean finished;
-
     private Integer duration;
-
     private Integer totalDuration;
+    private LocalDateTime startedAt;
+
+    private LocalDateTime finishedAt;
 
     public DuelDTO() {
         super();
@@ -294,5 +296,21 @@ public class DuelDTO extends ElementDTO {
             this.competitor2ScoreTime = new ArrayList<>();
         }
         this.competitor2ScoreTime.add(time);
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }
