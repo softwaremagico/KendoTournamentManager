@@ -36,7 +36,42 @@ now everything is centralized on the cloud.
 
 ## Installation
 
-### Compiling from the sourcecode
+### From a release version
+
+Download the release you want to use from this git project. You will find two different files, one for the frontend and one for the backend.
+
+#### Deploy the frontend
+
+For the frontend you can use any web server you are familiar to (Apache, Nginx, ...). Simply uncompress the file `kendo-tournament-frontend.zip` on the server as a standard web page.
+
+#### Deploy the backend
+
+The backend is released as a standalone JAR file. You need Java JRE 11 or superior to run this application. You can executely it manually by typing the next command:
+
+```
+java -jar kendo-tournament-backend.jar 
+```
+
+Note that probably you need to configure the application. For this purpose, you can use any ZIP tool to open the jar file, and edit the file `BOOT-INF/classes/application.properties` as described on this [Readme](./backend/README.md). Any change must be put inside the JAR file again to be used by the application.
+
+#### Database
+
+You will need to install a database server. By default, the application is configured to use a MySQL Server, but you can install anyone you desire. If you want to use any other database engine, you must include the needed connector on `/BOOT-INF/lib/` inside the backend JAR. After choosing your database server, you must configure the `application.properties` as described on this [Readme](./backend/README.md) to match your database properties. 
+
+For example, to use it with a PostgresSQL server the settings will be:
+
+```
+spring.kendo.datasource.platform=postgresql
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.kendo.datasource.jdbc-url=jdbc:postgresql://kendo-tournament-database:5432/postgres
+spring.kendo.datasource.username=<your user>
+spring.kendo.datasource.password=<your password>
+``` 
+And search and download the connector [postgresql-X.X.X.jar](https://mvnrepository.com/artifact/org.postgresql/postgresql) and deploy it on `/BOOT-INF/lib/` folder inside the JAR file.
+
+If the backend is connected successfully to the database, it will generate all required database structure for you. 
+
+### From the source code
 
 Please, download the complete project from [here](https://github.com/softwaremagico/KendoTournamentManager). The project
 is divided in two parts `frontend` and `backend`. Each one must be run separately.
