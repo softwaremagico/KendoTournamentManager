@@ -1,10 +1,10 @@
-package com.softwaremagico.kt.core.controller.models;
+package com.softwaremagico.kt.core.statistics;
 
 /*-
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
@@ -26,7 +26,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 import java.time.LocalDateTime;
 
-public class FightStatisticsDTO extends ElementDTO {
+public class TournamentFightStatistics {
 
     private Long menNumber;
 
@@ -41,17 +41,17 @@ public class FightStatisticsDTO extends ElementDTO {
     private Long ipponNumber;
 
     private Long fightsNumber;
-    private Integer fightsByTeam;
+    private Long fightsByTeam;
     private Long duelsNumber;
-    private Long averageTime;
     //In seconds.
+    private Long averageTime;
     private Long estimatedTime;
+
+    private Long fightsFinished;
 
     private LocalDateTime fightsStartedAt;
 
     private LocalDateTime fightsFinishedAt;
-
-    private Long fightsFinished;
 
     private long faults;
 
@@ -65,6 +65,14 @@ public class FightStatisticsDTO extends ElementDTO {
         } else {
             this.fightsNumber = null;
         }
+    }
+
+    public Long getFightsByTeam() {
+        return fightsByTeam;
+    }
+
+    public void setFightsByTeam(Long fightsByTeam) {
+        this.fightsByTeam = fightsByTeam;
     }
 
     public Long getDuelsNumber() {
@@ -85,14 +93,6 @@ public class FightStatisticsDTO extends ElementDTO {
 
     public void setEstimatedTime(Long estimatedTime) {
         this.estimatedTime = estimatedTime;
-    }
-
-    public Integer getFightsByTeam() {
-        return fightsByTeam;
-    }
-
-    public void setFightsByTeam(Integer fightsByTeam) {
-        this.fightsByTeam = fightsByTeam;
     }
 
     public Long getAverageTime() {
@@ -167,13 +167,13 @@ public class FightStatisticsDTO extends ElementDTO {
         this.ipponNumber = ipponNumber;
     }
 
+    /**
+     * Count fights that has at least one duel finished.
+     */
     public Long getFightsFinished() {
         return fightsFinished;
     }
 
-    /**
-     * Count fights that all duels are finished
-     */
     public void setFightsFinished(Long fightsFinished) {
         this.fightsFinished = fightsFinished;
     }

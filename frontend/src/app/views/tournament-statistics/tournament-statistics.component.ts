@@ -239,22 +239,22 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   obtainPoints(tournamentStatistics: TournamentStatistics): [string, number][] {
     const scores: [string, number][] = [];
-    if (tournamentStatistics && tournamentStatistics.fightStatistics) {
-      scores.push([Score.label(Score.MEN), tournamentStatistics.fightStatistics.menNumber ? tournamentStatistics.fightStatistics.menNumber : 0]);
-      scores.push([Score.label(Score.KOTE), tournamentStatistics.fightStatistics.koteNumber ? tournamentStatistics.fightStatistics.koteNumber : 0]);
-      scores.push([Score.label(Score.DO), tournamentStatistics.fightStatistics.doNumber ? tournamentStatistics.fightStatistics.doNumber : 0]);
-      scores.push([Score.label(Score.TSUKI), tournamentStatistics.fightStatistics.tsukiNumber ? tournamentStatistics.fightStatistics.tsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), tournamentStatistics.fightStatistics.ipponNumber ? tournamentStatistics.fightStatistics.ipponNumber : 0]);
+    if (tournamentStatistics && tournamentStatistics.tournamentFightStatistics) {
+      scores.push([Score.label(Score.MEN), tournamentStatistics.tournamentFightStatistics.menNumber ? tournamentStatistics.tournamentFightStatistics.menNumber : 0]);
+      scores.push([Score.label(Score.KOTE), tournamentStatistics.tournamentFightStatistics.koteNumber ? tournamentStatistics.tournamentFightStatistics.koteNumber : 0]);
+      scores.push([Score.label(Score.DO), tournamentStatistics.tournamentFightStatistics.doNumber ? tournamentStatistics.tournamentFightStatistics.doNumber : 0]);
+      scores.push([Score.label(Score.TSUKI), tournamentStatistics.tournamentFightStatistics.tsukiNumber ? tournamentStatistics.tournamentFightStatistics.tsukiNumber : 0]);
+      scores.push([Score.label(Score.IPPON), tournamentStatistics.tournamentFightStatistics.ipponNumber ? tournamentStatistics.tournamentFightStatistics.ipponNumber : 0]);
     }
     return scores;
   }
 
   obtainTimes(tournamentStatistics: TournamentStatistics): [string, number] {
     let times: [string, number];
-    if (tournamentStatistics.fightStatistics && tournamentStatistics.fightStatistics.fightsFinishedAt && tournamentStatistics.fightStatistics.fightsStartedAt) {
+    if (tournamentStatistics.tournamentFightStatistics && tournamentStatistics.tournamentFightStatistics.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics.fightsStartedAt) {
       //Time in minutes.
-      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.fightStatistics?.fightsFinishedAt).getTime() -
-        new Date(tournamentStatistics.fightStatistics?.fightsStartedAt).getTime()) / (1000 * 60), 2)];
+      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt).getTime() -
+        new Date(tournamentStatistics.tournamentFightStatistics?.fightsStartedAt).getTime()) / (1000 * 60), 2)];
     } else {
       times = [this.getLabel(tournamentStatistics.tournamentName), 0];
     }
@@ -296,7 +296,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   initializeFightsOverStatistics(tournamentStatistics: TournamentStatistics): void {
-    const progress: number = (tournamentStatistics.fightStatistics?.fightsFinished / tournamentStatistics.fightStatistics?.fightsNumber) * 100;
+    const progress: number = (tournamentStatistics.tournamentFightStatistics?.fightsFinished / tournamentStatistics.tournamentFightStatistics?.fightsNumber) * 100;
     this.fightsOverData = GaugeChartData.fromArray([[this.translateService.instant('fightsFinished'),
       isNaN(progress) ? 0 : progress]]);
   }
