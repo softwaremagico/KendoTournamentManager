@@ -61,9 +61,9 @@ export class StatisticsService {
       );
   }
 
-  getPreviousTournamentStatistics(tournamentId: number): Observable<TournamentStatistics[]> {
+  getPreviousTournamentStatistics(tournamentId: number, tournamentsToRetrieve: number): Observable<TournamentStatistics[]> {
     //this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/tournament/${tournamentId}/previous/10`;
+    const url: string = `${this.baseUrl}/tournament/${tournamentId}/previous/${tournamentsToRetrieve}`;
     return this.http.get<TournamentStatistics[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
