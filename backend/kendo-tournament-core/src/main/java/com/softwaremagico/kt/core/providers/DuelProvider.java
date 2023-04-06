@@ -99,8 +99,10 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     }
 
     public long countFaults(Tournament tournament) {
-        return repository.countFaultsByTournament(tournament, true) +
-                repository.countScore(tournament, Collections.singletonList(Score.HANSOKU)) * 2;
+        final Long faults = repository.countFaultsByTournament(tournament, true);
+        final Long hansokus = repository.countScore(tournament, Collections.singletonList(Score.HANSOKU));
+        return (faults != null ? faults : 0) +
+                (hansokus != null ? hansokus : 0) * 2;
     }
 
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})

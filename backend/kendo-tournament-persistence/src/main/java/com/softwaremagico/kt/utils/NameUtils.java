@@ -157,8 +157,8 @@ public class NameUtils {
             return "";
         }
 
-        final float rateLastname = (name.length() + getShortLastname(lastname, 20).length()) / (float) lastname.length();
-        final float rateName = (name.length() + getShortName(name, 20).length()) / (float) name.length();
+        final float rateLastname = (name.length() + getShortLastname(lastname, 20).length()) / ((float) lastname.length() > 0 ? (float) lastname.length() : 1);
+        final float rateName = (name.length() + getShortName(name, 20).length()) / ((float) name.length() > 0 ? (float) name.length() : 1);
         final String ret = getShortLastname(lastname, (int) (maxLength / rateLastname)).trim() + ", " + getShortName(name, (int) (maxLength / rateName));
         return ret.trim();
     }

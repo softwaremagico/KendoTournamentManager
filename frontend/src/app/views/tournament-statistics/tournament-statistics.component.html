@@ -18,7 +18,8 @@
             <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
             <h3>{{'participants' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="tournamentStatistics">
+          <!-- aria-hidden="true" to avoid complains from sonarcloud -->
+          <table class="statistics-table" *ngIf="tournamentStatistics"  aria-hidden="true">
             <tr *ngFor="let roleType of roleTypes">
               <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>
               <td *ngIf="tournamentStatistics">{{numberOfParticipantsByRole(roleType)}}</td>
@@ -28,7 +29,7 @@
             <mat-icon svgIcon="team" class="kendo-icon"></mat-icon>
             <h3>{{'teams' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="tournamentStatistics">
+          <table class="statistics-table" *ngIf="tournamentStatistics" aria-hidden="true">
             <tr>
               <td>{{'teams' | translate}}:</td>
               <td>{{tournamentStatistics?.numberOfTeams}}</td>
@@ -45,7 +46,7 @@
             <mat-icon>timer</mat-icon>
             <h3>{{'time' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="tournamentStatistics">
+          <table class="statistics-table" *ngIf="tournamentStatistics" aria-hidden="true">
             <tr>
               <td>{{'createdAt' | translate}}:</td>
               <td>{{convertDate(tournamentStatistics?.tournamentCreatedAt)}}</td>
@@ -75,7 +76,7 @@
             <mat-icon>flag</mat-icon>
             <h3>{{'faults' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="tournamentStatistics">
+          <table class="statistics-table" *ngIf="tournamentStatistics" aria-hidden="true">
             <tr>
               <td class="single">{{'faults' | translate}}: {{tournamentStatistics?.fightStatistics?.faults}}</td>
             </tr>
@@ -87,7 +88,7 @@
             <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
             <h3>{{'teamsRanking' | translate}}</h3>
           </div>
-          <table class="statistics-table">
+          <table class="statistics-table" aria-hidden="true">
             <tr *ngFor="let scoreOfTeam of teamScores">
               <td class="ranking">{{getTeamsRanking(scoreOfTeam)}}</td>
             </tr>
@@ -99,7 +100,7 @@
             <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
             <h3>{{'competitorsRanking' | translate}}</h3>
           </div>
-          <table class="statistics-table">
+          <table class="statistics-table" aria-hidden="true">
             <tr *ngFor="let scoreOfCompetitor of competitorsScore">
               <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
             </tr>
