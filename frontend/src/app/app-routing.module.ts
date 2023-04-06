@@ -9,6 +9,7 @@ import {FightListComponent} from "./views/fight-list/fight-list.component";
 import {AuthenticatedUserListComponent} from "./views/authenticated-user-list/authenticated-user-list.component";
 import {PasswordsComponent} from "./views/passwords/passwords.component";
 import {TournamentStatisticsComponent} from "./views/tournament-statistics/tournament-statistics.component";
+import {ParticipantStatisticsComponent} from "./views/participant-statistics/participant-statistics.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/tournaments', pathMatch: 'full' },
@@ -20,6 +21,7 @@ const routes: Routes = [
   {path: 'tournaments', component: TournamentListComponent, canActivate: [LoggedInService]},
   {path: 'tournaments/fights', component: FightListComponent, canActivate: [LoggedInService]},
   {path: 'tournaments/statistics', component: TournamentStatisticsComponent, canActivate: [LoggedInService]},
+  {path: 'participant/statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedInService]},
 ];
 
 @NgModule({

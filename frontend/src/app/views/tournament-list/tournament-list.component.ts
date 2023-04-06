@@ -56,7 +56,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     this.tournamentService.getAll().subscribe(tournaments => {
       this.basicTableData.dataSource.data = tournaments;
       //Select session tournament.
-      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter(x => x.id == Number(this.userSessionService.getTournament()))[0];
+      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter(x => x.id == Number(this.userSessionService.getSelectedTournament()))[0];
       const selectedElements: Tournament[] = [];
       selectedElements.push(selectedTournament);
       this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
@@ -103,7 +103,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
         this.updateRowData(result.data);
       } else if (result.action == Action.Delete) {
         this.deleteRowData(result.data);
-        this.userSessionService.setTournament(undefined);
+        this.userSessionService.setSelectedTournament(undefined);
       }
     });
   }
@@ -155,7 +155,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   openFights(): void {
     if (this.basicTableData.selectedElement) {
-      this.userSessionService.setTournament(this.basicTableData.selectedElement.id + "");
+      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
       this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }
@@ -247,7 +247,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   openStatistics() {
     if (this.basicTableData.selectedElement) {
-      this.userSessionService.setTournament(this.basicTableData.selectedElement.id + "");
+      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
       this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }

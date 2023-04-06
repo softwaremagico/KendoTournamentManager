@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.RoleType;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,8 @@ public class ParticipantStatisticsDTO extends ElementDTO {
     private Integer participantId;
 
     private String participantName;
+
+    private LocalDateTime participantCreatedAt;
 
     private int tournaments;
 
@@ -79,5 +82,13 @@ public class ParticipantStatisticsDTO extends ElementDTO {
 
     public void setRolesPerformed(Map<RoleType, Long> rolesPerformed) {
         this.rolesPerformed = rolesPerformed;
+    }
+
+    public LocalDateTime getParticipantCreatedAt() {
+        return participantCreatedAt;
+    }
+
+    public void setParticipantCreatedAt(LocalDateTime participantCreatedAt) {
+        this.participantCreatedAt = participantCreatedAt;
     }
 }

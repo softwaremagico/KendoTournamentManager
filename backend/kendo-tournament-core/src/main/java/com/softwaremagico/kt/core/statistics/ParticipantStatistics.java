@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.statistics;
 
 import com.softwaremagico.kt.persistence.values.RoleType;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,8 @@ public class ParticipantStatistics {
     private Integer participantId;
 
     private String participantName;
+
+    private LocalDateTime participantCreatedAt;
 
     private int tournaments;
 
@@ -86,5 +89,21 @@ public class ParticipantStatistics {
             this.rolesPerformed = new HashMap<>();
         }
         this.rolesPerformed.put(roleType, number);
+    }
+
+    public ParticipantFightStatistics getParticipantFightStatistics() {
+        return participantFightStatistics;
+    }
+
+    public void setParticipantFightStatistics(ParticipantFightStatistics participantFightStatistics) {
+        this.participantFightStatistics = participantFightStatistics;
+    }
+
+    public LocalDateTime getParticipantCreatedAt() {
+        return participantCreatedAt;
+    }
+
+    public void setParticipantCreatedAt(LocalDateTime participantCreatedAt) {
+        this.participantCreatedAt = participantCreatedAt;
     }
 }
