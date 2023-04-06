@@ -13,13 +13,15 @@ export class ParticipantFightStatistics extends Element {
   receivedDoNumber: number;
   receivedTsukiNumber: number;
   receivedHansokuNumber: number;
-  receivedipponNumber: number;
+  receivedIpponNumber: number;
   duelsNumber: number;
   //In seconds.
   averageTime: number;
   totalDuelsTime: number;
   faults: number;
   receivedFaults: number;
+  quickestHit: number;
+  quickestReceivedHit: number;
 
   public static override copy(source: ParticipantFightStatistics, target: ParticipantFightStatistics): void {
     Element.copy(source, target);
@@ -34,12 +36,14 @@ export class ParticipantFightStatistics extends Element {
     target.receivedDoNumber = source.receivedDoNumber;
     target.receivedTsukiNumber = source.receivedTsukiNumber;
     target.receivedHansokuNumber = source.receivedHansokuNumber;
-    target.receivedipponNumber = source.receivedipponNumber;
+    target.receivedIpponNumber = source.receivedIpponNumber;
     target.duelsNumber = source.duelsNumber;
     target.averageTime = source.averageTime;
     target.totalDuelsTime = source.totalDuelsTime;
     target.faults = source.faults;
     target.receivedFaults = source.receivedFaults;
+    target.quickestHit = source.quickestHit;
+    target.quickestReceivedHit = source.quickestReceivedHit;
   }
 
   public static clone(data: ParticipantFightStatistics): ParticipantFightStatistics {
