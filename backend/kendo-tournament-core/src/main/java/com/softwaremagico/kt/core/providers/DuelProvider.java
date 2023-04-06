@@ -53,6 +53,10 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.countByTournament(tournament);
     }
 
+    public List<Duel> get(Participant participant) {
+        return repository.findByParticipant(participant);
+    }
+
     public List<Duel> get(Tournament tournament) {
         return repository.findByTournament(tournament);
     }
