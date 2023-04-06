@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {TournamentFightStatistics} from "../../models/fight-statistics.model";
+import {TournamentFightStatistics} from "../../models/tournament-fight-statistics.model";
 import {Tournament} from "../../models/tournament";
 import {StatisticsService} from "../../services/statistics.service";
 import {StatisticsChangedService} from "../../services/notifications/statistics-changed.service";

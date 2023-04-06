@@ -7,8 +7,9 @@ import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
-import {TournamentFightStatistics} from "../models/fight-statistics.model";
+import {TournamentFightStatistics} from "../models/tournament-fight-statistics.model";
 import {TournamentStatistics} from "../models/tournament-statistics.model";
+import {ParticipantStatistics} from "../models/participant-statistics.model";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class StatisticsService {
   }
 
   getFightStatistics(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<TournamentFightStatistics> {
-    let url: string = `${this.baseUrl}/tournament/${tournamentId}/fights`;
+    let url: string = `${this.baseUrl}/tournaments/${tournamentId}/fights`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ export class StatisticsService {
 
   getTournamentStatistics(tournamentId: number): Observable<TournamentStatistics> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/tournament/${tournamentId}`;
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}`;
     return this.http.get<TournamentStatistics>(url, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -63,7 +64,7 @@ export class StatisticsService {
 
   getPreviousTournamentStatistics(tournamentId: number, tournamentsToRetrieve: number): Observable<TournamentStatistics[]> {
     //this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/tournament/${tournamentId}/previous/${tournamentsToRetrieve}`;
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/previous/${tournamentsToRetrieve}`;
     return this.http.get<TournamentStatistics[]>(url, this.loginService.httpOptions)
       .pipe(
         tap({
@@ -72,6 +73,20 @@ export class StatisticsService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.logOnlyError<TournamentStatistics[]>(`get id=${tournamentId}`))
+      );
+  }
+
+  getParticipantStatistics(participantId: number): Observable<ParticipantStatistics> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/participants/${participantId}`;
+    return this.http.get<ParticipantStatistics>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched statistics from participant id=${participantId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.logOnlyError<ParticipantStatistics>(`get id=${participantId}`))
       );
   }
 }
