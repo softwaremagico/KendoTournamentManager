@@ -8,30 +8,30 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
 import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.converters.FightStatisticsConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
-import com.softwaremagico.kt.core.converters.models.FightStatisticsConverterRequest;
-import com.softwaremagico.kt.core.providers.FightStatisticsProvider;
-import com.softwaremagico.kt.core.statistics.FightStatistics;
-import com.softwaremagico.kt.core.statistics.FightStatisticsRepository;
+import com.softwaremagico.kt.core.converters.TournamentFightStatisticsConverter;
+import com.softwaremagico.kt.core.converters.models.TournamentFightStatisticsConverterRequest;
+import com.softwaremagico.kt.core.providers.TournamentFightStatisticsProvider;
+import com.softwaremagico.kt.core.statistics.TournamentFightStatistics;
+import com.softwaremagico.kt.core.statistics.TournamentFightStatisticsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,23 +41,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
-public class FightStatisticsController extends BasicInsertableController<FightStatistics, FightStatisticsDTO, FightStatisticsRepository,
-        FightStatisticsProvider, FightStatisticsConverterRequest, FightStatisticsConverter> {
+public class FightStatisticsController extends BasicInsertableController<TournamentFightStatistics, TournamentFightStatisticsDTO,
+        TournamentFightStatisticsRepository, TournamentFightStatisticsProvider, TournamentFightStatisticsConverterRequest, TournamentFightStatisticsConverter> {
 
     private final TournamentConverter tournamentConverter;
 
     private final TeamConverter teamConverter;
 
-    public FightStatisticsController(FightStatisticsProvider provider, FightStatisticsConverter converter, TournamentConverter tournamentConverter,
-                                     TeamConverter teamConverter) {
+    public FightStatisticsController(TournamentFightStatisticsProvider provider, TournamentFightStatisticsConverter converter,
+                                     TournamentConverter tournamentConverter, TeamConverter teamConverter) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.teamConverter = teamConverter;
     }
 
     @Override
-    protected FightStatisticsConverterRequest createConverterRequest(FightStatistics fightStatistics) {
-        return new FightStatisticsConverterRequest(fightStatistics);
+    protected TournamentFightStatisticsConverterRequest createConverterRequest(TournamentFightStatistics tournamentFightStatistics) {
+        return new TournamentFightStatisticsConverterRequest(tournamentFightStatistics);
     }
 
     /**
@@ -66,27 +66,27 @@ public class FightStatisticsController extends BasicInsertableController<FightSt
      * @param tournamentDTO the tournament.
      * @return some estimations.
      */
-    public FightStatisticsDTO estimate(TournamentDTO tournamentDTO) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimate(tournamentConverter.reverse(tournamentDTO))));
+    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO) {
+        return converter.convert(new TournamentFightStatisticsConverterRequest(provider.estimate(tournamentConverter.reverse(tournamentDTO))));
     }
 
-    public FightStatisticsDTO estimateByTeams(TournamentDTO tournamentDTO) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateByTeams(tournamentConverter.reverse(tournamentDTO))));
+    public TournamentFightStatisticsDTO estimateByTeams(TournamentDTO tournamentDTO) {
+        return converter.convert(new TournamentFightStatisticsConverterRequest(provider.estimateByTeams(tournamentConverter.reverse(tournamentDTO))));
     }
 
-    public FightStatisticsDTO estimateByMembers(TournamentDTO tournamentDTO) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateByMembers(tournamentConverter.reverse(tournamentDTO))));
+    public TournamentFightStatisticsDTO estimateByMembers(TournamentDTO tournamentDTO) {
+        return converter.convert(new TournamentFightStatisticsConverterRequest(provider.estimateByMembers(tournamentConverter.reverse(tournamentDTO))));
     }
 
-    public FightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
+    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
         return estimate(tournamentDTO, tournamentDTO.getTeamSize(), teams);
     }
 
-    public FightStatisticsDTO estimateByRoles(TournamentDTO tournamentDTO, Collection<RoleDTO> roles) {
+    public TournamentFightStatisticsDTO estimateByRoles(TournamentDTO tournamentDTO, Collection<RoleDTO> roles) {
         return estimate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).collect(Collectors.toList())));
     }
 
-    public FightStatisticsDTO estimate(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
+    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
         if (tournamentDTO == null || teams == null || teams.size() < 2) {
             return null;
         }
@@ -102,13 +102,13 @@ public class FightStatisticsController extends BasicInsertableController<FightSt
         }
     }
 
-    private FightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateLeagueStatistics(teamSize,
+    private TournamentFightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
+        return converter.convert(new TournamentFightStatisticsConverterRequest(provider.estimateLeagueStatistics(teamSize,
                 teamConverter.reverseAll(teams))));
     }
 
-    private FightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO),
+    private TournamentFightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
+        return converter.convert(new TournamentFightStatisticsConverterRequest(provider.estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO),
                 teamSize, teamConverter.reverseAll(teams))));
     }
 

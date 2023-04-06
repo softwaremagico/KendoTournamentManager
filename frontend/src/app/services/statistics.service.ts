@@ -7,7 +7,7 @@ import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
-import {FightStatistics} from "../models/fight-statistics.model";
+import {TournamentFightStatistics} from "../models/fight-statistics.model";
 import {TournamentStatistics} from "../models/tournament-statistics.model";
 
 @Injectable({
@@ -22,7 +22,7 @@ export class StatisticsService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  getFightStatistics(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<FightStatistics> {
+  getFightStatistics(tournamentId: number, calculateByMembers: boolean, calculateByTeams: boolean): Observable<TournamentFightStatistics> {
     let url: string = `${this.baseUrl}/tournament/${tournamentId}/fights`;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -36,14 +36,14 @@ export class StatisticsService {
         }
       })
     };
-    return this.http.get<FightStatistics>(url, httpOptions)
+    return this.http.get<TournamentFightStatistics>(url, httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched statistics from tournament id=${tournamentId}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.logOnlyError<FightStatistics>(`get id=${tournamentId}`))
+        catchError(this.messageService.logOnlyError<TournamentFightStatistics>(`get id=${tournamentId}`))
       );
   }
 

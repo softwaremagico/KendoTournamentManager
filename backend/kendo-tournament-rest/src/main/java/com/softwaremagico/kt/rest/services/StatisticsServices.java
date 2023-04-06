@@ -27,7 +27,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
-import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentStatisticsDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
@@ -64,11 +64,11 @@ public class StatisticsServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}/fights", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+    public TournamentFightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
-                                                          @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
-                                                          @RequestParam(name = "calculateByMembers") Optional<Boolean> checkByMembers,
-                                                          HttpServletRequest request) {
+                                                                    @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
+                                                                    @RequestParam(name = "calculateByMembers") Optional<Boolean> checkByMembers,
+                                                                    HttpServletRequest request) {
         if (checkByMembers.isPresent() && checkByMembers.get()) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by members.");
             return fightStatisticsController.estimateByMembers(tournamentController.get(tournamentId));
