@@ -1,4 +1,4 @@
-import {TournamentFightStatistics} from "./fight-statistics.model";
+import {TournamentFightStatistics} from "./tournament-fight-statistics.model";
 import {Element} from "./element";
 import {RoleType} from "./role-type";
 

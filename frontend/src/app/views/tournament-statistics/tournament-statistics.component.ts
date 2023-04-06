@@ -24,6 +24,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {LineChartComponent} from "../../components/charts/line-chart/line-chart.component";
 import {StackedBarsChartComponent} from "../../components/charts/stacked-bars-chart/stacked-bars-chart.component";
 import {truncate} from "../../utils/maths/truncate";
+import {convertDate, convertSeconds} from "../../utils/dates/date-conversor";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -121,14 +122,14 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     if (tournamentId) {
       this.statisticsService.getPreviousTournamentStatistics(tournamentId!, 5)
         .subscribe((tournamentStatistics: TournamentStatistics[]) => {
-        if (tournamentStatistics) {
-          for (let tournamentStatistic of tournamentStatistics) {
-            if (tournamentStatistic && tournamentStatistic.tournamentId != tournamentId) {
-              this.generateStackedStatistics(TournamentStatistics.clone(tournamentStatistic));
+          if (tournamentStatistics) {
+            for (let tournamentStatistic of tournamentStatistics) {
+              if (tournamentStatistic && tournamentStatistic.tournamentId != tournamentId) {
+                this.generateStackedStatistics(TournamentStatistics.clone(tournamentStatistic));
+              }
             }
           }
-        }
-      });
+        });
     }
   }
 
@@ -302,21 +303,11 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   convertSeconds(seconds: number | undefined): string {
-    if (seconds) {
-      const minutes = Math.floor(seconds / 60);
-      if (minutes > 0) {
-        return minutes + "m " + seconds % 60 + "s";
-      }
-      return seconds + "s";
-    }
-    return "";
+    return convertSeconds(seconds);
   }
 
   convertDate(date: Date | undefined): string | null {
-    if (date) {
-      return this.pipe.transform(date, 'short');
-    }
-    return "";
+    return convertDate(this.pipe, date);
   }
 
   numberOfParticipantsByRole(roleType: RoleType): number {
