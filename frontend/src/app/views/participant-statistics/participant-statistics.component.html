@@ -34,6 +34,10 @@
               <td class="single">{{'tournaments' | translate}}
                 : {{participantStatistics?.tournaments}}</td>
             </tr>
+            <tr>
+              <td class="single">{{'duels' | translate}}
+                : {{participantStatistics?.participantFightStatistics?.duelsNumber}}</td>
+            </tr>
           </table>
         </div>
 
@@ -48,8 +52,16 @@
               <td>{{convertDate(participantStatistics?.participantCreatedAt)}}</td>
             </tr>
             <tr>
-              <td>{{'fightsAverage' | translate}}:</td>
+              <td>{{'duelsAverage' | translate}}:</td>
               <td>{{convertSeconds(participantStatistics?.participantFightStatistics?.averageTime)}}</td>
+            </tr>
+            <tr>
+              <td>{{'quickestHit' | translate}}:</td>
+              <td>{{convertSeconds(participantStatistics?.participantFightStatistics?.quickestHit)}}</td>
+            </tr>
+            <tr>
+              <td>{{'quickestReceivedHit' | translate}}:</td>
+              <td>{{convertSeconds(participantStatistics?.participantFightStatistics?.quickestReceivedHit)}}</td>
             </tr>
           </table>
         </div>
@@ -63,6 +75,26 @@
             <tr>
               <td>{{'men' | translate}}:</td>
               <td>{{participantStatistics?.participantFightStatistics?.menNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'kote' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.koteNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'do' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.doNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'tsuki' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.tsukiNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'hansoku' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.hansokuNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'ippon' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.ipponNumber}}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
@@ -87,6 +119,26 @@
               <td>{{'men' | translate}}:</td>
               <td>{{participantStatistics?.participantFightStatistics?.receivedMenNumber}}</td>
             </tr>
+            <tr>
+              <td>{{'kote' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.receivedKoteNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'do' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.receivedDoNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'tsuki' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.receivedTsukiNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'hansoku' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.receivedHansokuNumber}}</td>
+            </tr>
+            <tr>
+              <td>{{'ippon' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.receivedIpponNumber}}</td>
+            </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon class="flip">flag</mat-icon>
@@ -103,7 +155,7 @@
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
                        [title]="'participantHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
-        <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="hitsTypeChartData"
+        <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
       </div>

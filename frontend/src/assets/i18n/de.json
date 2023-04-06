@@ -200,7 +200,8 @@
   "TopTenCompetitorNumber": "Klassifikation",
   "teamsRanking": "Klassifikation Team",
   "hits": "Punkte",
-  "fights": "Kämpfe",
+  "fights": "Wettspiel",
+  "duels": "Kämpfe",
   "team": "Team",
   "swapTeams": "Auswahl Teams umkehren",
   "swapColors": "Farben umkehren",
@@ -603,7 +604,14 @@
   "progress": "Fortschritt",
   "minutes": "Minuten",
   "participantsByTournament": "Teilnehmer nach Turnier",
-  "tournamentActiveTime": "Aktive zeit"
+  "tournamentActiveTime": "Aktive zeit",
+  "receivedFaults": "Fehler erhalten",
+  "participantHitsStatistics": "Trefferstatistik",
+  "participantReceivedHitsStatistics": "Streiks erhielten Statistiken",
+  "receivedHits": "Treffer Erhalten",
+  "duelsAverage": "Medienkämpfe",
+  "quickestHit": "Schneller Schlag",
+  "quickestReceivedHit": "Schneller Getroffen"
 }
 
 

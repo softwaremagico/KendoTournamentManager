@@ -205,6 +205,7 @@
   "teamsRanking": "Classificació per equips",
   "hits": "Punts",
   "fights": "Partits",
+  "duels": "Combats",
   "team": "Equip",
   "swapTeams": "Invertir equips",
   "swapColors": "Invertir colors",
@@ -617,7 +618,14 @@
   "progress": "Progrés",
   "minutes": "Minuts",
   "participantsByTournament": "Participants per Torneig",
-  "tournamentActiveTime": "Temps en actiu"
+  "tournamentActiveTime": "Temps en actiu",
+  "receivedFaults": "Faltes Rebudes",
+  "participantHitsStatistics": "Estadístiques de Cops",
+  "participantReceivedHitsStatistics": "Estadístiques de Cops Rebuts",
+  "receivedHits": "Punts Rebuts",
+  "duelsAverage": "Mitjana de Combats",
+  "quickestHit": "Punt més Ràpid",
+  "quickestReceivedHit": "Punt Rebut més Ràpid"
 }
 
 

@@ -199,6 +199,7 @@
   "teamsRanking": "Clasificación por equipos",
   "hits": "Puntos",
   "fights": "Partidos",
+  "duels": "Combates",
   "team": "Equipo",
   "swapTeams": "Invertir Equipos",
   "swapColors": "Invertir Colores",
@@ -622,7 +623,14 @@
   "progress": "Progreso",
   "minutes": "Minutos",
   "participantsByTournament": "Participantes por torneo",
-  "tournamentActiveTime": "Tiempo en activo"
+  "tournamentActiveTime": "Tiempo en activo",
+  "receivedFaults": "Faltas Recibidas",
+  "participantHitsStatistics": "Estadísticas de Golpes Recibidos",
+  "participantReceivedHitsStatistics": "Estadísticas de Golpes Recibidos",
+  "receivedHits": "Puntos Recibidos",
+  "duelsAverage": "Media de Combates",
+  "quickestHit": "Punto más Rápido",
+  "quickestReceivedHit": "Punto Recibido más Rápido"
 }
 
 
