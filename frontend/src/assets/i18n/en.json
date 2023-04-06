@@ -630,6 +630,10 @@
   "progress": "Progress",
   "minutes": "Minutes",
   "participantsByTournament": "Participants by Tournament",
-  "tournamentActiveTime": "Tournament active time"
+  "tournamentActiveTime": "Tournament active time",
+  "receivedFaults": "",
+  "participantHitsStatistics": "",
+  "participantReceivedHitsStatistics": "",
+  "receivedHits": ""
 }
 
