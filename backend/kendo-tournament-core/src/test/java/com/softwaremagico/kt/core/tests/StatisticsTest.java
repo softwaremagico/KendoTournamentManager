@@ -292,6 +292,8 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getQuickestHit(), 3L);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getQuickestReceivedHit(), 6L);
 
+        Assert.assertEquals(participantStatisticsDTO.getTotalTournaments(), 1L);
+
         Assert.assertEquals(participantStatisticsDTO.getTournaments(), 1);
 
     }

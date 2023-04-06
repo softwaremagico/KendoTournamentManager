@@ -611,7 +611,12 @@
   "receivedHits": "Treffers Ontvangen",
   "duelsAverage": "Media-gevechten",
   "quickestHit": "Snellere Stoot",
-  "quickestReceivedHit": "Hit Sneller Genomen"
+  "quickestReceivedHit": "Hit Sneller Genomen",
+  "performance": "Prestatie",
+  "attack": "Hartinfarct",
+  "defense": "Verdedigen",
+  "willpower": "Wilskracht",
+  "aggressiveness": "Agressiviteit"
 }
 
 
