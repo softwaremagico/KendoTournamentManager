@@ -67,12 +67,14 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
         if ((tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED ||
                 tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
             final long competitors = roleProvider.count(tournament, RoleType.COMPETITOR);
-            for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
-                final Team team = new Team();
-                team.setName(String.format("Team %d", i));
-                team.setTournament(tournament);
-                team.setCreatedBy(createdBy);
-                newTeams.add(team);
+            if (tournament.getTeamSize() > 0) {
+                for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
+                    final Team team = new Team();
+                    team.setName(String.format("Team %d", i));
+                    team.setTournament(tournament);
+                    team.setCreatedBy(createdBy);
+                    newTeams.add(team);
+                }
             }
         }
         return new ArrayList<>(saveAll(newTeams));
