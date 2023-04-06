@@ -630,7 +630,12 @@
   "receivedHits": "Puntos Recibidos",
   "duelsAverage": "Media de Combates",
   "quickestHit": "Punto más Rápido",
-  "quickestReceivedHit": "Punto Recibido más Rápido"
+  "quickestReceivedHit": "Punto Recibido más Rápido",
+  "performance": "Rendimiento",
+  "attack": "Ataque",
+  "defense": "Defensa",
+  "willpower": "Fuerza de Voluntad",
+  "aggressiveness": "Agresividad"
 }
 
 

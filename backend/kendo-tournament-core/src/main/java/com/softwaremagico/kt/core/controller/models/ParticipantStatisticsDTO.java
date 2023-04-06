@@ -42,6 +42,8 @@ public class ParticipantStatisticsDTO extends ElementDTO {
 
     private int tournaments;
 
+    private long totalTournaments;
+
     private Map<RoleType, Long> rolesPerformed = new HashMap<>();
 
     public ParticipantFightStatisticsDTO getParticipantFightStatistics() {
@@ -74,6 +76,14 @@ public class ParticipantStatisticsDTO extends ElementDTO {
 
     public void setTournaments(int tournaments) {
         this.tournaments = tournaments;
+    }
+
+    public long getTotalTournaments() {
+        return totalTournaments;
+    }
+
+    public void setTotalTournaments(long totalTournaments) {
+        this.totalTournaments = totalTournaments;
     }
 
     public Map<RoleType, Long> getRolesPerformed() {

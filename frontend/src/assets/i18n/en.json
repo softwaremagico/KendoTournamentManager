@@ -638,6 +638,11 @@
   "receivedHits": "Received Hits",
   "duelsAverage": "Fights Average",
   "quickestHit": "Quickest Score",
-  "quickestReceivedHit": "Quickest Received Score"
+  "quickestReceivedHit": "Quickest Received Score",
+  "performance": "Performance",
+  "attack": "Attack",
+  "defense": "Defense",
+  "willpower": "Willpower",
+  "aggressiveness": "Aggressiveness"
 }
 

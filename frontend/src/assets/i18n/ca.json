@@ -625,7 +625,12 @@
   "receivedHits": "Punts Rebuts",
   "duelsAverage": "Mitjana de Combats",
   "quickestHit": "Punt més Ràpid",
-  "quickestReceivedHit": "Punt Rebut més Ràpid"
+  "quickestReceivedHit": "Punt Rebut més Ràpid",
+  "performance": "Rendiment",
+  "attack": "Atac",
+  "defense": "Defensa",
+  "willpower": "Força de Voluntat",
+  "aggressiveness": "Agressivitat"
 }
 
 

@@ -158,6 +158,7 @@
         <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
+        <app-gauge-chart *ngIf="!!performanceRadialData" [data]="performanceRadialData" [title]="'performance' | translate" [width]="400"></app-gauge-chart>
       </div>
     </div>
   </div>
