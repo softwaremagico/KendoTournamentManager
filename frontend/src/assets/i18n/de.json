@@ -611,7 +611,12 @@
   "receivedHits": "Treffer Erhalten",
   "duelsAverage": "Medienkämpfe",
   "quickestHit": "Schneller Schlag",
-  "quickestReceivedHit": "Schneller Getroffen"
+  "quickestReceivedHit": "Schneller Getroffen",
+  "performance": "Leistung",
+  "attack": "Schlaganfall",
+  "defense": "Verteidigen",
+  "willpower": "Willenskraft",
+  "aggressiveness": "Aggressivität"
 }
 
 

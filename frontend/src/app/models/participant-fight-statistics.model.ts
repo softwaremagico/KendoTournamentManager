@@ -58,4 +58,13 @@ export class ParticipantFightStatistics extends Element {
     }
     return undefined;
   }
+
+
+  public getTotalHits(): number {
+    return this.menNumber + this.koteNumber + this.doNumber + this.tsukiNumber + this.ipponNumber + this.hansokuNumber;
+  }
+
+  public getTotalReceivedHits(): number {
+    return this.receivedMenNumber + this.receivedKoteNumber + this.receivedDoNumber + this.receivedTsukiNumber + this.receivedIpponNumber + this.receivedHansokuNumber;
+  }
 }

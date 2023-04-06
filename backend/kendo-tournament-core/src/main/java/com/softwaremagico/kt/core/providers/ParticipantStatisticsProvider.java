@@ -38,11 +38,14 @@ public class ParticipantStatisticsProvider extends CrudProvider<ParticipantStati
 
     private final RoleProvider roleProvider;
 
+    private final TournamentProvider tournamentProvider;
+
     protected ParticipantStatisticsProvider(ParticipantStatisticsRepository repository, ParticipantFightStatisticsProvider fightStatisticsProvider,
-                                            RoleProvider roleProvider) {
+                                            RoleProvider roleProvider, TournamentProvider tournamentProvider) {
         super(repository);
         this.fightStatisticsProvider = fightStatisticsProvider;
         this.roleProvider = roleProvider;
+        this.tournamentProvider = tournamentProvider;
     }
 
     public ParticipantStatistics get(Participant participant) {
@@ -54,6 +57,7 @@ public class ParticipantStatisticsProvider extends CrudProvider<ParticipantStati
             participantStatistics.addRolePerformed(roleType, roleProvider.count(participant, roleType));
         }
         participantStatistics.setTournaments((int) participantStatistics.getRolesPerformed().values().stream().mapToDouble(d -> d).sum());
+        participantStatistics.setTotalTournaments(tournamentProvider.countTournamentsAfter(participant.getCreatedAt()));
         participantStatistics.setParticipantCreatedAt(participant.getCreatedAt());
         return participantStatistics;
     }

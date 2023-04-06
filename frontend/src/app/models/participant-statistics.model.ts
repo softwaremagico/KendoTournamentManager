@@ -14,6 +14,8 @@ export class ParticipantStatistics extends Element {
 
   public tournaments: number;
 
+  public totalTournaments: number;
+
   public rolesPerformed: Map<RoleType, number>;
 
   public static override copy(source: ParticipantStatistics, target: ParticipantStatistics): void {
@@ -27,6 +29,7 @@ export class ParticipantStatistics extends Element {
     target.participantId = source.participantId;
     target.participantName = source.participantName;
     target.tournaments = source.tournaments;
+    target.totalTournaments = source.totalTournaments;
     target.participantCreatedAt = source.participantCreatedAt;
     target.rolesPerformed = new Map();
     Object.keys(source.rolesPerformed).forEach(key => target.rolesPerformed.set((key as RoleType), (source.rolesPerformed as any)[key]));
