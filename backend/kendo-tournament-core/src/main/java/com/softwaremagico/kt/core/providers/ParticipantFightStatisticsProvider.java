@@ -58,17 +58,43 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         final List<Duel> duels = duelProvider.get(participant);
         long totalDuration = 0L;
         long totalDuelsWithDuration = 0L;
+        long quickestHit = Integer.MAX_VALUE;
+        long quickestReceivedHit = Integer.MAX_VALUE;
         for (final Duel duel : duels) {
             if (Objects.equals(duel.getCompetitor1(), participant)) {
                 populateScores(participantFightStatistics, duel.getCompetitor1Score());
                 populateReceivedScores(participantFightStatistics, duel.getCompetitor2Score());
-                participantFightStatistics.setFaults(participantFightStatistics.getFaults() + (duel.getCompetitor1Fault() ? 1 : 0));
-                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults() + (duel.getCompetitor2Fault() ? 1 : 0));
+                participantFightStatistics.setFaults(participantFightStatistics.getFaults() +
+                        (duel.getCompetitor1Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
+                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults() +
+                        (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
+                for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
+                    if (scoreTime < quickestHit) {
+                        quickestHit = scoreTime;
+                    }
+                }
+                for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
+                    if (scoreTime < quickestReceivedHit) {
+                        quickestReceivedHit = scoreTime;
+                    }
+                }
             } else if (Objects.equals(duel.getCompetitor2(), participant)) {
                 populateScores(participantFightStatistics, duel.getCompetitor2Score());
                 populateReceivedScores(participantFightStatistics, duel.getCompetitor1Score());
-                participantFightStatistics.setFaults(participantFightStatistics.getFaults() + (duel.getCompetitor2Fault() ? 1 : 0));
-                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults() + (duel.getCompetitor1Fault() ? 1 : 0));
+                participantFightStatistics.setFaults(participantFightStatistics.getFaults() +
+                        (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
+                participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults() +
+                        (duel.getCompetitor2Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
+                for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
+                    if (scoreTime < quickestHit) {
+                        quickestHit = scoreTime;
+                    }
+                }
+                for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
+                    if (scoreTime < quickestReceivedHit) {
+                        quickestReceivedHit = scoreTime;
+                    }
+                }
             }
             totalDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? duel.getDuration() : 0;
             totalDuelsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
@@ -77,6 +103,12 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
             participantFightStatistics.setAverageTime(totalDuration / totalDuelsWithDuration);
         } else {
             participantFightStatistics.setAverageTime(0L);
+        }
+        if (quickestHit < Integer.MAX_VALUE) {
+            participantFightStatistics.setQuickestHit(quickestHit);
+        }
+        if (quickestReceivedHit < Integer.MAX_VALUE) {
+            participantFightStatistics.setQuickestReceivedHit(quickestReceivedHit);
         }
         participantFightStatistics.setTotalDuelsTime(totalDuration);
         participantFightStatistics.setDuelsNumber((long) duels.size());

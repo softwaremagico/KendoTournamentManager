@@ -476,6 +476,7 @@
   "hits": "Score",
   "fights": "Matches",
   "team": "Team",
+  "duels": "Fights",
   "download": "Download",
   "competitor": "Competitor",
   "competitorsRanking": "Ranking by competitors",
@@ -630,10 +631,13 @@
   "progress": "Progress",
   "minutes": "Minutes",
   "participantsByTournament": "Participants by Tournament",
-  "tournamentActiveTime": "Tournament active time",
-  "receivedFaults": "",
-  "participantHitsStatistics": "",
-  "participantReceivedHitsStatistics": "",
-  "receivedHits": ""
+  "tournamentActiveTime": "Tournament active Time",
+  "receivedFaults": "Received Faults",
+  "participantHitsStatistics": "Hits Statistics",
+  "participantReceivedHitsStatistics": "Received Hits Statistics",
+  "receivedHits": "Received Hits",
+  "duelsAverage": "Fights Average",
+  "quickestHit": "Quickest Score",
+  "quickestReceivedHit": "Quickest Received Score"
 }
 
