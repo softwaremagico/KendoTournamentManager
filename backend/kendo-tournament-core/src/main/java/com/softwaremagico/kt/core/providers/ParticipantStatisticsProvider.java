@@ -54,6 +54,7 @@ public class ParticipantStatisticsProvider extends CrudProvider<ParticipantStati
             participantStatistics.addRolePerformed(roleType, roleProvider.count(participant, roleType));
         }
         participantStatistics.setTournaments((int) participantStatistics.getRolesPerformed().values().stream().mapToDouble(d -> d).sum());
+        participantStatistics.setParticipantCreatedAt(participant.getCreatedAt());
         return participantStatistics;
     }
 }

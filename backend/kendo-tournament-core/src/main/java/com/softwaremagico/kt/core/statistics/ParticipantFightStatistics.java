@@ -62,6 +62,10 @@ public class ParticipantFightStatistics {
 
     private Long receivedFaults;
 
+    private Long quickestHit;
+
+    private Long quickestReceivedHit;
+
 
     public Long getDuelsNumber() {
         return Objects.requireNonNullElse(duelsNumber, 0L);
@@ -202,5 +206,21 @@ public class ParticipantFightStatistics {
 
     public void setTotalDuelsTime(Long totalDuelsTime) {
         this.totalDuelsTime = totalDuelsTime;
+    }
+
+    public Long getQuickestHit() {
+        return quickestHit;
+    }
+
+    public void setQuickestHit(Long quickestHit) {
+        this.quickestHit = quickestHit;
+    }
+
+    public Long getQuickestReceivedHit() {
+        return quickestReceivedHit;
+    }
+
+    public void setQuickestReceivedHit(Long quickestReceivedHit) {
+        this.quickestReceivedHit = quickestReceivedHit;
     }
 }

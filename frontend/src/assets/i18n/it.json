@@ -160,9 +160,9 @@
   "fault": "Fallo",
   "DrawGame": "Si ha un pareggio!",
   "fightsWon": "Incontri vinti",
-  "fightsWon": "Incontri pari",
-  "duelsWon": "Duelli vinti",
-  "duelsDraw": "Duelli pari",
+  "fightsDraw": "Incontri pari",
+  "duelsWon": "Combatti vinti",
+  "duelsDraw": "Combatti pari",
   "histsWon": "Punti realizzati",
   "all": "Tutti",
   "PerformedHitStatistics": "Colpi dati",
@@ -203,6 +203,7 @@
   "teamsRanking": "Classificazione per squadra",
   "hits": "Punti",
   "fights": "Incontri",
+  "duels": "Combatti",
   "team": "Squadra",
   "swapTeams": "Invertire squadre",
   "swapColors": "Invertire colori",
@@ -608,9 +609,16 @@
   "faults": "Falli",
   "progress": "Progresso",
   "minutes": "Minuti",
-  "participantsByTournament": "Partecipanti per torneo",
-  "tournamentActiveTime": "Tempo attivo"
-,
+  "participantsByTournament": "Partecipanti per Torneo",
+  "tournamentActiveTime": "Tempo Attivo",
+  "receivedFaults": "Falli Ricevuti",
+  "participantHitsStatistics": "Statistiche sui Colpi",
+  "participantReceivedHitsStatistics": "Statistiche sugli Colpi Ricevut",
+  "receivedHits": "Punti Ricevuti",
+  "duelsAverage": "Media dei Combattimenti",
+  "quickestHit": "Punto più Veloce",
+  "quickestReceivedHit": "Punto Ricevuto più veloce"
+
 }
 
 

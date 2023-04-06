@@ -95,7 +95,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
       scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.receivedTsukiNumber ? participantStatistics.participantFightStatistics.receivedTsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.receivedipponNumber ? participantStatistics.participantFightStatistics.receivedipponNumber : 0]);
+      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.receivedIpponNumber ? participantStatistics.participantFightStatistics.receivedIpponNumber : 0]);
     }
     return scores;
   }
