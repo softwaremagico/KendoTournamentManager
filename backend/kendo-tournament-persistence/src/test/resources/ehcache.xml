@@ -11,18 +11,6 @@
             timeToLiveSeconds="120"
             overflowToDisk="false"
             diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU" />
-
-    <cache
-            name="duelsDurationAverage"
-            maxElementsInMemory="50"
-            eternal="false"
-            overflowToDisk="false"
-            timeToIdleSeconds="300"
-            timeToLiveSeconds="600"
-            diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="1"
-            memoryStoreEvictionPolicy="LFU" />
 
 </ehcache>

@@ -57,7 +57,7 @@
 
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jcache</artifactId>
+            <artifactId>hibernate-ehcache</artifactId>
         </dependency>
 
         <dependency>
