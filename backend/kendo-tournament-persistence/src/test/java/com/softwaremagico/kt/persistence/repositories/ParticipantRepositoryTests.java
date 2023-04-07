@@ -33,7 +33,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -56,11 +55,6 @@ public class ParticipantRepositoryTests extends AbstractTestNGSpringContextTests
 
     @BeforeClass
     public void createDefaultStructure() {
-
-    }
-
-    @AfterClass
-    public void clearData() {
 
     }
 
