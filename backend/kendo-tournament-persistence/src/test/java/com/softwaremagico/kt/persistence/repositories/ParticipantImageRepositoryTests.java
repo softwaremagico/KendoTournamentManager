@@ -77,11 +77,6 @@ public class ParticipantImageRepositoryTests extends AbstractTestNGSpringContext
         participant = participantRepository.save(participant);
     }
 
-    @AfterClass
-    public void clearData() {
-        participantRepository.delete(participant);
-    }
-
     @Test
     public void addUserImage() throws Exception {
         ParticipantImage participantImage = userImageFactory.createUserImage(IMAGE_RESOURCE, participant);
@@ -92,6 +87,11 @@ public class ParticipantImageRepositoryTests extends AbstractTestNGSpringContext
         Assert.assertTrue(Arrays.equals(storedImage.getData(), Files.readAllBytes(Paths.get(getClass().getClassLoader()
                 .getResource(IMAGE_RESOURCE).toURI()))));
         photoRepository.delete(participantImage);
+    }
+
+    @AfterClass
+    public void clearData() {
+        participantRepository.delete(participant);
     }
 
 }
