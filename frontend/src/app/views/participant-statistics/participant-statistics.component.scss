@@ -81,5 +81,39 @@
   transform: scaleX(-1);
 }
 
+.ranking {
+  text-align: center;
+  padding: 15px;
+}
 
+.ranking-very-good {
+  color: #011d4a;
+}
+
+.ranking-good {
+  color: #012354;
+}
+
+.ranking-normal {
+  color: #000000;
+}
+
+.ranking-bad {
+  color: #ff4a4a;
+}
+
+.ranking-very-bad {
+  color: #ff2525;
+}
+
+.your-ranking {
+  font-size: 500%;
+  padding-top: 55px;
+  font-weight: bold;
+}
+
+.total-ranking {
+  font-weight: bold;
+  font-size: 250%;
+}
 
