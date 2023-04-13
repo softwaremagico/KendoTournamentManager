@@ -43,6 +43,8 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     List<Role> findByTournamentAndRoleType(Tournament tournament, RoleType roleType);
 
+    List<Role> findByRoleType(RoleType roleType);
+
     List<Role> findByTournamentAndRoleTypeIn(Tournament tournament, Collection<RoleType> roleTypes);
 
     List<Role> findByTournamentAndDiplomaPrintedAndRoleTypeIn(Tournament tournament, boolean diplomaPrinted, Collection<RoleType> roleTypes);
