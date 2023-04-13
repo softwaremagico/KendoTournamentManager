@@ -51,6 +51,9 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u WHERE u.competitor1 IN :participants OR u.competitor2 IN :participants")
     List<Duel> findUntiesByParticipantIn(@Param("participants") Collection<Participant> participants);
 
+    @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u")
+    List<Duel> findAllUnties();
+
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
 

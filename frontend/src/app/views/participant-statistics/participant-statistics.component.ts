@@ -14,6 +14,8 @@ import {Score} from "../../models/score";
 import {TranslateService} from "@ngx-translate/core";
 import {truncate} from "../../utils/maths/truncate";
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
+import {RankingService} from "../../services/ranking.service";
+import {CompetitorRanking} from "../../models/competitor-ranking";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -27,6 +29,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   private readonly participantId: number | undefined;
   public participantStatistics: ParticipantStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
+  public competitorRanking: CompetitorRanking;
 
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
@@ -34,7 +37,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService, private rankingService: RankingService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -69,8 +72,11 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   generateStatistics(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.statisticsService.getParticipantStatistics(this.participantId!).subscribe((participantStatistics: ParticipantStatistics) => {
-      this.participantStatistics = ParticipantStatistics.clone(participantStatistics);
+    this.rankingService.getCompetitorsRanking(this.participantId!).subscribe((_competitorRanking: CompetitorRanking) => {
+      this.competitorRanking = _competitorRanking;
+    })
+    this.statisticsService.getParticipantStatistics(this.participantId!).subscribe((_participantStatistics: ParticipantStatistics) => {
+      this.participantStatistics = ParticipantStatistics.clone(_participantStatistics);
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
     });

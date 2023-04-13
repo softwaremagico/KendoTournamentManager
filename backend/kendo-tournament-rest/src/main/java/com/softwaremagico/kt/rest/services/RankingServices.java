@@ -24,10 +24,12 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.html.controller.HtmlController;
@@ -60,15 +62,18 @@ public class RankingServices {
 
     private final TournamentController tournamentController;
 
+    private final ParticipantController participantController;
+
     private final PdfController pdfController;
 
     private final HtmlController htmlController;
 
     public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
-                           HtmlController htmlController) {
+                           ParticipantController participantController, HtmlController htmlController) {
         this.rankingController = rankingController;
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
+        this.participantController = participantController;
         this.htmlController = htmlController;
     }
 
@@ -93,8 +98,15 @@ public class RankingServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitor> getCompetitorsScoreRankingTournament(@RequestBody Set<ParticipantDTO> participants, HttpServletRequest request) {
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(@RequestBody Set<ParticipantDTO> participants, HttpServletRequest request) {
         return rankingController.getCompetitorsGlobalScoreRanking(participants);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets participant global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitors/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompetitorRanking getCompetitorsRanking(@PathVariable("competitorId") Integer competitorId, HttpServletRequest request) {
+        return rankingController.getCompetitorRanking(participantController.get(competitorId));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
