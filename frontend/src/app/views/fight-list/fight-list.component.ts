@@ -151,32 +151,41 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         this.isWizardEnabled = tournament.type != TournamentType.CUSTOMIZED;
         if (this.tournamentId) {
           this.groupService.getAllByTournament(this.tournamentId).subscribe(groups => {
-            this.groups = groups;
-            this.groups.sort((a, b) => {
-              if (a.level === b.level) {
-                return a.index - b.index;
-              }
-              return a.level - b.level;
-            });
-            this.fights = groups.flatMap((group) => group.fights);
-            for (let fight of this.fights) {
-              for (let duel of fight.duels) {
-                if (duel.competitor1!.hasAvatar || duel.competitor2!.hasAvatar) {
-                  this.showAvatars = true;
-                }
-              }
+            if (!groups) {
+              +++
+            } else {
+              this.setGroups(groups);
             }
-            this.resetFilter();
-            //Use a timeout or refresh before the components are drawn.
-            setTimeout(() => {
-              if (!this.selectFirstUnfinishedDuel() && this.unties.length === 0) {
-                this.showTeamsClassification(true);
-              }
-            }, 1000);
           });
         }
       });
     }
+  }
+
+  private setGroups(groups: Group[]) {
+    groups.sort((a, b) => {
+      if (a.level === b.level) {
+        return a.index - b.index;
+      }
+      return a.level - b.level;
+    });
+    this.fights = groups.flatMap((group) => group.fights);
+    for (let fight of this.fights) {
+      for (let duel of fight.duels) {
+        if (duel.competitor1!.hasAvatar || duel.competitor2!.hasAvatar) {
+          this.showAvatars = true;
+        }
+      }
+    }
+    this.groups = groups;
+
+    this.resetFilter();
+    //Use a timeout or refresh before the components are drawn.
+    setTimeout(() => {
+      if (!this.selectFirstUnfinishedDuel() && this.unties.length === 0) {
+        this.showTeamsClassification(true);
+      }
+    }, 1000);
   }
 
   private refreshUnties() {
@@ -251,11 +260,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
+    // if (!this.groups[this.selectedGroup]) {
+    //   this.groupService.add
+    // }
     const group: Group = this.groups[this.selectedGroup];
     const fight: Fight = new Fight();
-    fight.tournament = group.tournament;
+    fight.tournament = this.tournament;
     fight.shiaijo = 0;
-    fight.level = group.level;
+    if (group) {
+      fight.level = group.level;
+    } else {
+      fight.level = 0;
+    }
     fight.duels = [];
     this.openAddFightDialog('Add a new Fight', Action.Add, fight, group, this.selectedFight);
   }
