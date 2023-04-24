@@ -39,8 +39,8 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 })
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
-  filteredFights: Map<Group, Fight[]>;
-  filteredUnties: Map<Group, Duel[]>;
+  filteredFights: Map<number, Fight[]>;
+  filteredUnties: Map<number, Duel[]>;
 
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
@@ -72,8 +72,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     super(rbacService);
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
-    this.filteredFights = new Map<Group, Fight[]>();
-    this.filteredUnties = new Map<Group, Duel[]>();
+    this.filteredFights = new Map<number, Fight[]>();
+    this.filteredUnties = new Map<number, Duel[]>();
     this.groups = [];
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -156,7 +156,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       //this.fights = this.groups.flatMap((group) => group.fights);
       this.resetFilter();
       if (this.selectedGroup && this.selectedFight && selectedFightIndex) {
-        this.selectFight(this.filteredFights.get(this.selectedGroup)![selectedFightIndex]);
+        this.selectFight(this.filteredFights.get(this.selectedGroup.id!)![selectedFightIndex]);
       } else {
         this.selectFight(undefined);
       }
@@ -359,7 +359,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId) {
       this.groupService.setTeams(teams).subscribe(_group => {
         this.selectedGroup = _group;
-        this.filteredFights = new Map<Group, Fight[]>();
         if (this.tournamentId) {
           this.fightService.create(this.tournamentId, 0).subscribe(fights => {
             this.resetFilter();
@@ -381,7 +380,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
         this.selectedGroup!.fights = this.selectedGroup!.fights.filter(existing_fight => existing_fight !== fight);
-        this.filteredFights.set(this.selectedGroup!, this.filteredFights.get(this.selectedGroup!)!.filter(existing_fight => existing_fight !== fight));
+        this.filteredFights.set(this.selectedGroup!.id!, this.filteredFights.get(this.selectedGroup!.id!)!.filter(existing_fight => existing_fight !== fight));
         this.messageService.infoMessage("fightDeleted");
       }
     );
@@ -612,9 +611,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   filter(filter: string) {
     filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+    this.filteredFights = new Map<number, Fight[]>();
+    this.filteredUnties = new Map<number, Duel[]>();
+
     for (const group of this.groups) {
       if (group.fights) {
-        this.filteredFights.set(group, group.fights.filter(fight =>
+        this.filteredFights.set(group.id!, group.fights.filter(fight =>
           fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
           fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
           fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
@@ -624,11 +626,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
             (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "")))));
       } else {
-        this.filteredFights.set(group, []);
+        this.filteredFights.set(group.id!, []);
       }
 
       if (group.unties) {
-        this.filteredUnties.set(group, group.unties.filter(duel =>
+        this.filteredUnties.set(group.id!, group.unties.filter(duel =>
           duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
           duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
           (duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
@@ -637,7 +639,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
           duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
           (duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "")));
       } else {
-        this.filteredUnties.set(group, []);
+        this.filteredUnties.set(group.id!, []);
       }
     }
   }
