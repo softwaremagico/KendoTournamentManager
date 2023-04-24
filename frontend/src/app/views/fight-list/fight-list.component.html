@@ -102,10 +102,12 @@
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
       <div class="fight-list">
-        <fight *ngFor="let fight of filteredFights" [fight]="fight" [selected]="fight === selectedFight"
-               [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
-               (click)="selectFight(fight)" [showAvatars]="showAvatars"
-               (onSelectedDuel)="selectDuel($event[0])"></fight>
+        <div class="fight-of-group" *ngFor="let fight of filteredFights">
+          <fight [fight]="fight" [selected]="fight === selectedFight"
+                 [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
+                 (click)="selectFight(fight)" [showAvatars]="showAvatars"
+                 (onSelectedDuel)="selectDuel($event[0])"></fight>
+        </div>
       </div>
       <div class="unties-list">
         <untie-fight *ngFor="let duel of filteredUnties" [duel]="duel" (click)="selectDuel(duel)"
