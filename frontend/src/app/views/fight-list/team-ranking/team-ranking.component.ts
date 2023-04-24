@@ -9,6 +9,7 @@ import {UndrawTeamsComponent} from "../undraw-teams/undraw-teams.component";
 import {Team} from "../../../models/team";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {Group} from "../../../models/group";
 
 @Component({
   selector: 'app-team-ranking',
@@ -20,18 +21,18 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   teamScores: ScoreOfTeam[];
   tournament: Tournament;
   fightsFinished: boolean;
-  groupId: number;
+  group: Group;
 
   private destroy$: Subject<void> = new Subject<void>();
   _loading = false;
 
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, groupId: number, finished: boolean },
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, group: Group, finished: boolean },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
               rbacService: RbacService) {
     super(rbacService);
     this.tournament = data.tournament;
-    this.groupId = data.groupId;
+    this.group = data.group;
     this.fightsFinished = data.finished;
   }
 
@@ -79,7 +80,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     const teams: Team[] = this.getDrawWinners(index);
     this.dialog.open(UndrawTeamsComponent, {
       disableClose: false,
-      data: {tournament: this.tournament, groupId: this.groupId, teams: teams}
+      data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
     });
     this.closeDialog();
   }

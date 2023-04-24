@@ -71,21 +71,23 @@
           <mat-icon svgIcon="member-order-disable" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button mat-button color="primary" [disabled]="!fights || fights.length===0"
+        <button mat-button color="primary" [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" matTooltip="{{'teamsRanking' | translate}}"
                 *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType))
                  && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
                 (click)="showTeamsClassification(areAllDuelsOver())">
           <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
         </button>
-        <button class="competitors-classification" mat-button color="primary" [disabled]="!fights || fights.length===0"
+        <button class="competitors-classification" mat-button color="primary"
+                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" matTooltip="{{'competitorsRanking' | translate}}"
                 *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
                 (click)="showCompetitorsClassification()">
           <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
         </button>
         <mat-divider class="download-divider" [vertical]="true"></mat-divider>
-        <button class="download-button" mat-button color="primary" [disabled]="!fights || fights.length===0"
+        <button class="download-button" mat-button color="primary"
+                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" matTooltip="{{'fightList' | translate}}"
                 *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.activities)"
                 (click)="downloadPDF()">
@@ -101,18 +103,18 @@
                (onPlayPressed)="duelStarted($event[0])"
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
-      <div class="fight-list">
-        <div class="fight-of-group" *ngFor="let fight of filteredFights">
-          <fight [fight]="fight" [selected]="fight === selectedFight"
+      <div class="fight-list" *ngFor="let group of filteredFights.keys()">
+        <div class="fights-of-group">
+          <fight *ngFor="let fight of group.fights" [fight]="fight" [selected]="fight === selectedFight"
                  [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
                  (click)="selectFight(fight)" [showAvatars]="showAvatars"
                  (onSelectedDuel)="selectDuel($event[0])"></fight>
         </div>
-      </div>
-      <div class="unties-list">
-        <untie-fight *ngFor="let duel of filteredUnties" [duel]="duel" (click)="selectDuel(duel)"
-                     [selected]="duel === selectedDuel" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
-                     [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></untie-fight>
+        <div class="unties-list">
+          <untie-fight *ngFor="let duel of filteredUnties.get(group)" [duel]="duel" (click)="selectDuel(duel)"
+                       [selected]="duel === selectedDuel" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
+                       [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"></untie-fight>
+        </div>
       </div>
     </div>
   </div>
