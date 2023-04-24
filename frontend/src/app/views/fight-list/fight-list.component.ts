@@ -152,7 +152,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (this.tournamentId) {
           this.groupService.getAllByTournament(this.tournamentId).subscribe(groups => {
             if (!groups) {
-              +++
+              this.messageService.errorMessage('No groups on tournament!');
             } else {
               this.setGroups(groups);
             }
@@ -260,9 +260,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
-    // if (!this.groups[this.selectedGroup]) {
-    //   this.groupService.add
-    // }
     const group: Group = this.groups[this.selectedGroup];
     const fight: Fight = new Fight();
     fight.tournament = this.tournament;
@@ -334,7 +331,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (result == undefined) {
         //Do nothing
       } else if (result.action === Action.Add) {
-        //this.createGroupFight();
+        this.selectFirstUnfinishedDuel();
       } else if (result.action === Action.Update) {
         this.updateRowData(result.data);
       } else if (result.action === Action.Delete) {
