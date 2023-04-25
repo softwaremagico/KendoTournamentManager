@@ -10,7 +10,7 @@ export class Group extends Element {
   shiaijo: number;
   level: number;
   index: number;
-  fights: Fight[];
+  fights: Fight[] = [];
   numberOfWinners: number;
   unties: Duel[];
 
