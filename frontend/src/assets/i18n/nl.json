@@ -176,7 +176,7 @@
   "PassLabel": "Aantal gewonnen",
   "nextLevel": "Alle wedstrijden in de poule zijn voorbij. Wil je verder gaan met het toernooi?",
   "group": "Groep",
-  "GroupLabel": "Groep",
+  "group": "Groep",
   "ToolTipEditable": "Dubbelklik voor meer opties.",
   "ToolTipNotEditable": "Teams zullen worden toegevoegd als de wedstrijden voorbij zijn.",
   "noTeams": "Er is geen team toegevoegd aan deze groep!",
@@ -603,7 +603,8 @@
   "progress": "Voortgang",
   "minutes": "Minuten",
   "participantsByTournament": "Deelnemers per toernooi",
-  "tournamentActiveTime": "Actieve tijd"
+  "tournamentActiveTime": "Actieve tijd",
+  "errorFightNotSelected": "U moet eerst een groep selecteren!"
 }
 
 

@@ -208,6 +208,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
     }
     this.groups = groups;
+    if (groups.length > 0) {
+      this.selectedGroup = groups[0];
+    }
 
     this.resetFilter();
     //Use a timeout or refresh before the components are drawn.
@@ -275,16 +278,20 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   addElement() {
-    const fight: Fight = new Fight();
-    fight.tournament = this.tournament;
-    fight.shiaijo = 0;
-    if (this.selectedGroup) {
-      fight.level = this.selectedGroup.level;
-    } else {
-      fight.level = 0;
+    //Ensure that is selected on the typical case.
+    if (this.groups.length == 1) {
+      this.selectedGroup = this.groups[0];
     }
-    fight.duels = [];
-    this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup!, this.selectedFight);
+    if (this.selectedGroup) {
+      const fight: Fight = new Fight();
+      fight.tournament = this.tournament;
+      fight.shiaijo = 0;
+      fight.level = this.selectedGroup.level;
+      fight.duels = [];
+      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup!, this.selectedFight);
+    } else {
+      this.messageService.warningMessage('errorFightNotSelected');
+    }
   }
 
   editElement(): void {

@@ -22,10 +22,21 @@
   margin-top: 10px;
 }
 
-.fights-of-group{
-  border: red 2px solid;
+.fights-of-group {
+  border: #001239 3px solid;
   padding: 5px;
-  margin-bottom: 20px;
+  margin: 5px 5px 20px;
+}
+
+.group-name {
+  text-align: left;
+  margin-left: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.group-name-hidden {
+  visibility: hidden;
 }
 
 @media screen and (max-height: 750px) {
