@@ -71,11 +71,11 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     @Override
     public TournamentDTO create(TournamentDTO tournamentDTO, String username) {
-        final TournamentDTO createdTournamentDto = super.create(tournamentDTO, username);
+        final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username);
         final Group group = new Group();
         group.setCreatedBy(username);
-        groupProvider.addGroup(converter.reverse(createdTournamentDto), group);
-        return createdTournamentDto;
+        groupProvider.addGroup(converter.reverse(createdTournamentDTO), group);
+        return createdTournamentDTO;
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {

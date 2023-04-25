@@ -152,7 +152,7 @@
   "LostFights": "Lost matches",
   "PassLabel": "Number of winners",
   "nextLevel": "All round's matches are over. Do you want to continue in the next phase of the league?",
-  "GroupLabel": "Pool",
+  "group": "Pool",
   "ToolTipEditable": "Double click for more options.",
   "ToolTipNotEditable": "Teams will be inserted while the combats are solved.",
   "noTeams": "There is not teams inserted on this pool!",
@@ -630,6 +630,7 @@
   "progress": "Progress",
   "minutes": "Minutes",
   "participantsByTournament": "Participants by Tournament",
-  "tournamentActiveTime": "Tournament active time"
+  "tournamentActiveTime": "Tournament active time",
+  "errorFightNotSelected": "You must select a group first"
 }
 
