@@ -103,9 +103,11 @@
                (onPlayPressed)="duelStarted($event[0])"
                (timeDurationChanged)="updateDuelDuration($event[0])" (timerClosed)="showTimer(false)"></app-timer>
     <div class="fight-container">
-      <div class="fight-list" *ngFor="let group of groups">
-        <div class="fights-of-group">
-          <fight *ngFor="let fight of filteredFights.get(group.id!)" [fight]="fight" [selected]="fight === selectedFight"
+      <div class="fight-list" *ngFor="let group of groups; let i = index">
+        <h3 class="group-name" [ngClass]="{'group-name-hidden': groups.length < 2}">{{'group' | translate}} {{i + 1}}</h3>
+        <div [ngClass]="{'fights-of-group': groups.length > 1}">
+          <fight *ngFor="let fight of filteredFights.get(group.id!)" [fight]="fight"
+                 [selected]="fight === selectedFight"
                  [over]="isFightOver(fight)" [swapColors]="swappedColors" [swapTeams]="swappedTeams"
                  (click)="selectFight(fight)" [showAvatars]="showAvatars"
                  (onSelectedDuel)="selectDuel($event[0])"></fight>
