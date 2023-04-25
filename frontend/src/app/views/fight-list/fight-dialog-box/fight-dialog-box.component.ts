@@ -105,7 +105,7 @@ export class FightDialogBoxComponent implements OnInit {
       this.groupServices.update(this.group).subscribe(_group => {
         this.messageService.infoMessage("addFightMessage");
         this.groupUpdatedService.isGroupUpdated.next(_group);
-        this.dialogRef.close();
+        this.dialogRef.close(this.fight);
       });
     });
 
