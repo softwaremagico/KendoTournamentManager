@@ -67,15 +67,15 @@ public class FightStatisticsController extends BasicInsertableController<FightSt
      * @return some estimations.
      */
     public FightStatisticsDTO estimate(TournamentDTO tournamentDTO) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimate(tournamentConverter.reverse(tournamentDTO))));
+        return convert(provider.estimate(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public FightStatisticsDTO estimateByTeams(TournamentDTO tournamentDTO) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateByTeams(tournamentConverter.reverse(tournamentDTO))));
+        return convert(provider.estimateByTeams(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public FightStatisticsDTO estimateByMembers(TournamentDTO tournamentDTO) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateByMembers(tournamentConverter.reverse(tournamentDTO))));
+        return convert(provider.estimateByMembers(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public FightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
@@ -103,13 +103,13 @@ public class FightStatisticsController extends BasicInsertableController<FightSt
     }
 
     private FightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateLeagueStatistics(teamSize,
-                teamConverter.reverseAll(teams))));
+        return convert(provider.estimateLeagueStatistics(teamSize,
+                teamConverter.reverseAll(teams)));
     }
 
     private FightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
-        return converter.convert(new FightStatisticsConverterRequest(provider.estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO),
-                teamSize, teamConverter.reverseAll(teams))));
+        return convert(provider.estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO),
+                teamSize, teamConverter.reverseAll(teams)));
     }
 
     private int getDuels(int fightByTeam, int teamSize, Collection<TeamDTO> teams) {
