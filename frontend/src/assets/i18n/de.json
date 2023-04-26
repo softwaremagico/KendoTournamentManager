@@ -176,7 +176,7 @@
   "PassLabel": "Anzahl Gewinne",
   "nextLevel": "Alle Kämpfe der Runde sind zuende. Wollen Sie mit der nächsten Runde weitermachen?",
   "group": "Pool",
-  "GroupLabel": "Pool",
+  "group": "Pool",
   "ToolTipEditable": "Doppelklick für mehr Optionen.",
   "ToolTipNotEditable": "Die Teams werden eingesetzt, während die Kämpfe erstellt werden.",
   "noTeams": "Es sind keine Teams in diesem Pool eingefügt!",
@@ -603,7 +603,8 @@
   "progress": "Fortschritt",
   "minutes": "Minuten",
   "participantsByTournament": "Teilnehmer nach Turnier",
-  "tournamentActiveTime": "Aktive zeit"
+  "tournamentActiveTime": "Aktive zeit",
+  "errorFightNotSelected": "Sie müssen zuerst eine Gruppe auswählen!"
 }
 
 
