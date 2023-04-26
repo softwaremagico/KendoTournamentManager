@@ -94,7 +94,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DTO> add(@RequestBody Collection<DTO> dtos, Authentication authentication, HttpServletRequest request) {
         if (dtos == null || dtos.isEmpty()) {
-            throw new BadRequestException(getClass(), "Fight data is missing");
+            throw new BadRequestException(getClass(), "Data is missing");
         }
         return getController().create(dtos, authentication.getName());
     }
