@@ -43,7 +43,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class TeamController extends BasicInsertableController<Team, TeamDTO, TeamRepository,
@@ -68,11 +67,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO, String createdBy) {
-        final List<TeamDTO> teams = converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        final List<TeamDTO> teams = convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)));
         if (teams.isEmpty()) {
-            return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy).stream()
-                    .map(this::createConverterRequest).collect(Collectors.toList()));
+            return convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
         }
         return teams;
     }
@@ -80,11 +77,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     public List<TeamDTO> getAllByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        final List<TeamDTO> teams = converter.convertAll(provider.getAll(tournament)
-                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        final List<TeamDTO> teams = convertAll(provider.getAll(tournament));
         if (teams.isEmpty()) {
-            return converter.convertAll(provider.createDefaultTeams(tournament, createdBy).stream()
-                    .map(this::createConverterRequest).collect(Collectors.toList()));
+            return convertAll(provider.createDefaultTeams(tournament, createdBy));
         }
         return teams;
     }
@@ -103,8 +98,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public List<TeamDTO> create(TournamentDTO tournamentDTO, String createdBy) {
-        return converter.convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
     }
 
     @Override
@@ -120,7 +114,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
         final Team team = provider.delete(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(member)).orElse(null);
         if (team != null) {
-            return converter.convert(new TeamConverterRequest(team));
+            return convert(team);
         }
         return null;
     }
@@ -133,9 +127,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     public TeamDTO update(TeamDTO teamDTO, String username) {
         teamDTO.setUpdatedBy(username);
         validate(teamDTO);
-        final Team dbTeam = super.provider.save(converter.reverse(teamDTO));
+        final Team dbTeam = super.provider.save(reverse(teamDTO));
         dbTeam.setTournament(tournamentConverter.reverse(teamDTO.getTournament()));
-        return converter.convert(createConverterRequest(dbTeam));
+        return convert(dbTeam);
     }
 
     public long count(TournamentDTO tournament) {
