@@ -36,10 +36,10 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
-import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentImageRepository;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -166,7 +166,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
 
     public TournamentImageDTO get(TournamentDTO tournamentDTO, TournamentImageType type) {
         final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
-        final TournamentImageDTO result = converter.convert(new TournamentImageConverterRequest(provider.get(tournament, type).orElse(null)));
+        final TournamentImageDTO result = convert(provider.get(tournament, type).orElse(null));
         if (result != null) {
             return result;
         }
@@ -191,7 +191,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
             tournamentImage.setImageType(type);
             tournamentImage.setImageCompression(imageCompression);
             tournamentProvider.save(tournamentConverter.reverse(tournamentDTO));
-            return converter.convert(new TournamentImageConverterRequest(provider.save(tournamentImage)));
+            return convert(provider.save(tournamentImage));
         } catch (IOException e) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
@@ -202,7 +202,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         tournamentImageDTO.setCreatedBy(username);
         final Tournament tournament = tournamentConverter.reverse(tournamentImageDTO.getTournament());
         tournamentProvider.save(tournament);
-        return converter.convert(new TournamentImageConverterRequest(provider.save(converter.reverse(tournamentImageDTO))));
+        return convert(provider.save(reverse(tournamentImageDTO)));
     }
 
     public int delete(TournamentDTO tournamentDTO, TournamentImageType type) {
