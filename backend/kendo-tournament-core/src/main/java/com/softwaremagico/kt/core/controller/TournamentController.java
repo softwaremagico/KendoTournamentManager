@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
@@ -74,17 +73,17 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username);
         final Group group = new Group();
         group.setCreatedBy(username);
-        groupProvider.addGroup(converter.reverse(createdTournamentDTO), group);
+        groupProvider.addGroup(reverse(createdTournamentDTO), group);
         return createdTournamentDTO;
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
-        final TournamentDTO tournamentDTO = converter.convert(createConverterRequest(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1,
-                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE, username))));
+        final TournamentDTO tournamentDTO = convert(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1,
+                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE, username)));
         //Add default group:
         final Group group = new Group();
         group.setCreatedBy(username);
-        groupProvider.addGroup(converter.reverse(tournamentDTO), group);
+        groupProvider.addGroup(reverse(tournamentDTO), group);
         return tournamentDTO;
     }
 
@@ -95,7 +94,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     @Override
     public void delete(TournamentDTO entity) {
-        final Tournament tournament = converter.reverse(entity);
+        final Tournament tournament = reverse(entity);
         groupProvider.delete(tournament);
         fightProvider.delete(tournament);
         duelProvider.delete(tournament);
@@ -105,7 +104,6 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
-        return converter.convertAll(provider.getPreviousTo(converter.reverse(tournamentDTO), elementsToRetrieve).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
     }
 }

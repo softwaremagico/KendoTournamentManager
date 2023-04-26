@@ -43,7 +43,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class RoleController extends BasicInsertableController<Role, RoleDTO, RoleRepository,
@@ -68,50 +67,42 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
     }
 
     public List<RoleDTO> getByTournamentId(Integer tournamentId) {
-        return converter.convertAll(provider.getAll(tournamentProvider.get(tournamentId)
-                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists."))).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getAll(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists."))));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO, List<ParticipantDTO> participantsDTOs) {
-        return converter.convertAll(provider.get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverseAll(participantsDTOs)).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverseAll(participantsDTOs)));
     }
 
     public RoleDTO get(TournamentDTO tournamentDTO, ParticipantDTO participantDTO) {
-        return converter.convert(new RoleConverterRequest(provider
-                .get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(participantDTO))));
+        return convert(provider.get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(participantDTO)));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO) {
-        return converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO, RoleType roleType) {
-        return converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO), roleType).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO), roleType));
     }
 
     public List<RoleDTO> get(Integer tournamentId, Collection<RoleType> roleTypes) {
-        return converter.convertAll(provider.getAll(tournamentProvider.get(tournamentId)
+        return convertAll(provider.getAll(tournamentProvider.get(tournamentId)
                         .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists.")),
-                roleTypes).stream().map(this::createConverterRequest).collect(Collectors.toList()));
+                roleTypes));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO, Collection<RoleType> roleTypes) {
-        return converter.convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO), roleTypes).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO), roleTypes));
     }
 
     public List<RoleDTO> getForAccreditations(TournamentDTO tournamentDTO, Boolean onlyNewAccreditations, Collection<RoleType> roleTypes) {
-        return converter.convertAll(provider.getAllForAccreditations(tournamentConverter.reverse(tournamentDTO), onlyNewAccreditations, roleTypes).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getAllForAccreditations(tournamentConverter.reverse(tournamentDTO), onlyNewAccreditations, roleTypes));
     }
 
     public List<RoleDTO> getForDiplomas(TournamentDTO tournamentDTO, Boolean onlyNewDiplomas, Collection<RoleType> roleTypes) {
-        return converter.convertAll(provider.getAllForDiplomas(tournamentConverter.reverse(tournamentDTO), onlyNewDiplomas, roleTypes).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getAllForDiplomas(tournamentConverter.reverse(tournamentDTO), onlyNewDiplomas, roleTypes));
     }
 
     public long count(TournamentDTO tournamentDTO) {
