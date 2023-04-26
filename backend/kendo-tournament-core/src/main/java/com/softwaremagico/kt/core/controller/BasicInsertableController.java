@@ -54,12 +54,12 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     public DTO get(Integer id) {
         final ENTITY entity = provider.get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
                 ExceptionType.INFO));
-        return converter.convert(createConverterRequest(entity));
+        return convert(entity);
     }
 
     @Override
     public List<DTO> get() {
-        return provider.getAll().parallelStream().map(this::createConverterRequest).map(converter::convert).collect(Collectors.toList());
+        return convertAll(provider.getAll());
     }
 
     @Transactional
@@ -84,8 +84,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             dto.setCreatedBy(username);
         }
         validate(dto);
-        return converter.convert(createConverterRequest(super.provider.save(converter.
-                reverse(dto))));
+        return convert(super.provider.save(reverse(dto)));
     }
 
     @Transactional
@@ -96,17 +95,16 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             }
         });
         validate(dtos);
-        return converter.convertAll(createConverterRequest(super.provider.save(converter.
-                reverseAll(dtos))));
+        return convertAll(super.provider.save(reverseAll(dtos)));
     }
 
 
     public void delete(DTO entity) {
-        provider.delete(converter.reverse(entity));
+        provider.delete(reverse(entity));
     }
 
     public void delete(Collection<DTO> entities) {
-        provider.delete(converter.reverseAll(entities));
+        provider.delete(reverseAll(entities));
     }
 
     protected abstract CONVERTER_REQUEST createConverterRequest(ENTITY entity);
@@ -115,6 +113,22 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         final List<CONVERTER_REQUEST> requests = new ArrayList<>();
         entities.forEach(entity -> requests.add(createConverterRequest(entity)));
         return requests;
+    }
+
+    protected DTO convert(ENTITY entity) {
+        return converter.convert(createConverterRequest(entity));
+    }
+
+    protected ENTITY reverse(DTO dto) {
+        return converter.reverse(dto);
+    }
+
+    protected List<DTO> convertAll(Collection<ENTITY> entities) {
+        return converter.convertAll(entities.stream().map(this::createConverterRequest).collect(Collectors.toList()));
+    }
+
+    protected List<ENTITY> reverseAll(Collection<DTO> dtos) {
+        return converter.reverseAll(dtos);
     }
 
     @Override

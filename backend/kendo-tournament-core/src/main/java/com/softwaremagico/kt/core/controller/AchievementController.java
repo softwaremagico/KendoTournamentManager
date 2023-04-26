@@ -43,7 +43,6 @@ import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class AchievementController extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository,
@@ -107,28 +106,25 @@ public class AchievementController extends BasicInsertableController<Achievement
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
-        return converter.convertAll(provider.get(participant).stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.get(participant));
     }
 
     public List<AchievementDTO> getParticipantAchievements(ParticipantDTO participantDTO) {
-        return converter.convertAll(provider.get(participantConverter.reverse(participantDTO))
-                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.get(participantConverter.reverse(participantDTO)));
     }
 
     public List<AchievementDTO> getAchievements(TournamentDTO tournamentDTO, AchievementType achievementType) {
-        return converter.convertAll(provider.get(tournamentConverter.reverse(tournamentDTO), achievementType)
-                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.get(tournamentConverter.reverse(tournamentDTO), achievementType));
     }
 
     public List<AchievementDTO> getAchievements(AchievementType achievementType) {
-        return converter.convertAll(provider.get(achievementType)
-                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.get(achievementType));
     }
 
     public List<AchievementDTO> getTournamentAchievements(Integer tournamentId) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        return converter.convertAll(provider.get(tournament).stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.get(tournament));
     }
 
     public void generateAchievements(TournamentDTO tournamentDTO) {

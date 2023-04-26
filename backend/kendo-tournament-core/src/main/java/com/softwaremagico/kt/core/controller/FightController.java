@@ -49,7 +49,6 @@ import org.springframework.stereotype.Controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class FightController extends BasicInsertableController<Fight, FightDTO, FightRepository,
@@ -90,13 +89,12 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     }
 
     public List<FightDTO> get(TournamentDTO tournamentDTO) {
-        return converter.convertAll(provider.getFights(tournamentConverter.reverse(tournamentDTO)).stream()
-                .map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(provider.getFights(tournamentConverter.reverse(tournamentDTO)));
     }
 
     @Override
     public void delete(FightDTO entity) {
-        final Fight fight = converter.reverse(entity);
+        final Fight fight = reverse(entity);
         final Group group = groupProvider.getGroup(fight);
         group.getFights().remove(fight);
         groupProvider.save(group);
@@ -113,7 +111,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     @Override
     public void delete(Collection<FightDTO> entities) {
-        final List<Fight> fights = converter.reverseAll(entities);
+        final List<Fight> fights = reverseAll(entities);
         groupProvider.getGroups(fights).forEach(group -> {
             group.getFights().removeAll(fights);
             groupProvider.save(group);
@@ -142,13 +140,13 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     }
 
     public FightDTO getCurrent(TournamentDTO tournament) {
-        return converter.convert(new FightConverterRequest(provider.getCurrent(tournamentConverter.reverse(tournament))));
+        return convert(provider.getCurrent(tournamentConverter.reverse(tournament)));
     }
 
     public FightDTO getCurrent(Integer tournamentId) {
-        return converter.convert(new FightConverterRequest(provider.getCurrent((tournamentProvider.get(tournamentId)
+        return convert(provider.getCurrent((tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
-                        ExceptionType.INFO))))));
+                        ExceptionType.INFO)))));
     }
 
     public List<FightDTO> createFights(Integer tournamentId, TeamsOrder teamsOrder, Integer level, String createdBy) {
@@ -158,7 +156,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
             final List<Fight> createdFights = provider.saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
-            return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
+            return convertAll(createdFights);
         }
         return new ArrayList<>();
     }
@@ -170,7 +168,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
             final List<Fight> createdFights = provider.saveAll(selectedManager.createNextFights(tournament, createdBy));
-            return converter.convertAll(createdFights.stream().map(this::createConverterRequest).collect(Collectors.toList()));
+            return convertAll(createdFights);
         }
         return new ArrayList<>();
     }
