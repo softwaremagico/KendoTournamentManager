@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
@@ -65,6 +65,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     @Transactional
     public DTO update(DTO dto, String username) {
         dto.setUpdatedBy(username);
+        validate(dto);
         return create(dto, null);
     }
 
