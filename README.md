@@ -132,7 +132,11 @@ To contribute to the code of Kendo Tournament Manager v2, follow these steps:
 
 Alternatively see the GitHub documentation
 on [creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
-.
+
+### Contributors
+<a href="https://github.com/softwaremagico/KendoTournamentManager/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=softwaremagico/KendoTournamentManager" />
+</a>
 
 # Contact
 
