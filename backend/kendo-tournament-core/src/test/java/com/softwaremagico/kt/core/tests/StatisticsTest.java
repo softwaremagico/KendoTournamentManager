@@ -27,9 +27,11 @@ package com.softwaremagico.kt.core.tests;
 import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
@@ -88,10 +90,17 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     @Autowired
     private TournamentStatisticsController tournamentStatisticsController;
 
+    @Autowired
+    private ParticipantStatisticsController participantStatisticsController;
+
+    @Autowired
+    private RankingController rankingController;
+
     private List<ParticipantDTO> participantsDTOs;
 
     private TournamentDTO tournament1DTO;
-    private TournamentDTO tournament2DTO;
+
+    private ParticipantDTO competitor1;
 
     private int totalFights;
 
@@ -103,17 +112,17 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
 
         //Add Referee Roles
         for (int i = 0; i < REFEREES; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.REFEREE), null);
         }
 
         //Add Organizer Roles
         for (int i = 0; i < ORGANIZER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.ORGANIZER), null);
         }
 
         //Add Volunteer Roles
         for (int i = 0; i < VOLUNTEER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.VOLUNTEER), null);
         }
     }
 
@@ -175,12 +184,16 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
 
 
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1ScoreTime(3);
         fightDTOs.get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor2ScoreTime(6);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1ScoreTime(12);
         fightDTOs.get(0).getDuels().get(0).setCompetitor1Fault(true);
         fightDTOs.get(0).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
         fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        competitor1 = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
 
 
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.KOTE);
@@ -236,20 +249,64 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     @Test
     public void basicTournamentStatistics() {
         final TournamentStatisticsDTO tournamentStatisticsDTO = tournamentStatisticsController.get(tournament1DTO);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getMenNumber(), 5);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getKoteNumber(), 3);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getDoNumber(), 3);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getHansokuNumber(), 2);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getTsukiNumber(), 2);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getIpponNumber(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getMenNumber(), 5);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getKoteNumber(), 3);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getDoNumber(), 3);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getHansokuNumber(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getTsukiNumber(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getIpponNumber(), 2);
 
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getFightsNumber(), totalFights);
-        Assert.assertNull(tournamentStatisticsDTO.getFightStatistics().getFightsByTeam());
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getDuelsNumber(), totalFights * 3L);
-        Assert.assertNotNull(tournamentStatisticsDTO.getFightStatistics().getAverageTime());
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getAverageTime(), DUEL_DURATION);
-        Assert.assertEquals(tournamentStatisticsDTO.getFightStatistics().getFaults(), 3 + 4);
-        Assert.assertEquals((long) tournamentStatisticsDTO.getFightStatistics().getFightsFinished(), 2);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getFightsNumber(), totalFights);
+        Assert.assertNull(tournamentStatisticsDTO.getTournamentFightStatistics().getFightsByTeam());
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getDuelsNumber(), totalFights * 3L);
+        Assert.assertNotNull(tournamentStatisticsDTO.getTournamentFightStatistics().getAverageTime());
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getAverageTime(), DUEL_DURATION);
+        Assert.assertEquals(tournamentStatisticsDTO.getTournamentFightStatistics().getFaults(), 3 + 4);
+        Assert.assertEquals((long) tournamentStatisticsDTO.getTournamentFightStatistics().getFightsFinished(), 2);
+    }
+
+    @Test
+    public void basicParticipantStatistics() {
+        final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(competitor1);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getMenNumber(), 2);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getKoteNumber(), 1);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getDoNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getHansokuNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getTsukiNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getIpponNumber(), 0);
+
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedMenNumber(), 1);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedKoteNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedDoNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedHansokuNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedTsukiNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedIpponNumber(), 0);
+
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getFaults(), 1);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedFaults(), 0);
+
+
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getDuelsNumber(), 3);
+        //Competitor1 is in two duels
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getTotalDuelsTime(), DUEL_DURATION * 2);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getAverageTime(), DUEL_DURATION);
+
+        Assert.assertEquals(participantStatisticsDTO.getParticipantId(), competitor1.getId());
+        Assert.assertEquals(participantStatisticsDTO.getParticipantName(), NameUtils.getLastnameName(competitor1));
+
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getQuickestHit(), 3L);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getQuickestReceivedHit(), 6L);
+
+        Assert.assertEquals(participantStatisticsDTO.getTotalTournaments(), 1L);
+
+        Assert.assertEquals(participantStatisticsDTO.getTournaments(), 1);
+    }
+
+    @Test
+    public void getCompetitorRankingPosition() {
+        final CompetitorRanking competitorRanking = rankingController.getCompetitorRanking(competitor1);
+        Assert.assertEquals(competitorRanking.getRanking(), 0);
+        Assert.assertEquals(competitorRanking.getTotal(), MEMBERS * TEAMS);
     }
 
     @AfterClass

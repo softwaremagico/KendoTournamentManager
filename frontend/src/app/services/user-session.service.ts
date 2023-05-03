@@ -21,7 +21,7 @@ export class UserSessionService {
     return this.cookies.get("selectedLanguage");
   }
 
-  setTournament(tournamentId: string | undefined) {
+  setSelectedTournament(tournamentId: string | undefined) {
     if (tournamentId) {
       sessionStorage.setItem("lastSelectedTournament", tournamentId);
     } else {
@@ -29,8 +29,20 @@ export class UserSessionService {
     }
   }
 
-  getTournament() {
+  getSelectedTournament() {
     return sessionStorage.getItem("lastSelectedTournament");
+  }
+
+  setSelectedParticipant(participantId: string | undefined) {
+    if (participantId) {
+      sessionStorage.setItem("lastSelectedParticipant", participantId);
+    } else {
+      sessionStorage.removeItem("lastSelectedParticipant");
+    }
+  }
+
+  getSelectedParticipant() {
+    return sessionStorage.getItem("lastSelectedParticipant");
   }
 
   setItemsPerPage(pageSize: number | undefined) {
