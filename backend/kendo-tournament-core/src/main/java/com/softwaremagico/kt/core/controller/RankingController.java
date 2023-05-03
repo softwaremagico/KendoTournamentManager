@@ -32,13 +32,18 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.*;
 import com.softwaremagico.kt.persistence.entities.Group;
-import com.softwaremagico.kt.persistence.values.ScoreType;
+import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 public class RankingController {
@@ -65,10 +70,15 @@ public class RankingController {
 
     private final ParticipantConverter participantConverter;
 
+    private final ParticipantProvider participantProvider;
+
+    private final RoleProvider roleProvider;
+
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter, FightProvider fightProvider,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
                              TeamProvider teamProvider, TeamConverter teamConverter, TournamentProvider tournamentProvider,
-                             DuelConverter duelConverter, DuelProvider duelProvider, ParticipantConverter participantConverter) {
+                             DuelConverter duelConverter, DuelProvider duelProvider, ParticipantConverter participantConverter,
+                             ParticipantProvider participantProvider, RoleProvider roleProvider) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
         this.fightProvider = fightProvider;
@@ -80,6 +90,8 @@ public class RankingController {
         this.duelConverter = duelConverter;
         this.duelProvider = duelProvider;
         this.participantConverter = participantConverter;
+        this.participantProvider = participantProvider;
+        this.roleProvider = roleProvider;
     }
 
     private boolean checkLevel(TournamentDTO tournament) {
@@ -272,20 +284,43 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors) {
-        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.INTERNATIONAL);
+        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT);
     }
 
     public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<FightDTO> fights = fightConverter.convertAll(fightProvider.get(participantConverter.reverseAll(competitors)).stream()
-                .map(FightConverterRequest::new).collect(Collectors.toList()));
+                .map(FightConverterRequest::new).collect(Collectors.toSet()));
         final List<DuelDTO> unties = duelConverter.convertAll(duelProvider.getUnties(participantConverter.reverseAll(competitors)).stream()
-                .map(DuelConverterRequest::new).collect(Collectors.toList()));
+                .map(DuelConverterRequest::new).collect(Collectors.toSet()));
         for (final ParticipantDTO competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }
         sortCompetitorsScores(scoreType, scores);
         return scores;
+    }
+
+    public List<ScoreOfCompetitor> getCompetitorGlobalRanking(ScoreType scoreType) {
+        final List<ScoreOfCompetitor> scores = new ArrayList<>();
+        final List<FightDTO> fights = fightConverter.convertAll(fightProvider.getAll().stream()
+                .map(FightConverterRequest::new).collect(Collectors.toSet()));
+        final List<DuelDTO> unties = duelConverter.convertAll(duelProvider.getUnties().stream()
+                .map(DuelConverterRequest::new).collect(Collectors.toSet()));
+        final List<ParticipantDTO> competitors = participantConverter.convertAll(roleProvider.getAll().stream()
+                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant)
+                .map(ParticipantConverterRequest::new).collect(Collectors.toSet()));
+        for (final ParticipantDTO competitor : competitors) {
+            scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
+        }
+        sortCompetitorsScores(scoreType, scores);
+        return scores;
+    }
+
+    public CompetitorRanking getCompetitorRanking(ParticipantDTO participantDTO) {
+        final List<ScoreOfCompetitor> ranking = getCompetitorGlobalRanking(ScoreType.DEFAULT);
+        return new CompetitorRanking(IntStream.range(0, ranking.size())
+                .filter(i -> Objects.equals(participantDTO, ranking.get(i).getCompetitor()))
+                .findFirst().orElse(ranking.size() - 1), ranking.size());
     }
 
     public ScoreOfCompetitor getScoreRanking(GroupDTO groupDTO, ParticipantDTO competitor) {
@@ -396,5 +431,11 @@ public class RankingController {
      */
     private boolean countNotOver(TournamentDTO tournamentDTO) {
         return tournamentDTO.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
+    }
+
+    @CacheEvict(allEntries = true, value = {"ranking"})
+    @Scheduled(fixedDelay = 60 * 10 * 1000)
+    public void reportCacheEvict() {
+        //Only for handling Spring cache.
     }
 }

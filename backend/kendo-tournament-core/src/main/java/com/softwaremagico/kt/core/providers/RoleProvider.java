@@ -55,6 +55,10 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         return roles;
     }
 
+    public List<Role> getAll(RoleType roleType) {
+        return repository.findByRoleType(roleType);
+    }
+
     public List<Role> getAll(Tournament tournament, Collection<RoleType> roleTypes) {
         final List<Role> roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
         roles.forEach(role -> role.setTournament(tournament));
@@ -113,6 +117,10 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
 
     public long count(Tournament tournament, RoleType roleType) {
         return repository.countByTournamentAndRoleType(tournament, roleType);
+    }
+
+    public long count(Participant participant, RoleType roleType) {
+        return repository.countByParticipantAndRoleType(participant, roleType);
     }
 
     public void delete(Participant participant, Tournament tournament) {
