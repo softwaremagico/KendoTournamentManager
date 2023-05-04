@@ -6,16 +6,17 @@ import {
   ApexFill,
   ApexLegend,
   ApexPlotOptions,
-  ApexTitleSubtitle,
+  ApexTitleSubtitle, ApexTooltip,
   ApexXAxis,
   ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {BarChartData} from "./bar-chart-data";
-import {CustomChartComponent} from "../CustomChartComponent";
+import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
+import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
 
 type BarChartOptions = {
@@ -25,10 +26,12 @@ type BarChartOptions = {
   chart: ApexChart;
   labels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
+  tooltip: ApexTooltip
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   legend: ApexLegend;
+  theme: ApexTheme;
 };
 
 @Component({
@@ -85,80 +88,30 @@ export class BarChartComponent extends CustomChartComponent {
   protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
-      chart: {
-        width: this.width,
-        type: "bar",
-        toolbar: {
-          show: this.showToolbar,
-        },
-        dropShadow: {
-          enabled: this.shadow,
-          color: '#000',
-          top: 18,
-          left: 7,
-          blur: 10,
-          opacity: 0.2
-        },
-      },
+      chart: this.getChart('bar', this.width, this.shadow, this.showToolbar),
       series: this.data.getData(),
-      labels: {
-        enabled: this.showValuesLabels
-      },
-      fill: {
-        type: this.fill,
-      },
-      plotOptions: {
-        bar: {
-          distributed: true, // this line is mandatory for using colors
-          horizontal: this.horizontal,
-          barHeight: this.barThicknessPercentage + '%',
-          columnWidth: this.barThicknessPercentage + '%',
-          borderRadius: this.borderRadius
-        }
-      },
-      xaxis: {
-        categories: this.data.getLabels(),
-        position: this.xAxisOnTop ? 'top' : 'bottom',
-        title: {
-          text: this.xAxisTitle
-        },
-        labels: {
-          style: {
-            fontFamily: 'Roboto',
-            colors: this.axisTextColor
-          },
-        },
-      },
-      yaxis: {
-        show: this.showYAxis,
-        title: {
-          text: this.yAxisTitle
-        },
-        labels: {
-          style: {
-            fontFamily: 'Roboto',
-            colors: this.axisTextColor
-          },
-        },
-      },
-      title: {
-        text: this.title,
-        align: this.titleAlignment,
-        style: {
-          fontSize: '14px',
-          fontWeight: 'bold',
-          fontFamily: 'Roboto',
-          color: this.titleTextColor
-        },
-      },
-      legend: {
-        position: this.legendPosition,
-        labels: {
-          colors: this.legendTextColor,
-          useSeriesColors: false
-        },
-      },
+      labels: this.getLabels(this.showValuesLabels),
+      fill: this.getFill(this.fill),
+      plotOptions: this.getPlotOptions(),
+      tooltip: this.getTooltip(),
+      xaxis: this.getXAxis(this.data.getLabels(), this.xAxisOnTop ? 'top' : 'bottom', this.xAxisTitle),
+      yaxis: this.getYAxis(this.showYAxis, this.yAxisTitle),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
     };
+  }
+
+  protected getPlotOptions(): ApexPlotOptions {
+    return {
+      bar: {
+        distributed: true, // this line is mandatory for using colors
+        horizontal: this.horizontal,
+        barHeight: this.barThicknessPercentage + '%',
+        columnWidth: this.barThicknessPercentage + '%',
+        borderRadius: this.borderRadius
+      }
+    }
   }
 
   update(data: BarChartData) {
