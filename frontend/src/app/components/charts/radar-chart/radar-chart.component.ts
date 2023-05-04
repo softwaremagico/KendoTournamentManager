@@ -15,6 +15,9 @@ import {
 import {StackedBarsData} from "../stacked-bars-chart/stacked-bars-chart-data";
 import {Colors} from "../colors";
 import {RadarChartData} from "./radar-chart-data";
+import {CustomChartComponent} from "../CustomChartComponent";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
 
 type RadarChartOptions = {
   series: ApexAxisChartSeries;
@@ -34,7 +37,7 @@ type RadarChartOptions = {
   templateUrl: './radar-chart.component.html',
   styleUrls: ['./radar-chart.component.scss']
 })
-export class RadarChartComponent implements OnInit {
+export class RadarChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -72,7 +75,11 @@ export class RadarChartComponent implements OnInit {
   @Input()
   public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
-  ngOnInit() {
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
+
+  protected setProperties(): void {
     this.chartOptions = {
       chart: {
         width: this.width,
@@ -117,10 +124,20 @@ export class RadarChartComponent implements OnInit {
       },
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
       },
       legend: {
-        position: this.legendPosition
+        position: this.legendPosition,
+        labels: {
+          colors: this.legendTextColor,
+          useSeriesColors: false
+        },
       },
     };
   }

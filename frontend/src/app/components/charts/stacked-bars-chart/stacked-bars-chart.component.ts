@@ -12,7 +12,10 @@ import {
   ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
-import {StackedBarChartData, StackedBarChartDataElement, StackedBarsData} from "./stacked-bars-chart-data";
+import {StackedBarChartData, StackedBarsData} from "./stacked-bars-chart-data";
+import {CustomChartComponent} from "../CustomChartComponent";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
 
 
 type StackedBarsChartOptions = {
@@ -36,7 +39,7 @@ type UpdateBarsChartOptions = {
   templateUrl: './stacked-bars-chart.component.html',
   styleUrls: ['./stacked-bars-chart.component.scss']
 })
-export class StackedBarsChartComponent implements OnInit {
+export class StackedBarsChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -84,7 +87,11 @@ export class StackedBarsChartComponent implements OnInit {
   @Input()
   public stacked: boolean = true;
 
-  ngOnInit() {
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
+
+  protected setProperties(): void {
     this.chartOptions = {
       chart: {
         width: this.width,
@@ -132,36 +139,58 @@ export class StackedBarsChartComponent implements OnInit {
         position: this.xAxisOnTop ? 'top' : 'bottom',
         title: {
           text: this.xAxisTitle
-        }
+        },
+        labels: {
+          style: {
+            fontFamily: 'Roboto',
+            colors: this.axisTextColor
+          },
+        },
       },
       yaxis: {
         show: this.showYAxis,
         title: {
           text: this.yAxisTitle
         },
+        labels: {
+          style: {
+            fontFamily: 'Roboto',
+            colors: this.axisTextColor
+          },
+        },
       },
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
       },
       legend: {
-        position: this.legendPosition
+        position: this.legendPosition,
+        labels: {
+          colors: this.legendTextColor,
+          useSeriesColors: false
+        },
       },
     };
   }
 
   update(data: StackedBarChartData) {
     this.chart.updateSeries(this.setColors(data.getData()), true);
-   const updateOptions: UpdateBarsChartOptions = {
-     xaxis: {
-       categories: data.getLabels(),
-       position: this.xAxisOnTop ? 'top' : 'bottom',
-       title: {
-         text: this.xAxisTitle
-       }
-     }
-   }
-   this.chart.updateOptions(updateOptions);
+    const updateOptions: UpdateBarsChartOptions = {
+      xaxis: {
+        categories: data.getLabels(),
+        position: this.xAxisOnTop ? 'top' : 'bottom',
+        title: {
+          text: this.xAxisTitle
+        }
+      }
+    }
+    this.chart.updateOptions(updateOptions);
   }
 
   setColors(data: StackedBarsData[]): StackedBarsData[] {
