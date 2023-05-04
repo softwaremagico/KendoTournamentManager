@@ -35,6 +35,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +76,11 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         }
         final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
         return repository.findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
+    }
+
+    public long countTournamentsAfter(LocalDateTime createdAfter) {
+        //Due to LocalDateTime encryption countByGreaterThan is not working very well.
+        return repository.findAll().stream().filter(tournament -> tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
     }
 
 }

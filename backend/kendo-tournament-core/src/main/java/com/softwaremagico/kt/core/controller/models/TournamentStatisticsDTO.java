@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class TournamentStatisticsDTO extends ElementDTO {
 
-    private FightStatisticsDTO fightStatistics;
+    private TournamentFightStatisticsDTO tournamentFightStatistics;
 
     private Integer tournamentId;
 
@@ -48,12 +48,12 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
 
-    public FightStatisticsDTO getFightStatistics() {
-        return fightStatistics;
+    public TournamentFightStatisticsDTO getTournamentFightStatistics() {
+        return tournamentFightStatistics;
     }
 
-    public void setFightStatistics(FightStatisticsDTO fightStatistics) {
-        this.fightStatistics = fightStatistics;
+    public void setTournamentFightStatistics(TournamentFightStatisticsDTO tournamentFightStatistics) {
+        this.tournamentFightStatistics = tournamentFightStatistics;
     }
 
     public Long getNumberOfTeams() {

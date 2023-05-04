@@ -21,5 +21,12 @@
       </div>
     </div>
     <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
+    <div class="bottom-menu">
+      <button mat-button color="primary" [disabled]="!basicTableData.selectedElement" (click)="openStatistics()"
+              [matTooltipShowDelay]="500" matTooltip="{{'titleStatistics' | translate}}"
+              *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.activities)">
+        <mat-icon>bar_chart</mat-icon>
+      </button>
+    </div>
   </div>
 </div>

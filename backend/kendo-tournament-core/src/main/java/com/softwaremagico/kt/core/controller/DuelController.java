@@ -43,6 +43,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -87,6 +88,11 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
                 dto.getCompetitor2Score().contains(Score.FAULT)) {
             throw new ValidateBadRequestException(this.getClass(), "Invalid score on duel '" + dto + "'");
         }
+    }
+
+    @CacheEvict(allEntries = true, value = {"ranking"})
+    public DuelDTO update(DuelDTO duel, String username) {
+        return super.update(duel, username);
     }
 
     public List<DuelDTO> getUntiesFromGroup(Integer groupId) {
