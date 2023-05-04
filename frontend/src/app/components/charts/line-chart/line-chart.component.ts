@@ -3,7 +3,7 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexDataLabels,
-  ApexFill,
+  ApexFill, ApexLegend,
   ApexMarkers,
   ApexPlotOptions,
   ApexStroke,
@@ -14,6 +14,9 @@ import {
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {LineChartData} from "./line-chart-data";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
+import {CustomChartComponent} from "../CustomChartComponent";
 
 
 export type LineChartOptions = {
@@ -27,6 +30,7 @@ export type LineChartOptions = {
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
+  legend: ApexLegend;
   markers: ApexMarkers;
 };
 
@@ -39,7 +43,7 @@ type UpdateLineChartOptions = {
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements OnInit {
+export class LineChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -79,12 +83,18 @@ export class LineChartComponent implements OnInit {
   @Input()
   public curve: "straight" | "smooth" | "stepline" = "smooth";
   @Input()
+  public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom";
+  @Input()
   public shadow: boolean = true;
   @Input()
   public strokeWidth: number = 5;
 
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
 
-  ngOnInit() {
+
+  protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
       series: this.data.getData(),
@@ -105,7 +115,10 @@ export class LineChartComponent implements OnInit {
         },
       },
       labels: {
-        enabled: this.showValuesLabels
+        enabled: this.showValuesLabels,
+        style: {
+          fontFamily: 'Roboto',
+        },
       },
       fill: {
         type: this.fill,
@@ -123,13 +136,24 @@ export class LineChartComponent implements OnInit {
         position: this.xAxisOnTop ? 'top' : 'bottom',
         title: {
           text: this.xAxisTitle
-        }
-        //type: 'datetime'
+        },
+        labels: {
+          style: {
+            fontFamily: 'Roboto',
+            colors: this.axisTextColor
+          },
+        },
       },
       yaxis: {
         show: this.showYAxis,
         title: {
           text: this.yAxisTitle
+        },
+        labels: {
+          style: {
+            fontFamily: 'Roboto',
+            colors: this.axisTextColor
+          },
         },
       },
       stroke: {
@@ -138,7 +162,20 @@ export class LineChartComponent implements OnInit {
       },
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
+      },
+      legend: {
+        position: this.legendPosition,
+        labels: {
+          colors: this.legendTextColor,
+          useSeriesColors: false
+        },
       },
       markers: {
         size: 0

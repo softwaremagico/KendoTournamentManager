@@ -1,9 +1,10 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexLegend, ApexPlotOptions, ApexTitleSubtitle, ChartComponent} from "ng-apexcharts";
 import {Colors} from "../colors";
 import {RadialChartData} from "./radial-chart-data";
-import {StackedBarChartData} from "../stacked-bars-chart/stacked-bars-chart-data";
-import {RadarChartData} from "../radar-chart/radar-chart-data";
+import {CustomChartComponent} from "../CustomChartComponent";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
 
 type RadialChartOptions = {
   series: number[];
@@ -22,7 +23,7 @@ type RadialChartOptions = {
   templateUrl: './radial-chart.component.html',
   styleUrls: ['./radial-chart.component.scss']
 })
-export class RadialChartComponent implements OnInit {
+export class RadialChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -54,8 +55,12 @@ export class RadialChartComponent implements OnInit {
   @Input()
   public endAngle: number = 360;
 
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
 
-  ngOnInit() {
+
+  protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
       chart: {
@@ -114,10 +119,20 @@ export class RadialChartComponent implements OnInit {
       },
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
       },
       legend: {
-        position: this.legendPosition
+        position: this.legendPosition,
+        labels: {
+          colors: this.legendTextColor,
+          useSeriesColors: false
+        },
       },
     };
   }

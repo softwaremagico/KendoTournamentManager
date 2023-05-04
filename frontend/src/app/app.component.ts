@@ -10,6 +10,7 @@ import {MessageService} from "./services/message.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
 import {OverlayContainer} from "@angular/cdk/overlay";
+import {DarkModeService} from "./services/notifications/dark-mode.service";
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,8 @@ export class AppComponent extends RbacBasedComponent {
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
               private overlay: OverlayContainer, private _renderer: Renderer2,
-              private messageService: MessageService, rbacService: RbacService) {
+              private messageService: MessageService, rbacService: RbacService,
+              private darkModeService: DarkModeService) {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');
@@ -73,10 +75,11 @@ export class AppComponent extends RbacBasedComponent {
   switchDarkMode() {
     this.nightModeEnabled = !this.nightModeEnabled;
     this.userSessionService.setNightMode(this.nightModeEnabled);
+    this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
     this.setDarkModeTheme();
   }
 
-  private setDarkModeTheme(){
+  private setDarkModeTheme() {
     this.className = this.nightModeEnabled ? 'dark-mode' : '';
     if (this.nightModeEnabled) {
       this.overlay.getContainerElement().classList.add('dark-mode');
