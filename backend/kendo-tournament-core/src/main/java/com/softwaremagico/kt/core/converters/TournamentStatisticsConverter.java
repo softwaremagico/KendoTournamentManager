@@ -25,7 +25,7 @@ package com.softwaremagico.kt.core.converters;
  */
 
 import com.softwaremagico.kt.core.controller.models.TournamentStatisticsDTO;
-import com.softwaremagico.kt.core.converters.models.FightStatisticsConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentFightStatisticsConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentStatisticsConverterRequest;
 import com.softwaremagico.kt.core.statistics.TournamentStatistics;
 import org.springframework.beans.BeanUtils;
@@ -34,10 +34,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class TournamentStatisticsConverter extends ElementConverter<TournamentStatistics, TournamentStatisticsDTO, TournamentStatisticsConverterRequest> {
 
-    private final FightStatisticsConverter fightStatisticsConverter;
+    private final TournamentFightStatisticsConverter tournamentFightStatisticsConverter;
 
-    public TournamentStatisticsConverter(FightStatisticsConverter fightStatisticsConverter) {
-        this.fightStatisticsConverter = fightStatisticsConverter;
+    public TournamentStatisticsConverter(TournamentFightStatisticsConverter tournamentFightStatisticsConverter) {
+        this.tournamentFightStatisticsConverter = tournamentFightStatisticsConverter;
     }
 
     @Override
@@ -47,8 +47,8 @@ public class TournamentStatisticsConverter extends ElementConverter<TournamentSt
         }
         final TournamentStatisticsDTO tournamentStatisticsDTO = new TournamentStatisticsDTO();
         BeanUtils.copyProperties(from.getEntity(), tournamentStatisticsDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        tournamentStatisticsDTO.setFightStatistics(fightStatisticsConverter.convertElement(
-                new FightStatisticsConverterRequest(from.getEntity().getFightStatistics())));
+        tournamentStatisticsDTO.setTournamentFightStatistics(tournamentFightStatisticsConverter.convertElement(
+                new TournamentFightStatisticsConverterRequest(from.getEntity().getFightStatistics())));
         return tournamentStatisticsDTO;
     }
 
@@ -59,7 +59,7 @@ public class TournamentStatisticsConverter extends ElementConverter<TournamentSt
         }
         final TournamentStatistics tournamentStatistics = new TournamentStatistics();
         BeanUtils.copyProperties(to, tournamentStatistics, ConverterUtils.getNullPropertyNames(to));
-        tournamentStatistics.setFightStatistics(fightStatisticsConverter.reverse(to.getFightStatistics()));
+        tournamentStatistics.setFightStatistics(tournamentFightStatisticsConverter.reverse(to.getTournamentFightStatistics()));
         return tournamentStatistics;
     }
 }

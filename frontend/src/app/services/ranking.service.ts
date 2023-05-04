@@ -10,6 +10,7 @@ import {ScoreOfTeam} from "../models/score-of-team";
 import {ScoreOfCompetitor} from "../models/score-of-competitor";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Participant} from "../models/participant";
+import {CompetitorRanking} from "../models/competitor-ranking";
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,20 @@ export class RankingService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<ScoreOfCompetitor[]>(`getting competitors ranking`))
+      );
+  }
+
+  getCompetitorsRanking(participantId: number): Observable<CompetitorRanking> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + `/competitors/${participantId}`;
+    return this.http.get<CompetitorRanking>(url, this.loginService.httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting competitor ${participantId} ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<CompetitorRanking>(`getting competitor ${participantId} ranking`))
       );
   }
 
