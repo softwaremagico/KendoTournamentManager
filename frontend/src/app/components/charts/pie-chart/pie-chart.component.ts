@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 
 import {
   ApexChart,
@@ -11,6 +11,9 @@ import {
 } from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";
 import {Colors} from "../colors";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
+import {CustomChartComponent} from "../CustomChartComponent";
 
 
 type PieChartOptions = {
@@ -29,7 +32,7 @@ type PieChartOptions = {
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss']
 })
-export class PieChartComponent implements OnInit {
+export class PieChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   private chart!: ChartComponent;
@@ -57,7 +60,11 @@ export class PieChartComponent implements OnInit {
   @Input()
   public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
-  ngOnInit() {
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
+
+  protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
       chart: {
@@ -95,10 +102,20 @@ export class PieChartComponent implements OnInit {
       ],
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
       },
       legend: {
-        position: this.legendPosition
+        position: this.legendPosition,
+        labels: {
+          colors: this.legendTextColor,
+          useSeriesColors: false
+        },
       },
     };
   }
