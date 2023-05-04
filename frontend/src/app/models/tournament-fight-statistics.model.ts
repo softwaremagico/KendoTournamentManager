@@ -1,6 +1,6 @@
 import {Element} from "./element";
 
-export class FightStatistics extends Element {
+export class TournamentFightStatistics extends Element {
 
   menNumber: number;
   koteNumber: number;
@@ -19,7 +19,7 @@ export class FightStatistics extends Element {
   fightsFinishedAt: Date;
   faults: number;
 
-  public static override copy(source: FightStatistics, target: FightStatistics): void {
+  public static override copy(source: TournamentFightStatistics, target: TournamentFightStatistics): void {
     Element.copy(source, target);
     target.menNumber = source.menNumber;
     target.koteNumber = source.koteNumber;
@@ -38,8 +38,8 @@ export class FightStatistics extends Element {
     target.faults = source.faults;
   }
 
-  public static clone(data: FightStatistics): FightStatistics {
-    const instance: FightStatistics = new FightStatistics();
+  public static clone(data: TournamentFightStatistics): TournamentFightStatistics {
+    const instance: TournamentFightStatistics = new TournamentFightStatistics();
     this.copy(data, instance);
     return instance;
   }

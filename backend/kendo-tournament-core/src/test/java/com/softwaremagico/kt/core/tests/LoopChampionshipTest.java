@@ -35,7 +35,7 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -224,11 +224,11 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights"})
     public void checkStatistics() {
         final Group group = groupProvider.getGroups(tournament).get(0);
-        FightStatisticsDTO fightStatisticsDTO = fightStatisticsController.estimate(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
+        TournamentFightStatisticsDTO tournamentFightStatisticsDTO = fightStatisticsController.estimate(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
                 MEMBERS,
                 teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
-        Assert.assertEquals(fightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
-        Assert.assertEquals(fightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
+        Assert.assertEquals(tournamentFightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
+        Assert.assertEquals(tournamentFightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
     }
 
     @Test(dependsOnMethods = {"createFights"})

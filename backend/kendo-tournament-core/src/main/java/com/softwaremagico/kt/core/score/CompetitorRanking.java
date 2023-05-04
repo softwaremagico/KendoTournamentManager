@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.converters.models;
+package com.softwaremagico.kt.core.score;
 
 /*-
  * #%L
@@ -24,11 +24,30 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
+public class CompetitorRanking {
 
-import com.softwaremagico.kt.core.statistics.FightStatistics;
+    private int ranking;
 
-public class FightStatisticsConverterRequest extends ConverterRequest<FightStatistics> {
-    public FightStatisticsConverterRequest(FightStatistics entity) {
-        super(entity);
+    private int total;
+
+    public CompetitorRanking(int ranking, int total) {
+        this.ranking = ranking;
+        this.total = total;
+    }
+
+    public int getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

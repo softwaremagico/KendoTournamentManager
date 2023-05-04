@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class TournamentStatistics {
 
-    private FightStatistics fightStatistics;
+    private TournamentFightStatistics tournamentFightStatistics;
 
     private Integer tournamentId;
 
@@ -48,12 +48,12 @@ public class TournamentStatistics {
 
     private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
 
-    public FightStatistics getFightStatistics() {
-        return fightStatistics;
+    public TournamentFightStatistics getFightStatistics() {
+        return tournamentFightStatistics;
     }
 
-    public void setFightStatistics(FightStatistics fightStatistics) {
-        this.fightStatistics = fightStatistics;
+    public void setFightStatistics(TournamentFightStatistics tournamentFightStatistics) {
+        this.tournamentFightStatistics = tournamentFightStatistics;
     }
 
     public Long getNumberOfTeams() {
