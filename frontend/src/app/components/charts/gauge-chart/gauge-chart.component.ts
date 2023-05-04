@@ -1,7 +1,10 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {ApexChart, ApexFill, ApexPlotOptions, ApexTitleSubtitle, ChartComponent} from "ng-apexcharts";
 import {Colors} from "../colors";
 import {GaugeChartData} from "./gauge-chart-data";
+import {CustomChartComponent} from "../CustomChartComponent";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
 
 type GaugeChartOptions = {
   series: number[];
@@ -18,7 +21,7 @@ type GaugeChartOptions = {
   templateUrl: './gauge-chart.component.html',
   styleUrls: ['./gauge-chart.component.scss']
 })
-export class GaugeChartComponent implements OnInit {
+export class GaugeChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -52,7 +55,11 @@ export class GaugeChartComponent implements OnInit {
   @Input()
   public trackBackgroundThicknessPercentage: number = 97;
 
-  ngOnInit() {
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
+
+  protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
       chart: {
@@ -119,7 +126,13 @@ export class GaugeChartComponent implements OnInit {
       },
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
       }
     };
   }

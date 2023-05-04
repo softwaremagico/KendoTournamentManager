@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -13,7 +13,9 @@ import {
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {BarChartData} from "./bar-chart-data";
-import {PieChartData} from "../pie-chart/pie-chart-data";
+import {CustomChartComponent} from "../CustomChartComponent";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
 
 
 type BarChartOptions = {
@@ -34,7 +36,7 @@ type BarChartOptions = {
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements OnInit {
+export class BarChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -76,8 +78,11 @@ export class BarChartComponent implements OnInit {
   @Input()
   public shadow: boolean = true;
 
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
 
-  ngOnInit() {
+  protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
       chart: {
@@ -116,25 +121,47 @@ export class BarChartComponent implements OnInit {
         position: this.xAxisOnTop ? 'top' : 'bottom',
         title: {
           text: this.xAxisTitle
-        }
+        },
+        labels: {
+          style: {
+            fontFamily: 'Roboto',
+            colors: this.axisTextColor
+          },
+        },
       },
       yaxis: {
         show: this.showYAxis,
         title: {
           text: this.yAxisTitle
         },
+        labels: {
+          style: {
+            fontFamily: 'Roboto',
+            colors: this.axisTextColor
+          },
+        },
       },
       title: {
         text: this.title,
-        align: this.titleAlignment
+        align: this.titleAlignment,
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          fontFamily: 'Roboto',
+          color: this.titleTextColor
+        },
       },
       legend: {
-        position: this.legendPosition
+        position: this.legendPosition,
+        labels: {
+          colors: this.legendTextColor,
+          useSeriesColors: false
+        },
       },
     };
   }
 
-  update(data: BarChartData){
+  update(data: BarChartData) {
     this.chart.updateSeries(data.getData());
   }
 }
