@@ -31,12 +31,12 @@
           </div>
           <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
             <tr>
-              <td class="single">{{'tournaments' | translate}}
-                : {{participantStatistics?.tournaments}}</td>
+              <td class="single">{{'tournaments' | translate}}:</td>
+              <td>{{participantStatistics?.tournaments}}</td>
             </tr>
             <tr>
-              <td class="single">{{'duels' | translate}}
-                : {{participantStatistics?.participantFightStatistics?.duelsNumber}}</td>
+              <td class="single">{{'duels' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.duelsNumber}}</td>
             </tr>
           </table>
         </div>
