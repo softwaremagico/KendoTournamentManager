@@ -25,4 +25,15 @@
             diskExpiryThreadIntervalSeconds="1"
             memoryStoreEvictionPolicy="LFU" />
 
+    <cache
+            name="ranking"
+            maxElementsInMemory="100"
+            eternal="false"
+            overflowToDisk="false"
+            timeToIdleSeconds="3000"
+            timeToLiveSeconds="6000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="1"
+            memoryStoreEvictionPolicy="LFU" />
+
 </ehcache>
