@@ -6,14 +6,15 @@ import {
   ApexLegend,
   ApexNonAxisChartSeries,
   ApexResponsive,
-  ApexTitleSubtitle,
+  ApexTitleSubtitle, ApexTooltip,
   ChartComponent
 } from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";
 import {Colors} from "../colors";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
-import {CustomChartComponent} from "../CustomChartComponent";
+import {CustomChartComponent} from "../custom-chart-component";
+import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
 
 type PieChartOptions = {
@@ -21,10 +22,12 @@ type PieChartOptions = {
   colors: string [];
   chart: ApexChart;
   fill: ApexFill;
+  tooltip: ApexTooltip;
   responsive: ApexResponsive[];
   labels: string[];
   title: ApexTitleSubtitle;
   legend: ApexLegend;
+  theme: ApexTheme;
 };
 
 @Component({
@@ -67,57 +70,20 @@ export class PieChartComponent extends CustomChartComponent {
   protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
-      chart: {
-        width: this.width,
-        type: this.isDonut ? "donut" : "pie",
-        dropShadow: {
-          enabled: this.shadow,
-          color: '#000',
-          top: -5,
-          left: 7,
-          blur: 8,
-          opacity: 0.2
-        },
-        toolbar: {
-          show: this.showToolbar,
-        },
-      },
+      chart: this.getChart(this.isDonut ? "donut" : "pie", this.width, this.shadow, this.showToolbar),
       series: this.data.getValues(),
       labels: this.data.getLabels(),
-      fill: {
-        type: this.fill,
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200
-            },
-            legend: {
-              position: this.legendPosition
-            }
-          }
-        }
-      ],
-      title: {
-        text: this.title,
-        align: this.titleAlignment,
-        style: {
-          fontSize: '14px',
-          fontWeight: 'bold',
-          fontFamily: 'Roboto',
-          color: this.titleTextColor
-        },
-      },
-      legend: {
-        position: this.legendPosition,
-        labels: {
-          colors: this.legendTextColor,
-          useSeriesColors: false
-        },
-      },
+      fill: this.getFill(this.fill),
+      tooltip: this.getTooltip(),
+      responsive: this.getResponsive(this.legendPosition),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
     };
+  }
+
+  protected getPlotOptions(): undefined {
+    return undefined;
   }
 
   update(data: PieChartData) {

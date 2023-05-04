@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -6,16 +6,17 @@ import {
   ApexFill,
   ApexLegend,
   ApexPlotOptions,
-  ApexTitleSubtitle,
+  ApexTitleSubtitle, ApexTooltip,
   ApexXAxis,
   ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {StackedBarChartData, StackedBarsData} from "./stacked-bars-chart-data";
-import {CustomChartComponent} from "../CustomChartComponent";
+import {CustomChartComponent} from "../custom-chart-component";
 import {DarkModeService} from "../../../services/notifications/dark-mode.service";
 import {UserSessionService} from "../../../services/user-session.service";
+import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
 
 type StackedBarsChartOptions = {
@@ -24,10 +25,12 @@ type StackedBarsChartOptions = {
   labels: ApexDataLabels;
   fill: ApexFill;
   plotOptions: ApexPlotOptions;
+  tooltip: ApexTooltip;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   legend: ApexLegend;
+  theme: ApexTheme;
 };
 
 type UpdateBarsChartOptions = {
@@ -93,90 +96,38 @@ export class StackedBarsChartComponent extends CustomChartComponent {
 
   protected setProperties(): void {
     this.chartOptions = {
-      chart: {
-        width: this.width,
-        type: "bar",
-        toolbar: {
-          show: this.showToolbar,
-        },
-        stacked: this.stacked,
-        stackType: this.stackType,
-        dropShadow: {
-          enabled: this.shadow,
-          color: '#000',
-          top: 0,
-          left: 7,
-          blur: 10,
-          opacity: 0.2
-        },
-      },
+      chart: this.getChart('bar', this.width, this.shadow, this.showToolbar),
       series: this.setColors(this.data.getData()),
-      labels: {
-        enabled: this.showValuesLabels
-      },
-      fill: {
-        type: this.fill,
-      },
-      plotOptions: {
-        bar: {
-          distributed: false, // this line is mandatory for using colors
-          horizontal: this.horizontal,
-          barHeight: this.barThicknessPercentage + '%',
-          columnWidth: this.barThicknessPercentage + '%',
-          borderRadius: this.borderRadius,
-          dataLabels: {
-            total: {
-              enabled: this.enableTotals,
-              style: {
-                fontWeight: 900
-              }
+      labels: this.getLabels(this.showValuesLabels),
+      fill: this.getFill(this.fill),
+      plotOptions: this.getPlotOptions(),
+      tooltip: this.getTooltip(),
+      xaxis: this.getXAxis(this.data.getLabels(), this.xAxisOnTop ? 'top' : 'bottom', this.xAxisTitle),
+      yaxis: this.getYAxis(this.showYAxis, this.yAxisTitle),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
+    };
+  }
+
+  protected getPlotOptions(): ApexPlotOptions {
+    return {
+      bar: {
+        distributed: false, // this line is mandatory for using colors
+        horizontal: this.horizontal,
+        barHeight: this.barThicknessPercentage + '%',
+        columnWidth: this.barThicknessPercentage + '%',
+        borderRadius: this.borderRadius,
+        dataLabels: {
+          total: {
+            enabled: this.enableTotals,
+            style: {
+              fontWeight: 900
             }
           }
         }
-      },
-      xaxis: {
-        categories: this.data.getLabels(),
-        position: this.xAxisOnTop ? 'top' : 'bottom',
-        title: {
-          text: this.xAxisTitle
-        },
-        labels: {
-          style: {
-            fontFamily: 'Roboto',
-            colors: this.axisTextColor
-          },
-        },
-      },
-      yaxis: {
-        show: this.showYAxis,
-        title: {
-          text: this.yAxisTitle
-        },
-        labels: {
-          style: {
-            fontFamily: 'Roboto',
-            colors: this.axisTextColor
-          },
-        },
-      },
-      title: {
-        text: this.title,
-        align: this.titleAlignment,
-        style: {
-          fontSize: '14px',
-          fontWeight: 'bold',
-          fontFamily: 'Roboto',
-          color: this.titleTextColor
-        },
-      },
-      legend: {
-        position: this.legendPosition,
-        labels: {
-          colors: this.legendTextColor,
-          useSeriesColors: false
-        },
-      },
-    };
+      }
+    }
   }
 
   update(data: StackedBarChartData) {

@@ -328,4 +328,5 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
 
+  protected readonly undefined = undefined;
 }
