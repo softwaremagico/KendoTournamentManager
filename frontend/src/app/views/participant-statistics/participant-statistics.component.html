@@ -187,6 +187,15 @@
                        [width]="360"></app-pie-chart>
         <app-gauge-chart *ngIf="!!performanceRadialData" [data]="performanceRadialData"
                          [title]="'performance' | translate" [width]="400"></app-gauge-chart>
+
+        <div class="box-statistics box shadow scrollable">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="gauge" class="kendo-icon"></mat-icon>
+            <h3>{{'performance' | translate}}</h3>
+          </div>
+          <app-progress-bar *ngFor="let value of performance" [text]="value[0]"
+                            [percentage]="value[1]" [barIcon]="'diploma'"></app-progress-bar>
+        </div>
       </div>
     </div>
   </div>
