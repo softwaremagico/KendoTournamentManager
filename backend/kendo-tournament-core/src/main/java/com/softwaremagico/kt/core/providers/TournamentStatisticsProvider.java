@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TournamentStatisticsProvider extends CrudProvider<TournamentStatistics, Integer, TournamentStatisticsRepository> {
 
-    private final FightStatisticsProvider fightStatisticsProvider;
+    private final TournamentFightStatisticsProvider fightStatisticsProvider;
 
     private final DuelProvider duelProvider;
 
@@ -41,7 +41,7 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
 
     private final RoleProvider roleProvider;
 
-    protected TournamentStatisticsProvider(TournamentStatisticsRepository repository, FightStatisticsProvider fightStatisticsProvider,
+    protected TournamentStatisticsProvider(TournamentStatisticsRepository repository, TournamentFightStatisticsProvider fightStatisticsProvider,
                                            DuelProvider duelProvider, TeamProvider teamProvider, RoleProvider roleProvider) {
         super(repository);
         this.fightStatisticsProvider = fightStatisticsProvider;

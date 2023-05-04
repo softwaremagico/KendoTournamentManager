@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.statistics;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -26,7 +26,7 @@ package com.softwaremagico.kt.core.statistics;
 
 import java.time.LocalDateTime;
 
-public class FightStatistics {
+public class TournamentFightStatisticsDTO extends ElementDTO {
 
     private Long menNumber;
 
@@ -41,17 +41,17 @@ public class FightStatistics {
     private Long ipponNumber;
 
     private Long fightsNumber;
-    private Long fightsByTeam;
+    private Integer fightsByTeam;
     private Long duelsNumber;
-    //In seconds.
     private Long averageTime;
+    //In seconds.
     private Long estimatedTime;
-
-    private Long fightsFinished;
 
     private LocalDateTime fightsStartedAt;
 
     private LocalDateTime fightsFinishedAt;
+
+    private Long fightsFinished;
 
     private long faults;
 
@@ -65,14 +65,6 @@ public class FightStatistics {
         } else {
             this.fightsNumber = null;
         }
-    }
-
-    public Long getFightsByTeam() {
-        return fightsByTeam;
-    }
-
-    public void setFightsByTeam(Long fightsByTeam) {
-        this.fightsByTeam = fightsByTeam;
     }
 
     public Long getDuelsNumber() {
@@ -93,6 +85,14 @@ public class FightStatistics {
 
     public void setEstimatedTime(Long estimatedTime) {
         this.estimatedTime = estimatedTime;
+    }
+
+    public Integer getFightsByTeam() {
+        return fightsByTeam;
+    }
+
+    public void setFightsByTeam(Integer fightsByTeam) {
+        this.fightsByTeam = fightsByTeam;
     }
 
     public Long getAverageTime() {
@@ -167,13 +167,13 @@ public class FightStatistics {
         this.ipponNumber = ipponNumber;
     }
 
-    /**
-     * Count fights that has at least one duel finished.
-     */
     public Long getFightsFinished() {
         return fightsFinished;
     }
 
+    /**
+     * Count fights that all duels are finished
+     */
     public void setFightsFinished(Long fightsFinished) {
         this.fightsFinished = fightsFinished;
     }
