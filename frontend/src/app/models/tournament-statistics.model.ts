@@ -1,4 +1,4 @@
-import {FightStatistics} from "./fight-statistics.model";
+import {TournamentFightStatistics} from "./tournament-fight-statistics.model";
 import {Element} from "./element";
 import {RoleType} from "./role-type";
 
@@ -8,7 +8,7 @@ export class TournamentStatistics extends Element {
 
   public tournamentName: string;
 
-  public fightStatistics: FightStatistics;
+  public tournamentFightStatistics: TournamentFightStatistics;
 
   public tournamentCreatedAt: Date;
 
@@ -25,8 +25,8 @@ export class TournamentStatistics extends Element {
       return undefined;
     }
     Element.copy(source, target);
-    if (source.fightStatistics !== undefined) {
-      target.fightStatistics = FightStatistics.clone(source.fightStatistics);
+    if (source.tournamentFightStatistics !== undefined) {
+      target.tournamentFightStatistics = TournamentFightStatistics.clone(source.tournamentFightStatistics);
     }
     target.tournamentId = source.tournamentId;
     target.tournamentName = source.tournamentName;

@@ -101,6 +101,7 @@ import {NgApexchartsModule} from "ng-apexcharts";
 import {RadarChartModule} from "./components/charts/radar-chart/radar-chart.module";
 import {RadialChartModule} from "./components/charts/radial-chart/radial-chart.module";
 import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.module";
+import { ParticipantStatisticsComponent } from './views/participant-statistics/participant-statistics.component';
 
 
 registerLocaleData(localeES, "es");
@@ -118,7 +119,8 @@ registerLocaleData(localeNL, "nl");
     TournamentListComponent,
     AuthenticatedUserListComponent,
     PasswordsComponent,
-    TournamentStatisticsComponent
+    TournamentStatisticsComponent,
+    ParticipantStatisticsComponent
   ],
   imports: [
     BrowserModule,

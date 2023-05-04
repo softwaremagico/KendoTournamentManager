@@ -24,8 +24,8 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.statistics.FightStatistics;
-import com.softwaremagico.kt.core.statistics.FightStatisticsRepository;
+import com.softwaremagico.kt.core.statistics.TournamentFightStatistics;
+import com.softwaremagico.kt.core.statistics.TournamentFightStatisticsRepository;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
-public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integer, FightStatisticsRepository> {
+public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFightStatistics, Integer, TournamentFightStatisticsRepository> {
 
     private static final int TIME_BETWEEN_FIGHTS = 20;
     private static final int TIME_BETWEEN_DUELS = 10;
@@ -52,10 +52,10 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
     private final RoleProvider roleProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
-    public FightStatisticsProvider(FightStatisticsRepository fightStatisticsRepository, DuelProvider duelProvider,
-                                   FightProvider fightProvider, TeamProvider teamProvider, RoleProvider roleProvider,
-                                   TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        super(fightStatisticsRepository);
+    public TournamentFightStatisticsProvider(TournamentFightStatisticsRepository tournamentFightStatisticsRepository, DuelProvider duelProvider,
+                                             FightProvider fightProvider, TeamProvider teamProvider, RoleProvider roleProvider,
+                                             TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+        super(tournamentFightStatisticsRepository);
         this.duelProvider = duelProvider;
         this.fightProvider = fightProvider;
         this.teamProvider = teamProvider;
@@ -69,7 +69,7 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
      * @param tournament the tournament.
      * @return some estimations.
      */
-    public FightStatistics estimate(Tournament tournament) {
+    public TournamentFightStatistics estimate(Tournament tournament) {
         final List<Team> teams = teamProvider.getAll(tournament);
         if (!teams.isEmpty()) {
             return estimate(tournament, teams);
@@ -78,26 +78,26 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         return estimateByRoles(tournament, roles);
     }
 
-    public FightStatistics estimateByTeams(Tournament tournament) {
+    public TournamentFightStatistics estimateByTeams(Tournament tournament) {
         final List<Team> teams = teamProvider.getAll(tournament);
         return estimate(tournament, teams);
     }
 
-    public FightStatistics estimateByMembers(Tournament tournament) {
+    public TournamentFightStatistics estimateByMembers(Tournament tournament) {
         final List<Role> roles = roleProvider.getAll(tournament);
         return estimateByRoles(tournament, roles.stream().filter(role ->
                 Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).collect(Collectors.toList()));
     }
 
-    public FightStatistics estimate(Tournament tournament, Collection<Team> teams) {
+    public TournamentFightStatistics estimate(Tournament tournament, Collection<Team> teams) {
         return estimate(tournament, tournament.getTeamSize(), teams);
     }
 
-    public FightStatistics estimateByRoles(Tournament tournament, Collection<Role> roles) {
+    public TournamentFightStatistics estimateByRoles(Tournament tournament, Collection<Role> roles) {
         return estimate(tournament, emulateTeams(tournament, roles.stream().map(Role::getParticipant).collect(Collectors.toList())));
     }
 
-    public FightStatistics estimate(Tournament tournament, int teamSize, Collection<Team> teams) {
+    public TournamentFightStatistics estimate(Tournament tournament, int teamSize, Collection<Team> teams) {
         if (tournament == null || teams == null || teams.size() < 2) {
             return null;
         }
@@ -113,37 +113,37 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         }
     }
 
-    public FightStatistics estimateLeagueStatistics(int teamSize, Collection<Team> teams) {
-        final FightStatistics fightStatistics = new FightStatistics();
-        fightStatistics.setFightsNumber((((long) teams.size() * (teams.size() - 1)) / 2));
-        fightStatistics.setFightsByTeam(((long) teams.size() - 1));
-        fightStatistics.setDuelsNumber(getDuels(fightStatistics.getFightsByTeam(), teamSize, teams));
+    public TournamentFightStatistics estimateLeagueStatistics(int teamSize, Collection<Team> teams) {
+        final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
+        tournamentFightStatistics.setFightsNumber((((long) teams.size() * (teams.size() - 1)) / 2));
+        tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1));
+        tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
         final Long durationAverage = duelProvider.getDurationAverage();
-        if (durationAverage != null && fightStatistics.getDuelsNumber() != null) {
-            fightStatistics.setAverageTime(durationAverage);
-            fightStatistics.setEstimatedTime(fightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS) +
-                    (fightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * fightStatistics.getFightsNumber() : 0));
+        if (durationAverage != null && tournamentFightStatistics.getDuelsNumber() != null) {
+            tournamentFightStatistics.setAverageTime(durationAverage);
+            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS) +
+                    (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
         }
-        return fightStatistics;
+        return tournamentFightStatistics;
     }
 
-    public FightStatistics estimateLoopStatistics(Tournament tournament, int teamSize, Collection<Team> teams) {
-        final FightStatistics fightStatistics = new FightStatistics();
+    public TournamentFightStatistics estimateLoopStatistics(Tournament tournament, int teamSize, Collection<Team> teams) {
+        final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
         final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
         if (maximizeFights) {
-            fightStatistics.setFightsNumber(((long) teams.size() * (teams.size() - 1)));
-            fightStatistics.setFightsByTeam(((long) teams.size() - 1) * 2);
+            tournamentFightStatistics.setFightsNumber(((long) teams.size() * (teams.size() - 1)));
+            tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1) * 2);
         } else {
-            fightStatistics.setFightsNumber(((long) teams.size() * teams.size() - 1) / 2);
-            fightStatistics.setFightsByTeam(((long) teams.size() - 1));
+            tournamentFightStatistics.setFightsNumber(((long) teams.size() * teams.size() - 1) / 2);
+            tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1));
         }
-        fightStatistics.setDuelsNumber(getDuels(fightStatistics.getFightsByTeam(), teamSize, teams));
+        tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
-            fightStatistics.setEstimatedTime(fightStatistics.getDuelsNumber() * duelProvider.getDurationAverage());
+            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * duelProvider.getDurationAverage());
         }
-        return fightStatistics;
+        return tournamentFightStatistics;
     }
 
     private long getDuels(long fightByTeam, int teamSize, Collection<Team> teams) {
@@ -198,40 +198,40 @@ public class FightStatisticsProvider extends CrudProvider<FightStatistics, Integ
         return teams;
     }
 
-    public FightStatistics get(Tournament tournament) {
-        final FightStatistics fightStatistics = new FightStatistics();
-        fightStatistics.setFightsNumber(fightProvider.count(tournament));
+    public TournamentFightStatistics get(Tournament tournament) {
+        final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
+        tournamentFightStatistics.setFightsNumber(fightProvider.count(tournament));
         final long teams = teamProvider.count(tournament);
         if (teams > 0) {
-            fightStatistics.setFightsByTeam(fightProvider.count(tournament) / teams);
+            tournamentFightStatistics.setFightsByTeam(fightProvider.count(tournament) / teams);
         } else {
-            fightStatistics.setFightsByTeam(0L);
+            tournamentFightStatistics.setFightsByTeam(0L);
         }
-        fightStatistics.setDuelsNumber(duelProvider.count(tournament));
-        fightStatistics.setAverageTime(duelProvider.getDurationAverage(tournament));
-        fightStatistics.setMenNumber(duelProvider.countScore(tournament, Score.MEN));
-        fightStatistics.setDoNumber(duelProvider.countScore(tournament, Score.DO));
-        fightStatistics.setKoteNumber(duelProvider.countScore(tournament, Score.KOTE));
-        fightStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
-        fightStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
-        fightStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
+        tournamentFightStatistics.setDuelsNumber(duelProvider.count(tournament));
+        tournamentFightStatistics.setAverageTime(duelProvider.getDurationAverage(tournament));
+        tournamentFightStatistics.setMenNumber(duelProvider.countScore(tournament, Score.MEN));
+        tournamentFightStatistics.setDoNumber(duelProvider.countScore(tournament, Score.DO));
+        tournamentFightStatistics.setKoteNumber(duelProvider.countScore(tournament, Score.KOTE));
+        tournamentFightStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
+        tournamentFightStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
+        tournamentFightStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
         final Duel firstDuel = duelProvider.getFirstDuel(tournament);
         final Duel lastDuel = duelProvider.getLastDuel(tournament);
         if (firstDuel != null) {
             if (firstDuel.getStartedAt() != null) {
-                fightStatistics.setFightsStartedAt(firstDuel.getStartedAt());
+                tournamentFightStatistics.setFightsStartedAt(firstDuel.getStartedAt());
             } else {
                 if (firstDuel.getFinishedAt() != null) {
-                    fightStatistics.setFightsStartedAt(firstDuel.getFinishedAt().minusMinutes(2));
+                    tournamentFightStatistics.setFightsStartedAt(firstDuel.getFinishedAt().minusMinutes(2));
                 }
             }
         }
         if (lastDuel != null) {
-            fightStatistics.setFightsFinishedAt(lastDuel.getFinishedAt());
+            tournamentFightStatistics.setFightsFinishedAt(lastDuel.getFinishedAt());
         }
-        fightStatistics.setFightsFinished(fightProvider.countByTournamentAndFinished(tournament));
-        fightStatistics.setFaults(duelProvider.countFaults(tournament));
-        return fightStatistics;
+        tournamentFightStatistics.setFightsFinished(fightProvider.countByTournamentAndFinished(tournament));
+        tournamentFightStatistics.setFaults(duelProvider.countFaults(tournament));
+        return tournamentFightStatistics;
     }
 
 }

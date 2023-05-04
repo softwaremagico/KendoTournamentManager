@@ -53,12 +53,20 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.countByTournament(tournament);
     }
 
+    public List<Duel> get(Participant participant) {
+        return repository.findByParticipant(participant);
+    }
+
     public List<Duel> get(Tournament tournament) {
         return repository.findByTournament(tournament);
     }
 
     public List<Duel> getUnties(List<Participant> participants) {
         return repository.findUntiesByParticipantIn(participants);
+    }
+
+    public List<Duel> getUnties() {
+        return repository.findAllUnties();
     }
 
     @Cacheable("duelsDurationAverage")
