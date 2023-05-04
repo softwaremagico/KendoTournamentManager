@@ -19,7 +19,7 @@ export class ProgressBarComponent implements OnInit {
   percentage: number = 50;
 
   @Input()
-  barIcon: string;
+  barIcon: string = "attack";
 
   progressInLoading() {
     if (this.drawnPercentage === 100) {
@@ -34,6 +34,4 @@ export class ProgressBarComponent implements OnInit {
       }
     }, 50);
   }
-
-  protected readonly undefined = undefined;
 }

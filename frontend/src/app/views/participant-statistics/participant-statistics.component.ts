@@ -16,7 +16,6 @@ import {truncate} from "../../utils/maths/truncate";
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
 import {RankingService} from "../../services/ranking.service";
 import {CompetitorRanking} from "../../models/competitor-ranking";
-import {ProgressBarComponent} from "../../components/progress-bar/progress-bar.component";
 
 @Component({
   selector: 'app-participant-statistics',
