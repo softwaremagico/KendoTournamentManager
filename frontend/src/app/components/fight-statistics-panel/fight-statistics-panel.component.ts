@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FightStatistics} from "../../models/fight-statistics.model";
+import {TournamentFightStatistics} from "../../models/tournament-fight-statistics.model";
 import {Tournament} from "../../models/tournament";
 import {StatisticsService} from "../../services/statistics.service";
 import {StatisticsChangedService} from "../../services/notifications/statistics-changed.service";
@@ -19,7 +19,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
   @Input()
   teams: boolean;
 
-  fightStatistics: FightStatistics;
+  fightStatistics: TournamentFightStatistics;
   hours: number;
   minutes: number;
   seconds: number;
@@ -33,7 +33,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
       if (this.tournament && this.tournament.id) {
         this.statisticsServices.getFightStatistics(this.tournament.id, !this.teams, this.teams).subscribe((_fightStatistics) => {
           if (_fightStatistics === undefined || _fightStatistics === null) {
-            _fightStatistics = new FightStatistics();
+            _fightStatistics = new TournamentFightStatistics();
           }
           this.fightStatistics = _fightStatistics;
           this.setHours(this.fightStatistics.estimatedTime);
