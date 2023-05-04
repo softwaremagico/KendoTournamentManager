@@ -43,7 +43,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   ngOnInit(): void {
     this.selectCamera();
-    navigator.mediaDevices.enumerateDevices().then(devices => {
+    navigator.mediaDevices.enumerateDevices().catch().then(devices => {
       this.availableCameras = devices.filter((device) => device.kind === "videoinput").length;
     })
   }
