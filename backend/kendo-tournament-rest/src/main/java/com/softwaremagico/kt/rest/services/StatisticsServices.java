@@ -24,11 +24,10 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.FightStatisticsController;
-import com.softwaremagico.kt.core.controller.TournamentController;
-import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
-import com.softwaremagico.kt.core.controller.models.FightStatisticsDTO;
+import com.softwaremagico.kt.core.controller.*;
+import com.softwaremagico.kt.core.controller.models.ParticipantStatisticsDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentStatisticsDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,24 +50,29 @@ public class StatisticsServices {
 
     private final TournamentController tournamentController;
     private final FightStatisticsController fightStatisticsController;
-
     private final TournamentStatisticsController tournamentStatisticsController;
+    private final ParticipantStatisticsController participantStatisticsController;
+
+    private final ParticipantController participantController;
 
     public StatisticsServices(TournamentController tournamentController, FightStatisticsController fightStatisticsController,
-                              TournamentStatisticsController tournamentStatisticsController) {
+                              TournamentStatisticsController tournamentStatisticsController,
+                              ParticipantStatisticsController participantStatisticsController, ParticipantController participantController) {
         this.tournamentController = tournamentController;
         this.fightStatisticsController = fightStatisticsController;
         this.tournamentStatisticsController = tournamentStatisticsController;
+        this.participantStatisticsController = participantStatisticsController;
+        this.participantController = participantController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournament/{tournamentId}/fights", produces = MediaType.APPLICATION_JSON_VALUE)
-    public FightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                          @PathVariable("tournamentId") Integer tournamentId,
-                                                          @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
-                                                          @RequestParam(name = "calculateByMembers") Optional<Boolean> checkByMembers,
-                                                          HttpServletRequest request) {
+    @GetMapping(value = "/tournaments/{tournamentId}/fights", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TournamentFightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                    @PathVariable("tournamentId") Integer tournamentId,
+                                                                    @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
+                                                                    @RequestParam(name = "calculateByMembers") Optional<Boolean> checkByMembers,
+                                                                    HttpServletRequest request) {
         if (checkByMembers.isPresent() && checkByMembers.get()) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by members.");
             return fightStatisticsController.estimateByMembers(tournamentController.get(tournamentId));
@@ -82,7 +86,7 @@ public class StatisticsServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                                @PathVariable("tournamentId") Integer tournamentId,
                                                                Authentication authentication,
@@ -95,7 +99,7 @@ public class StatisticsServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets previous tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournament/{tournamentId}/previous/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/tournaments/{tournamentId}/previous/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentStatisticsDTO> getStatisticsFromPreviousTournament(@Parameter(description = "Id of an existing tournament", required = true)
                                                                              @PathVariable("tournamentId") Integer tournamentId,
                                                                              @Parameter(description = "Number of tournaments statistics to retrieve")
@@ -114,5 +118,18 @@ public class StatisticsServices {
             statisticsDTOS.add(tournamentStatisticsDTO);
         });
         return statisticsDTOS;
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets participant statistics.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantStatisticsDTO getStatisticsFromParticipant(@Parameter(description = "Id of an existing participant", required = true)
+                                                                 @PathVariable("participantId") Integer participantId,
+                                                                 Authentication authentication,
+                                                                 HttpServletRequest request) {
+        final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(participantController.get(participantId));
+        participantStatisticsDTO.setCreatedBy(authentication.getName());
+        participantStatisticsDTO.setCreatedAt(LocalDateTime.now());
+        return participantStatisticsDTO;
     }
 }
