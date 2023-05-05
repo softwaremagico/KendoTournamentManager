@@ -14,6 +14,8 @@ export class TournamentStatistics extends Element {
 
   public tournamentLockedAt: Date;
 
+  public tournamentFinishedAt: Date;
+
   public numberOfTeams: number;
 
   public teamSize: number;
@@ -32,6 +34,7 @@ export class TournamentStatistics extends Element {
     target.tournamentName = source.tournamentName;
     target.tournamentCreatedAt = source.tournamentCreatedAt;
     target.tournamentLockedAt = source.tournamentLockedAt;
+    target.tournamentFinishedAt = source.tournamentFinishedAt;
     target.numberOfTeams = source.numberOfTeams;
     target.teamSize = source.teamSize;
     target.numberOfParticipants = new Map();
