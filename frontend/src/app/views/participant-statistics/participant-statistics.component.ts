@@ -34,6 +34,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
   public performanceRadialData: GaugeChartData;
+  public performance: [string, number][];
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
@@ -85,7 +86,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   initializeScoreStatistics(participantStatistics: ParticipantStatistics): void {
     this.hitsTypeChartData = PieChartData.fromArray(this.obtainPoints(participantStatistics));
     this.receivedHitsTypeChartData = PieChartData.fromArray(this.obtainReceivedPoints(participantStatistics));
-    this.performanceRadialData = GaugeChartData.fromArray(this.generatePerformanceStatistics(participantStatistics));
+    this.performance = this.generatePerformanceStatistics(participantStatistics);
+    this.performanceRadialData = GaugeChartData.fromArray(this.performance);
   }
 
   generatePerformanceStatistics(participantStatistics: ParticipantStatistics): [string, number][] {
