@@ -509,7 +509,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   finishTournament(date: Date | undefined) {
-    this.tournament.finishedAt = date;
+    if (!this.tournament.finishedAt) {
+      this.tournament.finishedAt = date;
+    }
     this.tournamentService.update(this.tournament).subscribe();
   }
 
