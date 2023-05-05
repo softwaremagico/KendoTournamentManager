@@ -40,6 +40,8 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     private LocalDateTime tournamentCreatedAt;
 
+    private LocalDateTime tournamentFinishedAt;
+
     private LocalDateTime tournamentLockedAt;
 
     private Long numberOfTeams;
@@ -102,6 +104,14 @@ public class TournamentStatisticsDTO extends ElementDTO {
 
     public void setTournamentLockedAt(LocalDateTime tournamentLockedAt) {
         this.tournamentLockedAt = tournamentLockedAt;
+    }
+
+    public LocalDateTime getTournamentFinishedAt() {
+        return tournamentFinishedAt;
+    }
+
+    public void setTournamentFinishedAt(LocalDateTime tournamentFinishedAt) {
+        this.tournamentFinishedAt = tournamentFinishedAt;
     }
 
     public Integer getTeamSize() {

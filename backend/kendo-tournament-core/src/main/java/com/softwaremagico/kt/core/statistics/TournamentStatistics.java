@@ -40,6 +40,8 @@ public class TournamentStatistics {
 
     private LocalDateTime tournamentCreatedAt;
 
+    private LocalDateTime tournamentFinishedAt;
+
     private LocalDateTime tournamentLockedAt;
 
     private Long numberOfTeams;
@@ -107,8 +109,16 @@ public class TournamentStatistics {
         return tournamentLockedAt;
     }
 
-    public void setTournamentLockedAt(LocalDateTime finishedAt) {
-        this.tournamentLockedAt = finishedAt;
+    public void setTournamentLockedAt(LocalDateTime tournamentLockedAt) {
+        this.tournamentLockedAt = tournamentLockedAt;
+    }
+
+    public LocalDateTime getTournamentFinishedAt() {
+        return tournamentFinishedAt;
+    }
+
+    public void setTournamentFinishedAt(LocalDateTime tournamentFinishedAt) {
+        this.tournamentFinishedAt = tournamentFinishedAt;
     }
 
     public Integer getTeamSize() {
