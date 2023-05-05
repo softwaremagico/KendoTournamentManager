@@ -217,8 +217,7 @@ public class Duel extends Element {
     /**
      * Gets the winner of the duel.
      *
-     * @return -1 if player of first team, 0 if draw, 1 if player of second
-     * tiem.
+     * @return -1 if player of first team, 0 if drawn, 1 if player of second team.
      */
     public int getWinner() {
         return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
