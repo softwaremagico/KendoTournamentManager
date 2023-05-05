@@ -64,6 +64,24 @@
               <td>{{convertSeconds(participantStatistics?.participantFightStatistics?.quickestReceivedHit)}}</td>
             </tr>
           </table>
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
+            <h3>{{'duels' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+            <tr>
+              <td class="single">{{'duelsWon' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.wonDuels}}</td>
+            </tr>
+            <tr>
+              <td class="single">{{'duelsDraw' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.drawDuels}}</td>
+            </tr>
+            <tr>
+              <td class="single">{{'duelsLost' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.lostDuels}}</td>
+            </tr>
+          </table>
         </div>
 
         <div class="box-statistics box shadow">
@@ -183,7 +201,7 @@
             <mat-icon svgIcon="gauge" class="kendo-icon"></mat-icon>
             <h3>{{'performance' | translate}}</h3>
           </div>
-          <app-progress-bar *ngFor="let value of performance" [text]="value[0]"
+          <app-progress-bar *ngFor="let value of performance" [text]="value[0] | translate"
                             [percentage]="value[1]" [barIcon]="value[0].toLowerCase()"></app-progress-bar>
         </div>
 
