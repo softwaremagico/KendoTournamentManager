@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {FaultComponent} from "./fault.component";
 import {MatMenuModule} from "@angular/material/menu";
 import {TranslateModule} from "@ngx-translate/core";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 
@@ -14,7 +15,8 @@ import {TranslateModule} from "@ngx-translate/core";
   imports: [
     CommonModule,
     MatMenuModule,
-    TranslateModule
+    TranslateModule,
+    MatTooltipModule
   ]
 })
 export class FaultModule { }

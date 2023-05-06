@@ -4,7 +4,6 @@ import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
-import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'score',
@@ -27,14 +26,16 @@ export class ScoreComponent implements OnInit, OnChanges {
 
   scoreRepresentation: string;
 
-  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
-              private translateService: TranslateService) {
+  timeRepresentation: string | undefined;
+
+  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
     this.scoreUpdatedService.isScoreUpdated.subscribe(duel => {
       if (duel == this.duel) {
         this.scoreRepresentation = this.getScoreRepresentation();
+        this.setTime();
       }
     });
   }
@@ -42,6 +43,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['duel'] || changes['left'] || changes['swapTeams']) {
       this.scoreRepresentation = this.getScoreRepresentation();
+      this.setTime();
     }
   }
 
@@ -179,4 +181,22 @@ export class ScoreComponent implements OnInit, OnChanges {
     return Score.toArray();
   }
 
+  setTime() {
+    let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+      this.duel.competitor1ScoreTime[this.index] : this.duel.competitor2ScoreTime[this.index];
+    if (seconds) {
+      const minutes: number | undefined = seconds ? Math.floor(seconds / 60) : undefined;
+      seconds = seconds % 60;
+      let text: string = "";
+      if (minutes) {
+        text += minutes + "' ";
+      }
+      if (seconds) {
+        text += seconds + '"';
+      }
+      this.timeRepresentation = text;
+    } else {
+      this.timeRepresentation = undefined;
+    }
+  }
 }
