@@ -354,7 +354,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         //Do nothing
       } else if (result.action === Action.Add) {
         this.selectFirstUnfinishedDuel();
-        this.finishTournament(undefined);
       } else if (result.action === Action.Update) {
         this.updateRowData(result.data);
       } else if (result.action === Action.Delete) {
@@ -372,7 +371,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             this.resetFilter();
             this.selectedGroup!.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
-            this.finishTournament(undefined);
           });
         }
       });
@@ -496,7 +494,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.fightService.createNext(this.tournamentId!).subscribe(_fights => {
       if (_fights.length > 0) {
         this.refreshFights();
-        this.finishTournament(undefined);
       } else {
         if ((this.tournament && this.tournament.teamSize && this.tournament.teamSize > 1) ||
           (this.tournament && this.tournament.type === this.kingOfTheMountainType)) {
