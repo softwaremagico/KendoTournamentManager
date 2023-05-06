@@ -372,6 +372,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             this.resetFilter();
             this.selectedGroup!.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
+            this.finishTournament(undefined);
           });
         }
       });
@@ -509,10 +510,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   finishTournament(date: Date | undefined) {
-    if (!this.tournament.finishedAt) {
+    if (!this.tournament.finishedAt && date) {
       this.tournament.finishedAt = date;
+      this.tournamentService.update(this.tournament).subscribe();
+    } else if (!date && this.tournament.finishedAt) {
+      this.tournament.finishedAt = undefined
+      this.tournamentService.update(this.tournament).subscribe();
     }
-    this.tournamentService.update(this.tournament).subscribe();
   }
 
   selectDuel(duel: Duel) {
