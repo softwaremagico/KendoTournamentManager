@@ -1,10 +1,11 @@
-<div class="fault" [matMenuTriggerFor]="menu">
+<div class="fault" [matMenuTriggerFor]="menu" matTooltip="{{this.timeRepresentation}}">
   <mat-menu #menu="matMenu">
     <button mat-menu-item *ngIf="this.duel.competitor1 !== null && this.duel.competitor2 !== null"
             (click)="updateFault(true)">{{'fault' | translate}}</button>
     <button mat-menu-item (click)="updateFault(false)">{{'clear' | translate}}</button>
   </mat-menu>
   <div class="fault-content"
-       *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams)?this.duel.competitor1Fault != null && this.duel.competitor1Fault:this.duel.competitor2Fault != null && this.duel.competitor2Fault">
+       *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+       this.duel.competitor1Fault != null && this.duel.competitor1Fault:this.duel.competitor2Fault != null && this.duel.competitor2Fault">
   </div>
 </div>

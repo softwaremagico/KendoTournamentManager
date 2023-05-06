@@ -12,8 +12,8 @@ export class Duel extends Element {
   public competitor2Score: Score[];
   public competitor1ScoreTime: number[];
   public competitor2ScoreTime: number[];
-  public competitor1FaultTime: number;
-  public competitor2FaultTime: number;
+  public competitor1FaultTime: number | undefined;
+  public competitor2FaultTime: number | undefined;
   public type: DuelType;
   public duration?: number;
   public totalDuration?: number;
