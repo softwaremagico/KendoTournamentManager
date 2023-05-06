@@ -1,4 +1,4 @@
-<div class="score-area" [matMenuTriggerFor]="menu">
+<div class="score-area" [matMenuTriggerFor]="menu" matTooltip="{{this.timeRepresentation}}">
   <mat-menu #menu="matMenu">
     <button *ngFor="let score of possibleScores()" mat-menu-item
             (click)="updateScore(score)">{{score.toLowerCase() | translate}}</button>
