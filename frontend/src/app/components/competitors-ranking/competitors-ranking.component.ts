@@ -7,6 +7,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";
+import {DOCUMENT} from "@angular/common";
 
 @Component({
   selector: 'app-competitors-ranking',
@@ -21,6 +22,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   showIndex: boolean | undefined;
 
   constructor(public dialogRef: MatDialogRef<CompetitorsRankingComponent>,
+              @Inject(DOCUMENT) document: Document,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: {
                 tournament: Tournament | undefined,
                 competitor: Participant | undefined,
@@ -41,6 +43,10 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
     } else {
       this.rankingService.getCompetitorsGlobalScoreRanking(undefined).subscribe((competitorsScore: ScoreOfCompetitor[]) => {
         this.competitorsScore = competitorsScore;
+        //Timeout to scroll after the component is drawn.
+        setTimeout((): void => {
+          this.scrollToScore(document.getElementById(this.competitor?.id + ""));
+        }, 500);
       });
     }
   }
@@ -51,25 +57,31 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
 
   downloadPDF() {
     if (this.tournament && this.tournament.id) {
-      this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+      this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
-        const anchor = document.createElement("a");
+        const anchor: HTMLAnchorElement = document.createElement("a");
         anchor.download = "Competitors Ranking - " + this.tournament!.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined).subscribe((pdf: Blob) => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
-        const anchor = document.createElement("a");
+        const anchor: HTMLAnchorElement = document.createElement("a");
         anchor.download = "Competitors Ranking.pdf";
         anchor.href = downloadURL;
         anchor.click();
       });
+    }
+  }
+
+  scrollToScore(row: HTMLElement | null): void {
+    if (row) {
+      row.scrollIntoView({behavior: 'smooth'});
     }
   }
 }
