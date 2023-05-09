@@ -50,7 +50,7 @@ export class RankingService {
       );
   }
 
-  getCompetitorsGlobalScoreRanking(participants: Participant[]): Observable<ScoreOfCompetitor[]> {
+  getCompetitorsGlobalScoreRanking(participants: Participant[] | undefined): Observable<ScoreOfCompetitor[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors';
     return this.http.post<ScoreOfCompetitor[]>(url, participants, this.loginService.httpOptions)
@@ -62,6 +62,24 @@ export class RankingService {
         }),
         catchError(this.messageService.handleError<ScoreOfCompetitor[]>(`getting competitors ranking`))
       );
+  }
+
+  getCompetitorsGlobalScoreRankingAsPdf(participants: Participant[] | undefined): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/competitors/pdf';
+    return this.http.post<Blob>(url, participants, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting competitors ranking`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting competitors ranking`))
+    );
   }
 
   getCompetitorsRanking(participantId: number): Observable<CompetitorRanking> {
