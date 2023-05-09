@@ -83,4 +83,14 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         return repository.findAll().stream().filter(tournament -> tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
     }
 
+    public void markAsFinished(Tournament tournament, boolean finish) {
+        if (finish && tournament.getFinishedAt() == null) {
+            tournament.setFinishedAt(LocalDateTime.now());
+            repository.save(tournament);
+        } else if (!finish && tournament.getFinishedAt() != null) {
+            tournament.setFinishedAt(null);
+            repository.save(tournament);
+        }
+    }
+
 }
