@@ -47,7 +47,7 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
 
     List<Fight> findByTournamentAndFinishedAtIsNotNull(Tournament tournament);
 
-    @Query("SELECT f FROM Fight f LEFT JOIN f.duels d WHERE d.competitor1 IN :participants or d.competitor2 IN :participants")
+    @Query("SELECT DISTINCT f FROM Fight f LEFT JOIN f.duels d WHERE d.competitor1 IN :participants or d.competitor2 IN :participants")
     List<Fight> findByParticipantIn(@Param("participants") Collection<Participant> participants);
 
     long countByTournamentAndFinishedAtIsNull(Tournament tournament);
