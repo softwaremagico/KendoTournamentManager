@@ -635,7 +635,9 @@
   "defense": "Defensa",
   "willpower": "Fuerza de Voluntad",
   "aggressiveness": "Agresividad",
-  "errorFightNotSelected": "¡Debes seleccionar primero un grupo!"
+  "errorFightNotSelected": "¡Debes seleccionar primero un grupo!",
+  "minutesAbbreviation": "mins",
+  "secondsAbbreviation": "secs"
 }
 
 
