@@ -1,14 +1,17 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'score',
   templateUrl: './score.component.html',
   styleUrls: ['./score.component.scss'],
+  // tooltip style not applied without this:
+  encapsulation: ViewEncapsulation.None,
 })
 export class ScoreComponent implements OnInit, OnChanges {
 
@@ -28,7 +31,15 @@ export class ScoreComponent implements OnInit, OnChanges {
 
   timeRepresentation: string | undefined;
 
-  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService) {
+  mouseX: number | undefined;
+  mouseY: number | undefined;
+  screenHeight: number | undefined;
+  screenWidth: number | undefined;
+  onLeftBorder: boolean;
+  onRightBorder: boolean;
+
+  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
+              private translateService: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -129,17 +140,21 @@ export class ScoreComponent implements OnInit, OnChanges {
   }
 
   getScoreRepresentation(): string {
+    return Score.tag(this.getScore());
+  }
+
+  getScore(): Score {
     if (this.left) {
       if (!this.swapTeams) {
-        return Score.tag(this.duel.competitor1Score[this.index]);
+        return this.duel.competitor1Score[this.index];
       } else {
-        return Score.tag(this.duel.competitor2Score[this.index]);
+        return this.duel.competitor2Score[this.index];
       }
     } else {
       if (!this.swapTeams) {
-        return Score.tag(this.duel.competitor2Score[this.index]);
+        return this.duel.competitor2Score[this.index];
       } else {
-        return Score.tag(this.duel.competitor1Score[this.index]);
+        return this.duel.competitor1Score[this.index];
       }
     }
   }
@@ -189,14 +204,48 @@ export class ScoreComponent implements OnInit, OnChanges {
       seconds = seconds % 60;
       let text: string = "";
       if (minutes) {
-        text += minutes + "' ";
+        text += minutes + " " + this.translateService.instant('minutesAbbreviation') + " ";
       }
       if (seconds) {
-        text += seconds + '"';
+        text += seconds + " " + this.translateService.instant('secondsAbbreviation') + " ";
       }
       this.timeRepresentation = text;
     } else {
       this.timeRepresentation = undefined;
+    }
+  }
+
+  tooltipText(): string {
+    if (!this.timeRepresentation || this.timeRepresentation.length == 0) {
+      return "";
+    }
+    let tooltipText: string = '<b>' + this.getScore() + '</b><br>' +
+      '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip">' + this.timeRepresentation + '</span></div>';
+    return tooltipText;
+  }
+
+  updateCoordinates($event: MouseEvent) {
+    this.mouseX = $event.clientX;
+    this.mouseY = $event.clientY;
+    this.calculateTooltipMargin();
+  }
+
+  clearCoordinates($event: MouseEvent) {
+    this.mouseX = undefined;
+    this.mouseY = undefined;
+  }
+
+
+  calculateTooltipMargin() {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    this.onLeftBorder = false;
+    this.onRightBorder = false;
+    if (this.mouseX! - 150 < 0) {
+      this.onLeftBorder = true;
+    }
+    if (this.mouseX! + 150 > this.screenWidth!) {
+      this.onRightBorder = true;
     }
   }
 }
