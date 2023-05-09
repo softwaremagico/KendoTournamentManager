@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -6,14 +6,17 @@ import {
   ApexFill,
   ApexLegend,
   ApexPlotOptions,
-  ApexTitleSubtitle,
+  ApexTitleSubtitle, ApexTooltip,
   ApexXAxis,
   ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
 import {BarChartData} from "./bar-chart-data";
-import {PieChartData} from "../pie-chart/pie-chart-data";
+import {CustomChartComponent} from "../custom-chart-component";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
+import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
 
 type BarChartOptions = {
@@ -23,10 +26,12 @@ type BarChartOptions = {
   chart: ApexChart;
   labels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
+  tooltip: ApexTooltip
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   legend: ApexLegend;
+  theme: ApexTheme;
 };
 
 @Component({
@@ -34,7 +39,7 @@ type BarChartOptions = {
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements OnInit {
+export class BarChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -76,65 +81,40 @@ export class BarChartComponent implements OnInit {
   @Input()
   public shadow: boolean = true;
 
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
 
-  ngOnInit() {
+  protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
-      chart: {
-        width: this.width,
-        type: "bar",
-        toolbar: {
-          show: this.showToolbar,
-        },
-        dropShadow: {
-          enabled: this.shadow,
-          color: '#000',
-          top: 18,
-          left: 7,
-          blur: 10,
-          opacity: 0.2
-        },
-      },
+      chart: this.getChart('bar', this.width, this.shadow, this.showToolbar),
       series: this.data.getData(),
-      labels: {
-        enabled: this.showValuesLabels
-      },
-      fill: {
-        type: this.fill,
-      },
-      plotOptions: {
-        bar: {
-          distributed: true, // this line is mandatory for using colors
-          horizontal: this.horizontal,
-          barHeight: this.barThicknessPercentage + '%',
-          columnWidth: this.barThicknessPercentage + '%',
-          borderRadius: this.borderRadius
-        }
-      },
-      xaxis: {
-        categories: this.data.getLabels(),
-        position: this.xAxisOnTop ? 'top' : 'bottom',
-        title: {
-          text: this.xAxisTitle
-        }
-      },
-      yaxis: {
-        show: this.showYAxis,
-        title: {
-          text: this.yAxisTitle
-        },
-      },
-      title: {
-        text: this.title,
-        align: this.titleAlignment
-      },
-      legend: {
-        position: this.legendPosition
-      },
+      labels: this.getLabels(this.showValuesLabels),
+      fill: this.getFill(this.fill),
+      plotOptions: this.getPlotOptions(),
+      tooltip: this.getTooltip(),
+      xaxis: this.getXAxis(this.data.getLabels(), this.xAxisOnTop ? 'top' : 'bottom', this.xAxisTitle),
+      yaxis: this.getYAxis(this.showYAxis, this.yAxisTitle),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
     };
   }
 
-  update(data: BarChartData){
+  protected getPlotOptions(): ApexPlotOptions {
+    return {
+      bar: {
+        distributed: true, // this line is mandatory for using colors
+        horizontal: this.horizontal,
+        barHeight: this.barThicknessPercentage + '%',
+        columnWidth: this.barThicknessPercentage + '%',
+        borderRadius: this.borderRadius
+      }
+    }
+  }
+
+  update(data: BarChartData) {
     this.chart.updateSeries(data.getData());
   }
 }
