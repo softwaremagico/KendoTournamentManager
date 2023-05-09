@@ -81,7 +81,7 @@
         <button class="competitors-classification" mat-button color="primary"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" matTooltip="{{'competitorsRanking' | translate}}"
-                *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
+                *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
                 (click)="showCompetitorsClassification()">
           <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
         </button>
