@@ -8,8 +8,8 @@
       <th class="competitor-ranking-header">{{'duelsDraw' | translate}}</th>
       <th class="competitor-ranking-header">{{'histsWon' | translate}}</th>
     </tr>
-    <tr *ngFor="let scoreOfCompetitor of competitorsScore">
-      <td class="competitor-ranking-value">{{scoreOfCompetitor.competitor.lastname}}
+    <tr *ngFor="let scoreOfCompetitor of competitorsScore; let i = index">
+      <td class="competitor-ranking-value">{{showIndex ? i + 1 + ". " : ""}}{{scoreOfCompetitor.competitor.lastname}}
         , {{scoreOfCompetitor.competitor.name}}</td>
       <td
         class="competitor-ranking-value">{{scoreOfCompetitor.wonDuels}}{{(scoreOfCompetitor.untieDuels ? "*" : "")}}</td>

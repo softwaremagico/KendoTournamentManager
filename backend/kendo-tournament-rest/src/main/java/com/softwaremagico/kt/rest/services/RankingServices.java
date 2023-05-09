@@ -98,8 +98,26 @@ public class RankingServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(@RequestBody Set<ParticipantDTO> participants, HttpServletRequest request) {
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(@RequestBody(required = false) Set<ParticipantDTO> participants,
+                                                                    HttpServletRequest request) {
         return rankingController.getCompetitorsGlobalScoreRanking(participants);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PostMapping(value = "/competitors/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
+    public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestBody(required = false) Set<ParticipantDTO> participants,
+                                                        Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final List<ScoreOfCompetitor> scores = rankingController.getCompetitorsGlobalScoreRanking(participants);
+        try {
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename("competitors score.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
