@@ -501,8 +501,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         } else {
           this.showCompetitorsClassification();
         }
+        this.finishTournament(new Date());
       }
     });
+  }
+
+  finishTournament(date: Date | undefined) {
+    if (!this.tournament.finishedAt && date) {
+      this.tournament.finishedAt = date;
+      this.tournamentService.update(this.tournament).subscribe();
+    } else if (!date && this.tournament.finishedAt) {
+      this.tournament.finishedAt = undefined
+      this.tournamentService.update(this.tournament).subscribe();
+    }
   }
 
   selectDuel(duel: Duel) {
