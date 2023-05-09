@@ -60,7 +60,11 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         long totalDuelsWithDuration = 0L;
         long quickestHit = Integer.MAX_VALUE;
         long quickestReceivedHit = Integer.MAX_VALUE;
+        long wonDuels = 0L;
+        long lostDuels = 0L;
+        long drawDuels = 0L;
         for (final Duel duel : duels) {
+            final int winner = duel.getWinner();
             if (Objects.equals(duel.getCompetitor1(), participant)) {
                 populateScores(participantFightStatistics, duel.getCompetitor1Score());
                 populateReceivedScores(participantFightStatistics, duel.getCompetitor2Score());
@@ -77,6 +81,13 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                     if (scoreTime < quickestReceivedHit) {
                         quickestReceivedHit = scoreTime;
                     }
+                }
+                if (winner < 0) {
+                    wonDuels++;
+                } else if (winner == 0) {
+                    drawDuels++;
+                } else {
+                    lostDuels++;
                 }
             } else if (Objects.equals(duel.getCompetitor2(), participant)) {
                 populateScores(participantFightStatistics, duel.getCompetitor2Score());
@@ -95,6 +106,13 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                         quickestReceivedHit = scoreTime;
                     }
                 }
+                if (winner > 0) {
+                    wonDuels++;
+                } else if (winner == 0) {
+                    drawDuels++;
+                } else {
+                    lostDuels++;
+                }
             }
             totalDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? duel.getDuration() : 0;
             totalDuelsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
@@ -112,6 +130,9 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         }
         participantFightStatistics.setTotalDuelsTime(totalDuration);
         participantFightStatistics.setDuelsNumber((long) duels.size());
+        participantFightStatistics.setWonDuels(wonDuels);
+        participantFightStatistics.setDrawDuels(drawDuels);
+        participantFightStatistics.setLostDuels(lostDuels);
         return participantFightStatistics;
     }
 
