@@ -25,6 +25,11 @@ export class IconModule {
       .addSvgIcon("member-order-disable", this.setPath(`${this.path}/member-order-disable.svg`))
       .addSvgIcon("competitors-classification", this.setPath(`${this.path}/competitors-classification.svg`))
       .addSvgIcon("diplomas", this.setPath(`${this.path}/diploma.svg`))
+      .addSvgIcon("gauge", this.setPath(`${this.path}/gauge.svg`))
+      .addSvgIcon("aggressiveness", this.setPath(`${this.path}/aggressiveness.svg`))
+      .addSvgIcon("attack", this.setPath(`${this.path}/attack.svg`))
+      .addSvgIcon("defense", this.setPath(`${this.path}/defense.svg`))
+      .addSvgIcon("willpower", this.setPath(`${this.path}/willpower.svg`))
       .addSvgIcon("match", this.setPath(`${this.path}/match.svg`));
   }
 

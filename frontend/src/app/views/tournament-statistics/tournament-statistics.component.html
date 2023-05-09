@@ -19,7 +19,7 @@
             <h3>{{'participants' | translate}}</h3>
           </div>
           <!***REMOVED***aria-hidden="true" to avoid complains from sonarcloud -->
-          <table class="statistics-table" *ngIf="tournamentStatistics"  aria-hidden="true">
+          <table class="statistics-table" *ngIf="tournamentStatistics" aria-hidden="true">
             <tr *ngFor="let roleType of roleTypes">
               <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>
               <td *ngIf="tournamentStatistics">{{numberOfParticipantsByRole(roleType)}}</td>
@@ -78,29 +78,30 @@
           </div>
           <table class="statistics-table" *ngIf="tournamentStatistics" aria-hidden="true">
             <tr>
-              <td class="single">{{'faults' | translate}}: {{tournamentStatistics?.tournamentFightStatistics?.faults}}</td>
+              <td class="single">{{'faults' | translate}}
+                : {{tournamentStatistics?.tournamentFightStatistics?.faults}}</td>
             </tr>
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable" *ngIf="teamScores">
+        <div class="box-statistics box shadow scrollable" *ngIf="tournamentStatistics && tournamentStatistics.teamSize>1">
           <div class="statistics-table-title">
             <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
             <h3>{{'teamsRanking' | translate}}</h3>
           </div>
-          <table class="statistics-table" aria-hidden="true">
+          <table class="statistics-table" aria-hidden="true" *ngIf="teamScores">
             <tr *ngFor="let scoreOfTeam of teamScores">
               <td class="ranking">{{getTeamsRanking(scoreOfTeam)}}</td>
             </tr>
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable" *ngIf="competitorsScore">
+        <div class="box-statistics box shadow scrollable">
           <div class="statistics-table-title">
             <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
             <h3>{{'competitorsRanking' | translate}}</h3>
           </div>
-          <table class="statistics-table" aria-hidden="true">
+          <table class="statistics-table" aria-hidden="true" *ngIf="competitorsScore">
             <tr *ngFor="let scoreOfCompetitor of competitorsScore">
               <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
             </tr>
@@ -125,8 +126,8 @@
                                 [width]="400" [stackType]="'normal'"></app-stacked-bars-chart>
         <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | translate"
                         [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
-<!***REMOVED***       <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>-->
-<!***REMOVED***       <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>-->
+        <!***REMOVED***       <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>-->
+        <!***REMOVED***       <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>-->
       </div>
     </div>
   </div>

@@ -34,6 +34,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
   public performanceRadialData: GaugeChartData;
+  public performance: [string, number][];
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
@@ -85,17 +86,18 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   initializeScoreStatistics(participantStatistics: ParticipantStatistics): void {
     this.hitsTypeChartData = PieChartData.fromArray(this.obtainPoints(participantStatistics));
     this.receivedHitsTypeChartData = PieChartData.fromArray(this.obtainReceivedPoints(participantStatistics));
-    this.performanceRadialData = GaugeChartData.fromArray(this.generatePerformanceStatistics(participantStatistics));
+    this.performance = this.generatePerformanceStatistics(participantStatistics);
+    this.performanceRadialData = GaugeChartData.fromArray(this.performance);
   }
 
   generatePerformanceStatistics(participantStatistics: ParticipantStatistics): [string, number][] {
     const performance: [string, number][] = [];
-    performance.push([this.translateService.instant('attack'), truncate(participantStatistics.participantFightStatistics.getTotalHits() / (participantStatistics.participantFightStatistics.duelsNumber * 2) * 100, 2)]);
-    performance.push([this.translateService.instant('defense'), truncate((1 - (participantStatistics.participantFightStatistics.getTotalReceivedHits() / (participantStatistics.participantFightStatistics.duelsNumber * 2))) * 100, 2)]);
-    performance.push([this.translateService.instant('willpower'), participantStatistics.totalTournaments > 0 ?
+    performance.push(['attack', truncate(participantStatistics.participantFightStatistics.getTotalHits() / (participantStatistics.participantFightStatistics.duelsNumber * 2) * 100, 2)]);
+    performance.push(['defense', truncate((1 - (participantStatistics.participantFightStatistics.getTotalReceivedHits() / (participantStatistics.participantFightStatistics.duelsNumber * 2))) * 100, 2)]);
+    performance.push(['willpower', participantStatistics.totalTournaments > 0 ?
       (participantStatistics.tournaments / participantStatistics.totalTournaments) * 100 : 0]);
     const aggressivenessMargin: number = 20;
-    performance.push([this.translateService.instant('aggressiveness'), participantStatistics.participantFightStatistics.averageTime > 0 ?
+    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageTime > 0 ?
       Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageTime - aggressivenessMargin) / 180)) * 100, 2)) : 0]);
     return performance;
   }

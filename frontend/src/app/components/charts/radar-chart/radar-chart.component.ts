@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -8,13 +8,17 @@ import {
   ApexMarkers,
   ApexPlotOptions,
   ApexStroke,
-  ApexTitleSubtitle,
+  ApexTitleSubtitle, ApexTooltip,
   ApexXAxis,
   ChartComponent
 } from "ng-apexcharts";
 import {StackedBarsData} from "../stacked-bars-chart/stacked-bars-chart-data";
 import {Colors} from "../colors";
 import {RadarChartData} from "./radar-chart-data";
+import {CustomChartComponent} from "../custom-chart-component";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
+import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
 type RadarChartOptions = {
   series: ApexAxisChartSeries;
@@ -22,11 +26,13 @@ type RadarChartOptions = {
   labels: ApexDataLabels;
   fill: ApexFill;
   plotOptions: ApexPlotOptions;
+  tooltip: ApexTooltip;
   xaxis: ApexXAxis;
   title: ApexTitleSubtitle;
   legend: ApexLegend;
   markers: ApexMarkers;
   stroke: ApexStroke;
+  theme: ApexTheme;
 };
 
 @Component({
@@ -34,7 +40,7 @@ type RadarChartOptions = {
   templateUrl: './radar-chart.component.html',
   styleUrls: ['./radar-chart.component.scss']
 })
-export class RadarChartComponent implements OnInit {
+export class RadarChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -72,57 +78,38 @@ export class RadarChartComponent implements OnInit {
   @Input()
   public legendPosition: 'left' | 'bottom' | 'right' | 'top' = "bottom"
 
-  ngOnInit() {
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
+
+  protected setProperties(): void {
     this.chartOptions = {
-      chart: {
-        width: this.width,
-        type: "radar",
-        toolbar: {
-          show: this.showToolbar,
-        },
-        dropShadow: {
-          enabled: this.shadow,
-          color: '#000',
-          blur: 1,
-          left: 1,
-          top: 1
-        },
-      },
+      chart: this.getChart('radar', this.width, this.shadow, this.showToolbar),
       series: this.setColors(this.data.getData()),
-      labels: {
-        enabled: this.showValuesLabels
-      },
-      fill: {
-        type: this.fill,
-        opacity: this.opacity,
-      },
-      markers: {
-        size: 0
-      },
-      stroke: {
-        width: this.strokeWidth
-      },
-      plotOptions: {
-        radar: {
-          size: this.radarSize,
-          polygons: {
-            fill: {
-              colors: this.innerColors
-            }
+      labels: this.getLabels(this.showValuesLabels),
+      fill: this.getFill(this.fill, this.opacity),
+      markers: this.getMarkers(),
+      stroke: this.getStroke(this.strokeWidth),
+      plotOptions: this.getPlotOptions(),
+      tooltip: this.getTooltip(),
+      xaxis: this.getXAxis(this.data.getLabels()),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
+    };
+  }
+
+  protected getPlotOptions(): ApexPlotOptions {
+    return {
+      radar: {
+        size: this.radarSize,
+        polygons: {
+          fill: {
+            colors: this.innerColors
           }
         }
-      },
-      xaxis: {
-        categories: this.data.getLabels()
-      },
-      title: {
-        text: this.title,
-        align: this.titleAlignment
-      },
-      legend: {
-        position: this.legendPosition
-      },
-    };
+      }
+    }
   }
 
   update(data: RadarChartData) {
