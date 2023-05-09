@@ -16,6 +16,7 @@ export class Tournament extends Element {
   public tournamentScore: TournamentScore;
   public locked: boolean;
   public lockedAt: Date | undefined;
+  public finishedAt: Date | undefined;
 
   public get scoreRules(): string {
     return this.tournamentScore ? this.tournamentScore.scoreType.toLowerCase() + 'Hint' + 'Hint' : "";
@@ -38,6 +39,7 @@ export class Tournament extends Element {
     }
     target.locked = source.locked;
     target.lockedAt = source.lockedAt;
+    target.finishedAt = source.finishedAt;
   }
 
   public static clone(data: Tournament): Tournament {
