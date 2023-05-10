@@ -85,10 +85,10 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
 
     public void markAsFinished(Tournament tournament, boolean finish) {
         if (finish && tournament.getFinishedAt() == null) {
-            tournament.setFinishedAt(LocalDateTime.now());
+            tournament.updateFinishedAt(LocalDateTime.now());
             repository.save(tournament);
         } else if (!finish && tournament.getFinishedAt() != null) {
-            tournament.setFinishedAt(null);
+            tournament.updateFinishedAt(null);
             repository.save(tournament);
         }
     }
