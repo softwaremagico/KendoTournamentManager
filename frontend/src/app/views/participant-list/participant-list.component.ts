@@ -17,6 +17,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
+import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 
 @Component({
   selector: 'app-participant-list',
@@ -137,6 +138,13 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
       this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
       this.router.navigate(['/participant/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
     }
+  }
+
+  showCompetitorsClassification() {
+    this.dialog.open(CompetitorsRankingComponent, {
+      width: '85vw',
+      data: {competitor: this.basicTableData.selectedElement, showIndex: true}
+    });
   }
 
 }
