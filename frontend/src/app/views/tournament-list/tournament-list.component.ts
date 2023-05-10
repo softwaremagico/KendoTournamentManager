@@ -240,6 +240,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       if (locked && !this.basicTableData.selectedElement.lockedAt) {
         this.basicTableData.selectedElement.lockedAt = new Date();
       }
+      if (locked && !this.basicTableData.selectedElement.finishedAt) {
+        this.basicTableData.selectedElement.finishedAt = new Date();
+      }
       this.updateRowData(this.basicTableData.selectedElement);
     }
   }
