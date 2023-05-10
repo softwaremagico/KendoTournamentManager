@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {TeamRankingComponent} from "./team-ranking.component";
+import {CompetitorsRankingComponent} from "./competitors-ranking.component";
+import {MatSpinnerOverlayModule} from "../mat-spinner-overlay/mat-spinner-overlay.module";
 import {TranslateModule} from "@ngx-translate/core";
-import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatIconModule} from "@angular/material/icon";
+import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 
 
 
 @NgModule({
-  declarations: [TeamRankingComponent],
+  declarations: [CompetitorsRankingComponent],
   imports: [
     CommonModule,
-    TranslateModule,
     MatSpinnerOverlayModule,
-    RbacModule,
+    TranslateModule,
     MatIconModule,
+    RbacModule,
     MatDialogModule,
     MatButtonModule
   ]
 })
-export class TeamRankingModule { }
+export class CompetitorsRankingModule { }

@@ -288,6 +288,10 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
+        if (competitors == null || competitors.isEmpty()) {
+            competitors = participantConverter.convertAll(participantProvider.getAll().stream()
+                    .map(ParticipantConverterRequest::new).collect(Collectors.toList()));
+        }
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<FightDTO> fights = fightConverter.convertAll(fightProvider.get(participantConverter.reverseAll(competitors)).stream()
                 .map(FightConverterRequest::new).collect(Collectors.toSet()));
