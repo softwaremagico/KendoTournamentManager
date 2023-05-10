@@ -13,8 +13,8 @@ import {LeagueGeneratorComponent} from "./league-generator/league-generator.comp
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {TeamRankingComponent} from "./team-ranking/team-ranking.component";
-import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ranking.component";
+import {TeamRankingComponent} from "../../components/team-ranking/team-ranking.component";
+import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 import {TranslateService} from "@ngx-translate/core";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
