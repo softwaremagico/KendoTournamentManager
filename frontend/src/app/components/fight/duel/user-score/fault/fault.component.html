@@ -1,4 +1,4 @@
-<div class="fault" [matMenuTriggerFor]="menu" matTooltip="{{this.timeRepresentation}}">
+<div class="fault" [matMenuTriggerFor]="menu">
   <mat-menu #menu="matMenu">
     <button mat-menu-item *ngIf="this.duel.competitor1 !== null && this.duel.competitor2 !== null"
             (click)="updateFault(true)">{{'fault' | translate}}</button>
@@ -6,6 +6,15 @@
   </mat-menu>
   <div class="fault-content"
        *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
-       this.duel.competitor1Fault != null && this.duel.competitor1Fault:this.duel.competitor2Fault != null && this.duel.competitor2Fault">
+       this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault">
+    <div class="tooltiptext" *ngIf="this.timeRepresentation"
+         [ngClass]="{
+          'left-border': onLeftBorder,
+          'center': !onRightBorder && !onLeftBorder,
+          'right-border': onRightBorder
+        }"
+         [innerHTML]="tooltipText()">
+      <mat-icon>timer</mat-icon>
+    </div>
   </div>
 </div>

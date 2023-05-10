@@ -4,6 +4,7 @@ import {FaultComponent} from "./fault.component";
 import {MatMenuModule} from "@angular/material/menu";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatIconModule} from "@angular/material/icon";
 
 
 
@@ -12,11 +13,12 @@ import {MatTooltipModule} from "@angular/material/tooltip";
   exports: [
     FaultComponent
   ],
-  imports: [
-    CommonModule,
-    MatMenuModule,
-    TranslateModule,
-    MatTooltipModule
-  ]
+    imports: [
+        CommonModule,
+        MatMenuModule,
+        TranslateModule,
+        MatTooltipModule,
+        MatIconModule
+    ]
 })
 export class FaultModule { }
