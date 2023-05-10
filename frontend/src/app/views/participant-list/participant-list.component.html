@@ -27,6 +27,11 @@
               *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.activities)">
         <mat-icon>bar_chart</mat-icon>
       </button>
+      <button mat-button color="primary" (click)="showCompetitorsClassification()"
+              [matTooltipShowDelay]="500" matTooltip="{{'fightList' | translate}}"
+              *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)">
+        <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
+      </button>
     </div>
   </div>
 </div>
