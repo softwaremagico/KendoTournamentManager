@@ -506,7 +506,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
-  finishTournament(date: Date | undefined) {
+  finishTournament(date: Date | undefined): void {
     if (!this.tournament.finishedAt && date) {
       this.tournament.finishedAt = date;
       this.tournamentService.update(this.tournament).subscribe();
@@ -516,7 +516,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  selectDuel(duel: Duel) {
+  selectDuel(duel: Duel): void {
     this.selectedDuel = duel;
     this.duelChangedService.isDuelUpdated.next(duel);
     if (duel) {
