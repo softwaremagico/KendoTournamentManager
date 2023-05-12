@@ -90,7 +90,7 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         }
     }
 
-    @CacheEvict(allEntries = true, value = {"ranking"})
+    @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
     public DuelDTO update(DuelDTO duel, String username) {
         return super.update(duel, username);
     }
