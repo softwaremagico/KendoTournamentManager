@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {AchievementWallComponent} from "./achievement-wall.component";
 import {AchievementTileModule} from "../achievement-tile/achievement-tile.module";
-
 
 
 @NgModule({

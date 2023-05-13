@@ -147,9 +147,6 @@
           <mat-icon svgIcon="teams-classification" class="left-kendo-icon"></mat-icon>
           <span class="left-menu-single-entry">{{'competitions' | translate}}</span>
         </mat-list-item>
-        <!***REMOVED***       <mat-list-item routerLink="/reports">-->
-        <!***REMOVED***         <mat-icon>dashboard</mat-icon>-->
-        <!***REMOVED***         {{'reports' | translate}}</mat-list-item>-->
         <mat-expansion-panel [class.mat-elevation-z0]="true" dense
                              *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.activities)">
           <mat-expansion-panel-header [matTooltipShowDelay]="500" matTooltip="{{'administration' | translate}}">
