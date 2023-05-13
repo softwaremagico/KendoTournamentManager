@@ -141,7 +141,7 @@ export class AchievementTileComponent implements OnInit {
     if (this.mouseX! - 150 < 0) {
       this.onLeftBorder = true;
     }
-    if (this.mouseX! + 150 > this.screenWidth!) {
+    if (this.mouseX! + 150 > this.screenWidth) {
       this.onRightBorder = true;
     }
   }
