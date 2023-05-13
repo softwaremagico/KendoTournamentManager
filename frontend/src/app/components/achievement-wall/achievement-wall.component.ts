@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {AchievementType} from "../../models/achievement-type.model";
 import {Achievement} from "../../models/achievement.model";
 
@@ -7,7 +7,7 @@ import {Achievement} from "../../models/achievement.model";
   templateUrl: './achievement-wall.component.html',
   styleUrls: ['./achievement-wall.component.scss']
 })
-export class AchievementWallComponent implements OnInit {
+export class AchievementWallComponent {
 
   totalAchievementsTypes: AchievementType[];
 
@@ -16,10 +16,6 @@ export class AchievementWallComponent implements OnInit {
 
   constructor() {
     this.totalAchievementsTypes = AchievementType.toArray()
-  }
-
-  ngOnInit(): void {
-
   }
 
   getAchievements(achievementType: AchievementType): Achievement[] {
