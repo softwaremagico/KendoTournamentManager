@@ -41,7 +41,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe(scoresOfTeams => {
         this.teamScores = scoresOfTeams;
       });
@@ -68,12 +68,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   downloadPDF() {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
         const anchor = document.createElement("a");
-        anchor.download = "Team Ranking - " + this.tournament!.name + ".pdf";
+        anchor.download = "Team Ranking - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
       });
