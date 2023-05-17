@@ -36,7 +36,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   }
 
   ngOnInit(): void {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.rankingService.getCompetitorsScoreRankingByTournament(this.tournament.id).subscribe((competitorsScore: ScoreOfCompetitor[]) => {
         this.competitorsScore = competitorsScore;
       });
@@ -56,7 +56,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   }
 
   downloadPDF() {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);

@@ -153,7 +153,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       const groupIndex: number = this.groups.map(group => group.id).indexOf(group.id);
       this.groups.splice(groupIndex, 1, group);
       this.selectedGroup = this.groups[groupIndex];
-      //this.fights = this.groups.flatMap((group) => group.fights);
       this.resetFilter();
       if (this.selectedGroup && this.selectedFight && selectedFightIndex) {
         this.selectFight(this.filteredFights.get(this.selectedGroup.id!)![selectedFightIndex]);
@@ -288,7 +287,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       fight.shiaijo = 0;
       fight.level = this.selectedGroup.level;
       fight.duels = [];
-      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup!, this.selectedFight);
+      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight);
     } else {
       this.messageService.warningMessage('errorFightNotSelected');
     }
@@ -506,7 +505,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
-  finishTournament(date: Date | undefined) {
+  finishTournament(date: Date | undefined): void {
     if (!this.tournament.finishedAt && date) {
       this.tournament.finishedAt = date;
       this.tournamentService.update(this.tournament).subscribe();
@@ -516,7 +515,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  selectDuel(duel: Duel) {
+  selectDuel(duel: Duel): void {
     this.selectedDuel = duel;
     this.duelChangedService.isDuelUpdated.next(duel);
     if (duel) {
