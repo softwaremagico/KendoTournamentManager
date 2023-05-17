@@ -35,6 +35,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -75,6 +76,18 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         group.setCreatedBy(username);
         groupProvider.addGroup(reverse(createdTournamentDTO), group);
         return createdTournamentDTO;
+    }
+
+    @Override
+    public TournamentDTO update(TournamentDTO tournamentDTO, String username) {
+        //If a tournament is locked we can define it as finished (maybe fights are not finished by time).
+        if (tournamentDTO.isLocked() && tournamentDTO.getFinishedAt() == null) {
+            tournamentDTO.setFinishedAt(LocalDateTime.now());
+        }
+        if (tournamentDTO.isLocked() && tournamentDTO.getLockedAt() == null) {
+            tournamentDTO.setLockedAt(LocalDateTime.now());
+        }
+        return super.update(tournamentDTO, username);
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {

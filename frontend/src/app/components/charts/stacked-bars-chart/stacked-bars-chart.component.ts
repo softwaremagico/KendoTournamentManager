@@ -6,7 +6,8 @@ import {
   ApexFill,
   ApexLegend,
   ApexPlotOptions,
-  ApexTitleSubtitle, ApexTooltip,
+  ApexTitleSubtitle,
+  ApexTooltip,
   ApexXAxis,
   ApexYAxis,
   ChartComponent
