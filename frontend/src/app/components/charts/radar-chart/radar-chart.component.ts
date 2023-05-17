@@ -8,7 +8,8 @@ import {
   ApexMarkers,
   ApexPlotOptions,
   ApexStroke,
-  ApexTitleSubtitle, ApexTooltip,
+  ApexTitleSubtitle,
+  ApexTooltip,
   ApexXAxis,
   ChartComponent
 } from "ng-apexcharts";
