@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, Inject, Optional} from '@angular/core';
 import {RbacBasedComponent} from "../../RbacBasedComponent";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {RbacService} from "../../../services/rbac/rbac.service";
@@ -9,7 +9,7 @@ import {Action} from "../../../action";
   templateUrl: './picture-dialog-box.component.html',
   styleUrls: ['./picture-dialog-box.component.scss']
 })
-export class PictureDialogBoxComponent extends RbacBasedComponent implements OnInit {
+export class PictureDialogBoxComponent extends RbacBasedComponent {
 
   participantPicture: string;
 
@@ -17,9 +17,6 @@ export class PictureDialogBoxComponent extends RbacBasedComponent implements OnI
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { image: string }, public dialog: MatDialog,) {
     super(rbacService);
     this.participantPicture = data.image;
-  }
-
-  ngOnInit(): void {
   }
 
   closeDialog() {

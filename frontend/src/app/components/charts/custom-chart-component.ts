@@ -39,17 +39,17 @@ interface ApexToolBar {
   };
   export?: {
     csv?: {
-      filename?: undefined | string;
+      filename?: string;
       columnDelimiter?: string;
       headerCategory?: string;
       headerValue?: string;
       dateFormatter?(timestamp?: number): any;
     };
     svg?: {
-      filename?: undefined | string;
+      filename?: string;
     };
     png?: {
-      filename?: undefined | string;
+      filename?: string;
     };
   };
   autoSelected?: "zoom" | "selection" | "pan";

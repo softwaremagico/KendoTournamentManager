@@ -201,7 +201,8 @@
             <mat-icon svgIcon="gauge" class="kendo-icon"></mat-icon>
             <h3>{{'performance' | translate}}</h3>
           </div>
-          <app-progress-bar *ngFor="let value of performance" [text]="value[0] | translate"
+          <app-progress-bar *ngFor="let value of performance; let i = index" [text]="value[0] | translate"
+                            [ngClass]="'bar-'+i"
                             [percentage]="value[1]" [barIcon]="value[0].toLowerCase()"></app-progress-bar>
         </div>
 

@@ -26,6 +26,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.TournamentType;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TournamentDTO extends ElementDTO {
@@ -43,6 +44,12 @@ public class TournamentDTO extends ElementDTO {
     private Integer duelsDuration;
 
     private boolean locked;
+
+    private LocalDateTime lockedAt;
+
+    private LocalDateTime startedAt;
+
+    private LocalDateTime finishedAt;
 
     public TournamentDTO() {
         super();
@@ -111,6 +118,30 @@ public class TournamentDTO extends ElementDTO {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public LocalDateTime getLockedAt() {
+        return lockedAt;
+    }
+
+    public void setLockedAt(LocalDateTime lockedAt) {
+        this.lockedAt = lockedAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 
     @Override
