@@ -591,6 +591,8 @@
   "onlyNews": "Nieuwe",
   "achievements": "Prestaties",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Verkregen op:",
+  "achievementToolTipObtainedAt": "Verkregen op",
+  "achievementToolTipObtainedBy": "Verkregen door",
   "time": "Tijd",
   "lockedAt": "Op slot",
   "fightsStartedAt": "Begin van wedstrijden",

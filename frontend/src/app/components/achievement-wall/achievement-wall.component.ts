@@ -14,6 +14,9 @@ export class AchievementWallComponent {
   @Input()
   achievements: Achievement[];
 
+  @Input()
+  view: 'participant' | 'tournament';
+
   constructor() {
     this.totalAchievementsTypes = AchievementType.toArray()
   }

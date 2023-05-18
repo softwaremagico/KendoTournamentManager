@@ -84,7 +84,8 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable" *ngIf="tournamentStatistics && tournamentStatistics.teamSize>1">
+        <div class="box-statistics box shadow scrollable"
+             *ngIf="tournamentStatistics && tournamentStatistics.teamSize>1">
           <div class="statistics-table-title">
             <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
             <h3>{{'teamsRanking' | translate}}</h3>
@@ -128,6 +129,14 @@
                         [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
         <!--        <app-radial-chart [data]="radialChartData" [title]="'Scores'" [width]="400"></app-radial-chart>-->
         <!--        <app-radar-chart [data]="radarBarsChartData" [title]="'Scores'" [width]="600"></app-radar-chart>-->
+        <div class="box-statistics box shadow achievements-box">
+          <div class="statistics-table-title">
+            <mat-icon>stars</mat-icon>
+            <h3>{{'achievements' | translate}}</h3>
+          </div>
+          <app-achievement-wall class="scrollable" [achievements]="achievements"
+                                [view]="'tournament'"></app-achievement-wall>
+        </div>
       </div>
     </div>
   </div>
