@@ -31,6 +31,7 @@ import com.softwaremagico.kt.core.converters.AchievementConverter;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.*;
@@ -43,6 +44,7 @@ import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class AchievementController extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository,
@@ -127,34 +129,59 @@ public class AchievementController extends BasicInsertableController<Achievement
         return convertAll(provider.get(tournament));
     }
 
-    public void generateAchievements(TournamentDTO tournamentDTO) {
+    public List<AchievementDTO> regenerateAllAchievements() {
+        final List<TournamentDTO> tournaments = tournamentConverter.convertAll(tournamentProvider.getAll().stream()
+                .map(TournamentConverterRequest::new).collect(Collectors.toList()));
+        final List<AchievementDTO> achievementsGenerated = new ArrayList<>();
+        for (final TournamentDTO tournament : tournaments) {
+            deleteAchievements(tournament);
+            achievementsGenerated.addAll(generateAchievements(tournament));
+        }
+        return achievementsGenerated;
+    }
+
+    public List<AchievementDTO> regenerateAchievements(Integer tournamentId) {
+        final TournamentDTO tournament = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
+        deleteAchievements(tournament);
+        return generateAchievements(tournament);
+    }
+
+    private void deleteAchievements(TournamentDTO tournamentDTO) {
+        provider.delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
+    public List<AchievementDTO> generateAchievements(TournamentDTO tournamentDTO) {
         final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
         //Remove any achievement already calculated.
         provider.delete(tournament);
 
+        final List<Achievement> achievementsGenerated = new ArrayList<>();
+
         //Generate new ones.
-        generateBillyTheKidAchievement(tournament);
-        generateLethalWeaponAchievement(tournament);
-        generateTerminatorAchievement(tournament);
-        generateJuggernautAchievement(tournament);
-        generateTheKingAchievement(tournament);
-        generateLooksGoodFromFarAwayButAchievementBronze(tournament);
-        generateLooksGoodFromFarAwayButAchievementSilver(tournament);
-        generateLooksGoodFromFarAwayButAchievementGold(tournament);
-        generateILoveTheFlagsAchievementBronze(tournament);
-        generateILoveTheFlagsAchievementSilver(tournament);
-        generateILoveTheFlagsAchievementGold(tournament);
-        generateTheRockAchievement(tournament);
-        generateTheTowerAchievement(tournament);
-        generateTheCastleAchievement(tournament);
-        generateEntrenchedAchievement(tournament);
-        generateALittleOfEverythingAchievement(tournament);
-        generateALittleOfEverythingSilverAchievement(tournament);
-        generateALittleOfEverythingGoldenAchievement(tournament);
-        generateBoneBreakerAchievement(tournament);
-        generateWoodcutterAchievement(tournament);
-        generateFlexibleAsBambooAchievement(tournament);
-        generateSweatyTenuguiAchievement(tournament);
+        achievementsGenerated.addAll(generateBillyTheKidAchievement(tournament));
+        achievementsGenerated.addAll(generateLethalWeaponAchievement(tournament));
+        achievementsGenerated.addAll(generateTerminatorAchievement(tournament));
+        achievementsGenerated.addAll(generateJuggernautAchievement(tournament));
+        achievementsGenerated.addAll(generateTheKingAchievement(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementGold(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTheRockAchievement(tournament));
+        achievementsGenerated.addAll(generateTheTowerAchievement(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievement(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievement(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingAchievement(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingSilverAchievement(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingGoldenAchievement(tournament));
+        achievementsGenerated.addAll(generateBoneBreakerAchievement(tournament));
+        achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
+        achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
+        achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
+        return convertAll(achievementsGenerated);
     }
 
     /**
@@ -162,7 +189,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateBillyTheKidAchievement(Tournament tournament) {
+    private List<Achievement> generateBillyTheKidAchievement(Tournament tournament) {
         final Set<Duel> duels = duelProvider.findByScorePerformedInLessThan(tournament, BILL_THE_KID_MAX_TIME);
         final Set<Participant> billies = new HashSet<>();
         duels.forEach(duel -> {
@@ -179,7 +206,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
         });
         //Create new achievement for the participants.
-        generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, billies, tournament);
+        return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, billies, tournament);
     }
 
     /**
@@ -187,8 +214,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateLethalWeaponAchievement(Tournament tournament) {
-
+    private List<Achievement> generateLethalWeaponAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -196,8 +223,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateTerminatorAchievement(Tournament tournament) {
-
+    private List<Achievement> generateTerminatorAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -205,8 +232,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateJuggernautAchievement(Tournament tournament) {
-
+    private List<Achievement> generateJuggernautAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -214,8 +241,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateTheKingAchievement(Tournament tournament) {
-
+    private List<Achievement> generateTheKingAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -223,8 +250,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateLooksGoodFromFarAwayButAchievementBronze(Tournament tournament) {
-
+    private List<Achievement> generateLooksGoodFromFarAwayButAchievementBronze(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -232,8 +259,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateLooksGoodFromFarAwayButAchievementSilver(Tournament tournament) {
-
+    private List<Achievement> generateLooksGoodFromFarAwayButAchievementSilver(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -241,8 +268,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateLooksGoodFromFarAwayButAchievementGold(Tournament tournament) {
-
+    private List<Achievement> generateLooksGoodFromFarAwayButAchievementGold(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -250,8 +277,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateILoveTheFlagsAchievementBronze(Tournament tournament) {
-
+    private List<Achievement> generateILoveTheFlagsAchievementBronze(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -259,8 +286,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateILoveTheFlagsAchievementSilver(Tournament tournament) {
-
+    private List<Achievement> generateILoveTheFlagsAchievementSilver(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -268,8 +295,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateILoveTheFlagsAchievementGold(Tournament tournament) {
-
+    private List<Achievement> generateILoveTheFlagsAchievementGold(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -277,8 +304,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateTheRockAchievement(Tournament tournament) {
-
+    private List<Achievement> generateTheRockAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -286,8 +313,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateTheTowerAchievement(Tournament tournament) {
-
+    private List<Achievement> generateTheTowerAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -295,8 +322,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateTheCastleAchievement(Tournament tournament) {
-
+    private List<Achievement> generateTheCastleAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -305,8 +332,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateEntrenchedAchievement(Tournament tournament) {
-
+    private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -314,8 +341,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateALittleOfEverythingAchievement(Tournament tournament) {
-
+    private List<Achievement> generateALittleOfEverythingAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -323,8 +350,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateALittleOfEverythingSilverAchievement(Tournament tournament) {
-
+    private List<Achievement> generateALittleOfEverythingSilverAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -332,8 +359,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateALittleOfEverythingGoldenAchievement(Tournament tournament) {
-
+    private List<Achievement> generateALittleOfEverythingGoldenAchievement(Tournament tournament) {
+        return new ArrayList<>();
     }
 
     /**
@@ -341,7 +368,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateBoneBreakerAchievement(Tournament tournament) {
+    private List<Achievement> generateBoneBreakerAchievement(Tournament tournament) {
         final Set<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.HANSOKU);
         final Set<Participant> participants = new HashSet<>();
         duels.forEach(duel -> {
@@ -355,7 +382,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         //Create new achievement for the participants.
-        generateAchievement(AchievementType.BONE_BREAKER, AchievementGrade.NORMAL, participants, tournament);
+        return generateAchievement(AchievementType.BONE_BREAKER, AchievementGrade.NORMAL, participants, tournament);
     }
 
     /**
@@ -363,7 +390,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateWoodcutterAchievement(Tournament tournament) {
+    private List<Achievement> generateWoodcutterAchievement(Tournament tournament) {
         final Set<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.DO);
         final Set<Participant> woodcutters = new HashSet<>();
         duels.forEach(duel -> {
@@ -377,7 +404,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         //Create new achievement for the participants.
-        generateAchievement(AchievementType.WOODCUTTER, AchievementGrade.NORMAL, woodcutters, tournament);
+        return generateAchievement(AchievementType.WOODCUTTER, AchievementGrade.NORMAL, woodcutters, tournament);
     }
 
 
@@ -386,13 +413,13 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateFlexibleAsBambooAchievement(Tournament tournament) {
+    private List<Achievement> generateFlexibleAsBambooAchievement(Tournament tournament) {
         //Get all participants from a tournament that has almost all roles in any tournament,
         final List<Participant> participants = participantProvider.get(tournament, RoleType.values().length / 2 + 1);
         //Remove the ones already have the achievement.
         participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
         //Create new achievement for the participants.
-        generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
     }
 
     /**
@@ -400,18 +427,18 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private void generateSweatyTenuguiAchievement(Tournament tournament) {
+    private List<Achievement> generateSweatyTenuguiAchievement(Tournament tournament) {
         final List<Participant> participants = participantProvider.getParticipantFirstTimeCompetitors(tournament);
-        generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
+        return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
-    private void generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
-                                     Collection<Participant> participants, Tournament tournament) {
+    private List<Achievement> generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
+                                                  Collection<Participant> participants, Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();
         participants.forEach(participant -> {
             achievements.add(new Achievement(participant, tournament, achievementType, achievementGrade));
         });
-        achievementProvider.saveAll(achievements);
+        return achievementProvider.saveAll(achievements);
     }
 
 }
