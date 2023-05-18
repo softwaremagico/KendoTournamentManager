@@ -597,6 +597,8 @@
   "onlyNews": "Nuovi",
   "achievements": "Resultati",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Ottenuto a:",
+  "achievementToolTipObtainedAt": "Ottenuto a",
+  "achievementToolTipObtainedBy": "Ottenuto da",
   "time": "Tempi",
   "lockedAt": "Bloccato",
   "fightsStartedAt": "Inizio delle partite",

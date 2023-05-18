@@ -606,6 +606,8 @@
   "onlyNews": "Nous",
   "achievements": "Èxits",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtingut a:",
+  "achievementToolTipObtainedAt": "Obtingut a",
+  "achievementToolTipObtainedBy": "Obtingut per",
   "time": "Temps",
   "lockedAt": "Bloquejat",
   "fightsStartedAt": "Inici partits",
