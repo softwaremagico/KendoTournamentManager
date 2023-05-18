@@ -212,6 +212,14 @@
         <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
+
+        <div class="box-statistics box shadow achievements-box">
+          <div class="statistics-table-title">
+            <mat-icon>stars</mat-icon>
+            <h3>{{'achievements' | translate}}</h3>
+          </div>
+          <app-achievement-wall class="scrollable" [achievements]="achievements"></app-achievement-wall>
+        </div>
       </div>
     </div>
   </div>

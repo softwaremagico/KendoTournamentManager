@@ -618,6 +618,7 @@
   "pointsByDraw": "Points by Tie",
   "nameExample": "John Smith",
   "onlyNews": "New Ones",
+  "achievements": "Achievements",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:",
   "time": "Time",
   "lockedAt": "Locked at",

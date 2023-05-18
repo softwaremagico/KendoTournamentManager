@@ -16,7 +16,7 @@ import {TournamentExtraPropertyKey} from "../models/tournament-extra-property-ke
 })
 export class TournamentExtendedPropertiesService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/tournaments/properties';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments/properties';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               public loginService: LoginService, private messageService: MessageService,

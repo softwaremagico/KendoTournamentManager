@@ -604,6 +604,7 @@
   "pointsByDraw": "Punts per empat",
   "nameExample": "Antonio Garcia",
   "onlyNews": "Nous",
+  "achievements": "Èxits",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtingut a:",
   "time": "Temps",
   "lockedAt": "Bloquejat",

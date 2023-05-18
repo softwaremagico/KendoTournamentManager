@@ -19,6 +19,9 @@ export class AchievementWallComponent {
   }
 
   getAchievements(achievementType: AchievementType): Achievement[] {
-    return this.achievements.filter((a) => a.achievementType === achievementType);
+    if (this.achievements) {
+      return this.achievements.filter((a: Achievement): boolean => a.achievementType === achievementType);
+    }
+    return [];
   }
 }
