@@ -1,4 +1,4 @@
-<div class="achievement" (mouseover)="updateCoordinates($event)" (mouseout)="clearCoordinates($event)">
+<div class="achievement" [class.disabled]="achievements?.length == 0" (mouseover)="updateCoordinates($event)" (mouseout)="clearCoordinates($event)">
   <img [src]="getAchievementImage()" [alt]="getAchievementAlt()" class="achievement-image">
   <div class="tooltiptext"
        [ngClass]="{
