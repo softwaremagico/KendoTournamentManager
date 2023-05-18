@@ -1,5 +1,5 @@
 <div class="achievement" (mouseover)="updateCoordinates($event)" (mouseout)="clearCoordinates($event)">
-  <img [src]="getAchievementImage()" [alt]="getAchievementAlt()">
+  <img [src]="getAchievementImage()" [alt]="getAchievementAlt()" class="achievement-image">
   <div class="tooltiptext"
        [ngClass]="{
           'left-border': onLeftBorder,
