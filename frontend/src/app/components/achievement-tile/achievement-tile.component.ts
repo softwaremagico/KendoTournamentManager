@@ -15,6 +15,9 @@ import {AchievementType} from "../../models/achievement-type.model";
 export class AchievementTileComponent implements OnInit {
 
   @Input()
+  achievementType: AchievementType;
+
+  @Input()
   achievements: Achievement[] | undefined;
   grade: AchievementGrade;
   mouseX: number | undefined;
@@ -53,10 +56,7 @@ export class AchievementTileComponent implements OnInit {
   }
 
   getAchievementImage(): string {
-    if (this.achievements && this.achievements.length > 0) {
-      return "assets/achievements/" + this.achievements[0].achievementType.toLowerCase() + ".svg";
-    }
-    return "assets/achievements/default.svg";
+    return "assets/achievements/" + this.achievementType.toLowerCase() + ".svg";
   }
 
   getAchievementAlt(): string {
