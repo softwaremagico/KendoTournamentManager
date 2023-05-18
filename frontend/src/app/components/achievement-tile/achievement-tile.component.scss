@@ -3,11 +3,7 @@
   height: 70px;
   margin: 5px;
 
-  border-radius: 15px;
-  border: solid 5px;
-
-  background: rgb(1, 16, 64);
-  background: linear-gradient(135deg, rgba(1, 16, 64, 1) 0%, rgba(64, 77, 141, 1) 50%, rgba(36, 18, 28, 1) 88%, rgba(255, 42, 42, 1) 100%);
+  background: #ffffff;
 
   position: relative;
   display: inline-block;
@@ -16,8 +12,7 @@
 .achievement-border {
   width: 70px;
   height: 70px;
-  border-radius: 15px;
-  border: solid 5px;
+  border: solid 2px;
   position: absolute;
   margin-top: -75px;
   margin-left: -5px;
@@ -67,7 +62,7 @@
   margin-left: 40px;
 }
 
-img {
+.achievement-image {
   width: 100%; /* or any custom size */
   height: 100%;
   object-fit: contain;
@@ -76,45 +71,6 @@ img {
   animation-duration: 0.8s;
   animation-iteration-count: infinite;
   animation-direction: alternate;
-}
-
-@keyframes animate {
-  0% {
-    filter: invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%) drop-shadow(0px 0px 1px #fff) drop-shadow(0px 0px 2px #add8e6) drop-shadow(0px 0px 3px #8097b3) drop-shadow(0px 0px 10px #274e7e) drop-shadow(0px 0px 15px #012f67)
-  }
-
-  100% {
-    filter: invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%) drop-shadow(0px 0px 1px #fff) drop-shadow(0px 0px 4px #add8e6) drop-shadow(0px 0px 6px #8097b3) drop-shadow(0px 0px 20px #274e7e) drop-shadow(0px 0px 30px #012f67)
-  }
-}
-
-.start-12 {
-  background: #e00000;
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  text-align: center;
-  margin-top: -10px;
-  margin-left: 12px;
-}
-
-.start-12:before,
-.start-12:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 16px;
-  width: 16px;
-  background: #e00000;
-}
-
-.start-12:before {
-  transform: rotate(30deg);
-}
-
-.start-12:after {
-  transform: rotate(60deg);
 }
 
 /* Tooltip text */

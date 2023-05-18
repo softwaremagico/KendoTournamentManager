@@ -589,6 +589,7 @@
   "pointsByDraw": "Punkte für ein Unentschieden",
   "nameExample": "Hanna Müller",
   "onlyNews": "Neuartig",
+  "achievements": "Erfolge",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Erhalten bei:\n\n",
   "time": "Zeit",
   "lockedAt": "Gesperrt",

@@ -589,6 +589,7 @@
   "pointsByDraw": "Punten voor een gelijkspel",
   "nameExample": "Emma De vries",
   "onlyNews": "Nieuwe",
+  "achievements": "Prestaties",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Verkregen op:",
   "time": "Tijd",
   "lockedAt": "Op slot",

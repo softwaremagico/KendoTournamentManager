@@ -14,7 +14,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class ParticipantService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/participants';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/participants';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,
