@@ -595,6 +595,7 @@
   "pointsByDraw": "Punti per il pareggio",
   "nameExample": "Giuseppe Rossi",
   "onlyNews": "Nuovi",
+  "achievements": "Resultati",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Ottenuto a:",
   "time": "Tempi",
   "lockedAt": "Bloccato",

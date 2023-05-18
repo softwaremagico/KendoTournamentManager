@@ -16,7 +16,7 @@ import {UserRoles} from "./rbac/user-roles";
 })
 export class UserService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/auth';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService, private systemOverloadService: SystemOverloadService,

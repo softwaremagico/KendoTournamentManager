@@ -115,3 +115,13 @@
   font-size: 250%;
 }
 
+.achievements-box{
+  display: inline-grid;
+}
+
+app-achievement-wall {
+  margin-top: 10px;
+  width: 270px;
+  height: 245px;
+}
+
