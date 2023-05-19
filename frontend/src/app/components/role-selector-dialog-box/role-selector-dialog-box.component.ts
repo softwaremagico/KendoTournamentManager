@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {Component, Inject, Input, Optional, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RoleType} from "../../models/role-type";
 import {Action} from "../../action";
@@ -9,7 +9,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
   templateUrl: './role-selector-dialog-box.component.html',
   styleUrls: ['./role-selector-dialog-box.component.scss']
 })
-export class RoleSelectorDialogBoxComponent implements OnInit {
+export class RoleSelectorDialogBoxComponent {
 
   @Input()
   tournament: Tournament;
@@ -22,10 +22,6 @@ export class RoleSelectorDialogBoxComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     this.tournament = data.tournament;
-  }
-
-  ngOnInit(): void {
-
   }
 
   setRoles(newOnes: boolean) {

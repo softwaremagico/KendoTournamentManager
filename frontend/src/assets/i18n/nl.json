@@ -616,7 +616,9 @@
   "defense": "Verdedigen",
   "willpower": "Wilskracht",
   "aggressiveness": "Agressiviteit",
-  "errorFightNotSelected": "U moet eerst een groep selecteren!"
+  "errorFightNotSelected": "U moet eerst een groep selecteren!",
+  "minutesAbbreviation": "mins",
+  "secondsAbbreviation": "secs"
 }
 
 
