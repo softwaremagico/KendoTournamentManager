@@ -9,8 +9,6 @@ export class AudioService {
     const audio = new Audio();
     audio.src = '../../assets/audio/alarm.wav';
     audio.load();
-    audio.play().then(function() {
-
-    });
+    audio.play().then().catch(() => console.error('Cannot reproduce audio!'));
   }
 }

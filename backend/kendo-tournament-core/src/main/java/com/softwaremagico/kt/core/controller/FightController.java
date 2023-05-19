@@ -121,12 +121,17 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public FightDTO generateDuels(FightDTO fightDTO, String createdBy) {
         fightDTO.getDuels().clear();
+        boolean added = false;
         if (fightDTO.getTeam1() != null && fightDTO.getTeam2() != null) {
             for (int i = 0; i < Math.max(fightDTO.getTeam1().getMembers().size(), fightDTO.getTeam2().getMembers().size()); i++) {
                 final DuelDTO duelDTO = new DuelDTO(i < fightDTO.getTeam1().getMembers().size() ? fightDTO.getTeam1().getMembers().get(i) : null,
                         i < fightDTO.getTeam2().getMembers().size() ? fightDTO.getTeam2().getMembers().get(i) : null, fightDTO.getTournament(), createdBy);
                 fightDTO.getDuels().add(duelDTO);
+                added = true;
             }
+        }
+        if (added) {
+            tournamentProvider.markAsFinished(tournamentConverter.reverse(fightDTO.getTournament()), false);
         }
         return fightDTO;
     }
@@ -156,6 +161,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
             final List<Fight> createdFights = provider.saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
+            tournamentProvider.markAsFinished(tournament, false);
             return convertAll(createdFights);
         }
         return new ArrayList<>();
@@ -168,6 +174,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
             final List<Fight> createdFights = provider.saveAll(selectedManager.createNextFights(tournament, createdBy));
+            tournamentProvider.markAsFinished(tournament, false);
             return convertAll(createdFights);
         }
         return new ArrayList<>();

@@ -72,6 +72,14 @@ public class Tournament extends Element {
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime lockedAt;
 
+    @Column(name = "started_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime startedAt;
+
+    @Column(name = "finished_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime finishedAt;
+
     public Tournament() {
         super();
     }
@@ -153,6 +161,31 @@ public class Tournament extends Element {
 
     public void setLockedAt(LocalDateTime lockedAt) {
         this.lockedAt = lockedAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public void updateFinishedAt(LocalDateTime finishedAt) {
+        if (this.finishedAt == null) {
+            this.finishedAt = finishedAt;
+            //Reset if new fights are added
+        } else if (finishedAt == null) {
+            this.finishedAt = null;
+        }
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
     }
 
     @Override

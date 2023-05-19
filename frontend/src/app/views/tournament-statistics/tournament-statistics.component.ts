@@ -286,9 +286,9 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   obtainTournamentTimes(tournamentStatistics: TournamentStatistics): [string, number] {
     let times: [string, number];
-    if (tournamentStatistics.tournamentLockedAt && tournamentStatistics.tournamentCreatedAt) {
+    if (tournamentStatistics.tournamentFinishedAt && tournamentStatistics.tournamentCreatedAt) {
       //Time in minutes.
-      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentLockedAt).getTime() -
+      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFinishedAt).getTime() -
         new Date(tournamentStatistics.tournamentCreatedAt).getTime()) / (1000 * 60), 2)];
     } else {
       times = [this.getLabel(tournamentStatistics.tournamentName), 0];
@@ -328,4 +328,5 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
 
+  protected readonly undefined = undefined;
 }

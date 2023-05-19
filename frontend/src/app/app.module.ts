@@ -61,10 +61,10 @@ import {
   AuthenticatedUserDialogBoxModule
 } from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
 import {ClubDialogBoxModule} from "./views/club-list/club-dialog-box/club-dialog-box.module";
-import {CompetitorsRankingModule} from "./views/fight-list/competitors-ranking/competitors-ranking.module";
+import {CompetitorsRankingModule} from "./components/competitors-ranking/competitors-ranking.module";
 import {FightDialogBoxModule} from "./views/fight-list/fight-dialog-box/fight-dialog-box.module";
 import {LeagueGeneratorModule} from "./views/fight-list/league-generator/league-generator.module";
-import {TeamRankingModule} from "./views/fight-list/team-ranking/team-ranking.module";
+import {TeamRankingModule} from "./components/team-ranking/team-ranking.module";
 import {UndrawTeamsModule} from "./views/fight-list/undraw-teams/undraw-teams.module";
 import {
   ParticipantDialogBoxModule
@@ -95,13 +95,13 @@ import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
 import {TournamentStatisticsComponent} from './views/tournament-statistics/tournament-statistics.component';
 import {PieChartModule} from "./components/charts/pie-chart/pie-chart.module";
 import {StackedBarsChartModule} from "./components/charts/stacked-bars-chart/stacked-bars-chart.module";
-import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
 import {LineChartModule} from "./components/charts/line-chart/line-chart.module";
 import {NgApexchartsModule} from "ng-apexcharts";
 import {RadarChartModule} from "./components/charts/radar-chart/radar-chart.module";
 import {RadialChartModule} from "./components/charts/radial-chart/radial-chart.module";
 import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.module";
-import { ParticipantStatisticsComponent } from './views/participant-statistics/participant-statistics.component';
+import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
+import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
 
 
 registerLocaleData(localeES, "es");
@@ -202,7 +202,8 @@ registerLocaleData(localeNL, "nl");
     RadarChartModule,
     NgApexchartsModule,
     RadialChartModule,
-    GaugeChartModule
+    GaugeChartModule,
+    ProgressBarModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,

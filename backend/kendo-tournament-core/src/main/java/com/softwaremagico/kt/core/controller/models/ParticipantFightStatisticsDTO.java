@@ -66,6 +66,12 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     private Long quickestReceivedHit;
 
+    private Long wonDuels;
+
+    private Long lostDuels;
+
+    private Long drawDuels;
+
     public Long getDuelsNumber() {
         return Objects.requireNonNullElse(duelsNumber, 0L);
     }
@@ -221,5 +227,29 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     public void setQuickestReceivedHit(Long quickestReceivedHit) {
         this.quickestReceivedHit = quickestReceivedHit;
+    }
+
+    public Long getWonDuels() {
+        return wonDuels;
+    }
+
+    public void setWonDuels(Long wonDuels) {
+        this.wonDuels = wonDuels;
+    }
+
+    public Long getLostDuels() {
+        return lostDuels;
+    }
+
+    public void setLostDuels(Long lostDuels) {
+        this.lostDuels = lostDuels;
+    }
+
+    public Long getDrawDuels() {
+        return drawDuels;
+    }
+
+    public void setDrawDuels(Long drawDuels) {
+        this.drawDuels = drawDuels;
     }
 }
