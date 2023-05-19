@@ -1,15 +1,15 @@
 import {Component, Inject, OnInit, Optional} from '@angular/core';
-import {ScoreOfTeam} from "../../../models/score-of-team";
-import {RankingService} from "../../../services/ranking.service";
+import {ScoreOfTeam} from "../../models/score-of-team";
+import {RankingService} from "../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {Tournament} from "../../../models/tournament";
+import {Tournament} from "../../models/tournament";
 import {Subject} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
-import {UndrawTeamsComponent} from "../undraw-teams/undraw-teams.component";
-import {Team} from "../../../models/team";
-import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
-import {RbacService} from "../../../services/rbac/rbac.service";
-import {Group} from "../../../models/group";
+import {UndrawTeamsComponent} from "../../views/fight-list/undraw-teams/undraw-teams.component";
+import {Team} from "../../models/team";
+import {RbacBasedComponent} from "../RbacBasedComponent";
+import {RbacService} from "../../services/rbac/rbac.service";
+import {Group} from "../../models/group";
 
 @Component({
   selector: 'app-team-ranking',
@@ -22,12 +22,16 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   tournament: Tournament;
   fightsFinished: boolean;
   group: Group;
+  showIndex: boolean | undefined;
 
   private destroy$: Subject<void> = new Subject<void>();
   _loading = false;
 
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, group: Group, finished: boolean },
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+                tournament: Tournament, group: Group, finished: boolean,
+                showIndex: boolean | undefined,
+              },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
               rbacService: RbacService) {
     super(rbacService);
@@ -37,7 +41,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe(scoresOfTeams => {
         this.teamScores = scoresOfTeams;
       });
@@ -64,12 +68,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   downloadPDF() {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
         const anchor = document.createElement("a");
-        anchor.download = "Team Ranking - " + this.tournament!.name + ".pdf";
+        anchor.download = "Team Ranking - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
       });

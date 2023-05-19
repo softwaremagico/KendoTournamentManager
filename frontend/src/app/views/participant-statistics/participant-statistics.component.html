@@ -31,12 +31,12 @@
           </div>
           <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
             <tr>
-              <td class="single">{{'tournaments' | translate}}
-                : {{participantStatistics?.tournaments}}</td>
+              <td class="single">{{'tournaments' | translate}}:</td>
+              <td>{{participantStatistics?.tournaments}}</td>
             </tr>
             <tr>
-              <td class="single">{{'duels' | translate}}
-                : {{participantStatistics?.participantFightStatistics?.duelsNumber}}</td>
+              <td class="single">{{'duels' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.duelsNumber}}</td>
             </tr>
           </table>
         </div>
@@ -62,6 +62,24 @@
             <tr>
               <td>{{'quickestReceivedHit' | translate}}:</td>
               <td>{{convertSeconds(participantStatistics?.participantFightStatistics?.quickestReceivedHit)}}</td>
+            </tr>
+          </table>
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
+            <h3>{{'duels' | translate}}</h3>
+          </div>
+          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+            <tr>
+              <td class="single">{{'duelsWon' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.wonDuels}}</td>
+            </tr>
+            <tr>
+              <td class="single">{{'duelsDraw' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.drawDuels}}</td>
+            </tr>
+            <tr>
+              <td class="single">{{'duelsLost' | translate}}:</td>
+              <td>{{participantStatistics?.participantFightStatistics?.lostDuels}}</td>
             </tr>
           </table>
         </div>
@@ -152,12 +170,12 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable" *ngIf="competitorRanking">
+        <div class="box-statistics box shadow scrollable">
           <div class="statistics-table-title">
             <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
             <h3>{{'competitorsRanking' | translate}}</h3>
           </div>
-          <table class="statistics-table" aria-hidden="true">
+          <table class="statistics-table" aria-hidden="true" *ngIf="competitorRanking">
             <tr>
               <td class="ranking your-ranking"
                   [ngClass]="{
@@ -178,6 +196,15 @@
           </table>
         </div>
 
+        <div class="box-statistics box shadow scrollable">
+          <div class="statistics-table-title">
+            <mat-icon svgIcon="gauge" class="kendo-icon"></mat-icon>
+            <h3>{{'performance' | translate}}</h3>
+          </div>
+          <app-progress-bar *ngFor="let value of performance; let i = index" [text]="value[0] | translate"
+                            [ngClass]="'bar-'+i"
+                            [percentage]="value[1]" [barIcon]="value[0].toLowerCase()"></app-progress-bar>
+        </div>
 
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
                        [title]="'participantHitsStatistics' | translate"
@@ -185,8 +212,6 @@
         <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
-        <app-gauge-chart *ngIf="!!performanceRadialData" [data]="performanceRadialData"
-                         [title]="'performance' | translate" [width]="400"></app-gauge-chart>
       </div>
     </div>
   </div>

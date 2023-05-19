@@ -38,6 +38,7 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
@@ -287,7 +288,12 @@ public class RankingController {
         return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT);
     }
 
+    @Cacheable("competitors-ranking")
     public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
+        if (competitors == null || competitors.isEmpty()) {
+            competitors = participantConverter.convertAll(participantProvider.getAll().stream()
+                    .map(ParticipantConverterRequest::new).collect(Collectors.toList()));
+        }
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<FightDTO> fights = fightConverter.convertAll(fightProvider.get(participantConverter.reverseAll(competitors)).stream()
                 .map(FightConverterRequest::new).collect(Collectors.toSet()));
@@ -300,6 +306,7 @@ public class RankingController {
         return scores;
     }
 
+    @Cacheable("competitors-ranking")
     public List<ScoreOfCompetitor> getCompetitorGlobalRanking(ScoreType scoreType) {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<FightDTO> fights = fightConverter.convertAll(fightProvider.getAll().stream()
@@ -433,7 +440,7 @@ public class RankingController {
         return tournamentDTO.getType() == TournamentType.KING_OF_THE_MOUNTAIN;
     }
 
-    @CacheEvict(allEntries = true, value = {"ranking"})
+    @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
     @Scheduled(fixedDelay = 60 * 10 * 1000)
     public void reportCacheEvict() {
         //Only for handling Spring cache.

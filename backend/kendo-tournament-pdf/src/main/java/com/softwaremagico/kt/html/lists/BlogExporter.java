@@ -222,7 +222,7 @@ public class BlogExporter {
             columns = new ArrayList<>();
             columns.add(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()));
             columns.add(scoreOfCompetitor.getWonDuels() + "/" + scoreOfCompetitor.getDrawDuels());
-            columns.add("" + scoreOfCompetitor.getHits());
+            columns.add(String.valueOf(scoreOfCompetitor.getHits()));
             rows.add(columns);
         }
         final int[] widths = {30, 15, 15};

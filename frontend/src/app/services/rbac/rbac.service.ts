@@ -12,9 +12,7 @@ export class RbacService {
   activities: RbacActivity[] = [];
 
   constructor(private userService: UserService) {
-    this.userService.getRoles().subscribe(_roles => {
-      this.setRoles(_roles);
-    });
+    this.getRoles();
   }
 
   public getRoles() {

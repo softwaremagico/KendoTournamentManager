@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -7,12 +7,17 @@ import {
   ApexLegend,
   ApexPlotOptions,
   ApexTitleSubtitle,
+  ApexTooltip,
   ApexXAxis,
   ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
 import {Colors} from "../colors";
-import {StackedBarChartData, StackedBarChartDataElement, StackedBarsData} from "./stacked-bars-chart-data";
+import {StackedBarChartData, StackedBarsData} from "./stacked-bars-chart-data";
+import {CustomChartComponent} from "../custom-chart-component";
+import {DarkModeService} from "../../../services/notifications/dark-mode.service";
+import {UserSessionService} from "../../../services/user-session.service";
+import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
 
 type StackedBarsChartOptions = {
@@ -21,10 +26,12 @@ type StackedBarsChartOptions = {
   labels: ApexDataLabels;
   fill: ApexFill;
   plotOptions: ApexPlotOptions;
+  tooltip: ApexTooltip;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
   title: ApexTitleSubtitle;
   legend: ApexLegend;
+  theme: ApexTheme;
 };
 
 type UpdateBarsChartOptions = {
@@ -36,7 +43,7 @@ type UpdateBarsChartOptions = {
   templateUrl: './stacked-bars-chart.component.html',
   styleUrls: ['./stacked-bars-chart.component.scss']
 })
-export class StackedBarsChartComponent implements OnInit {
+export class StackedBarsChartComponent extends CustomChartComponent {
 
   @ViewChild('chart')
   chart!: ChartComponent;
@@ -84,84 +91,58 @@ export class StackedBarsChartComponent implements OnInit {
   @Input()
   public stacked: boolean = true;
 
-  ngOnInit() {
+  constructor(darkModeService: DarkModeService, userSessionService: UserSessionService) {
+    super(darkModeService, userSessionService);
+  }
+
+  protected setProperties(): void {
     this.chartOptions = {
-      chart: {
-        width: this.width,
-        type: "bar",
-        toolbar: {
-          show: this.showToolbar,
-        },
-        stacked: this.stacked,
-        stackType: this.stackType,
-        dropShadow: {
-          enabled: this.shadow,
-          color: '#000',
-          top: 0,
-          left: 7,
-          blur: 10,
-          opacity: 0.2
-        },
-      },
+      chart: this.getChart('bar', this.width, this.shadow, this.showToolbar),
       series: this.setColors(this.data.getData()),
-      labels: {
-        enabled: this.showValuesLabels
-      },
-      fill: {
-        type: this.fill,
-      },
-      plotOptions: {
-        bar: {
-          distributed: false, // this line is mandatory for using colors
-          horizontal: this.horizontal,
-          barHeight: this.barThicknessPercentage + '%',
-          columnWidth: this.barThicknessPercentage + '%',
-          borderRadius: this.borderRadius,
-          dataLabels: {
-            total: {
-              enabled: this.enableTotals,
-              style: {
-                fontWeight: 900
-              }
+      labels: this.getLabels(this.showValuesLabels),
+      fill: this.getFill(this.fill),
+      plotOptions: this.getPlotOptions(),
+      tooltip: this.getTooltip(),
+      xaxis: this.getXAxis(this.data.getLabels(), this.xAxisOnTop ? 'top' : 'bottom', this.xAxisTitle),
+      yaxis: this.getYAxis(this.showYAxis, this.yAxisTitle),
+      title: this.getTitle(this.title, this.titleAlignment),
+      legend: this.getLegend(this.legendPosition),
+      theme: this.getTheme()
+    };
+  }
+
+  protected getPlotOptions(): ApexPlotOptions {
+    return {
+      bar: {
+        distributed: false, // this line is mandatory for using colors
+        horizontal: this.horizontal,
+        barHeight: this.barThicknessPercentage + '%',
+        columnWidth: this.barThicknessPercentage + '%',
+        borderRadius: this.borderRadius,
+        dataLabels: {
+          total: {
+            enabled: this.enableTotals,
+            style: {
+              fontWeight: 900
             }
           }
         }
-      },
-      xaxis: {
-        categories: this.data.getLabels(),
-        position: this.xAxisOnTop ? 'top' : 'bottom',
-        title: {
-          text: this.xAxisTitle
-        }
-      },
-      yaxis: {
-        show: this.showYAxis,
-        title: {
-          text: this.yAxisTitle
-        },
-      },
-      title: {
-        text: this.title,
-        align: this.titleAlignment
-      },
-      legend: {
-        position: this.legendPosition
-      },
-    };
+      }
+    }
   }
 
   update(data: StackedBarChartData) {
     this.chart.updateSeries(this.setColors(data.getData()), true);
-   const updateOptions: UpdateBarsChartOptions = {
-     xaxis: {
-       categories: data.getLabels(),
-       position: this.xAxisOnTop ? 'top' : 'bottom',
-       title: {
-         text: this.xAxisTitle
-       }
-     }
-   }
-   this.chart.updateOptions(updateOptions);
+    const updateOptions: UpdateBarsChartOptions = {
+      xaxis: {
+        categories: data.getLabels(),
+        position: this.xAxisOnTop ? 'top' : 'bottom',
+        title: {
+          text: this.xAxisTitle
+        }
+      }
+    }
+    this.chart.updateOptions(updateOptions);
   }
 
   setColors(data: StackedBarsData[]): StackedBarsData[] {

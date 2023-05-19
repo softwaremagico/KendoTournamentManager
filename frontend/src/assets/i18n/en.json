@@ -136,8 +136,10 @@
   "DrawGame": "There is a draw match.",
   "fightsWon": "Won matches",
   "fightsDraw": "Draw matches",
+  "fightsLost": "Lost matches",
   "duelsWon": "Won fights",
   "duelsDraw": "Draw fights",
+  "duelsLost": "Lost fights",
   "histsWon": "Hits",
   "all": "All",
   "PerformedHitStatistics": "Performed hits",
@@ -643,6 +645,8 @@
   "defense": "Defense",
   "willpower": "Willpower",
   "aggressiveness": "Aggressiveness",
-  "errorFightNotSelected": "You must select a group first"
+  "errorFightNotSelected": "You must select a group first",
+  "minutesAbbreviation": "mins",
+  "secondsAbbreviation": "secs"
 }
 

@@ -88,7 +88,7 @@ export class ParticipantPictureComponent implements OnInit {
   }
 
   openDialog(title: string, image: string) {
-    const dialogRef = this.dialog.open(PictureDialogBoxComponent, {
+    this.dialog.open(PictureDialogBoxComponent, {
       width: '435px',
       data: {
         image: image
