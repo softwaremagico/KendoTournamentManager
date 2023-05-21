@@ -25,8 +25,8 @@ package com.softwaremagico.kt.pdf;
  */
 
 import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.utils.BasicDataTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,14 +60,14 @@ public class ListTests extends BasicDataTest {
 
     @Test
     public void generateCompetitorsListPdf() {
-        List<ScoreOfCompetitor> competitorTopTen = rankingController.getCompetitorsScoreRankingFromTournament(tournament.getId());
+        List<ScoreOfCompetitorDTO> competitorTopTen = rankingController.getCompetitorsScoreRankingFromTournament(tournament.getId());
         Assert.assertEquals(pdfController.generateCompetitorsScoreList(Locale.getDefault(), tournament, competitorTopTen)
                 .createFile(PDF_PATH_OUTPUT + "CompetitorsList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
 
     @Test
     public void generateTeamsScoreListPdf() {
-        List<ScoreOfTeam> teamsTopTen = rankingController.getTeamsScoreRanking(tournament);
+        List<ScoreOfTeamDTO> teamsTopTen = rankingController.getTeamsScoreRanking(tournament);
         Assert.assertEquals(pdfController.generateTeamsScoreList(Locale.getDefault(), tournament, teamsTopTen)
                 .createFile(PDF_PATH_OUTPUT + "TeamsScoreList.pdf"), 2); // No clue why are 2 pages and not 1.
     }
