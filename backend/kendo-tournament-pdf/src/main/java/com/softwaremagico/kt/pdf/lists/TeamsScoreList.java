@@ -29,8 +29,8 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
@@ -45,13 +45,13 @@ import java.util.Locale;
 public class TeamsScoreList extends ParentList {
 
     private final TournamentDTO tournament;
-    private final List<ScoreOfTeam> teamTopTen;
+    private final List<ScoreOfTeamDTO> teamTopTen;
 
     private final MessageSource messageSource;
 
     private final Locale locale;
 
-    public TeamsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamTopTen) {
+    public TeamsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfTeamDTO> teamTopTen) {
         this.tournament = tournament;
         this.teamTopTen = teamTopTen;
         this.messageSource = messageSource;
@@ -72,7 +72,7 @@ public class TeamsScoreList extends ParentList {
         mainTable.addCell(getCell(messageSource.getMessage("classification.teams.fights", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
 
-        for (final ScoreOfTeam scoreOfTeam : teamTopTen) {
+        for (final ScoreOfTeamDTO scoreOfTeam : teamTopTen) {
             mainTable.addCell(getCell(scoreOfTeam.getTeam().getName(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));

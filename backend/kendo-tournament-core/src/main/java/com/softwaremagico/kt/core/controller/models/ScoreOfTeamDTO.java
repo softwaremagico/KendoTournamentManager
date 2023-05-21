@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.score;
+package com.softwaremagico.kt.core.controller.models;
 
 /*-
  * #%L
@@ -26,21 +26,17 @@ package com.softwaremagico.kt.core.score;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 
 import java.util.List;
 import java.util.Objects;
 
-public class ScoreOfTeam {
+public class ScoreOfTeamDTO {
 
-    private Team team;
+    private TeamDTO team;
     @JsonIgnore
-    private List<Fight> fights;
+    private List<FightDTO> fights;
     @JsonIgnore
-    private List<Duel> unties;
+    private List<DuelDTO> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
     private Integer fightsDone = null;
@@ -51,22 +47,22 @@ public class ScoreOfTeam {
     private Integer level = null;
     private Integer sortingIndex = null;
 
-    public ScoreOfTeam() {
+    public ScoreOfTeamDTO() {
 
     }
 
-    public ScoreOfTeam(Team team, List<Fight> fights, List<Duel> unties) {
+    public ScoreOfTeamDTO(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
         this.team = team;
         this.fights = fights;
         this.unties = unties;
         update();
     }
 
-    public Team getTeam() {
+    public TeamDTO getTeam() {
         return team;
     }
 
-    public Tournament getTournament() {
+    public TournamentDTO getTournament() {
         if (team != null) {
             return team.getTournament();
         }
@@ -94,13 +90,13 @@ public class ScoreOfTeam {
 
     public void setLevel() {
         level = fights.stream().filter(fightDTO -> fightDTO.getTeam1().equals(team) || fightDTO.getTeam2().equals(team))
-                .map(Fight::getLevel).max(Integer::compareTo).orElse(0);
+                .map(FightDTO::getLevel).max(Integer::compareTo).orElse(0);
     }
 
     public void setWonFights() {
         wonFights = 0;
-        for (final Fight fight : fights) {
-            final Team winner = fight.getWinner();
+        for (final FightDTO fight : fights) {
+            final TeamDTO winner = fight.getWinner();
             if (winner != null && winner.equals(team)) {
                 wonFights++;
             }
@@ -139,11 +135,11 @@ public class ScoreOfTeam {
         });
     }
 
-    public List<Fight> getFights() {
+    public List<FightDTO> getFights() {
         return fights;
     }
 
-    public List<Duel> getUnties() {
+    public List<DuelDTO> getUnties() {
         return unties;
     }
 
@@ -179,15 +175,15 @@ public class ScoreOfTeam {
         return level;
     }
 
-    public void setTeam(Team team) {
+    public void setTeam(TeamDTO team) {
         this.team = team;
     }
 
-    public void setFights(List<Fight> fights) {
+    public void setFights(List<FightDTO> fights) {
         this.fights = fights;
     }
 
-    public void setUnties(List<Duel> unties) {
+    public void setUnties(List<DuelDTO> unties) {
         this.unties = unties;
     }
 
