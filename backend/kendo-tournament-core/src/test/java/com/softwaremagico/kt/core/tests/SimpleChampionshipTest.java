@@ -26,8 +26,8 @@ package com.softwaremagico.kt.core.tests;
 
 
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
-import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
@@ -37,7 +37,6 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -104,7 +103,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
     private TeamConverter teamConverter;
 
     @Autowired
-    private RankingController rankingController;
+    private RankingProvider rankingProvider;
 
     @Autowired
     private FightStatisticsController fightStatisticsController;
@@ -244,7 +243,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
             fightProvider.save(currentFight);
         }
 
-        List<ScoreOfTeam> teamsScore = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        List<ScoreOfTeam> teamsScore = rankingProvider.getTeamsScoreRanking(tournament);
 
         for (int i = 0; i < teamsScore.size() - 1; i++) {
             Assert.assertTrue(teamsScore.get(i).getWonFights() >= teamsScore.get(i + 1).getWonFights());
@@ -300,8 +299,8 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
         simpleLeagueHandler.getGroups(tournament).get(0).getUnties().get(0).addCompetitor2Score(Score.MEN);
 
-        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(scores.get(0).getTeam()));
+        List<ScoreOfTeam> scores = rankingProvider.getTeamsScoreRanking(tournament);
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), scores.get(0).getTeam());
 
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }

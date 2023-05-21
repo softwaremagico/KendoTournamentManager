@@ -181,6 +181,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
         achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
+        achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -439,6 +440,16 @@ public class AchievementController extends BasicInsertableController<Achievement
             achievements.add(new Achievement(participant, tournament, achievementType, achievementGrade));
         });
         return achievementProvider.saveAll(achievements);
+    }
+
+    /**
+     * Winner of a tournament
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateTheWinnerTournament(Participant participant, Tournament tournament) {
+        final List<Participant> participants = participantProvider.getParticipantFirstTimeCompetitors(tournament);
+        return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL, participants, tournament);
     }
 
 }
