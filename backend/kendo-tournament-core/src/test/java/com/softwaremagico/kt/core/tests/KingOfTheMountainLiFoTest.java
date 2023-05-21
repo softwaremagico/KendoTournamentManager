@@ -24,11 +24,9 @@ package com.softwaremagico.kt.core.tests;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
-import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
@@ -100,7 +98,7 @@ public class KingOfTheMountainLiFoTest extends AbstractTestNGSpringContextTests 
     private TeamConverter teamConverter;
 
     @Autowired
-    private RankingController rankingController;
+    private RankingProvider rankingProvider;
 
     @Autowired
     private KingOfTheMountainHandler kingOfTheMountainHandler;
@@ -205,7 +203,7 @@ public class KingOfTheMountainLiFoTest extends AbstractTestNGSpringContextTests 
         tournamentFights.forEach(fight -> fight.getDuels().forEach(duel -> duel.setFinished(true)));
         fightProvider.save(tournamentFights.get(0));
 
-        List<ScoreOfTeam> teamsScore = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        List<ScoreOfTeam> teamsScore = rankingProvider.getTeamsScoreRanking(tournament);
         Assert.assertEquals(teamsScore.size(), TEAMS);
 
         Assert.assertEquals(teamsScore.get(0).getTeam().getName(), tournamentFights.get(0).getTeam1().getName());
