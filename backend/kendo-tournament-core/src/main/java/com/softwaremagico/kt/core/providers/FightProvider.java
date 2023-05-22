@@ -32,6 +32,7 @@ import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,7 +83,7 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return fight;
     }
 
-    public List<Fight> get(List<Participant> participants) {
+    public List<Fight> get(Collection<Participant> participants) {
         return repository.findByParticipantIn(participants);
     }
 

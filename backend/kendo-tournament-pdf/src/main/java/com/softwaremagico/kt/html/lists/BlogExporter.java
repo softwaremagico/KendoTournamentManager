@@ -25,8 +25,6 @@ package com.softwaremagico.kt.html.lists;
  */
 
 import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.ShiaijoName;
@@ -55,13 +53,13 @@ public class BlogExporter {
 
     private final List<ParticipantDTO> competitors;
 
-    private final List<ScoreOfTeam> scoreOfTeams;
+    private final List<ScoreOfTeamDTO> scoreOfTeams;
 
-    private final List<ScoreOfCompetitor> scoreOfCompetitors;
+    private final List<ScoreOfCompetitorDTO> scoreOfCompetitors;
 
     public BlogExporter(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<RoleDTO> roles,
-                        List<GroupDTO> groups, List<ParticipantDTO> competitors, List<ScoreOfTeam> scoreOfTeams,
-                        List<ScoreOfCompetitor> scoreOfCompetitors) {
+                        List<GroupDTO> groups, List<ParticipantDTO> competitors, List<ScoreOfTeamDTO> scoreOfTeams,
+                        List<ScoreOfCompetitorDTO> scoreOfCompetitors) {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournament = tournament;
@@ -195,7 +193,7 @@ public class BlogExporter {
         columns.add("<b>" + messageSource.getMessage("classification.teams.hits", null, locale) + "</b>");
         rows.add(columns);
 
-        for (final ScoreOfTeam scoreOfTeam : scoreOfTeams) {
+        for (final ScoreOfTeamDTO scoreOfTeam : scoreOfTeams) {
             columns = new ArrayList<>();
             columns.add(NameUtils.getShortName(scoreOfTeam.getTeam()));
             columns.add(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights());
@@ -218,7 +216,7 @@ public class BlogExporter {
         columns.add("<b>" + messageSource.getMessage("classification.competitors.duels.won", null, locale) + "</b>");
         rows.add(columns);
 
-        for (final ScoreOfCompetitor scoreOfCompetitor : scoreOfCompetitors) {
+        for (final ScoreOfCompetitorDTO scoreOfCompetitor : scoreOfCompetitors) {
             columns = new ArrayList<>();
             columns.add(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()));
             columns.add(scoreOfCompetitor.getWonDuels() + "/" + scoreOfCompetitor.getDrawDuels());

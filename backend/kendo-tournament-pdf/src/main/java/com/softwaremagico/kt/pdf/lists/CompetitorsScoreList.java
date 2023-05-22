@@ -30,8 +30,8 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
@@ -45,12 +45,12 @@ import java.util.Locale;
  * Creates a sheet with the competitors ranking depending on the performance on the tournament.
  */
 public class CompetitorsScoreList extends ParentList {
-    private final List<ScoreOfCompetitor> competitorTopTen;
+    private final List<ScoreOfCompetitorDTO> competitorTopTen;
     private final TournamentDTO tournament;
     private final MessageSource messageSource;
     private final Locale locale;
 
-    public CompetitorsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
+    public CompetitorsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
         this.tournament = tournament;
         this.competitorTopTen = competitorTopTen;
         this.messageSource = messageSource;
@@ -91,7 +91,7 @@ public class CompetitorsScoreList extends ParentList {
         mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.fights", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
 
-        for (final ScoreOfCompetitor scoreOfCompetitor : competitorTopTen) {
+        for (final ScoreOfCompetitorDTO scoreOfCompetitor : competitorTopTen) {
             mainTable.addCell(getCell(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfCompetitor.getWonDuels() + (scoreOfCompetitor.getUntieDuels() > 0 ? "*" : "") + "/"
                     + scoreOfCompetitor.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
