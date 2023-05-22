@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.persistence.values;
+package com.softwaremagico.kt.core.converters.models;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
@@ -24,47 +24,10 @@ package com.softwaremagico.kt.persistence.values;
  * #L%
  */
 
-public enum AchievementType {
+import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 
-    BILLY_THE_KID,
-
-    LETHAL_WEAPON,
-
-    TERMINATOR,
-
-    JUGGERNAUT,
-
-    THE_KING,
-
-    LOOKS_GOOD_FROM_FAR_AWAY_BUT,
-
-    I_LOVE_THE_FLAGS,
-
-    THE_TOWER,
-
-    THE_CASTLE,
-
-    ENTRENCHED,
-
-    A_LITTLE_OF_EVERYTHING,
-
-    BONE_BREAKER,
-
-    FLEXIBLE_AS_BAMBOO,
-
-    SWEATY_TENUGUI,
-
-    THE_WINNER,
-
-    WOODCUTTER;
-
-
-    public static AchievementType getType(String name) {
-        for (final AchievementType type : AchievementType.values()) {
-            if (type.name().equalsIgnoreCase(name)) {
-                return type;
-            }
-        }
-        return null;
+public class ScoreOfCompetitorConverterRequest extends ConverterRequest<ScoreOfCompetitor> {
+    public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity) {
+        super(entity);
     }
 }
