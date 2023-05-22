@@ -59,12 +59,15 @@ public class CipherInitializer {
     // AES-GCM needs GCMParameterSpec
     public String encrypt(String input) throws InvalidAlgorithmParameterException, InvalidKeyException,
             BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
+        return encrypt(input, databaseEncryptionKey);
+    }
+
+    public String encrypt(String input, String password) throws InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
         final byte[] salt = getRandomNonce(SALT_LENGTH_BYTE);
         final byte[] iv = getRandomNonce(GCM_IV_LENGTH);
-        final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-        cipher.init(Cipher.ENCRYPT_MODE, getAESKey(salt), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+        getCipher().init(Cipher.ENCRYPT_MODE, getAESKey(password, salt), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
         final byte[] encryptedText = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
-        // prefix IV length + IV bytes to cipher text
         final byte[] encryptedBytes = ByteBuffer.allocate(iv.length + salt.length + encryptedText.length)
                 .put(iv)
                 .put(salt)
@@ -77,11 +80,15 @@ public class CipherInitializer {
 
     public String decrypt(String encrypted) throws BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException,
             InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
+        return decrypt(encrypted, databaseEncryptionKey);
+    }
 
-        // get back the iv and salt from the cipher text
+
+    public String decrypt(String encrypted, String password) throws BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException,
+            InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeySpecException {
+        final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
         final ByteBuffer byteBuffer = ByteBuffer.wrap(encryptedBytes);
-        // 16 bytes salt
+
         final byte[] iv = new byte[GCM_IV_LENGTH];
         byteBuffer.get(iv);
         final byte[] salt = new byte[SALT_LENGTH_BYTE];
@@ -89,12 +96,18 @@ public class CipherInitializer {
         final byte[] cipherText = new byte[byteBuffer.remaining()];
         byteBuffer.get(cipherText);
 
-        final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-        cipher.init(Cipher.DECRYPT_MODE, getAESKey(salt), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
-        final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+        getCipher().init(Cipher.DECRYPT_MODE, getAESKey(password, salt), new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+        final byte[] decryptedBytes = cipher.doFinal(cipherText);
         final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
         return decrypted;
+    }
+
+    private Cipher getCipher() throws NoSuchPaddingException, NoSuchAlgorithmException {
+        if (cipher == null) {
+            cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
+        }
+        return cipher;
     }
 
     public static byte[] getRandomNonce(int numBytes) {
@@ -105,10 +118,13 @@ public class CipherInitializer {
 
     // AES secret key
     public static SecretKeySpec getAESKey(byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-        final KeySpec spec = new PBEKeySpec(databaseEncryptionKey.toCharArray(), salt,
-                65536, 256);
-        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), SECRET_KEY_ALGORITHM);
+        return getAESKey(databaseEncryptionKey, salt);
+    }
 
+    public static SecretKeySpec getAESKey(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
+        final KeySpec spec = new PBEKeySpec(password.toCharArray(), salt,
+                512, 256);
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), SECRET_KEY_ALGORITHM);
     }
 }
