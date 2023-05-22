@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, HostListener, Input, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
 import {TranslateService} from "@ngx-translate/core";
@@ -31,6 +31,8 @@ export class AchievementTileComponent implements OnInit {
   screenWidth: number | undefined;
   onLeftBorder: boolean;
   onRightBorder: boolean;
+  newAchievement: boolean;
+  totalAchievements: number;
 
   constructor(private translateService: TranslateService, private nameUtils: NameUtilsService) {
 
@@ -55,6 +57,13 @@ export class AchievementTileComponent implements OnInit {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['achievements']) {
+      this.newAchievement = this.isNewAchievement();
+      this.totalAchievements = this.getTotalAchievements();
+    }
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.calculateTooltipMargin();
@@ -72,12 +81,16 @@ export class AchievementTileComponent implements OnInit {
   }
 
   isNewAchievement(): boolean {
+    //Tournaments views does not show new icon.
+    if (this.view = 'tournament') {
+      return false;
+    }
     const today: Date = new Date();
     today.setDate(today.getDate() - 2);
-    return this.achievements?.find((a: Achievement): boolean => a.createdAt > today) !== undefined;
+    return this.achievements?.find((a: Achievement): boolean => new Date(a.createdAt) > today) !== undefined;
   }
 
-  totalAchievements(): number {
+  getTotalAchievements(): number {
     if (!this.achievements) {
       return 0;
     }
@@ -167,6 +180,7 @@ export class AchievementTileComponent implements OnInit {
       }
       tooltipText += '</div>';
     }
+    console.log('tooltip --->', tooltipText);
     return tooltipText;
   }
 

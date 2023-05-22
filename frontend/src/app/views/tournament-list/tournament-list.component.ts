@@ -239,12 +239,14 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   lockElement(locked: boolean): void {
     if (this.basicTableData.selectedElement) {
       this.basicTableData.selectedElement.locked = locked;
-      if (locked && !this.basicTableData.selectedElement.lockedAt) {
-        this.basicTableData.selectedElement.lockedAt = new Date();
-      }
-      if (locked && !this.basicTableData.selectedElement.finishedAt) {
-        this.basicTableData.selectedElement.finishedAt = new Date();
+      if (locked) {
         this.achievementsService.regenerateTournamentAchievements(this.basicTableData.selectedElement?.id!).subscribe();
+        if (!this.basicTableData.selectedElement.lockedAt) {
+          this.basicTableData.selectedElement.lockedAt = new Date();
+        }
+        if (!this.basicTableData.selectedElement.finishedAt) {
+          this.basicTableData.selectedElement.finishedAt = new Date();
+        }
       }
       this.updateRowData(this.basicTableData.selectedElement);
     }

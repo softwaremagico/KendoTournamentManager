@@ -26,12 +26,10 @@ package com.softwaremagico.kt.core.tests;
 
 
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
@@ -280,7 +278,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         }
 
         // Team1 is first one because the name.
-        List<Team> drawTeams = teamConverter.reverseAll(rankingController.getFirstTeamsWithDrawScore(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))), 1));
+        List<Team> drawTeams = rankingProvider.getFirstTeamsWithDrawScore(groupProvider.getGroups(tournament).get(0), 1);
         Assert.assertEquals(drawTeams.size(), 2);
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01").get()));
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03").get()));
@@ -336,7 +334,7 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
         }
 
         // Team1 is first one because the name.
-        List<Team> drawTeams = teamConverter.reverseAll(rankingController.getFirstTeamsWithDrawScore(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))), 1));
+        List<Team> drawTeams = rankingProvider.getFirstTeamsWithDrawScore(groupProvider.getGroups(tournament).get(0), 1);
         Assert.assertEquals(drawTeams.size(), 3);
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team01").get()));
         Assert.assertTrue(drawTeams.contains(teamProvider.get(tournament, "Team03").get()));
@@ -367,10 +365,10 @@ public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
         groupProvider.save(group);
 
-        List<TeamDTO> rankingTeams = rankingController.getTeamsRanking(groupConverter.convert(new GroupConverterRequest(groupProvider.getGroups(tournament).get(0))));
-        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), teamConverter.reverse(rankingTeams.get(0)));
-        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), teamConverter.reverse(rankingTeams.get(1)));
-        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), teamConverter.reverse(rankingTeams.get(2)));
+        List<Team> rankingTeams = rankingProvider.getTeamsRanking(groupProvider.getGroups(tournament).get(0));
+        Assert.assertEquals(teamProvider.get(tournament, "Team03").get(), rankingTeams.get(0));
+        Assert.assertEquals(teamProvider.get(tournament, "Team05").get(), rankingTeams.get(1));
+        Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), rankingTeams.get(2));
     }
 
     @AfterClass

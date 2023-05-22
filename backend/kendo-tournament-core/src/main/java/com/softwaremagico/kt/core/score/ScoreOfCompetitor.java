@@ -215,6 +215,46 @@ public class ScoreOfCompetitor {
         return untieHits;
     }
 
+    public void setWonDuels(Integer wonDuels) {
+        this.wonDuels = wonDuels;
+    }
+
+    public void setDrawDuels(Integer drawDuels) {
+        this.drawDuels = drawDuels;
+    }
+
+    public void setUntieDuels(Integer untieDuels) {
+        this.untieDuels = untieDuels;
+    }
+
+    public void setHits(Integer hits) {
+        this.hits = hits;
+    }
+
+    public void setUntieHits(Integer untieHits) {
+        this.untieHits = untieHits;
+    }
+
+    public void setDuelsDone(Integer duelsDone) {
+        this.duelsDone = duelsDone;
+    }
+
+    public void setWonFights(Integer wonFights) {
+        this.wonFights = wonFights;
+    }
+
+    public void setDrawFights(Integer drawFights) {
+        this.drawFights = drawFights;
+    }
+
+    public boolean isCountNotOver() {
+        return countNotOver;
+    }
+
+    public void setCountNotOver(boolean countNotOver) {
+        this.countNotOver = countNotOver;
+    }
+
     @Override
     public String toString() {
         return "{" + NameUtils.getLastnameName(competitor) + " D:" + getWonDuels() + "/" + getDrawDuels() + ", H:" + getHits() + "}";
