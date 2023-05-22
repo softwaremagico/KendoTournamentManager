@@ -8,7 +8,7 @@
                 <include name="kingOfTheMountainTest"/>
                 <include name="converterTests"/>
                 <include name="scoreTests"/>
-                <exclude name="achievementTests"/>
+                <include name="achievementTests"/>
                 <include name="statisticsTests"/>
             </run>
         </groups>

@@ -245,7 +245,6 @@ export abstract class CustomChartComponent implements OnInit {
   }
 
   protected getTheme(): ApexTheme {
-    console.log('darkmode', this.darkMode)
     return {
       mode: this.darkMode ? 'dark' : 'light',
     }
