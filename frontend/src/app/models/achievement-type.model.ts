@@ -2,8 +2,6 @@ export enum AchievementType {
 
   BILLY_THE_KID = 'BILLY_THE_KID',
 
-  LETHAL_WEAPON = 'LETHAL_WEAPON',
-
   TERMINATOR = 'TERMINATOR',
 
   JUGGERNAUT = 'JUGGERNAUT',
@@ -24,7 +22,13 @@ export enum AchievementType {
 
   BONE_BREAKER = 'BONE_BREAKER',
 
-  FLEXIBLE_AS_BAMBOO = 'FLEXIBLE_AS_BAMBOO'
+  FLEXIBLE_AS_BAMBOO = 'FLEXIBLE_AS_BAMBOO',
+
+  LETHAL_WEAPON = 'LETHAL_WEAPON',
+
+  THE_WINNER = 'THE_WINNER',
+
+  THE_WINNER_TEAM = 'THE_WINNER_TEAM',
 }
 
 export namespace AchievementType {

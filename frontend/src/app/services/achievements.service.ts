@@ -49,7 +49,7 @@ export class AchievementsService {
 
   regenerateTournamentAchievements(tournamentId: number): Observable<Achievement[]> {
     const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId;
-    return this.http.patch<Achievement[]>(url, this.loginService.httpOptions)
+    return this.http.patch<Achievement[]>(url, null, this.loginService.httpOptions)
       .pipe(
         tap({
           next: () => this.loggerService.info(`generating tournaments achievements`),

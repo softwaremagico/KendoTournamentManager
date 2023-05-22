@@ -28,10 +28,13 @@ import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -52,6 +55,20 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
 
     public List<Achievement> get(Tournament tournament, AchievementType achievementType) {
         return repository.findByTournamentAndAchievementType(tournament, achievementType);
+    }
+
+    /**
+     * Returns all achievements that are generated after a specific time. Any achievement with a grade equals or better that the selected will be returned
+     *
+     * @param tournament      Filter by tournament
+     * @param achievementType The achievement to look up.
+     * @param grade           the grade used for comparison,  if null, any grade will be used.
+     * @param after           the date used as minimum range.
+     * @return a list of achievements.
+     */
+    public List<Achievement> getAfter(Tournament tournament, AchievementType achievementType, AchievementGrade grade, LocalDateTime after) {
+        return repository.findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(tournament, achievementType,
+                grade != null ? grade.getGreaterThanEquals() : Arrays.asList(AchievementGrade.values()), after);
     }
 
     public List<Achievement> get(AchievementType achievementType) {

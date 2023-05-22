@@ -26,15 +26,15 @@
 }
 
 .achievement-border.bronze {
-  border-color: hsl(28, 31%, 52%);
+  border: 4px hsl(28, 31%, 52%);
 }
 
 .achievement-border.silver {
-  border-color: hsl(210, 3%, 61%);
+  border: 4px hsl(210, 3%, 61%);
 }
 
 .achievement-border.gold {
-  border-color: hsl(45, 100%, 47%);
+  border: 4px hsl(45, 100%, 47%);
 }
 
 .achievement-info {
@@ -48,13 +48,13 @@
   width: 20px;
   height: 20px;
   position: absolute;
-  margin-top: -12px;
+  margin-top: -14px;
 }
 
 .new-achievement {
   position: absolute;
-  margin-top: -11px;
-  margin-left: 18px;
+  margin-top: -14px;
+  margin-left: 10px;
   color: #ffffff;
   font-weight: bold;
   font-size: 12px;
@@ -66,9 +66,10 @@
 }
 
 .achievement-image {
-  width: 100%; /* or any custom size */
-  height: 100%;
+  width: 95%;
+  height: 95%;
   object-fit: contain;
+  padding-bottom: 3px;
 }
 
 /* Tooltip text */
@@ -84,7 +85,7 @@
 
   /* Position the tooltip text */
   position: absolute;
-  z-index: 1;
+  z-index: 1000000;
   bottom: 125%;
   left: 50%;
   margin-left: -150px;

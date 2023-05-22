@@ -35,6 +35,8 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
@@ -52,6 +54,12 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private static final int BILL_THE_KID_MAX_TIME = 10;
 
+    private static final int WINNER_BRONZE_NUMBER = 3;
+    private static final int WINNER_SILVER_NUMBER = 4;
+    private static final int WINNER_GOLD_NUMBER = 5;
+
+    private static final int DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS = 365;
+
     private final TournamentConverter tournamentConverter;
 
     private final TournamentProvider tournamentProvider;
@@ -66,6 +74,8 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final DuelProvider duelProvider;
 
+    private final RankingProvider rankingProvider;
+
     private List<Role> rolesFromTournament;
 
     private List<Participant> participantsFromTournament;
@@ -74,7 +84,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
                                     TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
                                     ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                                    RoleProvider roleProvider, AchievementProvider achievementProvider, DuelProvider duelProvider) {
+                                    RoleProvider roleProvider, AchievementProvider achievementProvider, DuelProvider duelProvider,
+                                    RankingProvider rankingProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -83,6 +94,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.roleProvider = roleProvider;
         this.achievementProvider = achievementProvider;
         this.duelProvider = duelProvider;
+        this.rankingProvider = rankingProvider;
     }
 
     @Override
@@ -182,6 +194,14 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
         achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
         achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerBronzeTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerSilverTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerGoldTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamBronzeTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamSilverTournament(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamGoldTournament(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -437,7 +457,14 @@ public class AchievementController extends BasicInsertableController<Achievement
                                                   Collection<Participant> participants, Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();
         participants.forEach(participant -> {
-            achievements.add(new Achievement(participant, tournament, achievementType, achievementGrade));
+            final Achievement achievement = new Achievement(participant, tournament, achievementType, achievementGrade);
+            //If achievements are redone, try to keep the dates.
+            if (tournament.getFinishedAt() != null) {
+                achievement.setCreatedAt(tournament.getFinishedAt());
+            } else {
+                achievement.setCreatedAt(tournament.getCreatedAt());
+            }
+            achievements.add(achievement);
         });
         return achievementProvider.saveAll(achievements);
     }
@@ -447,9 +474,79 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private List<Achievement> generateTheWinnerTournament(Participant participant, Tournament tournament) {
-        final List<Participant> participants = participantProvider.getParticipantFirstTimeCompetitors(tournament);
-        return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL, participants, tournament);
+    private List<Achievement> generateTheWinnerTournament(Tournament tournament) {
+        final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
+        if (!scoreOfCompetitors.isEmpty()) {
+            return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL,
+                    Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+        }
+        return new ArrayList<>();
     }
 
+    private List<Achievement> generateTheWinnerBronzeTournament(Tournament tournament) {
+        return generateIncrementalGradedTournament(tournament, AchievementType.THE_WINNER, AchievementGrade.BRONZE,
+                WINNER_BRONZE_NUMBER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+    }
+
+    private List<Achievement> generateTheWinnerSilverTournament(Tournament tournament) {
+        return generateIncrementalGradedTournament(tournament, AchievementType.THE_WINNER, AchievementGrade.SILVER,
+                WINNER_SILVER_NUMBER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+    }
+
+    private List<Achievement> generateTheWinnerGoldTournament(Tournament tournament) {
+        return generateIncrementalGradedTournament(tournament, AchievementType.THE_WINNER, AchievementGrade.GOLD,
+                WINNER_GOLD_NUMBER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+    }
+
+    private List<Achievement> generateIncrementalGradedTournament(Tournament tournament, AchievementType type, AchievementGrade grade,
+                                                                  Integer amount, Integer daysToCount) {
+        final List<Achievement> winnersAchievements = achievementProvider.getAfter(tournament, type,
+                AchievementGrade.NORMAL, tournament.getCreatedAt().minusDays(daysToCount));
+        final List<Achievement> winnersGradeAchievements = achievementProvider.getAfter(tournament, type,
+                grade, tournament.getCreatedAt().minusDays(daysToCount));
+        final List<Participant> participantsWithAchievements = winnersAchievements.stream().map(Achievement::getParticipant).collect(Collectors.toList());
+        final List<Achievement> generatedAchievements = new ArrayList<>();
+        for (final Participant participant : participantsWithAchievements) {
+            int counter = 0;
+            for (final Achievement winnerAchievement : winnersAchievements) {
+                if (Objects.equals(winnerAchievement.getParticipant(), participant) &&
+                        //Check that does not exist already a bronze achievement assigned after this one.
+                        winnersGradeAchievements.stream().filter(achievement ->
+                                Objects.equals(achievement.getParticipant(), participant) &&
+                                        achievement.getCreatedAt().isAfter(winnerAchievement.getCreatedAt())
+                        ).findAny().isEmpty()) {
+                    counter++;
+                }
+            }
+            if (counter >= amount) {
+                generatedAchievements.addAll(generateAchievement(AchievementType.THE_WINNER, grade,
+                        Collections.singletonList(participant), tournament));
+            }
+        }
+        return generatedAchievements;
+    }
+
+    private List<Achievement> generateTheWinnerTeamTournament(Tournament tournament) {
+        final List<ScoreOfTeam> scoreOfTeams = rankingProvider.getTeamsScoreRanking(tournament);
+        if (!scoreOfTeams.isEmpty()) {
+            return generateAchievement(AchievementType.THE_WINNER_TEAM, AchievementGrade.NORMAL,
+                    scoreOfTeams.get(0).getTeam().getMembers(), tournament);
+        }
+        return new ArrayList<>();
+    }
+
+    private List<Achievement> generateTheWinnerTeamBronzeTournament(Tournament tournament) {
+        return generateIncrementalGradedTournament(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.BRONZE,
+                WINNER_BRONZE_NUMBER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+    }
+
+    private List<Achievement> generateTheWinnerTeamSilverTournament(Tournament tournament) {
+        return generateIncrementalGradedTournament(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.SILVER,
+                WINNER_SILVER_NUMBER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+    }
+
+    private List<Achievement> generateTheWinnerTeamGoldTournament(Tournament tournament) {
+        return generateIncrementalGradedTournament(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.GOLD,
+                WINNER_GOLD_NUMBER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+    }
 }
