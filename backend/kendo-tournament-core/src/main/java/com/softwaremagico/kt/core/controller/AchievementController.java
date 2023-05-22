@@ -144,6 +144,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     public List<AchievementDTO> regenerateAllAchievements() {
         final List<TournamentDTO> tournaments = tournamentConverter.convertAll(tournamentProvider.getAll().stream()
                 .map(TournamentConverterRequest::new).collect(Collectors.toList()));
+        tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt));
         final List<AchievementDTO> achievementsGenerated = new ArrayList<>();
         for (final TournamentDTO tournament : tournaments) {
             deleteAchievements(tournament);
@@ -192,7 +193,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateBoneBreakerAchievement(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
-        achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
         achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
         achievementsGenerated.addAll(generateTheWinnerTournament(tournament));
         achievementsGenerated.addAll(generateTheWinnerBronzeTournament(tournament));

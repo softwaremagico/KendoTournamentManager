@@ -180,7 +180,6 @@ export class AchievementTileComponent implements OnInit {
       }
       tooltipText += '</div>';
     }
-    console.log('tooltip --->', tooltipText);
     return tooltipText;
   }
 
