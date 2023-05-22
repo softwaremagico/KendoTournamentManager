@@ -27,13 +27,11 @@ package com.softwaremagico.kt.pdf.controller;
 import com.softwaremagico.kt.core.controller.*;
 import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
-import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.*;
-import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -70,11 +68,11 @@ public class PdfController {
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
     }
 
-    public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
+    public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
         return new CompetitorsScoreList(messageSource, locale, tournament, competitorTopTen);
     }
 
-    public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamsTopTen) {
+    public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeamDTO> teamsTopTen) {
         return new TeamsScoreList(messageSource, locale, tournament, teamsTopTen);
     }
 

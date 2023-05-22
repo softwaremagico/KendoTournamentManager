@@ -26,7 +26,7 @@ package com.softwaremagico.kt.core.tests;
 
 
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
-import com.softwaremagico.kt.core.controller.RankingController;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
@@ -35,7 +35,6 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -107,7 +106,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     private TeamConverter teamConverter;
 
     @Autowired
-    private RankingController rankingController;
+    private RankingProvider rankingProvider;
 
     @Autowired
     private FightStatisticsController fightStatisticsController;
@@ -250,7 +249,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        List<ScoreOfTeam> teamsScore = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        List<ScoreOfTeam> teamsScore = rankingProvider.getTeamsScoreRanking(tournament);
         Assert.assertEquals(teamsScore.size(), TEAMS);
 
         for (int i = 0; i < teamsScore.size() - 1; i++) {
