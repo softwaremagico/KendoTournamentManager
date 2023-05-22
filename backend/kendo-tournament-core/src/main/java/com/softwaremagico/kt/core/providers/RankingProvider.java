@@ -1,5 +1,29 @@
 package com.softwaremagico.kt.core.providers;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2023 Softwaremagico
+ * %%
+ * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
+ * <softwaremagico@gmail.com> Valencia (Spain).
+ *  
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *  
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *  
+ * You should have received a copy of the GNU General Public License along with
+ * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.score.*;
@@ -40,6 +64,60 @@ public class RankingProvider {
         this.teamProvider = teamProvider;
     }
 
+    private static Set<Participant> getParticipants(List<Team> teams) {
+        final Set<Participant> allCompetitors = new HashSet<>();
+        for (final Team team : teams) {
+            allCompetitors.addAll(team.getMembers());
+        }
+        return allCompetitors;
+    }
+
+    private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores, boolean checkLevel) {
+        if (scores == null) {
+            return;
+        }
+        scores.sort(getTeamsSorter(type, checkLevel));
+    }
+
+    private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type, boolean checkLevel) {
+        switch (type) {
+            case CUSTOM:
+                return new ScoreOfTeamCustom(checkLevel);
+            case EUROPEAN:
+                return new ScoreOfTeamEuropean(checkLevel);
+            case INTERNATIONAL:
+                return new ScoreOfTeamInternational(checkLevel);
+            case WIN_OVER_DRAWS:
+                return new ScoreOfTeamWinOverDraws(checkLevel);
+            case CLASSIC:
+            default:
+                return new ScoreOfTeamClassic(checkLevel);
+        }
+    }
+
+    private static void sortCompetitorsScores(ScoreType type, List<ScoreOfCompetitor> scores) {
+        if (scores == null) {
+            return;
+        }
+        scores.sort(getCompetitorsSorter(type));
+    }
+
+    private static Comparator<ScoreOfCompetitor> getCompetitorsSorter(ScoreType type) {
+        switch (type) {
+            case CUSTOM:
+                return new ScoreOfCompetitorCustom();
+            case EUROPEAN:
+                return new ScoreOfCompetitorEuropean();
+            case INTERNATIONAL:
+                return new ScoreOfCompetitorInternational();
+            case WIN_OVER_DRAWS:
+                return new ScoreOfCompetitorWinOverDraws();
+            case CLASSIC:
+            default:
+                return new ScoreOfCompetitorClassic();
+        }
+    }
+
     public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
@@ -73,6 +151,12 @@ public class RankingProvider {
         }
         sortCompetitorsScores(tournamentDTO.getTournamentScore().getScoreType(), scores);
         return scores;
+    }
+
+    public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(Integer tournamentId) {
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+                new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
+        return getTeamsScoreRanking(tournament);
     }
 
     /**
@@ -160,14 +244,6 @@ public class RankingProvider {
         return null;
     }
 
-    private static Set<Participant> getParticipants(List<Team> teams) {
-        final Set<Participant> allCompetitors = new HashSet<>();
-        for (final Team team : teams) {
-            allCompetitors.addAll(team.getMembers());
-        }
-        return allCompetitors;
-    }
-
     public Integer getOrder(Group group, Team team) {
         final List<Team> ranking = getTeamsRanking(group);
 
@@ -235,54 +311,8 @@ public class RankingProvider {
         return scores;
     }
 
-    private static void sortTeamsScores(ScoreType type, List<ScoreOfTeam> scores, boolean checkLevel) {
-        if (scores == null) {
-            return;
-        }
-        scores.sort(getTeamsSorter(type, checkLevel));
-    }
-
-    private static Comparator<ScoreOfTeam> getTeamsSorter(ScoreType type, boolean checkLevel) {
-        switch (type) {
-            case CUSTOM:
-                return new ScoreOfTeamCustom(checkLevel);
-            case EUROPEAN:
-                return new ScoreOfTeamEuropean(checkLevel);
-            case INTERNATIONAL:
-                return new ScoreOfTeamInternational(checkLevel);
-            case WIN_OVER_DRAWS:
-                return new ScoreOfTeamWinOverDraws(checkLevel);
-            case CLASSIC:
-            default:
-                return new ScoreOfTeamClassic(checkLevel);
-        }
-    }
-
     private boolean checkLevel(Tournament tournament) {
         return tournament == null || tournament.getType() != TournamentType.KING_OF_THE_MOUNTAIN;
-    }
-
-    private static void sortCompetitorsScores(ScoreType type, List<ScoreOfCompetitor> scores) {
-        if (scores == null) {
-            return;
-        }
-        scores.sort(getCompetitorsSorter(type));
-    }
-
-    private static Comparator<ScoreOfCompetitor> getCompetitorsSorter(ScoreType type) {
-        switch (type) {
-            case CUSTOM:
-                return new ScoreOfCompetitorCustom();
-            case EUROPEAN:
-                return new ScoreOfCompetitorEuropean();
-            case INTERNATIONAL:
-                return new ScoreOfCompetitorInternational();
-            case WIN_OVER_DRAWS:
-                return new ScoreOfCompetitorWinOverDraws();
-            case CLASSIC:
-            default:
-                return new ScoreOfCompetitorClassic();
-        }
     }
 
     /**
@@ -318,6 +348,17 @@ public class RankingProvider {
                         .flatMap(group -> group.getUnties().stream())
                         .collect(Collectors.toList()),
                 checkLevel(tournament));
+    }
+
+    public List<Team> getFirstTeamsWithDrawScore(Group group, Integer maxWinners) {
+        final Map<Integer, List<Team>> teamsByPosition = getTeamsByPosition(group);
+        for (int i = 0; i < maxWinners; i++) {
+            final List<Team> teamsInDraw = teamsByPosition.get(i);
+            if (teamsInDraw.size() > 1) {
+                return teamsInDraw;
+            }
+        }
+        return new ArrayList<>();
     }
 
 }

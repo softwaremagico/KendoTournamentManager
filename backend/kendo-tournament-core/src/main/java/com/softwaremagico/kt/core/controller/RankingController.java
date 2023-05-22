@@ -28,12 +28,11 @@ import com.softwaremagico.kt.core.controller.models.*;
 import com.softwaremagico.kt.core.converters.*;
 import com.softwaremagico.kt.core.converters.models.*;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
-import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.cache.annotation.CacheEvict;
@@ -51,27 +50,15 @@ public class RankingController {
 
     private final GroupConverter groupConverter;
 
-    private final FightProvider fightProvider;
-
     private final TournamentConverter tournamentConverter;
 
     private final FightConverter fightConverter;
 
-    private final TeamProvider teamProvider;
-
     private final TeamConverter teamConverter;
-
-    private final TournamentProvider tournamentProvider;
 
     private final DuelConverter duelConverter;
 
-    private final DuelProvider duelProvider;
-
     private final ParticipantConverter participantConverter;
-
-    private final ParticipantProvider participantProvider;
-
-    private final RoleProvider roleProvider;
 
     private final RankingProvider rankingProvider;
 
@@ -79,28 +66,29 @@ public class RankingController {
 
     private final ScoreOfTeamConverter scoreOfTeamConverter;
 
-    public RankingController(GroupProvider groupProvider, GroupConverter groupConverter, FightProvider fightProvider,
+    public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
-                             TeamProvider teamProvider, TeamConverter teamConverter, TournamentProvider tournamentProvider,
-                             DuelConverter duelConverter, DuelProvider duelProvider, ParticipantConverter participantConverter,
-                             ParticipantProvider participantProvider, RoleProvider roleProvider, RankingProvider rankingProvider,
-                             ScoreOfCompetitorConverter scoreOfCompetitorConverter, ScoreOfTeamConverter scoreOfTeamConverter) {
+                             TeamConverter teamConverter, DuelConverter duelConverter, ParticipantConverter participantConverter,
+                             RankingProvider rankingProvider, ScoreOfCompetitorConverter scoreOfCompetitorConverter,
+                             ScoreOfTeamConverter scoreOfTeamConverter) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
-        this.fightProvider = fightProvider;
         this.tournamentConverter = tournamentConverter;
         this.fightConverter = fightConverter;
-        this.teamProvider = teamProvider;
         this.teamConverter = teamConverter;
-        this.tournamentProvider = tournamentProvider;
         this.duelConverter = duelConverter;
-        this.duelProvider = duelProvider;
         this.participantConverter = participantConverter;
-        this.participantProvider = participantProvider;
-        this.roleProvider = roleProvider;
         this.rankingProvider = rankingProvider;
         this.scoreOfCompetitorConverter = scoreOfCompetitorConverter;
         this.scoreOfTeamConverter = scoreOfTeamConverter;
+    }
+
+    private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
+        final Set<ParticipantDTO> allCompetitors = new HashSet<>();
+        for (final TeamDTO team : teams) {
+            allCompetitors.addAll(team.getMembers());
+        }
+        return allCompetitors;
     }
 
     private boolean checkLevel(TournamentDTO tournament) {
@@ -121,9 +109,8 @@ public class RankingController {
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
-                new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
-        return getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        return scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRankingFromTournament(tournamentId)
+                .stream().map(ScoreOfTeamConverterRequest::new).collect(Collectors.toList()));
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRanking(GroupDTO groupDTO) {
@@ -195,9 +182,8 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
-                new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
-        return getCompetitorsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsScoreRankingFromTournament(tournamentId)
+                .stream().map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toList()));
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRanking(TournamentDTO tournamentDTO) {
@@ -253,23 +239,8 @@ public class RankingController {
                 .getScoreOfCompetitor(groupConverter.reverse(groupDTO), order)));
     }
 
-    private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
-        final Set<ParticipantDTO> allCompetitors = new HashSet<>();
-        for (final TeamDTO team : teams) {
-            allCompetitors.addAll(team.getMembers());
-        }
-        return allCompetitors;
-    }
-
-    public Integer getOrder(GroupDTO group, TeamDTO team) {
-        final List<TeamDTO> ranking = getTeamsRanking(group);
-
-        for (int i = 0; i < ranking.size(); i++) {
-            if (ranking.get(i).equals(team)) {
-                return i;
-            }
-        }
-        return null;
+    public Integer getOrder(GroupDTO groupDTO, TeamDTO teamDTO) {
+        return rankingProvider.getOrder(groupConverter.reverse(groupDTO), teamConverter.reverse(teamDTO));
     }
 
     @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})

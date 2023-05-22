@@ -13,7 +13,6 @@
        'bronze': grade === AchievementGrade.BRONZE,
        'silver': grade === AchievementGrade.SILVER,
         'gold': grade === AchievementGrade.GOLD}"></div>
-  <div *ngIf="isNewAchievement()" class="start-12">!</div>
-  <div *ngIf="isNewAchievement()" class="new-achievement">!</div>
-  <div *ngIf="totalAchievements()>1" class="achievement-info total-achievement">{{totalAchievements()}}</div>
+  <div *ngIf="newAchievement" class="achievement-info new-achievement">!</div>
+  <div *ngIf="totalAchievements>1" class="achievement-info total-achievement">{{totalAchievements}}</div>
 </div>
