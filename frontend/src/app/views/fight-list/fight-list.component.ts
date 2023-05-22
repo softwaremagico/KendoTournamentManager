@@ -396,10 +396,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.router.navigate(['/tournaments'], {});
   }
 
-  selectFight(fight: Fight | undefined) {
+  selectFight(fight: Fight | undefined): void {
     this.selectedFight = fight;
     if (fight) {
-      this.selectedGroup = this.groups.find(group => group.fights.indexOf(fight) >= 0)!;
+      this.selectedGroup = this.groups.find((group: Group): boolean => group.fights.indexOf(fight) >= 0)!;
     } else {
       this.selectedGroup = undefined;
     }

@@ -27,11 +27,14 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -45,6 +48,9 @@ public interface AchievementRepository extends JpaRepository<Achievement, Intege
     List<Achievement> findByTournament(Tournament tournament);
 
     List<Achievement> findByTournamentAndAchievementType(Tournament tournament, AchievementType achievementType);
+
+    List<Achievement> findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(
+            Tournament tournament, AchievementType achievementType, Collection<AchievementGrade> grades, LocalDateTime range);
 
     List<Achievement> findByAchievementType(AchievementType achievementType);
 

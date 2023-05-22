@@ -56,6 +56,8 @@ public enum AchievementType {
 
     THE_WINNER,
 
+    THE_WINNER_TEAM,
+
     WOODCUTTER;
 
 
