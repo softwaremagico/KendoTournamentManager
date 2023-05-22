@@ -304,19 +304,30 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     }
 
     @Test
+    public void checkTheWinnerAchievement() {
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_WINNER).size(), 1);
+        Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.THE_WINNER).size(), 1);
+    }
+
+    @Test
+    public void checkTheWinnerTeamAchievement() {
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_WINNER_TEAM).size(), MEMBERS);
+        Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.THE_WINNER_TEAM).size(), MEMBERS);
+    }
+
+    @Test
     public void searchLastTournaments() {
         List<TournamentDTO> tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 1);
         Assert.assertEquals(tournamentDTOS.size(), 1);
-        Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
+        Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
 
         tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 2);
         Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
         Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
+        Assert.assertTrue(tournamentDTOS.contains(tournament1DTO));
 
         tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 3);
-        Assert.assertEquals(tournamentDTOS.size(), 3);
-        Assert.assertTrue(tournamentDTOS.contains(tournament3DTO));
+        Assert.assertEquals(tournamentDTOS.size(), 2);
         Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
         Assert.assertTrue(tournamentDTOS.contains(tournament1DTO));
     }
