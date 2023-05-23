@@ -26,21 +26,20 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 import com.softwaremagico.kt.persistence.values.AchievementType;
-import com.softwaremagico.kt.persistence.values.TournamentImageType;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class AchievementTypeCryptoConverter extends AbstractCryptoConverter<AchievementType>
         implements AttributeConverter<AchievementType, String> {
 
     public AchievementTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AchievementTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public AchievementTypeCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override

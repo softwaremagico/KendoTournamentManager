@@ -30,16 +30,16 @@ import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class TournamentExtraPropertyKeyTypeCryptoConverter extends AbstractCryptoConverter<TournamentExtraPropertyKey>
         implements AttributeConverter<TournamentExtraPropertyKey, String> {
 
     public TournamentExtraPropertyKeyTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public TournamentExtraPropertyKeyTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public TournamentExtraPropertyKeyTypeCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override
