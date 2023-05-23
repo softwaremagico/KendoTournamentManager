@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
+import {Component, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Achievement} from "../../models/achievement.model";
 import {AchievementGrade} from "../../models/achievement-grade.model";
 import {TranslateService} from "@ngx-translate/core";
@@ -13,13 +13,13 @@ import {NameUtilsService} from "../../services/name-utils.service";
   // tooltip style not applied without this:
   encapsulation: ViewEncapsulation.None,
 })
-export class AchievementTileComponent implements OnInit {
+export class AchievementTileComponent implements OnInit, OnChanges {
 
   @Input()
   achievementType: AchievementType;
 
   @Input()
-  achievements: Achievement[] | undefined;
+  achievements: Achievement[] | undefined | null;
 
   @Input()
   view: 'participant' | 'tournament';
@@ -37,6 +37,7 @@ export class AchievementTileComponent implements OnInit {
   constructor(private translateService: TranslateService, private nameUtils: NameUtilsService) {
 
   }
+
 
   ngOnInit(): void {
     this.grade = AchievementGrade.NORMAL;
@@ -57,7 +58,7 @@ export class AchievementTileComponent implements OnInit {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['achievements']) {
       this.newAchievement = this.isNewAchievement();
       this.totalAchievements = this.getTotalAchievements();
@@ -102,7 +103,7 @@ export class AchievementTileComponent implements OnInit {
   }
 
   tooltipText(): string {
-    if (this.view = 'tournament') {
+    if (this.view === 'tournament') {
       return this.tournamentToolTipText();
     } else {
       return this.participantToolTipText();
@@ -161,18 +162,19 @@ export class AchievementTileComponent implements OnInit {
           tooltipText += '<div class="tournament-item">';
           tooltipText += '<div class="circle ';
           if (achievement.achievementGrade == AchievementGrade.NORMAL) {
-            tooltipText += ' normal"></div>';
+            tooltipText += ' normal';
           }
           if (achievement.achievementGrade == AchievementGrade.BRONZE) {
-            tooltipText += ' bronze"></div>';
+            tooltipText += ' bronze';
           }
           if (achievement.achievementGrade == AchievementGrade.SILVER) {
-            tooltipText += ' silver"></div>';
+            tooltipText += ' silver';
           }
           if (achievement.achievementGrade == AchievementGrade.GOLD) {
-            tooltipText += ' gold"></div>';
+            tooltipText += ' gold';
           }
-          tooltipText += this.nameUtils.getDisplayName(achievement.participant);
+          tooltipText += '"></div>';
+          tooltipText += '<span>' + this.nameUtils.getDisplayName(achievement.participant) + '</span>';
 
           //End of tournament item.
           tooltipText += '</div>';
