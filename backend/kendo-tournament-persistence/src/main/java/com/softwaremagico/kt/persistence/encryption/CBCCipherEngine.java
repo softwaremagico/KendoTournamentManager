@@ -40,6 +40,11 @@ import java.util.Base64;
 
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
 
+/**
+ * AES/CBC/PKCS5Padding implementation for encrypt and decrypt.
+ * Is the only one fast enough for database access. Better than nothing.
+ */
+@SuppressWarnings("squid:S5542")
 public class CBCCipherEngine implements ICipherEngine {
 
     private static final String CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding";
