@@ -50,7 +50,7 @@ public class CheckEncryptionTest {
 
     @Test
     public void checkPassword() {
-        Assert.assertEquals(KeyProperty.databaseEncryptionKey, PASSWORD);
+        Assert.assertEquals(KeyProperty.getDatabaseEncryptionKey(), PASSWORD);
     }
 
     @Test
