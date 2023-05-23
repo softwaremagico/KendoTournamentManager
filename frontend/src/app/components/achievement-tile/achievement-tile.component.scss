@@ -6,6 +6,7 @@
 
   position: relative;
   display: inline-block;
+  margin: 5px;
 }
 
 .disabled img {
@@ -73,7 +74,7 @@
 }
 
 /* Tooltip text */
-.achievement .tooltiptext {
+.tooltiptext {
   visibility: hidden;
   width: 300px;
   background-color: #555555;
@@ -86,7 +87,7 @@
   /* Position the tooltip text */
   position: absolute;
   z-index: 1000000;
-  bottom: 125%;
+  bottom: 95%;
   left: 50%;
   margin-left: -150px;
 
@@ -95,20 +96,20 @@
   transition: opacity 0.3s;
 }
 
-.achievement .tooltiptext.left-border {
+.tooltiptext.left-border {
   margin-left: -40px;
 }
 
-.achievement .tooltiptext.right-border {
+.tooltiptext.right-border {
   margin-left: -260px;
 }
 
-.achievement .tooltiptext.center {
+.tooltiptext.center {
   margin-left: -150px;
 }
 
 /* Tooltip arrow */
-.achievement .tooltiptext::after {
+.tooltiptext::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -119,24 +120,30 @@
   border-color: #555555 transparent transparent transparent;
 }
 
-.achievement .tooltiptext.left-border::after{
+.tooltiptext.left-border::after{
   margin-left: -115px;
 }
 
-.achievement .tooltiptext.right-border::after{
+.tooltiptext.right-border::after{
   margin-left: 105px;
 }
 
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.achievement:hover .tooltiptext {
+.achievement:hover + .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.tournament-list{
+  text-align: left;
+  margin-left: 20%;
 }
 
 .tournament-item {
   display: flex;
   vertical-align: center;
+  margin-left: -10%;
 }
 
 .circle {
