@@ -31,15 +31,15 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.sql.Timestamp;
 
-@Converter(autoApply = true)
+@Converter
 public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp> implements AttributeConverter<Timestamp, String> {
 
     public TimestampCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public TimestampCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public TimestampCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override
