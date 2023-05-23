@@ -40,11 +40,11 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
     private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx", Locale.getDefault());
 
     public LocalDateTimeCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public LocalDateTimeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public LocalDateTimeCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

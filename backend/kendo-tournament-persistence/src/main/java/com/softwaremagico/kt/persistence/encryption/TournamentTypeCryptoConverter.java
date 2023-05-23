@@ -34,11 +34,11 @@ import javax.persistence.Converter;
 public class TournamentTypeCryptoConverter extends AbstractCryptoConverter<TournamentType> implements AttributeConverter<TournamentType, String> {
 
 	public TournamentTypeCryptoConverter() {
-		this(new CipherInitializer());
+		this(new CBCCipherEngine());
 	}
 
-	public TournamentTypeCryptoConverter(CipherInitializer cipherInitializer) {
-		super(cipherInitializer);
+	public TournamentTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
+		super(CBCCipherEngine);
 	}
 
 	@Override

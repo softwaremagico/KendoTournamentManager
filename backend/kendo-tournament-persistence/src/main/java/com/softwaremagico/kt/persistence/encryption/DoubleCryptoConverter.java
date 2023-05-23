@@ -33,11 +33,11 @@ import javax.persistence.Converter;
 public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> implements AttributeConverter<Double, String> {
 
 	public DoubleCryptoConverter() {
-		this(new CipherInitializer());
+		this(new CBCCipherEngine());
 	}
 
-	public DoubleCryptoConverter(CipherInitializer cipherInitializer) {
-		super(cipherInitializer);
+	public DoubleCryptoConverter(ICipherEngine CBCCipherEngine) {
+		super(CBCCipherEngine);
 	}
 
 	@Override

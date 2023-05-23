@@ -35,11 +35,11 @@ import java.time.format.DateTimeParseException;
 public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate> implements AttributeConverter<LocalDate, String> {
 
     public LocalDateCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public LocalDateCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public LocalDateCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

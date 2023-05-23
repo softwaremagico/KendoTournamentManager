@@ -40,14 +40,14 @@ import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseE
 
 public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
-    private final CipherInitializer cipherInitializer;
+    private final ICipherEngine CBCCipherEngine;
 
     public AbstractCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public AbstractCryptoConverter(CipherInitializer cipherInitializer) {
-        this.cipherInitializer = cipherInitializer;
+    public AbstractCryptoConverter(ICipherEngine CBCCipherEngine) {
+        this.CBCCipherEngine = CBCCipherEngine;
     }
 
     @Override
@@ -87,13 +87,13 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     private String encrypt(T attribute) throws IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
             NoSuchPaddingException, InvalidKeySpecException {
-        return cipherInitializer.encrypt(entityAttributeToString(attribute));
+        return CBCCipherEngine.encrypt(entityAttributeToString(attribute));
     }
 
     private T decrypt(String dbData) throws IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidKeySpecException {
-        final T entity = stringToEntityAttribute(cipherInitializer.decrypt(dbData));
+        final T entity = stringToEntityAttribute(CBCCipherEngine.decrypt(dbData));
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
     }

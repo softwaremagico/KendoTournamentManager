@@ -34,11 +34,11 @@ import javax.persistence.Converter;
 public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType> implements AttributeConverter<RoleType, String> {
 
     public RoleTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public RoleTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public RoleTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override
