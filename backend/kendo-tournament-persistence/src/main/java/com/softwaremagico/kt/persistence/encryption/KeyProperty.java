@@ -30,9 +30,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyProperty {
 
-    public static String databaseEncryptionKey;
-    public static String databasePublicKey;
-    public static String databasePrivateKey;
+    private static String databaseEncryptionKey;
+    private static String databasePublicKey;
+    private static String databasePrivateKey;
 
     public KeyProperty(@Value("${database.encryption.key:#{null}}") String databaseEncryptionKey,
                        @Value("${database.public.key:#{null}}") String databasePublicKey,
@@ -52,5 +52,17 @@ public class KeyProperty {
 
     private static synchronized void setDatabasePrivateKey(String databasePrivateKey) {
         KeyProperty.databasePrivateKey = databasePrivateKey;
+    }
+
+    public static String getDatabaseEncryptionKey() {
+        return databaseEncryptionKey;
+    }
+
+    public static String getDatabasePublicKey() {
+        return databasePublicKey;
+    }
+
+    public static String getDatabasePrivateKey() {
+        return databasePrivateKey;
     }
 }
