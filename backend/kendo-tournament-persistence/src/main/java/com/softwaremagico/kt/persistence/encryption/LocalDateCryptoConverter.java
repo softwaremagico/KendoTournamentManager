@@ -31,15 +31,15 @@ import javax.persistence.Converter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-@Converter(autoApply = true)
+@Converter
 public class LocalDateCryptoConverter extends AbstractCryptoConverter<LocalDate> implements AttributeConverter<LocalDate, String> {
 
     public LocalDateCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public LocalDateCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public LocalDateCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override
