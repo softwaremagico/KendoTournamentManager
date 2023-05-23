@@ -29,15 +29,15 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class LongCryptoConverter extends AbstractCryptoConverter<Long> implements AttributeConverter<Long, String> {
 
 	public LongCryptoConverter() {
-		this(new CBCCipherEngine());
+		this(AbstractCryptoConverter.generateEngine());
 	}
 
-	public LongCryptoConverter(ICipherEngine CBCCipherEngine) {
-		super(CBCCipherEngine);
+	public LongCryptoConverter(ICipherEngine cipherEngine) {
+		super(cipherEngine);
 	}
 
 	@Override
