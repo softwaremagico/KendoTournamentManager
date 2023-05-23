@@ -30,15 +30,15 @@ import com.softwaremagico.kt.persistence.values.ImageFormat;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFormat> implements AttributeConverter<ImageFormat, String> {
 
     public ImageFormatCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public ImageFormatCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public ImageFormatCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override

@@ -27,7 +27,7 @@ package com.softwaremagico.kt.persistence.encryption;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class BooleanCryptoConverter extends AbstractCryptoConverter<Boolean> implements AttributeConverter<Boolean, String> {
 
     @Override
