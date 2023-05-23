@@ -34,6 +34,8 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   newAchievement: boolean;
   totalAchievements: number;
 
+  tooltipHtml: string;
+
   constructor(private translateService: TranslateService, private nameUtils: NameUtilsService) {
 
   }
@@ -62,6 +64,10 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     if (changes['achievements']) {
       this.newAchievement = this.isNewAchievement();
       this.totalAchievements = this.getTotalAchievements();
+      this.tooltipHtml = this.tooltipText();
+    }
+    if (changes['view']) {
+      this.tooltipHtml = this.tooltipText();
     }
   }
 
@@ -83,7 +89,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
 
   isNewAchievement(): boolean {
     //Tournaments views does not show new icon.
-    if (this.view = 'tournament') {
+    if (this.view === 'tournament') {
       return false;
     }
     const today: Date = new Date();
@@ -111,7 +117,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   participantToolTipText(): string {
-    if (!this.achievements || this.achievements.length == 0) {
+    if (!this.view || !this.achievements || this.achievements.length == 0) {
       return "";
     }
     let tooltipText: string = '<b>' + this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)) + '</b><br>' +
@@ -124,17 +130,18 @@ export class AchievementTileComponent implements OnInit, OnChanges {
           tooltipText += '<div class="tournament-item">';
           tooltipText += '<div class="circle ';
           if (achievement.achievementGrade == AchievementGrade.NORMAL) {
-            tooltipText += ' normal"></div>';
+            tooltipText += ' normal';
           }
           if (achievement.achievementGrade == AchievementGrade.BRONZE) {
-            tooltipText += ' bronze"></div>';
+            tooltipText += ' bronze';
           }
           if (achievement.achievementGrade == AchievementGrade.SILVER) {
-            tooltipText += ' silver"></div>';
+            tooltipText += ' silver';
           }
           if (achievement.achievementGrade == AchievementGrade.GOLD) {
-            tooltipText += ' gold"></div>';
+            tooltipText += ' gold';
           }
+          tooltipText += '"></div>';
           tooltipText += achievement.tournament.name;
           const formattedDate: string = formatDate(achievement.tournament.createdAt, 'dd/MM/yyyy', navigator.language)
           tooltipText += ' (' + formattedDate + ')';
@@ -149,7 +156,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   tournamentToolTipText(): string {
-    if (!this.achievements || this.achievements.length == 0) {
+    if (!this.view || !this.achievements || this.achievements.length == 0) {
       return "";
     }
     let tooltipText: string = '<b>' + this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)) + '</b><br>' +
