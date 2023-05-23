@@ -30,16 +30,16 @@ import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class TournamentImageTypeCryptoConverter extends AbstractCryptoConverter<TournamentImageType>
         implements AttributeConverter<TournamentImageType, String> {
 
     public TournamentImageTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public TournamentImageTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public TournamentImageTypeCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override

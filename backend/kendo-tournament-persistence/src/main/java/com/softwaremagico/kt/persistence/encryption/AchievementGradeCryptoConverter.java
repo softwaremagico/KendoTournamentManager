@@ -30,16 +30,16 @@ import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<AchievementGrade>
         implements AttributeConverter<AchievementGrade, String> {
 
     public AchievementGradeCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AchievementGradeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public AchievementGradeCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override
