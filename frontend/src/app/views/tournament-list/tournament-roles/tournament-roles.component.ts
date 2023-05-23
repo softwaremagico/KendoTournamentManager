@@ -64,7 +64,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         participants = participants.filter((participantWithoutRole) => !participantsIds
           .includes(participantWithoutRole.id));
       }
-      participants.sort(function (a, b) {
+      participants.sort(function (a: Participant, b: Participant) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
       //Block participants and avatars.
@@ -95,7 +95,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     });
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
@@ -112,7 +112,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     return undefined;
   }
 
-  removeRole(event: CdkDragDrop<Participant[], any>) {
+  removeRole(event: CdkDragDrop<Participant[], any>): void {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
@@ -120,7 +120,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex]
-    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
+    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe((): void => {
       this.messageService.infoMessage("infoRoleDeleted");
       this.statisticsChangedService.areStatisticsChanged.next(true);
     });
@@ -128,7 +128,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
   }
 
-  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
+  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType): void {
     const participant: Participant | undefined = this.transferCard(event);
     if (!participant) {
       return;
@@ -152,14 +152,14 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   private shortRoles(): void {
-    this.participants.forEach(function (value, key) {
+    this.participants.forEach(function (value, key): void {
       value.sort((a, b) => a.lastname.localeCompare(b.lastname));
     });
   }
 
-  downloadPDF() {
-    if (this.tournament && this.tournament.id) {
-      this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob) => {
+  downloadPDF(): void {
+    if (this.tournament?.id) {
+      this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
 
@@ -172,7 +172,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   countRole(roleType: RoleType): number {
-    if (!this.participants || !this.participants.get(roleType)) {
+    if (!this.participants!.get(roleType)) {
       return 0;
     }
     return this.participants.get(roleType)!.length;

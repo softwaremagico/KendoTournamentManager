@@ -104,7 +104,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   obtainPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
-    if (participantStatistics && participantStatistics.participantFightStatistics) {
+    if (participantStatistics?.participantFightStatistics) {
       scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.menNumber ? participantStatistics.participantFightStatistics.menNumber : 0]);
       scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.koteNumber ? participantStatistics.participantFightStatistics.koteNumber : 0]);
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
@@ -116,7 +116,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   obtainReceivedPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
-    if (participantStatistics && participantStatistics.participantFightStatistics) {
+    if (participantStatistics?.participantFightStatistics) {
       scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.receivedMenNumber ? participantStatistics.participantFightStatistics.receivedMenNumber : 0]);
       scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
