@@ -1,4 +1,4 @@
-<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2"> 
+<img src="./documents/logo.svg" width="800" alt="Kendo Tournament Manager v2" align="middle"> 
 
 ***REMOVED***
 
