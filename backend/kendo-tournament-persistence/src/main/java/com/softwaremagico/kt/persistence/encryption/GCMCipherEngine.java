@@ -40,7 +40,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
  * AES/GCM/NoPadding implementation for encrypt and decrypt.
@@ -60,7 +60,7 @@ public class GCMCipherEngine implements ICipherEngine {
     // AES-GCM needs GCMParameterSpec
     @Override
     public String encrypt(String input) throws InvalidEncryptionException {
-        return encrypt(input, databaseEncryptionKey);
+        return encrypt(input, getDatabaseEncryptionKey());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class GCMCipherEngine implements ICipherEngine {
 
     @Override
     public String decrypt(String encrypted) throws InvalidEncryptionException {
-        return decrypt(encrypted, databaseEncryptionKey);
+        return decrypt(encrypted, getDatabaseEncryptionKey());
     }
 
     @Override
@@ -134,7 +134,7 @@ public class GCMCipherEngine implements ICipherEngine {
 
     // AES secret key
     public static SecretKeySpec getAESKey(byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return getAESKey(databaseEncryptionKey, salt);
+        return getAESKey(getDatabaseEncryptionKey(), salt);
     }
 
     public static SecretKeySpec getAESKey(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {

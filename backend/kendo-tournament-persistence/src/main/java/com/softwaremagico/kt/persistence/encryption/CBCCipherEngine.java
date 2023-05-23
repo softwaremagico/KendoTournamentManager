@@ -38,7 +38,7 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
  * AES/CBC/PKCS5Padding implementation for encrypt and decrypt.
@@ -57,7 +57,7 @@ public class CBCCipherEngine implements ICipherEngine {
 
     @Override
     public String encrypt(String input) throws InvalidEncryptionException {
-        return encrypt(input, databaseEncryptionKey);
+        return encrypt(input, getDatabaseEncryptionKey());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CBCCipherEngine implements ICipherEngine {
 
     @Override
     public String decrypt(String encrypted) throws InvalidEncryptionException {
-        return decrypt(encrypted, databaseEncryptionKey);
+        return decrypt(encrypted, getDatabaseEncryptionKey());
     }
 
     @Override
