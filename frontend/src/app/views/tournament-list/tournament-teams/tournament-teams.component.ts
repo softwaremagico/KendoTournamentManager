@@ -426,7 +426,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   getBalancedMember(participants: Participant[], selectFromSector: number, availableSectors: number): Participant {
-    let selected: number = Math.floor(Math.random() * (participants.length / availableSectors));
+    let selected: number = Math.floor(random() * (participants.length / availableSectors));
     let participant: Participant;
     if (selectFromSector == 0) {
       participant = participants[selected];
@@ -478,7 +478,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   downloadPDF() {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament?.id) {
       this.teamService.getTeamsByTournament(this.tournament.id).subscribe((pdf: Blob) => {
         const blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL = window.URL.createObjectURL(blob);
