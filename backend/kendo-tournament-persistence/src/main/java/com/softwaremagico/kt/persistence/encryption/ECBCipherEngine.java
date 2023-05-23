@@ -34,8 +34,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 
-import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databasePrivateKey;
-import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databasePublicKey;
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabasePrivateKey;
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabasePublicKey;
 
 /**
  * RSA/ECB/OAEPWithSHA-1AndMGF1Padding implementation for encrypt and decrypt.
@@ -45,12 +45,12 @@ public class ECBCipherEngine implements ICipherEngine {
 
     private static final String CIPHER_INSTANCE_NAME = "RSA/ECB/OAEPWithSHA-1AndMGF1Padding";
     private static final String SECRET_KEY_ALGORITHM = "RSA";
-    public PrivateKey privateKey;
-    public PublicKey publicKey;
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
 
     @Override
     public String encrypt(String input) throws InvalidEncryptionException {
-        return encrypt(input, databasePublicKey);
+        return encrypt(input, getDatabasePublicKey());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ECBCipherEngine implements ICipherEngine {
 
     @Override
     public String decrypt(String encrypted) throws InvalidEncryptionException {
-        return decrypt(encrypted, databasePrivateKey);
+        return decrypt(encrypted, getDatabasePrivateKey());
     }
 
     @Override
