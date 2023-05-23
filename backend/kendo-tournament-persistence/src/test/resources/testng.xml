@@ -10,6 +10,7 @@
                 <include name="userRepository"/>
                 <include name="imageRepository"/>
                 <include name="encryptedData"/>
+                <include name="encryptionEngines"/>
                 <include name="teamRepository"/>
                 <include name="groupRepository"/>
                 <include name="fightRepository"/>
