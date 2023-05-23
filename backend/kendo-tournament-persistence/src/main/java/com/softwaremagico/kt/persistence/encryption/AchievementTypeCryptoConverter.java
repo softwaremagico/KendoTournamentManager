@@ -30,16 +30,16 @@ import com.softwaremagico.kt.persistence.values.AchievementType;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class AchievementTypeCryptoConverter extends AbstractCryptoConverter<AchievementType>
         implements AttributeConverter<AchievementType, String> {
 
     public AchievementTypeCryptoConverter() {
-        this(new CBCCipherEngine());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AchievementTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
-        super(CBCCipherEngine);
+    public AchievementTypeCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override

@@ -30,15 +30,15 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class RoleTypeCryptoConverter extends AbstractCryptoConverter<RoleType> implements AttributeConverter<RoleType, String> {
 
     public RoleTypeCryptoConverter() {
-        this(new CBCCipherEngine());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public RoleTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
-        super(CBCCipherEngine);
+    public RoleTypeCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override
