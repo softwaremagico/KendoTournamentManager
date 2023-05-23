@@ -1,12 +1,6 @@
-<div class="achievement" [class.disabled]="achievements?.length == 0" (mouseover)="updateCoordinates($event)" (mouseout)="clearCoordinates($event)">
+<div class="achievement" [class.disabled]="achievements?.length == 0" (mouseover)="updateCoordinates($event)"
+     (mouseout)="clearCoordinates($event)">
   <img [src]="getAchievementImage()" [alt]="getAchievementAlt()" class="achievement-image">
-  <div class="tooltiptext"
-       [ngClass]="{
-          'left-border': onLeftBorder,
-          'center': !onRightBorder && !onLeftBorder,
-          'right-border': onRightBorder
-        }"
-       *ngIf="achievements!.length>0" [innerHTML]="tooltipText()"></div>
   <div class="achievement-border"
        [ngClass]="{
        'normal': grade === AchievementGrade.NORMAL,
@@ -16,3 +10,10 @@
   <div *ngIf="newAchievement" class="achievement-info new-achievement">!</div>
   <div *ngIf="totalAchievements>1" class="achievement-info total-achievement">{{totalAchievements}}</div>
 </div>
+<div class="tooltiptext"
+     [ngClass]="{
+          'left-border': onLeftBorder,
+          'center': !onRightBorder && !onLeftBorder,
+          'right-border': onRightBorder
+        }"
+     *ngIf="achievements!=null && achievements.length>0" [innerHTML]="tooltipText()"></div>
