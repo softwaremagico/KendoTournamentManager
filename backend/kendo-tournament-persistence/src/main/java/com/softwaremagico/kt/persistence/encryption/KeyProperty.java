@@ -31,12 +31,26 @@ import org.springframework.stereotype.Component;
 public class KeyProperty {
 
     public static String databaseEncryptionKey;
+    public static String databasePublicKey;
+    public static String databasePrivateKey;
 
-    public KeyProperty(@Value("${database.encryption.key}") String databaseEncryptionKey) {
+    public KeyProperty(@Value("${database.encryption.key:#{null}}") String databaseEncryptionKey,
+                       @Value("${database.public.key:#{null}}") String databasePublicKey,
+                       @Value("${database.private.key:#{null}}") String databasePrivateKey) {
         setDatabaseEncryptionKey(databaseEncryptionKey);
+        setDatabasePublicKey(databasePublicKey);
+        setDatabasePrivateKey(databasePrivateKey);
     }
 
     private static synchronized void setDatabaseEncryptionKey(String databaseEncryptionKey) {
         KeyProperty.databaseEncryptionKey = databaseEncryptionKey;
+    }
+
+    private static synchronized void setDatabasePublicKey(String databasePublicKey) {
+        KeyProperty.databasePublicKey = databasePublicKey;
+    }
+
+    private static synchronized void setDatabasePrivateKey(String databasePrivateKey) {
+        KeyProperty.databasePrivateKey = databasePrivateKey;
     }
 }

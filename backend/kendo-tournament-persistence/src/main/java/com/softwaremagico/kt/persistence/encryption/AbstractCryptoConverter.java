@@ -28,24 +28,26 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.persistence.AttributeConverter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
 
 
 public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
-    private final CipherInitializer cipherInitializer;
+    private final ICipherEngine cipherEngine;
 
     public AbstractCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AbstractCryptoConverter(CipherInitializer cipherInitializer) {
-        this.cipherInitializer = cipherInitializer;
+    public AbstractCryptoConverter(ICipherEngine cipherEngine) {
+        this.cipherEngine = cipherEngine;
     }
 
     @Override
@@ -54,8 +56,8 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
             try {
                 return encrypt(attribute);
             } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
-                     BadPaddingException |
-                     IllegalBlockSizeException e) {
+                     BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException |
+                     InvalidKeySpecException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -68,7 +70,8 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
             try {
                 return decrypt(dbData);
             } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
-                     IllegalBlockSizeException e) {
+                     IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException |
+                     InvalidKeySpecException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -81,15 +84,22 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     protected abstract String entityAttributeToString(T attribute);
 
-    private String encrypt(T attribute) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException,
-            NoSuchAlgorithmException, InvalidKeyException {
-        return cipherInitializer.encrypt(entityAttributeToString(attribute));
+    private String encrypt(T attribute) throws IllegalBlockSizeException, BadPaddingException,
+            InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
+            NoSuchPaddingException, InvalidKeySpecException {
+        return cipherEngine.encrypt(entityAttributeToString(attribute));
     }
 
-    private T decrypt(String dbData) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
-        final T entity = stringToEntityAttribute(cipherInitializer.decrypt(dbData));
+    private T decrypt(String dbData) throws IllegalBlockSizeException, BadPaddingException,
+            InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException,
+            NoSuchAlgorithmException, InvalidKeySpecException {
+        final T entity = stringToEntityAttribute(cipherEngine.decrypt(dbData));
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
+    }
+
+    public static ICipherEngine generateEngine() {
+        return new CBCCipherEngine();
     }
 
 }
