@@ -443,7 +443,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const downloadURL = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
-        anchor.download = "Fight List - " + this.tournament!.name + ".pdf";
+        anchor.download = "Fight List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
       });
@@ -469,7 +469,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   canStartFight(duel: Duel | undefined): boolean {
-    return duel !== undefined && duel.competitor1 !== null && duel.competitor2 !== null;
+    return duel?.competitor1 !== null && duel?.competitor2 !== null;
   }
 
   finishDuel(finished: boolean) {
@@ -494,7 +494,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (_fights.length > 0) {
         this.refreshFights();
       } else {
-        if ((this.tournament && this.tournament.teamSize && this.tournament.teamSize > 1) ||
+        if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
           (this.tournament && this.tournament.type === this.kingOfTheMountainType)) {
           this.showTeamsClassification(true);
         } else {
