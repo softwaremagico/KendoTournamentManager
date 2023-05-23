@@ -26,7 +26,6 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 import com.softwaremagico.kt.persistence.values.AchievementType;
-import com.softwaremagico.kt.persistence.values.TournamentImageType;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -36,11 +35,11 @@ public class AchievementTypeCryptoConverter extends AbstractCryptoConverter<Achi
         implements AttributeConverter<AchievementType, String> {
 
     public AchievementTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public AchievementTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public AchievementTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

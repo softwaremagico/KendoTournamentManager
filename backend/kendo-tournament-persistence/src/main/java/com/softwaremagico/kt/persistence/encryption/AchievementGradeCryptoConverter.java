@@ -35,11 +35,11 @@ public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<Ach
         implements AttributeConverter<AchievementGrade, String> {
 
     public AchievementGradeCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public AchievementGradeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public AchievementGradeCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

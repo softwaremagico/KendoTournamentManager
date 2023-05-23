@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 public class CheckEncryptionTest {
     private static final String PASSWORD = "myEncryptionCode";
 
-    private CipherInitializer cipherInitializer = new CipherInitializer();
+    private CBCCipherEngine CBCCipherEngine = new CBCCipherEngine();
     private final KeyProperty keyProperty = new KeyProperty(PASSWORD);
 
     @Test
@@ -44,16 +44,16 @@ public class CheckEncryptionTest {
     @Test
     public void encryptAndDecrypt() throws Exception {
         final String testText = "The text I want to encrypt";
-        final String encryptedText = cipherInitializer.encrypt(testText, PASSWORD);
-        final String decryptedText = cipherInitializer.decrypt(encryptedText, PASSWORD);
+        final String encryptedText = CBCCipherEngine.encrypt(testText, PASSWORD);
+        final String decryptedText = CBCCipherEngine.decrypt(encryptedText, PASSWORD);
         Assert.assertEquals(testText, decryptedText);
     }
 
     @Test
     public void encryptAndDecrypt2() throws Exception {
         final String testText = "The text I want to encrypt";
-        final String encryptedText = cipherInitializer.encrypt(testText);
-        final String decryptedText = cipherInitializer.decrypt(encryptedText);
+        final String encryptedText = CBCCipherEngine.encrypt(testText);
+        final String decryptedText = CBCCipherEngine.decrypt(encryptedText);
         Assert.assertEquals(testText, decryptedText);
     }
 }
