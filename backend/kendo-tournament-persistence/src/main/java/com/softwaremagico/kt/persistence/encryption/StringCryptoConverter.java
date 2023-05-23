@@ -27,15 +27,15 @@ package com.softwaremagico.kt.persistence.encryption;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class StringCryptoConverter extends AbstractCryptoConverter<String> implements AttributeConverter<String, String> {
 
 	public StringCryptoConverter() {
-		this(new CBCCipherEngine());
+		this(AbstractCryptoConverter.generateEngine());
 	}
 
-	public StringCryptoConverter(ICipherEngine CBCCipherEngine) {
-		super(CBCCipherEngine);
+	public StringCryptoConverter(ICipherEngine cipherEngine) {
+		super(cipherEngine);
 	}
 
 	@Override

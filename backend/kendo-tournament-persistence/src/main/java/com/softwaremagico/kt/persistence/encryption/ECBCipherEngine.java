@@ -27,6 +27,7 @@ package com.softwaremagico.kt.persistence.encryption;
 import com.softwaremagico.kt.logger.EncryptorLogger;
 
 import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -36,6 +37,10 @@ import java.util.Base64;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databasePrivateKey;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databasePublicKey;
 
+/**
+ * RSA/ECB/OAEPWithSHA-1AndMGF1Padding implementation for encrypt and decrypt.
+ * Better on performance that GCM, but still too slow.
+ */
 public class ECBCipherEngine implements ICipherEngine {
 
     private static final String CIPHER_INSTANCE_NAME = "RSA/ECB/OAEPWithSHA-1AndMGF1Padding";
@@ -51,10 +56,9 @@ public class ECBCipherEngine implements ICipherEngine {
     @Override
     public String encrypt(String input, String publickey) throws InvalidEncryptionException {
         try {
-            Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
+            final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
             cipher.init(Cipher.ENCRYPT_MODE, loadPublicKey(publickey));
-            return Base64.getEncoder().
-                    encodeToString(cipher.doFinal(input.getBytes()));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(input.getBytes(StandardCharsets.UTF_8)));
         } catch (InvalidEncryptionException | GeneralSecurityException e) {
             throw new InvalidEncryptionException(e);
         }
@@ -68,10 +72,9 @@ public class ECBCipherEngine implements ICipherEngine {
     @Override
     public String decrypt(String encrypted, String privatekey) throws InvalidEncryptionException {
         try {
-            Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
+            final Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
             cipher.init(Cipher.DECRYPT_MODE, loadPrivateKey(privatekey));
-            return new String(cipher.
-                    doFinal(Base64.getDecoder().decode(encrypted)));
+            return new String(cipher.doFinal(Base64.getDecoder().decode(encrypted)), StandardCharsets.UTF_8);
         } catch (InvalidEncryptionException | GeneralSecurityException e) {
             throw new InvalidEncryptionException(e);
         }
@@ -80,27 +83,27 @@ public class ECBCipherEngine implements ICipherEngine {
     // convert String publickey to Key object
     public Key loadPublicKey(String stored)
             throws GeneralSecurityException {
-        byte[] data = Base64.getDecoder().decode((stored.getBytes()));
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
-        KeyFactory fact = KeyFactory.getInstance(SECRET_KEY_ALGORITHM);
+        final byte[] data = Base64.getDecoder().decode(stored);
+        final X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
+        final KeyFactory fact = KeyFactory.getInstance(SECRET_KEY_ALGORITHM);
         return fact.generatePublic(spec);
     }
 
     // Convert String private key to privateKey object
-    public PrivateKey loadPrivateKey(String key64)
+    public PrivateKey loadPrivateKey(String stored)
             throws GeneralSecurityException {
-        byte[] clear = Base64.getDecoder().decode((key64.getBytes()));
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(clear);
-        KeyFactory fact = KeyFactory.getInstance(SECRET_KEY_ALGORITHM);
-        PrivateKey priv = fact.generatePrivate(keySpec);
+        final byte[] clear = Base64.getDecoder().decode(stored);
+        final PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(clear);
+        final KeyFactory fact = KeyFactory.getInstance(SECRET_KEY_ALGORITHM);
+        final PrivateKey priv = fact.generatePrivate(keySpec);
         Arrays.fill(clear, (byte) 0);
         return priv;
     }
 
     public void generateKeys() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(SECRET_KEY_ALGORITHM);
-        keyGen.initialize(2048);
-        KeyPair pair = keyGen.generateKeyPair();
+        final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(SECRET_KEY_ALGORITHM);
+        keyGen.initialize(4096);
+        final KeyPair pair = keyGen.generateKeyPair();
         this.privateKey = pair.getPrivate();
         this.publicKey = pair.getPublic();
     }

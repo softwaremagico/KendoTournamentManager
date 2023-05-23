@@ -40,14 +40,14 @@ import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseE
 
 public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
-    private final ICipherEngine CBCCipherEngine;
+    private final ICipherEngine cipherEngine;
 
     public AbstractCryptoConverter() {
-        this(new CBCCipherEngine());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AbstractCryptoConverter(ICipherEngine CBCCipherEngine) {
-        this.CBCCipherEngine = CBCCipherEngine;
+    public AbstractCryptoConverter(ICipherEngine cipherEngine) {
+        this.cipherEngine = cipherEngine;
     }
 
     @Override
@@ -87,15 +87,19 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     private String encrypt(T attribute) throws IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
             NoSuchPaddingException, InvalidKeySpecException {
-        return CBCCipherEngine.encrypt(entityAttributeToString(attribute));
+        return cipherEngine.encrypt(entityAttributeToString(attribute));
     }
 
     private T decrypt(String dbData) throws IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidKeySpecException {
-        final T entity = stringToEntityAttribute(CBCCipherEngine.decrypt(dbData));
+        final T entity = stringToEntityAttribute(cipherEngine.decrypt(dbData));
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
+    }
+
+    public static ICipherEngine generateEngine() {
+        return new CBCCipherEngine();
     }
 
 }
