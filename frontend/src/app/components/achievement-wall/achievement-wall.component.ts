@@ -26,7 +26,6 @@ export class AchievementWallComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['achievements']) {
       if (this.achievements) {
-        console.log('-->', this.achievements);
         this.groupedAchievements = new Map<AchievementType, Achievement[]>();
         for (const achievementType of this.totalAchievementsTypes) {
           if (this.achievements) {
