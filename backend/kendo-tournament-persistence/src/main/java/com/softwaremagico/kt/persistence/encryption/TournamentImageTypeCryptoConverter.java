@@ -35,11 +35,11 @@ public class TournamentImageTypeCryptoConverter extends AbstractCryptoConverter<
         implements AttributeConverter<TournamentImageType, String> {
 
     public TournamentImageTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public TournamentImageTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public TournamentImageTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

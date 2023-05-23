@@ -35,11 +35,11 @@ import java.sql.Timestamp;
 public class TimestampCryptoConverter extends AbstractCryptoConverter<Timestamp> implements AttributeConverter<Timestamp, String> {
 
     public TimestampCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public TimestampCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public TimestampCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

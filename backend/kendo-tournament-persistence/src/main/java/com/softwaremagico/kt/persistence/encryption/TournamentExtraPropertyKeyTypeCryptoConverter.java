@@ -35,11 +35,11 @@ public class TournamentExtraPropertyKeyTypeCryptoConverter extends AbstractCrypt
         implements AttributeConverter<TournamentExtraPropertyKey, String> {
 
     public TournamentExtraPropertyKeyTypeCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public TournamentExtraPropertyKeyTypeCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public TournamentExtraPropertyKeyTypeCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

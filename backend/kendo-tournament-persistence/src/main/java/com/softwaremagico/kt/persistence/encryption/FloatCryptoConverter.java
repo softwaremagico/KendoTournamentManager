@@ -33,11 +33,11 @@ import javax.persistence.Converter;
 public class FloatCryptoConverter extends AbstractCryptoConverter<Float> implements AttributeConverter<Float, String> {
 
     public FloatCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public FloatCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public FloatCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override

@@ -34,11 +34,11 @@ import javax.persistence.Converter;
 public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFormat> implements AttributeConverter<ImageFormat, String> {
 
     public ImageFormatCryptoConverter() {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public ImageFormatCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public ImageFormatCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override
