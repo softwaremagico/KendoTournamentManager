@@ -117,6 +117,8 @@
 
 .achievements-box{
   display: inline-grid;
+  position: relative;
+  min-width: 290px;
 }
 
 app-achievement-wall {
