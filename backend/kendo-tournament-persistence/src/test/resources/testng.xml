@@ -24,6 +24,7 @@
             <class name="com.softwaremagico.kt.persistence.repositories.FightRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.repositories.DuelRepositoryTests"/>
             <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptedDataStorageTest"/>
+            <class name="com.softwaremagico.kt.persistence.encryption.CheckEncryptionTest"/>
         </classes>
     </test>
 </suite>
