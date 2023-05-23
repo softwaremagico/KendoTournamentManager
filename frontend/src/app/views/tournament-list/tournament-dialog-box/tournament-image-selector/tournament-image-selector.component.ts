@@ -62,7 +62,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
           this.messageService.errorMessage(res);
         });
       } else {
-        const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file!.type);
+        const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file.type);
         if (imageCompression) {
           this.fileService.setTournamentFilePicture(file, this.tournament, this.insertedTournamentImageType, imageCompression).subscribe(_picture => {
             this.messageService.infoMessage('infoPictureStored');
@@ -136,7 +136,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   }
 
   downloadPreview(insertedTournamentImageType: TournamentImageType) {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament!.id) {
       const participant: Participant = new Participant();
       this.translateService.get('nameExample').subscribe((res: string) => {
         const names: string[] = res.split(' ');
