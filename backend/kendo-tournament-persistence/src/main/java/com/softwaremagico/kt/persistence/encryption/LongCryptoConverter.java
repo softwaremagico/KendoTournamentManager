@@ -33,11 +33,11 @@ import javax.persistence.Converter;
 public class LongCryptoConverter extends AbstractCryptoConverter<Long> implements AttributeConverter<Long, String> {
 
 	public LongCryptoConverter() {
-		this(new CipherInitializer());
+		this(new CBCCipherEngine());
 	}
 
-	public LongCryptoConverter(CipherInitializer cipherInitializer) {
-		super(cipherInitializer);
+	public LongCryptoConverter(ICipherEngine CBCCipherEngine) {
+		super(CBCCipherEngine);
 	}
 
 	@Override

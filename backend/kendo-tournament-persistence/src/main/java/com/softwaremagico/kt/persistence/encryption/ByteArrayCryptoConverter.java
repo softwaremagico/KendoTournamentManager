@@ -38,11 +38,11 @@ public class ByteArrayCryptoConverter extends AbstractCryptoConverter<byte[]>
         implements AttributeConverter<byte[], String> {
 
     public ByteArrayCryptoConverter() throws NoSuchAlgorithmException, NoSuchPaddingException {
-        this(new CipherInitializer());
+        this(new CBCCipherEngine());
     }
 
-    public ByteArrayCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public ByteArrayCryptoConverter(ICipherEngine CBCCipherEngine) {
+        super(CBCCipherEngine);
     }
 
     @Override
