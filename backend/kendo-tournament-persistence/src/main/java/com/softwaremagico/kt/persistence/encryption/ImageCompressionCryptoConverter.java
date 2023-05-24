@@ -30,15 +30,15 @@ import com.softwaremagico.kt.persistence.values.ImageCompression;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-@Converter(autoApply = true)
+@Converter
 public class ImageCompressionCryptoConverter extends AbstractCryptoConverter<ImageCompression> implements AttributeConverter<ImageCompression, String> {
 
     public ImageCompressionCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public ImageCompressionCryptoConverter(CipherInitializer cipherInitializer) {
-        super(cipherInitializer);
+    public ImageCompressionCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
     }
 
     @Override
