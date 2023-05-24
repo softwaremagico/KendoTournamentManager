@@ -1,7 +1,7 @@
 <div class="achievement" [class.disabled]="achievements?.length == 0" (mouseover)="updateCoordinates($event)"
      (mouseout)="clearCoordinates($event)">
   <img [src]="getAchievementImage()" [alt]="getAchievementAlt()" class="achievement-image">
-  <div class="achievement-border"
+  <div class="achievement-border gold"
        [ngClass]="{
        'normal': grade === AchievementGrade.NORMAL,
        'bronze': grade === AchievementGrade.BRONZE,
