@@ -58,7 +58,13 @@ public enum AchievementType {
 
     THE_WINNER_TEAM,
 
-    WOODCUTTER;
+    WOODCUTTER,
+
+    THE_NEVER_ENDING_STORY,
+
+    LOVE_SHARING,
+
+    MASTER_THE_LOOP;
 
 
     public static AchievementType getType(String name) {
