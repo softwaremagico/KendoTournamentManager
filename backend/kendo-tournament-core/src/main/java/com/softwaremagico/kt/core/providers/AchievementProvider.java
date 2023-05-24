@@ -34,7 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -55,6 +57,13 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
 
     public List<Achievement> get(Tournament tournament, AchievementType achievementType) {
         return repository.findByTournamentAndAchievementType(tournament, achievementType);
+    }
+
+    public List<Achievement> get(Tournament tournament, AchievementType achievementType, Collection<AchievementGrade> achievementGrades) {
+        if (achievementGrades == null || achievementGrades.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return repository.findByTournamentAndAchievementTypeAndAchievementGradeIn(tournament, achievementType, achievementGrades);
     }
 
     /**
