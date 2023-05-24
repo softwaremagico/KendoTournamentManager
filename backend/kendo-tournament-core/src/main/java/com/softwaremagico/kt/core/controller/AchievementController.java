@@ -39,12 +39,10 @@ import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
-import com.softwaremagico.kt.persistence.values.AchievementGrade;
-import com.softwaremagico.kt.persistence.values.AchievementType;
-import com.softwaremagico.kt.persistence.values.RoleType;
-import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.*;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -177,19 +175,27 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTerminatorAchievement(tournament));
         achievementsGenerated.addAll(generateJuggernautAchievement(tournament));
         achievementsGenerated.addAll(generateTheKingAchievement(tournament));
+        achievementsGenerated.addAll(generateMasterTheLoopAchievement(tournament));
+        achievementsGenerated.addAll(generateTheNeverEndingStoryAchievement(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievement(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementBronze(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementSilver(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementGold(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievement(tournament));
         achievementsGenerated.addAll(generateILoveTheFlagsAchievementBronze(tournament));
         achievementsGenerated.addAll(generateILoveTheFlagsAchievementSilver(tournament));
         achievementsGenerated.addAll(generateILoveTheFlagsAchievementGold(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievement(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievementGold(tournament));
         achievementsGenerated.addAll(generateTheRockAchievement(tournament));
         achievementsGenerated.addAll(generateTheTowerAchievement(tournament));
         achievementsGenerated.addAll(generateTheCastleAchievement(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievement(tournament));
         achievementsGenerated.addAll(generateALittleOfEverythingAchievement(tournament));
-        achievementsGenerated.addAll(generateALittleOfEverythingSilverAchievement(tournament));
-        achievementsGenerated.addAll(generateALittleOfEverythingGoldenAchievement(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingAchievementGolden(tournament));
         achievementsGenerated.addAll(generateBoneBreakerAchievement(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
@@ -263,7 +269,72 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateTheKingAchievement(Tournament tournament) {
+        if (tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN) {
+            final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
+            if (!scoreOfCompetitors.isEmpty()) {
+                return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL,
+                        Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+            }
+        }
         return new ArrayList<>();
+    }
+
+    /**
+     * Win a Loop tournament
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateMasterTheLoopAchievement(Tournament tournament) {
+        if (tournament.getType() == TournamentType.LOOP) {
+            final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
+            if (!scoreOfCompetitors.isEmpty()) {
+                return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL,
+                        Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Be a member for more than 10 years.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateTheNeverEndingStoryAchievement(Tournament tournament) {
+        //Get older of 10 years
+        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
+                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(10))).collect(Collectors.toList());
+        //Remove the ones already have this achievement.
+        final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY)
+                .stream().map(Achievement::getParticipant).collect(Collectors.toList());
+        participants.removeAll(participantsWithThisAchievement);
+        return generateAchievement(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    private List<Achievement> generateRoleBaseAchievements(Tournament tournament, int previousTournamentsNumber, RoleType roleType,
+                                                           AchievementType achievementType, AchievementGrade achievementGrade) {
+        final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament, previousTournamentsNumber);
+        final Set<Participant> organizers = roleProvider.getAll(tournament, roleType).stream().map(Role::getParticipant).collect(Collectors.toSet());
+        previousTournaments.forEach(previousTournament -> {
+            organizers.retainAll(
+                    roleProvider.getAll(previousTournament, roleType).stream().map(Role::getParticipant).collect(Collectors.toSet()));
+            //Remove all organizers that has been granted with an achievement grade greater than current (to avoid generating bronze when looking
+            // for a gold as an example)
+            organizers.removeAll(achievementProvider.get(previousTournament, achievementType, achievementGrade.getGreaterThan())
+                    .stream().map(Achievement::getParticipant).collect(Collectors.<Participant>toSet()));
+        });
+
+        return generateAchievement(achievementType, achievementGrade, organizers, tournament);
+    }
+
+    /**
+     * First tournament as an organizer
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateLooksGoodFromFarAwayButAchievement(Tournament tournament) {
+        final List<Participant> participants = participantProvider.getParticipantFirstTimeWithRole(tournament, RoleType.ORGANIZER);
+        return generateAchievement(AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.NORMAL, participants, tournament);
     }
 
     /**
@@ -272,7 +343,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementBronze(Tournament tournament) {
-        return new ArrayList<>();
+        return generateRoleBaseAchievements(tournament, 2, RoleType.ORGANIZER,
+                AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.BRONZE);
     }
 
     /**
@@ -281,7 +353,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementSilver(Tournament tournament) {
-        return new ArrayList<>();
+        return generateRoleBaseAchievements(tournament, 4, RoleType.ORGANIZER,
+                AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.SILVER);
     }
 
     /**
@@ -290,7 +363,18 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementGold(Tournament tournament) {
-        return new ArrayList<>();
+        return generateRoleBaseAchievements(tournament, 6, RoleType.ORGANIZER,
+                AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
+    }
+
+    /**
+     * First tournament as a referee
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateILoveTheFlagsAchievement(Tournament tournament) {
+        final List<Participant> participants = participantProvider.getParticipantFirstTimeWithRole(tournament, RoleType.REFEREE);
+        return generateAchievement(AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.NORMAL, participants, tournament);
     }
 
     /**
@@ -299,7 +383,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateILoveTheFlagsAchievementBronze(Tournament tournament) {
-        return new ArrayList<>();
+        return generateRoleBaseAchievements(tournament, 2, RoleType.REFEREE,
+                AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.BRONZE);
     }
 
     /**
@@ -308,7 +393,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateILoveTheFlagsAchievementSilver(Tournament tournament) {
-        return new ArrayList<>();
+        return generateRoleBaseAchievements(tournament, 3, RoleType.REFEREE,
+                AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.SILVER);
     }
 
     /**
@@ -317,7 +403,45 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateILoveTheFlagsAchievementGold(Tournament tournament) {
-        return new ArrayList<>();
+        return generateRoleBaseAchievements(tournament, 4, RoleType.REFEREE,
+                AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.GOLD);
+    }
+
+    /**
+     * First tournament as a volunteer
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateLoveSharingAchievement(Tournament tournament) {
+        final List<Participant> participants = participantProvider.getParticipantFirstTimeWithRole(tournament, RoleType.VOLUNTEER);
+        return generateAchievement(AchievementType.LOVE_SHARING, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * When somebody is a volunteer for at least three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateLoveSharingAchievementBronze(Tournament tournament) {
+        return generateRoleBaseAchievements(tournament, 2, RoleType.VOLUNTEER, AchievementType.LOVE_SHARING, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * When somebody is a volunteer for at least five consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateLoveSharingAchievementSilver(Tournament tournament) {
+        return generateRoleBaseAchievements(tournament, 4, RoleType.VOLUNTEER, AchievementType.LOVE_SHARING, AchievementGrade.SILVER);
+    }
+
+    /**
+     * When somebody is a volunteer for at least seven consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateLoveSharingAchievementGold(Tournament tournament) {
+        return generateRoleBaseAchievements(tournament, 6, RoleType.VOLUNTEER, AchievementType.LOVE_SHARING, AchievementGrade.GOLD);
     }
 
     /**
@@ -348,7 +472,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody has participated on a tournament and nobody has scored a hit against him/her and
+     * When somebody has participated on a tournament and nobody has scored a hit against him/her, and
      * he does neither score a hit against his opponents.
      *
      * @param tournament The tournament to check.
@@ -371,7 +495,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private List<Achievement> generateALittleOfEverythingSilverAchievement(Tournament tournament) {
+    private List<Achievement> generateALittleOfEverythingAchievementSilver(Tournament tournament) {
         return new ArrayList<>();
     }
 
@@ -380,7 +504,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      *
      * @param tournament The tournament to check.
      */
-    private List<Achievement> generateALittleOfEverythingGoldenAchievement(Tournament tournament) {
+    private List<Achievement> generateALittleOfEverythingAchievementGolden(Tournament tournament) {
         return new ArrayList<>();
     }
 
@@ -407,7 +531,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody only perform 'do' scores and win a duel.
+     * When somebody only performs 'do' scores and win a duel.
      *
      * @param tournament The tournament to check.
      */
@@ -449,7 +573,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateSweatyTenuguiAchievement(Tournament tournament) {
-        final List<Participant> participants = participantProvider.getParticipantFirstTimeCompetitors(tournament);
+        final List<Participant> participants = participantProvider.getParticipantFirstTimeWithRole(tournament, RoleType.COMPETITOR);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
