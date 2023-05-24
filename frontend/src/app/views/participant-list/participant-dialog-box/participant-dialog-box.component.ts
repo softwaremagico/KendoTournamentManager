@@ -64,7 +64,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.pictureUpdatedService.isPictureUpdated.subscribe(_picture => {
       this.participantPicture = _picture;
     });
-    if (this.participant && this.participant.id) {
+    if (this.participant?.id) {
       this.fileService.getParticipantPicture(this.participant).subscribe(_picture => {
         if (_picture) {
           this.participantPicture = _picture.base64;
@@ -76,7 +76,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   displayClub(club: Club): string {
-    return club && club.name ? club.name : '';
+    return club?.name ? club.name : '';
   }
 
   private _filter(name: string): Club[] {
@@ -105,18 +105,6 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       width: '700px',
       data: {
         title: title, action: action, participant: participant
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result.action == Action.Add) {
-        // this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
-        // this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
-        // this.deleteRowData(result.data);
       }
     });
   }
