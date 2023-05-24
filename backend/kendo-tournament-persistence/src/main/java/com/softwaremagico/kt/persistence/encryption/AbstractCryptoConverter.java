@@ -26,36 +26,29 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import javax.persistence.AttributeConverter;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
-import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 
 public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, String> {
 
-    private final CipherInitializer cipherInitializer;
+    private final ICipherEngine cipherEngine;
 
     public AbstractCryptoConverter() {
-        this(new CipherInitializer());
+        this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AbstractCryptoConverter(CipherInitializer cipherInitializer) {
-        this.cipherInitializer = cipherInitializer;
+    public AbstractCryptoConverter(ICipherEngine cipherEngine) {
+        this.cipherEngine = cipherEngine;
     }
 
     @Override
     public String convertToDatabaseColumn(T attribute) {
-        if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && isNotNullOrEmpty(attribute)) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isEmpty() && isNotNullOrEmpty(attribute)) {
             try {
                 return encrypt(attribute);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException |
-                     BadPaddingException |
-                     IllegalBlockSizeException e) {
+            } catch (InvalidEncryptionException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -64,11 +57,10 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     @Override
     public T convertToEntityAttribute(String dbData) {
-        if (databaseEncryptionKey != null && !databaseEncryptionKey.isEmpty() && dbData != null && !dbData.isEmpty()) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isEmpty() && dbData != null && !dbData.isEmpty()) {
             try {
                 return decrypt(dbData);
-            } catch (InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException |
-                     IllegalBlockSizeException e) {
+            } catch (InvalidEncryptionException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -81,15 +73,18 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     protected abstract String entityAttributeToString(T attribute);
 
-    private String encrypt(T attribute) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException,
-            NoSuchAlgorithmException, InvalidKeyException {
-        return cipherInitializer.encrypt(entityAttributeToString(attribute));
+    private String encrypt(T attribute) throws InvalidEncryptionException {
+        return cipherEngine.encrypt(entityAttributeToString(attribute));
     }
 
-    private T decrypt(String dbData) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
-        final T entity = stringToEntityAttribute(cipherInitializer.decrypt(dbData));
+    private T decrypt(String dbData) throws InvalidEncryptionException {
+        final T entity = stringToEntityAttribute(cipherEngine.decrypt(dbData));
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
+    }
+
+    public static ICipherEngine generateEngine() {
+        return new CBCCipherEngine();
     }
 
 }

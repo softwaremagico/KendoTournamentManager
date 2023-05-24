@@ -127,7 +127,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generatePreviousTournamentsStatistics(tournamentId: number) {
     if (tournamentId) {
-      this.statisticsService.getPreviousTournamentStatistics(tournamentId!, 5)
+      this.statisticsService.getPreviousTournamentStatistics(tournamentId, 5)
         .subscribe((tournamentStatistics: TournamentStatistics[]) => {
           if (tournamentStatistics) {
             for (let tournamentStatistic of tournamentStatistics) {
@@ -204,7 +204,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   getCompetitorRanking(scoreOfCompetitor: ScoreOfCompetitor): string {
-    if (scoreOfCompetitor && scoreOfCompetitor.competitor) {
+    if (scoreOfCompetitor?.competitor) {
       return this.nameUtilsService.getDisplayName(scoreOfCompetitor.competitor, 1800);
     }
     return "";
@@ -219,7 +219,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   getTeamsRanking(scoreOfTeam: ScoreOfTeam): string {
-    if (scoreOfTeam && scoreOfTeam.team) {
+    if (scoreOfTeam?.team) {
       return scoreOfTeam.team.name;
     }
     return "";
@@ -247,7 +247,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   obtainPoints(tournamentStatistics: TournamentStatistics): [string, number][] {
     const scores: [string, number][] = [];
-    if (tournamentStatistics && tournamentStatistics.tournamentFightStatistics) {
+    if (tournamentStatistics?.tournamentFightStatistics) {
       scores.push([Score.label(Score.MEN), tournamentStatistics.tournamentFightStatistics.menNumber ? tournamentStatistics.tournamentFightStatistics.menNumber : 0]);
       scores.push([Score.label(Score.KOTE), tournamentStatistics.tournamentFightStatistics.koteNumber ? tournamentStatistics.tournamentFightStatistics.koteNumber : 0]);
       scores.push([Score.label(Score.DO), tournamentStatistics.tournamentFightStatistics.doNumber ? tournamentStatistics.tournamentFightStatistics.doNumber : 0]);
@@ -259,7 +259,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   obtainTimes(tournamentStatistics: TournamentStatistics): [string, number] {
     let times: [string, number];
-    if (tournamentStatistics.tournamentFightStatistics && tournamentStatistics.tournamentFightStatistics.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics.fightsStartedAt) {
+    if (tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics?.fightsStartedAt) {
       //Time in minutes.
       times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt).getTime() -
         new Date(tournamentStatistics.tournamentFightStatistics?.fightsStartedAt).getTime()) / (1000 * 60), 2)];

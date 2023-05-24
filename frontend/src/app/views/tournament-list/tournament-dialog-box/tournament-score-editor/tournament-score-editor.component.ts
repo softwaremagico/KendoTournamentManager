@@ -14,7 +14,7 @@ import {Action} from "../../../../action";
   templateUrl: './tournament-score-editor.component.html',
   styleUrls: ['./tournament-score-editor.component.scss']
 })
-export class TournamentScoreEditorComponent extends RbacBasedComponent implements OnInit {
+export class TournamentScoreEditorComponent extends RbacBasedComponent {
   tournament: Tournament;
   title: string;
 
@@ -37,9 +37,6 @@ export class TournamentScoreEditorComponent extends RbacBasedComponent implement
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
     });
-  }
-
-  ngOnInit(): void {
   }
 
   setTournamentPoints() {

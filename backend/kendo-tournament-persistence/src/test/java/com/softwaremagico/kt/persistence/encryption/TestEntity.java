@@ -38,6 +38,7 @@ public class TestEntity {
     private static final String STRING_CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int STRING_LENGTH = 1000;
     private static final int BYTES_LENGTH = 1000;
+    private static final int COLUMN_LENGTH = 1000;
     private static final SecureRandom random = new SecureRandom();
 
     @Id
@@ -45,34 +46,34 @@ public class TestEntity {
     private Long id;
 
     @Convert(converter = StringCryptoConverter.class)
-    @Column(length = 4 * STRING_LENGTH, nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     private String stringColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer intColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = LongCryptoConverter.class)
     private Long longColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = DoubleCryptoConverter.class)
     private Double doubleColumn;
 
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = ByteArrayCryptoConverter.class)
-    @Column(length = 4 * STRING_LENGTH, nullable = false)
     private byte[] bytesColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = LocalDateCryptoConverter.class)
     private LocalDate localDateColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime localDateTimeColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = TimestampCryptoConverter.class)
     private Timestamp timestampColumn;
 

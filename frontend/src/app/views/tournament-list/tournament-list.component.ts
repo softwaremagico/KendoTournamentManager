@@ -163,7 +163,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   downloadBlogCode() {
-    if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+    if (this.basicTableData.selectedElement?.id) {
       this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
         const blob = new Blob([html], {type: 'txt/plain'});
         const downloadURL = window.URL.createObjectURL(blob);
@@ -186,7 +186,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+          if (this.basicTableData.selectedElement?.id) {
             this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
               if (html !== null) {
                 const blob = new Blob([html], {type: 'application/pdf'});
@@ -216,7 +216,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+          if (this.basicTableData.selectedElement?.id) {
             this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
               if (html !== null) {
                 const blob = new Blob([html], {type: 'application/pdf'});

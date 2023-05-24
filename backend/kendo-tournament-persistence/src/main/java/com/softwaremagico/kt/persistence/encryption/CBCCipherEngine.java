@@ -38,9 +38,14 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-import static com.softwaremagico.kt.persistence.encryption.KeyProperty.databaseEncryptionKey;
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
-public class CipherInitializer {
+/**
+ * AES/CBC/PKCS5Padding implementation for encrypt and decrypt.
+ * Is the only one fast enough for database access. Better than nothing.
+ */
+@SuppressWarnings("squid:S5542")
+public class CBCCipherEngine implements ICipherEngine {
 
     private static final String CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding";
     private static final String SECRET_KEY_ALGORITHM = "AES";
@@ -50,26 +55,46 @@ public class CipherInitializer {
     private IvParameterSpec ivSpec;
     private SecretKeySpec keySpec;
 
-    public String encrypt(String input) throws InvalidAlgorithmParameterException, InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException {
-        getCipher().init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-        final byte[] encryptedBytes = getCipher().doFinal(input.getBytes(StandardCharsets.UTF_8));
-        final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
-        EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
-        return encodedValue;
+    @Override
+    public String encrypt(String input) throws InvalidEncryptionException {
+        return encrypt(input, getDatabaseEncryptionKey());
     }
 
-    public String decrypt(String encrypted) throws BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException,
-            InvalidKeyException {
-        getCipher().init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
-        final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-        final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-        EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
-        return decrypted;
+    @Override
+    public String encrypt(String input, String password) throws InvalidEncryptionException {
+        try {
+            getCipher(password).init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            final byte[] encryptedBytes = getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
+            final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
+            EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
+            return encodedValue;
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
+                 InvalidKeyException e) {
+            throw new InvalidEncryptionException(e);
+        }
     }
 
-    private Cipher getCipher() {
+    @Override
+    public String decrypt(String encrypted) throws InvalidEncryptionException {
+        return decrypt(encrypted, getDatabaseEncryptionKey());
+    }
+
+    @Override
+    public String decrypt(String encrypted, String password) throws InvalidEncryptionException {
+        try {
+            getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+            final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
+            final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
+            EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
+            return decrypted;
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
+                 InvalidKeyException e) {
+            throw new InvalidEncryptionException(e);
+        }
+    }
+
+    private Cipher getCipher(String password) {
         if (cipher == null) {
             try {
                 cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
@@ -79,7 +104,7 @@ public class CipherInitializer {
 
                 // hash keyString with SHA-256 and crop the output to 128-bit for key
                 final MessageDigest digest = MessageDigest.getInstance(SECRET_MESSAGE_DIGEST_ALGORITHM);
-                digest.update(databaseEncryptionKey.getBytes(StandardCharsets.UTF_8));
+                digest.update(password.getBytes(StandardCharsets.UTF_8));
                 final byte[] key = new byte[16];
                 System.arraycopy(digest.digest(), 0, key, 0, key.length);
                 keySpec = new SecretKeySpec(key, SECRET_KEY_ALGORITHM);
