@@ -91,4 +91,8 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
     public int delete(Tournament tournament) {
         return repository.deleteByTournament(tournament);
     }
+
+    public long delete(AchievementType achievementType, AchievementGrade achievementGrade, Collection<Participant> participants, Tournament tournament) {
+        return repository.deleteByAchievementTypeAndAchievementGradeAndTournamentAndParticipantIn(achievementType, achievementGrade, tournament, participants);
+    }
 }
