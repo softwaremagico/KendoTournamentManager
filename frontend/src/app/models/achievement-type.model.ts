@@ -14,8 +14,6 @@ export enum AchievementType {
 
   I_LOVE_THE_FLAGS = 'I_LOVE_THE_FLAGS',
 
-  THE_TOWER = 'THE_TOWER',
-
   THE_CASTLE = 'THE_CASTLE',
 
   ENTRENCHED = 'ENTRENCHED',
