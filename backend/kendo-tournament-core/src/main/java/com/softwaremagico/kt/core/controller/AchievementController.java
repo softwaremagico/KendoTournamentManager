@@ -70,9 +70,13 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final RankingProvider rankingProvider;
 
+    private Tournament tournament;
+
     private List<Role> rolesFromTournament;
 
     private List<Participant> participantsFromTournament;
+
+    private List<Duel> duelsFromTournament;
 
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
@@ -96,18 +100,25 @@ public class AchievementController extends BasicInsertableController<Achievement
         return new AchievementConverterRequest(achievement);
     }
 
-    private List<Role> getRolesFromTournament(Tournament tournament) {
+    private List<Role> getRolesFromTournament() {
         if (rolesFromTournament == null) {
             rolesFromTournament = roleProvider.getAll(tournament);
         }
         return rolesFromTournament;
     }
 
-    private List<Participant> getParticipantsFromTournament(Tournament tournament) {
+    private List<Participant> getParticipantsFromTournament() {
         if (participantsFromTournament == null) {
             participantsFromTournament = participantProvider.get(tournament);
         }
         return participantsFromTournament;
+    }
+
+    private List<Duel> getDuelsFromTournament() {
+        if (duelsFromTournament == null) {
+            duelsFromTournament = duelProvider.get(tournament);
+        }
+        return duelsFromTournament;
     }
 
 
@@ -159,7 +170,11 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     public List<AchievementDTO> generateAchievements(TournamentDTO tournamentDTO) {
-        final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
+        tournament = tournamentConverter.reverse(tournamentDTO);
+        this.duelsFromTournament = null;
+        this.rolesFromTournament = null;
+        this.participantsFromTournament = null;
+
         //Remove any achievement already calculated.
         provider.delete(tournament);
 
@@ -194,10 +209,14 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateLoveSharingAchievementBronze(tournament));
         achievementsGenerated.addAll(generateLoveSharingAchievementSilver(tournament));
         achievementsGenerated.addAll(generateLoveSharingAchievementGold(tournament));
-        achievementsGenerated.addAll(generateTheRockAchievement(tournament));
-        achievementsGenerated.addAll(generateTheTowerAchievement(tournament));
         achievementsGenerated.addAll(generateTheCastleAchievement(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievementGold(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievement(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievementGold(tournament));
         achievementsGenerated.addAll(generateALittleOfEverythingAchievement(tournament));
         achievementsGenerated.addAll(generateALittleOfEverythingAchievementSilver(tournament));
         achievementsGenerated.addAll(generateALittleOfEverythingAchievementGolden(tournament));
@@ -302,10 +321,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateBillyTheKidAchievement(Tournament tournament) {
-        final List<Duel> duels = duelProvider.get(tournament);
         int minTime = tournament.getDuelsDuration();
         Participant participant = null;
-        for (final Duel duel : duels) {
+        for (final Duel duel : getDuelsFromTournament()) {
             for (final Integer time : duel.getCompetitor1ScoreTime()) {
                 //Billy cannot be a draw time.
                 if (time == minTime && !Objects.equals(participant, duel.getCompetitor1())) {
@@ -387,7 +405,16 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateTerminatorAchievement(Tournament tournament) {
-        return new ArrayList<>();
+        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        getDuelsFromTournament().forEach(duel -> {
+            if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
+                competitors.remove(duel.getCompetitor1());
+            }
+            if (duel.getCompetitor2Score().size() < Duel.POINTS_TO_WIN) {
+                competitors.remove(duel.getCompetitor2());
+            }
+        });
+        return generateAchievement(AchievementType.TERMINATOR, AchievementGrade.NORMAL, competitors, tournament);
     }
 
     /**
@@ -423,7 +450,26 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateJuggernautAchievement(Tournament tournament) {
-        return new ArrayList<>();
+        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        getDuelsFromTournament().forEach(duel -> {
+            //Max score competitor 1.
+            if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
+                competitors.remove(duel.getCompetitor1());
+            }
+            //No hits against him
+            if (duel.getCompetitor2Score().size() > 0) {
+                competitors.remove(duel.getCompetitor1());
+            }
+            //Max score competitor 2.
+            if (duel.getCompetitor2Score().size() < Duel.POINTS_TO_WIN) {
+                competitors.remove(duel.getCompetitor2());
+            }
+            //No hits against him
+            if (duel.getCompetitor1Score().size() > 0) {
+                competitors.remove(duel.getCompetitor2());
+            }
+        });
+        return generateAchievement(AchievementType.TERMINATOR, AchievementGrade.NORMAL, competitors, tournament);
     }
 
     /**
@@ -629,31 +675,51 @@ public class AchievementController extends BasicInsertableController<Achievement
         return generateGradeAchievements(tournament, 7, AchievementType.LOVE_SHARING, AchievementGrade.GOLD);
     }
 
+
     /**
      * When somebody has participated on a tournament and nobody has scored a hit against him/her.
      *
      * @param tournament The tournament to check.
      */
-    private List<Achievement> generateTheRockAchievement(Tournament tournament) {
-        return new ArrayList<>();
-    }
-
-    /**
-     * When somebody has participated on two consecutive tournaments and nobody has scored a hit against him/her.
-     *
-     * @param tournament The tournament to check.
-     */
-    private List<Achievement> generateTheTowerAchievement(Tournament tournament) {
-        return new ArrayList<>();
-    }
-
-    /**
-     * When somebody has participated on three consecutive tournaments and nobody has scored a hit against him/her.
-     *
-     * @param tournament The tournament to check.
-     */
     private List<Achievement> generateTheCastleAchievement(Tournament tournament) {
-        return new ArrayList<>();
+        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        getDuelsFromTournament().forEach(duel -> {
+            if (duel.getCompetitor2Score().size() > 0) {
+                competitors.remove(duel.getCompetitor1());
+            }
+            if (duel.getCompetitor1Score().size() > 0) {
+                competitors.remove(duel.getCompetitor2());
+            }
+        });
+        return generateAchievement(AchievementType.THE_CASTLE, AchievementGrade.NORMAL, competitors, tournament);
+    }
+
+    /**
+     * When somebody has participated on a tournament for at least two consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateTheCastleAchievementBronze(Tournament tournament) {
+        return generateGradeAchievements(tournament, 3, AchievementType.THE_TOWER, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * When somebody has participated on a tournament for at least three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateTheCastleAchievementSilver(Tournament tournament) {
+        return generateGradeAchievements(tournament, 4, AchievementType.THE_TOWER, AchievementGrade.SILVER);
+
+    }
+
+    /**
+     * When somebody has participated on a tournament for at least five consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateTheCastleAchievementGold(Tournament tournament) {
+        return generateGradeAchievements(tournament, 5, AchievementType.THE_TOWER, AchievementGrade.GOLD);
     }
 
     /**
@@ -663,7 +729,43 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      */
     private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
-        return new ArrayList<>();
+        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        getDuelsFromTournament().forEach(duel -> {
+            if (duel.getCompetitor2Score().size() > 0 || duel.getCompetitor1Score().size() > 0) {
+                competitors.remove(duel.getCompetitor1());
+            }
+        });
+        return generateAchievement(AchievementType.ENTRENCHED, AchievementGrade.NORMAL, competitors, tournament);
+    }
+
+    /**
+     * When somebody has participated on three tournaments and nobody has scored a hit against him/her, and
+     * he does neither score a hit against his opponents.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateEntrenchedAchievementBronze(Tournament tournament) {
+        return generateGradeAchievements(tournament, 3, AchievementType.ENTRENCHED, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * When somebody has participated on four tournaments and nobody has scored a hit against him/her, and
+     * he does neither score a hit against his opponents.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateEntrenchedAchievementSilver(Tournament tournament) {
+        return generateGradeAchievements(tournament, 4, AchievementType.ENTRENCHED, AchievementGrade.SILVER);
+    }
+
+    /**
+     * When somebody has participated on five tournaments and nobody has scored a hit against him/her, and
+     * he does neither score a hit against his opponents.
+     *
+     * @param tournament The tournament to check.
+     */
+    private List<Achievement> generateEntrenchedAchievementGold(Tournament tournament) {
+        return generateGradeAchievements(tournament, 5, AchievementType.ENTRENCHED, AchievementGrade.GOLD);
     }
 
     /**
@@ -764,6 +866,9 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private List<Achievement> generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
                                                   Collection<Participant> participants, Tournament tournament) {
+        if (participants == null || participants.isEmpty()) {
+            return new ArrayList<>();
+        }
         final List<Achievement> achievements = new ArrayList<>();
         participants.forEach(participant -> {
             final Achievement achievement = new Achievement(participant, tournament, achievementType, achievementGrade);
