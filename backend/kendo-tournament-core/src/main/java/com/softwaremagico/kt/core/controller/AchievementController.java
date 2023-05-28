@@ -80,6 +80,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Score>> scoresByParticipant = new HashMap<>();
     private Map<Participant, List<Score>> scoresReceivedByParticipant = new HashMap<>();
+    private Map<Participant, Long> totalScoreByParticipant = new HashMap<>();
 
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
@@ -156,6 +157,14 @@ public class AchievementController extends BasicInsertableController<Achievement
         return scoresReceivedByParticipant;
     }
 
+    private Map<Participant, Long> getTotalScoreByParticipant() {
+        if (totalScoreByParticipant == null) {
+            getParticipantsFromTournament().forEach(participant ->
+                    totalScoreByParticipant.put(participant, duelProvider.countScoreFromCompetitor(tournament, participant)));
+        }
+        return totalScoreByParticipant;
+    }
+
 
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
@@ -211,70 +220,89 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.participantsFromTournament = null;
         this.scoresByParticipant = null;
         this.scoresReceivedByParticipant = null;
+        this.totalScoreByParticipant = null;
 
         //Remove any achievement already calculated.
         provider.delete(tournament);
 
         final List<Achievement> achievementsGenerated = new ArrayList<>();
 
-        //Generate new ones.
+        //Generate first the normal ones.
         achievementsGenerated.addAll(generateBillyTheKidAchievement(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievement(tournament));
-        achievementsGenerated.addAll(generateLethalWeaponAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateLethalWeaponAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateLethalWeaponAchievementGold(tournament));
         achievementsGenerated.addAll(generateTerminatorAchievement(tournament));
-        achievementsGenerated.addAll(generateTerminatorAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateTerminatorAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateTerminatorAchievementGold(tournament));
-        achievementsGenerated.addAll(generateJuggernautAchievement(tournament));
-        achievementsGenerated.addAll(generateJuggernautAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateJuggernautAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateJuggernautAchievementGold(tournament));
+        final List<Achievement> juggernautAchievements = generateJuggernautAchievement(tournament);
+        //Juggernaut includes Terminator.
+        removeAchievements(achievementsGenerated, AchievementType.TERMINATOR, Collections.singletonList(AchievementGrade.NORMAL),
+                juggernautAchievements.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
+        achievementsGenerated.addAll(juggernautAchievements);
         achievementsGenerated.addAll(generateTheKingAchievement(tournament));
-        achievementsGenerated.addAll(generateMasterTheLoopAchievement(tournament));
-        achievementsGenerated.addAll(generateTheNeverEndingStoryAchievement(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievement(tournament));
-        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementGold(tournament));
         achievementsGenerated.addAll(generateILoveTheFlagsAchievement(tournament));
-        achievementsGenerated.addAll(generateILoveTheFlagsAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateILoveTheFlagsAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateILoveTheFlagsAchievementGold(tournament));
         achievementsGenerated.addAll(generateLoveSharingAchievement(tournament));
-        achievementsGenerated.addAll(generateLoveSharingAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateLoveSharingAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateLoveSharingAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTheNeverEndingStoryAchievement(tournament));
+        achievementsGenerated.addAll(generateMasterTheLoopAchievement(tournament));
         achievementsGenerated.addAll(generateTheCastleAchievement(tournament));
-        achievementsGenerated.addAll(generateTheCastleAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateTheCastleAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateTheCastleAchievementGold(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievement(tournament));
-        achievementsGenerated.addAll(generateEntrenchedAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateEntrenchedAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateEntrenchedAchievementGold(tournament));
-        achievementsGenerated.addAll(generateALittleOfEverythingAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateALittleOfEverythingAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateALittleOfEverythingAchievementGold(tournament));
         achievementsGenerated.addAll(generateBoneBreakerAchievement(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
         achievementsGenerated.addAll(generateSweatyTenuguiAchievement(tournament));
         achievementsGenerated.addAll(generateTheWinnerTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerBronzeTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerSilverTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerGoldTournament(tournament));
         achievementsGenerated.addAll(generateTheWinnerTeamTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerTeamBronzeTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerTeamSilverTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerTeamGoldTournament(tournament));
-        achievementsGenerated.addAll(generateTheWinnerTeamGoldTournament(tournament));
-        achievementsGenerated.addAll(generateIsJustAScarAchievement(tournament));
-        achievementsGenerated.addAll(generateIsJustAScarAchievementBronze(tournament));
-        achievementsGenerated.addAll(generateIsJustAScarAchievementSilver(tournament));
-        achievementsGenerated.addAll(generateIsJustAScarAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTisButAScratchAchievement(tournament));
+
+        // Now generate extra grades.
+        achievementsGenerated.addAll(generateLethalWeaponAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateLethalWeaponAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateLethalWeaponAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTerminatorAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTerminatorAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTerminatorAchievementGold(tournament));
+        achievementsGenerated.addAll(generateJuggernautAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateJuggernautAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateJuggernautAchievementGold(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementGold(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateILoveTheFlagsAchievementGold(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateLoveSharingAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTheCastleAchievementGold(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateEntrenchedAchievementGold(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingAchievementBronze(tournament));
+        final List<Achievement> aLittleOfEverythingSilver = generateALittleOfEverythingAchievementSilver(tournament);
+        //Delete the Bronzes, as Silver includes them
+        removeAchievements(achievementsGenerated, AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.SILVER.getLessThan(),
+                aLittleOfEverythingSilver.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
+        achievementsGenerated.addAll(aLittleOfEverythingSilver);
+        final List<Achievement> aLittleOfEverythingGold = generateALittleOfEverythingAchievementGold(tournament);
+        //Delete the Silver, as Gold includes them
+        removeAchievements(achievementsGenerated, AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.GOLD.getLessThan(),
+                aLittleOfEverythingSilver.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
+        achievementsGenerated.addAll(aLittleOfEverythingGold);
+        achievementsGenerated.addAll(generateTheWinnerAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTheWinnerAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTheWinnerAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTheWinnerTeamAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTisButAScratchAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTisButAScratchAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTisButAScratchAchievementGold(tournament));
         return convertAll(achievementsGenerated);
+    }
+
+    private void removeAchievements(List<Achievement> achievements, AchievementType achievementType, Collection<AchievementGrade> grades, Collection<Participant> participants) {
+        achievements.removeIf(achievement -> grades.contains(achievement.getAchievementGrade())
+                && achievement.getAchievementType() == achievementType && participants.contains(achievement.getParticipant()));
     }
 
     /**
@@ -521,7 +549,7 @@ public class AchievementController extends BasicInsertableController<Achievement
                 competitors.remove(duel.getCompetitor2());
             }
         });
-        return generateAchievement(AchievementType.TERMINATOR, AchievementGrade.NORMAL, competitors, tournament);
+        return generateAchievement(AchievementType.JUGGERNAUT, AchievementGrade.NORMAL, competitors, tournament);
     }
 
     /**
@@ -564,7 +592,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN) {
             final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
             if (!scoreOfCompetitors.isEmpty()) {
-                return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL,
+                return generateAchievement(AchievementType.THE_KING, AchievementGrade.NORMAL,
                         Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
             }
         }
@@ -581,7 +609,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (tournament.getType() == TournamentType.LOOP) {
             final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
             if (!scoreOfCompetitors.isEmpty()) {
-                return generateAchievement(AchievementType.THE_WINNER, AchievementGrade.NORMAL,
+                return generateAchievement(AchievementType.MASTER_THE_LOOP, AchievementGrade.NORMAL,
                         Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
             }
         }
@@ -755,7 +783,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, 3, AchievementType.THE_TOWER, AchievementGrade.BRONZE);
+        return generateGradeAchievements(tournament, 3, AchievementType.THE_CASTLE, AchievementGrade.BRONZE);
     }
 
     /**
@@ -765,7 +793,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, 4, AchievementType.THE_TOWER, AchievementGrade.SILVER);
+        return generateGradeAchievements(tournament, 4, AchievementType.THE_CASTLE, AchievementGrade.SILVER);
 
     }
 
@@ -776,7 +804,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, 5, AchievementType.THE_TOWER, AchievementGrade.GOLD);
+        return generateGradeAchievements(tournament, 5, AchievementType.THE_CASTLE, AchievementGrade.GOLD);
     }
 
     /**
@@ -863,8 +891,6 @@ public class AchievementController extends BasicInsertableController<Achievement
                 participants.add(participant);
             }
         });
-        //Delete the bronzes, as Silver includes them
-        deleteAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.BRONZE, participants, tournament);
         return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.SILVER, participants, tournament);
     }
 
@@ -885,8 +911,6 @@ public class AchievementController extends BasicInsertableController<Achievement
                 participants.add(participant);
             }
         });
-        //Delete the Silver, as Golds includes them
-        deleteAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.SILVER, participants, tournament);
         return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.GOLD, participants, tournament);
     }
 
@@ -982,11 +1006,6 @@ public class AchievementController extends BasicInsertableController<Achievement
         return achievementProvider.saveAll(achievements);
     }
 
-    private void deleteAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
-                                   Collection<Participant> participants, Tournament tournament) {
-        achievementProvider.delete(achievementType, achievementGrade, participants, tournament);
-    }
-
     /**
      * Winner of a tournament
      *
@@ -1008,7 +1027,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateTheWinnerBronzeTournament(Tournament tournament) {
+    private List<Achievement> generateTheWinnerAchievementBronze(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER, AchievementGrade.BRONZE,
                 3, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
     }
@@ -1019,7 +1038,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateTheWinnerSilverTournament(Tournament tournament) {
+    private List<Achievement> generateTheWinnerAchievementSilver(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER, AchievementGrade.SILVER,
                 4, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
     }
@@ -1030,7 +1049,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateTheWinnerGoldTournament(Tournament tournament) {
+    private List<Achievement> generateTheWinnerAchievementGold(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER, AchievementGrade.GOLD,
                 5, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
     }
@@ -1058,7 +1077,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateTheWinnerTeamBronzeTournament(Tournament tournament) {
+    private List<Achievement> generateTheWinnerTeamAchievementBronze(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.BRONZE,
                 3, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
     }
@@ -1069,7 +1088,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateTheWinnerTeamSilverTournament(Tournament tournament) {
+    private List<Achievement> generateTheWinnerTeamAchievementSilver(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.SILVER,
                 4, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
     }
@@ -1080,7 +1099,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateTheWinnerTeamGoldTournament(Tournament tournament) {
+    private List<Achievement> generateTheWinnerTeamAchievementGold(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.GOLD,
                 5, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
     }
@@ -1090,8 +1109,17 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return the generated achievements.
      */
-    private List<Achievement> generateIsJustAScarAchievement(Tournament tournament) {
-        return new ArrayList<>();
+    private List<Achievement> generateTisButAScratchAchievement(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.NORMAL).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreByParticipant().forEach((participant, score) -> {
+            if (score > 0 && !alreadyTisButAScratchAchievements.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.NORMAL, participantsFirstScore, tournament);
     }
 
     /***
@@ -1099,8 +1127,17 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return the generated achievements.
      */
-    private List<Achievement> generateIsJustAScarAchievementBronze(Tournament tournament) {
-        return new ArrayList<>();
+    private List<Achievement> generateTisButAScratchAchievementBronze(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.BRONZE).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreByParticipant().forEach((participant, score) -> {
+            if (score >= 20 && !alreadyTisButAScratchAchievements.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.BRONZE, participantsFirstScore, tournament);
     }
 
     /***
@@ -1108,8 +1145,17 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return the generated achievements.
      */
-    private List<Achievement> generateIsJustAScarAchievementSilver(Tournament tournament) {
-        return new ArrayList<>();
+    private List<Achievement> generateTisButAScratchAchievementSilver(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.SILVER).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreByParticipant().forEach((participant, score) -> {
+            if (score >= 50 && !alreadyTisButAScratchAchievements.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.SILVER, participantsFirstScore, tournament);
     }
 
     /***
@@ -1117,7 +1163,16 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return the generated achievements.
      */
-    private List<Achievement> generateIsJustAScarAchievementGold(Tournament tournament) {
-        return new ArrayList<>();
+    private List<Achievement> generateTisButAScratchAchievementGold(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.GOLD).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreByParticipant().forEach((participant, score) -> {
+            if (score >= 100 && !alreadyTisButAScratchAchievements.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.GOLD, participantsFirstScore, tournament);
     }
 }

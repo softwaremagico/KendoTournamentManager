@@ -66,7 +66,9 @@ public enum AchievementType {
 
     MASTER_THE_LOOP,
 
-    ITS_JUST_A_SCAR;
+    TIS_BUT_A_SCRATCH,
+
+    FIRST_BLOOD;
 
 
     public static AchievementType getType(String name) {
