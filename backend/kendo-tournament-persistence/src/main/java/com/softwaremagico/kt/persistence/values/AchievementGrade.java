@@ -50,6 +50,16 @@ public enum AchievementGrade {
         return null;
     }
 
+    public List<AchievementGrade> getLessThan() {
+        final List<AchievementGrade> achievementGrades = new ArrayList<>();
+        for (final AchievementGrade achievementGrade : AchievementGrade.values()) {
+            if (achievementGrade.grade < this.grade) {
+                achievementGrades.add(achievementGrade);
+            }
+        }
+        return achievementGrades;
+    }
+
     public List<AchievementGrade> getGreaterThan() {
         final List<AchievementGrade> achievementGrades = new ArrayList<>();
         for (final AchievementGrade achievementGrade : AchievementGrade.values()) {
