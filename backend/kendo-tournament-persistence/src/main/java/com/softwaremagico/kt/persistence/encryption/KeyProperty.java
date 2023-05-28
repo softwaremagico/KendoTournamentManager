@@ -54,15 +54,15 @@ public class KeyProperty {
         KeyProperty.databasePrivateKey = databasePrivateKey;
     }
 
-    public static String getDatabaseEncryptionKey() {
+    public static synchronized String getDatabaseEncryptionKey() {
         return databaseEncryptionKey;
     }
 
-    public static String getDatabasePublicKey() {
+    public static synchronized String getDatabasePublicKey() {
         return databasePublicKey;
     }
 
-    public static String getDatabasePrivateKey() {
+    public static synchronized String getDatabasePrivateKey() {
         return databasePrivateKey;
     }
 }
