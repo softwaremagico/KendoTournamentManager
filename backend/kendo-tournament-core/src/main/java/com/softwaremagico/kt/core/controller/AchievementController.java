@@ -80,7 +80,8 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Score>> scoresByParticipant = new HashMap<>();
     private Map<Participant, List<Score>> scoresReceivedByParticipant = new HashMap<>();
-    private Map<Participant, Long> totalScoreByParticipant = new HashMap<>();
+    private Map<Participant, Long> totalScoreFromParticipant = new HashMap<>();
+    private Map<Participant, Long> totalScoreAgainstParticipant = new HashMap<>();
 
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
@@ -157,12 +158,20 @@ public class AchievementController extends BasicInsertableController<Achievement
         return scoresReceivedByParticipant;
     }
 
-    private Map<Participant, Long> getTotalScoreByParticipant() {
-        if (totalScoreByParticipant == null) {
+    private Map<Participant, Long> getTotalScoreFromParticipant() {
+        if (totalScoreFromParticipant == null) {
             getParticipantsFromTournament().forEach(participant ->
-                    totalScoreByParticipant.put(participant, duelProvider.countScoreFromCompetitor(tournament, participant)));
+                    totalScoreFromParticipant.put(participant, duelProvider.countScoreFromCompetitor(tournament, participant)));
         }
-        return totalScoreByParticipant;
+        return totalScoreFromParticipant;
+    }
+
+    private Map<Participant, Long> getTotalScoreAgainstParticipant() {
+        if (totalScoreFromParticipant == null) {
+            getParticipantsFromTournament().forEach(participant ->
+                    totalScoreFromParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(tournament, participant)));
+        }
+        return totalScoreFromParticipant;
     }
 
 
@@ -220,7 +229,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.participantsFromTournament = null;
         this.scoresByParticipant = null;
         this.scoresReceivedByParticipant = null;
-        this.totalScoreByParticipant = null;
+        this.totalScoreFromParticipant = null;
+        this.totalScoreAgainstParticipant = null;
 
         //Remove any achievement already calculated.
         provider.delete(tournament);
@@ -251,6 +261,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTheWinnerTournament(tournament));
         achievementsGenerated.addAll(generateTheWinnerTeamTournament(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievement(tournament));
+        achievementsGenerated.addAll(generateFirstBloodAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateLethalWeaponAchievementBronze(tournament));
@@ -297,6 +308,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTisButAScratchAchievementBronze(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievementSilver(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievementGold(tournament));
+        achievementsGenerated.addAll(generateFirstBloodAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateFirstBloodAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateFirstBloodAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -1114,7 +1128,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Already achievements granted
         final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.NORMAL).stream().map(
                 Achievement::getParticipant).collect(Collectors.toList());
-        getTotalScoreByParticipant().forEach((participant, score) -> {
+        getTotalScoreAgainstParticipant().forEach((participant, score) -> {
             if (score > 0 && !alreadyTisButAScratchAchievements.contains(participant)) {
                 participantsFirstScore.add(participant);
             }
@@ -1132,7 +1146,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Already achievements granted
         final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.BRONZE).stream().map(
                 Achievement::getParticipant).collect(Collectors.toList());
-        getTotalScoreByParticipant().forEach((participant, score) -> {
+        getTotalScoreAgainstParticipant().forEach((participant, score) -> {
             if (score >= 20 && !alreadyTisButAScratchAchievements.contains(participant)) {
                 participantsFirstScore.add(participant);
             }
@@ -1150,7 +1164,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Already achievements granted
         final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.SILVER).stream().map(
                 Achievement::getParticipant).collect(Collectors.toList());
-        getTotalScoreByParticipant().forEach((participant, score) -> {
+        getTotalScoreAgainstParticipant().forEach((participant, score) -> {
             if (score >= 50 && !alreadyTisButAScratchAchievements.contains(participant)) {
                 participantsFirstScore.add(participant);
             }
@@ -1168,11 +1182,83 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Already achievements granted
         final List<Participant> alreadyTisButAScratchAchievements = provider.get(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.GOLD).stream().map(
                 Achievement::getParticipant).collect(Collectors.toList());
-        getTotalScoreByParticipant().forEach((participant, score) -> {
+        getTotalScoreAgainstParticipant().forEach((participant, score) -> {
             if (score >= 100 && !alreadyTisButAScratchAchievements.contains(participant)) {
                 participantsFirstScore.add(participant);
             }
         });
         return generateAchievement(AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.GOLD, participantsFirstScore, tournament);
+    }
+
+    /***
+     * Receive your first hit against you.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateFirstBloodAchievement(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyFirstBloodAchievement = provider.get(AchievementType.FIRST_BLOOD, AchievementGrade.NORMAL).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (score > 0 && !alreadyFirstBloodAchievement.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.FIRST_BLOOD, AchievementGrade.NORMAL, participantsFirstScore, tournament);
+    }
+
+    /***
+     * Receive your first 20 hits against you.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateFirstBloodAchievementBronze(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyFirstBloodAchievement = provider.get(AchievementType.FIRST_BLOOD, AchievementGrade.BRONZE).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (score >= 20 && !alreadyFirstBloodAchievement.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.FIRST_BLOOD, AchievementGrade.BRONZE, participantsFirstScore, tournament);
+    }
+
+    /***
+     * Receive your first 50 hits against you.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateFirstBloodAchievementSilver(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyFirstBloodAchievement = provider.get(AchievementType.FIRST_BLOOD, AchievementGrade.SILVER).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (score >= 50 && !alreadyFirstBloodAchievement.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.FIRST_BLOOD, AchievementGrade.SILVER, participantsFirstScore, tournament);
+    }
+
+    /***
+     * Receive your first 100 hits against you.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateFirstBloodAchievementGold(Tournament tournament) {
+        final List<Participant> participantsFirstScore = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyFirstBloodAchievement = provider.get(AchievementType.FIRST_BLOOD, AchievementGrade.GOLD).stream().map(
+                Achievement::getParticipant).collect(Collectors.toList());
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (score >= 100 && !alreadyFirstBloodAchievement.contains(participant)) {
+                participantsFirstScore.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.FIRST_BLOOD, AchievementGrade.GOLD, participantsFirstScore, tournament);
     }
 }
