@@ -64,7 +64,9 @@ public enum AchievementType {
 
     LOVE_SHARING,
 
-    MASTER_THE_LOOP;
+    MASTER_THE_LOOP,
+
+    ITS_JUST_A_SCAR;
 
 
     public static AchievementType getType(String name) {

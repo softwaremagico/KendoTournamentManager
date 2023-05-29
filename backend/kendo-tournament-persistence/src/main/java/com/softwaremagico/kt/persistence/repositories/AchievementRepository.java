@@ -57,6 +57,9 @@ public interface AchievementRepository extends JpaRepository<Achievement, Intege
 
     List<Achievement> findByAchievementType(AchievementType achievementType);
 
+    long deleteByAchievementTypeAndAchievementGradeAndTournamentAndParticipantIn(
+            AchievementType achievementType, AchievementGrade achievementGrade, Tournament tournament, Collection<Participant> participants);
+
     int deleteByTournament(Tournament tournament);
 }
 
