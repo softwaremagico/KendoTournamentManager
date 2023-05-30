@@ -128,6 +128,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Score>> getScoresByParticipant() {
         if (scoresByParticipant == null) {
+            scoresByParticipant = new HashMap<>();
             getDuelsFromTournament().forEach(duel -> {
                 scoresByParticipant.computeIfAbsent(duel.getCompetitor1(), k -> new ArrayList<>());
                 scoresByParticipant.computeIfAbsent(duel.getCompetitor2(), k -> new ArrayList<>());
@@ -160,16 +161,18 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, Long> getTotalScoreFromParticipant() {
         if (totalScoreFromParticipant == null) {
+            totalScoreFromParticipant = new HashMap<>();
             getParticipantsFromTournament().forEach(participant ->
-                    totalScoreFromParticipant.put(participant, duelProvider.countScoreFromCompetitor(tournament, participant)));
+                    totalScoreFromParticipant.put(participant, duelProvider.countScoreFromCompetitor(participant)));
         }
         return totalScoreFromParticipant;
     }
 
     private Map<Participant, Long> getTotalScoreAgainstParticipant() {
         if (totalScoreFromParticipant == null) {
+            totalScoreFromParticipant = new HashMap<>();
             getParticipantsFromTournament().forEach(participant ->
-                    totalScoreFromParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(tournament, participant)));
+                    totalScoreFromParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant)));
         }
         return totalScoreFromParticipant;
     }
@@ -429,7 +432,10 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         }
         //Create new achievement for the participants.
-        return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, Collections.singleton(participant), tournament);
+        if (participant != null) {
+            return generateAchievement(AchievementType.BILLY_THE_KID, AchievementGrade.NORMAL, Collections.singleton(participant), tournament);
+        }
+        return new ArrayList<>();
     }
 
     /**
