@@ -113,12 +113,12 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
                 (hansokus != null ? hansokus : 0) * 2;
     }
 
-    public long countScoreFromCompetitor(Tournament tournament, Participant participant) {
-        return repository.countScoreFromCompetitor(tournament, participant);
+    public long countScoreFromCompetitor(Participant participant) {
+        return repository.countLeftScoreFromCompetitor(participant) + repository.countRightScoreFromCompetitor(participant);
     }
 
-    public long countScoreAgainstCompetitor(Tournament tournament, Participant participant) {
-        return repository.countScoreAgainstCompetitor(tournament, participant);
+    public long countScoreAgainstCompetitor(Participant participant) {
+        return repository.countLeftScoreAgainstCompetitor(participant) + repository.countRightScoreAgainstCompetitor(participant);
     }
 
     @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})
