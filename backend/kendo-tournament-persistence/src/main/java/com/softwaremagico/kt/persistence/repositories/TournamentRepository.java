@@ -27,8 +27,6 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -40,4 +38,6 @@ import java.util.List;
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
 
     List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt, Pageable pageable);
+
+    List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt);
 }

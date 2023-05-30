@@ -78,13 +78,19 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
             "(s1 IN (:scores) OR  s2 IN (:scores))")
     Long countScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
 
-    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1 + " +
-            "SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s2")
-    Long countScoreFromCompetitor(@Param("tournament") Tournament tournament, @Param("competitor") Participant competitor);
+//    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1 + " +
+//            "SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s2")
+    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1")
+    Long countLeftScoreFromCompetitor(@Param("competitor") Participant competitor);
 
-    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1 + " +
-            "SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s2")
-    Long countScoreAgainstCompetitor(@Param("tournament") Tournament tournament, @Param("competitor") Participant competitor);
+    @Query("SELECT SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s1")
+    Long countRightScoreFromCompetitor(@Param("competitor") Participant competitor);
+
+    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s1")
+    Long countLeftScoreAgainstCompetitor(@Param("competitor") Participant competitor);
+
+    @Query("SELECT SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1")
+    Long countRightScoreAgainstCompetitor(@Param("competitor") Participant competitor);
 
     //    @Query("SELECT COUNT(*) FROM Duel d WHERE d.competitor1Fault=true OR d.competitor2Fault= true AND d.tournament=:tournament")
     @Query("SELECT SUM(CASE WHEN d.competitor1Fault=:status THEN 1 ELSE 0 END) + SUM(CASE WHEN d.competitor2Fault=:status THEN 1 ELSE 0 END) " +

@@ -43,6 +43,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"achievementTests"})
@@ -257,9 +258,9 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     @Test
     public void checkBambooAchievement() {
         List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(bambooAchievementParticipant);
-        //Flexible  + Sweaty Tenugui
-        Assert.assertEquals(achievementsDTOs.size(), 2);
-        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), bambooAchievementParticipant);
+        List<AchievementDTO> flexibleAsBambooAchievements = achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.FLEXIBLE_AS_BAMBOO).collect(Collectors.toList());
+        Assert.assertEquals(flexibleAsBambooAchievements.size(), 1);
+        Assert.assertEquals(flexibleAsBambooAchievements.get(0).getParticipant(), bambooAchievementParticipant);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);
     }
 
