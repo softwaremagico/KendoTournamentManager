@@ -320,17 +320,17 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void searchLastTournaments() {
         List<TournamentDTO> tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 1);
         Assert.assertEquals(tournamentDTOS.size(), 1);
-        Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament2DTO.getId()));
 
         tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 2);
         Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
-        Assert.assertTrue(tournamentDTOS.contains(tournament1DTO));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament2DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament1DTO.getId()));
 
         tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 3);
         Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.contains(tournament2DTO));
-        Assert.assertTrue(tournamentDTOS.contains(tournament1DTO));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament2DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament1DTO.getId()));
     }
 
     @AfterClass

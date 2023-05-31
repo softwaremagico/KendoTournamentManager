@@ -317,7 +317,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         return convertAll(achievementsGenerated);
     }
 
-    private void removeAchievements(List<Achievement> achievements, AchievementType achievementType, Collection<AchievementGrade> grades, Collection<Participant> participants) {
+    private void removeAchievements(List<Achievement> achievements, AchievementType achievementType,
+                                    Collection<AchievementGrade> grades, Collection<Participant> participants) {
         achievements.removeIf(achievement -> grades.contains(achievement.getAchievementGrade())
                 && achievement.getAchievementType() == achievementType && participants.contains(achievement.getParticipant()));
     }
@@ -501,7 +502,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTerminatorAchievement(Tournament tournament) {
-        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor1());
@@ -550,7 +551,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateJuggernautAchievement(Tournament tournament) {
-        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             //Max score competitor 1.
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
@@ -784,7 +785,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievement(Tournament tournament) {
-        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (duel.getCompetitor2Score().size() > 0) {
                 competitors.remove(duel.getCompetitor1());
@@ -835,7 +836,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
-        List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (duel.getCompetitor2Score().size() > 0 || duel.getCompetitor1Score().size() > 0) {
                 competitors.remove(duel.getCompetitor1());
@@ -884,7 +885,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateALittleOfEverythingAchievementBronze(Tournament tournament) {
-        List<Participant> participants = new ArrayList<>();
+        final List<Participant> participants = new ArrayList<>();
         getScoresByParticipant().keySet().forEach(participant -> {
             if (getScoresByParticipant().get(participant).contains(Score.MEN) &&
                     getScoresByParticipant().get(participant).contains(Score.KOTE) &&
@@ -902,7 +903,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateALittleOfEverythingAchievementSilver(Tournament tournament) {
-        List<Participant> participants = new ArrayList<>();
+        final List<Participant> participants = new ArrayList<>();
         getScoresByParticipant().keySet().forEach(participant -> {
             if (getScoresByParticipant().get(participant).contains(Score.MEN) &&
                     getScoresByParticipant().get(participant).contains(Score.KOTE) &&
@@ -921,7 +922,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateALittleOfEverythingAchievementGold(Tournament tournament) {
-        List<Participant> participants = new ArrayList<>();
+        final List<Participant> participants = new ArrayList<>();
         getScoresByParticipant().keySet().forEach(participant -> {
             if (getScoresByParticipant().get(participant).contains(Score.MEN) &&
                     getScoresByParticipant().get(participant).contains(Score.KOTE) &&
