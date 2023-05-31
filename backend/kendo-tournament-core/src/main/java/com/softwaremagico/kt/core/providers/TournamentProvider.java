@@ -29,14 +29,12 @@ import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRep
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -74,8 +72,12 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         if (tournament == null || tournament.getCreatedAt() == null) {
             return new ArrayList<>();
         }
-        final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
-        return repository.findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
+        // Due to LocalDateTime encryption countByGreaterThan is not working very well.
+        // final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
+        // return repository.findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
+        final List<Tournament> tournaments = repository.findAll();
+        tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
+        return tournaments.subList(tournaments.indexOf(tournament) + 1, Math.min(tournaments.indexOf(tournament) + 1 + elementsToRetrieve, tournaments.size()));
     }
 
     public long countTournamentsAfter(LocalDateTime createdAfter) {
