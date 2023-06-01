@@ -3,7 +3,9 @@
   <div class="statistics-layout">
     <div class="upper-menu">
       <div class="cell">
-        <button (click)="goBackToUsers()" *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)" [matTooltipShowDelay]="500" color="secondary"
+        <button (click)="goBackToUsers()"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)"
+                [matTooltipShowDelay]="500" color="secondary"
                 mat-button
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>

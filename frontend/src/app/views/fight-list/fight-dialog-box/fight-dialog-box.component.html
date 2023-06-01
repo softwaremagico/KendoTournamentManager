@@ -14,12 +14,14 @@
       translate)}}</h2>
   </div>
   <div class="new-fight">
-    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam1" [cdkDropListEnterPredicate]="checkDroppedElement"
+    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam1"
+         [cdkDropListEnterPredicate]="checkDroppedElement"
          [cdkDropListSortingDisabled]="false" cdkDropList
          class="team-selected">
       <app-team-card *ngFor="let team of selectedTeam1" [team]="team"></app-team-card>
     </div>
-    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam2" [cdkDropListEnterPredicate]="checkDroppedElement"
+    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam2"
+         [cdkDropListEnterPredicate]="checkDroppedElement"
          [cdkDropListSortingDisabled]="false" cdkDropList
          class="team-selected">
       <app-team-card *ngFor="let team of selectedTeam2" [team]="team"></app-team-card>

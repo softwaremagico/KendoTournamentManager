@@ -38,11 +38,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
 public abstract class PdfDocument {
+    protected static final int TOTAL_WIDTH = 100;
     private final int rightMargin = 30;
     private final int leftMargin = 30;
     private final int topMargin = 30;
     private final int bottomMargin = 30;
-    protected static final int TOTAL_WIDTH = 100;
 
     protected Document addMetaData(Document document) {
         document.addTitle("List Report");

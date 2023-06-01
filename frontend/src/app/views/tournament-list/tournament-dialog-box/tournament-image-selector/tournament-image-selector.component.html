@@ -2,8 +2,10 @@
 <div mat-dialog-content>
   <div class="picture-uploaded">
     <div class="image-editor">
-      <mat-slider #mySlider (valueChange)="sliderOnChange(mySlider.value)" *ngIf="insertedTournamentImageType === diplomaType"
-                  [(ngModel)]="sliderValue" [vertical]="true" class="name-position-selector" max="100" min="1" thumbLabel
+      <mat-slider #mySlider (valueChange)="sliderOnChange(mySlider.value)"
+                  *ngIf="insertedTournamentImageType === diplomaType"
+                  [(ngModel)]="sliderValue" [vertical]="true" class="name-position-selector" max="100" min="1"
+                  thumbLabel
                   tickInterval="1"></mat-slider>
       <div [class.accreditation-width]="insertedTournamentImageType === accreditationType"
            [class.alone]="insertedTournamentImageType !== diplomaType"
@@ -12,13 +14,15 @@
            [class.photo-width]="insertedTournamentImageType === photoType"
            [style.height]="getHeight()+'px'"
            class="content">
-        <div *ngIf="insertedTournamentImageType === diplomaType" [class.accreditation-width]="insertedTournamentImageType === accreditationType"
+        <div *ngIf="insertedTournamentImageType === diplomaType"
+             [class.accreditation-width]="insertedTournamentImageType === accreditationType"
              [class.banner-width]="insertedTournamentImageType === bannerType"
              [class.diploma-width]="insertedTournamentImageType === diplomaType"
              [class.photo-width]="insertedTournamentImageType === photoType"
              [style.margin-top]="getLinePosition()+'px'"
              class="name-line"></div>
-        <span *ngIf="insertedTournamentImageType === diplomaType" [class.accreditation-width]="insertedTournamentImageType === accreditationType"
+        <span *ngIf="insertedTournamentImageType === diplomaType"
+              [class.accreditation-width]="insertedTournamentImageType === accreditationType"
               [class.banner-width]="insertedTournamentImageType === bannerType"
               [class.diploma-width]="insertedTournamentImageType === diplomaType"
               [class.photo-width]="insertedTournamentImageType === photoType"
@@ -29,7 +33,11 @@
              class="image-preview" src="{{ image }}"/>
         <div *ngIf="!image" class="empty-image image-preview">
         </div>
-        <button (click)="fileInput.click()" *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)" [class.upload-accreditation]="insertedTournamentImageType === accreditationType" [class.upload-banner]="insertedTournamentImageType === bannerType" [class.upload-diploma]="insertedTournamentImageType === diplomaType"
+        <button (click)="fileInput.click()"
+                *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)"
+                [class.upload-accreditation]="insertedTournamentImageType === accreditationType"
+                [class.upload-banner]="insertedTournamentImageType === bannerType"
+                [class.upload-diploma]="insertedTournamentImageType === diplomaType"
                 [class.upload-photo]="insertedTournamentImageType === photoType"
                 class="floating-button"
                 color="picture"
@@ -62,28 +70,36 @@
     </div>
   </div>
   <div mat-dialog-actions>
-    <button (click)="selectType(accreditationType)" *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)" [class.selected-button]="insertedTournamentImageType === accreditationType"
+    <button (click)="selectType(accreditationType)"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_ACCREDITATION | rbac : this.rbacService.activities)"
+            [class.selected-button]="insertedTournamentImageType === accreditationType"
             color="picture"
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>badge</mat-icon>
       {{'accreditation' | translate}}
     </button>
-    <button (click)="selectType(photoType)" *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | rbac : this.rbacService.activities)" [class.selected-button]="insertedTournamentImageType === photoType"
+    <button (click)="selectType(photoType)"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_PHOTO | rbac : this.rbacService.activities)"
+            [class.selected-button]="insertedTournamentImageType === photoType"
             color="picture"
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>face</mat-icon>
       {{'photo' | translate}}
     </button>
-    <button (click)="selectType(diplomaType)" *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | rbac : this.rbacService.activities)" [class.selected-button]="insertedTournamentImageType === diplomaType"
+    <button (click)="selectType(diplomaType)"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_DIPLOMA | rbac : this.rbacService.activities)"
+            [class.selected-button]="insertedTournamentImageType === diplomaType"
             color="picture"
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
       {{'diplomas' | translate}}
     </button>
-    <button (click)="selectType(bannerType)" *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | rbac : this.rbacService.activities)" [class.selected-button]="insertedTournamentImageType ===  bannerType"
+    <button (click)="selectType(bannerType)"
+            *ngIf="(RbacActivity.UPLOAD_TOURNAMENT_BANNER | rbac : this.rbacService.activities)"
+            [class.selected-button]="insertedTournamentImageType ===  bannerType"
             color="picture"
             mat-flat-button mat-raised-button
             type="button">

@@ -103,7 +103,7 @@ public class TeamDTO extends ElementDTO implements ITeamName {
             return false;
         }
         return getName().equals(teamDTO.getName()) && Objects.equals(getTournament(), teamDTO.getTournament())
-                &&                Objects.equals(getMembers(), teamDTO.getMembers());
+                && Objects.equals(getMembers(), teamDTO.getMembers());
     }
 
     @Override
