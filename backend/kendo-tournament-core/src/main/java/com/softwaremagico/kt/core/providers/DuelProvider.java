@@ -35,7 +35,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
@@ -69,9 +74,10 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.findAllUnties();
     }
 
-    @Cacheable("duelsDurationAverage")
+    @Cacheable(value = "duels-duration-average", key = "'average'")
     public Long getDurationAverage() {
-        return repository.getDurationAverage();
+        final Long duration = repository.getDurationAverage();
+        return duration != null ? duration : -1;
     }
 
     public Long getDurationAverage(Tournament tournament) {
@@ -121,7 +127,7 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return repository.countLeftScoreAgainstCompetitor(participant) + repository.countRightScoreAgainstCompetitor(participant);
     }
 
-    @CacheEvict(allEntries = true, value = {"duelsDurationAverage"})
+    @CacheEvict(allEntries = true, value = {"duels-duration-average"})
     @Scheduled(fixedDelay = 60 * 10 * 1000)
     public void reportCacheEvict() {
         //Only for handling Spring cache.

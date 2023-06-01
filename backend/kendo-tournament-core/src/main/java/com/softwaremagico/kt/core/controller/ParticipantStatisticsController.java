@@ -43,7 +43,7 @@ public class ParticipantStatisticsController extends BasicInsertableController<P
     private final ParticipantConverter participantConverter;
 
     protected ParticipantStatisticsController(ParticipantStatisticsProvider provider, ParticipantStatisticsConverter converter,
-                                             ParticipantConverter participantConverter) {
+                                              ParticipantConverter participantConverter) {
         super(provider, converter);
         this.participantConverter = participantConverter;
     }

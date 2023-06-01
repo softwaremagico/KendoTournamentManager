@@ -24,9 +24,27 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.converters.*;
-import com.softwaremagico.kt.core.converters.models.*;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.DuelConverter;
+import com.softwaremagico.kt.core.converters.FightConverter;
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.ScoreOfCompetitorConverter;
+import com.softwaremagico.kt.core.converters.ScoreOfTeamConverter;
+import com.softwaremagico.kt.core.converters.TeamConverter;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
+import com.softwaremagico.kt.core.converters.models.ScoreOfCompetitorConverterRequest;
+import com.softwaremagico.kt.core.converters.models.ScoreOfTeamConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
@@ -40,7 +58,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller

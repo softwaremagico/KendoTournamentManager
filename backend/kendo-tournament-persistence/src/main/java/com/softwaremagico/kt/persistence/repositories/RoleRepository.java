@@ -28,10 +28,10 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,6 +62,7 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     long countByTournament(Tournament tournament);
 
     long countByTournamentAndRoleType(Tournament tournament, RoleType roleType);
+
     long countByParticipantAndRoleType(Participant participant, RoleType roleType);
 
     void deleteByParticipantAndTournament(Participant participant, Tournament tournament);

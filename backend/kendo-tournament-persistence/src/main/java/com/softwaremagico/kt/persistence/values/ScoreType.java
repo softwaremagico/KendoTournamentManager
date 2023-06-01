@@ -44,10 +44,6 @@ public enum ScoreType {
         this.tag = tag;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
     public static ScoreType getScoreType(String tag) {
         for (final ScoreType scoreType : ScoreType.values()) {
             if (scoreType.getTag().equals(tag.toLowerCase())) {
@@ -55,5 +51,9 @@ public enum ScoreType {
             }
         }
         return DEFAULT;
+    }
+
+    public String getTag() {
+        return tag;
     }
 }

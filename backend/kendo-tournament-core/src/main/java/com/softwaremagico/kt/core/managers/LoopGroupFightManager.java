@@ -25,7 +25,10 @@ package com.softwaremagico.kt.core.managers;
  */
 
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +70,7 @@ public class LoopGroupFightManager {
 
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
-        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
+        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getPropertyValue());
 
         for (final Team team : remainingTeams) {
             for (final Team adversary : remainingFights.getAdversaries(team)) {

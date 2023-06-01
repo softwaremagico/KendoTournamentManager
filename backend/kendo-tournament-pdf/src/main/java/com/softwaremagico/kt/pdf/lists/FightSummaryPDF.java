@@ -25,7 +25,13 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -74,26 +80,26 @@ public class FightSummaryPDF extends ParentList {
     protected String getDrawFight(FightDTO fightDTO, int duel) {
         // Draw Fights
         if (Objects.equals(fightDTO.getDuels().get(duel).getWinner(), 0) && fightDTO.isOver()) {
-            return "" + Score.DRAW.getAbbreviation();
+            return String.valueOf(Score.DRAW.getAbbreviation());
         } else {
-            return "" + Score.EMPTY.getAbbreviation();
+            return String.valueOf(Score.EMPTY.getAbbreviation());
         }
     }
 
     protected String getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
         if (leftTeam) {
-            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? "" + Score.FAULT.getAbbreviation() : "" + Score.EMPTY.getAbbreviation();
+            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? String.valueOf(Score.FAULT.getAbbreviation()) : String.valueOf(Score.EMPTY.getAbbreviation());
         } else {
-            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? "" + Score.FAULT.getAbbreviation() : "" + Score.EMPTY.getAbbreviation();
+            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? String.valueOf(Score.FAULT.getAbbreviation()) : String.valueOf(Score.EMPTY.getAbbreviation());
         }
     }
 
     protected String getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
         try {
             if (leftTeam) {
-                return fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation() + "";
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation());
             } else {
-                return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation() + "";
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
         } catch (IndexOutOfBoundsException e) {
             return "";
@@ -204,7 +210,7 @@ public class FightSummaryPDF extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
+        return new float[] {0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
     }
 
     @Override
