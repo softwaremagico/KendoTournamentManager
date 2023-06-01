@@ -51,11 +51,11 @@ public class ConverterRequest<T> {
         return entity;
     }
 
-    public T getEntityWithoutChecks() {
-        return entity;
-    }
-
     public void setEntity(T entity) {
         this.entity = entity;
+    }
+
+    public T getEntityWithoutChecks() {
+        return entity;
     }
 }

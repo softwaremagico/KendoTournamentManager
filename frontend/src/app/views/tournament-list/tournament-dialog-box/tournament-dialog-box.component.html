@@ -3,7 +3,8 @@
 <div class="form-layout" mat-dialog-content>
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="tournamentName" matInput placeholder="{{'competitionName' | translate}}"
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="tournamentName" matInput
+             placeholder="{{'competitionName' | translate}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
@@ -17,7 +18,8 @@
 
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
-          || this.selectedType == typeLeague || this.selectedType == typeKing" formControlName="shiaijos" matInput placeholder="{{'tournamentShiaijos' | translate}}"
+          || this.selectedType == typeLeague || this.selectedType == typeKing" formControlName="shiaijos" matInput
+             placeholder="{{'tournamentShiaijos' | translate}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
@@ -56,14 +58,17 @@
     </ng-template>
 
     <div class="button-container" mat-dialog-actions>
-      <button (click)="addPicture()" *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)" color="picture"
+      <button (click)="addPicture()"
+              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)"
+              color="picture"
               mat-flat-button
               mat-raised-button
               type="button">
         <mat-icon>image</mat-icon>
         {{'images' | translate}}
       </button>
-      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)" [disabled]="registerForm.invalid" color="primary"
+      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
+              [disabled]="registerForm.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
         <mat-icon>done</mat-icon>

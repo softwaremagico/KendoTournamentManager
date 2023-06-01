@@ -72,7 +72,6 @@ public class ParticipantAccreditationCard extends PdfDocument {
     private static final int EXTRA_WIDTH = 30;
 
 
-
     private final MessageSource messageSource;
     private final Locale locale;
 

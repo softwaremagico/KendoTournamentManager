@@ -13,10 +13,12 @@
           <h2 class="role-text">{{roleType.toLowerCase() | translate}}</h2>
           <h2 *ngIf="countRole(roleType)" class="role-counter">(x{{countRole(roleType)}})</h2>
         </div>
-        <div (cdkDropListDropped)="dropParticipant($event, roleType)" [cdkDropListData]="getParticipantsContainer(roleType)"
+        <div (cdkDropListDropped)="dropParticipant($event, roleType)"
+             [cdkDropListData]="getParticipantsContainer(roleType)"
              cdkDropList
              class="role">
-          <app-user-card *ngFor="let user of participants.get(roleType)" [activity]="RbacActivity.EDIT_ROLE" [dragDisabled]="user.locked"
+          <app-user-card *ngFor="let user of participants.get(roleType)" [activity]="RbacActivity.EDIT_ROLE"
+                         [dragDisabled]="user.locked"
                          [showAvatar]="showAvatars" [user]="user"></app-user-card>
         </div>
       </div>
@@ -24,7 +26,8 @@
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)" mat-flat-button
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)"
+          mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
