@@ -47,6 +47,7 @@ import java.util.List;
 
 public class TeamListPDF extends ParentList {
 
+    private static final float[] TABLE_WIDTH = {0.46f, 0.08f, 0.46f};
     private static final int BORDER = 0;
     private final TournamentDTO tournament;
 
@@ -62,7 +63,7 @@ public class TeamListPDF extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     public PdfPTable teamTable(TeamDTO teamDTO) {
@@ -119,7 +120,7 @@ public class TeamListPDF extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[] {0.46f, 0.08f, 0.46f};
+        return TABLE_WIDTH;
     }
 
 

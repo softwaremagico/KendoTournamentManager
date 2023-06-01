@@ -143,8 +143,8 @@ public class Fight extends Element {
     }
 
     public List<Duel> getDuels(Participant competitor) {
-        return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor) ||
-                Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
+        return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor)
+                || Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
     }
 
     public Team getWinner() {
@@ -219,8 +219,8 @@ public class Fight extends Element {
     }
 
     public Integer getDrawDuels(Participant competitor) {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0 &&
-                (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
+        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0
+                && (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
     }
 
     public Integer getDrawDuels(Team team) {
@@ -233,10 +233,10 @@ public class Fight extends Element {
 
     public Integer getDuelsWon(Participant competitor) {
         int numberOfDuels = 0;
-        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1 &&
-                (Objects.equals(duel.getCompetitor1(), competitor))).count();
-        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1 &&
-                (Objects.equals(duel.getCompetitor2(), competitor))).count();
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1
+                && (Objects.equals(duel.getCompetitor1(), competitor))).count();
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1
+                && (Objects.equals(duel.getCompetitor2(), competitor))).count();
         return numberOfDuels;
     }
 

@@ -24,8 +24,22 @@ package com.softwaremagico.kt.core.tests;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.*;
-import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.controller.AchievementController;
+import com.softwaremagico.kt.core.controller.ClubController;
+import com.softwaremagico.kt.core.controller.FightController;
+import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ParticipantController;
+import com.softwaremagico.kt.core.controller.RoleController;
+import com.softwaremagico.kt.core.controller.TeamController;
+import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.models.AchievementDTO;
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -258,7 +272,9 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     @Test
     public void checkBambooAchievement() {
         List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(bambooAchievementParticipant);
-        List<AchievementDTO> flexibleAsBambooAchievements = achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.FLEXIBLE_AS_BAMBOO).collect(Collectors.toList());
+        List<AchievementDTO> flexibleAsBambooAchievements =
+                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.FLEXIBLE_AS_BAMBOO)
+                        .collect(Collectors.toList());
         Assert.assertEquals(flexibleAsBambooAchievements.size(), 1);
         Assert.assertEquals(flexibleAsBambooAchievements.get(0).getParticipant(), bambooAchievementParticipant);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);

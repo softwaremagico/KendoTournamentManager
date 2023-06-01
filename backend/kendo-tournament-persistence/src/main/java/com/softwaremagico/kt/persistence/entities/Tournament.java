@@ -52,6 +52,7 @@ import java.time.LocalDateTime;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
 public class Tournament extends Element {
+    private static final int DEFAULT_DURATION = 180;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
@@ -76,7 +77,7 @@ public class Tournament extends Element {
 
     @Column(name = "duels_duration", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
-    private Integer duelsDuration = 180;
+    private Integer duelsDuration = DEFAULT_DURATION;
 
     @Column(name = "locked", nullable = false)
     @Convert(converter = BooleanCryptoConverter.class)

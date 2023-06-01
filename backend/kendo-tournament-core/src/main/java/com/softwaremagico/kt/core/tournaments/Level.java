@@ -115,8 +115,8 @@ public class Level {
     public void updateArenaOfGroups() {
         if (tournamentGroups.size() > 0) {
             // Divide groups by arena.
-            final double groupsPerArena = Math.ceil((double) tournamentGroups.size() / (tournament.getShiaijos() > 0 ?
-                    (double) tournament.getShiaijos() : 1));
+            final double groupsPerArena = Math.ceil((double) tournamentGroups.size() / (tournament.getShiaijos() > 0
+                    ? (double) tournament.getShiaijos() : 1));
             for (int j = 0; j < tournamentGroups.size(); j++) {
                 tournamentGroups.get(j).setShiaijo((j) / (int) groupsPerArena);
             }

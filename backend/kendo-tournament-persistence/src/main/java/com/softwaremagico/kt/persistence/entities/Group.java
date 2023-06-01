@@ -204,12 +204,12 @@ public class Group extends Element {
 
     @Override
     public String toString() {
-        return "Group{" +
-                "tournament=" + tournament +
-                ", shiaijo=" + shiaijo +
-                ", level=" + level +
-                ", index=" + index +
-                '}';
+        return "Group{"
+                + "tournament=" + tournament
+                + ", shiaijo=" + shiaijo
+                + ", level=" + level
+                + ", index=" + index
+                + '}';
     }
 }
 

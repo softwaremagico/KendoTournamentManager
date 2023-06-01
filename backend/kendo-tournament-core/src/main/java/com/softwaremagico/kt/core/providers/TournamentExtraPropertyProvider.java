@@ -42,23 +42,23 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
     }
 
     public List<TournamentExtraProperty> getAll(Tournament tournament) {
-        return repository.findByTournament(tournament);
+        return getRepository().findByTournament(tournament);
     }
 
     public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return repository.findByTournamentAndPropertyKey(tournament, key);
+        return getRepository().findByTournamentAndPropertyKey(tournament, key);
     }
 
     public int delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 
     public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return repository.deleteByTournamentAndPropertyKey(tournament, key);
+        return getRepository().deleteByTournamentAndPropertyKey(tournament, key);
     }
 
     @Override
     public TournamentExtraProperty save(TournamentExtraProperty tournamentExtraProperty) {
-        return repository.save(tournamentExtraProperty);
+        return getRepository().save(tournamentExtraProperty);
     }
 }

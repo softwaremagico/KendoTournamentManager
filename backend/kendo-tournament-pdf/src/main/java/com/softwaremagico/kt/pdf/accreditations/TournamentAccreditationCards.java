@@ -92,7 +92,7 @@ public class TournamentAccreditationCards extends PdfDocument {
     @Override
     protected void createContent(Document document, PdfWriter writer) {
         final PdfPTable table = pageTable(document);
-        table.setWidthPercentage(100);
+        table.setWidthPercentage(TOTAL_WIDTH);
         document.add(table);
     }
 

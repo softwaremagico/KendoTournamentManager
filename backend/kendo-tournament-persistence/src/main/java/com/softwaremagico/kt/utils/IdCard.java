@@ -24,8 +24,13 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-public class IdCard {
-    private static final String NIF_STRING_ASOCIATION = "TRWAGMYFPDXBNJZSQVHLCKE";
+public final class IdCard {
+    private static final String NIF_STRING_ASSOCIATION = "TRWAGMYFPDXBNJZSQVHLCKE";
+    private static final int NIF_CRC = 23;
+
+    private IdCard() {
+
+    }
 
     /**
      * Adds the letter of a spanish DNI.
@@ -37,7 +42,7 @@ public class IdCard {
         if (dni == null) {
             return null;
         }
-        return String.valueOf(dni) + NIF_STRING_ASOCIATION.charAt(dni % 23);
+        return String.valueOf(dni) + NIF_STRING_ASSOCIATION.charAt(dni % NIF_CRC);
     }
 
 }
