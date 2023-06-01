@@ -176,11 +176,11 @@
         <module name="TodoComment"/>
         <module name="UpperEll"/>
 
-<!***REMOVED***       &lt;!&ndash; https://checkstyle.org/config_filters.html#SuppressionXpathFilter &ndash;&gt;-->
-<!***REMOVED***       <module name="SuppressionXpathFilter">-->
-<!***REMOVED***           <property name="file" value="${main.basedir}/checkstyle-suppressions.xml"/>-->
-<!***REMOVED***           <property name="optional" value="false"/>-->
-<!***REMOVED***       </module>-->
+        <!***REMOVED***       &lt;!&ndash; https://checkstyle.org/config_filters.html#SuppressionXpathFilter &ndash;&gt;-->
+        <!***REMOVED***       <module name="SuppressionXpathFilter">-->
+        <!***REMOVED***           <property name="file" value="${main.basedir}/checkstyle-suppressions.xml"/>-->
+        <!***REMOVED***           <property name="optional" value="false"/>-->
+        <!***REMOVED***       </module>-->
 
     </module>
 </module>

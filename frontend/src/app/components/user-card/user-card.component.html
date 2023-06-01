@@ -1,4 +1,5 @@
-<mat-card [cdkDragData]="user" [cdkDragDisabled]="dragDisabled || !(activity | rbac : this.rbacService.activities)" cdkDrag
+<mat-card [cdkDragData]="user" [cdkDragDisabled]="dragDisabled || !(activity | rbac : this.rbacService.activities)"
+          cdkDrag
           class="user-card">
   <mat-card-header class="user-card-header">
     <app-participant-picture *ngIf="showAvatar" [participant]="user" mat-card-avatar></app-participant-picture>

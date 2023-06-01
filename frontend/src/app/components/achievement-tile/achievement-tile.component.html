@@ -1,4 +1,5 @@
-<div (mouseout)="clearCoordinates($event)" (mouseover)="updateCoordinates($event)" [class.disabled]="achievements?.length == 0"
+<div (mouseout)="clearCoordinates($event)" (mouseover)="updateCoordinates($event)"
+     [class.disabled]="achievements?.length == 0"
      class="achievement">
   <img [alt]="getAchievementAlt()" [src]="getAchievementImage()" class="achievement-image">
   <div [ngClass]="{

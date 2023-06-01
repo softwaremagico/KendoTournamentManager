@@ -12,7 +12,8 @@
   </div>
   <div class="viewer time">
     <mat-icon class="kendo-icon" color="primary" matTooltip="{{'estimatedTime' | translate}}">timer</mat-icon>
-    <span [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}" class="text"
+    <span [ngClass]="{'warning': hours!=undefined && hours>=2 && hours<3, 'alert': hours!=undefined && hours>=3}"
+          class="text"
           matTooltip="{{'estimatedTime' | translate}}">{{getTime()}}</span>
   </div>
 </div>
