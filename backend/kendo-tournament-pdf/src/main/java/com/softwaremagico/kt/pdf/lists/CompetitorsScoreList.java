@@ -50,6 +50,7 @@ import java.util.Locale;
  * Creates a sheet with the competitors ranking depending on the performance on the tournament.
  */
 public class CompetitorsScoreList extends ParentList {
+    private static final float[] TABLE_WIDTH = {0.50f, 0.20f, 0.20f, 0.20f};
     private final List<ScoreOfCompetitorDTO> competitorTopTen;
     private final TournamentDTO tournament;
     private final MessageSource messageSource;
@@ -114,7 +115,7 @@ public class CompetitorsScoreList extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[] {0.50f, 0.20f, 0.20f, 0.20f};
+        return TABLE_WIDTH;
     }
 
     @Override
@@ -122,7 +123,7 @@ public class CompetitorsScoreList extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override

@@ -37,7 +37,7 @@ import java.util.Objects;
 public class ScoreOfCompetitor {
 
     @JsonIgnore
-    protected List<Fight> fights;
+    private List<Fight> fights;
     private Participant competitor;
     @JsonIgnore
     private List<Duel> unties;

@@ -44,14 +44,10 @@ public class TeamSelector {
     protected TeamSelector(List<Team> teams, TeamsOrder teamsOrder) {
         this.teams = teams;
         switch (teamsOrder) {
-            case SORTED:
-                Collections.sort(this.teams);
-                break;
-            case RANDOM:
-                Collections.shuffle(this.teams);
-                break;
-            case NONE:
-                break;
+            case SORTED -> Collections.sort(this.teams);
+            case RANDOM -> Collections.shuffle(this.teams);
+            default -> {
+            }
         }
         combination = getAdversaries();
     }

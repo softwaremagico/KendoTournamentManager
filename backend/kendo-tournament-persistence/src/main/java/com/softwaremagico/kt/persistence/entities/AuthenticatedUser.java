@@ -173,12 +173,12 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public String toString() {
-        return "AuthenticatedUser{" +
-                "username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", roles=" + roles +
-                ", authorities=" + authorities +
-                '}';
+        return "AuthenticatedUser{"
+                + "username='" + username + '\''
+                + ", name='" + name + '\''
+                + ", lastname='" + lastname + '\''
+                + ", roles=" + roles
+                + ", authorities=" + authorities
+                + '}';
     }
 }

@@ -44,6 +44,7 @@ import java.util.Set;
 
 @Service
 public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
+    private static final int CACHE_EXPIRATION_TIME = 10 * 60 * 1000;
 
     @Autowired
     public DuelProvider(DuelRepository duelRepository) {
@@ -51,84 +52,83 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     }
 
     public long delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 
     public long count(Tournament tournament) {
-        return repository.countByTournament(tournament);
+        return getRepository().countByTournament(tournament);
     }
 
     public List<Duel> get(Participant participant) {
-        return repository.findByParticipant(participant);
+        return getRepository().findByParticipant(participant);
     }
 
     public List<Duel> get(Tournament tournament) {
-        return repository.findByTournament(tournament);
+        return getRepository().findByTournament(tournament);
     }
 
     public List<Duel> getUnties(Collection<Participant> participants) {
-        return repository.findUntiesByParticipantIn(participants);
+        return getRepository().findUntiesByParticipantIn(participants);
     }
 
     public List<Duel> getUnties() {
-        return repository.findAllUnties();
+        return getRepository().findAllUnties();
     }
 
     @Cacheable(value = "duels-duration-average", key = "'average'")
     public Long getDurationAverage() {
-        final Long duration = repository.getDurationAverage();
+        final Long duration = getRepository().getDurationAverage();
         return duration != null ? duration : -1;
     }
 
     public Long getDurationAverage(Tournament tournament) {
-        return repository.getDurationAverage(tournament);
+        return getRepository().getDurationAverage(tournament);
     }
 
     public Duel getFirstDuel(Tournament tournament) {
-        return repository.findFirstByTournamentOrderByStartedAtAsc(tournament);
+        return getRepository().findFirstByTournamentOrderByStartedAtAsc(tournament);
     }
 
     public Duel getLastDuel(Tournament tournament) {
-        return repository.findFirstByTournamentOrderByFinishedAtDesc(tournament);
+        return getRepository().findFirstByTournamentOrderByFinishedAtDesc(tournament);
     }
 
     public Long countScore(Tournament tournament, Score score) {
-        return repository.countScore(tournament, Collections.singletonList(score));
+        return getRepository().countScore(tournament, Collections.singletonList(score));
     }
 
     public Set<Duel> findByOnlyScore(Tournament tournament, Score score) {
         final List<Score> forbiddenScores = new ArrayList<>(Arrays.asList(Score.values()));
         forbiddenScores.remove(score);
         forbiddenScores.remove(Score.EMPTY);
-        return repository.findByOnlyScore(tournament, forbiddenScores);
+        return getRepository().findByOnlyScore(tournament, forbiddenScores);
     }
 
     public Set<Duel> findByScorePerformedInLessThan(Tournament tournament, int maxSeconds) {
-        return repository.findByScoreOnTimeLess(tournament, maxSeconds);
+        return getRepository().findByScoreOnTimeLess(tournament, maxSeconds);
     }
 
     public List<Duel> findByScoreDuration(Tournament tournament, int scoreMaxDuration) {
-        return repository.findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
+        return getRepository().findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(
                 tournament, scoreMaxDuration, scoreMaxDuration);
     }
 
     public long countFaults(Tournament tournament) {
-        final Long faults = repository.countFaultsByTournament(tournament, true);
-        final Long hansokus = repository.countScore(tournament, Collections.singletonList(Score.HANSOKU));
-        return (faults != null ? faults : 0) +
-                (hansokus != null ? hansokus : 0) * 2;
+        final Long faults = getRepository().countFaultsByTournament(tournament, true);
+        final Long hansokus = getRepository().countScore(tournament, Collections.singletonList(Score.HANSOKU));
+        return (faults != null ? faults : 0) + (hansokus != null ? hansokus : 0) * 2;
     }
 
     public long countScoreFromCompetitor(Participant participant) {
-        return repository.countLeftScoreFromCompetitor(participant) + repository.countRightScoreFromCompetitor(participant);
+        return getRepository().countLeftScoreFromCompetitor(participant) + getRepository().countRightScoreFromCompetitor(participant);
     }
 
     public long countScoreAgainstCompetitor(Participant participant) {
-        return repository.countLeftScoreAgainstCompetitor(participant) + repository.countRightScoreAgainstCompetitor(participant);
+        return getRepository().countLeftScoreAgainstCompetitor(participant) + getRepository().countRightScoreAgainstCompetitor(participant);
     }
 
     @CacheEvict(allEntries = true, value = {"duels-duration-average"})
-    @Scheduled(fixedDelay = 60 * 10 * 1000)
+    @Scheduled(fixedDelay = CACHE_EXPIRATION_TIME)
     public void reportCacheEvict() {
         //Only for handling Spring cache.
     }

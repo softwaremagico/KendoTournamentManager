@@ -30,7 +30,7 @@ import com.softwaremagico.kt.logger.ExceptionType;
 import java.util.Optional;
 
 public class ConverterRequest<T> {
-    protected T entity;
+    private T entity;
 
     public ConverterRequest(T entity) {
         this.entity = entity;
@@ -48,6 +48,10 @@ public class ConverterRequest<T> {
         if (entity == null) {
             throw new UnexpectedValueException(this.getClass(), "Entity could not be converted into a proper object.", ExceptionType.WARNING);
         }
+        return entity;
+    }
+
+    public T getEntityWithoutChecks() {
         return entity;
     }
 

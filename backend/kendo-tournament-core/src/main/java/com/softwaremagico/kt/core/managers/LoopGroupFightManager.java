@@ -76,8 +76,8 @@ public class LoopGroupFightManager {
             for (final Team adversary : remainingFights.getAdversaries(team)) {
                 //Avoid repeat fights between the same teams.
                 if (maximizeFights || fights.stream().
-                        noneMatch(fight -> ((fight.getTeam1() == team && fight.getTeam2() == adversary) ||
-                                (fight.getTeam2() == team && fight.getTeam1() == adversary)))) {
+                        noneMatch(fight -> ((fight.getTeam1() == team && fight.getTeam2() == adversary)
+                                || (fight.getTeam2() == team && fight.getTeam1() == adversary)))) {
                     fights.add(createFight(tournament, team, adversary, 0, level, createdBy));
                 }
             }

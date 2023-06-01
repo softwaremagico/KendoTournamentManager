@@ -126,8 +126,8 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         final Long durationAverage = duelProvider.getDurationAverage();
         if (durationAverage != null && durationAverage > 0 && tournamentFightStatistics.getDuelsNumber() != null) {
             tournamentFightStatistics.setAverageTime(durationAverage);
-            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS) +
-                    (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
+            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS)
+                    + (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
         }
         return tournamentFightStatistics;
     }

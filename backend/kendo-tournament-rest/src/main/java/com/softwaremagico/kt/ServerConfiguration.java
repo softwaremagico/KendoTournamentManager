@@ -42,6 +42,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 })
 @ComponentScan({"com.softwaremagico.kt"})
 public class ServerConfiguration {
+    private static final int CORE_POOL_SIZE = 20;
+    private static final int MAX_POOL_SIZE = 100;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -62,8 +64,8 @@ public class ServerConfiguration {
     @Bean("threadPoolExecutor")
     public TaskExecutor getAsyncExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(100);
+        executor.setCorePoolSize(CORE_POOL_SIZE);
+        executor.setMaxPoolSize(MAX_POOL_SIZE);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setThreadNamePrefix("Rest_Async-");
         return executor;

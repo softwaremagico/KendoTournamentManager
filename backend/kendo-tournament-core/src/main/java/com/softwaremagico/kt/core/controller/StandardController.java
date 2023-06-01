@@ -32,10 +32,14 @@ import java.util.Collection;
 
 public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>> implements Validates<DTO> {
-    protected final PROVIDER provider;
+    private final PROVIDER provider;
 
     protected StandardController(PROVIDER provider) {
         this.provider = provider;
+    }
+
+    public PROVIDER getProvider() {
+        return provider;
     }
 
     public abstract Collection<DTO> get();
@@ -43,10 +47,10 @@ public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepo
     public abstract DTO get(Integer id);
 
     public void deleteById(Integer id) {
-        provider.deleteById(id);
+        getProvider().deleteById(id);
     }
 
     public long count() {
-        return provider.count();
+        return getProvider().count();
     }
 }

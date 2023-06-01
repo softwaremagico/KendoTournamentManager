@@ -142,10 +142,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             final DrawResolution drawResolution = DrawResolution.getFromTag(extraProperty.getPropertyValue());
             final Group previousLastGroup = level > 1 ? groupProvider.getGroupsByLevel(tournament, level - 2).get(0) : null;
             switch (drawResolution) {
-                case BOTH_ELIMINATED:
-                    bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
-                    break;
-                case OLDEST_ELIMINATED:
+                case BOTH_ELIMINATED -> bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
+                case OLDEST_ELIMINATED -> {
                     if (previousLastGroup == null) {
                         bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
                     } else {
@@ -155,8 +153,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                         }
                         oldestEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), previousLastGroupTeams, tournament, lastGroup);
                     }
-                    break;
-                case NEWEST_ELIMINATED:
+                }
+                case NEWEST_ELIMINATED -> {
                     if (previousLastGroup == null) {
                         bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
                     } else {
@@ -166,7 +164,10 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                         }
                         newestEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), previousLastGroupTeams, tournament, lastGroup);
                     }
-                    break;
+                }
+                default -> {
+                    // Ignore.
+                }
             }
         }
         return teams;
