@@ -48,7 +48,7 @@ import java.util.Locale;
  * Creates a sheet with the teams ranking depending on the performance on the tournament.
  */
 public class TeamsScoreList extends ParentList {
-    private static final  float[] TABLE_WIDTH = {0.40f, 0.20f, 0.20f, 0.20f, 0.20f};
+    private static final float[] TABLE_WIDTH = {0.40f, 0.20f, 0.20f, 0.20f, 0.20f};
 
     private final TournamentDTO tournament;
     private final List<ScoreOfTeamDTO> teamTopTen;

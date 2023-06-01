@@ -2,7 +2,8 @@
   <div class="picture-engine">
     <div class="canvas">
       <div class="camera-frame">
-        <webcam (imageCapture)="pictureHandler($event)" (initError)="errorHandler($event)" [height]="512" [imageType]="imageType"
+        <webcam (imageCapture)="pictureHandler($event)" (initError)="errorHandler($event)" [height]="512"
+                [imageType]="imageType"
                 [trigger]="clickOnCamera" [videoOptions]="videoOptions" [width]="390"></webcam>
       </div>
       <div class="rectangle"></div>
@@ -18,25 +19,31 @@
   </div>
 
   <div class="button-container" mat-dialog-actions>
-    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)" color="picture"
+    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)"
+            color="picture"
             mat-flat-button
             mat-raised-button type="button">
       <mat-icon>add_a_photo</mat-icon>
       {{'photo' | translate}}
     </button>
-    <button (click)="switchCamera()" *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)" mat-flat-button
+    <button (click)="switchCamera()"
+            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)"
+            mat-flat-button
             mat-raised-button
             type="button">
       <mat-icon>switch_camera</mat-icon>
       {{'switch' | translate}}
     </button>
-    <button (click)="fileInput.click()" *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.activities)" mat-flat-button mat-raised-button
+    <button (click)="fileInput.click()"
+            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.activities)"
+            mat-flat-button mat-raised-button
             type="button">
       <mat-icon>upload_file</mat-icon>
       {{'upload' | translate}}
       <input #fileInput (change)="handleFileInput($event)" accept=".jpg,.jpeg,.png" style="display:none;" type="file"/>
     </button>
-    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)" [disabled]="selectedPicture == undefined" color="primary"
+    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)"
+            [disabled]="selectedPicture == undefined" color="primary"
             mat-flat-button
             mat-raised-button type="button">
       <mat-icon>photo_album</mat-icon>

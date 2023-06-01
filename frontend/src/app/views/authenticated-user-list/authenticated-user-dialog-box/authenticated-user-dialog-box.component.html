@@ -2,15 +2,18 @@
 <div class="form-layout" mat-dialog-content>
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="username" matInput placeholder="{{'username' | translate}}"
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="username" matInput
+             placeholder="{{'username' | translate}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="name" matInput placeholder="{{'name' | translate}}"
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="name" matInput
+             placeholder="{{'name' | translate}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="lastname" matInput placeholder="{{'lastname' | translate}}"
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="lastname" matInput
+             placeholder="{{'lastname' | translate}}"
              required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
@@ -31,8 +34,10 @@
       </mat-icon>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
-      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" [type]="'password'" formControlName="repeatPassword"
-             matInput name="repeatPassword" pattern="{{registerForm.value.password}}" placeholder="{{'repeatPassword' | translate}}"
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" [type]="'password'"
+             formControlName="repeatPassword"
+             matInput name="repeatPassword" pattern="{{registerForm.value.password}}"
+             placeholder="{{'repeatPassword' | translate}}"
              required>
       <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
     </mat-form-field>
@@ -41,7 +46,8 @@
     </ng-template>
 
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)" [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" color="primary"
+      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)"
+              [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
         <mat-icon>done</mat-icon>
