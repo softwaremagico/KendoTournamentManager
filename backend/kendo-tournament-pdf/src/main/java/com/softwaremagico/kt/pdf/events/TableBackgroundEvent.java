@@ -37,8 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class TableBackgroundEvent implements PdfPTableEvent {
-    private Image backgroundImage;
     private static Image defaultBackgroundImage;
+    private Image backgroundImage;
     private Document document;
 
     public TableBackgroundEvent() {
@@ -54,7 +54,7 @@ public class TableBackgroundEvent implements PdfPTableEvent {
     private Image getBackgroundImage() {
         if (backgroundImage == null) {
             if (defaultBackgroundImage == null) {
-                try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/accreditation-background.png");) {
+                try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/accreditation-background.png")) {
                     if (inputStream != null) {
                         defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
                         defaultBackgroundImage.setAlignment(Image.UNDERLYING);

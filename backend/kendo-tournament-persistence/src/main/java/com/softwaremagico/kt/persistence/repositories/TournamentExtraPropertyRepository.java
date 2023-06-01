@@ -27,10 +27,10 @@ package com.softwaremagico.kt.persistence.repositories;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -39,10 +39,10 @@ public interface TournamentExtraPropertyRepository extends JpaRepository<Tournam
 
     List<TournamentExtraProperty> findByTournament(Tournament tournament);
 
-    TournamentExtraProperty findByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
+    TournamentExtraProperty findByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
 
     int deleteByTournament(Tournament tournament);
 
-    int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
+    int deleteByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
 
 }

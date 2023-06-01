@@ -24,7 +24,11 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.TournamentFightStatisticsConverter;

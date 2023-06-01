@@ -37,10 +37,10 @@ import java.util.Set;
 
 public class Level {
     private final int levelIndex;
+    private final Level previousLevel;
     private Tournament tournament;
     private List<Group> tournamentGroups;
     private Level nextLevel;
-    private final Level previousLevel;
 
     protected Level(Tournament tournament, int levelIndex, Level nextLevel, Level previousLevel) {
         this.tournament = tournament;
@@ -168,20 +168,20 @@ public class Level {
         return tournament;
     }
 
-    public Level getNextLevel() {
-        return nextLevel;
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
-    public Level getPreviousLevel() {
-        return previousLevel;
+    public Level getNextLevel() {
+        return nextLevel;
     }
 
     public void setNextLevel(Level nextLevel) {
         this.nextLevel = nextLevel;
     }
 
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
+    public Level getPreviousLevel() {
+        return previousLevel;
     }
 
     public void update() {

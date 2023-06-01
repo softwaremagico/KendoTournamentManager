@@ -42,27 +42,27 @@ public class KeyProperty {
         setDatabasePrivateKey(databasePrivateKey);
     }
 
-    private static synchronized void setDatabaseEncryptionKey(String databaseEncryptionKey) {
-        KeyProperty.databaseEncryptionKey = databaseEncryptionKey;
-    }
-
-    private static synchronized void setDatabasePublicKey(String databasePublicKey) {
-        KeyProperty.databasePublicKey = databasePublicKey;
-    }
-
-    private static synchronized void setDatabasePrivateKey(String databasePrivateKey) {
-        KeyProperty.databasePrivateKey = databasePrivateKey;
-    }
-
     public static synchronized String getDatabaseEncryptionKey() {
         return databaseEncryptionKey;
+    }
+
+    private static synchronized void setDatabaseEncryptionKey(String databaseEncryptionKey) {
+        KeyProperty.databaseEncryptionKey = databaseEncryptionKey;
     }
 
     public static synchronized String getDatabasePublicKey() {
         return databasePublicKey;
     }
 
+    private static synchronized void setDatabasePublicKey(String databasePublicKey) {
+        KeyProperty.databasePublicKey = databasePublicKey;
+    }
+
     public static synchronized String getDatabasePrivateKey() {
         return databasePrivateKey;
+    }
+
+    private static synchronized void setDatabasePrivateKey(String databasePrivateKey) {
+        KeyProperty.databasePrivateKey = databasePrivateKey;
     }
 }
