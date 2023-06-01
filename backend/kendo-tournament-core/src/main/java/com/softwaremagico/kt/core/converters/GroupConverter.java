@@ -25,7 +25,11 @@ package com.softwaremagico.kt.core.converters;
  */
 
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.converters.models.*;
+import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
+import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.persistence.entities.Group;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

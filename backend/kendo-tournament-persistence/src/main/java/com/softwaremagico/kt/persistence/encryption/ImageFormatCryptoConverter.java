@@ -26,9 +26,8 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class ImageFormatCryptoConverter extends AbstractCryptoConverter<ImageFormat> implements AttributeConverter<ImageFormat, String> {

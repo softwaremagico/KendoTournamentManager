@@ -24,10 +24,15 @@ package com.softwaremagico.kt.pdf.accreditations;
  * #L%
  */
 
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -41,7 +46,7 @@ import com.softwaremagico.kt.pdf.events.TransparentBackgroundCell;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
-import java.awt.*;
+import java.awt.Color;
 import java.sql.Time;
 import java.util.Date;
 import java.util.Locale;

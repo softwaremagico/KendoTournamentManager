@@ -24,7 +24,11 @@ package com.softwaremagico.kt.pdf;
  * #L%
  */
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.logger.PdfExporterLog;

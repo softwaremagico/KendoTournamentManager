@@ -25,7 +25,12 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -176,7 +181,7 @@ public class FightsList extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.40f, 0.10f, 0.40f};
+        return new float[] {0.40f, 0.10f, 0.40f};
     }
 
     @Override

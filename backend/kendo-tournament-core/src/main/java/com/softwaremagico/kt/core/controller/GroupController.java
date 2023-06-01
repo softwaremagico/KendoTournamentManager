@@ -24,24 +24,36 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.*;
-import com.softwaremagico.kt.core.converters.*;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.DuelConverter;
+import com.softwaremagico.kt.core.converters.FightConverter;
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.TeamConverter;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentInvalidException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
