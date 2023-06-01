@@ -55,14 +55,12 @@ public class TournamentImageController extends BasicInsertableController<Tournam
     private static final String DEFAULT_DIPLOMA_IMAGE = "/images/default-diploma.png";
     private static final String DEFAULT_PHOTO_IMAGE = "/images/default-photo.png";
     private static final String DEFAULT_ACCREDITATION_IMAGE = "/images/accreditation-background.png";
-
-    private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
-
     private static byte[] defaultAccreditation;
     private static byte[] defaultBanner;
     private static byte[] defaultDiploma;
     private static byte[] defaultPhoto;
+    private final TournamentConverter tournamentConverter;
+    private final TournamentProvider tournamentProvider;
 
 
     @Autowired
@@ -71,45 +69,6 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
-    }
-
-    @Override
-    protected TournamentImageConverterRequest createConverterRequest(TournamentImage participantImage) {
-        return new TournamentImageConverterRequest(participantImage);
-    }
-
-    public int deleteByTournamentId(Integer tournamentId, TournamentImageType type) {
-        final Tournament tournament = tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No tournaments found with id '" + tournamentId + "'."));
-        return provider.delete(tournament, type);
-    }
-
-    public TournamentImageDTO get(Integer tournamentId, TournamentImageType type) {
-        final Tournament tournament = tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        return get(tournamentConverter.convert(new TournamentConverterRequest(tournament)), type);
-    }
-
-    private TournamentImageDTO getDefaultImage(TournamentDTO tournamentDTO, TournamentImageType type) {
-        final TournamentImageDTO tournamentImageDTO = new TournamentImageDTO();
-        tournamentImageDTO.setTournament(tournamentDTO);
-        tournamentImageDTO.setImageType(type);
-        tournamentImageDTO.setImageCompression(ImageCompression.PNG);
-        switch (type) {
-            case ACCREDITATION:
-                tournamentImageDTO.setData(getDefaultAccreditation());
-                break;
-            case BANNER:
-                tournamentImageDTO.setData(getDefaultBanner());
-                break;
-            case DIPLOMA:
-                tournamentImageDTO.setData(getDefaultDiploma());
-                break;
-            case PHOTO:
-                tournamentImageDTO.setData(getDefaultPhoto());
-                break;
-        }
-        return tournamentImageDTO;
     }
 
     private static byte[] getDefaultBanner() {
@@ -162,6 +121,45 @@ public class TournamentImageController extends BasicInsertableController<Tournam
             }
         }
         return defaultPhoto;
+    }
+
+    @Override
+    protected TournamentImageConverterRequest createConverterRequest(TournamentImage participantImage) {
+        return new TournamentImageConverterRequest(participantImage);
+    }
+
+    public int deleteByTournamentId(Integer tournamentId, TournamentImageType type) {
+        final Tournament tournament = tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No tournaments found with id '" + tournamentId + "'."));
+        return provider.delete(tournament, type);
+    }
+
+    public TournamentImageDTO get(Integer tournamentId, TournamentImageType type) {
+        final Tournament tournament = tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
+        return get(tournamentConverter.convert(new TournamentConverterRequest(tournament)), type);
+    }
+
+    private TournamentImageDTO getDefaultImage(TournamentDTO tournamentDTO, TournamentImageType type) {
+        final TournamentImageDTO tournamentImageDTO = new TournamentImageDTO();
+        tournamentImageDTO.setTournament(tournamentDTO);
+        tournamentImageDTO.setImageType(type);
+        tournamentImageDTO.setImageCompression(ImageCompression.PNG);
+        switch (type) {
+            case ACCREDITATION:
+                tournamentImageDTO.setData(getDefaultAccreditation());
+                break;
+            case BANNER:
+                tournamentImageDTO.setData(getDefaultBanner());
+                break;
+            case DIPLOMA:
+                tournamentImageDTO.setData(getDefaultDiploma());
+                break;
+            case PHOTO:
+                tournamentImageDTO.setData(getDefaultPhoto());
+                break;
+        }
+        return tournamentImageDTO;
     }
 
     public TournamentImageDTO get(TournamentDTO tournamentDTO, TournamentImageType type) {

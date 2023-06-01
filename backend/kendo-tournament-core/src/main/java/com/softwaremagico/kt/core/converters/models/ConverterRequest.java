@@ -30,6 +30,8 @@ import com.softwaremagico.kt.logger.ExceptionType;
 import java.util.Optional;
 
 public class ConverterRequest<T> {
+    protected T entity;
+
     public ConverterRequest(T entity) {
         this.entity = entity;
     }
@@ -37,8 +39,6 @@ public class ConverterRequest<T> {
     public ConverterRequest(Optional<T> entity) {
         entity.ifPresent(ent -> this.entity = ent);
     }
-
-    protected T entity;
 
     public boolean hasEntity() {
         return entity != null;

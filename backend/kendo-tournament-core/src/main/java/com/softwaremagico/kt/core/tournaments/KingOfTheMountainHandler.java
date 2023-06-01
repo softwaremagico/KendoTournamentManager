@@ -31,12 +31,24 @@ import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.managers.KingOfTheMountainFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.*;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -127,7 +139,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                         TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.BOTH_ELIMINATED.name()));
             }
 
-            final DrawResolution drawResolution = DrawResolution.getFromTag(extraProperty.getValue());
+            final DrawResolution drawResolution = DrawResolution.getFromTag(extraProperty.getPropertyValue());
             final Group previousLastGroup = level > 1 ? groupProvider.getGroupsByLevel(tournament, level - 2).get(0) : null;
             switch (drawResolution) {
                 case BOTH_ELIMINATED:
@@ -204,7 +216,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                     TournamentExtraPropertyKey.KING_INDEX, "1"));
         }
         try {
-            kingIndex.addAndGet(Integer.parseInt(extraProperty.getValue()));
+            kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));
         } catch (NumberFormatException | NullPointerException e) {
             kingIndex.set(1);
         }
@@ -224,7 +236,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
         // Get next team and save index.
         final Team nextTeam = teams.get(kingIndex.get() % teams.size());
-        extraProperty.setValue(kingIndex.get() + "");
+        extraProperty.setPropertyValue(String.valueOf(kingIndex.get()));
         tournamentExtraPropertyProvider.save(extraProperty);
         return nextTeam;
     }

@@ -26,8 +26,8 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
-import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,11 +46,15 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
     }
 
     public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return repository.findByTournamentAndProperty(tournament, key);
+        return repository.findByTournamentAndPropertyKey(tournament, key);
+    }
+
+    public int delete(Tournament tournament) {
+        return repository.deleteByTournament(tournament);
     }
 
     public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return repository.deleteByTournamentAndProperty(tournament, key);
+        return repository.deleteByTournamentAndPropertyKey(tournament, key);
     }
 
     @Override

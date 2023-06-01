@@ -24,7 +24,7 @@ package com.softwaremagico.kt.pdf;
  * #L%
  */
 
-import java.awt.*;
+import java.awt.Color;
 
 public class BaseColor {
     public static final Color BLACK = new Color(0, 0, 0);

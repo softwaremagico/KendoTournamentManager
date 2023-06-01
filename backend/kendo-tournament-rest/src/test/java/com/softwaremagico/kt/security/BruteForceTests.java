@@ -99,7 +99,8 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginBlocked() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
+        AuthenticatedUser authenticatedUser =
+                authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -146,7 +147,8 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginCountReset() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
+        AuthenticatedUser authenticatedUser =
+                authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());

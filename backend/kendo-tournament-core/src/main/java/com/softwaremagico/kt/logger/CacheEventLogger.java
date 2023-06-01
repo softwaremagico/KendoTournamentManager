@@ -2,7 +2,7 @@ package com.softwaremagico.kt.logger;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Rest)
+ * Kendo Tournament Manager (Logger)
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
@@ -24,15 +24,17 @@ package com.softwaremagico.kt.logger;
  * #L%
  */
 
+import org.ehcache.event.CacheEvent;
+import org.ehcache.event.CacheEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Defines basic log behavior. Uses log4j.properties.
  */
-public class RestServerLogger extends BasicLogger {
+public class CacheEventLogger extends BasicLogger implements CacheEventListener<Object, Object> {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestServerLogger.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheEventLogger.class);
 
     /**
      * Events that have business meaning (i.e. creating category, deleting form,
@@ -44,6 +46,10 @@ public class RestServerLogger extends BasicLogger {
      */
     public static void info(String className, String messageTemplate, Object... arguments) {
         info(logger, className, messageTemplate, arguments);
+    }
+
+    public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
+        info(clazz.getName(), messageTemplate, arguments);
     }
 
     /**
@@ -58,6 +64,10 @@ public class RestServerLogger extends BasicLogger {
         warning(logger, className, messageTemplate, arguments);
     }
 
+    public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
+        warning(clazz.getName(), messageTemplate, arguments);
+    }
+
     /**
      * For following the trace of the execution. I.e. Knowing if the application
      * access to a method, opening database connection, etc.
@@ -68,6 +78,10 @@ public class RestServerLogger extends BasicLogger {
      */
     public static void debug(String className, String messageTemplate, Object... arguments) {
         debug(logger, className, messageTemplate, arguments);
+    }
+
+    public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
+        debug(clazz.getName(), messageTemplate, arguments);
     }
 
     /**
@@ -103,5 +117,11 @@ public class RestServerLogger extends BasicLogger {
 
     public static boolean isDebugEnabled() {
         return logger.isDebugEnabled();
+    }
+
+    @Override
+    public void onEvent(CacheEvent<?, ?> cacheEvent) {
+        debug(this.getClass(), "Cache updated for '{}' value changed from '{}' to '{}'",
+                cacheEvent.getKey(), cacheEvent.getOldValue(), cacheEvent.getNewValue());
     }
 }

@@ -28,12 +28,12 @@ import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.Score;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -78,7 +78,7 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
             "(s1 IN (:scores) OR  s2 IN (:scores))")
     Long countScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
 
-//    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1 + " +
+    //    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1 + " +
 //            "SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s2")
     @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1")
     Long countLeftScoreFromCompetitor(@Param("competitor") Participant competitor);
