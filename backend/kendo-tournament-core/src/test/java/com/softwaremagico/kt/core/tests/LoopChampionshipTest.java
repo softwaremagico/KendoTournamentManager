@@ -33,10 +33,26 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -143,7 +159,8 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentProvider.count(), 0);
         Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LOOP, null);
         tournament = tournamentProvider.save(newTournament);
-        TournamentExtraProperty tournamentExtraProperty = new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, MAXIMIZE_FIGHTS + "");
+        TournamentExtraProperty tournamentExtraProperty =
+                new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, MAXIMIZE_FIGHTS + "");
         tournamentExtraPropertyProvider.save(tournamentExtraProperty);
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
@@ -223,9 +240,10 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"createFights"})
     public void checkStatistics() {
         final Group group = groupProvider.getGroups(tournament).get(0);
-        TournamentFightStatisticsDTO tournamentFightStatisticsDTO = fightStatisticsController.estimate(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
-                MEMBERS,
-                teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
+        TournamentFightStatisticsDTO tournamentFightStatisticsDTO =
+                fightStatisticsController.estimate(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
+                        MEMBERS,
+                        teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
         Assert.assertEquals(tournamentFightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
         Assert.assertEquals(tournamentFightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
     }

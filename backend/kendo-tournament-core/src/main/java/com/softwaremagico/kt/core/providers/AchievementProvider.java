@@ -49,22 +49,22 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
     }
 
     public Achievement add(Participant participant, Tournament tournament, AchievementType achievementType) {
-        return repository.save(new Achievement(participant, tournament, achievementType));
+        return getRepository().save(new Achievement(participant, tournament, achievementType));
     }
 
     public List<Achievement> get(Participant participant) {
-        return repository.findByParticipant(participant);
+        return getRepository().findByParticipant(participant);
     }
 
     public List<Achievement> get(Tournament tournament, AchievementType achievementType) {
-        return repository.findByTournamentAndAchievementType(tournament, achievementType);
+        return getRepository().findByTournamentAndAchievementType(tournament, achievementType);
     }
 
     public List<Achievement> get(Tournament tournament, AchievementType achievementType, Collection<AchievementGrade> achievementGrades) {
         if (achievementGrades == null || achievementGrades.isEmpty()) {
             return new ArrayList<>();
         }
-        return repository.findByTournamentAndAchievementTypeAndAchievementGradeIn(tournament, achievementType, achievementGrades);
+        return getRepository().findByTournamentAndAchievementTypeAndAchievementGradeIn(tournament, achievementType, achievementGrades);
     }
 
     /**
@@ -77,12 +77,12 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
      * @return a list of achievements.
      */
     public List<Achievement> getAfter(Tournament tournament, AchievementType achievementType, AchievementGrade grade, LocalDateTime after) {
-        return repository.findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(tournament, achievementType,
+        return getRepository().findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(tournament, achievementType,
                 grade != null ? grade.getGreaterThanEquals() : Arrays.asList(AchievementGrade.values()), after);
     }
 
     public List<Achievement> get(AchievementType achievementType) {
-        return repository.findByAchievementType(achievementType);
+        return getRepository().findByAchievementType(achievementType);
     }
 
     public List<Achievement> get(AchievementType achievementType, AchievementGrade achievementGrade) {
@@ -90,18 +90,19 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
     }
 
     public List<Achievement> get(AchievementType achievementType, Collection<AchievementGrade> achievementGrades) {
-        return repository.findByAchievementTypeAndAchievementGradeIn(achievementType, achievementGrades);
+        return getRepository().findByAchievementTypeAndAchievementGradeIn(achievementType, achievementGrades);
     }
 
     public List<Achievement> get(Tournament tournament) {
-        return repository.findByTournament(tournament);
+        return getRepository().findByTournament(tournament);
     }
 
     public int delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 
     public long delete(AchievementType achievementType, AchievementGrade achievementGrade, Collection<Participant> participants, Tournament tournament) {
-        return repository.deleteByAchievementTypeAndAchievementGradeAndTournamentAndParticipantIn(achievementType, achievementGrade, tournament, participants);
+        return getRepository().deleteByAchievementTypeAndAchievementGradeAndTournamentAndParticipantIn(
+                achievementType, achievementGrade, tournament, participants);
     }
 }

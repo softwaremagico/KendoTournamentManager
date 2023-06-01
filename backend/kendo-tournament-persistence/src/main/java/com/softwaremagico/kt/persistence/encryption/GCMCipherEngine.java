@@ -58,12 +58,12 @@ public class GCMCipherEngine implements ICipherEngine {
     private static final String SECRET_KEY_FACTORY_ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int SALT_LENGTH_BYTE = 16;
-    private static final SecureRandom random = new SecureRandom();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private Cipher cipher;
 
     public static byte[] getRandomNonce(int numBytes) {
         final byte[] nonce = new byte[numBytes];
-        random.nextBytes(nonce);
+        SECURE_RANDOM.nextBytes(nonce);
         return nonce;
     }
 
@@ -103,8 +103,13 @@ public class GCMCipherEngine implements ICipherEngine {
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
             EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
             return encodedValue;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (BadPaddingException
+                 | IllegalBlockSizeException
+                 | InvalidAlgorithmParameterException
+                 | InvalidKeyException
+                 | NoSuchPaddingException
+                 | NoSuchAlgorithmException
+                 | InvalidKeySpecException e) {
             throw new InvalidEncryptionException(e);
         }
     }
@@ -135,8 +140,13 @@ public class GCMCipherEngine implements ICipherEngine {
             final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
             EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
             return decrypted;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (BadPaddingException
+                 | IllegalBlockSizeException
+                 | InvalidAlgorithmParameterException
+                 | InvalidKeyException
+                 | NoSuchPaddingException
+                 | NoSuchAlgorithmException
+                 | InvalidKeySpecException e) {
             throw new InvalidEncryptionException(e);
         }
     }

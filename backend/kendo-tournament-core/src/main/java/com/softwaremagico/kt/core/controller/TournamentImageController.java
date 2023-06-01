@@ -131,7 +131,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
     public int deleteByTournamentId(Integer tournamentId, TournamentImageType type) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No tournaments found with id '" + tournamentId + "'."));
-        return provider.delete(tournament, type);
+        return getProvider().delete(tournament, type);
     }
 
     public TournamentImageDTO get(Integer tournamentId, TournamentImageType type) {
@@ -146,25 +146,19 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         tournamentImageDTO.setImageType(type);
         tournamentImageDTO.setImageCompression(ImageCompression.PNG);
         switch (type) {
-            case ACCREDITATION:
-                tournamentImageDTO.setData(getDefaultAccreditation());
-                break;
-            case BANNER:
-                tournamentImageDTO.setData(getDefaultBanner());
-                break;
-            case DIPLOMA:
-                tournamentImageDTO.setData(getDefaultDiploma());
-                break;
-            case PHOTO:
-                tournamentImageDTO.setData(getDefaultPhoto());
-                break;
+            case ACCREDITATION -> tournamentImageDTO.setData(getDefaultAccreditation());
+            case BANNER -> tournamentImageDTO.setData(getDefaultBanner());
+            case DIPLOMA -> tournamentImageDTO.setData(getDefaultDiploma());
+            case PHOTO -> tournamentImageDTO.setData(getDefaultPhoto());
+            default -> {
+            }
         }
         return tournamentImageDTO;
     }
 
     public TournamentImageDTO get(TournamentDTO tournamentDTO, TournamentImageType type) {
         final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
-        final TournamentImageDTO result = convert(provider.get(tournament, type).orElse(null));
+        final TournamentImageDTO result = convert(getProvider().get(tournament, type).orElse(null));
         if (result != null) {
             return result;
         }
@@ -189,7 +183,7 @@ public class TournamentImageController extends BasicInsertableController<Tournam
             tournamentImage.setImageType(type);
             tournamentImage.setImageCompression(imageCompression);
             tournamentProvider.save(tournamentConverter.reverse(tournamentDTO));
-            return convert(provider.save(tournamentImage));
+            return convert(getProvider().save(tournamentImage));
         } catch (IOException e) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
@@ -200,12 +194,12 @@ public class TournamentImageController extends BasicInsertableController<Tournam
         tournamentImageDTO.setCreatedBy(username);
         final Tournament tournament = tournamentConverter.reverse(tournamentImageDTO.getTournament());
         tournamentProvider.save(tournament);
-        return convert(provider.save(reverse(tournamentImageDTO)));
+        return convert(getProvider().save(reverse(tournamentImageDTO)));
     }
 
     public int delete(TournamentDTO tournamentDTO, TournamentImageType type) {
         final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
         tournamentProvider.save(tournament);
-        return provider.delete(tournament, type);
+        return getProvider().delete(tournament, type);
     }
 }

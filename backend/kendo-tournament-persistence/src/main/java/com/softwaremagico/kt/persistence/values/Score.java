@@ -24,9 +24,7 @@ package com.softwaremagico.kt.persistence.values;
  * #L%
  */
 
-import java.awt.Image;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 public enum Score {
@@ -49,7 +47,6 @@ public enum Score {
 
     DRAW("Draw", 'X', 'X');
 
-    private static final HashMap<String, Image> existingScore = new HashMap<>();
     private final char abbreviation;
     private final char enhancedAbbreviation;
     private final String name;

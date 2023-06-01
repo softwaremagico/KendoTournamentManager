@@ -53,6 +53,25 @@ import java.util.Locale;
 
 public class ParticipantAccreditationCard extends PdfDocument {
     private static final int BORDER = 0;
+    private static final int NAME_LENGTH = 18;
+    private static final int LASTNAME_LENGTH = 18;
+    private static final float NAME_HEIGHT = 0.17f;
+    private static final float ID_HEIGHT = 0.20f;
+    private static final float ID_NUMBER_HEIGHT = 0.15f;
+    private static final float BANNER_HEIGHT = 0.20f;
+    private static final Color COMPETITOR_COLOR = new Color(35, 144, 239);
+    private static final Color REFEREE_COLOR = new Color(255, 102, 0);
+    private static final Color VOLUNTEER_COLOR = new Color(155, 0, 255);
+    private static final Color PRESS_COLOR = new Color(255, 0, 127);
+    private static final Color ORGANIZER_COLOR = new Color(0, 187, 127);
+    private static final Color DEFAULT_COLOR = new Color(167, 239, 190);
+    private static final int BANNER_PADDING_BOTTOM = 5;
+    private static final int BANNER_PADDING_LEFT = 20;
+
+    private static final int ROTATION = 90;
+    private static final int EXTRA_WIDTH = 30;
+
+
 
     private final MessageSource messageSource;
     private final Locale locale;
@@ -78,7 +97,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
     @Override
     protected void createContent(Document document, PdfWriter writer) throws DocumentException {
         final PdfPTable table = pageTable(document.getPageSize().getWidth(), document.getPageSize().getHeight() + 20);
-        table.setWidthPercentage(100);
+        table.setWidthPercentage(TOTAL_WIDTH);
         document.add(table);
     }
 
@@ -114,7 +133,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         final float[] widths2 = {0.90f, 0.10f};
         final PdfPTable table2 = new PdfPTable(widths2);
 
-        p = new Paragraph(NameUtils.getShortName(participant.getName(), 18), new Font(PdfTheme.getLineFont(),
+        p = new Paragraph(NameUtils.getShortName(participant.getName(), NAME_LENGTH), new Font(PdfTheme.getLineFont(),
                 PdfTheme.ACCREDITATION_NAME_FONT_SIZE, Font.BOLD));
         cell = new PdfPCell(p);
         cell.setBorderWidth(BORDER);
@@ -125,7 +144,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         table2.addCell(this.getEmptyCell(1));
 
-        p = new Paragraph(NameUtils.getShortLastname(participant, 10).toUpperCase(), new Font(PdfTheme.getLineFont(),
+        p = new Paragraph(NameUtils.getShortLastname(participant, LASTNAME_LENGTH).toUpperCase(), new Font(PdfTheme.getLineFont(),
                 PdfTheme.ACCREDITATION_LASTNAME_FONT_SIZE, Font.BOLD));
         cell = new PdfPCell(p);
         cell.setBorderWidth(BORDER);
@@ -173,8 +192,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
         final PdfPTable table2 = new PdfPTable(widths);
 
         table2.addCell(this.getEmptyCell());
-        p = new Paragraph(messageSource.getMessage("role.type." +
-                role.getRoleType().toString().toLowerCase(locale), null, locale),
+        p = new Paragraph(messageSource.getMessage("role.type."
+                + role.getRoleType().toString().toLowerCase(locale), null, locale),
                 new Font(PdfTheme.getLineFont(), PdfTheme.ACCREDITATION_ROLE_FONT_SIZE, Font.BOLD));
 
         cell = new PdfPCell(p);
@@ -187,37 +206,29 @@ public class ParticipantAccreditationCard extends PdfDocument {
 
         table2.addCell(getEmptyCell(1));
 
-        final String identification = messageSource.getMessage("role.type." +
-                role.getRoleType().toString().toLowerCase(locale) + ".abbreviation", null, locale)
+        final String identification = messageSource.getMessage("role.type."
+                + role.getRoleType().toString().toLowerCase(locale) + ".abbreviation", null, locale)
                 + (participant.getId() != null ? " - " + String.format("%05d", Math.abs(participant.getId())) : " - 00000");
         p = new Paragraph(identification, new Font(PdfTheme.getLineFont(), PdfTheme.ACCREDITATION_IDENTIFICATION_FONT_SIZE));
         cell = new PdfPCell(p);
         cell.setBorderWidth(BORDER + 2f);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.15f);
+        cell.setFixedHeight(height * ID_NUMBER_HEIGHT);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
         try {
             switch (role.getRoleType()) {
-                case COMPETITOR:
-                    cell.setBackgroundColor(new Color(35, 144, 239));
-                    break;
-                case REFEREE:
-                    cell.setBackgroundColor(new Color(255, 102, 0));
-                    break;
-                case VOLUNTEER:
-                    cell.setBackgroundColor(new Color(155, 0, 255));
-                    break;
-                case PRESS:
-                    cell.setBackgroundColor(new Color(255, 0, 127));
-                    break;
-                case ORGANIZER:
-                    cell.setBackgroundColor(new Color(0, 187, 127));
-                    break;
+                case COMPETITOR -> cell.setBackgroundColor(COMPETITOR_COLOR);
+                case REFEREE -> cell.setBackgroundColor(REFEREE_COLOR);
+                case VOLUNTEER -> cell.setBackgroundColor(VOLUNTEER_COLOR);
+                case PRESS -> cell.setBackgroundColor(PRESS_COLOR);
+                case ORGANIZER -> cell.setBackgroundColor(ORGANIZER_COLOR);
+                default -> {
+                }
             }
         } catch (NullPointerException npe) {
-            cell.setBackgroundColor(new Color(167, 239, 190));
+            cell.setBackgroundColor(DEFAULT_COLOR);
         }
         table2.addCell(cell);
 
@@ -249,8 +260,8 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell.setBorderWidth(BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
-        cell.setPaddingBottom(5);
-        cell.setPaddingLeft(20);
+        cell.setPaddingBottom(BANNER_PADDING_BOTTOM);
+        cell.setPaddingLeft(BANNER_PADDING_LEFT);
         table.addCell(cell);
 
         return table;
@@ -268,7 +279,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createNameTable());
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.17f);
+        cell.setFixedHeight(height * NAME_HEIGHT);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_TOP);
         mainTable.addCell(cell);
@@ -276,7 +287,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createIdentificationTable(height));
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height * ID_HEIGHT);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         mainTable.addCell(cell);
@@ -284,7 +295,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         cell = new PdfPCell(createBannerTable(width));
         cell.setBorderWidth(BORDER);
         cell.setColspan(1);
-        cell.setFixedHeight(height * 0.20f);
+        cell.setFixedHeight(height * BANNER_HEIGHT);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
         mainTable.addCell(cell);
@@ -297,7 +308,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         final float[] widths = {0.90f, 0.10f};
         final PdfPTable mainTable = new PdfPTable(widths);
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
-        mainTable.setTotalWidth(width + 30);
+        mainTable.setTotalWidth(width + EXTRA_WIDTH);
 
         cell = new PdfPCell(mainTable(width, height));
         cell.setBorderWidth(BORDER);
@@ -341,7 +352,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         }
         cell = new PdfPCell(p);
         cell.setBorderWidth(0);
-        cell.setRotation(90);
+        cell.setRotation(ROTATION);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
         table.addCell(cell);

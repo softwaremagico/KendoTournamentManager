@@ -24,9 +24,9 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-public class ShiaijoName {
+public final class ShiaijoName {
 
-    private static final char[] shiaijosNames = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+    private static final char[] SHIAIJOS_NAMES = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
             'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
     private ShiaijoName() {
@@ -34,8 +34,8 @@ public class ShiaijoName {
     }
 
     public static String getShiaijoName(int shiaijo) {
-        if (shiaijo < shiaijosNames.length) {
-            return String.valueOf(shiaijosNames[shiaijo]);
+        if (shiaijo < SHIAIJOS_NAMES.length) {
+            return String.valueOf(SHIAIJOS_NAMES[shiaijo]);
         } else {
             return String.valueOf(shiaijo + 1);
         }

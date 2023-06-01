@@ -37,11 +37,12 @@ import java.awt.Color;
  * Event for creating a transparent cell.
  */
 public class TransparentBackgroundCell implements PdfPCellEvent {
+    private static final float OPACITY = 0.6f;
 
-    public final PdfGState documentGs = new PdfGState();
+    private final PdfGState documentGs = new PdfGState();
 
     public TransparentBackgroundCell() {
-        documentGs.setFillOpacity(0.6f);
+        documentGs.setFillOpacity(OPACITY);
         documentGs.setStrokeOpacity(1f);
     }
 

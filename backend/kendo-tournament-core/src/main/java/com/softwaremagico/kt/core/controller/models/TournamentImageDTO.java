@@ -76,12 +76,9 @@ public class TournamentImageDTO extends ElementDTO {
         if (data == null) {
             return null;
         }
-        switch (imageCompression) {
-            case JPG:
-                return IMAGE_JPG_BASE_64 + Base64.getEncoder().encodeToString(data);
-            case PNG:
-                return IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
-        }
-        return null;
+        return switch (imageCompression) {
+            case JPG -> IMAGE_JPG_BASE_64 + Base64.getEncoder().encodeToString(data);
+            case PNG -> IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
+        };
     }
 }
