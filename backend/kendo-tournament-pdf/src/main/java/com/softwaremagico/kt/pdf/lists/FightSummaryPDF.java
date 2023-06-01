@@ -60,6 +60,8 @@ import java.util.stream.Collectors;
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
  */
 public class FightSummaryPDF extends ParentList {
+    private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
+    private static final int DEFAULT_CELL_HEIGHT = 50;
     private static final int FIGHT_BORDER = 1;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -88,9 +90,11 @@ public class FightSummaryPDF extends ParentList {
 
     protected String getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
         if (leftTeam) {
-            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? String.valueOf(Score.FAULT.getAbbreviation()) : String.valueOf(Score.EMPTY.getAbbreviation());
+            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? String.valueOf(Score.FAULT.getAbbreviation())
+                    : String.valueOf(Score.EMPTY.getAbbreviation());
         } else {
-            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? String.valueOf(Score.FAULT.getAbbreviation()) : String.valueOf(Score.EMPTY.getAbbreviation());
+            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? String.valueOf(Score.FAULT.getAbbreviation())
+                    : String.valueOf(Score.EMPTY.getAbbreviation());
         }
     }
 
@@ -110,7 +114,7 @@ public class FightSummaryPDF extends ParentList {
         final PdfPTable table = new PdfPTable(getTableWidths());
 
         if (!first) {
-            table.addCell(getEmptyRow(50));
+            table.addCell(getEmptyRow(DEFAULT_CELL_HEIGHT));
         }
 
         table.addCell(getHeader3(fightDTO.getTeam1().getName() + " - " + fightDTO.getTeam2().getName(), 0));
@@ -148,7 +152,7 @@ public class FightSummaryPDF extends ParentList {
             }
             table.addCell(getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT));
         }
-        table.addCell(getEmptyRow(50));
+        table.addCell(getEmptyRow(DEFAULT_CELL_HEIGHT));
 
         return table;
     }
@@ -210,7 +214,7 @@ public class FightSummaryPDF extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[] {0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
+        return TABLE_WIDTH;
     }
 
     @Override
@@ -218,7 +222,7 @@ public class FightSummaryPDF extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override

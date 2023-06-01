@@ -24,7 +24,11 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-public class StringUtils {
+public final class StringUtils {
+
+    private StringUtils() {
+
+    }
 
     public static String setCase(String value) {
         final StringBuilder caseString = new StringBuilder();

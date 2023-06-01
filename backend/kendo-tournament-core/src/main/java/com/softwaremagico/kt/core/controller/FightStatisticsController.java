@@ -71,15 +71,15 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
      * @return some estimations.
      */
     public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO) {
-        return convert(provider.estimate(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().estimate(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentFightStatisticsDTO estimateByTeams(TournamentDTO tournamentDTO) {
-        return convert(provider.estimateByTeams(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().estimateByTeams(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentFightStatisticsDTO estimateByMembers(TournamentDTO tournamentDTO) {
-        return convert(provider.estimateByMembers(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().estimateByMembers(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
@@ -107,11 +107,11 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
     }
 
     private TournamentFightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
-        return convert(provider.estimateLeagueStatistics(teamSize, teamConverter.reverseAll(teams)));
+        return convert(getProvider().estimateLeagueStatistics(teamSize, teamConverter.reverseAll(teams)));
     }
 
     private TournamentFightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
-        return convert(provider.estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO), teamSize, teamConverter.reverseAll(teams)));
+        return convert(getProvider().estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO), teamSize, teamConverter.reverseAll(teams)));
     }
 
     private int getDuels(int fightByTeam, int teamSize, Collection<TeamDTO> teams) {

@@ -96,8 +96,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
-        final TournamentDTO tournamentDTO = convert(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1,
-                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE, username)));
+        final TournamentDTO tournamentDTO = convert(getProvider().save(new Tournament(name, shiaijos != null ? shiaijos : 1,
+                teamSize != null ? teamSize : TournamentProvider.DEFAULT_TEAM_SIZE, type != null ? type : TournamentType.LEAGUE, username)));
         //Add default group:
         final Group group = new Group();
         group.setCreatedBy(username);
@@ -118,10 +118,10 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         duelProvider.delete(tournament);
         teamProvider.delete(tournament);
         roleProvider.delete(tournament);
-        provider.delete(tournament);
+        getProvider().delete(tournament);
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
-        return convertAll(provider.getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
+        return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
     }
 }

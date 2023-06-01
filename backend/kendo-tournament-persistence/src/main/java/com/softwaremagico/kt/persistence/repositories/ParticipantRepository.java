@@ -50,18 +50,22 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     @Query("SELECT r.participant FROM Role r WHERE r.tournament = :tournament and r.roleType = :roleType")
     List<Participant> findByTournamentAndRoleType(@Param("tournament") Tournament tournament, @Param("roleType") RoleType roleType);
 
-    @Query("SELECT r.participant FROM Role r WHERE r.participant IN " +
-            "(SELECT rl.participant FROM Role rl WHERE rl.tournament = :tournament) " +
-            "GROUP BY r.participant " +
-            "HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes")
+    @Query("""
+            SELECT r.participant FROM Role r WHERE r.participant IN
+            (SELECT rl.participant FROM Role rl WHERE rl.tournament = :tournament)
+            GROUP BY r.participant
+            HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes
+            """)
     List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournament") Tournament tournament, @Param("differentRoleTypes") long differentRoleTypes);
 
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);
 
-    @Query("SELECT r.participant FROM Role r WHERE r.tournament = :tournament AND  r.roleType = :roleType " +
-            "AND NOT EXISTS " +
-            "(SELECT r2.participant FROM Role r2 WHERE r.participant = r2.participant " +
-            "AND r.roleType = r2.roleType AND r2.tournament.createdAt < r.tournament.createdAt)")
+    @Query("""
+            SELECT r.participant FROM Role r WHERE r.tournament = :tournament AND  r.roleType = :roleType
+            AND NOT EXISTS
+            (SELECT r2.participant FROM Role r2 WHERE r.participant = r2.participant
+            AND r.roleType = r2.roleType AND r2.tournament.createdAt < r.tournament.createdAt)
+            """)
     List<Participant> findParticipantsWithFirstRoleAs(@Param("tournament") Tournament tournament, @Param("roleType") RoleType roleType);
 }

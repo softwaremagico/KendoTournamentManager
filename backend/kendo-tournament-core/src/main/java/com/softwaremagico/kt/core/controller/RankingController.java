@@ -69,6 +69,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class RankingController {
+    private static final int CACHE_EXPIRATION_TIME = 10 * 60 * 1000;
 
     private final GroupProvider groupProvider;
 
@@ -268,7 +269,7 @@ public class RankingController {
     }
 
     @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
-    @Scheduled(fixedDelay = 60 * 10 * 1000)
+    @Scheduled(fixedDelay = CACHE_EXPIRATION_TIME)
     public void reportCacheEvict() {
         //Only for handling Spring cache.
     }

@@ -43,7 +43,8 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
-        TestLogging.errorMessage(this.getClass().getName(), "### Test failed '" + result.getMethod().getMethodName() + "' from '" + result.getTestClass().getName() + "'.");
+        TestLogging.errorMessage(this.getClass().getName(),
+                "### Test failed '" + result.getMethod().getMethodName() + "' from '" + result.getTestClass().getName() + "'.");
     }
 
     @Override

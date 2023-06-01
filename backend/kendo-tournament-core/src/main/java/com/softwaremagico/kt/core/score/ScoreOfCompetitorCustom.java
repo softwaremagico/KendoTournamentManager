@@ -34,20 +34,20 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
 
     @Override
     public int compare(ScoreOfCompetitor scoreOfCompetitor1, ScoreOfCompetitor scoreOfCompetitor2) {
-        if (!scoreOfCompetitor1.fights.isEmpty()) {
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+        if (!scoreOfCompetitor1.getFights().isEmpty()) {
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory()
                     + scoreOfCompetitor1.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return -1;
             }
 
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory()
                     + scoreOfCompetitor1.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return 1;
             }
 

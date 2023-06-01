@@ -93,7 +93,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     }
 
     public List<FightDTO> get(TournamentDTO tournamentDTO) {
-        return convertAll(provider.getFights(tournamentConverter.reverse(tournamentDTO)));
+        return convertAll(getProvider().getFights(tournamentConverter.reverse(tournamentDTO)));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final Group group = groupProvider.getGroup(fight);
         group.getFights().remove(fight);
         groupProvider.save(group);
-        provider.delete(fight);
+        getProvider().delete(fight);
     }
 
     public void delete(TournamentDTO tournamentDTO) {
@@ -110,7 +110,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             group.setFights(new ArrayList<>());
             groupProvider.save(group);
         });
-        provider.delete(tournamentConverter.reverse(tournamentDTO));
+        getProvider().delete(tournamentConverter.reverse(tournamentDTO));
     }
 
     @Override
@@ -120,7 +120,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             group.getFights().removeAll(fights);
             groupProvider.save(group);
         });
-        provider.delete(fights);
+        getProvider().delete(fights);
     }
 
     public FightDTO generateDuels(FightDTO fightDTO, String createdBy) {
@@ -141,19 +141,19 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     }
 
     public boolean areOver(TournamentDTO tournament) {
-        return provider.areOver(tournamentConverter.reverse(tournament));
+        return getProvider().areOver(tournamentConverter.reverse(tournament));
     }
 
     public long count(TournamentDTO tournament) {
-        return provider.count(tournamentConverter.reverse(tournament));
+        return getProvider().count(tournamentConverter.reverse(tournament));
     }
 
     public FightDTO getCurrent(TournamentDTO tournament) {
-        return convert(provider.getCurrent(tournamentConverter.reverse(tournament)));
+        return convert(getProvider().getCurrent(tournamentConverter.reverse(tournament)));
     }
 
     public FightDTO getCurrent(Integer tournamentId) {
-        return convert(provider.getCurrent((tournamentProvider.get(tournamentId)
+        return convert(getProvider().getCurrent((tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)))));
     }
@@ -164,7 +164,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = provider.saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
+            final List<Fight> createdFights = getProvider().saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
             tournamentProvider.markAsFinished(tournament, false);
             return convertAll(createdFights);
         }
@@ -177,7 +177,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = provider.saveAll(selectedManager.createNextFights(tournament, createdBy));
+            final List<Fight> createdFights = getProvider().saveAll(selectedManager.createNextFights(tournament, createdBy));
             tournamentProvider.markAsFinished(tournament, false);
             return convertAll(createdFights);
         }
@@ -203,6 +203,8 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                 return kingOfTheMountainHandler;
             case LEAGUE:
                 return simpleLeagueHandler;
+            default:
+                break;
         }
         return null;
     }

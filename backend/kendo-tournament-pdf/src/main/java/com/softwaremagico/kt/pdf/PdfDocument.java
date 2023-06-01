@@ -42,6 +42,7 @@ public abstract class PdfDocument {
     private final int leftMargin = 30;
     private final int topMargin = 30;
     private final int bottomMargin = 30;
+    protected static final int TOTAL_WIDTH = 100;
 
     protected Document addMetaData(Document document) {
         document.addTitle("List Report");
@@ -92,7 +93,7 @@ public abstract class PdfDocument {
         }
 
         // DIN A6 105 x 148 mm
-        try (final Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin)) {
+        try (Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin)) {
 
             try {
                 final PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));

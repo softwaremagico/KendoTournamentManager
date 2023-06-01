@@ -51,6 +51,7 @@ import java.util.Map;
 
 public class RoleList extends ParentList {
 
+    private static final float[] TABLE_WIDTH = {0.60f, 0.30f};
     private final MessageSource messageSource;
     private final Locale locale;
     private final TournamentDTO tournament;
@@ -68,7 +69,7 @@ public class RoleList extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override
@@ -93,8 +94,8 @@ public class RoleList extends ParentList {
 
             for (final RoleDTO role : participantsByClub.getValue()) {
                 mainTable.addCell(getCell(NameUtils.getLastnameName(role.getParticipant()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-                mainTable.addCell(getCell(messageSource.getMessage("role.type." +
-                                role.getRoleType().toString().toLowerCase(locale), null, locale),
+                mainTable.addCell(getCell(messageSource.getMessage("role.type."
+                                + role.getRoleType().toString().toLowerCase(locale), null, locale),
                         PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
                 added = true;
             }
@@ -123,7 +124,7 @@ public class RoleList extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[] {0.60f, 0.30f};
+        return TABLE_WIDTH;
     }
 
     @Override

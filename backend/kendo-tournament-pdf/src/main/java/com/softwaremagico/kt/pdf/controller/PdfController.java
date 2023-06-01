@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class PdfController {
+    private static final float DEFAULT_NAME_POSITION = 0.5f;
     private final MessageSource messageSource;
 
     private final RoleController roleController;
@@ -213,12 +214,12 @@ public class PdfController {
         final TournamentExtraPropertyDTO tournamentExtraPropertyDTO = tournamentExtraPropertyController
                 .getByTournamentAndProperty(tournamentDTO.getId(), TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT);
         if (tournamentExtraPropertyDTO == null) {
-            return 0.5f;
+            return DEFAULT_NAME_POSITION;
         }
         try {
             return Float.parseFloat(tournamentExtraPropertyDTO.getValue());
         } catch (Exception e) {
-            return 0.5f;
+            return DEFAULT_NAME_POSITION;
         }
     }
 }

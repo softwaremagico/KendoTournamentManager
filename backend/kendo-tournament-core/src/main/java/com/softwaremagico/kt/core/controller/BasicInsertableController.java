@@ -44,22 +44,26 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>>
         extends StandardController<ENTITY, DTO, REPOSITORY, PROVIDER> {
 
-    protected final CONVERTER converter;
+    private final CONVERTER converter;
 
     protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
         super(provider);
         this.converter = converter;
     }
 
+    public CONVERTER getConverter() {
+        return converter;
+    }
+
     public DTO get(Integer id) {
-        final ENTITY entity = provider.get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
+        final ENTITY entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
                 ExceptionType.INFO));
         return convert(entity);
     }
 
     @Override
     public List<DTO> get() {
-        return convertAll(provider.getAll());
+        return convertAll(getProvider().getAll());
     }
 
     @Transactional
@@ -85,7 +89,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             dto.setCreatedBy(username);
         }
         validate(dto);
-        return convert(super.provider.save(reverse(dto)));
+        return convert(super.getProvider().save(reverse(dto)));
     }
 
     @Transactional
@@ -96,16 +100,16 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             }
         });
         validate(dtos);
-        return convertAll(super.provider.save(reverseAll(dtos)));
+        return convertAll(super.getProvider().save(reverseAll(dtos)));
     }
 
 
     public void delete(DTO entity) {
-        provider.delete(reverse(entity));
+        getProvider().delete(reverse(entity));
     }
 
     public void delete(Collection<DTO> entities) {
-        provider.delete(reverseAll(entities));
+        getProvider().delete(reverseAll(entities));
     }
 
     protected abstract CONVERTER_REQUEST createConverterRequest(ENTITY entity);

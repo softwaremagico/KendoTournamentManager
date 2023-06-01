@@ -34,7 +34,7 @@ import java.util.Objects;
 public class ScoreOfCompetitorDTO {
 
     @JsonIgnore
-    protected List<FightDTO> fights;
+    private List<FightDTO> fights;
     private ParticipantDTO competitor;
     @JsonIgnore
     private List<DuelDTO> unties;

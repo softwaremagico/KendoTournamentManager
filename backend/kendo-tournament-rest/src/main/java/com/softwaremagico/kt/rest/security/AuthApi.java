@@ -68,7 +68,8 @@ import java.util.Set;
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class AuthApi {
-
+    private static final int MAX_WAITING_SECONDS = 10;
+    private static final long MILLIS = 1000L;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticatedUserController authenticatedUserController;
@@ -96,7 +97,7 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                Thread.sleep(random.nextInt(10) * 1000L);
+                Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
                 RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
                 throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
 
@@ -186,7 +187,7 @@ public class AuthApi {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
-        Thread.sleep(random.nextInt(10) * 1000L);
+        Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
             authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
         } catch (Exception e) {
@@ -202,7 +203,7 @@ public class AuthApi {
                                    @PathVariable("username") String username,
                                    @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
-        Thread.sleep(random.nextInt(10) * 1000L);
+        Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
             authenticatedUserController.updatePassword(username, request.getOldPassword(), request.getNewPassword());
         } catch (Exception e) {
