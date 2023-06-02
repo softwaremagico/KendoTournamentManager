@@ -34,6 +34,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
+/**
+ * Is automatically injected to the AuthenticationManager in WebSecurityConfig
+ */
 @Component
 public class KendoUserDetailsService implements UserDetailsService {
 
