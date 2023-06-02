@@ -48,7 +48,7 @@ public class SwaggerConfiguration {
     private static final String SWAGGER_README = SWAGGER_TITLE + " Documentation";
     private static final String SWAGGER_URL = "https://softwaremagico.github.io/KendoTournamentManager/";
     private static final String SWAGGER_DEFAULT_VERSION = "Dev";
-    private static final String[] PACKAGES_TO_SCAN = new String[]{"com.softwaremagico.kt"};
+    private static final String[] PACKAGES_TO_SCAN = new String[] {"com.softwaremagico.kt"};
 
     @Bean
     public GroupedOpenApi publicApi() {
@@ -64,8 +64,8 @@ public class SwaggerConfiguration {
         return new OpenAPI()
                 .info(new Info().title(SWAGGER_TITLE)
                         .description(SWAGGER_DESCRIPTION)
-                        .version(SwaggerConfiguration.class.getPackage().getImplementationVersion() != null ?
-                                SwaggerConfiguration.class.getPackage().getImplementationVersion() : SWAGGER_DEFAULT_VERSION)
+                        .version(SwaggerConfiguration.class.getPackage().getImplementationVersion() != null
+                                ? SwaggerConfiguration.class.getPackage().getImplementationVersion() : SWAGGER_DEFAULT_VERSION)
                         .license(new License().name("GNU General Public License v3").url("https://www.gnu.org/licenses/gpl-3.0.html")))
                 .externalDocs(new ExternalDocumentation()
                         .description(SWAGGER_README)

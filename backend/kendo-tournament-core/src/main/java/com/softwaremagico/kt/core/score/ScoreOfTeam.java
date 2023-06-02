@@ -66,6 +66,10 @@ public class ScoreOfTeam {
         return team;
     }
 
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     public Tournament getTournament() {
         if (team != null) {
             return team.getTournament();
@@ -143,80 +147,76 @@ public class ScoreOfTeam {
         return fights;
     }
 
-    public List<Duel> getUnties() {
-        return unties;
-    }
-
-    public Integer getWonFights() {
-        return wonFights;
-    }
-
-    public Integer getDrawFights() {
-        return drawFights;
-    }
-
-    public Integer getFightsDone() {
-        return fightsDone;
-    }
-
-    public Integer getWonDuels() {
-        return wonDuels;
-    }
-
-    public Integer getDrawDuels() {
-        return drawDuels;
-    }
-
-    public Integer getUntieDuels() {
-        return untieDuels;
-    }
-
-    public Integer getHits() {
-        return hits;
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
     public void setFights(List<Fight> fights) {
         this.fights = fights;
+    }
+
+    public List<Duel> getUnties() {
+        return unties;
     }
 
     public void setUnties(List<Duel> unties) {
         this.unties = unties;
     }
 
+    public Integer getWonFights() {
+        return wonFights;
+    }
+
     public void setWonFights(Integer wonFights) {
         this.wonFights = wonFights;
+    }
+
+    public Integer getDrawFights() {
+        return drawFights;
     }
 
     public void setDrawFights(Integer drawFights) {
         this.drawFights = drawFights;
     }
 
+    public Integer getFightsDone() {
+        return fightsDone;
+    }
+
     public void setFightsDone(Integer fightsDone) {
         this.fightsDone = fightsDone;
+    }
+
+    public Integer getWonDuels() {
+        return wonDuels;
     }
 
     public void setWonDuels(Integer wonDuels) {
         this.wonDuels = wonDuels;
     }
 
+    public Integer getDrawDuels() {
+        return drawDuels;
+    }
+
     public void setDrawDuels(Integer drawDuels) {
         this.drawDuels = drawDuels;
+    }
+
+    public Integer getUntieDuels() {
+        return untieDuels;
     }
 
     public void setUntieDuels(Integer untieDuels) {
         this.untieDuels = untieDuels;
     }
 
+    public Integer getHits() {
+        return hits;
+    }
+
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getLevel() {
+        return level;
     }
 
     public void setLevel(Integer level) {

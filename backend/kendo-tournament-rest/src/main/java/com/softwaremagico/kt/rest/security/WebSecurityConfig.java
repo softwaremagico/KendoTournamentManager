@@ -24,40 +24,32 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true,
-        prePostEnabled = true
-)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             // ***REMOVED***Swagger
             "/v3/api-docs/**", "/swagger-ui/**",
@@ -67,27 +59,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
             "/auth/public/**"
     };
 
-    private final AuthenticatedUserProvider authenticatedUserProvider;
     private final JwtTokenFilter jwtTokenFilter;
-
+    private final KendoUserDetailsService kendoUserDetailsService;
     @Value("${server.cors.domains:null}")
     private List<String> serverCorsDomains;
 
     @Autowired
-    public WebSecurityConfig(AuthenticatedUserProvider authenticatedUserProvider, JwtTokenFilter jwtTokenFilter) {
-        this.authenticatedUserProvider = authenticatedUserProvider;
+    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter, KendoUserDetailsService kendoUserDetailsService) {
         this.jwtTokenFilter = jwtTokenFilter;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> authenticatedUserProvider
-                .findByUsername(username)
-                .orElseThrow(
-                        () -> new UsernameNotFoundException(
-                                String.format("User '%s' not found!", username)
-                        )
-                )).passwordEncoder(passwordEncoder());
+        this.kendoUserDetailsService = kendoUserDetailsService;
     }
 
     @Bean
@@ -95,51 +75,44 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements W
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // Enable CORS and disable CSRF
-        // https://stackoverflow.com/questions/67258120/why-do-i-get-a-401-error-when-i-enable-csrf
-        http = http.cors().and().csrf().disable();
 
-        // Set session management to stateless
-        http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
-
-        // Set unauthorized requests exception handler
-        http = http.exceptionHandling().authenticationEntryPoint((request, response, ex) -> response.sendError(
-                HttpServletResponse.SC_UNAUTHORIZED,
-                ex.getMessage()
-        )).and();
-
-        http.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll();
-
-        //Block everything
-        http.authorizeRequests().anyRequest().authenticated();
-
-        // Add JWT token filter
-        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        //Will use the bean KendoUserDetailsService.
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // Used by spring security if CORS is enabled.
+
     @Bean
-    public CorsFilter corsFilter() {
-        final UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-        final CorsConfiguration config = new CorsConfiguration();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.cors(cors -> cors.configurationSource(generateCorsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(httpSecuritySessionManagementConfigurer ->
+                        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
+                        httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint((request, response, ex) -> response.sendError(
+                                HttpServletResponse.SC_UNAUTHORIZED,
+                                ex.getMessage()
+                        )))
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+
+    private CorsConfigurationSource generateCorsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
         if (serverCorsDomains == null || serverCorsDomains.contains("*")) {
-            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         } else {
-            config.setAllowedOrigins(serverCorsDomains);
-            config.setAllowCredentials(true);
+            configuration.setAllowedOrigins(serverCorsDomains);
+            configuration.setAllowCredentials(true);
         }
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
-
-    @Bean
-    public AuthenticationManager customAuthenticationManager() throws Exception {
-        return authenticationManager();
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

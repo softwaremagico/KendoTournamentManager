@@ -25,7 +25,12 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -45,6 +50,7 @@ import java.util.Locale;
  * Creates a sheet with the competitors ranking depending on the performance on the tournament.
  */
 public class CompetitorsScoreList extends ParentList {
+    private static final float[] TABLE_WIDTH = {0.50f, 0.20f, 0.20f, 0.20f};
     private final List<ScoreOfCompetitorDTO> competitorTopTen;
     private final TournamentDTO tournament;
     private final MessageSource messageSource;
@@ -95,9 +101,9 @@ public class CompetitorsScoreList extends ParentList {
             mainTable.addCell(getCell(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfCompetitor.getWonDuels() + (scoreOfCompetitor.getUntieDuels() > 0 ? "*" : "") + "/"
                     + scoreOfCompetitor.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfCompetitor.getHits() + (scoreOfCompetitor.getUntieHits() > 0 ? "*" : ""),
+            mainTable.addCell(getCell(scoreOfCompetitor.getHits() + (scoreOfCompetitor.getUntieHits() > 0 ? "*" : ""),
                     PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfCompetitor.getDuelsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell(String.valueOf(scoreOfCompetitor.getDuelsDone()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }
 
@@ -109,7 +115,7 @@ public class CompetitorsScoreList extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.50f, 0.20f, 0.20f, 0.20f};
+        return TABLE_WIDTH;
     }
 
     @Override
@@ -117,7 +123,7 @@ public class CompetitorsScoreList extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override

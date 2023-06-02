@@ -30,7 +30,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import java.beans.FeatureDescriptor;
 import java.util.stream.Stream;
 
-public class ConverterUtils {
+public final class ConverterUtils {
 
     private ConverterUtils() {
 
