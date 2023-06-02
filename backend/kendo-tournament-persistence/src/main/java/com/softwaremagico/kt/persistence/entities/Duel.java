@@ -29,12 +29,25 @@ import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,10 +171,6 @@ public class Duel extends Element {
         this.competitor2 = competitor2;
     }
 
-    public void setCompetitor1Score(List<Score> competitor1Score) {
-        this.competitor1Score = competitor1Score;
-    }
-
     public void addCompetitor1Score(Score score) {
         if (this.competitor1Score == null) {
             this.competitor1Score = new ArrayList<>();
@@ -171,6 +180,10 @@ public class Duel extends Element {
 
     public List<Score> getCompetitor1Score() {
         return competitor1Score;
+    }
+
+    public void setCompetitor1Score(List<Score> competitor1Score) {
+        this.competitor1Score = competitor1Score;
     }
 
     public List<Score> getCompetitor2Score() {

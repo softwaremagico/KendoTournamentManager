@@ -45,13 +45,13 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
     }
 
     public List<Fight> getFights(Tournament tournament, Integer level) {
-        final List<Fight> fights = repository.findByTournamentAndLevel(tournament, level);
+        final List<Fight> fights = getRepository().findByTournamentAndLevel(tournament, level);
         fights.forEach(f -> f.setTournament(tournament));
         return fights;
     }
 
     public List<Fight> getFights(Tournament tournament) {
-        final List<Fight> fights = repository.findByTournament(tournament);
+        final List<Fight> fights = getRepository().findByTournament(tournament);
         fights.forEach(f -> {
             f.setTournament(tournament);
             f.getTeam1().setTournament(tournament);
@@ -84,15 +84,15 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
     }
 
     public List<Fight> get(Collection<Participant> participants) {
-        return repository.findByParticipantIn(participants);
+        return getRepository().findByParticipantIn(participants);
     }
 
     public long delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 
     public long count(Tournament tournament) {
-        return repository.countByTournament(tournament);
+        return getRepository().countByTournament(tournament);
     }
 
     /**
@@ -102,11 +102,11 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
      * @return
      */
     public long countByTournamentAndFinished(Tournament tournament) {
-        return repository.countByTournamentAndFinishedNot(tournament, false);
+        return getRepository().countByTournamentAndFinishedNot(tournament, false);
     }
 
     public Integer getCurrentLevel(Tournament tournament) {
-        final Optional<Fight> fight = repository.findFirstByTournamentOrderByLevelDesc(tournament);
+        final Optional<Fight> fight = getRepository().findFirstByTournamentOrderByLevelDesc(tournament);
         if (fight.isPresent()) {
             return fight.get().getLevel();
         }

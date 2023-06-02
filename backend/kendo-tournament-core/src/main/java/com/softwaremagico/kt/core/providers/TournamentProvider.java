@@ -39,6 +39,7 @@ import java.util.List;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
+    public static final int DEFAULT_TEAM_SIZE = 3;
     private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
 
     @Autowired
@@ -48,14 +49,14 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
     public Tournament save(String name, Integer shiaijos, Integer teamSize, TournamentType type, String createdBy) {
-        return repository.save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : 3,
+        return getRepository().save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : DEFAULT_TEAM_SIZE,
                 type != null ? type : TournamentType.LEAGUE, createdBy));
     }
 
     @Override
     public void delete(Tournament tournament) {
         tournamentExtraPropertyRepository.deleteByTournament(tournament);
-        repository.delete(tournament);
+        getRepository().delete(tournament);
     }
 
     @Override
@@ -74,24 +75,24 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         }
         // Due to LocalDateTime encryption countByGreaterThan is not working very well.
         // final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
-        // return repository.findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
-        final List<Tournament> tournaments = repository.findAll();
+        // return getRepository().findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
+        final List<Tournament> tournaments = getRepository().findAll();
         tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
         return tournaments.subList(tournaments.indexOf(tournament) + 1, Math.min(tournaments.indexOf(tournament) + 1 + elementsToRetrieve, tournaments.size()));
     }
 
     public long countTournamentsAfter(LocalDateTime createdAfter) {
         //Due to LocalDateTime encryption countByGreaterThan is not working very well.
-        return repository.findAll().stream().filter(tournament -> tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
+        return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
     }
 
     public void markAsFinished(Tournament tournament, boolean finish) {
         if (finish && tournament.getFinishedAt() == null) {
             tournament.updateFinishedAt(LocalDateTime.now());
-            repository.save(tournament);
+            getRepository().save(tournament);
         } else if (!finish && tournament.getFinishedAt() != null) {
             tournament.updateFinishedAt(null);
-            repository.save(tournament);
+            getRepository().save(tournament);
         }
     }
 
