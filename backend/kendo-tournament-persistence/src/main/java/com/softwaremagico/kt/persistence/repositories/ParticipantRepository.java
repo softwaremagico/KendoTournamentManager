@@ -28,12 +28,12 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -50,18 +50,22 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     @Query("SELECT r.participant FROM Role r WHERE r.tournament = :tournament and r.roleType = :roleType")
     List<Participant> findByTournamentAndRoleType(@Param("tournament") Tournament tournament, @Param("roleType") RoleType roleType);
 
-    @Query("SELECT r.participant FROM Role r WHERE r.participant IN " +
-            "(SELECT rl.participant FROM Role rl WHERE rl.tournament = :tournament) " +
-            "GROUP BY r.participant " +
-            "HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes")
+    @Query("""
+            SELECT r.participant FROM Role r WHERE r.participant IN
+            (SELECT rl.participant FROM Role rl WHERE rl.tournament = :tournament)
+            GROUP BY r.participant
+            HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes
+            """)
     List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournament") Tournament tournament, @Param("differentRoleTypes") long differentRoleTypes);
 
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);
 
-    @Query("SELECT r.participant FROM Role r WHERE r.tournament = :tournament AND  r.roleType = :roleType " +
-            "AND NOT EXISTS " +
-            "(SELECT r2.participant FROM Role r2 WHERE r.participant = r2.participant " +
-            "AND r.roleType = r2.roleType AND r2.tournament.createdAt < r.tournament.createdAt)")
+    @Query("""
+            SELECT r.participant FROM Role r WHERE r.tournament = :tournament AND  r.roleType = :roleType
+            AND NOT EXISTS
+            (SELECT r2.participant FROM Role r2 WHERE r.participant = r2.participant
+            AND r.roleType = r2.roleType AND r2.tournament.createdAt < r.tournament.createdAt)
+            """)
     List<Participant> findParticipantsWithFirstRoleAs(@Param("tournament") Tournament tournament, @Param("roleType") RoleType roleType);
 }

@@ -25,7 +25,12 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -52,6 +57,7 @@ import java.util.stream.Collectors;
  * Gets the list of fights to be shown on a tournament. This list can be printed before the start of the tournament.
  */
 public class FightsList extends ParentList {
+    private static final float[] TABLE_WITH = {0.40f, 0.10f, 0.40f};
 
     private final MessageSource messageSource;
     private final Locale locale;
@@ -108,7 +114,7 @@ public class FightsList extends ParentList {
             for (final FightDTO fight : fights) {
                 cell = new PdfPCell(fightTable(fight));
                 cell.setBorderWidth(BORDER_WIDTH);
-                cell.setColspan(3);
+                cell.setColspan(TABLE_WITH.length);
                 cell.setBackgroundColor(BaseColor.WHITE);
                 mainTable.addCell(cell);
             }
@@ -153,7 +159,7 @@ public class FightsList extends ParentList {
                         if (groupsOfLevel.get(i).getFights().contains(fight)) {
                             cell = new PdfPCell(fightTable(fight));
                             cell.setBorderWidth(BORDER_WIDTH);
-                            cell.setColspan(3);
+                            cell.setColspan(TABLE_WITH.length);
                             cell.setBackgroundColor(BaseColor.WHITE);
                             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                             mainTable.addCell(cell);
@@ -176,7 +182,7 @@ public class FightsList extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.40f, 0.10f, 0.40f};
+        return TABLE_WITH;
     }
 
     @Override
@@ -184,7 +190,7 @@ public class FightsList extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override

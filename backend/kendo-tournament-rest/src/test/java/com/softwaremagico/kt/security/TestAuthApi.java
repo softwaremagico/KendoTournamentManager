@@ -53,7 +53,9 @@ import java.io.IOException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
@@ -66,7 +68,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private final static String USER_NEW_FIRST_NAME = "New Test";
     private final static String USER_NEW_LAST_NAME = "New User";
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
 
     private MockMvc mockMvc;
 

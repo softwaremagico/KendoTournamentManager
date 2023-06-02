@@ -26,7 +26,13 @@ package com.softwaremagico.kt.logger;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -79,7 +85,7 @@ public class BasicLogging extends AbstractLogging {
 
     @Around(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        if (logger.isDebugEnabled()) {
+        if (getLogger().isDebugEnabled()) {
             final StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             final Object returnValue = joinPoint.proceed();

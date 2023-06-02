@@ -24,7 +24,12 @@ package com.softwaremagico.kt.pdf.lists;
  * #L%
  */
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -43,6 +48,7 @@ import java.util.Locale;
  * Creates a sheet with the teams ranking depending on the performance on the tournament.
  */
 public class TeamsScoreList extends ParentList {
+    private static final float[] TABLE_WIDTH = {0.40f, 0.20f, 0.20f, 0.20f, 0.20f};
 
     private final TournamentDTO tournament;
     private final List<ScoreOfTeamDTO> teamTopTen;
@@ -78,15 +84,15 @@ public class TeamsScoreList extends ParentList {
                     Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfTeam.getWonDuels() + "/" + scoreOfTeam.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getHits() + (scoreOfTeam.getUntieDuels() > 0 ? "*" : ""),
+            mainTable.addCell(getCell(scoreOfTeam.getHits() + (scoreOfTeam.getUntieDuels() > 0 ? "*" : ""),
                     PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getFightsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell(String.valueOf(scoreOfTeam.getFightsDone()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.40f, 0.20f, 0.20f, 0.20f, 0.20f};
+        return TABLE_WIDTH;
     }
 
     @Override
@@ -94,7 +100,7 @@ public class TeamsScoreList extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override

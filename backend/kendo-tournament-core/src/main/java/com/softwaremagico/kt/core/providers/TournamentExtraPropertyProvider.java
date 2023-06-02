@@ -26,8 +26,8 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
-import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,19 +42,23 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
     }
 
     public List<TournamentExtraProperty> getAll(Tournament tournament) {
-        return repository.findByTournament(tournament);
+        return getRepository().findByTournament(tournament);
     }
 
     public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return repository.findByTournamentAndProperty(tournament, key);
+        return getRepository().findByTournamentAndPropertyKey(tournament, key);
+    }
+
+    public int delete(Tournament tournament) {
+        return getRepository().deleteByTournament(tournament);
     }
 
     public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return repository.deleteByTournamentAndProperty(tournament, key);
+        return getRepository().deleteByTournamentAndPropertyKey(tournament, key);
     }
 
     @Override
     public TournamentExtraProperty save(TournamentExtraProperty tournamentExtraProperty) {
-        return repository.save(tournamentExtraProperty);
+        return getRepository().save(tournamentExtraProperty);
     }
 }
