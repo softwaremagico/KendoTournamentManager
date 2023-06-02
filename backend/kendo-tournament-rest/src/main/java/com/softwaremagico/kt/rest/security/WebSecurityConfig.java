@@ -24,7 +24,6 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +31,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,8 +41,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Collections;
 import java.util.List;
@@ -61,16 +59,13 @@ public class WebSecurityConfig {
             "/auth/public/**"
     };
 
-    private final AuthenticatedUserProvider authenticatedUserProvider;
     private final JwtTokenFilter jwtTokenFilter;
     private final KendoUserDetailsService kendoUserDetailsService;
     @Value("${server.cors.domains:null}")
     private List<String> serverCorsDomains;
 
     @Autowired
-    public WebSecurityConfig(AuthenticatedUserProvider authenticatedUserProvider, JwtTokenFilter jwtTokenFilter,
-                             KendoUserDetailsService kendoUserDetailsService) {
-        this.authenticatedUserProvider = authenticatedUserProvider;
+    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter, KendoUserDetailsService kendoUserDetailsService) {
         this.jwtTokenFilter = jwtTokenFilter;
         this.kendoUserDetailsService = kendoUserDetailsService;
     }
@@ -80,19 +75,17 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(kendoUserDetailsService)
-                .passwordEncoder(passwordEncoder())
-                .and()
-                .build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        //Will use the bean KendoUserDetailsService.
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.cors(cors -> cors.configurationSource(generateCorsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
@@ -107,22 +100,19 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    // Used by spring security if CORS is enabled.
-    @Bean
-    public CorsFilter corsFilter() {
-        final UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-        final CorsConfiguration config = new CorsConfiguration();
+    private CorsConfigurationSource generateCorsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
         if (serverCorsDomains == null || serverCorsDomains.contains("*")) {
-            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+            configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         } else {
-            config.setAllowedOrigins(serverCorsDomains);
-            config.setAllowCredentials(true);
+            configuration.setAllowedOrigins(serverCorsDomains);
+            configuration.setAllowCredentials(true);
         }
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
