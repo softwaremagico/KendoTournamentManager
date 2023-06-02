@@ -24,7 +24,11 @@ package com.softwaremagico.kt.pdf;
  * #L%
  */
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.logger.PdfExporterLog;
@@ -34,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
 public abstract class PdfDocument {
+    protected static final int TOTAL_WIDTH = 100;
     private final int rightMargin = 30;
     private final int leftMargin = 30;
     private final int topMargin = 30;
@@ -88,7 +93,7 @@ public abstract class PdfDocument {
         }
 
         // DIN A6 105 x 148 mm
-        try (final Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin)) {
+        try (Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin)) {
 
             try {
                 final PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));

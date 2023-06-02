@@ -29,10 +29,18 @@ import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.StringUtils;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 import java.text.Collator;
 import java.util.Locale;
 
@@ -81,25 +89,16 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         setClub(club);
     }
 
-    public void setIdCard(String value) {
-        idCard = value.replaceAll("-", "").replaceAll(" ", "").trim().toUpperCase();
-    }
-
     public String getIdCard() {
         return idCard;
     }
 
+    public void setIdCard(String value) {
+        idCard = value.replaceAll("-", "").replaceAll(" ", "").trim().toUpperCase();
+    }
+
     public boolean isValid() {
         return getName().length() > 0 && getIdCard() != null && getIdCard().length() > 0;
-    }
-
-    public void setName(String value) {
-        name = StringUtils.setCase(value);
-    }
-
-
-    public void setLastname(String value) {
-        lastname = StringUtils.setCase(value);
     }
 
     @Override
@@ -107,18 +106,25 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         return name;
     }
 
+    public void setName(String value) {
+        name = StringUtils.setCase(value);
+    }
+
     @Override
     public String getLastname() {
         return lastname;
     }
 
-
-    public void setClub(Club club) {
-        this.club = club;
+    public void setLastname(String value) {
+        lastname = StringUtils.setCase(value);
     }
 
     public Club getClub() {
         return club;
+    }
+
+    public void setClub(Club club) {
+        this.club = club;
     }
 
     public Boolean getHasAvatar() {
@@ -127,25 +133,6 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     public void setHasAvatar(Boolean hasAvatar) {
         this.hasAvatar = hasAvatar;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof Participant)) {
-            return false;
-        }
-        final Participant otherParticipant = (Participant) object;
-        return this.idCard.equals(otherParticipant.idCard);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 31 * hash + (this.idCard != null ? this.idCard.hashCode() : 0);
-        return hash;
     }
 
     /**

@@ -33,6 +33,6 @@ public class ParticipantConverterRequest extends ConverterRequest<Participant> {
 
     @Override
     public Participant getEntity() {
-        return super.entity;
+        return super.getEntityWithoutChecks();
     }
 }

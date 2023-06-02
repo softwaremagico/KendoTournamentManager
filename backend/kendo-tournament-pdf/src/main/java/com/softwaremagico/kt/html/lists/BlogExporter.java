@@ -8,23 +8,29 @@ package com.softwaremagico.kt.html.lists;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.ShiaijoName;
@@ -71,6 +77,13 @@ public class BlogExporter {
         this.scoreOfCompetitors = scoreOfCompetitors;
     }
 
+    /**
+     * Header of the document
+     */
+    private static void addTitle(StringBuilder stringBuilder, TournamentDTO tournament) {
+        stringBuilder.append("<h2>").append(tournament.getName()).append("</h2>\n");
+    }
+
     public String getWordpressFormat() {
         final StringBuilder stringBuilder = new StringBuilder();
         addTitle(stringBuilder, tournament);
@@ -82,13 +95,6 @@ public class BlogExporter {
         }
         addCompetitorClassificationTable(stringBuilder);
         return stringBuilder.toString();
-    }
-
-    /**
-     * Header of the document
-     */
-    private static void addTitle(StringBuilder stringBuilder, TournamentDTO tournament) {
-        stringBuilder.append("<h2>").append(tournament.getName()).append("</h2>\n");
     }
 
     /**
@@ -198,7 +204,7 @@ public class BlogExporter {
             columns.add(NameUtils.getShortName(scoreOfTeam.getTeam()));
             columns.add(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights());
             columns.add(scoreOfTeam.getWonDuels() + "/" + scoreOfTeam.getDrawDuels());
-            columns.add("" + scoreOfTeam.getHits());
+            columns.add(String.valueOf(scoreOfTeam.getHits()));
             rows.add(columns);
         }
         final int[] widths = {20, 10, 10, 10};
@@ -253,9 +259,9 @@ public class BlogExporter {
         // Draw Fights
         String draw;
         if (fightDTO.getDuels().get(duel).getWinner() == 0 && fightDTO.isOver()) {
-            draw = "" + Score.DRAW.getAbbreviation();
+            draw = String.valueOf(Score.DRAW.getAbbreviation());
         } else {
-            draw = "" + Score.EMPTY.getAbbreviation();
+            draw = String.valueOf(Score.EMPTY.getAbbreviation());
         }
         return draw;
     }
@@ -269,9 +275,9 @@ public class BlogExporter {
             faults = fightDTO.getDuels().get(duel).getCompetitor2Fault();
         }
         if (faults) {
-            faultSymbol = "" + Score.FAULT.getAbbreviation();
+            faultSymbol = String.valueOf(Score.FAULT.getAbbreviation());
         } else {
-            faultSymbol = "" + Score.EMPTY.getAbbreviation();
+            faultSymbol = String.valueOf(Score.EMPTY.getAbbreviation());
         }
         return faultSymbol;
     }
@@ -279,9 +285,9 @@ public class BlogExporter {
     private String getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
         try {
             if (leftTeam) {
-                return fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation() + "";
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation());
             } else {
-                return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation() + "";
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
         } catch (IndexOutOfBoundsException e) {
             return "";

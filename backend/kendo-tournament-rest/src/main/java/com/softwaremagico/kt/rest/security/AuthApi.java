@@ -27,6 +27,7 @@ package com.softwaremagico.kt.rest.security;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import com.softwaremagico.kt.rest.exceptions.UserBlockedException;
@@ -37,6 +38,7 @@ import com.softwaremagico.kt.security.AvailableRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -47,9 +49,17 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
@@ -58,21 +68,25 @@ import java.util.Set;
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class AuthApi {
-
+    private static final int MAX_WAITING_SECONDS = 10;
+    private static final long MILLIS = 1000L;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticatedUserController authenticatedUserController;
     private final BruteForceService bruteForceService;
+    private final AuthenticatedUserRepository authenticatedUserRepository;
 
     private final Random random = new Random();
 
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
-                   AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService) {
+                   AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
+                   AuthenticatedUserRepository authenticatedUserRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserController = authenticatedUserController;
         this.bruteForceService = bruteForceService;
+        this.authenticatedUserRepository = authenticatedUserRepository;
     }
 
 
@@ -83,7 +97,7 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                Thread.sleep(random.nextInt(10) * 1000L);
+                Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
                 RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
                 throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
 
@@ -92,7 +106,8 @@ public class AuthApi {
             final Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-            final AuthenticatedUser user = (AuthenticatedUser) authenticate.getPrincipal();
+            final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
+                    new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
             final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
             user.setPassword(jwtToken);
             bruteForceService.loginSucceeded(ip);
@@ -172,7 +187,7 @@ public class AuthApi {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
-        Thread.sleep(random.nextInt(10) * 1000L);
+        Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
             authenticatedUserController.updatePassword(authentication.getName(), request.getOldPassword(), request.getNewPassword());
         } catch (Exception e) {
@@ -188,7 +203,7 @@ public class AuthApi {
                                    @PathVariable("username") String username,
                                    @RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
-        Thread.sleep(random.nextInt(10) * 1000L);
+        Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
         try {
             authenticatedUserController.updatePassword(username, request.getOldPassword(), request.getNewPassword());
         } catch (Exception e) {

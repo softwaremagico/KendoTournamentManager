@@ -36,6 +36,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.pdf.PdfTheme;
 
 public class FooterEvent extends PdfPageEventHelper {
+    private static final int BOTTOM_MARGIN = 20;
 
     /**
      * Adds a footer to every page
@@ -47,7 +48,7 @@ public class FooterEvent extends PdfPageEventHelper {
         final Phrase footer = new Phrase("Created using 'Kendo Tournament Manager v2'",
                 new Font(PdfTheme.getFooterFont(), PdfTheme.FOOTER_FONT_SIZE));
         ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer, (document.right() - document.left()) / 2 + document.leftMargin(),
-                document.bottom() + 20, 0);
+                document.bottom() + BOTTOM_MARGIN, 0);
         //}
     }
 }

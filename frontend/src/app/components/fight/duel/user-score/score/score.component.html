@@ -1,17 +1,19 @@
-<div class="score-area" [matMenuTriggerFor]="menu">
+<div [matMenuTriggerFor]="menu" class="score-area">
   <mat-menu #menu="matMenu">
-    <button *ngFor="let score of possibleScores()" mat-menu-item
-            (click)="updateScore(score)">{{score.toLowerCase() | translate}}</button>
+    <button (click)="updateScore(score)" *ngFor="let score of possibleScores()"
+            mat-menu-item>{{score.toLowerCase() | translate}}
+    </button>
   </mat-menu>
-  <div class="point" *ngIf="scoreRepresentation!==''" (mouseover)="updateCoordinates($event)" (mouseout)="clearCoordinates($event)">
+  <div (mouseout)="clearCoordinates($event)" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
+       class="point">
     {{scoreRepresentation}}
-    <div class="tooltiptext" *ngIf="this.timeRepresentation"
+    <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
          [ngClass]="{
           'left-border': onLeftBorder,
           'center': !onRightBorder && !onLeftBorder,
           'right-border': onRightBorder
         }"
-         [innerHTML]="tooltipText()">
+         class="tooltiptext">
       <mat-icon>timer</mat-icon>
     </div>
   </div>

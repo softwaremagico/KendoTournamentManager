@@ -26,9 +26,9 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 @Converter
 public class AchievementGradeCryptoConverter extends AbstractCryptoConverter<AchievementGrade>
