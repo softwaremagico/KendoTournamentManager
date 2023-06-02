@@ -34,7 +34,6 @@ import java.lang.annotation.Target;
  * any annotation that has class retention and whose name ends with
  * "SuppressWarnings".
  *
- * @hide
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.CONSTRUCTOR, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.CLASS)
