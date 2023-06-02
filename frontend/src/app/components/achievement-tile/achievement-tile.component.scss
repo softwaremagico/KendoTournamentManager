@@ -22,6 +22,10 @@
   margin-left: 0;
 }
 
+.achievement-border.disabled {
+  box-shadow: none !important;
+}
+
 .achievement-border.normal {
   border-color: black;
   animation-name: animate-normal;
