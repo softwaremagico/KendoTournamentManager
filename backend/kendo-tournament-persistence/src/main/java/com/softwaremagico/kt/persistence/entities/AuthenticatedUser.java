@@ -87,11 +87,13 @@ public class AuthenticatedUser implements UserDetails {
         return id;
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
     }
 
+    @JsonIgnore
     public void setPassword(String password) {
         this.password = password;
     }
