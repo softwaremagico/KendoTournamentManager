@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -66,8 +67,8 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return getRepository().findParticipantsWithAchievementFromList(achievementType, participants);
     }
 
-    public List<Participant> getParticipantFirstTimeWithRole(Tournament tournament, RoleType roleType) {
-        return getRepository().findParticipantsWithFirstRoleAs(tournament, roleType);
+    public List<Participant> findParticipantsWithRoleNotInTournaments(Tournament tournament, RoleType roleType, Collection<Tournament> olderTournaments) {
+        return getRepository().findParticipantsWithRoleNotInTournaments(tournament, roleType, olderTournaments);
     }
 
 
