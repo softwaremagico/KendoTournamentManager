@@ -57,7 +57,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"achievementTests"})
@@ -274,7 +273,7 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
         List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(bambooAchievementParticipant);
         List<AchievementDTO> flexibleAsBambooAchievements =
                 achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.FLEXIBLE_AS_BAMBOO)
-                        .collect(Collectors.toList());
+                        .toList();
         Assert.assertEquals(flexibleAsBambooAchievements.size(), 1);
         Assert.assertEquals(flexibleAsBambooAchievements.get(0).getParticipant(), bambooAchievementParticipant);
         Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);
@@ -318,6 +317,7 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void checkSweatyTenuguiAchievement() {
         Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.SWEATY_TENUGUI).size(), MEMBERS * TEAMS);
         Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.SWEATY_TENUGUI).size(), 1);
+        Assert.assertEquals(achievementController.getAchievements(tournament3DTO, AchievementType.SWEATY_TENUGUI).size(), 0);
     }
 
     @Test
@@ -336,17 +336,17 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void searchLastTournaments() {
         List<TournamentDTO> tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 1);
         Assert.assertEquals(tournamentDTOS.size(), 1);
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament2DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament2DTO.getId()));
 
         tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 2);
         Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament2DTO.getId()));
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament1DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament2DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament1DTO.getId()));
 
         tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 3);
         Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament2DTO.getId()));
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).collect(Collectors.toList()).contains(tournament1DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament2DTO.getId()));
+        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament1DTO.getId()));
     }
 
     @AfterClass
