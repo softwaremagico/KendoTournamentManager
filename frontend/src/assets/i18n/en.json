@@ -650,6 +650,92 @@
   "aggressiveness": "Aggressiveness",
   "errorFightNotSelected": "You must select a group first",
   "minutesAbbreviation": "mins",
-  "secondsAbbreviation": "secs"
+  "secondsAbbreviation": "secs",
+  "achievement": {
+    "billyTheKid": {
+      "title": "Billy The Kid",
+      "description": "Perform the quickest point in a tournament."
+    },
+    "lethalWeapon": {
+      "title": "Lethal Weapon",
+      "description": "Perform a point in less than 5 seconds."
+    },
+    "Terminator": {
+      "title": "Terminator",
+      "description": "Perform the maximum possible points on a tournament."
+    },
+    "Juggernaut": {
+      "title": "Juggernaut",
+      "description": "Perform the maximum possible points on a tournament and nobody has scored against you."
+    },
+    "theKing": {
+      "title": "The King",
+      "description": "Be the one that last longer on the King of the Mountain mode."
+    },
+    "looksGoodFromFarAwayBut": {
+      "title": "Looks good from far away but...",
+      "description": "Be an organizer in a tournament."
+    },
+    "iLoveTheFlags": {
+      "title": "I love the flags",
+      "description": "Be a referee in a tournament."
+    },
+    "theCastle": {
+      "title": "The Castle",
+      "description": "Avoid that anybody perform a point against you."
+    },
+    "entrenched": {
+      "title": "Entrenched",
+      "description": "Perform no points in a tournament but also nobody has scored against you."
+    },
+    "aLittleOfEverything": {
+      "title": "A little of everything",
+      "description": "Perform different points in a single tournament."
+    },
+    "boneBreaker": {
+      "title": "Bone breaker",
+      "description": "Lost a fight by two Hansokus."
+    },
+    "flexibleAsBamboo": {
+      "title": "Flexible as bamboo",
+      "description": "Perform all possible roles."
+    },
+    "sweatyTenugui": {
+      "title": "Sweaty tenugui",
+      "description": "Participate in your first tournament as a competitor."
+    },
+    "theWinner": {
+      "title": "The winner",
+      "description": "Be the first on a tournament."
+    },
+    "theWinnerTeam": {
+      "title": "The winner team",
+      "description": "Be a member of a team that is the first on a tournament."
+    },
+    "woodcutter": {
+      "title": "Woodcutter",
+      "description": "Perform only 'Do' points, and perform at least one 'Do' on each fight."
+    },
+    "theNeverEndingStory": {
+      "title": "The never ending story",
+      "description": "Be a member for more than 10 years."
+    },
+    "loveSharing": {
+      "title": "Love sharing",
+      "description": "Be a volunteer in a tournament."
+    },
+    "masterTheLoop": {
+      "title": "Master the loop",
+      "description": "Win a Loop Tournament."
+    },
+    "tisButAScratch": {
+      "title": "'Tis but a scratch",
+      "description": "Receive a point from your adversary."
+    },
+    "firstBlood": {
+      "title": "First Blood",
+      "description": "Make a point to an adversary."
+    }
+  }
 }
 
