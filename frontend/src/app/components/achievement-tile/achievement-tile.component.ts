@@ -120,8 +120,10 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     if (!this.view || !this.achievements || this.achievements.length == 0) {
       return "";
     }
-    let tooltipText: string = '<b>' + this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)) + '</b><br>' +
-      this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType) + 'Description') + '<br>';
+    let tooltipText: string = '<b>' + this.translateService.instant(
+      'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.title') + '</b><br>' +
+      this.translateService.instant(
+        'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.description') + '<br>';
     if (this.achievements) {
       tooltipText += '<br>' + this.translateService.instant('achievementToolTipObtainedAt') + ':<br>';
       tooltipText += '<div class="tournament-list">';
@@ -159,8 +161,10 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     if (!this.view || !this.achievements || this.achievements.length == 0) {
       return "";
     }
-    let tooltipText: string = '<b>' + this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType)) + '</b><br>' +
-      this.translateService.instant(AchievementType.toCamel(this.achievements[0].achievementType) + 'Description') + '<br>';
+    let tooltipText: string = '<b>' + this.translateService.instant(
+        'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.title') + '</b><br>' +
+      this.translateService.instant(
+        'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.description') + '<br>';
     if (this.achievements) {
       tooltipText += '<br>' + this.translateService.instant('achievementToolTipObtainedBy') + ':<br>';
       tooltipText += '<div class="tournament-list">';
