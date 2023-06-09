@@ -640,7 +640,93 @@
   "aggressiveness": "Agresividad",
   "errorFightNotSelected": "¡Debes seleccionar primero un grupo!",
   "minutesAbbreviation": "mins",
-  "secondsAbbreviation": "secs"
+  "secondsAbbreviation": "secs",
+  "achievement": {
+    "billyTheKid": {
+      "title": "",
+      "description": ""
+    },
+    "lethalWeapon": {
+      "title": "",
+      "description": ""
+    },
+    "Terminator": {
+      "title": "",
+      "description": ""
+    },
+    "Juggernaut": {
+      "title": "",
+      "description": ""
+    },
+    "theKing": {
+      "title": "",
+      "description": ""
+    },
+    "looksGoodFromFarAwayBut": {
+      "title": "",
+      "description": ""
+    },
+    "iLoveTheFlags": {
+      "title": "",
+      "description": ""
+    },
+    "theCastle": {
+      "title": "",
+      "description": ""
+    },
+    "entrenched": {
+      "title": "",
+      "description": ""
+    },
+    "aLittleOfEverything": {
+      "title": "",
+      "description": ""
+    },
+    "boneBreaker": {
+      "title": "",
+      "description": ""
+    },
+    "flexibleAsBamboo": {
+      "title": "",
+      "description": ""
+    },
+    "sweatyTenugui": {
+      "title": "",
+      "description": ""
+    },
+    "theWinner": {
+      "title": "",
+      "description": ""
+    },
+    "theWinnerTeam": {
+      "title": "",
+      "description": ""
+    },
+    "woodcutter": {
+      "title": "",
+      "description": ""
+    },
+    "theNeverEndingStory": {
+      "title": "",
+      "description": ""
+    },
+    "loveSharing": {
+      "title": "",
+      "description": ""
+    },
+    "masterTheLoop": {
+      "title": "",
+      "description": ""
+    },
+    "tisButAScratch": {
+      "title": "",
+      "description": ""
+    },
+    "firstBlood": {
+      "title": "",
+      "description": ""
+    }
+  }
 }
 
 
