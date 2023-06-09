@@ -85,7 +85,8 @@
         <checkstyle.version>3.3.0</checkstyle.version>
         <spotbugs.version>4.7.3.4</spotbugs.version>
         <org.testng.version>7.8.0</org.testng.version>
-        <springdoc.version>1.6.6</springdoc.version>
+        <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
+        <springdoc.version>1.7.0</springdoc.version>
         <license-maven-plugin.version>2.0.1</license-maven-plugin.version>
         <modelmapper.version>2.3.9</modelmapper.version>
         <maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
