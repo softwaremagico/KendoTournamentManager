@@ -85,6 +85,8 @@
         <checkstyle.version>3.3.0</checkstyle.version>
         <spotbugs.version>4.7.3.4</spotbugs.version>
         <org.testng.version>7.8.0</org.testng.version>
+        <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
+        <springdoc.version>1.7.0</springdoc.version>
         <license-maven-plugin.version>2.0.1</license-maven-plugin.version>
         <modelmapper.version>2.3.9</modelmapper.version>
         <maven-scm-provider-gitexe.version>1.9.2</maven-scm-provider-gitexe.version>
@@ -102,8 +104,6 @@
         <jaxb-core.version>2.3.0.1</jaxb-core.version>
         <jaxb-impl.version>2.3.1</jaxb-impl.version>
         <javassist.version>3.25.0-GA</javassist.version>
-        <springdoc.version>1.7.0</springdoc.version>
-        <openapi.version>2.1.0</openapi.version>
     </properties>
 
     <build>

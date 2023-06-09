@@ -72,7 +72,7 @@ import java.util.stream.Collectors;
 public class AchievementController extends BasicInsertableController<Achievement, AchievementDTO, AchievementRepository,
         AchievementProvider, AchievementConverterRequest, AchievementConverter> {
 
-    private static final int LETHAL_WEAPON_MAX_TIME = 8;
+    private static final int LETHAL_WEAPON_MAX_TIME = 5;
 
     private static final int DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS = 365;
 
@@ -87,6 +87,11 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DEFAULT_SCORE_BRONZE = 20;
     private static final int DEFAULT_SCORE_SILVER = 50;
     private static final int DEFAULT_SCORE_GOLD = 100;
+
+    private static final int MINIMUM_ROLES_BAMBOO_NORMAL = 2;
+    private static final int MINIMUM_ROLES_BAMBOO_BRONZE = 3;
+    private static final int MINIMUM_ROLES_BAMBOO_SILVER = 4;
+    private static final int MINIMUM_ROLES_BAMBOO_GOLD = 5;
 
     private static final int PARTICIPANT_YEARS = 10;
 
@@ -351,6 +356,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateFirstBloodAchievementBronze(tournament));
         achievementsGenerated.addAll(generateFirstBloodAchievementSilver(tournament));
         achievementsGenerated.addAll(generateFirstBloodAchievementGold(tournament));
+        achievementsGenerated.addAll(generateWoodcutterAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateWoodcutterAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateWoodcutterAchievementGold(tournament));
+        achievementsGenerated.addAll(generateFlexibleAsBambooAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateFlexibleAsBambooAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateFlexibleAsBambooAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -1000,38 +1011,121 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody only performs 'do' scores and win a duel.
+     * When somebody only performs 'do' scores in a tournament and all fights has at least a 'do'.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievement(Tournament tournament) {
-        final Set<Duel> duels = duelProvider.findByOnlyScore(tournament, Score.DO);
-        final Set<Participant> woodcutters = new HashSet<>();
+        final List<Duel> duels = getDuelsFromTournament();
+        final List<Participant> woodcutters = getParticipantsFromTournament();
         duels.forEach(duel -> {
-            if (duel.getCompetitor1Score().size() == 2 && duel.getCompetitor1Score().get(0) == Score.DO
-                    && duel.getCompetitor1Score().get(1) == Score.DO) {
-                woodcutters.add(duel.getCompetitor1());
+            if (duel.getCompetitor1Score().isEmpty()) {
+                woodcutters.remove(duel.getCompetitor1());
             }
-            if (duel.getCompetitor2Score().size() == 2 && duel.getCompetitor2Score().get(0) == Score.DO
-                    && duel.getCompetitor2Score().get(1) == Score.DO) {
-                woodcutters.add(duel.getCompetitor2());
+            duel.getCompetitor1Score().forEach(score -> {
+                if (score != Score.DO) {
+                    woodcutters.remove(duel.getCompetitor1());
+                }
+            });
+            if (duel.getCompetitor2Score().isEmpty()) {
+                woodcutters.remove(duel.getCompetitor2());
             }
+            duel.getCompetitor2Score().forEach(score -> {
+                if (score != Score.DO) {
+                    woodcutters.remove(duel.getCompetitor2());
+                }
+            });
         });
         //Create new achievement for the participants.
         return generateAchievement(AchievementType.WOODCUTTER, AchievementGrade.NORMAL, woodcutters, tournament);
     }
 
+    /**
+     * When somebody only performs 'do' scores in a tournament and all fights has at least a 'do' in at least two consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateWoodcutterAchievementBronze(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.WOODCUTTER, AchievementGrade.BRONZE);
+    }
 
     /**
-     * When somebody has performed all the roles
+     * When somebody only performs 'do' scores in a tournament and all fights has at least a 'do' in at least three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateWoodcutterAchievementSilver(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.WOODCUTTER, AchievementGrade.SILVER);
+    }
+
+    /**
+     * When somebody only performs 'do' scores in a tournament and all fights has at least a 'do' in at least five consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateWoodcutterAchievementGold(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.WOODCUTTER, AchievementGrade.GOLD);
+    }
+
+
+    /**
+     * When somebody has performed two different roles.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
     private List<Achievement> generateFlexibleAsBambooAchievement(Tournament tournament) {
         //Get all participants from a tournament that has almost all roles in any tournament,
-        final List<Participant> participants = participantProvider.get(tournament, RoleType.values().length / 2 + 1);
+        final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_NORMAL);
+        //Remove the ones already have the achievement.
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        //Create new achievement for the participants.
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * When somebody has performed three different roles.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateFlexibleAsBambooAchievementBronze(Tournament tournament) {
+        //Get all participants from a tournament that has almost all roles in any tournament,
+        final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_BRONZE);
+        //Remove the ones already have the achievement.
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        //Create new achievement for the participants.
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * When somebody has performed three different roles.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateFlexibleAsBambooAchievementSilver(Tournament tournament) {
+        //Get all participants from a tournament that has almost all roles in any tournament,
+        final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_SILVER);
+        //Remove the ones already have the achievement.
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        //Create new achievement for the participants.
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * When somebody has performed three different roles.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateFlexibleAsBambooAchievementGold(Tournament tournament) {
+        //Get all participants from a tournament that has almost all roles in any tournament,
+        final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_GOLD);
         //Remove the ones already have the achievement.
         participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
         //Create new achievement for the participants.
