@@ -638,12 +638,14 @@
   "minutesAbbreviation": "mins",
   "secondsAbbreviation": "secs",
   "achievement": {
+    "normal": "",
     "bronze": "",
     "silver": "",
     "gold": "",
     "billyTheKid": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -651,6 +653,7 @@
     "lethalWeapon": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -658,6 +661,7 @@
     "Terminator": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -665,6 +669,7 @@
     "Juggernaut": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -672,6 +677,7 @@
     "theKing": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -679,6 +685,7 @@
     "looksGoodFromFarAwayBut": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -686,6 +693,7 @@
     "iLoveTheFlags": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -693,6 +701,7 @@
     "theCastle": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -708,6 +717,7 @@
     "boneBreaker": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -715,6 +725,7 @@
     "flexibleAsBamboo": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -722,6 +733,7 @@
     "sweatyTenugui": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -729,6 +741,7 @@
     "theWinner": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -736,6 +749,7 @@
     "theWinnerTeam": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -743,6 +757,7 @@
     "woodcutter": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -750,6 +765,7 @@
     "theNeverEndingStory": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -757,6 +773,7 @@
     "loveSharing": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -764,6 +781,7 @@
     "masterTheLoop": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -771,6 +789,7 @@
     "tisButAScratch": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -778,6 +797,7 @@
     "firstBlood": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -785,6 +805,7 @@
     "daruma": {
       "title": "",
       "description": "",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""

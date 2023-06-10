@@ -199,6 +199,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
         'achievement.' + achievementTag + '.title') + '</b><br>' +
       this.translateService.instant(
         'achievement.' + achievementTag + '.description') + '<br>';
+    tooltipText += '<br><span class="text-normal">' + this.translateService.instant('achievement.normal') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.normal') + ':<br>';
     if (this.achievements.some(a => a.achievementGrade === AchievementGrade.BRONZE)) {
       tooltipText += '<br><span class="text-bronze">' + this.translateService.instant('achievement.bronze') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.bronze') + ':<br>';
     }
