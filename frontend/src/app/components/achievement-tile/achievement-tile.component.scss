@@ -71,6 +71,24 @@
   animation-direction: alternate;
 }
 
+.text-bronze {
+  color: hsl(28, 31%, 52%);
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
+.text-silver {
+  color: hsl(210, 3%, 61%);
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
+.text-gold {
+  color: hsl(45, 100%, 47%);
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
 @keyframes animate-normal {
   0% {
     box-shadow: 0 0 1px black;

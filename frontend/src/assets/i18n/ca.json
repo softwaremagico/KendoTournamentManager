@@ -638,6 +638,9 @@
   "minutesAbbreviation": "mins",
   "secondsAbbreviation": "secs",
   "achievement": {
+    "bronze": "",
+    "silver": "",
+    "gold": "",
     "billyTheKid": {
       "title": "",
       "description": "",
