@@ -654,87 +654,157 @@
   "achievement": {
     "billyTheKid": {
       "title": "Billy The Kid",
-      "description": "Perform the quickest point in a tournament."
+      "description": "Perform the quickest point in a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "lethalWeapon": {
       "title": "Lethal Weapon",
-      "description": "Perform a point in less than 5 seconds."
+      "description": "Perform a point in less than 5 seconds.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "Terminator": {
       "title": "Terminator",
-      "description": "Perform the maximum possible points on a tournament."
+      "description": "Perform the maximum possible points on a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "Juggernaut": {
       "title": "Juggernaut",
-      "description": "Perform the maximum possible points on a tournament and nobody has scored against you."
+      "description": "Perform the maximum possible points on a tournament and nobody has scored against you.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theKing": {
       "title": "The King",
-      "description": "Be the one that last longer on the King of the Mountain mode."
+      "description": "Be the one that last longer on the King of the Mountain mode.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "looksGoodFromFarAwayBut": {
       "title": "Looks good from far away but...",
-      "description": "Be an organizer in a tournament."
+      "description": "Be an organizer in a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "iLoveTheFlags": {
       "title": "I love the flags",
-      "description": "Be a referee in a tournament."
+      "description": "Be a referee in a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theCastle": {
       "title": "The Castle",
-      "description": "Avoid that anybody perform a point against you."
+      "description": "Avoid that anybody perform a point against you.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "entrenched": {
       "title": "Entrenched",
-      "description": "Perform no points in a tournament but also nobody has scored against you."
+      "description": "Perform no points in a tournament but also nobody has scored against you.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "aLittleOfEverything": {
       "title": "A little of everything",
-      "description": "Perform different points in a single tournament."
+      "description": "Perform different points in a single tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "boneBreaker": {
       "title": "Bone breaker",
-      "description": "Lost a fight by two Hansokus."
+      "description": "Lost a fight by two Hansokus.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "flexibleAsBamboo": {
       "title": "Flexible as bamboo",
-      "description": "Perform all possible roles."
+      "description": "Perform all possible roles.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "sweatyTenugui": {
       "title": "Sweaty tenugui",
-      "description": "Participate in your first tournament as a competitor."
+      "description": "Participate in your first tournament as a competitor.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theWinner": {
       "title": "The winner",
-      "description": "Be the first on a tournament."
+      "description": "Be the first on a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theWinnerTeam": {
       "title": "The winner team",
-      "description": "Be a member of a team that is the first on a tournament."
+      "description": "Be a member of a team that is the first on a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "woodcutter": {
       "title": "Woodcutter",
-      "description": "Perform only 'Do' points, and perform at least one 'Do' on each fight."
+      "description": "Perform only 'Do' points, and perform at least one 'Do' on each fight.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theNeverEndingStory": {
       "title": "The never ending story",
-      "description": "Be a member for more than 10 years."
+      "description": "Be a member for more than 10 years.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "loveSharing": {
       "title": "Love sharing",
-      "description": "Be a volunteer in a tournament."
+      "description": "Be a volunteer in a tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "masterTheLoop": {
       "title": "Master the loop",
-      "description": "Win a Loop Tournament."
+      "description": "Win a Loop Tournament.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "tisButAScratch": {
       "title": "'Tis but a scratch",
-      "description": "Receive a point from your adversary."
+      "description": "Receive a point from your adversary.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "firstBlood": {
       "title": "First Blood",
-      "description": "Make a point to an adversary."
+      "description": "Make a point to an adversary.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
+    },
+    "daruma": {
+      "title": "First Blood",
+      "description": "Make a point to an adversary.",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     }
   }
 }
