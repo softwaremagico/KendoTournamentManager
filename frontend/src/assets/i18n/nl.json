@@ -625,35 +625,59 @@
   "achievement": {
     "billyTheKid": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "lethalWeapon": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "Terminator": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "Juggernaut": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theKing": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "looksGoodFromFarAwayBut": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "iLoveTheFlags": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theCastle": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "entrenched": {
       "title": "",
@@ -665,47 +689,87 @@
     },
     "boneBreaker": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "flexibleAsBamboo": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "sweatyTenugui": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theWinner": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theWinnerTeam": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "woodcutter": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "theNeverEndingStory": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "loveSharing": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "masterTheLoop": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "tisButAScratch": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     },
     "firstBlood": {
       "title": "",
-      "description": ""
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
+    },
+    "daruma": {
+      "title": "",
+      "description": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
     }
   }
 }

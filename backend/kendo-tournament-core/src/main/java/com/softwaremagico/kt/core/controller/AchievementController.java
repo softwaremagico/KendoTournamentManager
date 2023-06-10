@@ -34,38 +34,16 @@ import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.AchievementProvider;
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.RankingProvider;
-import com.softwaremagico.kt.core.providers.RoleProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.persistence.entities.Achievement;
-import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.Role;
-import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
-import com.softwaremagico.kt.persistence.values.AchievementGrade;
-import com.softwaremagico.kt.persistence.values.AchievementType;
-import com.softwaremagico.kt.persistence.values.RoleType;
-import com.softwaremagico.kt.persistence.values.Score;
-import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.persistence.values.*;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -95,6 +73,11 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private static final int PARTICIPANT_YEARS = 10;
 
+    private static final int DARUMA_TOURNAMENTS_NORMAL = 10;
+    private static final int DARUMA_TOURNAMENTS_BRONZE = 20;
+    private static final int DARUMA_TOURNAMENTS_SILVER = 30;
+    private static final int DARUMA_TOURNAMENTS_GOLD = 50;
+
 
     private final TournamentConverter tournamentConverter;
 
@@ -120,10 +103,12 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private List<Duel> duelsFromTournament;
 
-    private Map<Participant, List<Score>> scoresByParticipant = new HashMap<>();
-    private Map<Participant, List<Score>> scoresReceivedByParticipant = new HashMap<>();
-    private Map<Participant, Long> totalScoreFromParticipant = new HashMap<>();
-    private Map<Participant, Long> totalScoreAgainstParticipant = new HashMap<>();
+    private Map<Participant, List<Score>> scoresByParticipant = null;
+    private Map<Participant, List<Score>> scoresReceivedByParticipant = null;
+    private Map<Participant, Long> totalScoreFromParticipant = null;
+    private Map<Participant, Long> totalScoreAgainstParticipant = null;
+
+    private Map<Participant, List<Role>> rolesByParticipant = null;
 
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
@@ -217,6 +202,14 @@ public class AchievementController extends BasicInsertableController<Achievement
                     totalScoreFromParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant)));
         }
         return totalScoreFromParticipant;
+    }
+
+    private Map<Participant, List<Role>> getRolesByParticipant() {
+        if (rolesByParticipant == null) {
+            final List<Role> roles = roleProvider.get(getParticipantsFromTournament());
+            rolesByParticipant = roles.stream().collect(Collectors.groupingBy(Role::getParticipant));
+        }
+        return rolesByParticipant;
     }
 
 
@@ -1403,5 +1396,77 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         return generateAchievement(AchievementType.FIRST_BLOOD, AchievementGrade.GOLD, participantsFirstScore, tournament);
+    }
+
+    /***
+     * Assist at least to 10 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievement(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.NORMAL).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_NORMAL && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.NORMAL, participantsDaruma, tournament);
+    }
+
+    /***
+     * Assist at least to 20 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievementBronze(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.BRONZE).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_BRONZE && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.BRONZE, participantsDaruma, tournament);
+    }
+
+    /***
+     * Assist at least to 30 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievementSilver(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.SILVER).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_SILVER && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.SILVER, participantsDaruma, tournament);
+    }
+
+    /***
+     * Assist at least to 50 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievementGold(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.GOLD).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_GOLD && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.GOLD, participantsDaruma, tournament);
     }
 }
