@@ -6,10 +6,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {Achievement} from "../../models/achievement.model";
-import {AchievementType} from "../../models/achievement-type.model";
-import {AchievementGrade} from "../../models/achievement-grade.model";
-import {Tournament} from "../../models/tournament";
+import {AuthenticatedUser} from "../../models/authenticated-user";
 
 const {version: appVersion} = require('../../../../package.json')
 
@@ -35,8 +32,9 @@ export class LoginComponent {
 
   login() {
     this.loginService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value).subscribe({
-      next: (authenticatedUser) => {
-        this.loginService.setJwtValue(authenticatedUser.jwt);
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.loginService.autoRenewToken(authenticatedUser.jwt, authenticatedUser.expires, (jwt: string, expires: number): void => {
+        });
         this.rbacService.setRoles(authenticatedUser.roles);
         let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         this.router.navigate([returnUrl]);
