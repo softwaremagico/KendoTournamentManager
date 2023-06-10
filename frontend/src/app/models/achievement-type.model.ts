@@ -40,7 +40,9 @@ export enum AchievementType {
 
   TIS_BUT_A_SCRATCH = 'TIS_BUT_A_SCRATCH',
 
-  FIRST_BLOOD = 'FIRST_BLOOD'
+  FIRST_BLOOD = 'FIRST_BLOOD',
+
+  DARUMA = 'DARUMA',
 
 }
 
