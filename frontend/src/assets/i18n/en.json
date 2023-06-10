@@ -652,6 +652,9 @@
   "minutesAbbreviation": "mins",
   "secondsAbbreviation": "secs",
   "achievement": {
+    "bronze": "bronze",
+    "silver": "silver",
+    "gold": "gold",
     "billyTheKid": {
       "title": "Billy The Kid",
       "description": "Perform the quickest point in a tournament.",
