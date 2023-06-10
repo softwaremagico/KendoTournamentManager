@@ -652,82 +652,94 @@
   "minutesAbbreviation": "mins",
   "secondsAbbreviation": "secs",
   "achievement": {
+    "normal": "basic",
     "bronze": "bronze",
     "silver": "silver",
     "gold": "gold",
     "billyTheKid": {
       "title": "Billy The Kid",
       "description": "Perform the quickest point in a tournament.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Achieved for one tournament.",
+      "bronze": "Achieved for at least two tournaments.",
+      "silver": "Achieved for at least three tournaments.",
+      "gold": "Achieved for at least five tournaments."
     },
     "lethalWeapon": {
       "title": "Lethal Weapon",
       "description": "Perform a point in less than 5 seconds.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Achieved for one tournament.",
+      "bronze": "Achieved for at least two tournaments.",
+      "silver": "Achieved for at least three tournaments.",
+      "gold": "Achieved for at least five tournaments."
     },
     "Terminator": {
       "title": "Terminator",
       "description": "Perform the maximum possible points on a tournament.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Exterminate everything in one tournament.",
+      "bronze": "Exterminate everything in two tournaments.",
+      "silver": "Exterminate everything in three tournaments.",
+      "gold": "Exterminate everything in five tournaments."
     },
     "Juggernaut": {
       "title": "Juggernaut",
       "description": "Perform the maximum possible points on a tournament and nobody has scored against you.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Be a Juggernaut in one tournament.",
+      "bronze": "Be a Juggernaut in two tournaments.",
+      "silver": "Be a Juggernaut in three tournaments.",
+      "gold": "Be the king in five tournaments."
     },
     "theKing": {
       "title": "The King",
       "description": "Be the one that last longer on the King of the Mountain mode.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Be the king in one tournament.",
+      "bronze": "Be the king in two tournaments.",
+      "silver": "Be the king in three tournaments.",
+      "gold": "Be the king in five tournaments."
     },
     "looksGoodFromFarAwayBut": {
       "title": "Looks good from far away but...",
-      "description": "Be an organizer in a tournament.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Be an organizer.",
+      "normal": "Be an organizer in one tournament.",
+      "bronze": "Be an organizer in two tournaments.",
+      "silver": "Be an organizer in three tournaments.",
+      "gold": "Be an organizer in five tournaments."
     },
     "iLoveTheFlags": {
       "title": "I love the flags",
-      "description": "Be a referee in a tournament.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Be a referee.",
+      "normal": "Be a referee in one tournament.",
+      "bronze": "Be a referee in two tournaments.",
+      "silver": "Be a referee in three tournaments.",
+      "gold": "Be a referee in five tournaments."
     },
     "theCastle": {
       "title": "The Castle",
       "description": "Avoid that anybody perform a point against you.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Protect the castle in one tournament.",
+      "bronze": "Protect the castle in two tournaments.",
+      "silver": "Protect the castle in three tournaments.",
+      "gold": "Protect the castle in five tournaments."
     },
     "entrenched": {
       "title": "Entrenched",
       "description": "Perform no points in a tournament but also nobody has scored against you.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Protect the trench for one tournament.",
+      "bronze": "Protect the trench for two tournaments.",
+      "silver": "Protect the trench for three tournaments.",
+      "gold": "Protect the trench for five tournaments."
     },
     "aLittleOfEverything": {
       "title": "A little of everything",
-      "description": "Perform different points in a single tournament.",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Perform different points in a tournament. This achievement can be obtained multiple times.",
+      "normal": "Score a Men, Kote and Do in one tournament.",
+      "bronze": "Score a Men, Kote, Do and Tsuki in one tournament.",
+      "silver": "Score a Men, Kote, Do, Tsuki and Hansoku in one tournament.",
+      "gold": "Score a Men, Kote, Do, Tsuki, Hansoku and Ippon in one tournament."
     },
     "boneBreaker": {
       "title": "Bone breaker",
       "description": "Lost a fight by two Hansokus.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -735,6 +747,7 @@
     "flexibleAsBamboo": {
       "title": "Flexible as bamboo",
       "description": "Perform all possible roles.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -742,6 +755,7 @@
     "sweatyTenugui": {
       "title": "Sweaty tenugui",
       "description": "Participate in your first tournament as a competitor.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -749,6 +763,7 @@
     "theWinner": {
       "title": "The winner",
       "description": "Be the first on a tournament.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -756,6 +771,7 @@
     "theWinnerTeam": {
       "title": "The winner team",
       "description": "Be a member of a team that is the first on a tournament.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -763,6 +779,7 @@
     "woodcutter": {
       "title": "Woodcutter",
       "description": "Perform only 'Do' points, and perform at least one 'Do' on each fight.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -770,6 +787,7 @@
     "theNeverEndingStory": {
       "title": "The never ending story",
       "description": "Be a member for more than 10 years.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -777,6 +795,7 @@
     "loveSharing": {
       "title": "Love sharing",
       "description": "Be a volunteer in a tournament.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -784,6 +803,7 @@
     "masterTheLoop": {
       "title": "Master the loop",
       "description": "Win a Loop Tournament.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -791,6 +811,7 @@
     "tisButAScratch": {
       "title": "'Tis but a scratch",
       "description": "Receive a point from your adversary.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
@@ -798,13 +819,15 @@
     "firstBlood": {
       "title": "First Blood",
       "description": "Make a point to an adversary.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""
     },
     "daruma": {
-      "title": "First Blood",
-      "description": "Make a point to an adversary.",
+      "title": "Daruma",
+      "description": "Assist as much as possible to the tournaments.",
+      "normal": "",
       "bronze": "",
       "silver": "",
       "gold": ""

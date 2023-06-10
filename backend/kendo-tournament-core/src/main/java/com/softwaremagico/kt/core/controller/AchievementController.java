@@ -300,8 +300,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTheWinnerTeamTournament(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievement(tournament));
         achievementsGenerated.addAll(generateFirstBloodAchievement(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievement(tournament));
 
         // Now generate extra grades.
+        achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateBillyTheKidAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateBillyTheKidAchievementGold(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievementBronze(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievementSilver(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievementGold(tournament));
@@ -326,6 +330,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateEntrenchedAchievementBronze(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievementSilver(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievementGold(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingAchievement(tournament));
         achievementsGenerated.addAll(generateALittleOfEverythingAchievementBronze(tournament));
         final List<Achievement> aLittleOfEverythingSilver = generateALittleOfEverythingAchievementSilver(tournament);
         //Delete the Bronzes, as Silver includes them
@@ -355,6 +360,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementBronze(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementSilver(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementGold(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -504,6 +512,36 @@ public class AchievementController extends BasicInsertableController<Achievement
         });
         //Create new achievement for the participants.
         return generateAchievement(AchievementType.LETHAL_WEAPON, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * Achievement for the quickest score in two tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateBillyTheKidAchievementBronze(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.BILLY_THE_KID, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * Achievement for the quickest score in three tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateBillyTheKidAchievementSilver(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.BILLY_THE_KID, AchievementGrade.SILVER);
+    }
+
+    /**
+     * Achievement for the quickest score in five tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateBillyTheKidAchievementGold(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.BILLY_THE_KID, AchievementGrade.GOLD);
     }
 
     /**
@@ -709,7 +747,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody is as an organizer for at least three consecutive tournaments.
+     * When somebody is as an organizer for at least two consecutive tournaments.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -719,7 +757,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody is as an organizer for at least five consecutive tournaments.
+     * When somebody is as an organizer for at least three consecutive tournaments.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -729,7 +767,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody is as an organizer for at least seven consecutive tournaments.
+     * When somebody is as an organizer for at least five consecutive tournaments.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -929,7 +967,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateALittleOfEverythingAchievementBronze(Tournament tournament) {
+    private List<Achievement> generateALittleOfEverythingAchievement(Tournament tournament) {
         final List<Participant> participants = new ArrayList<>();
         getScoresByParticipant().keySet().forEach(participant -> {
             if (getScoresByParticipant().get(participant).contains(Score.MEN)
@@ -941,8 +979,28 @@ public class AchievementController extends BasicInsertableController<Achievement
         return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.BRONZE, participants, tournament);
     }
 
+
     /**
-     * When all points are scored: Men, Kote, Do and Hansoku.
+     * When all points are scored: Men, Kote, Do and Tsuki.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateALittleOfEverythingAchievementBronze(Tournament tournament) {
+        final List<Participant> participants = new ArrayList<>();
+        getScoresByParticipant().keySet().forEach(participant -> {
+            if (getScoresByParticipant().get(participant).contains(Score.MEN)
+                    && getScoresByParticipant().get(participant).contains(Score.KOTE)
+                    && getScoresByParticipant().get(participant).contains(Score.DO)
+                    && getScoresByParticipant().get(participant).contains(Score.TSUKI)) {
+                participants.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.BRONZE, participants, tournament);
+    }
+
+    /**
+     * When all points are scored: Men, Kote, Do, Tsuki and Hansoku.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -953,6 +1011,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             if (getScoresByParticipant().get(participant).contains(Score.MEN)
                     && getScoresByParticipant().get(participant).contains(Score.KOTE)
                     && getScoresByParticipant().get(participant).contains(Score.DO)
+                    && getScoresByParticipant().get(participant).contains(Score.TSUKI)
                     && getScoresByParticipant().get(participant).contains(Score.HANSOKU)) {
                 participants.add(participant);
             }
@@ -961,7 +1020,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When all points are scored: Men, Kote, Do and Hansoku and Ippon.
+     * When all points are scored: Men, Kote, Do, Tsuki, Hansoku and Ippon.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -972,6 +1031,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             if (getScoresByParticipant().get(participant).contains(Score.MEN)
                     && getScoresByParticipant().get(participant).contains(Score.KOTE)
                     && getScoresByParticipant().get(participant).contains(Score.DO)
+                    && getScoresByParticipant().get(participant).contains(Score.TSUKI)
                     && getScoresByParticipant().get(participant).contains(Score.HANSOKU)
                     && getScoresByParticipant().get(participant).contains(Score.IPPON)) {
                 participants.add(participant);
