@@ -657,7 +657,7 @@
     "silver": "silver",
     "gold": "gold",
     "billyTheKid": {
-      "title": "Billy The Kid",
+      "title": "Billy the Kid",
       "description": "Perform the quickest point in a tournament.",
       "normal": "Achieved for one tournament.",
       "bronze": "Achieved for at least two tournaments.",
@@ -672,15 +672,15 @@
       "silver": "Achieved for at least five tournaments.",
       "gold": "Achieved for at least seven tournaments."
     },
-    "Terminator": {
-      "title": "Terminator",
+    "terminator": {
+      "title": "Terminator T-800",
       "description": "Perform the maximum possible points at a tournament.",
-      "normal": "Exterminate everything in one tournament.",
-      "bronze": "Exterminate everything in two tournaments.",
-      "silver": "Exterminate everything in three tournaments.",
-      "gold": "Exterminate everything in five tournaments."
+      "normal": "Exterminate everybody in one tournament.",
+      "bronze": "Exterminate everybody in two tournaments.",
+      "silver": "Exterminate everybody in three tournaments.",
+      "gold": "Exterminate everybody in five tournaments."
     },
-    "Juggernaut": {
+    "juggernaut": {
       "title": "Juggernaut",
       "description": "Perform the maximum possible points at a tournament and nobody has scored against you.",
       "normal": "Be a Juggernaut in one tournament.",
@@ -691,6 +691,7 @@
     "theKing": {
       "title": "The King",
       "description": "Be the one that last longer on the King of the Mountain mode.",
+      "normal": "Be the king in one tournament.",
       "bronze": "Be the king in three tournaments during the same year.",
       "silver": "Be the king in four tournaments during the same year.",
       "gold": "Be the king in five tournaments during the same year."
@@ -737,7 +738,7 @@
     },
     "boneBreaker": {
       "title": "Bone breaker",
-      "description": "Lost a fight by two Hansokus.",
+      "description": "Lose a fight by two Hansokus.",
       "normal": "",
       "bronze": "",
       "silver": "",
@@ -752,7 +753,7 @@
       "gold": "Perform five different roles."
     },
     "sweatyTenugui": {
-      "title": "Sweaty tenugui",
+      "title": "Sweaty tenugi",
       "description": "Participate in a tournament as a competitor.",
       "normal": "Participate in your first tournament as a competitor.",
       "bronze": "Participate in ten tournaments as a competitor.",
@@ -824,11 +825,11 @@
     },
     "daruma": {
       "title": "Daruma",
-      "description": "Assist as much as possible to the tournaments.",
-      "normal": "Assist to ten tournaments.",
-      "bronze": "Assist to twenty tournaments.",
-      "silver": "Assist to thirty tournaments.",
-      "gold": "Assist to fifty tournaments."
+      "description": "Attend as much as possible tournaments.",
+      "normal": "Attend to ten tournaments.",
+      "bronze": "Attend to twenty tournaments.",
+      "silver": "Attend to thirty tournaments.",
+      "gold": "Attend to fifty tournaments."
     }
   }
 }
