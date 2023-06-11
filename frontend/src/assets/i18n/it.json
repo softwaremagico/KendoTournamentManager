@@ -637,9 +637,9 @@
       "title": "Billy the Kid",
       "description": "Realizza il punto più veloce in un torneo.",
       "normal": "Ottenuto per un torneo.",
-      "bronze": "Ottenuto durante almeno due tornei.",
-      "silver": "Ottenuto durante almeno tre tornei.",
-      "gold": "Ottenuto durante almeno cinque tornei."
+      "bronze": "Ottenuto durante almeno due tornei consecutivi.",
+      "silver": "Ottenuto durante almeno tre tornei consecutivi.",
+      "gold": "Ottenuto durante almeno cinque tornei consecutivi."
     },
     "lethalWeapon": {
       "title": "Arma letale",
@@ -653,9 +653,9 @@
       "title": "Terminator T-800",
       "description": "Segna più punti possibile in un torneo.",
       "normal": "Stermina tutti durante un torneo.",
-      "bronze": "Stermina tutti in due tornei.",
-      "silver": "Stermina tutti in tre tornei.",
-      "gold": "Stermina tutti in cinque tornei."
+      "bronze": "Stermina tutti in due tornei consecutivi.",
+      "silver": "Stermina tutti in tre tornei consecutivi.",
+      "gold": "Stermina tutti in cinque tornei consecutivi."
     },
     "juggernaut": {
       "title": "Juggernaut",
@@ -676,26 +676,26 @@
     "looksGoodFromFarAwayBut": {
       "title": "Sembra buono da lontano ma...",
       "description": "Sii un organizzatore.",
-      "normal": "Sii l'organizzatore di un torneo.",
-      "bronze": "Sii un organizzatore in tre tornei.",
-      "silver": "Sii un organizzatore in cinque tornei.",
-      "gold": "Sii un organizzatore in sette tornei."
+      "normal": "Sii l'organizzatore di un torneo consecutivi.",
+      "bronze": "Sii un organizzatore in tre tornei consecutivi.",
+      "silver": "Sii un organizzatore in cinque tornei consecutivi.",
+      "gold": "Sii un organizzatore in sette tornei consecutivi."
     },
     "iLoveTheFlags": {
       "title": "Amo le bandiere",
       "description": "Sii un arbitro.",
       "normal": "Fai l'arbitro in un torneo.",
-      "bronze": "Fai l'arbitro in tre tornei.",
-      "silver": "Fai l'arbitro in cinque tornei.",
-      "gold": "Fai l'arbitro in sette tornei."
+      "bronze": "Fai l'arbitro in tre tornei consecutivi.",
+      "silver": "Fai l'arbitro in cinque tornei consecutivi.",
+      "gold": "Fai l'arbitro in sette tornei consecutivi."
     },
     "theCastle": {
       "title": "Il Castello",
       "description": "Impedisci a qualcuno di segnare un punto contro di te.",
       "normal": "Proteggi il castello in un torneo.",
-      "bronze": "Proteggi il castello in due tornei.",
-      "silver": "Proteggi il castello in tre tornei.",
-      "gold": "Proteggi il castello in cinque tornei."
+      "bronze": "Proteggi il castello in due tornei consecutivi.",
+      "silver": "Proteggi il castello in tre tornei consecutivi.",
+      "gold": "Proteggi il castello in cinque tornei consecutivi."
     },
     "entrenched": {
       "title": "Trincerato",
@@ -756,10 +756,10 @@
     "woodcutter": {
       "title": "Boscaiolo",
       "description": "Segna solo punti Do e ottieni almeno un Do in ogni combattimento.",
-      "normal": "Ottieni solo 'Do' durante un torneo.",
-      "bronze": "Ottieni solo 'Do' in tre tornei.",
-      "silver": "Ottieni solo 'Do' per cinque tornei.",
-      "gold": "Ottieni solo 'Do' per sette tornei."
+      "normal": "Ottieni solo 'Do' in un torneo.",
+      "bronze": "Ottieni solo 'Do' in due tornei consecutivi.",
+      "silver": "Ottieni solo 'Do' per tre tornei consecutivi.",
+      "gold": "Ottieni solo 'Do' per cinque tornei consecutivi."
     },
     "theNeverEndingStory": {
       "title": "La storia infinita",
@@ -773,9 +773,9 @@
       "title": "Amore condiviso",
       "description": "Sii un volontario.",
       "normal": "Fai volontariato in un torneo.",
-      "bronze": "Fai volontariato in tre tornei.",
-      "silver": "Fai volontariato in cinque tornei.",
-      "gold": "Fai volontariato in sette tornei."
+      "bronze": "Fai volontariato in tre tornei consecutivi.",
+      "silver": "Fai volontariato in cinque tornei consecutivi.",
+      "gold": "Fai volontariato in sette tornei consecutivi."
     },
     "masterTheLoop": {
       "title": "Padroneggia il loop",

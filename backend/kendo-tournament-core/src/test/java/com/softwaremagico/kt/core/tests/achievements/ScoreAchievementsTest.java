@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.tests;
+package com.softwaremagico.kt.core.tests.achievements;
 
 /*-
  * #%L
@@ -25,46 +25,28 @@ package com.softwaremagico.kt.core.tests;
  */
 
 import com.softwaremagico.kt.core.controller.AchievementController;
-import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.FightController;
-import com.softwaremagico.kt.core.controller.GroupController;
-import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
-import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.AchievementDTO;
-import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
-import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.persistence.values.AchievementType;
-import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
-import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest
-@Test(groups = {"achievementTests"})
-public class AchievementTest extends AbstractTransactionalTestNGSpringContextTests {
-
-    private static final String CLUB_NAME = "ClubName";
-    private static final String CLUB_COUNTRY = "ClubCountry";
-    private static final String CLUB_CITY = "ClubCity";
+@Test(groups = {"scoreAchievementTests"})
+public class ScoreAchievementsTest extends AchievementTest {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -73,6 +55,8 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     private static final int ORGANIZER = 2;
 
     private static final int VOLUNTEER = 2;
+
+    private static final int PRESS = 1;
 
     private static final int BAMBOO_ACHIEVEMENT_PARTICIPANTS = 1;
 
@@ -83,22 +67,10 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     private static final String TOURNAMENT3_NAME = "Tournament 3";
 
     @Autowired
-    private ClubController clubController;
-
-    @Autowired
-    private ParticipantController participantController;
-
-    @Autowired
     private TournamentController tournamentController;
 
     @Autowired
     private RoleController roleController;
-
-    @Autowired
-    private GroupController groupController;
-
-    @Autowired
-    private TeamController teamController;
 
     @Autowired
     private FightController fightController;
@@ -106,13 +78,9 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     @Autowired
     private AchievementController achievementController;
 
-    private List<ParticipantDTO> participantsDTOs;
-
     private TournamentDTO tournament1DTO;
     private TournamentDTO tournament2DTO;
     private TournamentDTO tournament3DTO;
-
-    private ParticipantDTO bambooAchievementParticipant;
 
     private ParticipantDTO woodCutter;
 
@@ -124,87 +92,16 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
 
     private ParticipantDTO billyTheKid;
 
-    private void generateRoles(TournamentDTO tournamentDTO) {
-        //Add Competitors Roles
-        for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(i), RoleType.COMPETITOR), null);
-        }
-
-        //Add Referee Roles
-        for (int i = 0; i < REFEREES; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.REFEREE), null);
-        }
-
-        //Add Organizer Roles
-        for (int i = 0; i < ORGANIZER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.ORGANIZER), null);
-        }
-
-        //Add Volunteer Roles
-        for (int i = 0; i < VOLUNTEER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.VOLUNTEER), null);
-        }
-    }
-
-    private void addTeams(TournamentDTO tournamentDTO) {
-        List<RoleDTO> competitorsRolesDTO = roleController.get(tournamentDTO, RoleType.COMPETITOR);
-
-        int teamIndex = 0;
-        TeamDTO teamDTO = null;
-        int teamMember = 0;
-
-        final GroupDTO groupDTO = groupController.get(tournamentDTO).get(0);
-
-        for (RoleDTO competitorRoleDTO : competitorsRolesDTO) {
-            // Create a new team.
-            if (teamDTO == null) {
-                teamIndex++;
-                teamDTO = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
-                teamMember = 0;
-            }
-
-            // Add member.
-            teamDTO.addMember(competitorRoleDTO.getParticipant());
-            teamDTO = teamController.update(teamDTO, null);
-
-            if (teamMember == 0) {
-                groupController.addTeams(groupDTO.getId(), Collections.singletonList(teamDTO), null);
-            }
-
-            teamMember++;
-
-            // Team filled up, create a new team.
-            if (teamMember >= MEMBERS) {
-                teamDTO = null;
-            }
-        }
-    }
 
     @BeforeClass
     public void prepareData() {
-        //Add club
-        final ClubDTO clubDTO = clubController.create(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY, null);
-
-        //Add participants
-        participantsDTOs = new ArrayList<>();
-        for (int i = 0; i < MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + BAMBOO_ACHIEVEMENT_PARTICIPANTS; i++) {
-            participantsDTOs.add(participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i),
-                    String.format("lastname%s", i), clubDTO), null));
-            if (i == MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + BAMBOO_ACHIEVEMENT_PARTICIPANTS - 1) {
-                bambooAchievementParticipant = participantsDTOs.get(i);
-            }
-        }
+        addParticipants(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 0);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
     public void prepareTournament1() {
         //Create Tournament
-        tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournament1DTO.setCreatedAt(LocalDateTime.now().minusMinutes(2));
-        tournamentController.update(tournament1DTO, null);
-        generateRoles(tournament1DTO);
-        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
-        addTeams(tournament1DTO);
+        tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
         List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
 
         //Woodcutter
@@ -245,38 +142,17 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     @BeforeClass(dependsOnMethods = "prepareTournament1")
     public void prepareTournament2() {
         //Create Tournament
-        tournament2DTO = tournamentController.create(new TournamentDTO(TOURNAMENT2_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournament2DTO.setCreatedAt(LocalDateTime.now().minusMinutes(1));
-        tournamentController.update(tournament2DTO, null);
-        generateRoles(tournament2DTO);
-        roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
-        addTeams(tournament2DTO);
+        tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
         fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
         achievementController.generateAchievements(tournament2DTO);
     }
 
     @BeforeClass(dependsOnMethods = "prepareTournament2")
     public void prepareTournament3() {
+        tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        tournament3DTO = tournamentController.create(new TournamentDTO(TOURNAMENT3_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournament3DTO.setCreatedAt(LocalDateTime.now());
-        tournamentController.update(tournament3DTO, null);
-        generateRoles(tournament3DTO);
-        roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
-        addTeams(tournament3DTO);
         fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
         achievementController.generateAchievements(tournament3DTO);
-    }
-
-    @Test
-    public void checkBambooAchievement() {
-        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(bambooAchievementParticipant);
-        List<AchievementDTO> flexibleAsBambooAchievements =
-                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.FLEXIBLE_AS_BAMBOO)
-                        .toList();
-        Assert.assertEquals(flexibleAsBambooAchievements.size(), 1);
-        Assert.assertEquals(flexibleAsBambooAchievements.get(0).getParticipant(), bambooAchievementParticipant);
-        Assert.assertEquals(achievementController.getAchievements(AchievementType.FLEXIBLE_AS_BAMBOO).size(), 1);
     }
 
     @Test
@@ -314,13 +190,6 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     }
 
     @Test
-    public void checkSweatyTenuguiAchievement() {
-        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.SWEATY_TENUGUI).size(), MEMBERS * TEAMS);
-        Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.SWEATY_TENUGUI).size(), 1);
-        Assert.assertEquals(achievementController.getAchievements(tournament3DTO, AchievementType.SWEATY_TENUGUI).size(), 0);
-    }
-
-    @Test
     public void checkTheWinnerAchievement() {
         Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_WINNER).size(), 1);
         Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.THE_WINNER).size(), 1);
@@ -330,23 +199,6 @@ public class AchievementTest extends AbstractTransactionalTestNGSpringContextTes
     public void checkTheWinnerTeamAchievement() {
         Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_WINNER_TEAM).size(), MEMBERS);
         Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.THE_WINNER_TEAM).size(), MEMBERS);
-    }
-
-    @Test
-    public void searchLastTournaments() {
-        List<TournamentDTO> tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 1);
-        Assert.assertEquals(tournamentDTOS.size(), 1);
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament2DTO.getId()));
-
-        tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 2);
-        Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament2DTO.getId()));
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament1DTO.getId()));
-
-        tournamentDTOS = tournamentController.getPreviousTo(tournament3DTO, 3);
-        Assert.assertEquals(tournamentDTOS.size(), 2);
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament2DTO.getId()));
-        Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament1DTO.getId()));
     }
 
     @AfterClass
