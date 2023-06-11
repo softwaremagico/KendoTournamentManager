@@ -119,4 +119,14 @@ public class Achievement extends Element {
     public void setAchievementGrade(AchievementGrade achievementGrade) {
         this.achievementGrade = Objects.requireNonNullElse(achievementGrade, AchievementGrade.NORMAL);
     }
+
+    @Override
+    public String toString() {
+        return "Achievement{"
+                + "participant=" + participant
+                + ", tournament=" + tournament
+                + ", achievementType=" + achievementType
+                + ", achievementGrade=" + achievementGrade
+                + "} " + super.toString();
+    }
 }

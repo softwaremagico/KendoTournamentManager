@@ -78,7 +78,7 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
      */
     public List<Achievement> getAfter(Tournament tournament, AchievementType achievementType, AchievementGrade grade, LocalDateTime after) {
         return getRepository().findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(tournament, achievementType,
-                grade != null ? grade.getGreaterThanEquals() : Arrays.asList(AchievementGrade.values()), after);
+                grade != null ? grade.getGreaterEqualsThan() : Arrays.asList(AchievementGrade.values()), after);
     }
 
     public List<Achievement> get(AchievementType achievementType) {
@@ -91,6 +91,10 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
 
     public List<Achievement> get(AchievementType achievementType, Collection<AchievementGrade> achievementGrades) {
         return getRepository().findByAchievementTypeAndAchievementGradeIn(achievementType, achievementGrades);
+    }
+
+    public List<Achievement> get(AchievementType achievementType, Collection<AchievementGrade> achievementGrades, Collection<Participant> participants) {
+        return getRepository().findByAchievementTypeAndAchievementGradeInAndParticipantIn(achievementType, achievementGrades, participants);
     }
 
     public List<Achievement> get(Tournament tournament) {
