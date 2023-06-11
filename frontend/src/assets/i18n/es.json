@@ -690,33 +690,33 @@
       "title": "Se ve bien desde lejos pero...",
       "description": "Sé un organizador.",
       "normal": "Sé un organizador en un torneo.",
-      "bronze": "Sé un organizador en tres torneos.",
-      "silver": "Sé un organizador en cinco torneos.",
-      "gold": "Sé un organizador en siete torneos."
+      "bronze": "Sé un organizador en tres torneos sucesivos.",
+      "silver": "Sé un organizador en cinco torneos sucesivos.",
+      "gold": "Sé un organizador en siete torneos sucesivos."
     },
     "iLoveTheFlags": {
       "title": "Me encantan las banderas",
       "description": "Sé un árbitro.",
       "normal": "Sé árbitro en un torneo.",
-      "bronze": "Sé árbitro en tres torneos.",
-      "silver": "Sé árbitro en cinco torneos.",
-      "gold": "Sé árbitro en siete torneos."
+      "bronze": "Sé árbitro en tres torneos sucesivos.",
+      "silver": "Sé árbitro en cinco torneos sucesivos.",
+      "gold": "Sé árbitro en siete torneos sucesivos."
     },
     "theCastle": {
       "title": "El Castillo",
       "description": "Evita que alguien realice un punto en tu contra.",
       "normal": "Protege el castillo en un torneo.",
-      "bronze": "Protege el castillo en dos torneos.",
-      "silver": "Protege el castillo en tres torneos.",
-      "gold": "Protege el castillo en cinco torneos."
+      "bronze": "Protege el castillo en dos torneos sucesivos.",
+      "silver": "Protege el castillo en tres torneos sucesivos.",
+      "gold": "Protege el castillo en cinco torneos sucesivos."
     },
     "entrenched": {
       "title": "Atrincherado",
       "description": "No sumes puntos en un torneo en los que nadie tampoco ha anotado contra ti.",
       "normal": "Protege la trinchera en un torneo.",
-      "bronze": "Protege la trinchera durante tres torneos.",
-      "silver": "Protege la trinchera durante cinco torneos.",
-      "gold": "Protege la trinchera durante siete torneos."
+      "bronze": "Protege la trinchera durante dos torneos sucesivos.",
+      "silver": "Protege la trinchera durante tres torneos sucesivos.",
+      "gold": "Protege la trinchera durante cinco torneos sucesivos."
     },
     "aLittleOfEverything": {
       "title": "Un poco de todo",
@@ -770,9 +770,9 @@
       "title": "Leñador",
       "description": "Obtén solo puntos 'Do' y obtén al menos un 'Do' en cada combate.",
       "normal": "Puntuar solo 'Do' durante un torneo.",
-      "bronze": "Obtén solo 'Do' durante tres torneos.",
-      "silver": "Obtén solo 'Do' durante cinco torneos.",
-      "gold": "Obtén solo 'Do' durante siete torneos."
+      "bronze": "Obtén solo 'Do' durante dos torneos sucesivos.",
+      "silver": "Obtén solo 'Do' durante tres torneos sucesivos.",
+      "gold": "Obtén solo 'Do' durante cinco torneos sucesivos."
     },
     "theNeverEndingStory": {
       "title": "La historia interminable",
@@ -786,9 +786,9 @@
       "title": "Amor compartido",
       "description": "Sé un voluntario.",
       "normal": "Sé voluntario en un torneo.",
-      "bronze": "Sé voluntario en tres torneos.",
-      "silver": "Sé voluntario en cinco torneos.",
-      "gold": "Sé voluntario en siete torneos."
+      "bronze": "Sé voluntario en tres torneos sucesivos.",
+      "silver": "Sé voluntario en cinco torneos sucesivos.",
+      "gold": "Sé voluntario en siete torneos sucesivos."
     },
     "masterTheLoop": {
       "title": "Domina el bucle",
