@@ -631,9 +631,9 @@
       "title": "Billy the Kid",
       "description": "Voer het snelste punt in een toernooi uit.",
       "normal": "Bereikt voor één toernooi.",
-      "bronze": "Behaald tijdens ten minste twee toernooien.",
-      "silver": "Behaald tijdens ten minste drie toernooien.",
-      "gold": "Behaald tijdens ten minste vijf toernooien."
+      "bronze": "Behaald tijdens ten minste twee opeenvolgende toernooien.",
+      "silver": "Behaald tijdens ten minste drie opeenvolgende toernooien.",
+      "gold": "Behaald tijdens ten minste vijf opeenvolgende toernooien."
     },
     "lethalWeapon": {
       "title": "Dodelijk wapen",
@@ -647,9 +647,9 @@
       "title": "Terminator T-800",
       "description": "Scoor zoveel mogelijk punten in een toernooi.",
       "normal": "Iedereen uitroeien tijdens een toernooi.",
-      "bronze": "Vernietig iedereen in twee toernooien.",
-      "silver": "Vernietig iedereen in drie toernooien.",
-      "gold": "Vernietig iedereen in vijf toernooien."
+      "bronze": "Vernietig iedereen in twee opeenvolgende toernooien.",
+      "silver": "Vernietig iedereen in drie opeenvolgende toernooien.",
+      "gold": "Vernietig iedereen in vijf opeenvolgende toernooien."
     },
     "juggernaut": {
       "title": "moloch",
@@ -671,33 +671,33 @@
       "title": "Ziet er van ver goed uit, maar...",
       "description": "Wees een organisator.",
       "normal": "Wees organisator van een toernooi.",
-      "bronze": "Wees een organisator in drie toernooien.",
-      "silver": "Wees een organisator in vijf toernooien.",
-      "gold": "Wees een organisator in zeven toernooien."
+      "bronze": "Wees een organisator in drie opeenvolgende toernooien.",
+      "silver": "Wees een organisator in vijf opeenvolgende toernooien.",
+      "gold": "Wees een organisator in zeven opeenvolgende toernooien."
     },
     "iLoveTheFlags": {
       "title": "Ik hou van vlaggen",
       "description": "Wees een scheidsrechter.",
       "normal": "Wees een scheidsrechter in een toernooi.",
-      "bronze": "Refiteer drie toernooien.",
-      "silver": "Ref in vijf toernooien.",
-      "gold": "Ref in zeven toernooien."
+      "bronze": "Refiteer drie opeenvolgende toernooien.",
+      "silver": "Ref in vijf opeenvolgende toernooien.",
+      "gold": "Ref in zeven opeenvolgende toernooien."
     },
     "theCastle": {
       "title": "Het kasteel",
       "description": "Voorkom dat iemand een punt tegen je scoort.",
       "normal": "Bescherm het kasteel in een toernooi.",
-      "bronze": "Bescherm het kasteel in twee toernooien.",
-      "silver": "Bescherm het kasteel in drie toernooien.",
-      "gold": "Bescherm het kasteel in vijf toernooien."
+      "bronze": "Bescherm het kasteel in twee opeenvolgende toernooien.",
+      "silver": "Bescherm het kasteel in drie opeenvolgende toernooien.",
+      "gold": "Bescherm het kasteel in vijf opeenvolgende toernooien."
     },
     "entrenched": {
       "title": "Verankerd",
       "description": "Scoor geen punten in een toernooi waar ook niemand tegen jou heeft gescoord.",
       "normal": "Bewaak de loopgraaf in een toernooi.",
-      "bronze": "Bewaak de loopgraaf voor drie toernooien.",
-      "silver": "Bewaak de loopgraaf voor vijf toernooien.",
-      "gold": "Bewaak de loopgraaf voor zeven toernooien."
+      "bronze": "Bewaak de loopgraaf voor drie opeenvolgende toernooien.",
+      "silver": "Bewaak de loopgraaf voor vijf opeenvolgende toernooien.",
+      "gold": "Bewaak de loopgraaf voor zeven opeenvolgende toernooien."
     },
     "aLittleOfEverything": {
       "title": "Van alles een beetje",
@@ -751,9 +751,9 @@
       "title": "Houthakker",
       "description": "Scoor alleen Do-punten en verkrijg ten minste één Do in elk gevecht.",
       "normal": "Beoordeel alleen 'Do' tijdens een toernooi.",
-      "bronze": "Krijg alleen 'Do' over drie toernooien.",
-      "silver": "Krijg alleen 'Do' voor vijf toernooien.",
-      "gold": "Krijg slechts 'Do' voor zeven toernooien."
+      "bronze": "Krijg alleen 'Do' over twee opeenvolgende toernooien.",
+      "silver": "Krijg alleen 'Do' voor drie opeenvolgende toernooien.",
+      "gold": "Krijg slechts 'Do' voor vijf opeenvolgende toernooien."
     },
     "theNeverEndingStory": {
       "title": "Het oneindige verhaal",
@@ -767,9 +767,9 @@
       "title": "Liefde gedeeld",
       "description": "Wees een vrijwilliger.",
       "normal": "Doe vrijwilligerswerk in een toernooi.",
-      "bronze": "Doe vrijwilligerswerk in drie toernooien.",
-      "silver": "Doe vrijwilligerswerk in vijf toernooien.",
-      "gold": "Doe vrijwilligerswerk in zeven toernooien."
+      "bronze": "Doe vrijwilligerswerk in drie opeenvolgende toernooien.",
+      "silver": "Doe vrijwilligerswerk in vijf opeenvolgende toernooien.",
+      "gold": "Doe vrijwilligerswerk in zeven opeenvolgende toernooien."
     },
     "masterTheLoop": {
       "title": "Beheers de lus",

@@ -660,9 +660,9 @@
       "title": "Billy the Kid",
       "description": "Perform the quickest point in a tournament.",
       "normal": "Achieved for one tournament.",
-      "bronze": "Achieved for at least two tournaments.",
-      "silver": "Achieved for at least three tournaments.",
-      "gold": "Achieved for at least five tournaments."
+      "bronze": "Achieved for at least two consecutive tournaments.",
+      "silver": "Achieved for at least three consecutive tournaments.",
+      "gold": "Achieved for at least five consecutive tournaments."
     },
     "lethalWeapon": {
       "title": "Lethal Weapon",
@@ -676,9 +676,9 @@
       "title": "Terminator T-800",
       "description": "Perform the maximum possible points at a tournament.",
       "normal": "Exterminate everybody in one tournament.",
-      "bronze": "Exterminate everybody in two tournaments.",
-      "silver": "Exterminate everybody in three tournaments.",
-      "gold": "Exterminate everybody in five tournaments."
+      "bronze": "Exterminate everybody in two consecutive tournaments.",
+      "silver": "Exterminate everybody in three consecutive tournaments.",
+      "gold": "Exterminate everybody in five consecutive tournaments."
     },
     "juggernaut": {
       "title": "Juggernaut",
@@ -700,33 +700,33 @@
       "title": "Looks good from far away but...",
       "description": "Be an organizer.",
       "normal": "Be an organizer in one tournament.",
-      "bronze": "Be an organizer in three tournaments.",
-      "silver": "Be an organizer in five tournaments.",
-      "gold": "Be an organizer in seven tournaments."
+      "bronze": "Be a organizer in three consecutive tournaments.",
+      "silver": "Be a organizer in five consecutive tournaments.",
+      "gold": "Be a organizer in seven consecutive tournaments."
     },
     "iLoveTheFlags": {
       "title": "I love the flags",
       "description": "Be a referee.",
       "normal": "Be a referee in one tournament.",
-      "bronze": "Be a referee in three tournaments.",
-      "silver": "Be a referee in five tournaments.",
-      "gold": "Be a referee in seven tournaments."
+      "bronze": "Be a referee in three consecutive tournaments.",
+      "silver": "Be a referee in five consecutive tournaments.",
+      "gold": "Be a referee in seven consecutive tournaments."
     },
     "theCastle": {
       "title": "The Castle",
       "description": "Avoid that anybody perform a point against you.",
       "normal": "Protect the castle in one tournament.",
-      "bronze": "Protect the castle in two tournaments.",
-      "silver": "Protect the castle in three tournaments.",
-      "gold": "Protect the castle in five tournaments."
+      "bronze": "Protect the castle in two consecutive tournaments.",
+      "silver": "Protect the castle in three consecutive tournaments.",
+      "gold": "Protect the castle in five consecutive tournaments."
     },
     "entrenched": {
       "title": "Entrenched",
       "description": "Perform no points in a tournament but also nobody has scored against you.",
       "normal": "Protect the trench for one tournament.",
-      "bronze": "Protect the trench for three tournaments.",
-      "silver": "Protect the trench for five tournaments.",
-      "gold": "Protect the trench for seven tournaments."
+      "bronze": "Protect the trench for two consecutive tournaments.",
+      "silver": "Protect the trench for three consecutive tournaments.",
+      "gold": "Protect the trench for five consecutive tournaments."
     },
     "aLittleOfEverything": {
       "title": "A little of everything",
@@ -780,9 +780,9 @@
       "title": "Woodcutter",
       "description": "Score only 'Do' points, and score at least one 'Do' on each fight.",
       "normal": "Score only 'Do' in one tournament.",
-      "bronze": "Score only 'Do' in three tournaments.",
-      "silver": "Score only 'Do' in five tournaments.",
-      "gold": "Score only 'Do' in seven tournaments."
+      "bronze": "Score only 'Do' in two consecutive tournaments.",
+      "silver": "Score only 'Do' in three consecutive tournaments.",
+      "gold": "Score only 'Do' in five consecutive tournaments."
     },
     "theNeverEndingStory": {
       "title": "The never ending story",
@@ -796,9 +796,9 @@
       "title": "Love sharing",
       "description": "Be a volunteer.",
       "normal": "Be a volunteer in one tournament.",
-      "bronze": "Be a volunteer in three tournaments.",
-      "silver": "Be a volunteer in five tournaments.",
-      "gold": "Be a volunteer in seven tournaments."
+      "bronze": "Be a volunteer in three consecutive tournaments.",
+      "silver": "Be a volunteer in five consecutive tournaments.",
+      "gold": "Be a volunteer in seven consecutive tournaments."
     },
     "masterTheLoop": {
       "title": "Master the loop",
