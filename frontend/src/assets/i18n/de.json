@@ -623,177 +623,184 @@
   "minutesAbbreviation": "mins",
   "secondsAbbreviation": "secs",
   "achievement": {
-    "normal": "",
-    "bronze": "",
-    "silver": "",
-    "gold": "",
+    "normal": "basic",
+    "bronze": "bronze",
+    "silver": "silber",
+    "gold": "gold",
     "billyTheKid": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Billy the Kid",
+      "description": "Erziele den schnellsten Punkt in einem Turnier.",
+      "normal": "Für ein Turnier erreicht.",
+      "bronze": "Erreicht in mindestens zwei Turnieren.",
+      "silver": "Erreicht in mindestens drei Turnieren.",
+      "gold": "Während mindestens fünf Turnieren erreicht."
     },
     "lethalWeapon": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Tödliche Waffe",
+      "description": "Machen Sie in weniger als 5 Sekunden einen Punkt.",
+      "normal": "Für ein Turnier erreicht.",
+      "bronze": "Während mindestens drei Turnieren erreicht.",
+      "silver": "Erreicht in mindestens fünf Turnieren.",
+      "gold": "In mindestens sieben Turnieren erreicht."
     },
-    "Terminator": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+    "terminator": {
+      "title": "Terminator T-800",
+      "description": "Erziele in einem Turnier so viele Punkte wie möglich.",
+      "normal": "Vernichte jeden während eines Turniers.",
+      "bronze": "Vernichte alle in zwei Turnieren.",
+      "silver": "Vernichte alle in drei Turnieren.",
+      "gold": "Vernichte alle in fünf Turnieren."
     },
-    "Juggernaut": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+    "juggernaut": {
+      "title": "Juggernaut",
+      "description": "Erreiche in einem Turnier so viele Punkte wie möglich und niemand hat dich gepunktet.",
+      "normal": "Sei ein Juggernaut in einem Turnier.",
+      "bronze": "Werde zum Juggernaut für zwei Turniere.",
+      "silver": "Werde zum Juggernaut für drei Turniere.",
+      "gold": "Werde zum Juggernaut für fünf Turniere."
     },
     "theKing": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Der König",
+      "description": "Sei derjenige, der im King of the Mountain-Modus am längsten durchhält.",
+      "normal": "Seien Sie der König in einem Turnier.",
+      "bronze": "Sei der König in drei Turnieren im selben Jahr.",
+      "silver": "Sei der König in vier Turnieren im selben Jahr.",
+      "gold": "Sei der König in fünf Turnieren im selben Jahr."
     },
     "looksGoodFromFarAwayBut": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Sieht aus der Ferne gut aus, aber ...",
+      "description": "Organisator sein.",
+      "normal": "Organisator eines Turniers sein.",
+      "bronze": "Seien Sie Organisator von drei Turnieren.",
+      "silver": "Seien Sie Organisator von fünf Turnieren.",
+      "gold": "Seien Sie Organisator von sieben Turnieren."
     },
     "iLoveTheFlags": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Ich liebe Flaggen",
+      "description": "Schiedsrichter sein.",
+      "normal": "Sei Schiedsrichter in einem Turnier.",
+      "bronze": "Erweitere drei Turniere.",
+      "silver": "Schiedsrichter in fünf Turnieren.",
+      "gold": "Schiedsrichter in sieben Turnieren."
     },
     "theCastle": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Das Schloss",
+      "description": "Verhindern Sie, dass jemand einen Punkt gegen Sie erzielt.",
+      "normal": "Beschütze die Burg in einem Turnier.",
+      "bronze": "Beschütze die Burg in zwei Turnieren.",
+      "silver": "Beschütze die Burg in drei Turnieren.",
+      "gold": "Beschütze die Burg in fünf Turnieren."
     },
     "entrenched": {
-      "title": "",
-      "description": ""
+      "title": "Verankert",
+      "description": "Erziele auch keine Punkte in einem Turnier, in dem niemand gegen dich gepunktet hat.",
+      "normal": "Bewache den Graben in einem Turnier.",
+      "bronze": "Bewache den Graben für drei Turniere.",
+      "silver": "Bewache den Graben fünf Turniere lang.",
+      "gold": "Bewache den Graben sieben Turniere lang."
     },
     "aLittleOfEverything": {
-      "title": "",
-      "description": ""
+      "title": "Von allem ein bisschen",
+      "description": "Erziele in einem Turnier unterschiedliche Punkte. Dieser Erfolg kann mehrmals erreicht werden.",
+      "normal": "Während eines Turniers ein Herren-, Kote- und Do-Ergebnis erzielen.",
+      "bronze": "Erziele während eines Turniers ein Herren-, Kote-, Do- und Tsuki-Ergebnis.",
+      "silver": "Erziele während eines Turniers ein Men, Kote, Do, Tsuki und Hansoku.",
+      "gold": "Erziele während eines Turniers ein Men, Kote, Do, Tsuki, Hansoku und Ippon."
     },
     "boneBreaker": {
-      "title": "",
-      "description": "",
+      "title": "Knochenbrecher",
+      "description": "Verliere einen Kampf mit zwei Hansokus.",
       "normal": "",
       "bronze": "",
       "silver": "",
-      "gold": ""
+      "Gold": ""
     },
     "flexibleAsBamboo": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Flexibel wie Bambus",
+      "description": "Alle möglichen Rollen ausführen.",
+      "normal": "Zwei verschiedene Rollen spielen.",
+      "bronze": "Übernimm drei verschiedene Rollen.",
+      "silver": "Führe vier verschiedene Rollen aus.",
+      "gold": "Fünf verschiedene Rollen übernehmen."
     },
     "sweatyTenugui": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Sweaty Tenugi",
+      "description": "Nehmen Sie als Teilnehmer an einem Turnier teil.",
+      "normal": "Nehmen Sie als Teilnehmer an Ihrem ersten Turnier teil.",
+      "bronze": "Nehmen Sie als Teilnehmer an zehn Turnieren teil.",
+      "silver": "Nehmen Sie als Teilnehmer an zwanzig Turnieren teil.",
+      "gold": "Nehmen Sie als Teilnehmer an dreißig Turnieren teil."
     },
     "theWinner": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Der Gewinner",
+      "description": "Erster in einem Turnier sein.",
+      "normal": "Ein Turnier gewinnen.",
+      "bronze": "Gewinne drei Turniere im selben Jahr.",
+      "silver": "Gewinne vier Turniere im selben Jahr.",
+      "gold": "Gewinne fünf Turniere im selben Jahr."
     },
     "theWinnerTeam": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Das Gewinnerteam",
+      "description": "Seien Sie Mitglied eines Teams, das in einem Turnier den ersten Platz belegt.",
+      "normal": "Seien Sie Teil eines Teams, das ein Turnier gewinnt.",
+      "bronze": "Seien Sie Teil eines Siegerteams bei drei Turnieren im selben Jahr.",
+      "silver": "Seien Sie Teil eines Teams, das im selben Jahr vier Turniere gewonnen hat.",
+      "gold": "Seien Sie Teil eines Teams, das im selben Jahr fünf Turniere gewonnen hat."
     },
     "woodcutter": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Holzfäller",
+      "description": "Erziele nur Punkte und schaffe in jedem Kampf mindestens einen.",
+      "normal": "Bewerte nur 'Do' während eines Turniers.",
+      "bronze": "Erreiche in drei Turnieren nur ‚Do‘.",
+      "silver": "Erreiche in fünf Turnieren nur ‚Do‘.",
+      "gold": "Erreiche in sieben Turnieren nur ‚Do‘."
     },
     "theNeverEndingStory": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Die unendliche Geschichte",
+      "description": "Länger Mitglied sein und weiterhin teilnehmen.",
+      "normal": "Fünf Jahre lang Mitglied sein.",
+      "bronze": "Seien Sie zehn Jahre lang Mitglied.",
+      "silver": "Fünfzehn Jahre lang Mitglied sein.",
+      "gold": "Zwanzig Jahre lang Mitglied sein."
     },
     "loveSharing": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Geteilte Liebe",
+      "description": "Seien Sie ein Freiwilliger.",
+      "normal": "Freiwilliger bei einem Turnier.",
+      "bronze": "Bei drei Turnieren ehrenamtlich dabei.",
+      "silver": "Bei fünf Turnieren ehrenamtlich dabei.",
+      "gold": "Freiwilliger bei sieben Turnieren."
     },
     "masterTheLoop": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Meister die Schleife",
+      "description": "Gewinne eine Liga in Rueda.",
+      "bronze": "Dominiere die Runde in drei Turnieren im selben Jahr.",
+      "silver": "Dominiere die Runde in vier Turnieren im selben Jahr.",
+      "gold": "Dominiere die Runde in fünf Turnieren im selben Jahr."
     },
     "tisButAScratch": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Es ist nur ein Kratzer",
+      "description": "Erhalte einen Punkt von deinem Gegner.",
+      "normal": "Erster Treffer.",
+      "bronze": "Nimm deine ersten zwanzig Ergebnisse.",
+      "silver": "Erhalten Sie Ihre ersten fünfzig Ergebnisse.",
+      "gold": "Erhalten Sie Ihre ersten hundert Aufrufe."
     },
     "firstBlood": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "First Blood",
+      "description": "Erziele einen Punkt gegen einen Gegner.",
+      "normal": "Hol dir deinen ersten Punkt.",
+      "bronze": "Holen Sie sich Ihre ersten zwanzig Punkte.",
+      "silver": "Holen Sie sich Ihre ersten fünfzig Punkte.",
+      "gold": "Holen Sie sich Ihre ersten hundert Punkte."
     },
     "daruma": {
-      "title": "",
-      "description": "",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "title": "Daruma",
+      "description": "Nehmen Sie an so vielen Turnieren wie möglich teil.",
+      "normal": "An zehn Turnieren teilnehmen.",
+      "bronze": "Nehmen Sie an zwanzig Turnieren teil.",
+      "silver": "Nehmen Sie an dreißig Turnieren teil.",
+      "gold": "Nehmen Sie an fünfzig Turnieren teil."
     }
   }
 }
