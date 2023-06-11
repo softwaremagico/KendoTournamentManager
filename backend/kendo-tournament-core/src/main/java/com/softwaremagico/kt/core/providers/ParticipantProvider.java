@@ -27,6 +27,7 @@ package com.softwaremagico.kt.core.providers;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,11 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
     public List<Participant> getParticipantsWithAchievementFromList(AchievementType achievementType, List<Participant> participants) {
         return getRepository().findParticipantsWithAchievementFromList(achievementType, participants);
+    }
+
+    public List<Participant> getParticipantsWithAchievementFromList(AchievementType achievementType, AchievementGrade achievementGrade,
+                                                                    List<Participant> participants) {
+        return getRepository().findParticipantsWithAchievementAndGradeFromList(achievementType, achievementGrade, participants);
     }
 
     public List<Participant> findParticipantsWithRoleNotInTournaments(Tournament tournament, RoleType roleType, Collection<Tournament> olderTournaments) {
