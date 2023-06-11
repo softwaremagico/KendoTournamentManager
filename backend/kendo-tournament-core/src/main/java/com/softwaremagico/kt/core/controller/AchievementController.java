@@ -34,16 +34,38 @@ import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.AchievementProvider;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Achievement;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
-import com.softwaremagico.kt.persistence.values.*;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import com.softwaremagico.kt.persistence.values.AchievementType;
+import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -183,6 +205,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Score>> getScoresReceivedByParticipant() {
         if (scoresReceivedByParticipant == null) {
+            scoresReceivedByParticipant = new HashMap<>();
             getDuelsFromTournament().forEach(duel -> {
                 scoresReceivedByParticipant.computeIfAbsent(duel.getCompetitor1(), k -> new ArrayList<>());
                 scoresReceivedByParticipant.computeIfAbsent(duel.getCompetitor2(), k -> new ArrayList<>());
@@ -207,12 +230,12 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     private Map<Participant, Long> getTotalScoreAgainstParticipant() {
-        if (totalScoreFromParticipant == null) {
-            totalScoreFromParticipant = new HashMap<>();
+        if (totalScoreAgainstParticipant == null) {
+            totalScoreAgainstParticipant = new HashMap<>();
             getParticipantsFromTournament().forEach(participant ->
-                    totalScoreFromParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant)));
+                    totalScoreAgainstParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant)));
         }
-        return totalScoreFromParticipant;
+        return totalScoreAgainstParticipant;
     }
 
     private Map<Participant, List<Role>> getRolesByParticipant() {
@@ -240,6 +263,10 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     public List<AchievementDTO> getAchievements(AchievementType achievementType) {
         return convertAll(getProvider().get(achievementType));
+    }
+
+    public List<AchievementDTO> getAchievements(AchievementType achievementType, AchievementGrade achievementGrade) {
+        return convertAll(getProvider().get(achievementType, achievementGrade));
     }
 
     public List<AchievementDTO> getTournamentAchievements(Integer tournamentId) {
@@ -280,6 +307,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.scoresReceivedByParticipant = null;
         this.totalScoreFromParticipant = null;
         this.totalScoreAgainstParticipant = null;
+        this.rolesByParticipant = null;
 
         //Remove any achievement already calculated.
         getProvider().delete(tournament);
@@ -406,8 +434,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param achievementGrade       the grade to generate.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateGradeAchievements(Tournament tournament, int consecutiveTournaments,
-                                                        AchievementType achievementType, AchievementGrade achievementGrade) {
+    private List<Achievement> generateConsecutiveGradeAchievements(Tournament tournament, int consecutiveTournaments,
+                                                                   AchievementType achievementType, AchievementGrade achievementGrade) {
         if (achievementGrade == null || achievementGrade.equals(AchievementGrade.NORMAL)) {
             return new ArrayList<>();
         }
@@ -415,8 +443,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Also current tournament!
         previousTournaments.add(0, tournament);
 
-        final Map<Participant, List<Achievement>> achievementsByParticipant = achievementProvider.get(tournament, achievementType,
-                        Collections.singletonList(AchievementGrade.NORMAL)).stream()
+        if (previousTournaments.size() < consecutiveTournaments) {
+            return new ArrayList<>();
+        }
+
+        final Map<Participant, List<Achievement>> achievementsByParticipant = achievementProvider.get(achievementType,
+                        Collections.singletonList(AchievementGrade.NORMAL), getParticipantsFromTournament()).stream()
                 .collect(Collectors.groupingBy(Achievement::getParticipant));
 
         //Remove the ones that does not have all required achievements
@@ -425,7 +457,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
         //Check if already a higher achievement grade has been granted.
         previousTournaments.forEach(previousTournament -> achievementProvider.get(previousTournament, achievementType,
-                achievementGrade.getGreaterThan()).forEach(
+                achievementGrade.getGreaterEqualsThan()).forEach(
                 achievementBetterGrade -> achievementsByParticipant.remove(achievementBetterGrade.getParticipant())));
 
         //Generate desired grade.
@@ -543,7 +575,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateBillyTheKidAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.BILLY_THE_KID, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.BILLY_THE_KID, AchievementGrade.BRONZE);
     }
 
     /**
@@ -553,7 +585,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateBillyTheKidAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.BILLY_THE_KID, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.BILLY_THE_KID, AchievementGrade.SILVER);
     }
 
     /**
@@ -563,7 +595,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateBillyTheKidAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.BILLY_THE_KID, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.BILLY_THE_KID, AchievementGrade.GOLD);
     }
 
     /**
@@ -573,7 +605,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLethalWeaponAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.LETHAL_WEAPON, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.LETHAL_WEAPON, AchievementGrade.BRONZE);
     }
 
     /**
@@ -583,7 +615,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLethalWeaponAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.LETHAL_WEAPON, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.LETHAL_WEAPON, AchievementGrade.SILVER);
     }
 
     /**
@@ -593,7 +625,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLethalWeaponAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LETHAL_WEAPON, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LETHAL_WEAPON, AchievementGrade.GOLD);
     }
 
     /**
@@ -622,7 +654,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTerminatorAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.TERMINATOR, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.TERMINATOR, AchievementGrade.BRONZE);
     }
 
     /**
@@ -632,7 +664,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTerminatorAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.TERMINATOR, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.TERMINATOR, AchievementGrade.SILVER);
     }
 
     /**
@@ -642,7 +674,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTerminatorAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.TERMINATOR, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.TERMINATOR, AchievementGrade.GOLD);
     }
 
     /**
@@ -681,7 +713,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateJuggernautAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.JUGGERNAUT, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.JUGGERNAUT, AchievementGrade.BRONZE);
     }
 
     /**
@@ -691,7 +723,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateJuggernautAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.JUGGERNAUT, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.JUGGERNAUT, AchievementGrade.SILVER);
     }
 
     /**
@@ -701,7 +733,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateJuggernautAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.JUGGERNAUT, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.JUGGERNAUT, AchievementGrade.GOLD);
     }
 
     /**
@@ -893,7 +925,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT,
+                AchievementGrade.BRONZE);
     }
 
     /**
@@ -903,7 +936,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT,
+                AchievementGrade.SILVER);
     }
 
     /**
@@ -913,7 +947,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
     }
 
     /**
@@ -923,9 +957,19 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateILoveTheFlagsAchievement(Tournament tournament) {
-        final List<Participant> participants = participantProvider.findParticipantsWithRoleNotInTournaments(tournament, RoleType.REFEREE,
-                tournamentProvider.getPreviousTo(tournament));
+        final List<Participant> participants = participantProvider.get(tournament, RoleType.REFEREE);
         return generateAchievement(AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * When somebody is a referee for at least two consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateILoveTheFlagsAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.I_LOVE_THE_FLAGS,
+                AchievementGrade.BRONZE);
     }
 
     /**
@@ -934,18 +978,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateILoveTheFlagsAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.BRONZE);
-    }
-
-    /**
-     * When somebody is a referee for at least four consecutive tournaments.
-     *
-     * @param tournament The tournament to check.
-     * @return a list of new achievements.
-     */
     private List<Achievement> generateILoveTheFlagsAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.I_LOVE_THE_FLAGS,
+                AchievementGrade.SILVER);
     }
 
     /**
@@ -955,7 +990,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateILoveTheFlagsAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.I_LOVE_THE_FLAGS,
+                AchievementGrade.GOLD);
     }
 
     /**
@@ -977,7 +1013,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLoveSharingAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.LOVE_SHARING, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.LOVE_SHARING, AchievementGrade.BRONZE);
     }
 
     /**
@@ -987,7 +1023,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLoveSharingAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.LOVE_SHARING, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.LOVE_SHARING, AchievementGrade.SILVER);
     }
 
     /**
@@ -997,7 +1033,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLoveSharingAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.LOVE_SHARING, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.LOVE_SHARING, AchievementGrade.GOLD);
     }
 
 
@@ -1027,7 +1063,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.THE_CASTLE, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.THE_CASTLE, AchievementGrade.BRONZE);
     }
 
     /**
@@ -1037,7 +1073,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.THE_CASTLE, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.THE_CASTLE, AchievementGrade.SILVER);
 
     }
 
@@ -1048,7 +1084,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.THE_CASTLE, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.THE_CASTLE, AchievementGrade.GOLD);
     }
 
     /**
@@ -1076,7 +1112,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.ENTRENCHED, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.ENTRENCHED, AchievementGrade.BRONZE);
     }
 
     /**
@@ -1087,7 +1123,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.ENTRENCHED, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.ENTRENCHED, AchievementGrade.SILVER);
     }
 
     /**
@@ -1098,7 +1134,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.ENTRENCHED, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.ENTRENCHED, AchievementGrade.GOLD);
     }
 
     /**
@@ -1241,7 +1277,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.WOODCUTTER, AchievementGrade.BRONZE);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.WOODCUTTER, AchievementGrade.BRONZE);
     }
 
     /**
@@ -1251,7 +1287,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.WOODCUTTER, AchievementGrade.SILVER);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.WOODCUTTER, AchievementGrade.SILVER);
     }
 
     /**
@@ -1261,7 +1297,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.WOODCUTTER, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.WOODCUTTER, AchievementGrade.GOLD);
     }
 
 
@@ -1290,9 +1326,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Get all participants from a tournament that has almost all roles in any tournament,
         final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_BRONZE);
         //Remove the ones already have the achievement.
-        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO,
+                AchievementGrade.BRONZE, participants));
         //Create new achievement for the participants.
-        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.BRONZE, participants, tournament);
     }
 
     /**
@@ -1305,9 +1342,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Get all participants from a tournament that has almost all roles in any tournament,
         final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_SILVER);
         //Remove the ones already have the achievement.
-        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO,
+                AchievementGrade.SILVER, participants));
         //Create new achievement for the participants.
-        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.SILVER, participants, tournament);
     }
 
     /**
@@ -1320,9 +1358,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         //Get all participants from a tournament that has almost all roles in any tournament,
         final List<Participant> participants = participantProvider.get(tournament, MINIMUM_ROLES_BAMBOO_GOLD);
         //Remove the ones already have the achievement.
-        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO, participants));
+        participants.removeAll(participantProvider.getParticipantsWithAchievementFromList(AchievementType.FLEXIBLE_AS_BAMBOO,
+                AchievementGrade.GOLD, participants));
         //Create new achievement for the participants.
-        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.NORMAL, participants, tournament);
+        return generateAchievement(AchievementType.FLEXIBLE_AS_BAMBOO, AchievementGrade.GOLD, participants, tournament);
     }
 
     /**
@@ -1349,7 +1388,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE,
                 getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
-        Set<Participant> participants = getRolesByParticipant().keySet();
+        Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE) {
@@ -1371,7 +1410,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER,
                 getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
-        Set<Participant> participants = getRolesByParticipant().keySet();
+        Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER) {
@@ -1393,7 +1432,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD,
                 getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
-        Set<Participant> participants = getRolesByParticipant().keySet();
+        Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_GOLD) {

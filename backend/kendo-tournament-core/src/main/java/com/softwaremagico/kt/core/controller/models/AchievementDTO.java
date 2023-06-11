@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 
 public class AchievementDTO extends ElementDTO {
@@ -33,6 +34,8 @@ public class AchievementDTO extends ElementDTO {
     private TournamentDTO tournament;
 
     private AchievementType achievementType;
+
+    private AchievementGrade achievementGrade;
 
     public ParticipantDTO getParticipant() {
         return participant;
@@ -56,5 +59,23 @@ public class AchievementDTO extends ElementDTO {
 
     public void setAchievementType(AchievementType achievementType) {
         this.achievementType = achievementType;
+    }
+
+    public AchievementGrade getAchievementGrade() {
+        return achievementGrade;
+    }
+
+    public void setAchievementGrade(AchievementGrade achievementGrade) {
+        this.achievementGrade = achievementGrade;
+    }
+
+    @Override
+    public String toString() {
+        return "Achievement{"
+                + "participant=" + participant
+                + ", tournament=" + tournament
+                + ", achievementType=" + achievementType
+                + ", achievementGrade=" + achievementGrade
+                + "} " + super.toString();
     }
 }
