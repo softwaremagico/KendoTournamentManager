@@ -631,9 +631,9 @@
       "title": "Billy the Kid",
       "description": "Erziele den schnellsten Punkt in einem Turnier.",
       "normal": "Für ein Turnier erreicht.",
-      "bronze": "Erreicht in mindestens zwei Turnieren.",
-      "silver": "Erreicht in mindestens drei Turnieren.",
-      "gold": "Während mindestens fünf Turnieren erreicht."
+      "bronze": "Erreicht in mindestens zwei aufeinanderfolgenden Turnieren erreicht.",
+      "silver": "Erreicht in mindestens drei aufeinanderfolgenden Turnieren erreicht.",
+      "gold": "Während mindestens fünf aufeinanderfolgenden Turnieren erreicht."
     },
     "lethalWeapon": {
       "title": "Tödliche Waffe",
@@ -647,9 +647,9 @@
       "title": "Terminator T-800",
       "description": "Erziele in einem Turnier so viele Punkte wie möglich.",
       "normal": "Vernichte jeden während eines Turniers.",
-      "bronze": "Vernichte alle in zwei Turnieren.",
-      "silver": "Vernichte alle in drei Turnieren.",
-      "gold": "Vernichte alle in fünf Turnieren."
+      "bronze": "Vernichte alle in zwei aufeinanderfolgenden Turnieren erreicht.",
+      "silver": "Vernichte alle in drei aufeinanderfolgenden Turnieren erreicht.",
+      "gold": "Vernichte alle in fünf aufeinanderfolgenden Turnieren erreicht."
     },
     "juggernaut": {
       "title": "Juggernaut",
@@ -671,33 +671,33 @@
       "title": "Sieht aus der Ferne gut aus, aber ...",
       "description": "Organisator sein.",
       "normal": "Organisator eines Turniers sein.",
-      "bronze": "Seien Sie Organisator von drei Turnieren.",
-      "silver": "Seien Sie Organisator von fünf Turnieren.",
-      "gold": "Seien Sie Organisator von sieben Turnieren."
+      "bronze": "Seien Sie Organisator von drei aufeinanderfolgenden Turnieren.",
+      "silver": "Seien Sie Organisator von fünf aufeinanderfolgenden Turnieren.",
+      "gold": "Seien Sie Organisator von sieben aufeinanderfolgenden Turnieren."
     },
     "iLoveTheFlags": {
       "title": "Ich liebe Flaggen",
       "description": "Schiedsrichter sein.",
       "normal": "Sei Schiedsrichter in einem Turnier.",
-      "bronze": "Erweitere drei Turniere.",
-      "silver": "Schiedsrichter in fünf Turnieren.",
-      "gold": "Schiedsrichter in sieben Turnieren."
+      "bronze": "Erweitere drei aufeinanderfolgenden Turniere.",
+      "silver": "Schiedsrichter in fünf aufeinanderfolgenden Turnieren.",
+      "gold": "Schiedsrichter in sieben aufeinanderfolgenden Turnieren."
     },
     "theCastle": {
       "title": "Das Schloss",
       "description": "Verhindern Sie, dass jemand einen Punkt gegen Sie erzielt.",
       "normal": "Beschütze die Burg in einem Turnier.",
-      "bronze": "Beschütze die Burg in zwei Turnieren.",
-      "silver": "Beschütze die Burg in drei Turnieren.",
-      "gold": "Beschütze die Burg in fünf Turnieren."
+      "bronze": "Beschütze die Burg in zwei aufeinanderfolgenden Turnieren.",
+      "silver": "Beschütze die Burg in drei aufeinanderfolgenden Turnieren.",
+      "gold": "Beschütze die Burg in fünf aufeinanderfolgenden Turnieren."
     },
     "entrenched": {
       "title": "Verankert",
       "description": "Erziele auch keine Punkte in einem Turnier, in dem niemand gegen dich gepunktet hat.",
       "normal": "Bewache den Graben in einem Turnier.",
-      "bronze": "Bewache den Graben für drei Turniere.",
-      "silver": "Bewache den Graben fünf Turniere lang.",
-      "gold": "Bewache den Graben sieben Turniere lang."
+      "bronze": "Bewache den Graben für drei aufeinanderfolgenden Turniere.",
+      "silver": "Bewache den Graben fünf aufeinanderfolgenden Turniere lang.",
+      "gold": "Bewache den Graben sieben aufeinanderfolgenden Turniere lang."
     },
     "aLittleOfEverything": {
       "title": "Von allem ein bisschen",
@@ -751,9 +751,9 @@
       "title": "Holzfäller",
       "description": "Erziele nur Punkte und schaffe in jedem Kampf mindestens einen.",
       "normal": "Bewerte nur 'Do' während eines Turniers.",
-      "bronze": "Erreiche in drei Turnieren nur ‚Do‘.",
-      "silver": "Erreiche in fünf Turnieren nur ‚Do‘.",
-      "gold": "Erreiche in sieben Turnieren nur ‚Do‘."
+      "bronze": "Erreiche in zwei Turnieren nur 'Do'.",
+      "silver": "Erreiche in drei Turnieren nur 'Do'.",
+      "gold": "Erreiche in fünf Turnieren nur 'Do'."
     },
     "theNeverEndingStory": {
       "title": "Die unendliche Geschichte",

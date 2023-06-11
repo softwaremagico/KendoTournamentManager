@@ -70,7 +70,7 @@ public enum AchievementGrade {
         return achievementGrades;
     }
 
-    public List<AchievementGrade> getGreaterThanEquals() {
+    public List<AchievementGrade> getGreaterEqualsThan() {
         final List<AchievementGrade> achievementGrades = getGreaterThan();
         achievementGrades.add(0, this);
         return achievementGrades;
