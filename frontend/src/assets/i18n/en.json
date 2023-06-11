@@ -668,13 +668,13 @@
       "title": "Lethal Weapon",
       "description": "Perform a point in less than 5 seconds.",
       "normal": "Achieved for one tournament.",
-      "bronze": "Achieved for at least two tournaments.",
-      "silver": "Achieved for at least three tournaments.",
-      "gold": "Achieved for at least five tournaments."
+      "bronze": "Achieved for at least three tournaments.",
+      "silver": "Achieved for at least five tournaments.",
+      "gold": "Achieved for at least seven tournaments."
     },
     "Terminator": {
       "title": "Terminator",
-      "description": "Perform the maximum possible points on a tournament.",
+      "description": "Perform the maximum possible points at a tournament.",
       "normal": "Exterminate everything in one tournament.",
       "bronze": "Exterminate everything in two tournaments.",
       "silver": "Exterminate everything in three tournaments.",
@@ -682,35 +682,34 @@
     },
     "Juggernaut": {
       "title": "Juggernaut",
-      "description": "Perform the maximum possible points on a tournament and nobody has scored against you.",
+      "description": "Perform the maximum possible points at a tournament and nobody has scored against you.",
       "normal": "Be a Juggernaut in one tournament.",
       "bronze": "Be a Juggernaut in two tournaments.",
       "silver": "Be a Juggernaut in three tournaments.",
-      "gold": "Be the king in five tournaments."
+      "gold": "Be a Juggernaut in five tournaments."
     },
     "theKing": {
       "title": "The King",
       "description": "Be the one that last longer on the King of the Mountain mode.",
-      "normal": "Be the king in one tournament.",
-      "bronze": "Be the king in two tournaments.",
-      "silver": "Be the king in three tournaments.",
-      "gold": "Be the king in five tournaments."
+      "bronze": "Be the king in three tournaments during the same year.",
+      "silver": "Be the king in four tournaments during the same year.",
+      "gold": "Be the king in five tournaments during the same year."
     },
     "looksGoodFromFarAwayBut": {
       "title": "Looks good from far away but...",
       "description": "Be an organizer.",
       "normal": "Be an organizer in one tournament.",
-      "bronze": "Be an organizer in two tournaments.",
-      "silver": "Be an organizer in three tournaments.",
-      "gold": "Be an organizer in five tournaments."
+      "bronze": "Be an organizer in three tournaments.",
+      "silver": "Be an organizer in five tournaments.",
+      "gold": "Be an organizer in seven tournaments."
     },
     "iLoveTheFlags": {
       "title": "I love the flags",
       "description": "Be a referee.",
       "normal": "Be a referee in one tournament.",
-      "bronze": "Be a referee in two tournaments.",
-      "silver": "Be a referee in three tournaments.",
-      "gold": "Be a referee in five tournaments."
+      "bronze": "Be a referee in three tournaments.",
+      "silver": "Be a referee in five tournaments.",
+      "gold": "Be a referee in seven tournaments."
     },
     "theCastle": {
       "title": "The Castle",
@@ -724,9 +723,9 @@
       "title": "Entrenched",
       "description": "Perform no points in a tournament but also nobody has scored against you.",
       "normal": "Protect the trench for one tournament.",
-      "bronze": "Protect the trench for two tournaments.",
-      "silver": "Protect the trench for three tournaments.",
-      "gold": "Protect the trench for five tournaments."
+      "bronze": "Protect the trench for three tournaments.",
+      "silver": "Protect the trench for five tournaments.",
+      "gold": "Protect the trench for seven tournaments."
     },
     "aLittleOfEverything": {
       "title": "A little of everything",
@@ -747,90 +746,89 @@
     "flexibleAsBamboo": {
       "title": "Flexible as bamboo",
       "description": "Perform all possible roles.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Perform two different roles.",
+      "bronze": "Perform three different roles.",
+      "silver": "Perform four different roles.",
+      "gold": "Perform five different roles."
     },
     "sweatyTenugui": {
       "title": "Sweaty tenugui",
-      "description": "Participate in your first tournament as a competitor.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Participate in a tournament as a competitor.",
+      "normal": "Participate in your first tournament as a competitor.",
+      "bronze": "Participate in ten tournaments as a competitor.",
+      "silver": "Participate in twenty tournaments as a competitor.",
+      "gold": "Participate in thirty tournaments as a competitor"
     },
     "theWinner": {
       "title": "The winner",
       "description": "Be the first on a tournament.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Win a tournament.",
+      "bronze": "Win three tournaments during the same year.",
+      "silver": "Win four tournaments during the same year.",
+      "gold": "Win five tournaments during the same year."
     },
     "theWinnerTeam": {
       "title": "The winner team",
       "description": "Be a member of a team that is the first on a tournament.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Be in a team that wins a tournament.",
+      "bronze": "Be in a winner team in three tournaments during the same year.",
+      "silver": "Be in a winner team in four tournaments during the same year.",
+      "gold": "Be in a winner team in five tournaments during the same year."
     },
     "woodcutter": {
       "title": "Woodcutter",
-      "description": "Perform only 'Do' points, and perform at least one 'Do' on each fight.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Score only 'Do' points, and score at least one 'Do' on each fight.",
+      "normal": "Score only 'Do' in one tournament.",
+      "bronze": "Score only 'Do' in three tournaments.",
+      "silver": "Score only 'Do' in five tournaments.",
+      "gold": "Score only 'Do' in seven tournaments."
     },
     "theNeverEndingStory": {
       "title": "The never ending story",
-      "description": "Be a member for more than 10 years.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Be a member for a long period and still keep participating.",
+      "normal": "Be a member for five years.",
+      "bronze": "Be a member for ten years.",
+      "silver": "Be a member for fifteen years.",
+      "gold": "Be a member for twenty years."
     },
     "loveSharing": {
       "title": "Love sharing",
-      "description": "Be a volunteer in a tournament.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Be a volunteer.",
+      "normal": "Be a volunteer in one tournament.",
+      "bronze": "Be a volunteer in three tournaments.",
+      "silver": "Be a volunteer in five tournaments.",
+      "gold": "Be a volunteer in seven tournaments."
     },
     "masterTheLoop": {
       "title": "Master the loop",
       "description": "Win a Loop Tournament.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "bronze": "Master the loop in three tournaments during the same year.",
+      "silver": "Master the loop in four tournaments during the same year.",
+      "gold": "Master the loop in five tournaments during the same year."
     },
     "tisButAScratch": {
       "title": "'Tis but a scratch",
       "description": "Receive a point from your adversary.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Receive your first hit.",
+      "bronze": "Receive your first twenty hits.",
+      "silver": "Receive your first fifty hits.",
+      "gold": "Receive your first one hundred hits."
     },
     "firstBlood": {
       "title": "First Blood",
-      "description": "Make a point to an adversary.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Score a point to an adversary.",
+      "normal": "Score your first point.",
+      "bronze": "Score your first twenty points.",
+      "silver": "Score your first fifty points.",
+      "gold": "Score your first one hundred points."
     },
     "daruma": {
       "title": "Daruma",
       "description": "Assist as much as possible to the tournaments.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "normal": "Assist to ten tournaments.",
+      "bronze": "Assist to twenty tournaments.",
+      "silver": "Assist to thirty tournaments.",
+      "gold": "Assist to fifty tournaments."
     }
   }
 }

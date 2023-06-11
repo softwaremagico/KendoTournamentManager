@@ -26,6 +26,7 @@ package com.softwaremagico.kt.persistence.repositories;
 
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import jakarta.transaction.Transactional;
@@ -61,6 +62,11 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);
+
+    @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType AND a.achievementGrade=:achievementGrade")
+    List<Participant> findParticipantsWithAchievementAndGradeFromList(
+            @Param("achievementType") AchievementType achievementType, @Param("achievementGrade") AchievementGrade achievementGrade,
+            @Param("participants") List<Participant> participants);
 
     // Created at not working, we cannot search using this field.
     @Query("""
