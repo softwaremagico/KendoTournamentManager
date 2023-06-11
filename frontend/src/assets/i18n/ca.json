@@ -180,7 +180,6 @@
   "PassLabel": "Nombre de guanyadors",
   "nextLevel": "Els partits d'aquesta ronda han finalitzat. Vols passar a la següent fase del campionat?",
   "group": "Grup",
-  "group": "Grup",
   "ToolTipEditable": "Feu doble clik per obtindre opcions extra.",
   "ToolTipNotEditable": "Els equips aniran completant-se automàticament segons es resolguen els partits.",
   "noTeams": "No hi ha equips dins d'aquest grup!",
@@ -646,9 +645,9 @@
       "title": "Billy el Nen",
       "description": "Realitza el punt més ràpid d'un torneig.",
       "normal": "Aconseguit en un torneig.",
-      "bronze": "Aconseguit en almenys dos tornejos.",
-      "silver": "Aconseguit en almenys tres tornejos.",
-      "gold": "Aconseguit en almenys cinc tornejos."
+      "bronze": "Aconseguit en almenys dos tornejos successius.",
+      "silver": "Aconseguit en almenys tres tornejos successius.",
+      "gold": "Aconseguit en almenys cinc tornejos successius."
     },
     "lethalWeapon": {
       "title": "Arma letal",
@@ -662,9 +661,9 @@
       "title": "Terminator",
       "description": "Aconsegueix el màxim de punts possibles en un torneig.",
       "normal": "Extermina tothom durant un torneig.",
-      "bronze": "Extermina tothom durant dos tornejos.",
-      "silver": "Extermina tothom durant tres tornejos.",
-      "gold": "Extermina tothom durant cinc tornejos."
+      "bronze": "Extermina tothom durant dos tornejos successius.",
+      "silver": "Extermina tothom durant tres tornejos successius.",
+      "gold": "Extermina tothom durant cinc tornejos successius."
     },
     "juggernaut": {
       "title": "Juggernaut",
@@ -686,33 +685,33 @@
       "title": "Es veu bé des de lluny però...",
       "description": "Sigues un organitzador.",
       "normal": "Sigues un organitzador durant un torneig.",
-      "bronze": "Sigues un organitzador durant tres tornejos.",
-      "silver": "Sigues un organitzador durant cinc tornejos.",
-      "gold": "Sigues un organitzador durant set tornejos."
+      "bronze": "Sigues un organitzador durant tres tornejos successius.",
+      "silver": "Sigues un organitzador durant cinc tornejos successius.",
+      "gold": "Sigues un organitzador durant set tornejos successius."
     },
     "iLoveTheFlags": {
       "title": "M'encanten les banderes",
       "description": "Sigues un àrbitre.",
       "normal": "Sigues àrbitre en un torneig.",
-      "bronze": "Sigues àrbitre en tres tornejos.",
-      "silver": "Sigues àrbitre en cinc tornejos.",
-      "gold": "Sigues àrbitre en set tornejos."
+      "bronze": "Sigues àrbitre en tres tornejos successius.",
+      "silver": "Sigues àrbitre en cinc tornejos successius.",
+      "gold": "Sigues àrbitre en set tornejos successius."
     },
     "theCastle": {
       "title": "El Castell",
       "description": "Evita que algú faci un punt en contra teu.",
       "normal": "Protegeix el castell en un torneig.",
-      "bronze": "Protegeix el castell en dos tornejos.",
-      "silver": "Protegeix el castell en tres tornejos.",
-      "gold": "Protegeix el castell en cinc tornejos."
+      "bronze": "Protegeix el castell en dos tornejos successius.",
+      "silver": "Protegeix el castell en tres tornejos successius.",
+      "gold": "Protegeix el castell en cinc tornejos successius."
     },
     "entrenched": {
       "title": "Entrinxerat",
       "description": "No sumes punts en un torneig en què ningú tampoc no ha anotat contra tu.",
       "normal": "Protegeix la trinxera en un torneig.",
-      "bronze": "Protegeix la trinxera durant tres tornejos.",
-      "silver": "Protegeix la trinxera durant cinc tornejos.",
-      "gold": "Protegeix la trinxera durant set tornejos."
+      "bronze": "Protegeix la trinxera durant tres tornejos successius.",
+      "silver": "Protegeix la trinxera durant cinc tornejos successius.",
+      "gold": "Protegeix la trinxera durant set tornejos successius."
     },
     "aLittleOfEverything": {
       "title": "Una mica de tot",
@@ -766,9 +765,9 @@
       "title": "Llenyater",
       "description": "Obtingues només punts 'Do' i aconsegueix almenys un 'Do' en cada combat.",
       "normal": "Puntuar només 'Do' durant un torneig.",
-      "bronze": "Obtingues només 'Do' durant tres tornejos.",
-      "silver": "Obtingues només 'Do' durant cinc tornejos.",
-      "gold": "Obtingues només 'Do' durant set tornejos."
+      "bronze": "Obtingues només 'Do' durant tres tornejos successius.",
+      "silver": "Obtingues només 'Do' durant cinc tornejos successius.",
+      "gold": "Obtingues només 'Do' durant set tornejos successius."
     },
     "theNeverEndingStory": {
       "title": "La història interminable",
@@ -781,10 +780,10 @@
     "loveSharing": {
       "title": "Amor compartit",
       "description": "Sigues un voluntari.",
-      "normal": "Sigues voluntari en un torneig.",
-      "bronze": "Sigues voluntari en tres tornejos.",
-      "silver": "Sigues voluntari en cinc tornejos.",
-      "gold": "Sigues voluntari en set tornejos."
+      "normal": "Sigues voluntari en un torneig successius.",
+      "bronze": "Sigues voluntari en tres tornejos successius.",
+      "silver": "Sigues voluntari en cinc tornejos successius.",
+      "gold": "Sigues voluntari en set tornejos successius."
     },
     "masterTheLoop": {
       "title": "Domina el bucle",
