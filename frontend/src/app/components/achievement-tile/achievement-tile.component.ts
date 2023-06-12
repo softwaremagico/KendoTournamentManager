@@ -120,10 +120,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     if (!this.view || !this.achievements || this.achievements.length == 0) {
       return "";
     }
-    let tooltipText: string = '<b>' + this.translateService.instant(
-      'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.title') + '</b><br>' +
-      this.translateService.instant(
-        'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.description') + '<br>';
+    let tooltipText: string = this.getAchievementDescription();
     if (this.achievements) {
       tooltipText += '<br>' + this.translateService.instant('achievementToolTipObtainedAt') + ':<br>';
       tooltipText += '<div class="tournament-list">';
@@ -161,10 +158,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     if (!this.view || !this.achievements || this.achievements.length == 0) {
       return "";
     }
-    let tooltipText: string = '<b>' + this.translateService.instant(
-        'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.title') + '</b><br>' +
-      this.translateService.instant(
-        'achievement.' + AchievementType.toCamel(this.achievements[0].achievementType) + '.description') + '<br>';
+    let tooltipText: string = this.getAchievementDescription();
     if (this.achievements) {
       tooltipText += '<br>' + this.translateService.instant('achievementToolTipObtainedBy') + ':<br>';
       tooltipText += '<div class="tournament-list">';
@@ -192,6 +186,28 @@ export class AchievementTileComponent implements OnInit, OnChanges {
         }
       }
       tooltipText += '</div>';
+    }
+    return tooltipText;
+  }
+
+  private getAchievementDescription(): string {
+    if (!this.view || !this.achievements || this.achievements.length == 0) {
+      return "";
+    }
+    const achievementTag: string = AchievementType.toCamel(this.achievements[0].achievementType);
+    let tooltipText: string = '<b>' + this.translateService.instant(
+        'achievement.' + achievementTag + '.title') + '</b><br>' +
+      this.translateService.instant(
+        'achievement.' + achievementTag + '.description') + '<br>';
+    tooltipText += '<br><span class="text-normal">' + this.translateService.instant('achievement.normal') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.normal') + ':<br>';
+    if (this.achievements.some(a => a.achievementGrade === AchievementGrade.BRONZE)) {
+      tooltipText += '<br><span class="text-bronze">' + this.translateService.instant('achievement.bronze') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.bronze') + ':<br>';
+    }
+    if (this.achievements.some(a => a.achievementGrade === AchievementGrade.BRONZE)) {
+      tooltipText += '<br><span class="text-silver">' + this.translateService.instant('achievement.silver') + "</span>" + this.translateService.instant('achievement.' + achievementTag + '.silver') + ':<br>';
+    }
+    if (this.achievements.some(a => a.achievementGrade === AchievementGrade.BRONZE)) {
+      tooltipText += '<br><span class="text-gold">' + this.translateService.instant('achievement.gold') + "</span>" + +this.translateService.instant('achievement.' + achievementTag + '.gold') + ':<br>';
     }
     return tooltipText;
   }

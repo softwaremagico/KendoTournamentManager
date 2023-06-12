@@ -34,38 +34,16 @@ import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
-import com.softwaremagico.kt.core.providers.AchievementProvider;
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.RankingProvider;
-import com.softwaremagico.kt.core.providers.RoleProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.providers.*;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
-import com.softwaremagico.kt.persistence.entities.Achievement;
-import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.entities.Role;
-import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.*;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
-import com.softwaremagico.kt.persistence.values.AchievementGrade;
-import com.softwaremagico.kt.persistence.values.AchievementType;
-import com.softwaremagico.kt.persistence.values.RoleType;
-import com.softwaremagico.kt.persistence.values.Score;
-import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.persistence.values.*;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -80,6 +58,14 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DEFAULT_TOURNAMENT_NUMBER_SILVER = 3;
     private static final int DEFAULT_TOURNAMENT_NUMBER_GOLD = 5;
 
+    private static final int DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE = 3;
+    private static final int DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER = 5;
+    private static final int DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD = 7;
+
+    private static final int DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE = 10;
+    private static final int DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER = 20;
+    private static final int DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_GOLD = 30;
+
     private static final int DEFAULT_OCCURRENCES_BY_YEAR_BRONZE = 3;
     private static final int DEFAULT_OCCURRENCES_BY_YEAR_SILVER = 4;
     private static final int DEFAULT_OCCURRENCES_BY_YEAR_GOLD = 5;
@@ -93,7 +79,15 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int MINIMUM_ROLES_BAMBOO_SILVER = 4;
     private static final int MINIMUM_ROLES_BAMBOO_GOLD = 5;
 
-    private static final int PARTICIPANT_YEARS = 10;
+    private static final int PARTICIPANT_YEARS = 5;
+    private static final int PARTICIPANT_YEARS_BRONZE = 10;
+    private static final int PARTICIPANT_YEARS_SILVER = 15;
+    private static final int PARTICIPANT_YEARS_GOLD = 20;
+
+    private static final int DARUMA_TOURNAMENTS_NORMAL = 10;
+    private static final int DARUMA_TOURNAMENTS_BRONZE = 20;
+    private static final int DARUMA_TOURNAMENTS_SILVER = 30;
+    private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
 
     private final TournamentConverter tournamentConverter;
@@ -120,10 +114,12 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private List<Duel> duelsFromTournament;
 
-    private Map<Participant, List<Score>> scoresByParticipant = new HashMap<>();
-    private Map<Participant, List<Score>> scoresReceivedByParticipant = new HashMap<>();
-    private Map<Participant, Long> totalScoreFromParticipant = new HashMap<>();
-    private Map<Participant, Long> totalScoreAgainstParticipant = new HashMap<>();
+    private Map<Participant, List<Score>> scoresByParticipant = null;
+    private Map<Participant, List<Score>> scoresReceivedByParticipant = null;
+    private Map<Participant, Long> totalScoreFromParticipant = null;
+    private Map<Participant, Long> totalScoreAgainstParticipant = null;
+
+    private Map<Participant, List<Role>> rolesByParticipant = null;
 
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
@@ -219,6 +215,14 @@ public class AchievementController extends BasicInsertableController<Achievement
         return totalScoreFromParticipant;
     }
 
+    private Map<Participant, List<Role>> getRolesByParticipant() {
+        if (rolesByParticipant == null) {
+            final List<Role> roles = roleProvider.get(getParticipantsFromTournament());
+            rolesByParticipant = roles.stream().collect(Collectors.groupingBy(Role::getParticipant));
+        }
+        return rolesByParticipant;
+    }
+
 
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
@@ -307,8 +311,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTheWinnerTeamTournament(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievement(tournament));
         achievementsGenerated.addAll(generateFirstBloodAchievement(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievement(tournament));
 
         // Now generate extra grades.
+        achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateBillyTheKidAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateBillyTheKidAchievementGold(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievementBronze(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievementSilver(tournament));
         achievementsGenerated.addAll(generateLethalWeaponAchievementGold(tournament));
@@ -318,6 +326,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateJuggernautAchievementBronze(tournament));
         achievementsGenerated.addAll(generateJuggernautAchievementSilver(tournament));
         achievementsGenerated.addAll(generateJuggernautAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTheKingAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTheKingAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTheKingAchievementGold(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementBronze(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementSilver(tournament));
         achievementsGenerated.addAll(generateLooksGoodFromFarAwayButAchievementGold(tournament));
@@ -333,6 +344,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateEntrenchedAchievementBronze(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievementSilver(tournament));
         achievementsGenerated.addAll(generateEntrenchedAchievementGold(tournament));
+        achievementsGenerated.addAll(generateALittleOfEverythingAchievement(tournament));
         achievementsGenerated.addAll(generateALittleOfEverythingAchievementBronze(tournament));
         final List<Achievement> aLittleOfEverythingSilver = generateALittleOfEverythingAchievementSilver(tournament);
         //Delete the Bronzes, as Silver includes them
@@ -344,12 +356,21 @@ public class AchievementController extends BasicInsertableController<Achievement
         removeAchievements(achievementsGenerated, AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.GOLD.getLessThan(),
                 aLittleOfEverythingSilver.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
         achievementsGenerated.addAll(aLittleOfEverythingGold);
+        achievementsGenerated.addAll(generateSweatyTenuguiAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateSweatyTenuguiAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateSweatyTenuguiAchievementGold(tournament));
         achievementsGenerated.addAll(generateTheWinnerAchievementBronze(tournament));
         achievementsGenerated.addAll(generateTheWinnerAchievementSilver(tournament));
         achievementsGenerated.addAll(generateTheWinnerAchievementGold(tournament));
         achievementsGenerated.addAll(generateTheWinnerTeamAchievementBronze(tournament));
         achievementsGenerated.addAll(generateTheWinnerTeamAchievementSilver(tournament));
         achievementsGenerated.addAll(generateTheWinnerTeamAchievementGold(tournament));
+        achievementsGenerated.addAll(generateMasterTheLoopAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateMasterTheLoopAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateMasterTheLoopAchievementGold(tournament));
+        achievementsGenerated.addAll(generateTheNeverEndingStoryAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateTheNeverEndingStoryAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateTheNeverEndingStoryAchievementGold(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievementBronze(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievementSilver(tournament));
         achievementsGenerated.addAll(generateTisButAScratchAchievementGold(tournament));
@@ -362,6 +383,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementBronze(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementSilver(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievementGold(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateDarumaAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -417,18 +441,17 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param achievementType  achievement to check
      * @param achievementGrade current achievementGrade to check
      * @param amount           number of required achievements to be present on the time range
-     * @param daysToCount      time range to count.
      * @return a list of achievements
      */
     private List<Achievement> generateGradeAchievementsByDays(Tournament tournament, AchievementType achievementType, AchievementGrade achievementGrade,
-                                                              Integer amount, Integer daysToCount) {
+                                                              Integer amount) {
         if (achievementGrade == null || achievementGrade.equals(AchievementGrade.NORMAL)) {
             return new ArrayList<>();
         }
         final List<Achievement> winnersAchievements = achievementProvider.getAfter(tournament, achievementType,
-                AchievementGrade.NORMAL, tournament.getCreatedAt().minusDays(daysToCount));
+                AchievementGrade.NORMAL, tournament.getCreatedAt().minusDays(DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS));
         final List<Achievement> winnersGradeAchievements = achievementProvider.getAfter(tournament, achievementType,
-                achievementGrade, tournament.getCreatedAt().minusDays(daysToCount));
+                achievementGrade, tournament.getCreatedAt().minusDays(DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS));
         final List<Participant> participantsWithAchievements = winnersAchievements.stream().map(Achievement::getParticipant).toList();
         final List<Achievement> generatedAchievements = new ArrayList<>();
         for (final Participant participant : participantsWithAchievements) {
@@ -514,13 +537,43 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
+     * Achievement for the quickest score in two tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateBillyTheKidAchievementBronze(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.BILLY_THE_KID, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * Achievement for the quickest score in three tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateBillyTheKidAchievementSilver(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.BILLY_THE_KID, AchievementGrade.SILVER);
+    }
+
+    /**
+     * Achievement for the quickest score in five tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateBillyTheKidAchievementGold(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.BILLY_THE_KID, AchievementGrade.GOLD);
+    }
+
+    /**
      * If somebody has performed a score in less than 5 seconds for at least two consecutive tournaments.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
     private List<Achievement> generateLethalWeaponAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.LETHAL_WEAPON, AchievementGrade.BRONZE);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.LETHAL_WEAPON, AchievementGrade.BRONZE);
     }
 
     /**
@@ -530,7 +583,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLethalWeaponAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.LETHAL_WEAPON, AchievementGrade.SILVER);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.LETHAL_WEAPON, AchievementGrade.SILVER);
     }
 
     /**
@@ -540,7 +593,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLethalWeaponAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.LETHAL_WEAPON, AchievementGrade.GOLD);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LETHAL_WEAPON, AchievementGrade.GOLD);
     }
 
     /**
@@ -669,6 +722,39 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
+     * Be The king of 3 tournaments in a year
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateTheKingAchievementBronze(Tournament tournament) {
+        return generateGradeAchievementsByDays(tournament, AchievementType.THE_KING, AchievementGrade.BRONZE,
+                DEFAULT_OCCURRENCES_BY_YEAR_BRONZE);
+    }
+
+    /**
+     * Be The king of 4 tournaments in a year
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateTheKingAchievementSilver(Tournament tournament) {
+        return generateGradeAchievementsByDays(tournament, AchievementType.THE_KING, AchievementGrade.SILVER,
+                DEFAULT_OCCURRENCES_BY_YEAR_SILVER);
+    }
+
+    /**
+     * Be The king of 5 tournaments in a year
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateTheKingAchievementGold(Tournament tournament) {
+        return generateGradeAchievementsByDays(tournament, AchievementType.THE_KING, AchievementGrade.GOLD,
+                DEFAULT_OCCURRENCES_BY_YEAR_GOLD);
+    }
+
+    /**
      * Win a Loop tournament
      *
      * @param tournament The tournament to check.
@@ -686,7 +772,40 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * Be a member for more than 10 years.
+     * Master the loop during 3 tournaments in a year
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateMasterTheLoopAchievementBronze(Tournament tournament) {
+        return generateGradeAchievementsByDays(tournament, AchievementType.MASTER_THE_LOOP, AchievementGrade.BRONZE,
+                DEFAULT_OCCURRENCES_BY_YEAR_BRONZE);
+    }
+
+    /**
+     * Master the loop during 4 tournaments in a year
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateMasterTheLoopAchievementSilver(Tournament tournament) {
+        return generateGradeAchievementsByDays(tournament, AchievementType.MASTER_THE_LOOP, AchievementGrade.SILVER,
+                DEFAULT_OCCURRENCES_BY_YEAR_SILVER);
+    }
+
+    /**
+     * Master the loop during 5 tournaments in a year
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateMasterTheLoopAchievementGold(Tournament tournament) {
+        return generateGradeAchievementsByDays(tournament, AchievementType.MASTER_THE_LOOP, AchievementGrade.GOLD,
+                DEFAULT_OCCURRENCES_BY_YEAR_GOLD);
+    }
+
+    /**
+     * Be a member for more than 5 years.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -696,10 +815,62 @@ public class AchievementController extends BasicInsertableController<Achievement
         final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
                 participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
-        final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY)
+        final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL)
                 .stream().map(Achievement::getParticipant).toList();
         participants.removeAll(participantsWithThisAchievement);
         return generateAchievement(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL, participants, tournament);
+    }
+
+    /**
+     * Be a member for more than 10 years.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateTheNeverEndingStoryAchievementBronze(Tournament tournament) {
+        //Get older of 10 years
+        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
+                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS_BRONZE))).collect(Collectors.toList());
+        //Remove the ones already have this achievement.
+        final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.BRONZE)
+                .stream().map(Achievement::getParticipant).toList();
+        participants.removeAll(participantsWithThisAchievement);
+        return generateAchievement(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.BRONZE, participants, tournament);
+    }
+
+    /**
+     * Be a member for more than 15 years.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateTheNeverEndingStoryAchievementSilver(Tournament tournament) {
+        //Get older of 10 years
+        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
+                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS_SILVER))).collect(Collectors.toList());
+        //Remove the ones already have this achievement.
+        final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.SILVER)
+                .stream().map(Achievement::getParticipant).toList();
+        participants.removeAll(participantsWithThisAchievement);
+        return generateAchievement(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.SILVER, participants, tournament);
+    }
+
+    /**
+     * Be a member for more than 20 years.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateTheNeverEndingStoryAchievementGold(Tournament tournament) {
+        //Get older of 10 years
+        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
+                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS_GOLD))).collect(Collectors.toList());
+        //Remove the ones already have this achievement.
+        final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.GOLD
+                )
+                .stream().map(Achievement::getParticipant).toList();
+        participants.removeAll(participantsWithThisAchievement);
+        return generateAchievement(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.GOLD, participants, tournament);
     }
 
     /**
@@ -716,13 +887,23 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody is as an organizer for at least three consecutive tournaments.
+     * When somebody is as an organizer for at least two consecutive tournaments.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.BRONZE);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * When somebody is as an organizer for at least three consecutive tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateLooksGoodFromFarAwayButAchievementSilver(Tournament tournament) {
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.SILVER);
     }
 
     /**
@@ -731,18 +912,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateLooksGoodFromFarAwayButAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.SILVER);
-    }
-
-    /**
-     * When somebody is as an organizer for at least seven consecutive tournaments.
-     *
-     * @param tournament The tournament to check.
-     * @return a list of new achievements.
-     */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
     }
 
     /**
@@ -764,7 +935,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateILoveTheFlagsAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.BRONZE);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.BRONZE);
     }
 
     /**
@@ -774,7 +945,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateILoveTheFlagsAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.SILVER);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.I_LOVE_THE_FLAGS, AchievementGrade.SILVER);
     }
 
     /**
@@ -905,7 +1076,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.ENTRENCHED, AchievementGrade.BRONZE);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.ENTRENCHED, AchievementGrade.BRONZE);
     }
 
     /**
@@ -916,7 +1087,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.ENTRENCHED, AchievementGrade.SILVER);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.ENTRENCHED, AchievementGrade.SILVER);
     }
 
     /**
@@ -927,7 +1098,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.ENTRENCHED, AchievementGrade.GOLD);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.ENTRENCHED, AchievementGrade.GOLD);
     }
 
     /**
@@ -936,7 +1107,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @param tournament The tournament to check.
      * @return a list of new achievements.
      */
-    private List<Achievement> generateALittleOfEverythingAchievementBronze(Tournament tournament) {
+    private List<Achievement> generateALittleOfEverythingAchievement(Tournament tournament) {
         final List<Participant> participants = new ArrayList<>();
         getScoresByParticipant().keySet().forEach(participant -> {
             if (getScoresByParticipant().get(participant).contains(Score.MEN)
@@ -948,8 +1119,28 @@ public class AchievementController extends BasicInsertableController<Achievement
         return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.BRONZE, participants, tournament);
     }
 
+
     /**
-     * When all points are scored: Men, Kote, Do and Hansoku.
+     * When all points are scored: Men, Kote, Do and Tsuki.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateALittleOfEverythingAchievementBronze(Tournament tournament) {
+        final List<Participant> participants = new ArrayList<>();
+        getScoresByParticipant().keySet().forEach(participant -> {
+            if (getScoresByParticipant().get(participant).contains(Score.MEN)
+                    && getScoresByParticipant().get(participant).contains(Score.KOTE)
+                    && getScoresByParticipant().get(participant).contains(Score.DO)
+                    && getScoresByParticipant().get(participant).contains(Score.TSUKI)) {
+                participants.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.A_LITTLE_OF_EVERYTHING, AchievementGrade.BRONZE, participants, tournament);
+    }
+
+    /**
+     * When all points are scored: Men, Kote, Do, Tsuki and Hansoku.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -960,6 +1151,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             if (getScoresByParticipant().get(participant).contains(Score.MEN)
                     && getScoresByParticipant().get(participant).contains(Score.KOTE)
                     && getScoresByParticipant().get(participant).contains(Score.DO)
+                    && getScoresByParticipant().get(participant).contains(Score.TSUKI)
                     && getScoresByParticipant().get(participant).contains(Score.HANSOKU)) {
                 participants.add(participant);
             }
@@ -968,7 +1160,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When all points are scored: Men, Kote, Do and Hansoku and Ippon.
+     * When all points are scored: Men, Kote, Do, Tsuki, Hansoku and Ippon.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -979,6 +1171,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             if (getScoresByParticipant().get(participant).contains(Score.MEN)
                     && getScoresByParticipant().get(participant).contains(Score.KOTE)
                     && getScoresByParticipant().get(participant).contains(Score.DO)
+                    && getScoresByParticipant().get(participant).contains(Score.TSUKI)
                     && getScoresByParticipant().get(participant).contains(Score.HANSOKU)
                     && getScoresByParticipant().get(participant).contains(Score.IPPON)) {
                 participants.add(participant);
@@ -1048,7 +1241,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievementBronze(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.WOODCUTTER, AchievementGrade.BRONZE);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_BRONZE, AchievementType.WOODCUTTER, AchievementGrade.BRONZE);
     }
 
     /**
@@ -1058,7 +1251,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievementSilver(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.WOODCUTTER, AchievementGrade.SILVER);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_SILVER, AchievementType.WOODCUTTER, AchievementGrade.SILVER);
     }
 
     /**
@@ -1068,7 +1261,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievementGold(Tournament tournament) {
-        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.WOODCUTTER, AchievementGrade.GOLD);
+        return generateGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.WOODCUTTER, AchievementGrade.GOLD);
     }
 
 
@@ -1144,6 +1337,72 @@ public class AchievementController extends BasicInsertableController<Achievement
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
+    /**
+     * First ten tournaments as a competitor
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateSweatyTenuguiAchievementBronze(Tournament tournament) {
+        Map<Participant, List<Role>> rolesByParticipant = getRolesByParticipant();
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE,
+                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        //Remove the ones that has no the required number of tournaments.
+        Set<Participant> participants = getRolesByParticipant().keySet();
+        rolesByParticipant.forEach((participant, roles) -> {
+            if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
+                    .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE) {
+                participants.remove(participant);
+            }
+        });
+        return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE, participants, tournament);
+    }
+
+    /**
+     * First twenty tournaments as a competitor
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateSweatyTenuguiAchievementSilver(Tournament tournament) {
+        Map<Participant, List<Role>> rolesByParticipant = getRolesByParticipant();
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER,
+                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        //Remove the ones that has no the required number of tournaments.
+        Set<Participant> participants = getRolesByParticipant().keySet();
+        rolesByParticipant.forEach((participant, roles) -> {
+            if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
+                    .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER) {
+                participants.remove(participant);
+            }
+        });
+        return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER, participants, tournament);
+    }
+
+    /**
+     * First twenty tournaments as a competitor
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateSweatyTenuguiAchievementGold(Tournament tournament) {
+        Map<Participant, List<Role>> rolesByParticipant = getRolesByParticipant();
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD,
+                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        //Remove the ones that has no the required number of tournaments.
+        Set<Participant> participants = getRolesByParticipant().keySet();
+        rolesByParticipant.forEach((participant, roles) -> {
+            if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
+                    .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_GOLD) {
+                participants.remove(participant);
+            }
+        });
+        return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD, participants, tournament);
+    }
+
     private List<Achievement> generateAchievement(AchievementType achievementType, AchievementGrade achievementGrade,
                                                   Collection<Participant> participants, Tournament tournament) {
         if (participants == null || participants.isEmpty()) {
@@ -1186,7 +1445,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheWinnerAchievementBronze(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER, AchievementGrade.BRONZE,
-                DEFAULT_OCCURRENCES_BY_YEAR_BRONZE, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+                DEFAULT_OCCURRENCES_BY_YEAR_BRONZE);
     }
 
     /**
@@ -1197,7 +1456,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheWinnerAchievementSilver(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER, AchievementGrade.SILVER,
-                DEFAULT_OCCURRENCES_BY_YEAR_SILVER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+                DEFAULT_OCCURRENCES_BY_YEAR_SILVER);
     }
 
     /**
@@ -1208,7 +1467,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheWinnerAchievementGold(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER, AchievementGrade.GOLD,
-                DEFAULT_OCCURRENCES_BY_YEAR_GOLD, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+                DEFAULT_OCCURRENCES_BY_YEAR_GOLD);
     }
 
     /**
@@ -1220,7 +1479,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheWinnerTeamTournament(Tournament tournament) {
         if (tournament.getTeamSize() > 1) {
             final List<ScoreOfTeam> scoreOfTeams = rankingProvider.getTeamsScoreRanking(tournament);
-            if (!scoreOfTeams.isEmpty()) {
+            if (!scoreOfTeams.isEmpty() && scoreOfTeams.get(0).getTeam().getMembers().size() > 1) {
                 return generateAchievement(AchievementType.THE_WINNER_TEAM, AchievementGrade.NORMAL,
                         scoreOfTeams.get(0).getTeam().getMembers(), tournament);
             }
@@ -1236,7 +1495,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheWinnerTeamAchievementBronze(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.BRONZE,
-                DEFAULT_OCCURRENCES_BY_YEAR_BRONZE, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+                DEFAULT_OCCURRENCES_BY_YEAR_BRONZE);
     }
 
     /**
@@ -1247,7 +1506,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheWinnerTeamAchievementSilver(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.SILVER,
-                DEFAULT_OCCURRENCES_BY_YEAR_SILVER, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+                DEFAULT_OCCURRENCES_BY_YEAR_SILVER);
     }
 
     /**
@@ -1258,7 +1517,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheWinnerTeamAchievementGold(Tournament tournament) {
         return generateGradeAchievementsByDays(tournament, AchievementType.THE_WINNER_TEAM, AchievementGrade.GOLD,
-                DEFAULT_OCCURRENCES_BY_YEAR_GOLD, DAYS_TO_CHECK_INCREMENTAL_ACHIEVEMENTS);
+                DEFAULT_OCCURRENCES_BY_YEAR_GOLD);
     }
 
     /***
@@ -1403,5 +1662,77 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         return generateAchievement(AchievementType.FIRST_BLOOD, AchievementGrade.GOLD, participantsFirstScore, tournament);
+    }
+
+    /***
+     * Assist at least to 10 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievement(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.NORMAL).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_NORMAL && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.NORMAL, participantsDaruma, tournament);
+    }
+
+    /***
+     * Assist at least to 20 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievementBronze(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.BRONZE).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_BRONZE && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.BRONZE, participantsDaruma, tournament);
+    }
+
+    /***
+     * Assist at least to 30 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievementSilver(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.SILVER).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_SILVER && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.SILVER, participantsDaruma, tournament);
+    }
+
+    /***
+     * Assist at least to 50 tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateDarumaAchievementGold(Tournament tournament) {
+        final List<Participant> participantsDaruma = new ArrayList<>();
+        //Already achievements granted
+        final List<Participant> alreadyDarumaAchievement = getProvider().get(AchievementType.DARUMA, AchievementGrade.GOLD).stream().map(
+                Achievement::getParticipant).toList();
+        getTotalScoreFromParticipant().forEach((participant, score) -> {
+            if (getRolesByParticipant().get(participant).size() >= DARUMA_TOURNAMENTS_GOLD && !alreadyDarumaAchievement.contains(participant)) {
+                participantsDaruma.add(participant);
+            }
+        });
+        return generateAchievement(AchievementType.DARUMA, AchievementGrade.GOLD, participantsDaruma, tournament);
     }
 }
