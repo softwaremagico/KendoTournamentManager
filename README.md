@@ -127,7 +127,7 @@ devices is not recommended due to the physical size of the screen.
 
 ## Default credentials.
 
-The default user is `admin@test` with password `asd123`. This user is an admin user that can create new users. Remember
+The default user is `admin@test.com` with password `asd123`. This user is an admin user that can create new users. Remember
 to change the password or remove this account.
 
 # Contributing to Kendo Tournament Manager v2
