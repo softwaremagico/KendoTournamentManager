@@ -1,9 +1,24 @@
 # Customizing the application
 
+On the file `docker/.env` you can customize easily some properties. Please, take a look on the next sections:
+
+## Using a custom domain
+
+By default, I am assuming that you are deploying this application as a docker container on a server on the cloud. That
+means that probably you already have a domain that you must set on the application. Please, update `machine_domain`
+variable to match your existing domain.
+
+```
+machine_domain=mydomain.com
+protocol=https
+``` 
+
+Parameter `protocol` is assuming that you have also an SSL certificate. If is not the case, please change to `http`.
+
 ## Using a different database engine.
 
 If you want to use a different database engine, add the correct jar dependency with the jdbc connector
-in `backend/libraries`. Configure the specific parameters in the `.env` file:
+in `backend/libraries`. Configure these specific variables in the `.env` file:
 
 ```
 database_type=postgresql  (hsqldb, h2, oracle, mysql, postgresql, ...)
@@ -12,6 +27,15 @@ database_password=mypass
 database_user=myuser
 database_port=5432
 ```
+
+## Security passwords
+
+Variable `jwt_secret` is used for encrypting JWT token related to the REST API authorization. Please change it and avoid
+using the default one.
+
+Variable `database_encryption_key` will encrypt the database content, to ensure a higher level of privacy. If you want
+to check the content of your database using any other external software, please left this variable with a blank value.
+Otherwise, change the default value to any other that only you know.
 
 # Using REVERSE PROXY and Generating SSL certificates for the first time
 
