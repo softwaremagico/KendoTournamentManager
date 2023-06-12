@@ -68,7 +68,9 @@ public enum AchievementType {
 
     TIS_BUT_A_SCRATCH,
 
-    FIRST_BLOOD;
+    FIRST_BLOOD,
+
+    DARUMA;
 
 
     public static AchievementType getType(String name) {
