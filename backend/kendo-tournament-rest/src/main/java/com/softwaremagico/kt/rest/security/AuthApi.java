@@ -47,7 +47,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -106,7 +114,7 @@ public class AuthApi {
             //Create a default user if no user exists. Needed when database is encrypted.
             if (authenticatedUserController.countUsers() == 0) {
                 final AuthenticatedUser user = authenticatedUserController.createUser(
-                        null, request.getUsername(), null, null, request.getPassword(), AvailableRole.ROLE_ADMIN);
+                        null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
