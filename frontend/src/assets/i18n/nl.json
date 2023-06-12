@@ -623,89 +623,184 @@
   "minutesAbbreviation": "mins",
   "secondsAbbreviation": "secs",
   "achievement": {
+    "normal": "basic",
+    "bronze": "bronzen",
+    "silver": "zilver",
+    "gold": "goud",
     "billyTheKid": {
-      "title": "",
-      "description": ""
+      "title": "Billy the Kid",
+      "description": "Voer het snelste punt in een toernooi uit.",
+      "normal": "Bereikt voor één toernooi.",
+      "bronze": "Behaald tijdens ten minste twee toernooien.",
+      "silver": "Behaald tijdens ten minste drie toernooien.",
+      "gold": "Behaald tijdens ten minste vijf toernooien."
     },
     "lethalWeapon": {
-      "title": "",
-      "description": ""
+      "title": "Dodelijk wapen",
+      "description": "Maak een punt in minder dan 5 seconden.",
+      "normal": "Behaald voor een toernooi.",
+      "bronze": "Behaald tijdens ten minste drie toernooien.",
+      "silver": "Behaald tijdens ten minste vijf toernooien.",
+      "gold": "Behaald tijdens ten minste zeven toernooien."
     },
-    "Terminator": {
-      "title": "",
-      "description": ""
+    "terminator": {
+      "title": "Terminator T-800",
+      "description": "Scoor zoveel mogelijk punten in een toernooi.",
+      "normal": "Iedereen uitroeien tijdens een toernooi.",
+      "bronze": "Vernietig iedereen in twee toernooien.",
+      "silver": "Vernietig iedereen in drie toernooien.",
+      "gold": "Vernietig iedereen in vijf toernooien."
     },
-    "Juggernaut": {
-      "title": "",
-      "description": ""
+    "juggernaut": {
+      "title": "moloch",
+      "description": "Haal zoveel mogelijk punten in een toernooi en niemand heeft je gescoord.",
+      "normal": "Wees een Juggernaut in een toernooi.",
+      "bronze": "Word een Juggernaut voor twee toernooien.",
+      "silver": "Word een Juggernaut voor drie toernooien.",
+      "gold": "Word een Juggernaut voor vijf toernooien."
     },
     "theKing": {
-      "title": "",
-      "description": ""
+      "titel": "De koning",
+      "description": "Wees degene die het langst meegaat in King of the Mountain-modus.",
+      "normal": "Wees de koning in een toernooi.",
+      "bronze": "Word de koning in drie toernooien in hetzelfde jaar.",
+      "silver": "Word de koning in vier toernooien in hetzelfde jaar.",
+      "gold": "Word de koning in vijf toernooien in hetzelfde jaar."
     },
     "looksGoodFromFarAwayBut": {
-      "title": "",
-      "description": ""
+      "title": "Ziet er van ver goed uit, maar...",
+      "description": "Wees een organisator.",
+      "normal": "Wees organisator van een toernooi.",
+      "bronze": "Wees een organisator in drie toernooien.",
+      "silver": "Wees een organisator in vijf toernooien.",
+      "gold": "Wees een organisator in zeven toernooien."
     },
     "iLoveTheFlags": {
-      "title": "",
-      "description": ""
+      "title": "Ik hou van vlaggen",
+      "description": "Wees een scheidsrechter.",
+      "normal": "Wees een scheidsrechter in een toernooi.",
+      "bronze": "Refiteer drie toernooien.",
+      "silver": "Ref in vijf toernooien.",
+      "gold": "Ref in zeven toernooien."
     },
     "theCastle": {
-      "title": "",
-      "description": ""
+      "title": "Het kasteel",
+      "description": "Voorkom dat iemand een punt tegen je scoort.",
+      "normal": "Bescherm het kasteel in een toernooi.",
+      "bronze": "Bescherm het kasteel in twee toernooien.",
+      "silver": "Bescherm het kasteel in drie toernooien.",
+      "gold": "Bescherm het kasteel in vijf toernooien."
     },
     "entrenched": {
-      "title": "",
-      "description": ""
+      "title": "Verankerd",
+      "description": "Scoor geen punten in een toernooi waar ook niemand tegen jou heeft gescoord.",
+      "normal": "Bewaak de loopgraaf in een toernooi.",
+      "bronze": "Bewaak de loopgraaf voor drie toernooien.",
+      "silver": "Bewaak de loopgraaf voor vijf toernooien.",
+      "gold": "Bewaak de loopgraaf voor zeven toernooien."
     },
     "aLittleOfEverything": {
-      "title": "",
-      "description": ""
+      "title": "Van alles een beetje",
+      "description": "Scoor verschillende punten in een toernooi. Deze prestatie kan meerdere keren worden verdiend.",
+      "normal": "Score een Men, Kote en Do tijdens een toernooi.",
+      "bronze": "Score een Men, Kote, Do en Tsuki tijdens een toernooi.",
+      "silver": "Score een Men, Kote, Do, Tsuki en Hansoku tijdens een toernooi.",
+      "gold": "Score een Men, Kote, Do, Tsuki, Hansoku en Ippon tijdens een toernooi."
     },
     "boneBreaker": {
-      "title": "",
-      "description": ""
+      "title": "Benenbreker",
+      "description": "Verlies een gevecht met twee Hansokus.",
+      "normaal": "",
+      "brons": "",
+      "zilver": "",
+      "goud": ""
     },
     "flexibleAsBamboo": {
-      "title": "",
-      "description": ""
+      "title": "Flexibel als bamboe",
+      "description": "Voer alle mogelijke rollen uit.",
+      "normal": "Speel twee verschillende rollen.",
+      "bronze": "Voer drie verschillende rollen uit.",
+      "silver": "Voer vier verschillende rollen uit.",
+      "gold": "Voer vijf verschillende rollen uit."
     },
     "sweatyTenugui": {
-      "title": "",
-      "description": ""
+      "title": "Bezwete Tenugi",
+      "description": "Neem deel aan een toernooi als deelnemer.",
+      "normal": "Doe mee aan je eerste toernooi als deelnemer.",
+      "bronze": "Neem als deelnemer deel aan tien toernooien.",
+      "silver": "Doe mee aan twintig toernooien als deelnemer.",
+      "gold": "Neem als deelnemer deel aan dertig toernooien."
     },
     "theWinner": {
-      "title": "",
-      "description": ""
+      "title": "De winnaar",
+      "description": "Wees de eerste in een toernooi.",
+      "normal": "Win een toernooi.",
+      "bronze": "Win drie toernooien in hetzelfde jaar.",
+      "silver": "Vier toernooien winnen in hetzelfde jaar.",
+      "gold": "Win vijf toernooien in hetzelfde jaar."
     },
     "theWinnerTeam": {
-      "title": "",
-      "description": ""
+      "title": "Het winnende team",
+      "description": "Wees lid van een team dat als eerste eindigt in een toernooi.",
+      "normal": "Wees in een team dat een toernooi wint.",
+      "bronze": "Maak deel uit van een winnend team in drie toernooien in hetzelfde jaar.",
+      "silver": "Zorg dat je deel uitmaakt van een team dat in hetzelfde jaar vier toernooien heeft gewonnen.",
+      "gold": "Maak deel uit van een team dat in hetzelfde jaar vijf toernooien heeft gewonnen."
     },
     "woodcutter": {
-      "title": "",
-      "description": ""
+      "title": "Houthakker",
+      "description": "Scoor alleen Do-punten en verkrijg ten minste één Do in elk gevecht.",
+      "normal": "Beoordeel alleen 'Do' tijdens een toernooi.",
+      "bronze": "Krijg alleen 'Do' over drie toernooien.",
+      "silver": "Krijg alleen 'Do' voor vijf toernooien.",
+      "gold": "Krijg slechts 'Do' voor zeven toernooien."
     },
     "theNeverEndingStory": {
-      "title": "",
-      "description": ""
+      "title": "Het oneindige verhaal",
+      "description": "Blijf voor langere tijd lid en blijf meedoen.",
+      "normal": "Blijf vijf jaar lid.",
+      "bronze": "Blijf tien jaar lid.",
+      "silver": "Blijf vijftien jaar lid.",
+      "gold": "Blijf twintig jaar lid."
     },
     "loveSharing": {
-      "title": "",
-      "description": ""
+      "title": "Liefde gedeeld",
+      "description": "Wees een vrijwilliger.",
+      "normal": "Doe vrijwilligerswerk in een toernooi.",
+      "bronze": "Doe vrijwilligerswerk in drie toernooien.",
+      "silver": "Doe vrijwilligerswerk in vijf toernooien.",
+      "gold": "Doe vrijwilligerswerk in zeven toernooien."
     },
     "masterTheLoop": {
-      "title": "",
-      "description": ""
+      "title": "Beheers de lus",
+      "description": "Win een competitie in Loop.",
+      "bronze": "Domineer de lus in drie toernooien in hetzelfde jaar.",
+      "silver": "Domineer de lus in vier toernooien in hetzelfde jaar.",
+      "gold": "Domineer de lus in vijf toernooien in hetzelfde jaar."
     },
     "tisButAScratch": {
-      "title": "",
-      "description": ""
+      "title": "Het is maar een schrammetje",
+      "description": "Ontvang een punt van je tegenstander.",
+      "normal": "Neem je eerste hit.",
+      "bronze": "Neem je eerste twintig treffers.",
+      "silver": "Neem je eerste vijftig treffers.",
+      "gold": "Krijg je eerste honderd treffers."
     },
     "firstBlood": {
-      "title": "",
-      "description": ""
+      "title": "Eerste Bloed",
+      "description": "Scoor een punt tegen een tegenstander.",
+      "normal": "Behaal je eerste punt.",
+      "bronze": "Haal je eerste twintig punten.",
+      "silver": "Ontvang je eerste vijftig punten.",
+      "gold": "Verkrijg je eerste honderd punten."
+    },
+    "daruma": {
+      "titel": "Daruma",
+      "description": "Neem zoveel mogelijk toernooien mee.",
+      "normal": "Bezoek tien toernooien.",
+      "bronze": "Bezoek twintig toernooien.",
+      "silver": "Bezoek dertig toernooien.",
+      "gold": "Bezoek vijftig toernooien."
     }
   }
 }
