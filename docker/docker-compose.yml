@@ -57,6 +57,7 @@ services:
       args:
         - release
         - machine_domain
+        - protocol
     image: kendo-tournament-frontend
     restart: always
     networks:
