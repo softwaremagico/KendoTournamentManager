@@ -25,6 +25,8 @@ package com.softwaremagico.kt;
  */
 
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -34,6 +36,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.DispatcherServlet;
 
+//Avoid Swagger redirecting https to http
+@OpenAPIDefinition(servers = {@Server(url = "${server.servlet.context-path}", description = "Default Server URL")})
 @SpringBootApplication
 @Service
 public class KendoTournamentServer {
