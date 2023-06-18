@@ -60,7 +60,7 @@ public class RoleAchievementsTest extends AchievementTest {
     private static final int PRESS = 1;
 
     private static final int BAMBOO_ACHIEVEMENT_PARTICIPANTS = 1;
-    private static final int I_LOVE_THE_FLAGS_PARTICIPANTS = 1;
+    private static final int I_LOVE_THE_FLAGS_PARTICIPANTS_SOMETIMES = 1;
 
     private static final String TOURNAMENT1_NAME = "Tournament 1";
     private static final String TOURNAMENT2_NAME = "Tournament 2";
@@ -98,14 +98,16 @@ public class RoleAchievementsTest extends AchievementTest {
 
     private ParticipantDTO bambooAchievementParticipant;
     private ParticipantDTO iLoveTheFlagsParticipant;
+    private ParticipantDTO iLoveTheFlagsParticipantButNoSoMuch;
 
 
     @BeforeClass
     public void prepareData() {
         List<ParticipantDTO> extras = addParticipants(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS,
-                BAMBOO_ACHIEVEMENT_PARTICIPANTS);
+                BAMBOO_ACHIEVEMENT_PARTICIPANTS + I_LOVE_THE_FLAGS_PARTICIPANTS_SOMETIMES);
         bambooAchievementParticipant = extras.get(0);
         iLoveTheFlagsParticipant = getReferees(MEMBERS, TEAMS, REFEREES).get(0);
+        iLoveTheFlagsParticipantButNoSoMuch = extras.get(1);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
@@ -114,6 +116,7 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 10);
         fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
         roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament1DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament1DTO);
     }
 
@@ -122,6 +125,7 @@ public class RoleAchievementsTest extends AchievementTest {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 9);
         roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
+        roleController.create(new RoleDTO(tournament2DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament2DTO);
     }
 
@@ -138,6 +142,7 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 7);
         //Create Tournament
         roleController.create(new RoleDTO(tournament4DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament4DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament4DTO);
     }
 
@@ -146,6 +151,7 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament5DTO = addTournament(TOURNAMENT5_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 6);
         //Create Tournament
         roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.PRESS), null);
+        roleController.create(new RoleDTO(tournament5DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament5DTO);
     }
 
@@ -153,7 +159,8 @@ public class RoleAchievementsTest extends AchievementTest {
     public void prepareTournament6() {
         tournament6DTO = addTournament(TOURNAMENT6_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 5);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
+        roleController.create(new RoleDTO(tournament6DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
+        roleController.create(new RoleDTO(tournament6DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament6DTO);
     }
 
@@ -161,7 +168,7 @@ public class RoleAchievementsTest extends AchievementTest {
     public void prepareTournament7() {
         tournament7DTO = addTournament(TOURNAMENT7_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 4);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament7DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament7DTO);
     }
 
@@ -169,7 +176,8 @@ public class RoleAchievementsTest extends AchievementTest {
     public void prepareTournament8() {
         tournament8DTO = addTournament(TOURNAMENT8_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament8DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament8DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament8DTO);
     }
 
@@ -177,7 +185,8 @@ public class RoleAchievementsTest extends AchievementTest {
     public void prepareTournament9() {
         tournament9DTO = addTournament(TOURNAMENT9_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament9DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament9DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament9DTO);
     }
 
@@ -185,7 +194,8 @@ public class RoleAchievementsTest extends AchievementTest {
     public void prepareTournament10() {
         tournament10DTO = addTournament(TOURNAMENT10_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.PRESS), null);
+        roleController.create(new RoleDTO(tournament10DTO, bambooAchievementParticipant, RoleType.PRESS), null);
+        roleController.create(new RoleDTO(tournament10DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament10DTO);
     }
 
@@ -225,6 +235,25 @@ public class RoleAchievementsTest extends AchievementTest {
         Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
                 .toList().size(), 1);
         Assert.assertEquals(iLoveTheFlagsAchievements.get(0).getParticipant(), iLoveTheFlagsParticipant);
+    }
+
+    @Test
+    public void checkILoveTheFlagsSometimesAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(iLoveTheFlagsParticipantButNoSoMuch);
+        List<AchievementDTO> iLoveTheFlagsAchievements =
+                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.I_LOVE_THE_FLAGS)
+                        .toList();
+        iLoveTheFlagsAchievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), iLoveTheFlagsParticipantButNoSoMuch));
+        Assert.assertEquals(iLoveTheFlagsAchievements.size(), 10);
+        Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.NORMAL)
+                .toList().size(), 8);
+        Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.BRONZE)
+                .toList().size(), 2);
+        Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.SILVER)
+                .toList().size(), 0);
+        Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
+                .toList().size(), 0);
+        Assert.assertEquals(iLoveTheFlagsAchievements.get(0).getParticipant(), iLoveTheFlagsParticipantButNoSoMuch);
     }
 
     @Test
