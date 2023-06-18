@@ -54,8 +54,9 @@ public interface AchievementRepository extends JpaRepository<Achievement, Intege
 
     List<Achievement> findByAchievementTypeAndAchievementGradeIn(AchievementType achievementType, Collection<AchievementGrade> achievementGrades);
 
-    List<Achievement> findByAchievementTypeAndAchievementGradeInAndParticipantIn(
-            AchievementType achievementType, Collection<AchievementGrade> achievementGrades, Collection<Participant> participants);
+    List<Achievement> findByAchievementTypeAndAchievementGradeInAndParticipantInAndTournamentIn(
+            AchievementType achievementType, Collection<AchievementGrade> achievementGrades, Collection<Participant> participants,
+            Collection<Tournament> tournaments);
 
     List<Achievement> findByTournamentAndAchievementTypeAndAchievementGradeInAndCreatedAtGreaterThanEqual(
             Tournament tournament, AchievementType achievementType, Collection<AchievementGrade> grades, LocalDateTime range);

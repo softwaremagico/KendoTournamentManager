@@ -448,7 +448,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         }
 
         final Map<Participant, List<Achievement>> achievementsByParticipant = achievementProvider.get(achievementType,
-                        Collections.singletonList(AchievementGrade.NORMAL), getParticipantsFromTournament()).stream()
+                        Collections.singletonList(AchievementGrade.NORMAL), getParticipantsFromTournament(), previousTournaments).stream()
                 .collect(Collectors.groupingBy(Achievement::getParticipant));
 
         //Remove the ones that does not have all required achievements
@@ -947,7 +947,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateLooksGoodFromFarAwayButAchievementGold(Tournament tournament) {
-        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD, AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_LONG_NUMBER_GOLD,
+                AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT, AchievementGrade.GOLD);
     }
 
     /**
