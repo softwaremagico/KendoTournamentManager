@@ -120,6 +120,7 @@ public class AuthApi {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
             //Create a default user if no user exists. Needed when database is encrypted.
             if (authenticatedUserController.countUsers() == 0) {
+                RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername() + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
                         null, request.getUsername(), null, null, request.getPassword(), AvailableRole.ROLE_ADMIN);
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
