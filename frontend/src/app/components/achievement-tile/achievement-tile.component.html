@@ -7,7 +7,8 @@
        'bronze': grade === AchievementGrade.BRONZE,
        'silver': grade === AchievementGrade.SILVER,
         'gold': grade === AchievementGrade.GOLD}"
-       class="achievement-border gold"></div>
+       [class.disabled]="achievements?.length == 0"
+       class="achievement-border"></div>
   <div *ngIf="newAchievement" class="achievement-info new-achievement">!</div>
   <div *ngIf="totalAchievements>1" class="achievement-info total-achievement">{{totalAchievements}}</div>
 </div>
