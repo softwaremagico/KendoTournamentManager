@@ -60,6 +60,13 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
         return getRepository().findByTournamentAndAchievementType(tournament, achievementType);
     }
 
+    public List<Achievement> get(Tournament tournament, AchievementType achievementType, AchievementGrade achievementGrade) {
+        if (achievementGrade == null) {
+            return get(tournament, achievementType);
+        }
+        return getRepository().findByTournamentAndAchievementTypeAndAchievementGradeIn(tournament, achievementType, Collections.singleton(achievementGrade));
+    }
+
     public List<Achievement> get(Tournament tournament, AchievementType achievementType, Collection<AchievementGrade> achievementGrades) {
         if (achievementGrades == null || achievementGrades.isEmpty()) {
             return new ArrayList<>();
