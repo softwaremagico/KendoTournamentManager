@@ -10,6 +10,7 @@
                 <include name="scoreTests"/>
                 <include name="roleAchievementTests"/>
                 <include name="scoreAchievementTests"/>
+                <include name="darumaAchievementTests"/>
                 <include name="statisticsTests"/>
             </run>
         </groups>
@@ -21,6 +22,7 @@
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.DarumaAchievementTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
         </classes>
     </test>
