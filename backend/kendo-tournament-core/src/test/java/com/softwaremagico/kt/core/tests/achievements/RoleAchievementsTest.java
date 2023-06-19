@@ -32,7 +32,6 @@ import com.softwaremagico.kt.core.controller.models.AchievementDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -61,6 +60,8 @@ public class RoleAchievementsTest extends AchievementTest {
 
     private static final int BAMBOO_ACHIEVEMENT_PARTICIPANTS = 1;
     private static final int I_LOVE_THE_FLAGS_PARTICIPANTS_SOMETIMES = 1;
+    private static final int LOOKS_GOOD_FROM_FAR_AWAY_SOMETIMES = 1;
+    private static final int LOVE_SHARING_SOMETIMES = 1;
 
     private static final String TOURNAMENT1_NAME = "Tournament 1";
     private static final String TOURNAMENT2_NAME = "Tournament 2";
@@ -98,25 +99,34 @@ public class RoleAchievementsTest extends AchievementTest {
 
     private ParticipantDTO bambooAchievementParticipant;
     private ParticipantDTO iLoveTheFlagsParticipant;
-    private ParticipantDTO iLoveTheFlagsParticipantButNoSoMuch;
+    private ParticipantDTO iLoveTheFlagsParticipantSometimes;
+    private ParticipantDTO looksGoodFromFarAway;
+    private ParticipantDTO looksGoodFromFarAwaySometimes;
+    private ParticipantDTO loveSharer;
+    private ParticipantDTO loveSharerSometimes;
 
 
     @BeforeClass
     public void prepareData() {
         List<ParticipantDTO> extras = addParticipants(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS,
-                BAMBOO_ACHIEVEMENT_PARTICIPANTS + I_LOVE_THE_FLAGS_PARTICIPANTS_SOMETIMES);
+                BAMBOO_ACHIEVEMENT_PARTICIPANTS + I_LOVE_THE_FLAGS_PARTICIPANTS_SOMETIMES + LOOKS_GOOD_FROM_FAR_AWAY_SOMETIMES
+                        + LOVE_SHARING_SOMETIMES);
         bambooAchievementParticipant = extras.get(0);
         iLoveTheFlagsParticipant = getReferees(MEMBERS, TEAMS, REFEREES).get(0);
-        iLoveTheFlagsParticipantButNoSoMuch = extras.get(1);
+        iLoveTheFlagsParticipantSometimes = extras.get(1);
+        looksGoodFromFarAway = getOrganizers(MEMBERS, TEAMS, REFEREES, ORGANIZER).get(0);
+        looksGoodFromFarAwaySometimes = extras.get(2);
+        loveSharer = getVolunteers(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER).get(0);
+        loveSharerSometimes = extras.get(3);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 10);
-        fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
         roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament1DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament1DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament1DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
         achievementController.generateAchievements(tournament1DTO);
     }
 
@@ -125,7 +135,7 @@ public class RoleAchievementsTest extends AchievementTest {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 9);
         roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
-        roleController.create(new RoleDTO(tournament2DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament2DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament2DTO);
     }
 
@@ -134,6 +144,7 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 8);
         //Create Tournament
         roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament3DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
         achievementController.generateAchievements(tournament3DTO);
     }
 
@@ -142,7 +153,7 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 7);
         //Create Tournament
         roleController.create(new RoleDTO(tournament4DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
-        roleController.create(new RoleDTO(tournament4DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament4DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
         achievementController.generateAchievements(tournament4DTO);
     }
 
@@ -151,7 +162,9 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament5DTO = addTournament(TOURNAMENT5_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 6);
         //Create Tournament
         roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.PRESS), null);
-        roleController.create(new RoleDTO(tournament5DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament5DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament5DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament5DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
         achievementController.generateAchievements(tournament5DTO);
     }
 
@@ -160,7 +173,8 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament6DTO = addTournament(TOURNAMENT6_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 5);
         //Create Tournament
         roleController.create(new RoleDTO(tournament6DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
-        roleController.create(new RoleDTO(tournament6DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament6DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament6DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
         achievementController.generateAchievements(tournament6DTO);
     }
 
@@ -169,6 +183,8 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament7DTO = addTournament(TOURNAMENT7_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 4);
         //Create Tournament
         roleController.create(new RoleDTO(tournament7DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament7DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament7DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
         achievementController.generateAchievements(tournament7DTO);
     }
 
@@ -177,7 +193,8 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament8DTO = addTournament(TOURNAMENT8_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
         //Create Tournament
         roleController.create(new RoleDTO(tournament8DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
-        roleController.create(new RoleDTO(tournament8DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament8DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament8DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
         achievementController.generateAchievements(tournament8DTO);
     }
 
@@ -186,7 +203,8 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament9DTO = addTournament(TOURNAMENT9_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
         //Create Tournament
         roleController.create(new RoleDTO(tournament9DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
-        roleController.create(new RoleDTO(tournament9DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament9DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament9DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
         achievementController.generateAchievements(tournament9DTO);
     }
 
@@ -195,7 +213,8 @@ public class RoleAchievementsTest extends AchievementTest {
         tournament10DTO = addTournament(TOURNAMENT10_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
         roleController.create(new RoleDTO(tournament10DTO, bambooAchievementParticipant, RoleType.PRESS), null);
-        roleController.create(new RoleDTO(tournament10DTO, iLoveTheFlagsParticipantButNoSoMuch, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament10DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament10DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
         achievementController.generateAchievements(tournament10DTO);
     }
 
@@ -239,11 +258,11 @@ public class RoleAchievementsTest extends AchievementTest {
 
     @Test
     public void checkILoveTheFlagsSometimesAchievement() {
-        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(iLoveTheFlagsParticipantButNoSoMuch);
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(iLoveTheFlagsParticipantSometimes);
         List<AchievementDTO> iLoveTheFlagsAchievements =
                 achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.I_LOVE_THE_FLAGS)
                         .toList();
-        iLoveTheFlagsAchievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), iLoveTheFlagsParticipantButNoSoMuch));
+        iLoveTheFlagsAchievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), iLoveTheFlagsParticipantSometimes));
         Assert.assertEquals(iLoveTheFlagsAchievements.size(), 10);
         Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.NORMAL)
                 .toList().size(), 8);
@@ -253,7 +272,82 @@ public class RoleAchievementsTest extends AchievementTest {
                 .toList().size(), 0);
         Assert.assertEquals(iLoveTheFlagsAchievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
                 .toList().size(), 0);
-        Assert.assertEquals(iLoveTheFlagsAchievements.get(0).getParticipant(), iLoveTheFlagsParticipantButNoSoMuch);
+        Assert.assertEquals(iLoveTheFlagsAchievements.get(0).getParticipant(), iLoveTheFlagsParticipantSometimes);
+    }
+
+    @Test
+    public void checkLooksGoodFromFarAwayAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(looksGoodFromFarAway);
+        List<AchievementDTO> achievements =
+                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT)
+                        .toList();
+        achievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), looksGoodFromFarAway));
+        Assert.assertEquals(achievements.size(), 14);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.NORMAL)
+                .toList().size(), 10);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.BRONZE)
+                .toList().size(), 2);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.SILVER)
+                .toList().size(), 1);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
+                .toList().size(), 1);
+        Assert.assertEquals(achievements.get(0).getParticipant(), looksGoodFromFarAway);
+    }
+
+    public void checkLooksGoodFromFarAwaySometimesAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(looksGoodFromFarAwaySometimes);
+        List<AchievementDTO> achievements =
+                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.LOOKS_GOOD_FROM_FAR_AWAY_BUT)
+                        .toList();
+        achievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), looksGoodFromFarAwaySometimes));
+        Assert.assertEquals(achievements.size(), 6);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.NORMAL)
+                .toList().size(), 5);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.BRONZE)
+                .toList().size(), 1);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.SILVER)
+                .toList().size(), 0);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
+                .toList().size(), 0);
+        Assert.assertEquals(achievements.get(0).getParticipant(), looksGoodFromFarAwaySometimes);
+    }
+
+    @Test
+    public void checksLoveSharingAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(loveSharer);
+        List<AchievementDTO> achievements =
+                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.LOVE_SHARING)
+                        .toList();
+        achievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), loveSharer));
+        Assert.assertEquals(achievements.size(), 14);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.NORMAL)
+                .toList().size(), 10);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.BRONZE)
+                .toList().size(), 2);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.SILVER)
+                .toList().size(), 1);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
+                .toList().size(), 1);
+        Assert.assertEquals(achievements.get(0).getParticipant(), loveSharer);
+    }
+
+    @Test
+    public void checksLoveSharingSometimesAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(loveSharerSometimes);
+        List<AchievementDTO> achievements =
+                achievementsDTOs.stream().filter(achievementDTO -> achievementDTO.getAchievementType() == AchievementType.LOVE_SHARING)
+                        .toList();
+        achievements.forEach(achievementDTO -> Assert.assertEquals(achievementDTO.getParticipant(), loveSharerSometimes));
+        Assert.assertEquals(achievements.size(), 5);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.NORMAL)
+                .toList().size(), 5);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.BRONZE)
+                .toList().size(), 0);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.SILVER)
+                .toList().size(), 0);
+        Assert.assertEquals(achievements.stream().filter(achievementDTO -> achievementDTO.getAchievementGrade() == AchievementGrade.GOLD)
+                .toList().size(), 0);
+        Assert.assertEquals(achievements.get(0).getParticipant(), loveSharerSometimes);
     }
 
     @Test
