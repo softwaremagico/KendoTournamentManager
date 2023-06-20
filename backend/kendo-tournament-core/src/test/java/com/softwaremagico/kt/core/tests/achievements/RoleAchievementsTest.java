@@ -382,6 +382,7 @@ public class RoleAchievementsTest extends AchievementTest {
         deleteFromTables("fights", "members_of_team", "teams_by_group");
         deleteFromTables("teams");
         deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("achievements");
         deleteFromTables("tournaments");
         deleteFromTables("participant_image");
         deleteFromTables("participants");
