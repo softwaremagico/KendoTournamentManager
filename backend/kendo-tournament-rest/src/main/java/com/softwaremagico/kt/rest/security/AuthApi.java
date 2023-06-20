@@ -103,19 +103,26 @@ public class AuthApi {
 
             }
             //We verify the provided credentials using the authentication manager
+            RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
             final Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername() + "' authenticated.");
 
-            final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
-                    new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
-            final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
-            user.setPassword(jwtToken);
-            bruteForceService.loginSucceeded(ip);
+            try {
+                final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
+                        new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
+                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
+                user.setPassword(jwtToken);
+                bruteForceService.loginSucceeded(ip);
 
-            //We generate the JWT token and return it as a response header along with the user identity information in the response body.
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                    .body(user);
+                //We generate the JWT token and return it as a response header along with the user identity information in the response body.
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                        .body(user);
+            } catch (UsernameNotFoundException e) {
+                RestServerLogger.warning(this.getClass().getName(), "User '" + authenticate.getName() + "' does not exist!.");
+                throw e;
+            }
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
             //Create a default user if no user exists. Needed when database is encrypted.

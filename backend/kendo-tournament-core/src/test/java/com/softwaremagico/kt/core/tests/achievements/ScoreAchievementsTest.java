@@ -58,8 +58,6 @@ public class ScoreAchievementsTest extends AchievementTest {
 
     private static final int PRESS = 1;
 
-    private static final int BAMBOO_ACHIEVEMENT_PARTICIPANTS = 1;
-
     private static final String TOURNAMENT1_NAME = "Tournament 1";
 
     private static final String TOURNAMENT2_NAME = "Tournament 2";
@@ -91,6 +89,10 @@ public class ScoreAchievementsTest extends AchievementTest {
     private ParticipantDTO boneBreaker;
 
     private ParticipantDTO billyTheKid;
+
+    private ParticipantDTO terminator;
+
+    private ParticipantDTO juggernaut;
 
 
     @BeforeClass
@@ -131,10 +133,36 @@ public class ScoreAchievementsTest extends AchievementTest {
 
         //BillyTheKid
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.KOTE);
-        fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(6);
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(4);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
         fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
         billyTheKid = fightDTOs.get(1).getDuels().get(0).getCompetitor1();
+
+        //Woodcutter
+        fightDTOs.get(3).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(3).getDuels().get(0).addCompetitor1ScoreTime(11);
+        fightDTOs.get(3).getDuels().get(0).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+
+        //No Woodcutter has a 'Men' here!
+        fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.DO);
+        fightDTOs.get(3).getDuels().get(1).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(3).getDuels().get(1).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+
+
+        //Woodcutter
+        fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(4).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(4).getDuels().get(0).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+
+        //No Woodcutter and now Terminator!
+        fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.DO);
+        fightDTOs.get(4).getDuels().get(1).addCompetitor1Score(Score.DO);
+        fightDTOs.get(4).getDuels().get(1).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+        terminator = fightDTOs.get(4).getDuels().get(1).getCompetitor1();
 
         achievementController.generateAchievements(tournament1DTO);
     }
@@ -143,7 +171,31 @@ public class ScoreAchievementsTest extends AchievementTest {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
-        fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+
+        //Juggernaut
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1ScoreTime(11);
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        juggernaut = fightDTOs.get(0).getDuels().get(2).getCompetitor1();
+
+
+        //Juggernaut
+        fightDTOs.get(3).getDuels().get(2).addCompetitor1Score(Score.DO);
+        fightDTOs.get(3).getDuels().get(2).addCompetitor1Score(Score.MEN);
+        fightDTOs.get(3).getDuels().get(2).addCompetitor1ScoreTime(11);
+        fightDTOs.get(3).getDuels().get(2).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+
+
+        //Juggernaut
+        fightDTOs.get(4).getDuels().get(2).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(4).getDuels().get(2).addCompetitor1Score(Score.DO);
+        fightDTOs.get(4).getDuels().get(2).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+
         achievementController.generateAchievements(tournament2DTO);
     }
 
@@ -186,7 +238,35 @@ public class ScoreAchievementsTest extends AchievementTest {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.BILLY_THE_KID);
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), billyTheKid);
-        Assert.assertEquals(achievementController.getAchievements(AchievementType.BILLY_THE_KID).size(), 1);
+    }
+
+    @Test
+    public void checkLethalWeaponAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.LETHAL_WEAPON);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), billyTheKid);
+    }
+
+    @Test
+    public void checkTerminatorAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.TERMINATOR);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), terminator);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.TERMINATOR).size(), 1);
+    }
+
+    @Test
+    public void checkJuggernautAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament2DTO, AchievementType.JUGGERNAUT);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), juggernaut);
+        Assert.assertEquals(achievementController.getAchievements(AchievementType.JUGGERNAUT).size(), 1);
+    }
+
+    @Test
+    public void checkJuggernautNotTerminatorAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(juggernaut);
+        achievementsDTOs.forEach(achievementDTO -> Assert.assertNotSame(achievementDTO.getAchievementType(), AchievementType.TERMINATOR));
     }
 
     @Test
@@ -209,6 +289,7 @@ public class ScoreAchievementsTest extends AchievementTest {
         deleteFromTables("fights", "members_of_team", "teams_by_group");
         deleteFromTables("teams");
         deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("achievements");
         deleteFromTables("tournaments");
         deleteFromTables("participant_image");
         deleteFromTables("participants");
