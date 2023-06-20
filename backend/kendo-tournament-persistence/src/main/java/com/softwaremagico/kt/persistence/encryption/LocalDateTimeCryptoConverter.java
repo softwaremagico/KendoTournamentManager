@@ -25,9 +25,10 @@ package com.softwaremagico.kt.persistence.encryption;
  */
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -55,18 +56,23 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
     @Override
     protected LocalDateTime stringToEntityAttribute(String dbData) {
         try {
-            return (dbData == null || dbData.isEmpty()) ? null : LocalDateTime.parse(dbData);
-        } catch (DateTimeParseException nfe) {
+            return (dbData == null || dbData.isEmpty()) ? null : new Timestamp(Long.parseLong(dbData)).toLocalDateTime();
+        } catch (NumberFormatException nfe) {
             try {
-                // From SQL Script.
-                return LocalDateTime.parse(dbData, formatter);
-            } catch (DateTimeParseException dte) {
+                //Old versions store it as LocalDateTime
+                return LocalDateTime.parse(dbData);
+            } catch (DateTimeParseException dtpe) {
                 try {
-                    //Try with offset.
-                    return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
-                } catch (DateTimeParseException e) {
-                    EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
-                    return null;
+                    // From SQL Script.
+                    return LocalDateTime.parse(dbData, formatter);
+                } catch (DateTimeParseException dte) {
+                    try {
+                        //Try with offset.
+                        return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
+                    } catch (DateTimeParseException e) {
+                        EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
+                        return null;
+                    }
                 }
             }
         }
@@ -74,6 +80,6 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
 
     @Override
     protected String entityAttributeToString(LocalDateTime attribute) {
-        return attribute == null ? null : attribute + "";
+        return attribute == null ? null : String.valueOf(Timestamp.valueOf(attribute).getTime());
     }
 }

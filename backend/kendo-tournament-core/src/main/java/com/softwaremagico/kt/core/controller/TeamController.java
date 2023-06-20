@@ -67,9 +67,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO, String createdBy) {
-        final List<TeamDTO> teams = convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)));
+        final List<TeamDTO> teams = convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO)));
         if (teams.isEmpty()) {
-            return convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
+            return convertAll(getProvider().createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
         }
         return teams;
     }
@@ -77,42 +77,42 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     public List<TeamDTO> getAllByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        final List<TeamDTO> teams = convertAll(provider.getAll(tournament));
+        final List<TeamDTO> teams = convertAll(getProvider().getAll(tournament));
         if (teams.isEmpty()) {
-            return convertAll(provider.createDefaultTeams(tournament, createdBy));
+            return convertAll(getProvider().createDefaultTeams(tournament, createdBy));
         }
         return teams;
     }
 
     public long countByTournament(Integer tournamentId) {
-        return provider.count(tournamentProvider.get(tournamentId)
+        return getProvider().count(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")));
     }
 
     @Override
     public TeamDTO create(TeamDTO teamDTO, String username) {
         if (teamDTO.getName() == null) {
-            teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
+            teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
         return super.create(teamDTO, username);
     }
 
     public List<TeamDTO> create(TournamentDTO tournamentDTO, String createdBy) {
-        return convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
+        return convertAll(getProvider().createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
     }
 
     @Override
     public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username) {
         teamsDTOs.forEach(teamDTO -> {
             if (teamDTO.getName() == null) {
-                teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
+                teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
             }
         });
         return super.create(teamsDTOs, username);
     }
 
     public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
-        final Team team = provider.delete(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(member)).orElse(null);
+        final Team team = getProvider().delete(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(member)).orElse(null);
         if (team != null) {
             return convert(team);
         }
@@ -120,20 +120,20 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public void delete(TournamentDTO tournamentDTO) {
-        provider.delete(tournamentConverter.reverse(tournamentDTO));
+        getProvider().delete(tournamentConverter.reverse(tournamentDTO));
     }
 
     @Override
     public TeamDTO update(TeamDTO teamDTO, String username) {
         teamDTO.setUpdatedBy(username);
         validate(teamDTO);
-        final Team dbTeam = super.provider.save(reverse(teamDTO));
+        final Team dbTeam = super.getProvider().save(reverse(teamDTO));
         dbTeam.setTournament(tournamentConverter.reverse(teamDTO.getTournament()));
         return convert(dbTeam);
     }
 
     public long count(TournamentDTO tournament) {
-        return provider.count(tournamentConverter.reverse(tournament));
+        return getProvider().count(tournamentConverter.reverse(tournament));
     }
 
     @Override

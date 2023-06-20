@@ -48,15 +48,15 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroups(Tournament tournament) {
-        return repository.findByTournamentOrderByLevelAscIndexAsc(tournament);
+        return getRepository().findByTournamentOrderByLevelAscIndexAsc(tournament);
     }
 
     public Group getGroup(Fight fight) {
-        return repository.findByFightsId(fight.getId()).orElse(null);
+        return getRepository().findByFightsId(fight.getId()).orElse(null);
     }
 
     public List<Group> getGroupsByLevel(Tournament tournament, Integer level) {
-        return repository.findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
+        return getRepository().findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
     }
 
     public Group getGroupByLevelAndIndex(Tournament tournament, Integer level, Integer index) {
@@ -66,7 +66,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         if (index == null) {
             index = 0;
         }
-        return repository.findByTournamentAndLevelAndIndex(tournament, level, index);
+        return getRepository().findByTournamentAndLevelAndIndex(tournament, level, index);
     }
 
     public boolean deleteGroupByLevelAndIndex(Tournament tournament, Integer level, Integer index) {
@@ -76,38 +76,38 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         if (index == null) {
             index = 0;
         }
-        return repository.deleteByTournamentAndLevelAndIndex(tournament, level, index) > 0;
+        return getRepository().deleteByTournamentAndLevelAndIndex(tournament, level, index) > 0;
     }
 
     public Group getGroup(Integer groupId) {
-        return repository.getById(groupId);
+        return getRepository().getById(groupId);
     }
 
     public List<Group> getGroups(Collection<Fight> fights) {
-        return repository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toList()));
+        return getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toList()));
     }
 
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
-        return repository.findByTournamentAndShiaijoOrderByLevelAscIndexAsc(tournament, shiaijo);
+        return getRepository().findByTournamentAndShiaijoOrderByLevelAscIndexAsc(tournament, shiaijo);
     }
 
     public Group addGroup(Tournament tournament, Group group) {
         group.setTournament(tournament);
-        return repository.save(group);
+        return getRepository().save(group);
     }
 
     public long delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 
     public void delete(Tournament tournament, Group group) {
         if (Objects.equals(group.getTournament(), tournament)) {
-            repository.delete(group);
+            getRepository().delete(group);
         }
     }
 
     public long delete(Tournament tournament, Integer level) {
-        return repository.deleteByTournamentAndLevel(tournament, level);
+        return getRepository().deleteByTournamentAndLevel(tournament, level);
     }
 
     public Group addTeams(Integer groupId, List<Team> teams, String username) {
@@ -115,7 +115,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
                 ExceptionType.INFO));
         group.getTeams().addAll(teams.stream().filter(team -> !group.getTeams().contains(team)).collect(Collectors.toList()));
         group.setUpdatedBy(username);
-        return repository.save(group);
+        return getRepository().save(group);
     }
 
     public Group deleteTeams(Integer groupId, List<Team> teams, String username) {
@@ -123,10 +123,10 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
                 ExceptionType.INFO));
         group.getTeams().removeAll(teams);
         group.setUpdatedBy(username);
-        return repository.save(group);
+        return getRepository().save(group);
     }
 
     public long count(Tournament tournament) {
-        return repository.countByTournament(tournament);
+        return getRepository().countByTournament(tournament);
     }
 }

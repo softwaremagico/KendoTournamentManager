@@ -24,13 +24,27 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.*;
+import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,6 +52,7 @@ import java.time.LocalDateTime;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
 public class Tournament extends Element {
+    private static final int DEFAULT_DURATION = 180;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
@@ -62,7 +77,7 @@ public class Tournament extends Element {
 
     @Column(name = "duels_duration", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
-    private Integer duelsDuration = 180;
+    private Integer duelsDuration = DEFAULT_DURATION;
 
     @Column(name = "locked", nullable = false)
     @Convert(converter = BooleanCryptoConverter.class)
@@ -180,12 +195,12 @@ public class Tournament extends Element {
         }
     }
 
-    public void setFinishedAt(LocalDateTime finishedAt) {
-        this.finishedAt = finishedAt;
-    }
-
     public LocalDateTime getFinishedAt() {
         return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 
     @Override
