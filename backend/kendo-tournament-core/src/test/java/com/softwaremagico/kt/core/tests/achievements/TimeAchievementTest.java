@@ -8,17 +8,17 @@ package com.softwaremagico.kt.core.tests.achievements;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -26,8 +26,10 @@ package com.softwaremagico.kt.core.tests.achievements;
 
 import com.softwaremagico.kt.core.controller.AchievementController;
 import com.softwaremagico.kt.core.controller.FightController;
+import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
@@ -38,9 +40,12 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @SpringBootTest
 @Test(groups = {"darumaAchievementTests"})
-public class DarumaAchievementTest extends AchievementTest {
+public class TimeAchievementTest extends AchievementTest {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -85,6 +90,9 @@ public class DarumaAchievementTest extends AchievementTest {
     @Autowired
     private AchievementController achievementController;
 
+    @Autowired
+    private ParticipantController participantController;
+
     private TournamentDTO tournament1DTO;
     private TournamentDTO tournament2DTO;
     private TournamentDTO tournament3DTO;
@@ -99,11 +107,16 @@ public class DarumaAchievementTest extends AchievementTest {
     private TournamentDTO tournament20DTO;
 
 
-
-
     @BeforeClass
     public void prepareData() {
         addParticipants(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 0);
+        List<ParticipantDTO> participants = participantController.get();
+        int years = participants.size() - 1;
+        for (final ParticipantDTO participant : participants) {
+            participant.setCreatedAt(LocalDateTime.now().minusYears(years).minusHours(1));
+            years--;
+        }
+        participantController.updateAll(participants, null);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
@@ -238,6 +251,18 @@ public class DarumaAchievementTest extends AchievementTest {
         Assert.assertEquals(achievementController.getAchievements(tournament20DTO, AchievementType.DARUMA, AchievementGrade.NORMAL).size(), 0);
         Assert.assertEquals(achievementController.getAchievements(tournament20DTO, AchievementType.DARUMA, AchievementGrade.BRONZE).size(),
                 MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS);
+    }
+
+    @Test
+    public void checkNeverEndingStoryAchievement() {
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL).size(),
+                MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS - 5);
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.BRONZE).size(),
+                MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS - 10);
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.SILVER).size(),
+                MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS - 15);
+        Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.GOLD).size(),
+                MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS - 20);
     }
 
     @AfterClass

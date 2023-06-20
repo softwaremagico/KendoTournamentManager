@@ -353,6 +353,36 @@ public class ScoreAchievementsTest extends AchievementTest {
         achievementsDTOs.forEach(achievementDTO -> Assert.assertNotSame(achievementDTO.getAchievementType(), AchievementType.THE_CASTLE));
     }
 
+    @Test
+    public void tisButAScratchAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.NORMAL);
+        //Only Participant2, Participant8 and Participant11 has not this one.
+        Assert.assertEquals(achievementsDTOs.size(), MEMBERS * TEAMS - 3);
+
+        //Participant2, Participant8
+        achievementsDTOs = achievementController.getAchievements(tournament2DTO, AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 2);
+
+        //Participant11
+        achievementsDTOs = achievementController.getAchievements(tournament3DTO, AchievementType.TIS_BUT_A_SCRATCH, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+    }
+
+    @Test
+    public void firstBloodAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.FIRST_BLOOD, AchievementGrade.NORMAL);
+        //Only Participant0, Participant1, Participant2, Participant3, Participant4, Participant6
+        Assert.assertEquals(achievementsDTOs.size(), 6);
+
+        //Nobody new
+        achievementsDTOs = achievementController.getAchievements(tournament2DTO, AchievementType.FIRST_BLOOD, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 0);
+
+        //Only Participant5, Participant7, Participant8, Participant9, Participant10, Participant11
+        achievementsDTOs = achievementController.getAchievements(tournament3DTO, AchievementType.FIRST_BLOOD, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 6);
+    }
+
     @AfterClass
     public void deleteTournament() {
         deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
