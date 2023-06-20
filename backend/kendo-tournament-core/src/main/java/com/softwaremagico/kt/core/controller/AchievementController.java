@@ -423,8 +423,12 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private void removeAchievements(List<Achievement> achievements, AchievementType achievementType,
                                     Collection<AchievementGrade> grades, Collection<Participant> participants) {
+        List<Achievement> sourceAchievements = new ArrayList<>(achievements);
         achievements.removeIf(achievement -> grades.contains(achievement.getAchievementGrade())
                 && achievement.getAchievementType() == achievementType && participants.contains(achievement.getParticipant()));
+        sourceAchievements.removeAll(achievements);
+        //Delete from database the ones that has been removed here.
+        achievementProvider.delete(sourceAchievements);
     }
 
     /**
@@ -1248,8 +1252,15 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievement(Tournament tournament) {
-        final List<Duel> duels = getDuelsFromTournament();
-        final List<Participant> woodcutters = getParticipantsFromTournament();
+        final List<Duel> duels = new ArrayList<>(getDuelsFromTournament());
+        final List<Participant> woodcutters = new ArrayList<>(getParticipantsFromTournament());
+        //Only applied to competitors.
+        getRolesFromTournament().forEach(role -> {
+            if (role.getRoleType() != RoleType.COMPETITOR) {
+                woodcutters.remove(role.getParticipant());
+            }
+        });
+        //Must have at least one hit, and cannot have something different that a 'Do'.
         duels.forEach(duel -> {
             if (duel.getCompetitor1Score().isEmpty()) {
                 woodcutters.remove(duel.getCompetitor1());
