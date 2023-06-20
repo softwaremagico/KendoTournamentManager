@@ -27,7 +27,12 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
@@ -91,8 +96,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
-        final TournamentDTO tournamentDTO = convert(provider.save(new Tournament(name, shiaijos != null ? shiaijos : 1,
-                teamSize != null ? teamSize : 3, type != null ? type : TournamentType.LEAGUE, username)));
+        final TournamentDTO tournamentDTO = convert(getProvider().save(new Tournament(name, shiaijos != null ? shiaijos : 1,
+                teamSize != null ? teamSize : TournamentProvider.DEFAULT_TEAM_SIZE, type != null ? type : TournamentType.LEAGUE, username)));
         //Add default group:
         final Group group = new Group();
         group.setCreatedBy(username);
@@ -113,10 +118,10 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         duelProvider.delete(tournament);
         teamProvider.delete(tournament);
         roleProvider.delete(tournament);
-        provider.delete(tournament);
+        getProvider().delete(tournament);
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
-        return convertAll(provider.getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
+        return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
     }
 }

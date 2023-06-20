@@ -16,7 +16,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class GroupService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/groups';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/groups';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,

@@ -25,8 +25,7 @@ package com.softwaremagico.kt.persistence.encryption;
  */
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
-
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
@@ -41,6 +40,10 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     public AbstractCryptoConverter(ICipherEngine cipherEngine) {
         this.cipherEngine = cipherEngine;
+    }
+
+    public static ICipherEngine generateEngine() {
+        return new CBCCipherEngine();
     }
 
     @Override
@@ -81,10 +84,6 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
         final T entity = stringToEntityAttribute(cipherEngine.decrypt(dbData));
         EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", dbData, entity);
         return entity;
-    }
-
-    public static ICipherEngine generateEngine() {
-        return new CBCCipherEngine();
     }
 
 }

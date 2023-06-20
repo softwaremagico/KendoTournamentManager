@@ -1,33 +1,36 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="roles-container" cdkDropListGroup>
-  <div cdkDropList class="users-container"
-       [cdkDropListData]="userListData.filteredParticipants"
-       (cdkDropListDropped)="removeRole($event)">
-    <user-list [userListData]="userListData" [showAvatars]="showAvatars"></user-list>
+<div cdkDropListGroup class="roles-container">
+  <div (cdkDropListDropped)="removeRole($event)" [cdkDropListData]="userListData.filteredParticipants"
+       cdkDropList
+       class="users-container">
+    <user-list [showAvatars]="showAvatars" [userListData]="userListData"></user-list>
   </div>
   <div class="right-panel">
-    <app-fight-statistics-panel [tournament]="tournament" [teams]="false"></app-fight-statistics-panel>
+    <app-fight-statistics-panel [teams]="false" [tournament]="tournament"></app-fight-statistics-panel>
     <div class="roles">
-      <div class="roles-location" *ngFor="let roleType of roleTypes">
+      <div *ngFor="let roleType of roleTypes" class="roles-location">
         <div class="role-header">
           <h2 class="role-text">{{roleType.toLowerCase() | translate}}</h2>
-          <h2 class="role-counter" *ngIf="countRole(roleType)">(x{{countRole(roleType)}})</h2>
+          <h2 *ngIf="countRole(roleType)" class="role-counter">(x{{countRole(roleType)}})</h2>
         </div>
-        <div class="role" cdkDropList
+        <div (cdkDropListDropped)="dropParticipant($event, roleType)"
              [cdkDropListData]="getParticipantsContainer(roleType)"
-             (cdkDropListDropped)="dropParticipant($event, roleType)">
-          <app-user-card *ngFor="let user of participants.get(roleType)" [user]="user" [showAvatar]="showAvatars"
-                         [activity]="RbacActivity.EDIT_ROLE" [dragDisabled]="user.locked"></app-user-card>
+             cdkDropList
+             class="role">
+          <app-user-card *ngFor="let user of participants.get(roleType)" [activity]="RbacActivity.EDIT_ROLE"
+                         [dragDisabled]="user.locked"
+                         [showAvatar]="showAvatars" [user]="user"></app-user-card>
         </div>
       </div>
     </div>
   </div>
 </div>
-<div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="downloadPDF()" mat-flat-button
-          *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)">
+<div class="button-container" mat-dialog-actions>
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)"
+          mat-flat-button
+          mat-raised-button>
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
 </div>

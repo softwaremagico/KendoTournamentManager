@@ -25,6 +25,8 @@ import {LineChartComponent} from "../../components/charts/line-chart/line-chart.
 import {StackedBarsChartComponent} from "../../components/charts/stacked-bars-chart/stacked-bars-chart.component";
 import {truncate} from "../../utils/maths/truncate";
 import {convertDate, convertSeconds} from "../../utils/dates/date-conversor";
+import {Achievement} from "../../models/achievement.model";
+import {AchievementsService} from "../../services/achievements.service";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -49,6 +51,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   competitorsScore: ScoreOfCompetitor[];
   teamScores: ScoreOfTeam[];
 
+  public achievements: Achievement[];
+
   @ViewChild('timeByTournamentChart')
   timeByTournamentChart: LineChartComponent;
 
@@ -68,7 +72,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private statisticsService: StatisticsService, private userSessionService: UserSessionService,
               private rankingService: RankingService, private nameUtilsService: NameUtilsService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService, private achievementService: AchievementsService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -115,6 +119,9 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
         this.generateTeamsRanking();
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
+    });
+    this.achievementService.getTournamentAchievements(this.tournamentId!).subscribe((_achievements: Achievement[]): void => {
+      this.achievements = _achievements;
     });
   }
 

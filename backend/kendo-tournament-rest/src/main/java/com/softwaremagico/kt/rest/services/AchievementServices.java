@@ -8,17 +8,17 @@ package com.softwaremagico.kt.rest.services;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- *  
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *  
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- *  
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
@@ -34,14 +34,15 @@ import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -69,5 +70,21 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           HttpServletRequest request) {
         return getController().getTournamentAchievements(tournamentId);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Regenerates tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AchievementDTO> regenerateTournamentAchievements(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                 @PathVariable("tournamentId") Integer tournamentId,
+                                                                 HttpServletRequest request) {
+        return getController().regenerateAchievements(tournamentId);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @Operation(summary = "Regenerates all tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/tournaments/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<AchievementDTO> regenerateAllTournamentAchievements(HttpServletRequest request) {
+        return getController().regenerateAllAchievements();
     }
 }

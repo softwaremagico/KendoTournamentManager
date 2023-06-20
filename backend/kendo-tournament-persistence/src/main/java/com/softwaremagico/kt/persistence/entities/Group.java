@@ -25,12 +25,25 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +92,24 @@ public class Group extends Element {
 
     public Group() {
         super();
+    }
+
+    /**
+     * If the fightManager are over or fightManager are not needed.
+     *
+     * @param fights the fights.
+     * @return
+     */
+    public static boolean areFightsOverOrNull(List<Fight> fights) {
+        if (fights.size() > 0) {
+            for (final Fight fight : fights) {
+                if (!fight.isOver()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return true;
     }
 
     public Tournament getTournament() {
@@ -132,24 +163,6 @@ public class Group extends Element {
         return areFightsOverOrNull(getFights());
     }
 
-    /**
-     * If the fightManager are over or fightManager are not needed.
-     *
-     * @param fights the fights.
-     * @return
-     */
-    public static boolean areFightsOverOrNull(List<Fight> fights) {
-        if (fights.size() > 0) {
-            for (final Fight fight : fights) {
-                if (!fight.isOver()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return true;
-    }
-
     public int getNumberOfWinners() {
         return numberOfWinners;
     }
@@ -191,12 +204,12 @@ public class Group extends Element {
 
     @Override
     public String toString() {
-        return "Group{" +
-                "tournament=" + tournament +
-                ", shiaijo=" + shiaijo +
-                ", level=" + level +
-                ", index=" + index +
-                '}';
+        return "Group{"
+                + "tournament=" + tournament
+                + ", shiaijo=" + shiaijo
+                + ", level=" + level
+                + ", index=" + index
+                + '}';
     }
 }
 

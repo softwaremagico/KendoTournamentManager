@@ -47,6 +47,6 @@ public class ClubController extends BasicInsertableController<Club, ClubDTO, Clu
     }
 
     public ClubDTO create(String name, String country, String city, String username) {
-        return create(convert(provider.add(name, country, city)), username);
+        return create(convert(getProvider().add(name, country, city)), username);
     }
 }
