@@ -24,9 +24,16 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-public class NameUtils {
+public final class NameUtils {
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
+    private static final int NAME_PREFIX = 3;
+    private static final int MAX_ALLOWED_NAME_LENGTH = 20;
+
+
+    private NameUtils() {
+
+    }
 
     public static String getLastnameName(IParticipantName participant) {
         if (participant == null) {
@@ -117,7 +124,7 @@ public class NameUtils {
      */
     public static String getShortLastname(String lastname, int length) {
         final String[] shortLastname = lastname.split(" ");
-        if (shortLastname[0].length() > 3) {
+        if (shortLastname[0].length() > NAME_PREFIX) {
             return shortLastname[0].substring(0, Math.min(length, shortLastname[0].length()));
         } else {
             return lastname.substring(0, Math.min(length - 1, lastname.length()));
@@ -157,8 +164,9 @@ public class NameUtils {
             return "";
         }
 
-        final float rateLastname = (name.length() + getShortLastname(lastname, 20).length()) / ((float) lastname.length() > 0 ? (float) lastname.length() : 1);
-        final float rateName = (name.length() + getShortName(name, 20).length()) / ((float) name.length() > 0 ? (float) name.length() : 1);
+        final float rateLastname = (name.length() + getShortLastname(lastname, MAX_ALLOWED_NAME_LENGTH).length())
+                / ((float) lastname.length() > 0 ? (float) lastname.length() : 1);
+        final float rateName = (name.length() + getShortName(name, MAX_ALLOWED_NAME_LENGTH).length()) / ((float) name.length() > 0 ? (float) name.length() : 1);
         final String ret = getShortLastname(lastname, (int) (maxLength / rateLastname)).trim() + ", " + getShortName(name, (int) (maxLength / rateName));
         return ret.trim();
     }
@@ -209,7 +217,7 @@ public class NameUtils {
         String acronym = "";
         acronym += name.trim().substring(0, 1).toUpperCase();
         final String[] shortLastname = lastname.trim().split(" ");
-        if (shortLastname[0].length() < 4 && shortLastname.length > 1) {
+        if (shortLastname[0].length() <= NAME_PREFIX && shortLastname.length > 1) {
             acronym += shortLastname[0].substring(0, 1).toLowerCase();
             acronym += shortLastname[1].substring(0, 1).toUpperCase();
         } else {
@@ -219,14 +227,14 @@ public class NameUtils {
     }
 
     public static String getShortName(ITeamName teamName) {
-        return getShortName(teamName, 21);
+        return getShortName(teamName, MAX_ALLOWED_NAME_LENGTH);
     }
 
     public static String getShortName(ITeamName teamName, int length) {
         if (teamName.getName().length() <= length) {
             return teamName.getName();
         } else {
-            return teamName.getName().substring(0, length - 3).trim() + ". "
+            return teamName.getName().substring(0, length - NAME_PREFIX).trim() + ". "
                     + teamName.getName().substring(teamName.getName().length() - 2).trim();
         }
     }

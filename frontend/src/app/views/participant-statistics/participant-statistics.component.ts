@@ -16,6 +16,8 @@ import {truncate} from "../../utils/maths/truncate";
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
 import {RankingService} from "../../services/ranking.service";
 import {CompetitorRanking} from "../../models/competitor-ranking";
+import {AchievementsService} from "../../services/achievements.service";
+import {Achievement} from "../../models/achievement.model";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -35,10 +37,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public receivedHitsTypeChartData: PieChartData;
   public performanceRadialData: GaugeChartData;
   public performance: [string, number][];
+  public achievements: Achievement[];
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
-              private translateService: TranslateService, private rankingService: RankingService) {
+              private translateService: TranslateService, private rankingService: RankingService,
+              private achievementService: AchievementsService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -53,7 +57,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     this.setLocale();
   }
 
-  private setLocale() {
+  private setLocale(): void {
     if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
       this.pipe = new DatePipe('es');
     } else if (this.userSessionService.getLanguage() === 'it') {
@@ -73,13 +77,16 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   generateStatistics(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.rankingService.getCompetitorsRanking(this.participantId!).subscribe((_competitorRanking: CompetitorRanking) => {
+    this.rankingService.getCompetitorsRanking(this.participantId!).subscribe((_competitorRanking: CompetitorRanking): void => {
       this.competitorRanking = _competitorRanking;
     })
-    this.statisticsService.getParticipantStatistics(this.participantId!).subscribe((_participantStatistics: ParticipantStatistics) => {
+    this.statisticsService.getParticipantStatistics(this.participantId!).subscribe((_participantStatistics: ParticipantStatistics): void => {
       this.participantStatistics = ParticipantStatistics.clone(_participantStatistics);
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
+    });
+    this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {
+      this.achievements = _achievements;
     });
   }
 
@@ -126,7 +133,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     return scores;
   }
 
-  goBackToUsers() {
+  goBackToUsers(): void {
     this.router.navigate(['/participants'], {});
   }
 

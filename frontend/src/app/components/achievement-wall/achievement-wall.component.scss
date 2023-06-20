@@ -1,11 +1,10 @@
 .achievement-wall {
   display: flex;
   flex-wrap: wrap;
-  background-color: #012f67;
-  border: 7px #000000 solid;
-  border-radius: 15px;
-}
-
-.achievement-container {
-  padding: 5px;
+  //background-color: #012f67;
+  //border: 7px #000000 solid;
+  //border-radius: 15px;
+  overflow-y: auto;
+  max-height: 250px;
+  padding: 10px;
 }

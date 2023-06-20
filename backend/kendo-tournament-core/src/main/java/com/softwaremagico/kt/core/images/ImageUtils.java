@@ -25,7 +25,8 @@ package com.softwaremagico.kt.core.images;
  */
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,8 +37,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 
-public class ImageUtils {
+public final class ImageUtils {
     private static final double DNI_PROPORTIONS = 26d / 32d;
+    private static final int DEFAULT_WIDTH = 680;
+    private static final int DEFAULT_HEIGHT = 480;
 
     private ImageUtils() {
 
@@ -55,13 +58,13 @@ public class ImageUtils {
     }
 
     public static BufferedImage getImage(byte[] data) throws IOException {
-        try (final InputStream inputStream = new ByteArrayInputStream(data)) {
+        try (InputStream inputStream = new ByteArrayInputStream(data)) {
             return ImageIO.read(inputStream);
         }
     }
 
     public static byte[] getBytes(BufferedImage bufferedImage) throws IOException {
-        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         }
@@ -72,7 +75,7 @@ public class ImageUtils {
     }
 
     public static BufferedImage resizeImage(BufferedImage bufferedImage) {
-        return resizeImage(bufferedImage, 680, 480);
+        return resizeImage(bufferedImage, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     public static byte[] cropImage(byte[] data) throws IOException {

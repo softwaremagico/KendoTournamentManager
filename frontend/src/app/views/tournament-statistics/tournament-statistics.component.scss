@@ -75,5 +75,17 @@
   text-align: center;
 }
 
+.achievements-box {
+  display: inline-grid;
+  position: relative;
+  min-width: 290px;
+}
+
+app-achievement-wall {
+  margin-top: 10px;
+  width: 270px;
+  height: 245px;
+}
+
 
 

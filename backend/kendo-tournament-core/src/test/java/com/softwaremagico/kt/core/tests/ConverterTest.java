@@ -24,9 +24,34 @@ package com.softwaremagico.kt.core.tests;
  * #L%
  */
 
-import com.softwaremagico.kt.core.converters.*;
-import com.softwaremagico.kt.core.converters.models.*;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.core.converters.ClubConverter;
+import com.softwaremagico.kt.core.converters.DuelConverter;
+import com.softwaremagico.kt.core.converters.FightConverter;
+import com.softwaremagico.kt.core.converters.GroupConverter;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.RoleConverter;
+import com.softwaremagico.kt.core.converters.TeamConverter;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.TournamentScoreConverter;
+import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
+import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
+import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
+import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
+import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
+import com.softwaremagico.kt.core.converters.models.RoleConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentScoreConverterRequest;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.DuelType;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.ScoreType;

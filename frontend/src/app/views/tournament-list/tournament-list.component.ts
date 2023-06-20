@@ -23,6 +23,7 @@ import {
   RoleSelectorDialogBoxComponent
 } from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {AchievementsService} from "../../services/achievements.service";
 
 @Component({
   selector: 'app-tournament-list',
@@ -39,7 +40,8 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
-              private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService) {
+              private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private achievementsService: AchievementsService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'type', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
@@ -237,11 +239,14 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   lockElement(locked: boolean): void {
     if (this.basicTableData.selectedElement) {
       this.basicTableData.selectedElement.locked = locked;
-      if (locked && !this.basicTableData.selectedElement.lockedAt) {
-        this.basicTableData.selectedElement.lockedAt = new Date();
-      }
-      if (locked && !this.basicTableData.selectedElement.finishedAt) {
-        this.basicTableData.selectedElement.finishedAt = new Date();
+      if (locked) {
+        this.achievementsService.regenerateTournamentAchievements(this.basicTableData.selectedElement?.id!).subscribe();
+        if (!this.basicTableData.selectedElement.lockedAt) {
+          this.basicTableData.selectedElement.lockedAt = new Date();
+        }
+        if (!this.basicTableData.selectedElement.finishedAt) {
+          this.basicTableData.selectedElement.finishedAt = new Date();
+        }
       }
       this.updateRowData(this.basicTableData.selectedElement);
     }
