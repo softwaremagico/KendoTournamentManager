@@ -169,8 +169,12 @@ public abstract class AchievementTest extends AbstractTransactionalTestNGSpringC
     }
 
     protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, int minutesPast) {
+        return addTournament(tournamentName, members, teams, referees, organizers, volunteers, press, TournamentType.LEAGUE, minutesPast);
+    }
+
+    protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, TournamentType type, int minutesPast) {
         //Create Tournament
-        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, TournamentType.LEAGUE), null);
+        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null);
         tournamentDTO.setCreatedAt(LocalDateTime.now().minusMinutes(minutesPast));
         tournamentController.update(tournamentDTO, null);
         generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
