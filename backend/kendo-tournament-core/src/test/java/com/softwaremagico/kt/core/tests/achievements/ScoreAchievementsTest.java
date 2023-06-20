@@ -33,6 +33,7 @@ import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,10 @@ public class ScoreAchievementsTest extends AchievementTest {
     private ParticipantDTO terminator;
 
     private ParticipantDTO juggernaut;
+
+    private ParticipantDTO theCastle;
+
+    private ParticipantDTO entrenched;
 
 
     @BeforeClass
@@ -203,7 +208,48 @@ public class ScoreAchievementsTest extends AchievementTest {
     public void prepareTournament3() {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
+
+        //The Castle
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(0).addCompetitor1ScoreTime(35);
+        fightDTOs.get(0).getDuels().get(0).setFinished(true);
+        theCastle = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
+
+        //Entrenched
+        fightDTOs.get(0).getDuels().get(1).setFinished(true);
+        entrenched = fightDTOs.get(0).getDuels().get(1).getCompetitor1();
+
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(0).getDuels().get(2).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(0).getDuels().get(2).addCompetitor1ScoreTime(35);
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+
+        fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(2).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(2).getDuels().get(0).addCompetitor1ScoreTime(35);
+        fightDTOs.get(2).getDuels().get(0).setFinished(true);
+        theCastle = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
+
+        fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(2).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(2).getDuels().get(1).addCompetitor1ScoreTime(35);
+        fightDTOs.get(2).getDuels().get(1).setFinished(true);
+
+        fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(2).getDuels().get(2).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(2).getDuels().get(2).addCompetitor1ScoreTime(35);
+        fightDTOs.get(2).getDuels().get(2).setFinished(true);
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+
+        //I only want one entrenched.
+        fightDTOs.get(5).getDuels().get(1).addCompetitor1Score(Score.KOTE);
+        fightDTOs.get(5).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(5).getDuels().get(1).addCompetitor1ScoreTime(35);
+        fightDTOs.get(5).getDuels().get(1).setFinished(true);
+        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null));
+
         achievementController.generateAchievements(tournament3DTO);
     }
 
@@ -270,6 +316,12 @@ public class ScoreAchievementsTest extends AchievementTest {
     }
 
     @Test
+    public void checkJuggernautNotTheCastleAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(tournament2DTO, juggernaut);
+        achievementsDTOs.forEach(achievementDTO -> Assert.assertNotSame(achievementDTO.getAchievementType(), AchievementType.THE_CASTLE));
+    }
+
+    @Test
     public void checkTheWinnerAchievement() {
         Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_WINNER).size(), 1);
         Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.THE_WINNER).size(), 1);
@@ -279,6 +331,26 @@ public class ScoreAchievementsTest extends AchievementTest {
     public void checkTheWinnerTeamAchievement() {
         Assert.assertEquals(achievementController.getAchievements(tournament1DTO, AchievementType.THE_WINNER_TEAM).size(), MEMBERS);
         Assert.assertEquals(achievementController.getAchievements(tournament2DTO, AchievementType.THE_WINNER_TEAM).size(), MEMBERS);
+    }
+
+    @Test
+    public void checkTheCastleAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament3DTO, AchievementType.THE_CASTLE, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theCastle);
+    }
+
+    @Test
+    public void checkEntrenchedAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament3DTO, AchievementType.ENTRENCHED, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 1);
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), entrenched);
+    }
+
+    @Test
+    public void checkEntrenchedNotTheCastleAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getParticipantAchievements(entrenched);
+        achievementsDTOs.forEach(achievementDTO -> Assert.assertNotSame(achievementDTO.getAchievementType(), AchievementType.THE_CASTLE));
     }
 
     @AfterClass

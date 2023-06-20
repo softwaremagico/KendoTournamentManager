@@ -56,6 +56,10 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
         return getRepository().findByParticipant(participant);
     }
 
+    public List<Achievement> get(Tournament tournament, Participant participant) {
+        return getRepository().findByParticipantAndTournament(participant, tournament);
+    }
+
     public List<Achievement> get(Tournament tournament, AchievementType achievementType) {
         return getRepository().findByTournamentAndAchievementType(tournament, achievementType);
     }

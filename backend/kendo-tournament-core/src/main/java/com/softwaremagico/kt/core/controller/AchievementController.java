@@ -257,6 +257,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         return convertAll(getProvider().get(participantConverter.reverse(participantDTO)));
     }
 
+    public List<AchievementDTO> getParticipantAchievements(TournamentDTO tournamentDTO, ParticipantDTO participantDTO) {
+        return convertAll(getProvider().get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(participantDTO)));
+    }
+
     public List<AchievementDTO> getAchievements(TournamentDTO tournamentDTO, AchievementType achievementType) {
         return convertAll(getProvider().get(tournamentConverter.reverse(tournamentDTO), achievementType));
     }
@@ -334,7 +338,14 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTheNeverEndingStoryAchievement(tournament));
         achievementsGenerated.addAll(generateMasterTheLoopAchievement(tournament));
         achievementsGenerated.addAll(generateTheCastleAchievement(tournament));
-        achievementsGenerated.addAll(generateEntrenchedAchievement(tournament));
+        //Juggernaut includes The Castle.
+        removeAchievements(achievementsGenerated, AchievementType.THE_CASTLE, Collections.singletonList(AchievementGrade.NORMAL),
+                juggernautAchievements.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
+        final List<Achievement> entrenchedAchievements = generateEntrenchedAchievement(tournament);
+        achievementsGenerated.addAll(entrenchedAchievements);
+        //Entrenchment includes the castle.
+        removeAchievements(achievementsGenerated, AchievementType.THE_CASTLE, Collections.singletonList(AchievementGrade.NORMAL),
+                entrenchedAchievements.stream().map(Achievement::getParticipant).collect(Collectors.toSet()));
         achievementsGenerated.addAll(generateBoneBreakerAchievement(tournament));
         achievementsGenerated.addAll(generateWoodcutterAchievement(tournament));
         achievementsGenerated.addAll(generateFlexibleAsBambooAchievement(tournament));
@@ -1103,8 +1114,9 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
-            if (duel.getCompetitor2Score().size() > 0 || duel.getCompetitor1Score().size() > 0) {
+            if (duel.getCompetitor1Score().size() > 0 || duel.getCompetitor2Score().size() > 0) {
                 competitors.remove(duel.getCompetitor1());
+                competitors.remove(duel.getCompetitor2());
             }
         });
         return generateAchievement(AchievementType.ENTRENCHED, AchievementGrade.NORMAL, competitors, tournament);
