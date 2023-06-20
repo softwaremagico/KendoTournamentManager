@@ -11,7 +11,7 @@ import {Observable, of} from "rxjs";
 })
 export class LoggerService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/logger';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/logger';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, public loginService: LoginService) {
   }

@@ -24,7 +24,13 @@ package com.softwaremagico.kt.pdf.diplomas;
  * #L%
  */
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -40,8 +46,8 @@ import java.util.List;
 public class DiplomaPDF extends PdfDocument {
     private static final int BORDER = 0;
     private final List<ParticipantDTO> participants;
-    private Image backgroundImage;
     private final float nameHeight;
+    private Image backgroundImage;
 
     public DiplomaPDF(List<ParticipantDTO> participants, byte[] backgroundImage, float nameHeight) {
         this.participants = participants;
@@ -98,7 +104,7 @@ public class DiplomaPDF extends PdfDocument {
         mainTable.writeSelectedRows(0, -1, (float) 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2f,
                 writer.getDirectContent());
         mainTable.flushContent();
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
         document.add(mainTable);
     }
 

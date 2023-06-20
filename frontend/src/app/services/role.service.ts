@@ -18,7 +18,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class RoleService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/roles';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/roles';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, private systemOverloadService: SystemOverloadService, public loginService: LoginService) {

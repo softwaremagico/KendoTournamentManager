@@ -131,14 +131,13 @@ public class ClubDTO extends ElementDTO {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ClubDTO)) {
+        if (!(o instanceof ClubDTO clubDTO)) {
             return false;
         }
-        final ClubDTO clubDTO = (ClubDTO) o;
         return getName().equals(clubDTO.getName()) && getCountry().equals(clubDTO.getCountry()) && getCity().equals(clubDTO.getCity())
                 && Objects.equals(getAddress(), clubDTO.getAddress()) && Objects.equals(getRepresentativeId(), clubDTO.getRepresentativeId())
-                && Objects.equals(getEmail(), clubDTO.getEmail()) && Objects.equals(getPhone(), clubDTO.getPhone()) &&
-                Objects.equals(getWeb(), clubDTO.getWeb());
+                && Objects.equals(getEmail(), clubDTO.getEmail()) && Objects.equals(getPhone(), clubDTO.getPhone())
+                && Objects.equals(getWeb(), clubDTO.getWeb());
     }
 
     @Override

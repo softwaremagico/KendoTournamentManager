@@ -30,7 +30,6 @@ the `dist/` directory.
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-
 # 3rd party components
 
 Font used on the chronometer is:  Square Sans Serif 7 by Sizenko Alexander. 

@@ -28,7 +28,14 @@ import com.softwaremagico.kt.logger.EncryptorLogger;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
@@ -45,6 +52,7 @@ public class ECBCipherEngine implements ICipherEngine {
 
     private static final String CIPHER_INSTANCE_NAME = "RSA/ECB/OAEPWithSHA-1AndMGF1Padding";
     private static final String SECRET_KEY_ALGORITHM = "RSA";
+    private static final int KEY_SIZE = 4096;
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
@@ -102,7 +110,7 @@ public class ECBCipherEngine implements ICipherEngine {
 
     public void generateKeys() throws NoSuchAlgorithmException {
         final KeyPairGenerator keyGen = KeyPairGenerator.getInstance(SECRET_KEY_ALGORITHM);
-        keyGen.initialize(4096);
+        keyGen.initialize(KEY_SIZE);
         final KeyPair pair = keyGen.generateKeyPair();
         this.privateKey = pair.getPrivate();
         this.publicKey = pair.getPublic();

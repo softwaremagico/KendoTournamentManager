@@ -114,15 +114,14 @@ public class GroupDTO extends ElementDTO {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof GroupDTO)) {
+        if (!(o instanceof GroupDTO groupDTO)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-        final GroupDTO groupDTO = (GroupDTO) o;
-        return getTournament().equals(groupDTO.getTournament()) && Objects.equals(getTeams(), groupDTO.getTeams()) &&
-                getShiaijo().equals(groupDTO.getShiaijo()) && getLevel().equals(groupDTO.getLevel()) && Objects.equals(getFights(),
+        return getTournament().equals(groupDTO.getTournament()) && Objects.equals(getTeams(), groupDTO.getTeams())
+                && getShiaijo().equals(groupDTO.getShiaijo()) && getLevel().equals(groupDTO.getLevel()) && Objects.equals(getFights(),
                 groupDTO.getFights()) && getNumberOfWinners().equals(groupDTO.getNumberOfWinners()) && Objects.equals(getUnties(), groupDTO.getUnties());
     }
 

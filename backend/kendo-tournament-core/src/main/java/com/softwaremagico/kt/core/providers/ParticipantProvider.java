@@ -27,12 +27,14 @@ package com.softwaremagico.kt.core.providers;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -47,32 +49,37 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
     }
 
     public List<Participant> get(List<Integer> ids) {
-        return repository.findByIdIn(ids);
+        return getRepository().findByIdIn(ids);
     }
 
     public List<Participant> get(Tournament tournament) {
-        return repository.findByTournament(tournament);
+        return getRepository().findByTournament(tournament);
     }
 
     public List<Participant> get(Tournament tournament, RoleType roleType) {
-        return repository.findByTournamentAndRoleType(tournament, roleType);
+        return getRepository().findByTournamentAndRoleType(tournament, roleType);
     }
 
     public List<Participant> get(Tournament tournament, int differentRoleTypes) {
-        return repository.findParticipantsWithMoreRoleTypesThan(tournament, differentRoleTypes);
+        return getRepository().findParticipantsWithMoreRoleTypesThan(tournament, differentRoleTypes);
     }
 
     public List<Participant> getParticipantsWithAchievementFromList(AchievementType achievementType, List<Participant> participants) {
-        return repository.findParticipantsWithAchievementFromList(achievementType, participants);
+        return getRepository().findParticipantsWithAchievementFromList(achievementType, participants);
     }
 
-    public List<Participant> getParticipantFirstTimeCompetitors(Tournament tournament) {
-        return repository.findParticipantsWithFirstRoleAs(tournament, RoleType.COMPETITOR);
+    public List<Participant> getParticipantsWithAchievementFromList(AchievementType achievementType, AchievementGrade achievementGrade,
+                                                                    List<Participant> participants) {
+        return getRepository().findParticipantsWithAchievementAndGradeFromList(achievementType, achievementGrade, participants);
+    }
+
+    public List<Participant> findParticipantsWithRoleNotInTournaments(Tournament tournament, RoleType roleType, Collection<Tournament> olderTournaments) {
+        return getRepository().findParticipantsWithRoleNotInTournaments(tournament, roleType, olderTournaments);
     }
 
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
-        final List<Participant> databaseParticipants = repository.findByIdIn(ids);
+        final List<Participant> databaseParticipants = getRepository().findByIdIn(ids);
         //JPA 'in' does not maintain the order. We need to sort them by the source list.
         final Map<Integer, Participant> participantsById = databaseParticipants.stream().collect(Collectors.toMap(Participant::getId, Function.identity()));
         final List<Participant> sortedParticipants = new ArrayList<>();

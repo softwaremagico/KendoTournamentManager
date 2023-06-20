@@ -17,7 +17,7 @@ import {CompetitorRanking} from "../models/competitor-ranking";
 })
 export class RankingService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/rankings';
+  private baseUrl : string = this.environmentService.getBackendUrl() + '/rankings';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,
