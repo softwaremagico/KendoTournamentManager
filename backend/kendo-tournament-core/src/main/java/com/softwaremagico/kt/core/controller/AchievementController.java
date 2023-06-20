@@ -55,7 +55,6 @@ import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Controller;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -863,8 +862,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievement(Tournament tournament) {
         //Get older of 10 years
-        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
-                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
+        final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
+                participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL)
                 .stream().map(Achievement::getParticipant).toList();
@@ -880,8 +879,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementBronze(Tournament tournament) {
         //Get older of 10 years
-        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
-                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS_BRONZE))).collect(Collectors.toList());
+        final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
+                participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_BRONZE))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.BRONZE)
                 .stream().map(Achievement::getParticipant).toList();
@@ -897,8 +896,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementSilver(Tournament tournament) {
         //Get older of 10 years
-        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
-                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS_SILVER))).collect(Collectors.toList());
+        final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
+                participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_SILVER))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.SILVER)
                 .stream().map(Achievement::getParticipant).toList();
@@ -914,8 +913,8 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementGold(Tournament tournament) {
         //Get older of 10 years
-        final List<Participant> participants = participantProvider.get(tournament).stream().filter(participant ->
-                participant.getCreatedAt().isBefore(LocalDateTime.now().minusYears(PARTICIPANT_YEARS_GOLD))).collect(Collectors.toList());
+        final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
+                participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_GOLD))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.GOLD
                 )
