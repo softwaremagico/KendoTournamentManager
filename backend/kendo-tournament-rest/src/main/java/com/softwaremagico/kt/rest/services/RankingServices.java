@@ -28,10 +28,10 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
-import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.html.controller.HtmlController;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
@@ -41,14 +41,19 @@ import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -80,26 +85,26 @@ public class RankingServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/group/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitor> getCompetitorsScoreRankingGroup(@Parameter(description = "Id of an existing group", required = true)
-                                                                   @PathVariable("groupId") Integer groupId,
-                                                                   HttpServletRequest request) {
+    public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingGroup(@Parameter(description = "Id of an existing group", required = true)
+                                                                      @PathVariable("groupId") Integer groupId,
+                                                                      HttpServletRequest request) {
         return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitor> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                                        @PathVariable("tournamentId") Integer tournamentId,
-                                                                        HttpServletRequest request) {
+    public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                           @PathVariable("tournamentId") Integer tournamentId,
+                                                                           HttpServletRequest request) {
         return rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(@RequestBody(required = false) Set<ParticipantDTO> participants,
-                                                                    HttpServletRequest request) {
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestBody(required = false) Set<ParticipantDTO> participants,
+                                                                       HttpServletRequest request) {
         return rankingController.getCompetitorsGlobalScoreRanking(participants);
     }
 
@@ -108,7 +113,7 @@ public class RankingServices {
     @PostMapping(value = "/competitors/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
     public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestBody(required = false) Set<ParticipantDTO> participants,
                                                         Locale locale, HttpServletResponse response, HttpServletRequest request) {
-        final List<ScoreOfCompetitor> scores = rankingController.getCompetitorsGlobalScoreRanking(participants);
+        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants);
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename("competitors score.pdf").build();
@@ -134,7 +139,7 @@ public class RankingServices {
                                                             @PathVariable("tournamentId") Integer tournamentId,
                                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
-        final List<ScoreOfCompetitor> scores = rankingController.getCompetitorsScoreRanking(tournament);
+        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsScoreRanking(tournament);
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - competitors score.pdf").build();
@@ -149,18 +154,18 @@ public class RankingServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/group/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfTeam> getTeamsScoreRankingFromGroup(@Parameter(description = "Id of an existing group", required = true)
-                                                           @PathVariable("groupId") Integer groupId,
-                                                           HttpServletRequest request) {
+    public List<ScoreOfTeamDTO> getTeamsScoreRankingFromGroup(@Parameter(description = "Id of an existing group", required = true)
+                                                              @PathVariable("groupId") Integer groupId,
+                                                              HttpServletRequest request) {
         return rankingController.getTeamsScoreRankingFromGroup(groupId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
-                                                                @PathVariable("tournamentId") Integer tournamentId,
-                                                                HttpServletRequest request) {
+    public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
+                                                                   @PathVariable("tournamentId") Integer tournamentId,
+                                                                   HttpServletRequest request) {
         return rankingController.getTeamsScoreRankingFromTournament(tournamentId);
     }
 
@@ -171,7 +176,7 @@ public class RankingServices {
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
-        final List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournament);
+        final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(tournament);
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - teams score.pdf").build();

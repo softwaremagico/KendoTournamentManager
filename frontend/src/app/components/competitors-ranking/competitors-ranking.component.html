@@ -9,23 +9,26 @@
       <th class="competitor-ranking-header">{{'histsWon' | translate}}</th>
     </tr>
     <tr *ngFor="let scoreOfCompetitor of competitorsScore; let i = index">
-      <td [id]="scoreOfCompetitor.competitor.id" class="competitor-ranking-value"
-          [ngClass]="{
+      <td [id]="scoreOfCompetitor.competitor.id" [ngClass]="{
           'selected': competitor?.id === scoreOfCompetitor.competitor.id
-        }">{{showIndex ? i + 1 + ". " : ""}}{{scoreOfCompetitor.competitor.lastname}}
-        , {{scoreOfCompetitor.competitor.name}}</td>
+        }"
+          class="competitor-ranking-value">{{showIndex ? i + 1 + ". " : ""}}{{scoreOfCompetitor.competitor.lastname}}
+        , {{scoreOfCompetitor.competitor.name}}
+      </td>
       <td
-        class="competitor-ranking-value">{{scoreOfCompetitor.wonDuels}}{{(scoreOfCompetitor.untieDuels ? "*" : "")}}</td>
+        class="competitor-ranking-value">{{scoreOfCompetitor.wonDuels}}{{(scoreOfCompetitor.untieDuels ? "*" : "")}}
+      </td>
       <td class="competitor-ranking-value">{{scoreOfCompetitor.drawDuels}}</td>
       <td class="competitor-ranking-value">{{scoreOfCompetitor.hits}}{{(scoreOfCompetitor.untieHits ? "*" : "")}}</td>
     </tr>
   </table>
 </div>
-<div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="downloadPDF()" mat-flat-button
-          *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)">
+<div class="button-container" mat-dialog-actions>
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
+          mat-flat-button
+          mat-raised-button>
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
 </div>

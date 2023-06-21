@@ -62,18 +62,18 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
-        provider.deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getProperty());
+        getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getProperty());
         dto.setUpdatedBy(username);
         return create(dto, null);
     }
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {
-        return convertAll(provider.getAll(tournamentProvider.get(tournamentId)
+        return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
     }
 
     public TournamentExtraPropertyDTO getByTournamentAndProperty(Integer tournamentId, TournamentExtraPropertyKey key) {
-        return convert(provider.getByTournamentAndProperty(tournamentProvider.get(tournamentId)
+        return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key));
     }
 

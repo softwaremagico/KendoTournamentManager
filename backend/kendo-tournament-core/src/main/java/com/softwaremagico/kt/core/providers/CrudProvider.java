@@ -32,10 +32,14 @@ import java.util.Optional;
 
 public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository<ENTITY, KEY>> {
 
-    protected final REPOSITORY repository;
+    private final REPOSITORY repository;
 
     protected CrudProvider(REPOSITORY repository) {
         this.repository = repository;
+    }
+
+    public REPOSITORY getRepository() {
+        return repository;
     }
 
     public ENTITY save(ENTITY entity) {

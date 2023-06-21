@@ -26,7 +26,13 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,6 +43,10 @@ import java.util.Date;
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
     private static final long JWT_EXPIRATION = 604800000;
+    private static final int ID_INDEX = 0;
+    private static final int USERNAME_INDEX = 1;
+    private static final int IP_INDEX = 2;
+    private static final int MAC_INDEX = 3;
 
     private final NetworkController networkController;
 
@@ -81,7 +91,7 @@ public class JwtTokenUtil {
                 .getBody();
 
         try {
-            return claims.getSubject().split(",")[0];
+            return claims.getSubject().split(",")[ID_INDEX];
         } catch (Exception e) {
             RestServerLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
             return null;
@@ -95,7 +105,7 @@ public class JwtTokenUtil {
                 .getBody();
 
         try {
-            return claims.getSubject().split(",")[1];
+            return claims.getSubject().split(",")[USERNAME_INDEX];
         } catch (Exception e) {
             RestServerLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
             return null;
@@ -108,7 +118,7 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
         try {
-            return claims.getSubject().split(",")[2];
+            return claims.getSubject().split(",")[IP_INDEX];
         } catch (Exception e) {
             RestServerLogger.warning(this.getClass().getName(), "No filed 'user IP' on JWT token!");
             return null;
@@ -121,7 +131,7 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
         try {
-            return claims.getSubject().split(",")[3];
+            return claims.getSubject().split(",")[MAC_INDEX];
         } catch (Exception e) {
             RestServerLogger.warning(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
             return null;

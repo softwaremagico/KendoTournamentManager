@@ -16,7 +16,7 @@ import {RoleType} from "../models/role-type";
 })
 export class TournamentService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/tournaments';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               public loginService: LoginService, private messageService: MessageService,
