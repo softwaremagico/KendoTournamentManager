@@ -49,6 +49,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -129,7 +130,7 @@ public class AuthApi {
             if (authenticatedUserController.countUsers() == 0) {
                 RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername() + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
-                        null, request.getUsername(), null, null, request.getPassword(), AvailableRole.ROLE_ADMIN);
+                        null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
