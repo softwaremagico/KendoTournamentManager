@@ -67,50 +67,50 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
     }
 
     public List<RoleDTO> getByTournamentId(Integer tournamentId) {
-        return convertAll(provider.getAll(tournamentProvider.get(tournamentId)
+        return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists."))));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO, List<ParticipantDTO> participantsDTOs) {
-        return convertAll(provider.get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverseAll(participantsDTOs)));
+        return convertAll(getProvider().get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverseAll(participantsDTOs)));
     }
 
     public RoleDTO get(TournamentDTO tournamentDTO, ParticipantDTO participantDTO) {
-        return convert(provider.get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(participantDTO)));
+        return convert(getProvider().get(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(participantDTO)));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO) {
-        return convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)));
+        return convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO, RoleType roleType) {
-        return convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO), roleType));
+        return convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO), roleType));
     }
 
     public List<RoleDTO> get(Integer tournamentId, Collection<RoleType> roleTypes) {
-        return convertAll(provider.getAll(tournamentProvider.get(tournamentId)
+        return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
                         .orElseThrow(() -> new TournamentNotFoundException(getClass(), "Tournament with id '" + tournamentId + "' does not exists.")),
                 roleTypes));
     }
 
     public List<RoleDTO> get(TournamentDTO tournamentDTO, Collection<RoleType> roleTypes) {
-        return convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO), roleTypes));
+        return convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO), roleTypes));
     }
 
     public List<RoleDTO> getForAccreditations(TournamentDTO tournamentDTO, Boolean onlyNewAccreditations, Collection<RoleType> roleTypes) {
-        return convertAll(provider.getAllForAccreditations(tournamentConverter.reverse(tournamentDTO), onlyNewAccreditations, roleTypes));
+        return convertAll(getProvider().getAllForAccreditations(tournamentConverter.reverse(tournamentDTO), onlyNewAccreditations, roleTypes));
     }
 
     public List<RoleDTO> getForDiplomas(TournamentDTO tournamentDTO, Boolean onlyNewDiplomas, Collection<RoleType> roleTypes) {
-        return convertAll(provider.getAllForDiplomas(tournamentConverter.reverse(tournamentDTO), onlyNewDiplomas, roleTypes));
+        return convertAll(getProvider().getAllForDiplomas(tournamentConverter.reverse(tournamentDTO), onlyNewDiplomas, roleTypes));
     }
 
     public long count(TournamentDTO tournamentDTO) {
-        return provider.count(tournamentConverter.reverse(tournamentDTO));
+        return getProvider().count(tournamentConverter.reverse(tournamentDTO));
     }
 
     public void delete(ParticipantDTO participantDTO, TournamentDTO tournamentDTO) {
-        provider.delete(participantConverter.reverse(participantDTO), tournamentConverter.reverse(tournamentDTO));
+        getProvider().delete(participantConverter.reverse(participantDTO), tournamentConverter.reverse(tournamentDTO));
     }
 
     @Override
@@ -123,8 +123,8 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
 
     @Override
     public void validate(RoleDTO roleDTO) throws ValidateBadRequestException {
-        if (roleDTO == null || roleDTO.getTournament() == null || roleDTO.getParticipant() == null ||
-                roleDTO.getRoleType() == null) {
+        if (roleDTO == null || roleDTO.getTournament() == null || roleDTO.getParticipant() == null
+                || roleDTO.getRoleType() == null) {
             throw new ValidateBadRequestException(getClass(), "Role data is missing");
         }
     }

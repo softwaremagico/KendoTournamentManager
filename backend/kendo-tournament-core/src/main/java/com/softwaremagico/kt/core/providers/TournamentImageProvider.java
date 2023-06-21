@@ -42,10 +42,10 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
     }
 
     public Optional<TournamentImage> get(Tournament tournament, TournamentImageType imageType) {
-        return repository.findByTournamentAndImageType(tournament, imageType);
+        return getRepository().findByTournamentAndImageType(tournament, imageType);
     }
 
     public int delete(Tournament tournament, TournamentImageType imageType) {
-        return repository.deleteByTournamentAndImageType(tournament, imageType);
+        return getRepository().deleteByTournamentAndImageType(tournament, imageType);
     }
 }

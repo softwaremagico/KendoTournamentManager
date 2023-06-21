@@ -44,31 +44,31 @@ public class ScoreOfTeamCustom implements Comparator<ScoreOfTeam> {
             }
         }
 
-        if (scoreOfTeam1.getWonFights() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawFights() *
-                scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
-                > scoreOfTeam2.getWonFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory() +
-                scoreOfTeam2.getDrawFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
+        if (scoreOfTeam1.getWonFights() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawFights()
+                * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
+                > scoreOfTeam2.getWonFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory()
+                + scoreOfTeam2.getDrawFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
             return -1;
         }
 
-        if (scoreOfTeam1.getWonFights() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawFights() *
-                scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
-                < scoreOfTeam2.getWonFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory() +
-                scoreOfTeam2.getDrawFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
+        if (scoreOfTeam1.getWonFights() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawFights()
+                * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
+                < scoreOfTeam2.getWonFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory()
+                + scoreOfTeam2.getDrawFights() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
             return 1;
         }
 
-        if (scoreOfTeam1.getWonDuels() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawDuels() *
-                scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
-                > scoreOfTeam2.getWonDuels() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam2.getDrawDuels() *
-                scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
+        if (scoreOfTeam1.getWonDuels() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawDuels()
+                * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
+                > scoreOfTeam2.getWonDuels() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam2.getDrawDuels()
+                * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
             return -1;
         }
 
-        if (scoreOfTeam1.getWonDuels() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawDuels() *
-                scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
-                < scoreOfTeam2.getWonDuels() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory() +
-                scoreOfTeam2.getDrawDuels() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
+        if (scoreOfTeam1.getWonDuels() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawDuels()
+                * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByDraw()
+                < scoreOfTeam2.getWonDuels() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByVictory()
+                + scoreOfTeam2.getDrawDuels() * scoreOfTeam2.getTeam().getTournament().getTournamentScore().getPointsByDraw()) {
             return 1;
         }
 

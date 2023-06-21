@@ -25,7 +25,13 @@ package com.softwaremagico.kt.pdf.lists;
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -54,6 +60,8 @@ import java.util.stream.Collectors;
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
  */
 public class FightSummaryPDF extends ParentList {
+    private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
+    private static final int DEFAULT_CELL_HEIGHT = 50;
     private static final int FIGHT_BORDER = 1;
     private final MessageSource messageSource;
     private final Locale locale;
@@ -74,26 +82,28 @@ public class FightSummaryPDF extends ParentList {
     protected String getDrawFight(FightDTO fightDTO, int duel) {
         // Draw Fights
         if (Objects.equals(fightDTO.getDuels().get(duel).getWinner(), 0) && fightDTO.isOver()) {
-            return "" + Score.DRAW.getAbbreviation();
+            return String.valueOf(Score.DRAW.getAbbreviation());
         } else {
-            return "" + Score.EMPTY.getAbbreviation();
+            return String.valueOf(Score.EMPTY.getAbbreviation());
         }
     }
 
     protected String getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
         if (leftTeam) {
-            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? "" + Score.FAULT.getAbbreviation() : "" + Score.EMPTY.getAbbreviation();
+            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? String.valueOf(Score.FAULT.getAbbreviation())
+                    : String.valueOf(Score.EMPTY.getAbbreviation());
         } else {
-            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? "" + Score.FAULT.getAbbreviation() : "" + Score.EMPTY.getAbbreviation();
+            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? String.valueOf(Score.FAULT.getAbbreviation())
+                    : String.valueOf(Score.EMPTY.getAbbreviation());
         }
     }
 
     protected String getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
         try {
             if (leftTeam) {
-                return fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation() + "";
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation());
             } else {
-                return fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation() + "";
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
         } catch (IndexOutOfBoundsException e) {
             return "";
@@ -104,7 +114,7 @@ public class FightSummaryPDF extends ParentList {
         final PdfPTable table = new PdfPTable(getTableWidths());
 
         if (!first) {
-            table.addCell(getEmptyRow(50));
+            table.addCell(getEmptyRow(DEFAULT_CELL_HEIGHT));
         }
 
         table.addCell(getHeader3(fightDTO.getTeam1().getName() + " - " + fightDTO.getTeam2().getName(), 0));
@@ -142,7 +152,7 @@ public class FightSummaryPDF extends ParentList {
             }
             table.addCell(getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT));
         }
-        table.addCell(getEmptyRow(50));
+        table.addCell(getEmptyRow(DEFAULT_CELL_HEIGHT));
 
         return table;
     }
@@ -204,7 +214,7 @@ public class FightSummaryPDF extends ParentList {
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
+        return TABLE_WIDTH;
     }
 
     @Override
@@ -212,7 +222,7 @@ public class FightSummaryPDF extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override

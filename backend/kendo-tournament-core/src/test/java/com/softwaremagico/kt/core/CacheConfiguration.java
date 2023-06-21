@@ -24,28 +24,24 @@ package com.softwaremagico.kt.core;
  * #L%
  */
 
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
 
-    @Bean
-    public CacheManager cacheManager() {
-        return new EhCacheCacheManager(ehCacheCacheManager().getObject());
-    }
-
-    @Bean
-    public EhCacheManagerFactoryBean ehCacheCacheManager() {
-        final EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
-        ehCacheManagerFactoryBean.setConfigLocation(new ClassPathResource("ehcache.xml"));
-        ehCacheManagerFactoryBean.setShared(true);
-        return ehCacheManagerFactoryBean;
-    }
+//    @Bean
+//    public JCacheManagerFactoryBean cacheManagerFactoryBean() throws Exception {
+//        JCacheManagerFactoryBean jCacheManagerFactoryBean = new JCacheManagerFactoryBean();
+//        jCacheManagerFactoryBean.setCacheManagerUri(new ClassPathResource("ehcache.xml").getURI());
+//        return jCacheManagerFactoryBean;
+//    }
+//
+//    @Bean
+//    public CacheManager cacheManager() throws Exception {
+//        final JCacheCacheManager jCacheCacheManager = new JCacheCacheManager();
+//        jCacheCacheManager.setCacheManager(cacheManagerFactoryBean().getObject());
+//        return jCacheCacheManager;
+//    }
 }

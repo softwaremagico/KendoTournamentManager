@@ -52,10 +52,10 @@ public class TournamentStatisticsController extends BasicInsertableController<To
     }
 
     public TournamentStatisticsDTO get(TournamentDTO tournamentDTO) {
-        return convert(provider.get(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().get(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentStatisticsDTO getPrevious(TournamentDTO tournamentDTO) {
-        return convert(provider.get(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().get(tournamentConverter.reverse(tournamentDTO)));
     }
 }

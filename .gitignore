@@ -23,4 +23,4 @@ default_data.sql
 *.bak
 .attach_*
 .env_bak
-
+target/*
