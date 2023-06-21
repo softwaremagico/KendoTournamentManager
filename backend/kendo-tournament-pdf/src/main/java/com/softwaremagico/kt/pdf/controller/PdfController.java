@@ -24,26 +24,51 @@ package com.softwaremagico.kt.pdf.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.*;
-import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ParticipantImageController;
+import com.softwaremagico.kt.core.controller.RoleController;
+import com.softwaremagico.kt.core.controller.TeamController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
+import com.softwaremagico.kt.core.controller.TournamentImageController;
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
-import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
-import com.softwaremagico.kt.pdf.lists.*;
-import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
+import com.softwaremagico.kt.pdf.lists.FightSummaryPDF;
+import com.softwaremagico.kt.pdf.lists.FightsList;
+import com.softwaremagico.kt.pdf.lists.RoleList;
+import com.softwaremagico.kt.pdf.lists.TeamListPDF;
+import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
 public class PdfController {
+    private static final float DEFAULT_NAME_POSITION = 0.5f;
     private final MessageSource messageSource;
 
     private final RoleController roleController;
@@ -70,11 +95,11 @@ public class PdfController {
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
     }
 
-    public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitor> competitorTopTen) {
+    public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
         return new CompetitorsScoreList(messageSource, locale, tournament, competitorTopTen);
     }
 
-    public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamsTopTen) {
+    public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeamDTO> teamsTopTen) {
         return new TeamsScoreList(messageSource, locale, tournament, teamsTopTen);
     }
 
@@ -189,12 +214,12 @@ public class PdfController {
         final TournamentExtraPropertyDTO tournamentExtraPropertyDTO = tournamentExtraPropertyController
                 .getByTournamentAndProperty(tournamentDTO.getId(), TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT);
         if (tournamentExtraPropertyDTO == null) {
-            return 0.5f;
+            return DEFAULT_NAME_POSITION;
         }
         try {
             return Float.parseFloat(tournamentExtraPropertyDTO.getValue());
         } catch (Exception e) {
-            return 0.5f;
+            return DEFAULT_NAME_POSITION;
         }
     }
 }

@@ -44,23 +44,23 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
     }
 
     public List<Role> getAll(Tournament tournament) {
-        final List<Role> roles = repository.findByTournament(tournament);
+        final List<Role> roles = getRepository().findByTournament(tournament);
         roles.forEach(role -> role.setTournament(tournament));
         return roles;
     }
 
     public List<Role> getAll(Tournament tournament, RoleType roleType) {
-        final List<Role> roles = repository.findByTournamentAndRoleType(tournament, roleType);
+        final List<Role> roles = getRepository().findByTournamentAndRoleType(tournament, roleType);
         roles.forEach(role -> role.setTournament(tournament));
         return roles;
     }
 
     public List<Role> getAll(RoleType roleType) {
-        return repository.findByRoleType(roleType);
+        return getRepository().findByRoleType(roleType);
     }
 
     public List<Role> getAll(Tournament tournament, Collection<RoleType> roleTypes) {
-        final List<Role> roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+        final List<Role> roles = getRepository().findByTournamentAndRoleTypeIn(tournament, roleTypes);
         roles.forEach(role -> role.setTournament(tournament));
         return roles;
     }
@@ -69,15 +69,15 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         final List<Role> roles;
         if (onlyNewDiplomas != null && onlyNewDiplomas) {
             if (!roleTypes.isEmpty()) {
-                roles = repository.findByTournamentAndDiplomaPrintedAndRoleTypeIn(tournament, false, roleTypes);
+                roles = getRepository().findByTournamentAndDiplomaPrintedAndRoleTypeIn(tournament, false, roleTypes);
             } else {
-                roles = repository.findByTournamentAndDiplomaPrinted(tournament, false);
+                roles = getRepository().findByTournamentAndDiplomaPrinted(tournament, false);
             }
         } else {
             if (!roleTypes.isEmpty()) {
-                roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+                roles = getRepository().findByTournamentAndRoleTypeIn(tournament, roleTypes);
             } else {
-                roles = repository.findByTournament(tournament);
+                roles = getRepository().findByTournament(tournament);
             }
         }
         roles.forEach(role -> role.setTournament(tournament));
@@ -88,15 +88,15 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         final List<Role> roles;
         if (onlyNewAccreditations != null && onlyNewAccreditations) {
             if (!roleTypes.isEmpty()) {
-                roles = repository.findByTournamentAndAccreditationPrintedAndRoleTypeIn(tournament, false, roleTypes);
+                roles = getRepository().findByTournamentAndAccreditationPrintedAndRoleTypeIn(tournament, false, roleTypes);
             } else {
-                roles = repository.findByTournamentAndAccreditationPrinted(tournament, false);
+                roles = getRepository().findByTournamentAndAccreditationPrinted(tournament, false);
             }
         } else {
             if (!roleTypes.isEmpty()) {
-                roles = repository.findByTournamentAndRoleTypeIn(tournament, roleTypes);
+                roles = getRepository().findByTournamentAndRoleTypeIn(tournament, roleTypes);
             } else {
-                roles = repository.findByTournament(tournament);
+                roles = getRepository().findByTournament(tournament);
             }
         }
         roles.forEach(role -> role.setTournament(tournament));
@@ -104,30 +104,34 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
     }
 
     public List<Role> get(Tournament tournament, List<Participant> participants) {
-        return repository.findByTournamentAndParticipantIn(tournament, participants);
+        return getRepository().findByTournamentAndParticipantIn(tournament, participants);
+    }
+
+    public List<Role> get(List<Participant> participants) {
+        return getRepository().findByParticipantIn(participants);
     }
 
     public Role get(Tournament tournament, Participant participant) {
-        return repository.findByTournamentAndParticipant(tournament, participant);
+        return getRepository().findByTournamentAndParticipant(tournament, participant);
     }
 
     public long count(Tournament tournament) {
-        return repository.countByTournament(tournament);
+        return getRepository().countByTournament(tournament);
     }
 
     public long count(Tournament tournament, RoleType roleType) {
-        return repository.countByTournamentAndRoleType(tournament, roleType);
+        return getRepository().countByTournamentAndRoleType(tournament, roleType);
     }
 
     public long count(Participant participant, RoleType roleType) {
-        return repository.countByParticipantAndRoleType(participant, roleType);
+        return getRepository().countByParticipantAndRoleType(participant, roleType);
     }
 
     public void delete(Participant participant, Tournament tournament) {
-        repository.deleteByParticipantAndTournament(participant, tournament);
+        getRepository().deleteByParticipantAndTournament(participant, tournament);
     }
 
     public long delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 }

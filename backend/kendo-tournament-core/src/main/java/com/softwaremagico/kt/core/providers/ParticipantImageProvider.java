@@ -43,14 +43,14 @@ public class ParticipantImageProvider extends CrudProvider<ParticipantImage, Int
     }
 
     public Optional<ParticipantImage> get(Participant participant) {
-        return repository.findByParticipant(participant);
+        return getRepository().findByParticipant(participant);
     }
 
     public List<ParticipantImage> get(Collection<Participant> participants) {
-        return repository.findByParticipantIn(participants);
+        return getRepository().findByParticipantIn(participants);
     }
 
     public int delete(Participant participant) {
-        return repository.deleteByParticipant(participant);
+        return getRepository().deleteByParticipant(participant);
     }
 }

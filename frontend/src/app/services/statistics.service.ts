@@ -16,7 +16,7 @@ import {ParticipantStatistics} from "../models/participant-statistics.model";
 })
 export class StatisticsService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/statistics';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/statistics';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,

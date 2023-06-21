@@ -54,7 +54,23 @@ public enum AchievementType {
 
     SWEATY_TENUGUI,
 
-    WOODCUTTER;
+    THE_WINNER,
+
+    THE_WINNER_TEAM,
+
+    WOODCUTTER,
+
+    THE_NEVER_ENDING_STORY,
+
+    LOVE_SHARING,
+
+    MASTER_THE_LOOP,
+
+    TIS_BUT_A_SCRATCH,
+
+    FIRST_BLOOD,
+
+    DARUMA;
 
 
     public static AchievementType getType(String name) {

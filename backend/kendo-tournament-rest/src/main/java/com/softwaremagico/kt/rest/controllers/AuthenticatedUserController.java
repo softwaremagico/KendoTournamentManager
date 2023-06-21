@@ -53,8 +53,8 @@ public class AuthenticatedUserController {
 
     public AuthenticatedUser createUser(String creator, CreateUserRequest createUserRequest) {
         return createUser(creator, createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastname(),
-                createUserRequest.getPassword(), createUserRequest.getRoles() != null ?
-                        createUserRequest.getRoles().toArray(new String[0]) : null);
+                createUserRequest.getPassword(), createUserRequest.getRoles() != null
+                        ? createUserRequest.getRoles().toArray(new String[0]) : null);
     }
 
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
