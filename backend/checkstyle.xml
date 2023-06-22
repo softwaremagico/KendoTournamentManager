@@ -173,6 +173,7 @@
         <!***REMOVED***See https://checkstyle.org/config_misc.html -->
         <module name="ArrayTypeStyle"/>
         <!***REMOVED***       <module name="FinalParameters"/>-->
+        <module name="FinalLocalVariable"/>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
 
