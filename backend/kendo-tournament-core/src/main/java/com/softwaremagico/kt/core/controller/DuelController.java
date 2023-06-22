@@ -78,14 +78,14 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     @Override
     public void validate(DuelDTO dto) throws ValidateBadRequestException {
-        if (dto.getCompetitor1Score().contains(Score.EMPTY) ||
-                dto.getCompetitor1Score().contains(Score.DRAW) ||
-                dto.getCompetitor1Score().contains(Score.FAULT)) {
+        if (dto.getCompetitor1Score().contains(Score.EMPTY)
+                || dto.getCompetitor1Score().contains(Score.DRAW)
+                || dto.getCompetitor1Score().contains(Score.FAULT)) {
             throw new ValidateBadRequestException(this.getClass(), "Invalid score on duel '" + dto + "'");
         }
-        if (dto.getCompetitor2Score().contains(Score.EMPTY) ||
-                dto.getCompetitor2Score().contains(Score.DRAW) ||
-                dto.getCompetitor2Score().contains(Score.FAULT)) {
+        if (dto.getCompetitor2Score().contains(Score.EMPTY)
+                || dto.getCompetitor2Score().contains(Score.DRAW)
+                || dto.getCompetitor2Score().contains(Score.FAULT)) {
             throw new ValidateBadRequestException(this.getClass(), "Invalid score on duel '" + dto + "'");
         }
     }
@@ -111,7 +111,7 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
     }
 
     public long count(TournamentDTO tournament) {
-        return provider.count(tournamentConverter.reverse(tournament));
+        return getProvider().count(tournamentConverter.reverse(tournament));
     }
 
 }

@@ -26,7 +26,11 @@ package com.softwaremagico.kt.persistence.encryption;
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -48,14 +52,32 @@ import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDataba
  */
 public class GCMCipherEngine implements ICipherEngine {
 
+    public static final int GCM_IV_LENGTH = 12;
     private static final String CIPHER_INSTANCE_NAME = "AES/GCM/NoPadding";
     private static final String SECRET_KEY_ALGORITHM = "AES";
     private static final String SECRET_KEY_FACTORY_ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final int TAG_LENGTH_BIT = 128;
-    public static final int GCM_IV_LENGTH = 12;
     private static final int SALT_LENGTH_BYTE = 16;
-    private static final SecureRandom random = new SecureRandom();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private Cipher cipher;
+
+    public static byte[] getRandomNonce(int numBytes) {
+        final byte[] nonce = new byte[numBytes];
+        SECURE_RANDOM.nextBytes(nonce);
+        return nonce;
+    }
+
+    // AES secret key
+    public static SecretKeySpec getAESKey(byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return getAESKey(getDatabaseEncryptionKey(), salt);
+    }
+
+    public static SecretKeySpec getAESKey(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
+        final KeySpec spec = new PBEKeySpec(password != null ? password.toCharArray() : null, salt,
+                512, 256);
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), SECRET_KEY_ALGORITHM);
+    }
 
     // AES-GCM needs GCMParameterSpec
     @Override
@@ -81,8 +103,13 @@ public class GCMCipherEngine implements ICipherEngine {
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
             EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
             return encodedValue;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (BadPaddingException
+                 | IllegalBlockSizeException
+                 | InvalidAlgorithmParameterException
+                 | InvalidKeyException
+                 | NoSuchPaddingException
+                 | NoSuchAlgorithmException
+                 | InvalidKeySpecException e) {
             throw new InvalidEncryptionException(e);
         }
     }
@@ -113,8 +140,13 @@ public class GCMCipherEngine implements ICipherEngine {
             final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
             EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
             return decrypted;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (BadPaddingException
+                 | IllegalBlockSizeException
+                 | InvalidAlgorithmParameterException
+                 | InvalidKeyException
+                 | NoSuchPaddingException
+                 | NoSuchAlgorithmException
+                 | InvalidKeySpecException e) {
             throw new InvalidEncryptionException(e);
         }
     }
@@ -124,23 +156,5 @@ public class GCMCipherEngine implements ICipherEngine {
             cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
         }
         return cipher;
-    }
-
-    public static byte[] getRandomNonce(int numBytes) {
-        final byte[] nonce = new byte[numBytes];
-        random.nextBytes(nonce);
-        return nonce;
-    }
-
-    // AES secret key
-    public static SecretKeySpec getAESKey(byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return getAESKey(getDatabaseEncryptionKey(), salt);
-    }
-
-    public static SecretKeySpec getAESKey(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-        final KeySpec spec = new PBEKeySpec(password != null ? password.toCharArray() : null, salt,
-                512, 256);
-        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), SECRET_KEY_ALGORITHM);
     }
 }

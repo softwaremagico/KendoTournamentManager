@@ -70,17 +70,17 @@ public class ParticipantImageController extends BasicInsertableController<Partic
     public int deleteByParticipantId(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
-        return provider.delete(participant);
+        return getProvider().delete(participant);
     }
 
     public List<ParticipantImageDTO> get(List<ParticipantDTO> participantDTOS) {
-        return convertAll(provider.get(participantConverter.reverseAll(participantDTOS)));
+        return convertAll(getProvider().get(participantConverter.reverseAll(participantDTOS)));
     }
 
     public ParticipantImageDTO getByParticipantId(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
-        return convert(provider.get(participant).orElse(null));
+        return convert(getProvider().get(participant).orElse(null));
     }
 
     public ParticipantImageDTO add(MultipartFile file, Integer participantId, String username) {
@@ -100,7 +100,7 @@ public class ParticipantImageController extends BasicInsertableController<Partic
             participantImage.setCreatedBy(username);
             participantDTO.setHasAvatar(true);
             participantProvider.save(participantConverter.reverse(participantDTO));
-            return convert(provider.save(participantImage));
+            return convert(getProvider().save(participantImage));
         } catch (IOException e) {
             throw new DataInputException(this.getClass(), "File creation failed.");
         }
@@ -118,13 +118,13 @@ public class ParticipantImageController extends BasicInsertableController<Partic
         final Participant participant = participantConverter.reverse(participantImageDTO.getParticipant());
         participant.setHasAvatar(participantImageDTO.getData() != null);
         participantProvider.save(participant);
-        return convert(provider.save(reverse(participantImageDTO)));
+        return convert(getProvider().save(reverse(participantImageDTO)));
     }
 
     public int delete(ParticipantDTO participantDTO) {
         final Participant participant = participantConverter.reverse(participantDTO);
         participant.setHasAvatar(false);
         participantProvider.save(participant);
-        return provider.delete(participant);
+        return getProvider().delete(participant);
     }
 }

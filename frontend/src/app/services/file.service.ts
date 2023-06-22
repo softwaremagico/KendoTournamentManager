@@ -19,7 +19,7 @@ import {ImageCompression} from "../models/image-compression";
 })
 export class FileService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/files';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/files';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,

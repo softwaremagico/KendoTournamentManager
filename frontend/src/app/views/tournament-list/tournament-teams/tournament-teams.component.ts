@@ -35,7 +35,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   userListData: UserListData = new UserListData();
   tournament: Tournament;
   teams: Team[];
-  members = new Map<Team, (Participant | undefined)[]>();
+  members:Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
   teamSize: number[];
 

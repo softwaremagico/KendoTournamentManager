@@ -3,9 +3,11 @@
   <div class="statistics-layout">
     <div class="upper-menu">
       <div class="cell">
-        <button mat-button color="secondary" (click)="goBackToUsers()" [matTooltipShowDelay]="500"
-                matTooltip="{{'back' | translate}}"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)">
+        <button (click)="goBackToUsers()"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)"
+                [matTooltipShowDelay]="500" color="secondary"
+                mat-button
+                matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
       </div>
@@ -15,21 +17,21 @@
 
         <div class="box-statistics box shadow">
           <div class="statistics-table-title">
-            <mat-icon svgIcon="card" class="kendo-icon"></mat-icon>
+            <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
             <h3>{{'roles' | translate}}</h3>
           </div>
           <!-- aria-hidden="true" to avoid complains from sonarcloud -->
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr *ngFor="let roleType of roleTypes">
               <td *ngIf="participantStatistics">{{roleType.toLowerCase() | translate}}:</td>
               <td *ngIf="participantStatistics">{{numberOfPerformedRoles(roleType)}}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
-            <mat-icon svgIcon="teams-classification" class="kendo-icon"></mat-icon>
+            <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
             <h3>{{'tournaments' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td class="single">{{'tournaments' | translate}}:</td>
               <td>{{participantStatistics?.tournaments}}</td>
@@ -46,7 +48,7 @@
             <mat-icon>timer</mat-icon>
             <h3>{{'time' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td>{{'createdAt' | translate}}:</td>
               <td>{{convertDate(participantStatistics?.participantCreatedAt)}}</td>
@@ -65,10 +67,10 @@
             </tr>
           </table>
           <div class="statistics-table-title">
-            <mat-icon svgIcon="fight" class="kendo-icon"></mat-icon>
+            <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
             <h3>{{'duels' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td class="single">{{'duelsWon' | translate}}:</td>
               <td>{{participantStatistics?.participantFightStatistics?.wonDuels}}</td>
@@ -86,10 +88,10 @@
 
         <div class="box-statistics box shadow">
           <div class="statistics-table-title">
-            <mat-icon svgIcon="match" class="kendo-icon"></mat-icon>
+            <mat-icon class="kendo-icon" svgIcon="match"></mat-icon>
             <h3>{{'hits' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td>{{'men' | translate}}:</td>
               <td>{{participantStatistics?.participantFightStatistics?.menNumber}}</td>
@@ -119,20 +121,21 @@
             <mat-icon>flag</mat-icon>
             <h3>{{'faults' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td class="single">{{'faults' | translate}}
-                : {{participantStatistics?.participantFightStatistics?.faults}}</td>
+                : {{participantStatistics?.participantFightStatistics?.faults}}
+              </td>
             </tr>
           </table>
         </div>
 
         <div class="box-statistics box shadow">
           <div class="statistics-table-title">
-            <mat-icon svgIcon="match" class="kendo-icon flip"></mat-icon>
+            <mat-icon class="kendo-icon flip" svgIcon="match"></mat-icon>
             <h3>{{'receivedHits' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td>{{'men' | translate}}:</td>
               <td>{{participantStatistics?.participantFightStatistics?.receivedMenNumber}}</td>
@@ -162,30 +165,32 @@
             <mat-icon class="flip">flag</mat-icon>
             <h3>{{'receivedFaults' | translate}}</h3>
           </div>
-          <table class="statistics-table" *ngIf="participantStatistics" aria-hidden="true">
+          <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td class="single">{{'faults' | translate}}
-                : {{participantStatistics?.participantFightStatistics?.receivedFaults}}</td>
+                : {{participantStatistics?.participantFightStatistics?.receivedFaults}}
+              </td>
             </tr>
           </table>
         </div>
 
         <div class="box-statistics box shadow scrollable">
           <div class="statistics-table-title">
-            <mat-icon svgIcon="competitors-classification" class="kendo-icon"></mat-icon>
+            <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
             <h3>{{'competitorsRanking' | translate}}</h3>
           </div>
-          <table class="statistics-table" aria-hidden="true" *ngIf="competitorRanking">
+          <table *ngIf="competitorRanking" aria-hidden="true" class="statistics-table">
             <tr>
-              <td class="ranking your-ranking"
-                  [ngClass]="{
+              <td [ngClass]="{
                     'ranking-very-good': competitorRanking.ranking / competitorRanking.total < 0.1,
                     'ranking-good': competitorRanking.ranking / competitorRanking.total >= 0.1 && competitorRanking.ranking / competitorRanking.total <= 0.3,
                     'ranking-normal': competitorRanking.ranking / competitorRanking.total >= 0.3 && competitorRanking.ranking / competitorRanking.total <= 0.7,
                     'ranking-bad': competitorRanking.ranking / competitorRanking.total >= 0.7 && competitorRanking.ranking / competitorRanking.total <= 0.9,
                     'ranking-very-bad': competitorRanking.ranking / competitorRanking.total > 0.9}
-                  ">
-                {{competitorRanking.ranking + 1}}</td>
+                  "
+                  class="ranking your-ranking">
+                {{competitorRanking.ranking + 1}}
+              </td>
             </tr>
             <tr>
               <td class="ranking">of</td>
@@ -198,12 +203,12 @@
 
         <div class="box-statistics box shadow scrollable">
           <div class="statistics-table-title">
-            <mat-icon svgIcon="gauge" class="kendo-icon"></mat-icon>
+            <mat-icon class="kendo-icon" svgIcon="gauge"></mat-icon>
             <h3>{{'performance' | translate}}</h3>
           </div>
-          <app-progress-bar *ngFor="let value of performance; let i = index" [text]="value[0] | translate"
+          <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
                             [ngClass]="'bar-'+i"
-                            [percentage]="value[1]" [barIcon]="value[0].toLowerCase()"></app-progress-bar>
+                            [percentage]="value[1]" [text]="value[0] | translate"></app-progress-bar>
         </div>
 
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
@@ -212,6 +217,15 @@
         <app-pie-chart *ngIf="!!receivedHitsTypeChartData" [data]="receivedHitsTypeChartData"
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
+
+        <div class="box-statistics box shadow achievements-box">
+          <div class="statistics-table-title">
+            <mat-icon>stars</mat-icon>
+            <h3>{{'achievements' | translate}}</h3>
+          </div>
+          <app-achievement-wall [achievements]="achievements"
+                                [view]="'participant'"></app-achievement-wall>
+        </div>
       </div>
     </div>
   </div>

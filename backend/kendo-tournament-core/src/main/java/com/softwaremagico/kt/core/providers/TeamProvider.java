@@ -51,21 +51,21 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
     public Team update(Team team, List<Participant> members) {
         if (team != null) {
             team.setMembers(members);
-            return repository.save(team);
+            return getRepository().save(team);
         }
         return null;
     }
 
     public Optional<Team> get(Tournament tournament, String name) {
-        final Optional<Team> team = repository.findByTournamentAndName(tournament, name);
+        final Optional<Team> team = getRepository().findByTournamentAndName(tournament, name);
         team.ifPresent(value -> value.setTournament(tournament));
         return team;
     }
 
     public List<Team> createDefaultTeams(Tournament tournament, String createdBy) {
         final List<Team> newTeams = new ArrayList<>();
-        if ((tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED ||
-                tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
+        if ((tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED
+                || tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
             final long competitors = roleProvider.count(tournament, RoleType.COMPETITOR);
             if (tournament.getTeamSize() > 0) {
                 for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
@@ -81,29 +81,29 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
     }
 
     public synchronized List<Team> getAll(Tournament tournament) {
-        final List<Team> teams = repository.findByTournament(tournament);
+        final List<Team> teams = getRepository().findByTournament(tournament);
         teams.forEach(team -> team.setTournament(tournament));
         return teams;
     }
 
     public long count(Tournament tournament) {
-        return repository.countByTournament(tournament);
+        return getRepository().countByTournament(tournament);
     }
 
     public long delete(Tournament tournament) {
-        return repository.deleteByTournament(tournament);
+        return getRepository().deleteByTournament(tournament);
     }
 
     public void delete(Integer id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
+        if (getRepository().existsById(id)) {
+            getRepository().deleteById(id);
         } else {
             throw new TeamNotFoundException(getClass(), "Team with id '" + id + "' not found");
         }
     }
 
     public Optional<Team> get(Tournament tournament, Participant participant) {
-        return repository.findByTournamentAndMembers(tournament, participant);
+        return getRepository().findByTournamentAndMembers(tournament, participant);
     }
 
     public Optional<Team> delete(Tournament tournament, Participant member) {

@@ -26,10 +26,22 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,13 +138,13 @@ public class Fight extends Element {
         return duels;
     }
 
-    public List<Duel> getDuels(Participant competitor) {
-        return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor) ||
-                Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
-    }
-
     public void setDuels(List<Duel> duels) {
         this.duels = duels;
+    }
+
+    public List<Duel> getDuels(Participant competitor) {
+        return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor)
+                || Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
     }
 
     public Team getWinner() {
@@ -195,6 +207,79 @@ public class Fight extends Element {
                 duels.add(duel);
             }
         }
+    }
+
+    public Integer getScore(Participant competitor) {
+        int score = 0;
+        score += getDuels().stream().filter(duel ->
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        score += getDuels().stream().filter(duel ->
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return score;
+    }
+
+    public Integer getDrawDuels(Participant competitor) {
+        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0
+                && (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
+    }
+
+    public Integer getDrawDuels(Team team) {
+        int drawDuels = 0;
+        if ((getTeam1().equals(team) || getTeam2().equals(team))) {
+            drawDuels = (int) getDuels().stream().filter(duel -> duel.getWinner() == 0).count();
+        }
+        return drawDuels;
+    }
+
+    public Integer getDuelsWon(Participant competitor) {
+        int numberOfDuels = 0;
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1
+                && (Objects.equals(duel.getCompetitor1(), competitor))).count();
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1
+                && (Objects.equals(duel.getCompetitor2(), competitor))).count();
+        return numberOfDuels;
+    }
+
+    public boolean isWon(Participant competitor) {
+        if (competitor != null) {
+            if (team1.isMember(competitor) && Objects.equals(getWinner(), team1)) {
+                return true;
+            }
+            return team2.isMember(competitor) && Objects.equals(getWinner(), team2);
+        }
+        return false;
+    }
+
+    public boolean isDrawFight() {
+        return getWinner() == null;
+    }
+
+    public int getWonDuels(Team team) {
+        if (Objects.equals(team1, team)) {
+            return (int) getDuels().stream().filter(duel -> duel.getWinner() == -1).count();
+        }
+        if (Objects.equals(team2, team)) {
+            return (int) getDuels().stream().filter(duel -> duel.getWinner() == 1).count();
+        }
+        return 0;
+    }
+
+    public Integer getScore(Team team) {
+        if (Objects.equals(team1, team)) {
+            return getScoreTeam1();
+        }
+        if (Objects.equals(team2, team)) {
+            return getScoreTeam2();
+        }
+        return 0;
+    }
+
+    public Integer getScoreTeam1() {
+        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+    }
+
+    public Integer getScoreTeam2() {
+        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
     }
 }
 
