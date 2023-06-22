@@ -101,7 +101,7 @@ public class WebSecurityConfig {
     }
 
     private CorsConfigurationSource generateCorsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+        final CorsConfiguration configuration = new CorsConfiguration();
         if (serverCorsDomains == null || serverCorsDomains.contains("*")) {
             configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
         } else {
@@ -111,7 +111,7 @@ public class WebSecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

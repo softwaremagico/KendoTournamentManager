@@ -257,7 +257,7 @@ public class BlogExporter {
 
     private String getDrawFight(FightDTO fightDTO, int duel) {
         // Draw Fights
-        String draw;
+        final String draw;
         if (fightDTO.getDuels().get(duel).getWinner() == 0 && fightDTO.isOver()) {
             draw = String.valueOf(Score.DRAW.getAbbreviation());
         } else {
@@ -267,8 +267,8 @@ public class BlogExporter {
     }
 
     private String getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
-        String faultSymbol;
-        boolean faults;
+        final String faultSymbol;
+        final boolean faults;
         if (leftTeam) {
             faults = fightDTO.getDuels().get(duel).getCompetitor1Fault();
         } else {
