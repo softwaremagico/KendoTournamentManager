@@ -66,7 +66,7 @@ public class CompetitorsScoreList extends ParentList {
     @Override
     public void createHeaderRow(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                 BaseFont font, int fontSize) {
-        PdfPCell cell;
+        final PdfPCell cell;
 
         // Tournament name.
         if (tournament != null) {

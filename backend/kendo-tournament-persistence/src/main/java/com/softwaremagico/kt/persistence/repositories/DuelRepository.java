@@ -54,7 +54,7 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u")
     List<Duel> findAllUnties();
 
-    @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
+    @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
 
     @Query("""
@@ -71,7 +71,7 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
             """)
     Set<Duel> findByScoreOnTimeLess(@Param("tournament") Tournament tournament, @Param("maxSeconds") int maxSeconds);
 
-    @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION + " AND d.tournament=:tournament")
+    @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION + " AND d.tournament=:tournament")
     Long getDurationAverage(@Param("tournament") Tournament tournament);
 
     Duel findFirstByTournamentOrderByStartedAtAsc(Tournament tournament);
