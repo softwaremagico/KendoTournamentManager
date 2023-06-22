@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 public class FightStatisticsController extends BasicInsertableController<TournamentFightStatistics, TournamentFightStatisticsDTO,
@@ -87,7 +86,7 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
     }
 
     public TournamentFightStatisticsDTO estimateByRoles(TournamentDTO tournamentDTO, Collection<RoleDTO> roles) {
-        return estimate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).collect(Collectors.toList())));
+        return estimate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).toList()));
     }
 
     public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {

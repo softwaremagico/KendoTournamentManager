@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository> {
@@ -84,7 +83,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroups(Collection<Fight> fights) {
-        return getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toList()));
+        return getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).toList());
     }
 
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
@@ -113,7 +112,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     public Group addTeams(Integer groupId, List<Team> teams, String username) {
         final Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + groupId + "' not found.",
                 ExceptionType.INFO));
-        group.getTeams().addAll(teams.stream().filter(team -> !group.getTeams().contains(team)).collect(Collectors.toList()));
+        group.getTeams().addAll(teams.stream().filter(team -> !group.getTeams().contains(team)).toList());
         group.setUpdatedBy(username);
         return getRepository().save(group);
     }

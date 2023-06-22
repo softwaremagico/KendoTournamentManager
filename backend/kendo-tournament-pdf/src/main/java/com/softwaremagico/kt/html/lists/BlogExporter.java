@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 public class BlogExporter {
@@ -71,7 +70,7 @@ public class BlogExporter {
         this.tournament = tournament;
         this.roles = roles;
         this.groups = groups;
-        this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).collect(Collectors.toList());
+        this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
         this.competitors = competitors;
         this.scoreOfTeams = scoreOfTeams;
         this.scoreOfCompetitors = scoreOfCompetitors;

@@ -66,7 +66,6 @@ import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @SpringBootTest
@@ -243,7 +242,7 @@ public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
         TournamentFightStatisticsDTO tournamentFightStatisticsDTO =
                 fightStatisticsController.estimate(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
                         MEMBERS,
-                        teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).collect(Collectors.toList())));
+                        teamConverter.convertAll(group.getTeams().stream().map(TeamConverterRequest::new).toList()));
         Assert.assertEquals(tournamentFightStatisticsDTO.getFightsNumber().intValue(), group.getFights().size());
         Assert.assertEquals(tournamentFightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
     }
