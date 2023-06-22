@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  backendUrl: "https://MACHINE_DOMAIN/kendo-tournament-backend"
+  backendUrl: "PROTOCOL://MACHINE_DOMAIN/kendo-tournament-backend"
 };
