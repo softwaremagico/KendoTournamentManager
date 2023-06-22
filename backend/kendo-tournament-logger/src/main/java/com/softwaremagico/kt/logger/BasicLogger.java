@@ -125,7 +125,7 @@ public abstract class BasicLogger {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            logger.debug(String.format("%s: %s", className, messageTemplate), arguments);
+            logger.debug(String.format("%s: %s", className, messageTemplate), arguments); //NOSONAR
         }
     }
 
