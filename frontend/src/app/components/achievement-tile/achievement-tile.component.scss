@@ -71,7 +71,16 @@
   animation-direction: alternate;
 }
 
+.achivement-content {
+  text-align: left;
+}
+
+.achievement-grade {
+  margin-right: 10px;
+}
+
 .text-normal {
+  color: black;
   font-style: oblique;
   text-transform: uppercase;
 }
@@ -234,7 +243,7 @@
 
 .tournament-list {
   text-align: left;
-  margin-left: 20%;
+  margin-left: 10%;
 }
 
 .tournament-item {
