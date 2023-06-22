@@ -34,7 +34,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @Component
 public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
@@ -58,9 +57,9 @@ public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetit
         BeanUtils.copyProperties(from.getEntity(), scoreOfCompetitorDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         scoreOfCompetitorDTO.setCompetitor(participantConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
         scoreOfCompetitorDTO.setFights(fightConverter.convertAll(from.getEntity().getFights().stream()
-                .map(FightConverterRequest::new).collect(Collectors.toList())));
+                .map(FightConverterRequest::new).toList()));
         scoreOfCompetitorDTO.setUnties(duelConverter.convertAll(from.getEntity().getUnties().stream()
-                .map(DuelConverterRequest::new).collect(Collectors.toList())));
+                .map(DuelConverterRequest::new).toList()));
         return scoreOfCompetitorDTO;
     }
 

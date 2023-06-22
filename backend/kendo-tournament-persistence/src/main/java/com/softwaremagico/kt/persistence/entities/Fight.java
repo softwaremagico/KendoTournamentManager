@@ -46,7 +46,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Entity
 @Cacheable
@@ -144,7 +143,7 @@ public class Fight extends Element {
 
     public List<Duel> getDuels(Participant competitor) {
         return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor)
-                || Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
+                || Objects.equals(duel.getCompetitor2(), competitor)).toList();
     }
 
     public Team getWinner() {

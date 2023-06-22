@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -155,13 +154,13 @@ public class RankingProvider {
 
         return getCompetitorsScoreRanking(getParticipants(groups.stream()
                         .flatMap(group -> group.getTeams().stream())
-                        .collect(Collectors.toList())),
+                        .toList()),
                 groups.stream()
                         .flatMap(group -> group.getFights().stream())
-                        .collect(Collectors.toList()),
+                        .toList(),
                 groups.stream()
                         .flatMap(group -> group.getUnties().stream())
-                        .collect(Collectors.toList()),
+                        .toList(),
                 tournament);
     }
 
@@ -200,7 +199,7 @@ public class RankingProvider {
         final List<Fight> fights = fightProvider.getAll();
         final List<Duel> unties = duelProvider.getUnties();
         final List<Participant> competitors = roleProvider.getAll().stream()
-                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant).collect(Collectors.toList());
+                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant).toList();
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }
@@ -372,7 +371,7 @@ public class RankingProvider {
                 fightProvider.getFights(tournament),
                 groupProvider.getGroups(tournament).stream()
                         .flatMap(group -> group.getUnties().stream())
-                        .collect(Collectors.toList()),
+                        .toList(),
                 checkLevel(tournament));
     }
 

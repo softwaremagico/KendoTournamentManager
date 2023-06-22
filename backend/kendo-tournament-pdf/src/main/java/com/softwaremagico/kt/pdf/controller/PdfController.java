@@ -135,7 +135,7 @@ public class PdfController {
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
         final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
-        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
+        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).toList();
         final List<ParticipantImageDTO> participantImageDTOS = participantImageController.get(participantDTOS);
         final Map<ParticipantDTO, ParticipantImageDTO> participantImages = participantImageDTOS.stream()
                 .collect(Collectors.toMap(ParticipantImageDTO::getParticipant, Function.identity()));
@@ -196,7 +196,7 @@ public class PdfController {
             throw new NoContentException(this.getClass(), "No roles matching this criteria are found");
         }
         final TournamentImageDTO diploma = tournamentImageController.get(tournamentDTO, TournamentImageType.DIPLOMA);
-        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).collect(Collectors.toList());
+        final List<ParticipantDTO> participantDTOS = roleDTOS.stream().map(RoleDTO::getParticipant).toList();
         try {
             return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
         } finally {

@@ -51,7 +51,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Gets the list of fights to be shown on a tournament. This list can be printed before the start of the tournament.
@@ -69,7 +68,7 @@ public class FightsList extends ParentList {
         this.messageSource = messageSource;
         this.locale = locale;
         this.tournamentDto = tournament;
-        this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).collect(Collectors.toList());
+        this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
         this.groups = groups;
     }
 
@@ -105,7 +104,7 @@ public class FightsList extends ParentList {
 
         for (int i = 0; i < tournamentDto.getShiaijos(); i++) {
             final int shiaijo = i;
-            final List<FightDTO> fights = this.fights.stream().filter(fightDTO -> fightDTO.getShiaijo().equals(shiaijo)).collect(Collectors.toList());
+            final List<FightDTO> fights = this.fights.stream().filter(fightDTO -> fightDTO.getShiaijo().equals(shiaijo)).toList();
             mainTable.addCell(getEmptyRow());
             mainTable.addCell(getEmptyRow());
             mainTable.addCell(getHeader2(
@@ -130,7 +129,7 @@ public class FightsList extends ParentList {
         for (int level = 0; level <= levels; level++) {
             final Integer currentLevel = level;
             final List<GroupDTO> groupsOfLevel = groups.stream().filter(groupDTO -> Objects.equals(groupDTO.getLevel(), currentLevel))
-                    .collect(Collectors.toList());
+                    .toList();
             if (groupsOfLevel.stream().anyMatch(groupDTO -> !groupDTO.getFights().isEmpty())) {
                 /*
                  * Header of the phase
