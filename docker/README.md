@@ -2,14 +2,35 @@
 
 On the file `docker/.env` you can customize easily some properties. Please, take a look on the next sections:
 
-## Using a custom domain
+## Domain
+
+### Using localhost
+
+You can deploy the application in your desktop computer for testing it. It is not recommended for a real environment but
+is an easy way to check the state of the art of this application and if it fits to your needs or not.
+
+On `docker/.env` set:
+
+```
+machine_domain=localhost
+[...]
+#Frontend
+protocol=http
+``` 
+
+And deploy the application using `docker-compose` command as usual. Ignore any information about SSL certificates as
+they are not available for localhost domain.
+
+### Using a custom domain
 
 By default, I am assuming that you are deploying this application as a docker container on a server on the cloud. That
 means that probably you already have a domain that you must set on the application. Please, update `machine_domain`
-variable to match your existing domain.
+variable on `docker/.env` to match your existing domain.
 
 ```
 machine_domain=mydomain.com
+[...]
+#Frontend
 protocol=https
 ``` 
 
@@ -34,7 +55,7 @@ Variable `jwt_secret` is used for encrypting JWT token related to the REST API a
 using the default one.
 
 Variable `database_encryption_key` will encrypt the database content, to ensure a higher level of privacy. If you want
-to check the content of your database using any other external software, please left this variable with a blank value.
+to check the content of your database using any other external software, please leave this variable with a blank value.
 Otherwise, change the default value to any other that only you know.
 
 # Using REVERSE PROXY and Generating SSL certificates for the first time
@@ -169,9 +190,10 @@ server {
 }    
 ```
 
-And comment completely the second server configuration that includes the `location ^~ /.well-known` rule. 
+And comment completely the second server configuration that includes the `location ^~ /.well-known` rule.
 
-Remember also to change the protocol to `http` as described above in this document. 
+Remember also to change the protocol to `http` as described above in this document.
 
-You can also modify the final file `/etc/nginx/conf.d/default.conf` located inside the `kendo-tournament-rproxy` docker container. But be careful as
+You can also modify the final file `/etc/nginx/conf.d/default.conf` located inside the `kendo-tournament-rproxy` docker
+container. But be careful as
 any rebuild of the container will destroy any change you do here.
