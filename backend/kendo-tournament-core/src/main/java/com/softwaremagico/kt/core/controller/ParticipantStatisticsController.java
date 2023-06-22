@@ -43,7 +43,7 @@ public class ParticipantStatisticsController extends BasicInsertableController<P
     private final ParticipantConverter participantConverter;
 
     protected ParticipantStatisticsController(ParticipantStatisticsProvider provider, ParticipantStatisticsConverter converter,
-                                             ParticipantConverter participantConverter) {
+                                              ParticipantConverter participantConverter) {
         super(provider, converter);
         this.participantConverter = participantConverter;
     }
@@ -54,10 +54,10 @@ public class ParticipantStatisticsController extends BasicInsertableController<P
     }
 
     public ParticipantStatisticsDTO get(ParticipantDTO participantDTO) {
-        return converter.convert(new ParticipantStatisticsConverterRequest(provider.get(participantConverter.reverse(participantDTO))));
+        return getConverter().convert(new ParticipantStatisticsConverterRequest(getProvider().get(participantConverter.reverse(participantDTO))));
     }
 
     public ParticipantStatisticsDTO getPrevious(ParticipantDTO participantDTO) {
-        return converter.convert(new ParticipantStatisticsConverterRequest(provider.get(participantConverter.reverse(participantDTO))));
+        return getConverter().convert(new ParticipantStatisticsConverterRequest(getProvider().get(participantConverter.reverse(participantDTO))));
     }
 }

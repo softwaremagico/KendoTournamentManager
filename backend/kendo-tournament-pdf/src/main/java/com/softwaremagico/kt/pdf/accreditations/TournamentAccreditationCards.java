@@ -25,7 +25,11 @@ package com.softwaremagico.kt.pdf.accreditations;
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -52,10 +56,10 @@ public class TournamentAccreditationCards extends PdfDocument {
 
     private final TournamentDTO tournament;
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
+    private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
     private Image banner;
     private Image background;
     private Image defaultPhoto;
-    private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
 
 
     public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
@@ -88,7 +92,7 @@ public class TournamentAccreditationCards extends PdfDocument {
     @Override
     protected void createContent(Document document, PdfWriter writer) {
         final PdfPTable table = pageTable(document);
-        table.setWidthPercentage(100);
+        table.setWidthPercentage(TOTAL_WIDTH);
         document.add(table);
     }
 

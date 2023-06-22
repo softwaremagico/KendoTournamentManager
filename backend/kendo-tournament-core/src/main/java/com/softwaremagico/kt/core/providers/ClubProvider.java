@@ -38,6 +38,6 @@ public class ClubProvider extends CrudProvider<Club, Integer, ClubRepository> {
     }
 
     public Club add(String name, String country, String city) {
-        return repository.save(new Club(name, country, city));
+        return getRepository().save(new Club(name, country, city));
     }
 }

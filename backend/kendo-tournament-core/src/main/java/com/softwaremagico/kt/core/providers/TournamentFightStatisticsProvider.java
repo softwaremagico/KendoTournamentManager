@@ -26,7 +26,12 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.statistics.TournamentFightStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentFightStatisticsRepository;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -119,10 +124,10 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1));
         tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
         final Long durationAverage = duelProvider.getDurationAverage();
-        if (durationAverage != null && tournamentFightStatistics.getDuelsNumber() != null) {
+        if (durationAverage != null && durationAverage > 0 && tournamentFightStatistics.getDuelsNumber() != null) {
             tournamentFightStatistics.setAverageTime(durationAverage);
-            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS) +
-                    (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
+            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS)
+                    + (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
         }
         return tournamentFightStatistics;
     }
@@ -131,7 +136,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
-        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
+        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getPropertyValue());
         if (maximizeFights) {
             tournamentFightStatistics.setFightsNumber(((long) teams.size() * (teams.size() - 1)));
             tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1) * 2);
@@ -141,7 +146,8 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         }
         tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
-            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * duelProvider.getDurationAverage());
+            final Long average = duelProvider.getDurationAverage();
+            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (average > 0 ? average : 0));
         }
         return tournamentFightStatistics;
     }

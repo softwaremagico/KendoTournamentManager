@@ -50,7 +50,8 @@ public class CBCCipherEngine implements ICipherEngine {
     private static final String CIPHER_INSTANCE_NAME = "AES/CBC/PKCS5Padding";
     private static final String SECRET_KEY_ALGORITHM = "AES";
     private static final String SECRET_MESSAGE_DIGEST_ALGORITHM = "SHA-256";
-    private static final SecureRandom random = new SecureRandom();
+    private static final int KEY_SIZE = 16;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private Cipher cipher;
     private IvParameterSpec ivSpec;
     private SecretKeySpec keySpec;
@@ -68,8 +69,8 @@ public class CBCCipherEngine implements ICipherEngine {
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
             EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
             return encodedValue;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
-                 InvalidKeyException e) {
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
+                 | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
         }
     }
@@ -88,8 +89,8 @@ public class CBCCipherEngine implements ICipherEngine {
             final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
             EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
             return decrypted;
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException |
-                 InvalidKeyException e) {
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
+                 | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
         }
     }
@@ -99,13 +100,13 @@ public class CBCCipherEngine implements ICipherEngine {
             try {
                 cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
                 final byte[] iv = new byte[cipher.getBlockSize()];
-                random.nextBytes(iv);
+                SECURE_RANDOM.nextBytes(iv);
                 ivSpec = new IvParameterSpec(iv);
 
                 // hash keyString with SHA-256 and crop the output to 128-bit for key
                 final MessageDigest digest = MessageDigest.getInstance(SECRET_MESSAGE_DIGEST_ALGORITHM);
                 digest.update(password.getBytes(StandardCharsets.UTF_8));
-                final byte[] key = new byte[16];
+                final byte[] key = new byte[KEY_SIZE];
                 System.arraycopy(digest.digest(), 0, key, 0, key.length);
                 keySpec = new SecretKeySpec(key, SECRET_KEY_ALGORITHM);
             } catch (Exception e) {

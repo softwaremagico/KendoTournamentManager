@@ -13,7 +13,7 @@ import {EnvironmentService} from "../environment.service";
 })
 export class LoginService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/auth/public';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/auth/public';
 
   httpOptions: { headers: HttpHeaders };
 

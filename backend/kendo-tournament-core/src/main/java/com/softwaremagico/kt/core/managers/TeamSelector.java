@@ -26,7 +26,12 @@ package com.softwaremagico.kt.core.managers;
 
 import com.softwaremagico.kt.persistence.entities.Team;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 
 public class TeamSelector {
@@ -39,14 +44,10 @@ public class TeamSelector {
     protected TeamSelector(List<Team> teams, TeamsOrder teamsOrder) {
         this.teams = teams;
         switch (teamsOrder) {
-            case SORTED:
-                Collections.sort(this.teams);
-                break;
-            case RANDOM:
-                Collections.shuffle(this.teams);
-                break;
-            case NONE:
-                break;
+            case SORTED -> Collections.sort(this.teams);
+            case RANDOM -> Collections.shuffle(this.teams);
+            default -> {
+            }
         }
         combination = getAdversaries();
     }

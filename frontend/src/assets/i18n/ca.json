@@ -180,7 +180,6 @@
   "PassLabel": "Nombre de guanyadors",
   "nextLevel": "Els partits d'aquesta ronda han finalitzat. Vols passar a la següent fase del campionat?",
   "group": "Grup",
-  "group": "Grup",
   "ToolTipEditable": "Feu doble clik per obtindre opcions extra.",
   "ToolTipNotEditable": "Els equips aniran completant-se automàticament segons es resolguen els partits.",
   "noTeams": "No hi ha equips dins d'aquest grup!",
@@ -604,7 +603,10 @@
   "pointsByDraw": "Punts per empat",
   "nameExample": "Antonio Garcia",
   "onlyNews": "Nous",
+  "achievements": "Èxits",
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtingut a:",
+  "achievementToolTipObtainedAt": "Obtingut a",
+  "achievementToolTipObtainedBy": "Obtingut per",
   "time": "Temps",
   "lockedAt": "Bloquejat",
   "fightsStartedAt": "Inici partits",
@@ -633,7 +635,188 @@
   "aggressiveness": "Agressivitat",
   "errorFightNotSelected": "Primer has de seleccionar un grup!",
   "minutesAbbreviation": "mins",
-  "secondsAbbreviation": "secs"
+  "secondsAbbreviation": "secs",
+  "achievement": {
+    "normal": "bàsic",
+    "bronze": "bronze",
+    "silver": "plata",
+    "gold": "oro",
+    "billyTheKid": {
+      "title": "Billy el Nen",
+      "description": "Realitza el punt més ràpid d'un torneig.",
+      "normal": "Aconseguit en un torneig.",
+      "bronze": "Aconseguit en almenys dos tornejos successius.",
+      "silver": "Aconseguit en almenys tres tornejos successius.",
+      "gold": "Aconseguit en almenys cinc tornejos successius."
+    },
+    "lethalWeapon": {
+      "title": "Arma letal",
+      "description": "Feu un punt en menys de 5 segons.",
+      "normal": "Aconseguit per a un torneig.",
+      "bronze": "Aconseguit en almenys tres tornejos.",
+      "silver": "Aconseguit en almenys cinc tornejos.",
+      "gold": "Aconseguit en almenys set tornejos."
+    },
+    "terminator": {
+      "title": "Terminator",
+      "description": "Aconsegueix el màxim de punts possibles en un torneig.",
+      "normal": "Extermina tothom durant un torneig.",
+      "bronze": "Extermina tothom durant dos tornejos successius.",
+      "silver": "Extermina tothom durant tres tornejos successius.",
+      "gold": "Extermina tothom durant cinc tornejos successius."
+    },
+    "juggernaut": {
+      "title": "Juggernaut",
+      "description": "Aconsegueix el màxim de punts possibles en un torneig i ningú no t'ha anotat.",
+      "normal": "Converteix-te en un Juggernaut en un torneig.",
+      "bronze": "Converteix-te en un Juggernaut durant dos tornejos.",
+      "silver": "Converteix-te en un Juggernaut durant tres tornejos.",
+      "gold": "Converteix-te en un Juggernaut durant cinc tournois."
+    },
+    "theKing": {
+      "title": "El Rei",
+      "description": "Sigues el que duri més temps en el mode Rei de la Muntanya.",
+      "normal": "Sigues el rei en un torneig.",
+      "bronze": "Sigues el rei en tres tornejos durant el mateix any.",
+      "silver": "Sigues el rei en quatre tornejos durant el mateix any.",
+      "gold": "Sigues el rei en cinc tornejos durant el mateix any."
+    },
+    "looksGoodFromFarAwayBut": {
+      "title": "Es veu bé des de lluny però...",
+      "description": "Sigues un organitzador.",
+      "normal": "Sigues un organitzador durant un torneig.",
+      "bronze": "Sigues un organitzador durant tres tornejos successius.",
+      "silver": "Sigues un organitzador durant cinc tornejos successius.",
+      "gold": "Sigues un organitzador durant set tornejos successius."
+    },
+    "iLoveTheFlags": {
+      "title": "M'encanten les banderes",
+      "description": "Sigues un àrbitre.",
+      "normal": "Sigues àrbitre en un torneig.",
+      "bronze": "Sigues àrbitre en tres tornejos successius.",
+      "silver": "Sigues àrbitre en cinc tornejos successius.",
+      "gold": "Sigues àrbitre en set tornejos successius."
+    },
+    "theCastle": {
+      "title": "El Castell",
+      "description": "Evita que algú faci un punt en contra teu.",
+      "normal": "Protegeix el castell en un torneig.",
+      "bronze": "Protegeix el castell en dos tornejos successius.",
+      "silver": "Protegeix el castell en tres tornejos successius.",
+      "gold": "Protegeix el castell en cinc tornejos successius."
+    },
+    "entrenched": {
+      "title": "Entrinxerat",
+      "description": "No sumes punts en un torneig en què ningú tampoc no ha anotat contra tu.",
+      "normal": "Protegeix la trinxera en un torneig.",
+      "bronze": "Protegeix la trinxera durant tres tornejos successius.",
+      "silver": "Protegeix la trinxera durant cinc tornejos successius.",
+      "gold": "Protegeix la trinxera durant set tornejos successius."
+    },
+    "aLittleOfEverything": {
+      "title": "Una mica de tot",
+      "description": "Realitza diferents punts en un torneig. Aquest èxit es pot obtenir diverses vegades.",
+      "normal": "Marca un Men, Kote i Do durant un torneig.",
+      "bronze": "Marca un Men, Kote, Do i Tsuki durant un torneig.",
+      "silver": "Marca un Men, Kote, Do, Tsuki i Hansoku durant un torneig.",
+      "gold": "Marca un Men, Kote, Do, Tsuki, Hansoku i Ippon durant un torneig."
+    },
+    "boneBreaker": {
+      "title": "Trenca Ossos",
+      "description": "Perd un combat amb dos Hansokus.",
+      "normal": "",
+      "bronze": "",
+      "silver": "",
+      "gold": ""
+    },
+    "flexibleAsBamboo": {
+      "title": "Flexible com el bambú",
+      "description": "Realitza tots els rols possibles.",
+      "normal": "Exercir dos rols diferents.",
+      "bronze": "Exercir tres rols diferents.",
+      "silver": "Exercir quatre rols diferents.",
+      "gold": "Exercir cinc rols diferents."
+    },
+    "sweatyTenugui": {
+      "title": "Tenugui suat",
+      "description": "Participa en un torneig com a competidor.",
+      "normal": "Participa al teu primer torneig com a competidor.",
+      "bronze": "Participa en deu tornejos com a competidor.",
+      "silver": "Participa en vint tornejos com a competidor.",
+      "gold": "Participa en trenta tornejos com a competidor."
+    },
+    "theWinner": {
+      "title": "El guanyador",
+      "description": "Sigues el primer en un torneig.",
+      "normal": "Guanya un torneig.",
+      "bronze": "Guanya tres tornejos durant el mateix any.",
+      "silver": "Guanya quatre tornejos durant el mateix any.",
+      "gold": "Guanya cinc tornejos durant el mateix any."
+    },
+    "theWinnerTeam": {
+      "title": "L'equip guanyador",
+      "description": "Ser membre d'un equip que queda el primer en un torneig.",
+      "normal": "Estar en un equip que guanyi un torneig.",
+      "bronze": "Estar en un equip guanyador en tres tornejos durant el mateix any.",
+      "silver": "Estar en un equip guanyador en quatre tornejos durant el mateix any.",
+      "gold": "Estar en un equip guanyador en cinc tornejos durant el mateix any."
+    },
+    "woodcutter": {
+      "title": "Llenyater",
+      "description": "Obtingues només punts 'Do' i aconsegueix almenys un 'Do' en cada combat.",
+      "normal": "Puntuar només 'Do' durant un torneig.",
+      "bronze": "Obtingues només 'Do' durant tres tornejos successius.",
+      "silver": "Obtingues només 'Do' durant cinc tornejos successius.",
+      "gold": "Obtingues només 'Do' durant set tornejos successius."
+    },
+    "theNeverEndingStory": {
+      "title": "La història interminable",
+      "description": "Ser membre per un llarg període i continuar participant.",
+      "normal": "Ser membre durant cinc anys.",
+      "bronze": "Ser membre durant deu anys.",
+      "silver": "Ser membre durant quinze anys.",
+      "gold": "Ser membre durant vint anys."
+    },
+    "loveSharing": {
+      "title": "Amor compartit",
+      "description": "Sigues un voluntari.",
+      "normal": "Sigues voluntari en un torneig successius.",
+      "bronze": "Sigues voluntari en tres tornejos successius.",
+      "silver": "Sigues voluntari en cinc tornejos successius.",
+      "gold": "Sigues voluntari en set tornejos successius."
+    },
+    "masterTheLoop": {
+      "title": "Domina el bucle",
+      "description": "Guanya una Lliga a Roda.",
+      "bronze": "Domina el bucle en tres tornejos durant el mateix any.",
+      "silver": "Domina el bucle en quatre tornejos durant el mateix any.",
+      "gold": "Domina el bucle a cinc torneigs durant el mateix any."
+    },
+    "tisButAScratch": {
+      "title": "No és més que una esgarrinxada",
+      "description": "Rep un punt del teu adversari.",
+      "normal": "Rep el teu primer cop.",
+      "bronze": "Rep les teves primeres vint cops.",
+      "silver": "Rep els teus primers cinquanta cops.",
+      "gold": "Rep els teus primers cent cops."
+    },
+    "firstBlood": {
+      "title": "Primera Sang",
+      "description": "Anota un punt a un adversari.",
+      "normal": "Obtingues el teu primer punt.",
+      "bronze": "Aconsegueix els teus primers vint punts.",
+      "silver": "Obtingues els teus primers cinquanta punts.",
+      "gold": "Obtingues els teus primers cent punts."
+    },
+    "daruma": {
+      "title": "Daruma",
+      "description": "Assisteix al màxim possible de tornejos.",
+      "normal": "Assisteix a deu tornejos.",
+      "bronze": "Assisteix a vint tornejos.",
+      "silver": "Assisteix a trenta tornejos.",
+      "gold": "Assisteix a cinquanta tornejos."
+    }
+  }
 }
 
 
