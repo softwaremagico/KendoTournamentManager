@@ -42,7 +42,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Service
 public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFightStatistics, Integer, TournamentFightStatisticsRepository> {
@@ -91,7 +90,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     public TournamentFightStatistics estimateByMembers(Tournament tournament) {
         final List<Role> roles = roleProvider.getAll(tournament);
         return estimateByRoles(tournament, roles.stream().filter(role ->
-                Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).collect(Collectors.toList()));
+                Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).toList());
     }
 
     public TournamentFightStatistics estimate(Tournament tournament, Collection<Team> teams) {
@@ -99,7 +98,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     }
 
     public TournamentFightStatistics estimateByRoles(Tournament tournament, Collection<Role> roles) {
-        return estimate(tournament, emulateTeams(tournament, roles.stream().map(Role::getParticipant).collect(Collectors.toList())));
+        return estimate(tournament, emulateTeams(tournament, roles.stream().map(Role::getParticipant).toList()));
     }
 
     public TournamentFightStatistics estimate(Tournament tournament, int teamSize, Collection<Team> teams) {

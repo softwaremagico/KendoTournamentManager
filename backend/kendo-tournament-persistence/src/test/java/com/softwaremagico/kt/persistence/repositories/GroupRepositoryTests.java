@@ -35,7 +35,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @Test(groups = {"groupRepository"})
@@ -77,7 +76,7 @@ public class GroupRepositoryTests extends BasicDataTest {
         Assert.assertNotNull(group);
         List<Group> groups = groupRepository.findDistinctByFightsIdIn(fights.stream()
                 .map(Fight::getId)
-                .collect(Collectors.toList()));
+                .toList());
         Assert.assertEquals(groups.size(), 1);
         group.getFights().removeAll(fights);
         groupRepository.save(group);

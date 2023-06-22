@@ -106,7 +106,7 @@ public class AuthApi {
             RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
             final Authentication authenticate = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername() + "' authenticated.");
+            RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             try {
                 final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
@@ -120,14 +120,14 @@ public class AuthApi {
                         .header(HttpHeaders.AUTHORIZATION, jwtToken)
                         .body(user);
             } catch (UsernameNotFoundException e) {
-                RestServerLogger.warning(this.getClass().getName(), "User '" + authenticate.getName() + "' does not exist!.");
+                RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
                 throw e;
             }
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
             //Create a default user if no user exists. Needed when database is encrypted.
             if (authenticatedUserController.countUsers() == 0) {
-                RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername() + "'.");
+                RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
                         null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
