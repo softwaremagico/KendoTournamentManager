@@ -119,17 +119,19 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return (faults != null ? faults : 0) + (hansokus != null ? hansokus : 0) * 2;
     }
 
-    public long countScoreFromCompetitor(Participant participant) {
+    public long countScoreFromCompetitor(Participant participant, Collection<Tournament> tournaments) {
         try {
-            return getRepository().countLeftScoreFromCompetitor(participant) + getRepository().countRightScoreFromCompetitor(participant);
+            return getRepository().countLeftScoreFromCompetitor(participant, tournaments)
+                    + getRepository().countRightScoreFromCompetitor(participant, tournaments);
         } catch (NullPointerException e) {
             return 0L;
         }
     }
 
-    public long countScoreAgainstCompetitor(Participant participant) {
+    public long countScoreAgainstCompetitor(Participant participant, Collection<Tournament> tournaments) {
         try {
-            return getRepository().countLeftScoreAgainstCompetitor(participant) + getRepository().countRightScoreAgainstCompetitor(participant);
+            return getRepository().countLeftScoreAgainstCompetitor(participant, tournaments)
+                    + getRepository().countRightScoreAgainstCompetitor(participant, tournaments);
         } catch (NullPointerException e) {
             return 0L;
         }
