@@ -110,6 +110,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DARUMA_TOURNAMENTS_SILVER = 30;
     private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
+    private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
+
 
     private final TournamentConverter tournamentConverter;
 
@@ -222,8 +224,13 @@ public class AchievementController extends BasicInsertableController<Achievement
     private Map<Participant, Long> getTotalScoreFromParticipant() {
         if (totalScoreFromParticipant == null) {
             totalScoreFromParticipant = new HashMap<>();
+
+            final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament, MAX_PREVIOUS_TOURNAMENTS);
+            //Also current tournament!
+            previousTournaments.add(0, tournament);
+
             getParticipantsFromTournament().forEach(participant ->
-                    totalScoreFromParticipant.put(participant, duelProvider.countScoreFromCompetitor(participant)));
+                    totalScoreFromParticipant.put(participant, duelProvider.countScoreFromCompetitor(participant, previousTournaments)));
         }
         return totalScoreFromParticipant;
     }
@@ -231,8 +238,13 @@ public class AchievementController extends BasicInsertableController<Achievement
     private Map<Participant, Long> getTotalScoreAgainstParticipant() {
         if (totalScoreAgainstParticipant == null) {
             totalScoreAgainstParticipant = new HashMap<>();
+
+            final List<Tournament> previousTournaments = tournamentProvider.getPreviousTo(tournament, MAX_PREVIOUS_TOURNAMENTS);
+            //Also current tournament!
+            previousTournaments.add(0, tournament);
+
             getParticipantsFromTournament().forEach(participant ->
-                    totalScoreAgainstParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant)));
+                    totalScoreAgainstParticipant.put(participant, duelProvider.countScoreAgainstCompetitor(participant, previousTournaments)));
         }
         return totalScoreAgainstParticipant;
     }
