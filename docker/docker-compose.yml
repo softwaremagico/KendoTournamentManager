@@ -27,7 +27,7 @@ services:
       - external
     ports:
       - "443:443"
-    #      - "80:80"    # Enable this if you are using certbot as a docker container.
+      - "80:80"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - rproxy-settings:/etc/nginx/conf.d
