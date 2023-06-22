@@ -37,10 +37,10 @@ import java.util.Set;
 
 public class Level {
     private final int levelIndex;
+    private final Level previousLevel;
     private Tournament tournament;
     private List<Group> tournamentGroups;
     private Level nextLevel;
-    private final Level previousLevel;
 
     protected Level(Tournament tournament, int levelIndex, Level nextLevel, Level previousLevel) {
         this.tournament = tournament;
@@ -115,8 +115,8 @@ public class Level {
     public void updateArenaOfGroups() {
         if (tournamentGroups.size() > 0) {
             // Divide groups by arena.
-            final double groupsPerArena = Math.ceil((double) tournamentGroups.size() / (tournament.getShiaijos() > 0 ?
-                    (double) tournament.getShiaijos() : 1));
+            final double groupsPerArena = Math.ceil((double) tournamentGroups.size() / (tournament.getShiaijos() > 0
+                    ? (double) tournament.getShiaijos() : 1));
             for (int j = 0; j < tournamentGroups.size(); j++) {
                 tournamentGroups.get(j).setShiaijo((j) / (int) groupsPerArena);
             }
@@ -168,20 +168,20 @@ public class Level {
         return tournament;
     }
 
-    public Level getNextLevel() {
-        return nextLevel;
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
-    public Level getPreviousLevel() {
-        return previousLevel;
+    public Level getNextLevel() {
+        return nextLevel;
     }
 
     public void setNextLevel(Level nextLevel) {
         this.nextLevel = nextLevel;
     }
 
-    public void setTournament(Tournament tournament) {
-        this.tournament = tournament;
+    public Level getPreviousLevel() {
+        return previousLevel;
     }
 
     public void update() {

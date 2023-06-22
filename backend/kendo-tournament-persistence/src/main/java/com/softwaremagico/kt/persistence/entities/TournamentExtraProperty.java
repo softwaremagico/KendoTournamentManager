@@ -27,15 +27,26 @@ package com.softwaremagico.kt.persistence.entities;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentExtraPropertyKeyTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournament_extra_properties", uniqueConstraints = {@UniqueConstraint(columnNames = {"tournament", "property"})},
+@Table(name = "tournament_extra_properties", uniqueConstraints = {@UniqueConstraint(columnNames = {"tournament", "property_key"})},
         indexes = {
                 @Index(name = "ind_tournament", columnList = "tournament"),
         })
@@ -46,23 +57,23 @@ public class TournamentExtraProperty extends Element {
     private Tournament tournament;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "property", nullable = false)
+    @Column(name = "property_key", nullable = false)
     @Convert(converter = TournamentExtraPropertyKeyTypeCryptoConverter.class)
-    private TournamentExtraPropertyKey property;
+    private TournamentExtraPropertyKey propertyKey;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "property_value", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
-    private String value;
+    private String propertyValue;
 
     public TournamentExtraProperty() {
         super();
     }
 
-    public TournamentExtraProperty(Tournament tournament, TournamentExtraPropertyKey property, String value) {
+    public TournamentExtraProperty(Tournament tournament, TournamentExtraPropertyKey propertyKey, String propertyValue) {
         this();
         this.tournament = tournament;
-        this.property = property;
-        this.value = value;
+        this.propertyKey = propertyKey;
+        this.propertyValue = propertyValue;
     }
 
     public Tournament getTournament() {
@@ -73,19 +84,19 @@ public class TournamentExtraProperty extends Element {
         this.tournament = tournament;
     }
 
-    public TournamentExtraPropertyKey getProperty() {
-        return property;
+    public TournamentExtraPropertyKey getPropertyKey() {
+        return propertyKey;
     }
 
-    public void setProperty(TournamentExtraPropertyKey property) {
-        this.property = property;
+    public void setPropertyKey(TournamentExtraPropertyKey propertyKey) {
+        this.propertyKey = propertyKey;
     }
 
-    public String getValue() {
-        return value;
+    public String getPropertyValue() {
+        return propertyValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
     }
 }

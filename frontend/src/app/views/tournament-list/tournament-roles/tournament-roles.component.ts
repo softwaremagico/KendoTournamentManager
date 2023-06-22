@@ -27,7 +27,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   userListData: UserListData = new UserListData();
   tournament: Tournament;
   roleTypes: RoleType[] = RoleType.toArray();
-  participants = new Map<RoleType, Participant[]>();
+  participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,

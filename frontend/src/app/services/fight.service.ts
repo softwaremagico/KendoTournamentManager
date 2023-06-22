@@ -15,7 +15,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class FightService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/fights';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/fights';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,

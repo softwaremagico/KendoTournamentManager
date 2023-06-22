@@ -169,8 +169,17 @@ public class FightDTO extends ElementDTO {
 
 
     public Integer getDrawDuels(ParticipantDTO competitor) {
-        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0 &&
-                (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
+        return (int) getDuels().stream().filter(duel -> duel.getWinner() == 0
+                && (Objects.equals(duel.getCompetitor1(), competitor) || Objects.equals(duel.getCompetitor2(), competitor))).count();
+    }
+
+    public Integer getScore(ParticipantDTO competitor) {
+        int score = 0;
+        score += getDuels().stream().filter(duel ->
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        score += getDuels().stream().filter(duel ->
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return score;
     }
 
     public Integer getScore(TeamDTO team) {
@@ -191,27 +200,18 @@ public class FightDTO extends ElementDTO {
         return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
     }
 
-    public Integer getScore(ParticipantDTO competitor) {
-        int score = 0;
-        score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
-        score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
-        return score;
-    }
-
     public Integer getDuelsWon(ParticipantDTO competitor) {
         int numberOfDuels = 0;
-        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1 &&
-                (Objects.equals(duel.getCompetitor1(), competitor))).count();
-        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1 &&
-                (Objects.equals(duel.getCompetitor2(), competitor))).count();
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == -1
+                && (Objects.equals(duel.getCompetitor1(), competitor))).count();
+        numberOfDuels += (int) getDuels().stream().filter(duel -> duel.getWinner() == 1
+                && (Objects.equals(duel.getCompetitor2(), competitor))).count();
         return numberOfDuels;
     }
 
     public List<DuelDTO> getDuels(ParticipantDTO competitor) {
-        return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor) ||
-                Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
+        return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor)
+                || Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
     }
 
     public boolean isWon(ParticipantDTO competitor) {
@@ -230,13 +230,12 @@ public class FightDTO extends ElementDTO {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof FightDTO)) {
+        if (!(o instanceof FightDTO fightDTO)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-        final FightDTO fightDTO = (FightDTO) o;
         return getTeam1().equals(fightDTO.getTeam1()) && getTeam2().equals(fightDTO.getTeam2()) && getTournament().equals(fightDTO.getTournament())
                 && getShiaijo().equals(fightDTO.getShiaijo()) && Objects.equals(getDuels(), fightDTO.getDuels()) && Objects.equals(getFinishedAt(),
                 fightDTO.getFinishedAt()) && getLevel().equals(fightDTO.getLevel());
