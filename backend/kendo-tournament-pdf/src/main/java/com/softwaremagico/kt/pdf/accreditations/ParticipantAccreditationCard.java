@@ -155,7 +155,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
         table2.addCell(this.getEmptyCell(1));
 
 
-        String clubName;
+        final String clubName;
         if (participant.getClub() != null) {
             clubName = participant.getClub().getName();
         } else {
@@ -245,7 +245,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
     }
 
     private PdfPTable createBannerTable(float width) throws BadElementException {
-        PdfPCell cell;
+        final PdfPCell cell;
         final PdfPTable table = new PdfPTable(1);
         table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         table.setTotalWidth(width);
@@ -335,7 +335,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
     private PdfPTable createSignature(int fontSize) {
         final PdfPTable table = new PdfPTable(1);
         Paragraph p;
-        PdfPCell cell;
+        final PdfPCell cell;
 
         final Date date = new java.util.Date();
         final long lnMilliseconds = date.getTime();

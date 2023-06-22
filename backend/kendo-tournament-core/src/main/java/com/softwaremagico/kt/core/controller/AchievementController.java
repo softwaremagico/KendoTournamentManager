@@ -433,7 +433,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private void removeAchievements(List<Achievement> achievements, AchievementType achievementType,
                                     Collection<AchievementGrade> grades, Collection<Participant> participants) {
-        List<Achievement> sourceAchievements = new ArrayList<>(achievements);
+        final List<Achievement> sourceAchievements = new ArrayList<>(achievements);
         achievements.removeIf(achievement -> grades.contains(achievement.getAchievementGrade())
                 && achievement.getAchievementType() == achievementType && participants.contains(achievement.getParticipant()));
         sourceAchievements.removeAll(achievements);
@@ -1412,7 +1412,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE,
                 getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
-        Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
+        final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE) {
@@ -1434,7 +1434,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER,
                 getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
-        Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
+        final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER) {
