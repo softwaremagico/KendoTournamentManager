@@ -47,7 +47,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class DuelController extends BasicInsertableController<Duel, DuelDTO, DuelRepository,
@@ -106,8 +105,8 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
         final List<GroupDTO> groupDTO = groupConverter.convertAll(groups.stream()
-                .map(GroupConverterRequest::new).collect(Collectors.toList()));
-        return groupDTO.stream().flatMap(group -> group.getUnties().stream()).collect(Collectors.toList());
+                .map(GroupConverterRequest::new).toList());
+        return groupDTO.stream().flatMap(group -> group.getUnties().stream()).toList();
     }
 
     public long count(TournamentDTO tournament) {

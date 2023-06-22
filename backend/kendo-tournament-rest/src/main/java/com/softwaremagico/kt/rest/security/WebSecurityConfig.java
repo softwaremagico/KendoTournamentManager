@@ -60,14 +60,13 @@ public class WebSecurityConfig {
     };
 
     private final JwtTokenFilter jwtTokenFilter;
-    private final KendoUserDetailsService kendoUserDetailsService;
+
     @Value("${server.cors.domains:null}")
     private List<String> serverCorsDomains;
 
     @Autowired
-    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter, KendoUserDetailsService kendoUserDetailsService) {
+    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
-        this.kendoUserDetailsService = kendoUserDetailsService;
     }
 
     @Bean

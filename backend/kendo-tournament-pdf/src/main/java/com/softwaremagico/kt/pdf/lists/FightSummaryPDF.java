@@ -54,7 +54,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
@@ -76,7 +75,7 @@ public class FightSummaryPDF extends ParentList {
         this.locale = locale;
         this.useOnlyShiaijo = shiaijo;
         this.groups = groups;
-        this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).collect(Collectors.toList());
+        this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
     }
 
     protected String getDrawFight(FightDTO fightDTO, int duel) {
@@ -167,7 +166,7 @@ public class FightSummaryPDF extends ParentList {
         for (int level = 0; level <= levels; level++) {
             final Integer currentLevel = level;
             final List<GroupDTO> groupsOfLevel = groups.stream().filter(groupDTO -> Objects.equals(groupDTO.getLevel(), currentLevel))
-                    .collect(Collectors.toList());
+                    .toList();
             if (groupsOfLevel.stream().anyMatch(groupDTO -> !groupDTO.getFights().isEmpty())) {
                 /*
                  * Header of the phase

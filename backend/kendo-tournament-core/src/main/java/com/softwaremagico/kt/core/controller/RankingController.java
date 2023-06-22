@@ -122,7 +122,7 @@ public class RankingController {
 
     public List<TeamDTO> getTeamsRanking(GroupDTO groupDTO) {
         return teamConverter.convertAll(rankingProvider.getTeamsRanking(groupConverter.reverse(groupDTO))
-                .stream().map(TeamConverterRequest::new).collect(Collectors.toList()));
+                .stream().map(TeamConverterRequest::new).toList());
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromGroup(Integer groupId) {
@@ -135,7 +135,7 @@ public class RankingController {
 
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(Integer tournamentId) {
         return scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRankingFromTournament(tournamentId)
-                .stream().map(ScoreOfTeamConverterRequest::new).collect(Collectors.toList()));
+                .stream().map(ScoreOfTeamConverterRequest::new).toList());
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRanking(GroupDTO groupDTO) {
@@ -154,12 +154,12 @@ public class RankingController {
                 fightConverter.reverseAll(fights),
                 duelConverter.reverseAll(unties),
                 checkLevel
-        ).stream().map(ScoreOfTeamConverterRequest::new).collect(Collectors.toList()));
+        ).stream().map(ScoreOfTeamConverterRequest::new).toList());
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRanking(TournamentDTO tournamentDTO) {
         return scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO))
-                .stream().map(ScoreOfTeamConverterRequest::new).collect(Collectors.toList()));
+                .stream().map(ScoreOfTeamConverterRequest::new).toList());
     }
 
     /**
@@ -171,7 +171,7 @@ public class RankingController {
         final Map<Integer, List<Team>> teamsByPosition = rankingProvider.getTeamsByPosition(groupConverter.reverse(groupDTO));
         final Map<Integer, List<TeamDTO>> teamsByPositionDTO = new HashMap<>();
         teamsByPosition.keySet().forEach(key -> teamsByPositionDTO.put(key, teamConverter.convertAll(teamsByPosition.get(key)
-                .stream().map(TeamConverterRequest::new).collect(Collectors.toList()))));
+                .stream().map(TeamConverterRequest::new).toList())));
         return teamsByPositionDTO;
     }
 
@@ -208,12 +208,12 @@ public class RankingController {
 
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsScoreRankingFromTournament(tournamentId)
-                .stream().map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toList()));
+                .stream().map(ScoreOfCompetitorConverterRequest::new).toList());
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRanking(TournamentDTO tournamentDTO) {
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsScoreRanking(tournamentConverter.reverse(tournamentDTO))
-                .stream().map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toList()));
+                .stream().map(ScoreOfCompetitorConverterRequest::new).toList());
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRanking(Set<ParticipantDTO> competitors, List<FightDTO> fights, List<DuelDTO> unties,
@@ -223,7 +223,7 @@ public class RankingController {
                 fightConverter.reverseAll(fights),
                 duelConverter.reverseAll(unties),
                 tournamentConverter.reverse(tournamentDTO)
-        ).stream().map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toList()));
+        ).stream().map(ScoreOfCompetitorConverterRequest::new).toList());
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors) {
@@ -236,7 +236,7 @@ public class RankingController {
                         participantConverter.reverseAll(competitors),
                         scoreType
                 )
-                .stream().map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toList()));
+                .stream().map(ScoreOfCompetitorConverterRequest::new).toList());
     }
 
     @Cacheable("competitors-ranking")

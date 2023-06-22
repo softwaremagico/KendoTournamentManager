@@ -28,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class FightDTO extends ElementDTO {
     private TeamDTO team1;
@@ -211,7 +210,7 @@ public class FightDTO extends ElementDTO {
 
     public List<DuelDTO> getDuels(ParticipantDTO competitor) {
         return getDuels().stream().filter(duel -> Objects.equals(duel.getCompetitor1(), competitor)
-                || Objects.equals(duel.getCompetitor2(), competitor)).collect(Collectors.toList());
+                || Objects.equals(duel.getCompetitor2(), competitor)).toList();
     }
 
     public boolean isWon(ParticipantDTO competitor) {
