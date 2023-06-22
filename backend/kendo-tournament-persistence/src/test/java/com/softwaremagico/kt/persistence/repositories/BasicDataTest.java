@@ -24,7 +24,13 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,28 +50,6 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final Integer SHIAIJO = 0;
 
     private static final Integer LEVEL = 0;
-
-    @Autowired
-    private ClubRepository clubRepository;
-
-    @Autowired
-    private ParticipantRepository participantRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private TeamRepository teamRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
-
-    @Autowired
-    private FightRepository fightRepository;
-
     protected Club club;
     protected Tournament tournament;
     protected List<Participant> members;
@@ -73,6 +57,20 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected List<Team> teams;
     protected Group group;
     protected List<Fight> fights;
+    @Autowired
+    private ClubRepository clubRepository;
+    @Autowired
+    private ParticipantRepository participantRepository;
+    @Autowired
+    private TournamentRepository tournamentRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private TeamRepository teamRepository;
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private FightRepository fightRepository;
 
     protected Club createClub() {
         return clubRepository.save(new Club(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY));
@@ -81,7 +79,8 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected List<Participant> createParticipants(Club club) {
         List<Participant> members = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            members.add(participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
+            members.add(
+                    participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
         }
         return members;
     }

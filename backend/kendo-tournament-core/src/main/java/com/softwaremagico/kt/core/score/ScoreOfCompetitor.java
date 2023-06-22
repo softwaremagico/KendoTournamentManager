@@ -26,9 +26,9 @@ package com.softwaremagico.kt.core.score;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.softwaremagico.kt.core.controller.models.DuelDTO;
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
@@ -36,11 +36,11 @@ import java.util.Objects;
 
 public class ScoreOfCompetitor {
 
-    private ParticipantDTO competitor;
     @JsonIgnore
-    protected List<FightDTO> fights;
+    private List<Fight> fights;
+    private Participant competitor;
     @JsonIgnore
-    private List<DuelDTO> unties;
+    private List<Duel> unties;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
     private Integer untieDuels = null;
@@ -56,12 +56,28 @@ public class ScoreOfCompetitor {
 
     }
 
-    public ScoreOfCompetitor(ParticipantDTO competitor, List<FightDTO> fights, List<DuelDTO> unties, boolean countNotOver) {
+    public ScoreOfCompetitor(Participant competitor, List<Fight> fights, List<Duel> unties, boolean countNotOver) {
         this.competitor = competitor;
         this.fights = fights;
         this.unties = unties;
         this.countNotOver = countNotOver;
         update();
+    }
+
+    public List<Fight> getFights() {
+        return fights;
+    }
+
+    public void setFights(List<Fight> fights) {
+        this.fights = fights;
+    }
+
+    public List<Duel> getUnties() {
+        return unties;
+    }
+
+    public void setUnties(List<Duel> unties) {
+        this.unties = unties;
     }
 
     public void update() {
@@ -80,8 +96,12 @@ public class ScoreOfCompetitor {
         setHits();
     }
 
-    public ParticipantDTO getCompetitor() {
+    public Participant getCompetitor() {
         return competitor;
+    }
+
+    public void setCompetitor(Participant competitor) {
+        this.competitor = competitor;
     }
 
     public void setDuelsDone() {
@@ -104,7 +124,7 @@ public class ScoreOfCompetitor {
 
     public void setFightsWon() {
         wonFights = 0;
-        for (final FightDTO fight : fights) {
+        for (final Fight fight : fights) {
             if (fight.isOver() || countNotOver) {
                 if (fight.isWon(competitor)) {
                     wonFights++;
@@ -115,7 +135,7 @@ public class ScoreOfCompetitor {
 
     public void setFightsDraw() {
         drawFights = 0;
-        for (final FightDTO fight : fights) {
+        for (final Fight fight : fights) {
             if (fight.isOver() || countNotOver) {
                 if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
                         || fight.getTeam2().isMember(competitor))) {
@@ -127,7 +147,7 @@ public class ScoreOfCompetitor {
 
     public void setDuelsDraw() {
         drawDuels = 0;
-        for (final FightDTO fight : fights) {
+        for (final Fight fight : fights) {
             if (fight.isOver() || countNotOver) {
                 drawDuels += fight.getDrawDuels(competitor);
             }
@@ -136,7 +156,7 @@ public class ScoreOfCompetitor {
 
     public void setHits() {
         hits = 0;
-        for (final FightDTO fight : fights) {
+        for (final Fight fight : fights) {
             hits += fight.getScore(competitor);
         }
     }
@@ -167,32 +187,72 @@ public class ScoreOfCompetitor {
         return wonDuels;
     }
 
+    public void setWonDuels(Integer wonDuels) {
+        this.wonDuels = wonDuels;
+    }
+
     public Integer getDrawDuels() {
         return drawDuels;
+    }
+
+    public void setDrawDuels(Integer drawDuels) {
+        this.drawDuels = drawDuels;
     }
 
     public Integer getHits() {
         return hits;
     }
 
+    public void setHits(Integer hits) {
+        this.hits = hits;
+    }
+
     public Integer getDuelsDone() {
         return duelsDone;
+    }
+
+    public void setDuelsDone(Integer duelsDone) {
+        this.duelsDone = duelsDone;
     }
 
     public Integer getWonFights() {
         return wonFights;
     }
 
+    public void setWonFights(Integer wonFights) {
+        this.wonFights = wonFights;
+    }
+
     public Integer getDrawFights() {
         return drawFights;
+    }
+
+    public void setDrawFights(Integer drawFights) {
+        this.drawFights = drawFights;
     }
 
     public Integer getUntieDuels() {
         return untieDuels;
     }
 
+    public void setUntieDuels(Integer untieDuels) {
+        this.untieDuels = untieDuels;
+    }
+
     public Integer getUntieHits() {
         return untieHits;
+    }
+
+    public void setUntieHits(Integer untieHits) {
+        this.untieHits = untieHits;
+    }
+
+    public boolean isCountNotOver() {
+        return countNotOver;
+    }
+
+    public void setCountNotOver(boolean countNotOver) {
+        this.countNotOver = countNotOver;
     }
 
     @Override

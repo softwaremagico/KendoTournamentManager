@@ -28,12 +28,12 @@ import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.Score;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -57,14 +57,18 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
 
-    @Query("SELECT d FROM Duel d WHERE d.tournament=:tournament AND (" +
-            "((size(d.competitor1Score)=2 AND NOT EXISTS (SELECT s1 FROM d.competitor1Score s1 WHERE s1 IN :forbiddenScores)) OR " +
-            "(size(d.competitor2Score)=2 AND NOT EXISTS (SELECT s2 FROM d.competitor2Score s2 WHERE s2 IN :forbiddenScores)))" +
-            ") ")
+    @Query("""
+            SELECT d FROM Duel d WHERE d.tournament=:tournament AND (
+            ((size(d.competitor1Score)=2 AND NOT EXISTS (SELECT s1 FROM d.competitor1Score s1 WHERE s1 IN :forbiddenScores)) OR
+            (size(d.competitor2Score)=2 AND NOT EXISTS (SELECT s2 FROM d.competitor2Score s2 WHERE s2 IN :forbiddenScores)))
+            )
+            """)
     Set<Duel> findByOnlyScore(@Param("tournament") Tournament tournament, @Param("forbiddenScores") Collection<Score> forbiddenScores);
 
-    @Query("SELECT d FROM Duel d LEFT JOIN d.competitor1ScoreTime t1 LEFT JOIN d.competitor2ScoreTime t2 WHERE d.tournament=:tournament " +
-            "AND (t1<=:maxSeconds OR t2<=:maxSeconds)")
+    @Query("""
+            SELECT d FROM Duel d LEFT JOIN d.competitor1ScoreTime t1 LEFT JOIN d.competitor2ScoreTime t2 WHERE d.tournament=:tournament
+            AND (t1<=:maxSeconds OR t2<=:maxSeconds)
+            """)
     Set<Duel> findByScoreOnTimeLess(@Param("tournament") Tournament tournament, @Param("maxSeconds") int maxSeconds);
 
     @Query("SELECT AVG(CAST(d.duration AS int)) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION + " AND d.tournament=:tournament")
@@ -74,13 +78,29 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     Duel findFirstByTournamentOrderByFinishedAtDesc(Tournament tournament);
 
-    @Query("SELECT COUNT(*) FROM Duel d LEFT JOIN d.competitor1Score s1 LEFT JOIN d.competitor2Score s2 WHERE d.tournament=:tournament AND " +
-            "(s1 IN (:scores) OR  s2 IN (:scores))")
+    @Query("""
+            SELECT COUNT(*) FROM Duel d LEFT JOIN d.competitor1Score s1 LEFT JOIN d.competitor2Score s2 WHERE d.tournament=:tournament AND
+            (s1 IN (:scores) OR  s2 IN (:scores))
+            """)
     Long countScore(@Param("tournament") Tournament tournament, @Param("scores") Collection<Score> scores);
 
+    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1")
+    Long countLeftScoreFromCompetitor(@Param("competitor") Participant competitor);
+
+    @Query("SELECT SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s1")
+    Long countRightScoreFromCompetitor(@Param("competitor") Participant competitor);
+
+    @Query("SELECT SUM(CASE WHEN d.competitor1=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor2Score s1")
+    Long countLeftScoreAgainstCompetitor(@Param("competitor") Participant competitor);
+
+    @Query("SELECT SUM(CASE WHEN d.competitor2=:competitor THEN 1 ELSE 0 END) FROM Duel d INNER JOIN d.competitor1Score s1")
+    Long countRightScoreAgainstCompetitor(@Param("competitor") Participant competitor);
+
     //    @Query("SELECT COUNT(*) FROM Duel d WHERE d.competitor1Fault=true OR d.competitor2Fault= true AND d.tournament=:tournament")
-    @Query("SELECT SUM(CASE WHEN d.competitor1Fault=:status THEN 1 ELSE 0 END) + SUM(CASE WHEN d.competitor2Fault=:status THEN 1 ELSE 0 END) " +
-            "FROM Duel d WHERE d.tournament=:tournament")
+    @Query("""
+            SELECT SUM(CASE WHEN d.competitor1Fault=:status THEN 1 ELSE 0 END) + SUM(CASE WHEN d.competitor2Fault=:status THEN 1 ELSE 0 END)
+            FROM Duel d WHERE d.tournament=:tournament
+            """)
     Long countFaultsByTournament(@Param("tournament") Tournament tournament, @Param("status") Boolean status);
 
     List<Duel> findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(Tournament tournament,
