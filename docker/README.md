@@ -155,15 +155,23 @@ Remember to change `<<my-email>>` and `<<my-domain>>` with valid values.
 
 After this, if you see the success message, you can configure the reverse proxy server as explained above.
 
-## Renewal of SSL certificates
+# Ignoring SSL Certificates in Reverse Proxy
 
-As before, your certificates will expire in 90 days, and you will need to renew them. Ensure that reverse proxy is
-stopped for freeing the port 80.
+If you do not want to use SSL certificates, you need to change a few lines of the NGINX reverse proxy. Please edit
+the `rproxy/config/severs.conf` file and change the next lines:
 
 ```
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-0 5 * * 7 /usr/bin/docker stop kendo-tournament-rproxy >/dev/null 2>&1 && /usr/bin/certbot certonly --standalone -d <<my-domain>> -m <<my-email>> --agree-tos --force-renew --no-eff-email --webroot-path=/data/letsencrypt && /usr/bin/docker start kendo-tournament-rproxy >/dev/null 2>&1
+server {                            
+  listen 80; 
+  server_name <your ip>;
+  
+  ...
+}    
 ```
 
-As before remember to change `<<my-email>>` and `<<my-domain>>` with valid values.
+And comment completely the second server configuration that includes the `location ^~ /.well-known` rule. 
+
+Remember also to change the protocol to `http` as described above in this document. 
+
+You can also modify the final file `/etc/nginx/conf.d/default.conf` located inside the `kendo-tournament-rproxy` docker container. But be careful as
+any rebuild of the container will destroy any change you do here.
