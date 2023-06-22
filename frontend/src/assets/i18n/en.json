@@ -682,7 +682,7 @@
     },
     "juggernaut": {
       "title": "Juggernaut",
-      "description": "Perform the maximum possible points at a tournament and nobody has scored against you.",
+      "description": "Perform the maximum possible points in a tournament and nobody has scored against you.",
       "normal": "Be a Juggernaut in one tournament.",
       "bronze": "Be a Juggernaut in two tournaments.",
       "silver": "Be a Juggernaut in three tournaments.",
@@ -758,7 +758,7 @@
       "normal": "Participate in your first tournament as a competitor.",
       "bronze": "Participate in ten tournaments as a competitor.",
       "silver": "Participate in twenty tournaments as a competitor.",
-      "gold": "Participate in thirty tournaments as a competitor"
+      "gold": "Participate in thirty tournaments as a competitor."
     },
     "theWinner": {
       "title": "The winner",

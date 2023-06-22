@@ -121,7 +121,7 @@ public class AuthApi {
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
-                throw e;
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (BadCredentialsException ex) {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
