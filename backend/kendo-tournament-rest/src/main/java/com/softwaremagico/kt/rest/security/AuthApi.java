@@ -66,7 +66,7 @@ import java.util.Random;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/auth")
 public class AuthApi {
     private static final int MAX_WAITING_SECONDS = 10;
     private static final long MILLIS = 1000L;
@@ -190,6 +190,7 @@ public class AuthApi {
         return xfHeader.split(",")[0];
     }
 
+    @PreAuthorize("hasAuthority('ROLE_VIEWER')")
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/password")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -219,6 +220,7 @@ public class AuthApi {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_VIEWER')")
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
