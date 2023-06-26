@@ -91,7 +91,7 @@ public class AuthApi {
 
 
     @Operation(summary = "Gets the JWT Token into the headers.")
-    @PostMapping(path = "/public/login")
+    @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         try {
@@ -159,14 +159,14 @@ public class AuthApi {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.createUser(authentication.getName(), request);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PatchMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.updateUser(authentication.getName(), request);
     }
@@ -192,7 +192,7 @@ public class AuthApi {
 
     @PreAuthorize("hasAuthority('ROLE_VIEWER')")
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(path = "/password")
+    @PostMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updatePassword(@RequestBody UpdatePasswordRequest request, Authentication authentication, HttpServletRequest httpRequest)
             throws InterruptedException {
@@ -206,7 +206,7 @@ public class AuthApi {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(path = "/{username}/password")
+    @PostMapping(path = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void updateUserPassword(@Parameter(description = "username", required = true)
                                    @PathVariable("username") String username,
