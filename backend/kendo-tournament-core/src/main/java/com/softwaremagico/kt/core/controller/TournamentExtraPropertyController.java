@@ -62,7 +62,7 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
-        getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getProperty());
+        getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
         dto.setUpdatedBy(username);
         return create(dto, null);
     }
