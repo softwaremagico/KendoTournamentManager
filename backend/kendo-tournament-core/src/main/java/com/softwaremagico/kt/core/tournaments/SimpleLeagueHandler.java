@@ -31,9 +31,13 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,15 +49,18 @@ public class SimpleLeagueHandler extends LeagueHandler {
     private final SimpleGroupFightManager simpleGroupFightManager;
     private final FightProvider fightProvider;
     private final GroupProvider groupProvider;
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 
     @Autowired
     public SimpleLeagueHandler(GroupProvider groupProvider, SimpleGroupFightManager simpleGroupFightManager, FightProvider fightProvider,
-                               TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
+                               TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
+                               TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
         this.simpleGroupFightManager = simpleGroupFightManager;
         this.fightProvider = fightProvider;
         this.groupProvider = groupProvider;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     @Override
@@ -62,11 +69,22 @@ public class SimpleLeagueHandler extends LeagueHandler {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
+        final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
         final List<Fight> fights = fightProvider.saveAll(simpleGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
-                TeamsOrder.NONE, level, createdBy));
+                TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);
         groupProvider.save(group);
         return fights;
+    }
+
+    private TournamentExtraProperty getLeagueFightsOrder(Tournament tournament) {
+        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION);
+        if (extraProperty == null) {
+            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()));
+        }
+        return extraProperty;
     }
 }

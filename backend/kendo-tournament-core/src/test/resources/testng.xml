@@ -3,6 +3,7 @@
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
+                <include name="leagueTest"/>
                 <include name="simpleChampionshipTest"/>
                 <include name="loopChampionshipTest"/>
                 <include name="kingOfTheMountainTest"/>
@@ -15,6 +16,7 @@
             </run>
         </groups>
         <classes>
+            <class name="com.softwaremagico.kt.core.tests.LeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.SimpleChampionshipTest"/>
             <class name="com.softwaremagico.kt.core.tests.LoopChampionshipTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
@@ -22,7 +24,7 @@
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
-            <class name="com.softwaremagico.kt.core.tests.achievements.TimeAchievementTest"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
         </classes>
     </test>

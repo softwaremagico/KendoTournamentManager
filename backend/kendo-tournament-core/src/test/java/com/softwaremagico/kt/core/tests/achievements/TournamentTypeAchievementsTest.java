@@ -8,22 +8,23 @@ package com.softwaremagico.kt.core.tests.achievements;
  * %%
  * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
  * <softwaremagico@gmail.com> Valencia (Spain).
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
 
+import com.softwaremagico.kt.core.TournamentTestUtils;
 import com.softwaremagico.kt.core.controller.AchievementController;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.RoleController;
@@ -40,6 +41,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -47,7 +49,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"roleAchievementTests"})
-public class TournamentTypeAchievementsTest extends AchievementTest {
+public class TournamentTypeAchievementsTest extends TournamentTestUtils {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -151,4 +153,8 @@ public class TournamentTypeAchievementsTest extends AchievementTest {
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theKing);
     }
 
+    @AfterClass
+    public void wipeOut() {
+        super.wipeOut();
+    }
 }
