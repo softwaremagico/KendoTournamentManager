@@ -111,6 +111,7 @@ public class AuthApi {
             try {
                 final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
                         new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
+                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
                 bruteForceService.loginSucceeded(ip);
@@ -118,6 +119,7 @@ public class AuthApi {
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 return ResponseEntity.ok()
                         .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                        .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
@@ -130,11 +132,13 @@ public class AuthApi {
                 RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
                         null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
+                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 final HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
+                headers.add(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration));
                 return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
             }
             bruteForceService.loginFailed(ip);
@@ -236,8 +240,11 @@ public class AuthApi {
         final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);
+        final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip)).build();
+                .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
+                .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                .build();
     }
 
 
