@@ -14,7 +14,7 @@ import {EnvironmentService} from "../environment.service";
 export class LoginService {
 
   private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
-  private static readonly FIRST_RENEW_JWT: number = 1000;
+  private static readonly JWT_RENEW_MARGIN: number = 30000;
   private interval: NodeJS.Timeout | null;
 
   httpOptions: { headers: HttpHeaders };
@@ -81,7 +81,7 @@ export class LoginService {
     this.interval = setInterval((): void => {
       //Set current JWT.
       this.setJwtValue(jwt, timeout);
-      this.renew(jwt).subscribe(
+      this.renew().subscribe(
         (res: HttpResponse<AuthenticatedUser>): void => {
           const authToken: string | null = res.headers.get('authorization');
           let expiration: number = Number(res.headers.get('expires'));
@@ -91,7 +91,7 @@ export class LoginService {
           if (isNaN(expiration)) {
             throw new Error('Server returned invalid expiration time');
           }
-          expiration = expiration - (new Date()).getTime();
+          expiration = expiration - (new Date()).getTime() - LoginService.JWT_RENEW_MARGIN;
           console.log(`Next token expiration time: ${expiration}`);
           callback(authToken, expiration);
           this.setIntervalRenew(authToken, expiration, callback);
@@ -100,9 +100,7 @@ export class LoginService {
     }, timeout)
   }
 
-  private renew(jwt ?: string): Observable<HttpResponse<AuthenticatedUser>> {
-    return jwt ?
-      this.http.get<HttpResponse<AuthenticatedUser>>(`${this.baseUrl}/jwt/renew`, this.httpOptions)
-      : this.http.get<HttpResponse<AuthenticatedUser>>(`${this.baseUrl}/jwt/renew`);
+  private renew(): Observable<HttpResponse<AuthenticatedUser>> {
+    return this.http.get<HttpResponse<AuthenticatedUser>>(`${this.baseUrl}/jwt/renew`, this.httpOptions);
   }
 }
