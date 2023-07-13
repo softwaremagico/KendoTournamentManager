@@ -30,7 +30,6 @@ import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
-import com.softwaremagico.kt.rest.exceptions.UserBlockedException;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
@@ -97,10 +96,24 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-                RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-
+                try {
+                    Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    final HttpHeaders headers = new HttpHeaders();
+                    headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
+                            + bruteForceService.getExpirationTime()));
+                    return new ResponseEntity<>(headers, HttpStatus.LOCKED);
+                } catch (InterruptedException e) {
+                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    try {
+                        final HttpHeaders headers = new HttpHeaders();
+                        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
+                                + bruteForceService.getExpirationTime()));
+                        return new ResponseEntity<>(headers, HttpStatus.LOCKED);
+                    } finally {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
             //We verify the provided credentials using the authentication manager
             RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
@@ -143,13 +156,6 @@ public class AuthApi {
             }
             bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (InterruptedException e) {
-            RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-            try {
-                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-            } finally {
-                Thread.currentThread().interrupt();
-            }
         }
     }
 
