@@ -17,11 +17,8 @@ export class LoginService {
   private static readonly JWT_RENEW_MARGIN: number = 30000;
   private interval: NodeJS.Timeout | null;
 
-  httpOptions: { headers: HttpHeaders };
-
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
-    this.refreshHeader();
   }
 
   login(username: string, password: string): Observable<AuthenticatedUser> {
@@ -46,19 +43,9 @@ export class LoginService {
     sessionStorage.clear();
   }
 
-  private refreshHeader(): void {
-    this.httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.getJwtValue()
-      })
-    };
-  }
-
   public setJwtValue(token: string, expires: number): void {
     this.cookies.set("jwt", token);
     this.cookies.set("jwt_expires", expires.toString());
-    this.refreshHeader();
   }
 
   public getJwtValue(): string {
@@ -101,6 +88,6 @@ export class LoginService {
   }
 
   private renew(): Observable<HttpResponse<AuthenticatedUser>> {
-    return this.http.get<HttpResponse<AuthenticatedUser>>(`${this.baseUrl}/jwt/renew`, this.httpOptions);
+    return this.http.get<HttpResponse<AuthenticatedUser>>(`${this.baseUrl}/jwt/renew`);
   }
 }
