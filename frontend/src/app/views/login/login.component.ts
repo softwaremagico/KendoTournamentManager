@@ -33,6 +33,7 @@ export class LoginComponent {
   login() {
     this.loginService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
+        this.loginService.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
         this.loginService.autoRenewToken(authenticatedUser.jwt, authenticatedUser.expires, (jwt: string, expires: number): void => {
         });
         this.rbacService.setRoles(authenticatedUser.roles);
