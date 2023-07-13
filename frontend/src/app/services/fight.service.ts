@@ -194,7 +194,7 @@ export class FightService {
 
   generateDuels(fight: Fight): Observable<Fight> {
     const url: string = `${this.baseUrl}/duels`;
-    return this.http.put<Fight>(url, fight, this.loginService.httpOptions)
+    return this.http.put<Fight>(url, fight)
       .pipe(
         tap({next:(_updatedFight: Fight) => this.loggerService.info(`generating duels for a fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
