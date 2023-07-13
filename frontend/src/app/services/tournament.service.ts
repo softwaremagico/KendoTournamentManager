@@ -27,10 +27,7 @@ export class TournamentService {
   getAll(): Observable<Tournament[]> {
     const url: string = `${this.baseUrl}`;
 
-    // Why is not set yet????
-    this.loginService.httpOptions.headers.get('Authorization');
-
-    return this.http.get<Tournament[]>(url, this.loginService.httpOptions)
+    return this.http.get<Tournament[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all Tournaments`),
@@ -43,7 +40,7 @@ export class TournamentService {
 
   get(id: number): Observable<Tournament> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Tournament>(url, this.loginService.httpOptions)
+    return this.http.get<Tournament>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched tournament id=${id}`),
@@ -56,7 +53,7 @@ export class TournamentService {
 
   deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url, this.loginService.httpOptions)
+    this.http.delete(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting tournament id=${id}`),
@@ -69,7 +66,7 @@ export class TournamentService {
 
   delete(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Tournament>(url, tournament, this.loginService.httpOptions)
+    return this.http.post<Tournament>(url, tournament)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting tournament ${tournament}`),
@@ -82,7 +79,7 @@ export class TournamentService {
 
   add(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Tournament>(url, tournament, this.loginService.httpOptions)
+    return this.http.post<Tournament>(url, tournament)
       .pipe(
         tap({
           next: () => (newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`),
@@ -97,7 +94,7 @@ export class TournamentService {
   update(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
     this.systemOverloadService.isBusy.next(true);
-    return this.http.put<Tournament>(url, tournament, this.loginService.httpOptions)
+    return this.http.put<Tournament>(url, tournament)
       .pipe(
         tap({
           next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
