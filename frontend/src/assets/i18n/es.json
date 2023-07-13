@@ -470,6 +470,7 @@
   "organizer": "Organizador",
   "press": "Prensa",
   "deniedUserError": "Usuario o contraseña inválidos.",
+  "blockedUserError": "¡Demasiados intentos! Pruébalo más tarde.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
   "userloggedInMessage": "Usuario registrado correctamente.",
   "userloggedOutMessage": "La sesión del usuario se ha cerrado correctamente",

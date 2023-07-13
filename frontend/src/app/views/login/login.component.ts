@@ -42,10 +42,13 @@ export class LoginComponent {
         this.messageService.infoMessage("userloggedInMessage");
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
       },
-      error: (error) => {
+      error: (error): void => {
         if (error.status === 401) {
           this.loggerService.info(`Error logging: ` + error);
           this.messageService.errorMessage("deniedUserError");
+        } else if (error.status === 423) {
+          this.loggerService.info(`Blocked IP!: ` + error);
+          this.messageService.errorMessage("blockedUserError");
         } else {
           console.error(error);
           this.messageService.errorMessage("backendError");
