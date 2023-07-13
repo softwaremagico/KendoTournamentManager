@@ -476,6 +476,7 @@
   "organizer": "Organitzador",
   "press": "Premsa",
   "deniedUserError": "Usuari o contrasenya invàlids",
+  "blockedUserError": "Massa intents! Prova-ho més tard.",
   "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
   "userloggedInMessage": "Usuari registrat correctament.",
   "userloggedOutMessage": "La sessió d'usuari s'ha tancat correctament",
