@@ -15,6 +15,8 @@ export class ArrowComponent implements OnInit {
   @Input() x2: number;
   @Input() y2: number;
 
+  @Input() color: string = "#ff00ff";
+
   height: number;
   width: number;
 
