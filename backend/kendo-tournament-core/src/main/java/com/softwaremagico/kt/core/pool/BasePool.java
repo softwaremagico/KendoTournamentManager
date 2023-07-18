@@ -162,6 +162,10 @@ public abstract class BasePool<ElementId, Type> {
     }
 
 
+    public Long getElementsTime(ElementId elementId) {
+        return elementsTime.get(elementId);
+    }
+
     public Map<ElementId, Long> getElementsTime() {
         return elementsTime;
     }

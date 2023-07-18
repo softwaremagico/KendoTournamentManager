@@ -1,7 +1,7 @@
 import {Component, HostBinding, Renderer2} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {LoginService} from "./services/login.service";
-import {LoggedInService} from "./guards/logged-in.service";
+import {LoggedInService} from "./interceptors/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
 import {ConfirmationDialogComponent} from "./components/basic/confirmation-dialog/confirmation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";

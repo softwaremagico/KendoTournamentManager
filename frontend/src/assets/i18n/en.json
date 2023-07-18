@@ -455,6 +455,7 @@
   "draw": "Draw",
   "fault": "Fault",
   "deniedUserError": "Invalid user or password.",
+  "blockedUserError": "Too many attempts! Try it later.",
   "backendError": "Cannot connect with the backend! Please, check your deployment.",
   "userloggedInMessage": "User logged in successfully",
   "userloggedOutMessage": "User session closed successfully",
