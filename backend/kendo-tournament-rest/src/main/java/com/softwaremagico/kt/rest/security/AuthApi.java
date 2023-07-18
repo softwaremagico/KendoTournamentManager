@@ -30,7 +30,6 @@ import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
-import com.softwaremagico.kt.rest.exceptions.UserBlockedException;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import com.softwaremagico.kt.rest.security.dto.UpdatePasswordRequest;
@@ -97,10 +96,24 @@ public class AuthApi {
         try {
             //Check if the IP is blocked.
             if (bruteForceService.isBlocked(ip)) {
-                Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
-                RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-
+                try {
+                    Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
+                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    final HttpHeaders headers = new HttpHeaders();
+                    headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
+                            + bruteForceService.getExpirationTime()));
+                    return new ResponseEntity<>(headers, HttpStatus.LOCKED);
+                } catch (InterruptedException e) {
+                    RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
+                    try {
+                        final HttpHeaders headers = new HttpHeaders();
+                        headers.add(HttpHeaders.RETRY_AFTER, String.valueOf(bruteForceService.getElementsTime(ip)
+                                + bruteForceService.getExpirationTime()));
+                        return new ResponseEntity<>(headers, HttpStatus.LOCKED);
+                    } finally {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
             //We verify the provided credentials using the authentication manager
             RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
@@ -111,6 +124,7 @@ public class AuthApi {
             try {
                 final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
                         new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
+                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
                 bruteForceService.loginSucceeded(ip);
@@ -118,6 +132,7 @@ public class AuthApi {
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 return ResponseEntity.ok()
                         .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                        .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
@@ -130,22 +145,17 @@ public class AuthApi {
                 RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
                         null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
+                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 final HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
+                headers.add(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration));
                 return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
             }
             bruteForceService.loginFailed(ip);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (InterruptedException e) {
-            RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
-            try {
-                throw new UserBlockedException(this.getClass(), "Too many attempts from IP '" + ip + "'.");
-            } finally {
-                Thread.currentThread().interrupt();
-            }
         }
     }
 
@@ -226,6 +236,21 @@ public class AuthApi {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public Set<String> getRoles(Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.getRoles(authentication.getName());
+    }
+
+    @PreAuthorize("hasAuthority(@securityService.viewerPrivilege)")
+    @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public ResponseEntity<String> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
+        final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authentication.getName()).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
+        final String ip = getClientIP(httpRequest);
+        final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
+                .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                .build();
     }
 
 
