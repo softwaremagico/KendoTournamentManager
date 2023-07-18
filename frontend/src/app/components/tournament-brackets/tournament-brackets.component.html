@@ -1,0 +1,7 @@
+<div class="level" [class]="'level-' + i" *ngFor="let level of groupsByLevel.keys(); let i = index">
+  <div [attr.id]="'group-' + g" [ngStyle]="{ 'margin-bottom':  ((i + 1) * 100) + 'px' }" class="group"
+       [ngClass]="['group-' + g ,'group-' + i + '-' + g]"
+       *ngFor="let group of groupsByLevel.get(level); let g = index">
+    <app-arrow [x1]="200" [y1]="50" [x2]="300" [y2]="50"></app-arrow>
+  </div>
+</div>

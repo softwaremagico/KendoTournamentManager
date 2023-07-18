@@ -103,6 +103,8 @@ import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.modu
 import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
 import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
 import {HeaderInterceptor} from "./interceptors/header-interceptor";
+import {TournamentBracketsModule} from "./components/tournament-brackets/tournament-brackets.module";
+import {ArrowModule} from "./components/tournament-brackets/arrow/arrow.module";
 
 
 registerLocaleData(localeES, "es");
@@ -204,12 +206,14 @@ registerLocaleData(localeNL, "nl");
     NgApexchartsModule,
     RadialChartModule,
     GaugeChartModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TournamentBracketsModule,
+    ArrowModule
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
     useFactory: (translate: TranslateService) => {
-      const service = new PaginatorI18n();
+      const service: PaginatorI18n = new PaginatorI18n();
       service.injectTranslateService(translate);
       return service;
     },
