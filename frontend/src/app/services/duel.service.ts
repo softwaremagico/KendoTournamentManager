@@ -22,7 +22,7 @@ export class DuelService {
 
   update(duel: Duel): Observable<Duel> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Duel>(url, duel, this.loginService.httpOptions)
+    return this.http.put<Duel>(url, duel)
       .pipe(
         tap((_updatedDuel: Duel) => this.loggerService.info(`updating duel`)),
         catchError(this.messageService.handleError<Duel>(`updating duel`))
@@ -31,7 +31,7 @@ export class DuelService {
 
   getUntiesFromGroup(groupId: number): Observable<Duel[]> {
     const url: string = `${this.baseUrl}/groups/` + groupId + '/unties';
-    return this.http.get<Duel[]>(url, this.loginService.httpOptions)
+    return this.http.get<Duel[]>(url)
       .pipe(
         tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from group '` + groupId + `'`)),
         catchError(this.messageService.handleError<Duel[]>(`getting unties from group '` + groupId + `'`))
@@ -40,7 +40,7 @@ export class DuelService {
 
   getUntiesFromTournament(tournamentId: number): Observable<Duel[]> {
     const url: string = `${this.baseUrl}/tournaments/` + tournamentId + '/unties';
-    return this.http.get<Duel[]>(url, this.loginService.httpOptions)
+    return this.http.get<Duel[]>(url)
       .pipe(
         tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from tournament '` + tournamentId + `'`)),
         catchError(this.messageService.handleError<Duel[]>(`getting unties from tournament '` + tournamentId + `'`))

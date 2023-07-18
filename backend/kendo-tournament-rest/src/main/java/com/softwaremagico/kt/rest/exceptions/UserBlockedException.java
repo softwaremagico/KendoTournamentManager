@@ -29,11 +29,11 @@ import com.softwaremagico.kt.logger.LoggedHttpException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+@ResponseStatus(value = HttpStatus.LOCKED)
 public class UserBlockedException extends LoggedHttpException {
     private static final long serialVersionUID = 7032994921678894370L;
 
     public UserBlockedException(Class<?> clazz, String message) {
-        super(clazz, message, ExceptionType.INFO, HttpStatus.UNAUTHORIZED);
+        super(clazz, message, ExceptionType.INFO, HttpStatus.LOCKED);
     }
 }

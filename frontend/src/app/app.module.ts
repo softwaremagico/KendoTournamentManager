@@ -88,7 +88,7 @@ import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
-import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
+import {InvalidJwtInterceptor} from "./interceptors/invalid-jwt-interceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
@@ -102,6 +102,7 @@ import {RadialChartModule} from "./components/charts/radial-chart/radial-chart.m
 import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.module";
 import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
 import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
+import {HeaderInterceptor} from "./interceptors/header-interceptor";
 
 
 registerLocaleData(localeES, "es");
@@ -218,7 +219,11 @@ registerLocaleData(localeNL, "nl");
       provide: HTTP_INTERCEPTORS,
       useClass: InvalidJwtInterceptor,
       multi: true
-    },],
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HeaderInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule {

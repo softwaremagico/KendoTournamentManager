@@ -84,6 +84,15 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+    /**
+     * Gets current expiration time in milliseconds.
+     *
+     * @return unix epoch time in milliseconds.
+     */
+    public long getJwtExpirationTime() {
+        return (System.currentTimeMillis() + jwtExpiration);
+    }
+
     public String getUserId(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
