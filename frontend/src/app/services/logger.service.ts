@@ -26,7 +26,7 @@ export class LoggerService {
     const url: string = `${this.baseUrl}/info`;
 
     console.log(log.message);
-    return this.http.post(url, log, this.loginService.httpOptions).pipe(
+    return this.http.post(url, log).pipe(
       catchError(this.handleErrorConsole('sendInfo'))
     ).subscribe();
   }
@@ -39,7 +39,7 @@ export class LoggerService {
 
   sendWarning(log: Log) {
     const url: string = `${this.baseUrl}/warning`;
-    return this.http.post(url, log, this.loginService.httpOptions).pipe(
+    return this.http.post(url, log).pipe(
       catchError(this.handleErrorConsole('sendWarning'))
     ).subscribe();
   }
@@ -52,7 +52,7 @@ export class LoggerService {
 
   sendError(log: Log) {
     const url: string = `${this.baseUrl}/error`;
-    return this.http.post(url, log, this.loginService.httpOptions).pipe(
+    return this.http.post(url, log).pipe(
       catchError(this.handleErrorConsole('sendError'))
     ).subscribe();
   }
