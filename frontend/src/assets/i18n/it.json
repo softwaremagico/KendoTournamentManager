@@ -559,7 +559,7 @@
   "blockedUserError": "Troppi tentativi! Prova più tardi.",
   "backendError": "Impossibile connettersi con il backend! Per favore, controlla la tua implementazione.",
   "userloggedInMessage": "L'utente ha effettuato l'accesso con successo",
-  "userloggedOutMessage": "L'utente si è disconnesso correttamente",
+  "userLoggedOutMessage": "L'utente si è disconnesso correttamente",
   "admin": "Amministratore",
   "editor": "Editore",
   "viewer": "Spettatore",

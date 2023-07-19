@@ -458,7 +458,7 @@
   "blockedUserError": "Too many attempts! Try it later.",
   "backendError": "Cannot connect with the backend! Please, check your deployment.",
   "userloggedInMessage": "User logged in successfully",
-  "userloggedOutMessage": "User session closed successfully",
+  "userLoggedOutMessage": "User session closed successfully",
   "accept": "Accept",
   "cancel": "Cancel",
   "delete": "Delete",
