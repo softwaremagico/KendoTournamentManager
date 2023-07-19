@@ -90,11 +90,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public Integer getNumberOfLevels() {
-        return 1;
-    }
-
-    @Override
     public List<Group> getGroups(Tournament tournament, Integer level) {
         if (level == 0) {
             return getGroups(tournament);
@@ -136,11 +131,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public Level getLevel(Integer level) {
-        return null;
-    }
-
-    @Override
     public boolean exist(Tournament tournament, Team team) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
@@ -171,11 +161,6 @@ public abstract class LeagueHandler implements ITournamentManager {
             return getGroup(tournament);
         }
         return null;
-    }
-
-    @Override
-    public Integer getLastLevelUsed() {
-        return 0;
     }
 
     @Override
@@ -214,29 +199,8 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public Level getCurrentLevel() {
-        return null;
-    }
-
-    @Override
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
         return groupProvider.getGroupsByShiaijo(tournament, shiaijo);
-    }
-
-    @Override
-    public List<Level> getLevels() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public Level getLastLevel() {
-        return getLevel(0);
-    }
-
-    @Override
-    public boolean isNewLevelNeeded() {
-        // Only one level is needed.
-        return false;
     }
 
     @Override

@@ -24,10 +24,10 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.GroupLink;
 
-public class GroupLinkConverterRequest extends ConverterRequest<Group> {
-    public GroupLinkConverterRequest(Group entity) {
+public class GroupLinkConverterRequest extends ConverterRequest<GroupLink> {
+    public GroupLinkConverterRequest(GroupLink entity) {
         super(entity);
     }
 }

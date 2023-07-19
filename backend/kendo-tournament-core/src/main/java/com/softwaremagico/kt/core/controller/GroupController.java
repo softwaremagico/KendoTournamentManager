@@ -43,7 +43,6 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
@@ -71,12 +70,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     private final TeamConverter teamConverter;
 
-    private final TeamProvider teamProvider;
-
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
-                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter, TeamProvider teamProvider) {
+                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -85,7 +82,6 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.duelProvider = duelProvider;
         this.duelConverter = duelConverter;
         this.teamConverter = teamConverter;
-        this.teamProvider = teamProvider;
     }
 
     @Override
