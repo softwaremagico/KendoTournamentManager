@@ -41,7 +41,7 @@ export class AppComponent extends RbacBasedComponent {
     this.setDarkModeTheme();
   }
 
-  toggleMenu(selectedRow: string) {
+  toggleMenu(selectedRow: string): void {
     if (this.selectedRow === selectedRow) {
       this.selectedRow = '';
     } else {
@@ -49,7 +49,7 @@ export class AppComponent extends RbacBasedComponent {
     }
   }
 
-  switchLanguage(lang: string) {
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
     this.selectedLanguage = lang;
     this.userSessionService.setLanguage(lang);
@@ -66,20 +66,20 @@ export class AppComponent extends RbacBasedComponent {
         this.loginService.logout();
         this.rbacService.setRoles([]);
         this.loggedIn = false;
-        this.messageService.infoMessage("userloggedOutMessage");
+        this.messageService.infoMessage("userLoggedOutMessage");
         this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
       }
     });
   }
 
-  switchDarkMode() {
+  switchDarkMode(): void {
     this.nightModeEnabled = !this.nightModeEnabled;
     this.userSessionService.setNightMode(this.nightModeEnabled);
     this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
     this.setDarkModeTheme();
   }
 
-  private setDarkModeTheme() {
+  private setDarkModeTheme(): void {
     this.className = this.nightModeEnabled ? 'dark-mode' : '';
     if (this.nightModeEnabled) {
       this.overlay.getContainerElement().classList.add('dark-mode');

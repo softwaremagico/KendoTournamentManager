@@ -144,7 +144,7 @@ public class JwtTokenUtil {
         try {
             return claims.getSubject().split(",")[IP_INDEX];
         } catch (Exception e) {
-            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user IP' on JWT token!");
+            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'user IP' on JWT token!");
             return null;
         }
     }
@@ -157,7 +157,7 @@ public class JwtTokenUtil {
         try {
             return claims.getSubject().split(",")[MAC_INDEX];
         } catch (Exception e) {
-            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
+            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
             return null;
         }
     }

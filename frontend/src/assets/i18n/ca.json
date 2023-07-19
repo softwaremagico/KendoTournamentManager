@@ -479,7 +479,7 @@
   "blockedUserError": "Massa intents! Prova-ho més tard.",
   "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
   "userloggedInMessage": "Usuari registrat correctament.",
-  "userloggedOutMessage": "La sessió d'usuari s'ha tancat correctament",
+  "userLoggedOutMessage": "La sessió d'usuari s'ha tancat correctament",
   "wizard": "Assistent",
   "download": "Descarregar",
   "disablePopUpBlocker": "Si us plau, desactiveu el vostre bloquejador de finestres emergents i torneu-ho a provar.",

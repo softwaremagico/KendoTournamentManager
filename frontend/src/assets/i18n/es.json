@@ -473,7 +473,7 @@
   "blockedUserError": "¡Demasiados intentos! Pruébalo más tarde.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
   "userloggedInMessage": "Usuario registrado correctamente.",
-  "userloggedOutMessage": "La sesión del usuario se ha cerrado correctamente",
+  "userLoggedOutMessage": "La sesión del usuario se ha cerrado correctamente",
   "accept": "Aceptar",
   "cancel": "Cancelar",
   "delete": "Borrar",
