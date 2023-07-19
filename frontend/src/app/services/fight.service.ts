@@ -25,7 +25,7 @@ export class FightService {
 
   getAll(): Observable<Fight[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Fight[]>(url, this.loginService.httpOptions)
+    return this.http.get<Fight[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all fights`),
@@ -38,7 +38,7 @@ export class FightService {
 
   getFromTournament(tournament: Tournament): Observable<Fight[]> {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
-    return this.http.get<Fight[]>(url, this.loginService.httpOptions)
+    return this.http.get<Fight[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched fights from tournament ${tournament.name}`),
@@ -51,7 +51,7 @@ export class FightService {
 
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.delete<number>(url, this.loginService.httpOptions)
+    return this.http.delete<number>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting fight id=${id}`),
@@ -64,7 +64,7 @@ export class FightService {
 
   delete(fight: Fight): Observable<Fight> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Fight>(url, fight, this.loginService.httpOptions)
+    return this.http.post<Fight>(url, fight)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting fight ${fight}`),
@@ -77,7 +77,7 @@ export class FightService {
 
   deleteCollection(fights: Fight[]): Observable<Fight[]> {
     const url: string = `${this.baseUrl}/delete/list`;
-    return this.http.post<Fight[]>(url, fights, this.loginService.httpOptions)
+    return this.http.post<Fight[]>(url, fights)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting fights ${fights}`),
@@ -90,7 +90,7 @@ export class FightService {
 
   deleteByTournament(tournament: Tournament): Observable<Fight> {
     const url: string = `${this.baseUrl}/delete/tournaments`;
-    return this.http.post<Fight>(url, {tournament: tournament}, this.loginService.httpOptions)
+    return this.http.post<Fight>(url, {tournament: tournament})
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting fights on ${tournament}`),
@@ -103,7 +103,7 @@ export class FightService {
 
   add(fight: Fight): Observable<Fight> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Fight>(url, fight, this.loginService.httpOptions)
+    return this.http.post<Fight>(url, fight)
       .pipe(
         tap({
           next: (_newFight: Fight) => this.loggerService.info(`adding fight`),
@@ -116,7 +116,7 @@ export class FightService {
 
   addCollection(fights: Fight[]): Observable<Fight[]> {
     const url: string = `${this.baseUrl}` + '/list';
-    return this.http.post<Fight[]>(url, fights, this.loginService.httpOptions)
+    return this.http.post<Fight[]>(url, fights)
       .pipe(
         tap({
           next: (_newFight: Fight[]) => this.loggerService.info(`adding fight`),
@@ -129,7 +129,7 @@ export class FightService {
 
   update(fight: Fight): Observable<Fight> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Fight>(url, fight, this.loginService.httpOptions)
+    return this.http.put<Fight>(url, fight)
       .pipe(
         tap({next:(_updatedFight: Fight) => this.loggerService.info(`updating fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
@@ -141,7 +141,7 @@ export class FightService {
 
   updateAll(fights: Fight[]): Observable<Fight[]> {
     const url: string = `${this.baseUrl}/all`;
-    return this.http.put<Fight[]>(url, fights, this.loginService.httpOptions)
+    return this.http.put<Fight[]>(url, fights)
       .pipe(
         tap({next:(_updatedFight: Fight[]) => this.loggerService.info(`updating fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
@@ -153,7 +153,7 @@ export class FightService {
 
   create(tournamentId: number, level: number): Observable<Fight[]> {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level;
-    return this.http.put<Fight[]>(url, undefined, this.loginService.httpOptions)
+    return this.http.put<Fight[]>(url, undefined)
       .pipe(
         tap({next:(_newFight: Fight[]) => this.loggerService.info(`adding fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
@@ -165,7 +165,7 @@ export class FightService {
 
   createNext(tournamentId: number): Observable<Fight[]> {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/next';
-    return this.http.put<Fight[]>(url, undefined, this.loginService.httpOptions)
+    return this.http.put<Fight[]>(url, undefined)
       .pipe(
         tap({next:(_newFight: Fight[]) => this.loggerService.info(`generating next fights`),
           error: () => this.systemOverloadService.isBusy.next(false),
@@ -179,8 +179,7 @@ export class FightService {
     const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -194,7 +193,7 @@ export class FightService {
 
   generateDuels(fight: Fight): Observable<Fight> {
     const url: string = `${this.baseUrl}/duels`;
-    return this.http.put<Fight>(url, fight, this.loginService.httpOptions)
+    return this.http.put<Fight>(url, fight)
       .pipe(
         tap({next:(_updatedFight: Fight) => this.loggerService.info(`generating duels for a fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
