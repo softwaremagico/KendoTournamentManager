@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {RbacActivity} from "./rbac.activity";
 import {UserService} from "../user.service";
 import {UserRoles} from "./user-roles";
+import {LoginService} from "../login.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +12,16 @@ export class RbacService {
   private roles: UserRoles[];
   activities: RbacActivity[] = [];
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private loginService: LoginService) {
     this.getRoles();
   }
 
-  public getRoles() {
-    this.userService.getRoles().subscribe(_roles => {
-      this.setRoles(_roles);
-    });
+  public getRoles(): void {
+    if (this.loginService.getJwtValue()) {
+      this.userService.getRoles().subscribe((_roles: UserRoles[]): void => {
+        this.setRoles(_roles);
+      });
+    }
   }
 
   public setRoles(roles: UserRoles[]): void {
@@ -52,7 +55,7 @@ export class RbacService {
   }
 
   private removeActivity(activities: RbacActivity[], activityToRemove: RbacActivity): void {
-    const index = activities.indexOf(activityToRemove, 0);
+    const index: number = activities.indexOf(activityToRemove, 0);
     if (index > -1) {
       activities.splice(index, 1);
     }
@@ -63,7 +66,7 @@ export class RbacService {
   }
 
   private getEditorActivities(): RbacActivity[] {
-    const adminActivities = this.getAdminActivities();
+    const adminActivities: RbacActivity[] = this.getAdminActivities();
     //Remove user management activities,
     this.removeActivity(adminActivities, RbacActivity.READ_ALL_USERS);
     this.removeActivity(adminActivities, RbacActivity.READ_ONE_USER);

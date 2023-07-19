@@ -26,6 +26,7 @@ package com.softwaremagico.kt.rest.security;
 
 
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
@@ -91,14 +92,23 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (ObjectUtils.isEmpty(header) || !header.startsWith("Bearer ")) {
             chain.doFilter(request, response);
+            JwtFilterLogger.debug(this.getClass().getName(), "No Bearer token found on headers");
             return;
         }
 
         // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
         if (!jwtTokenUtil.validate(token)) {
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
             chain.doFilter(request, response);
             return;
+        }
+
+        if (JwtFilterLogger.isDebugEnabled()) {
+            JwtFilterLogger.debug(this.getClass().getName(), "\nJWT Obtained:\n"
+                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
+                    jwtTokenUtil.getExpirationDate(token), jwtTokenUtil.getUserId(token), jwtTokenUtil.getUsername(token),
+                    jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
         }
 
         // Get user identity and set it on the spring security context

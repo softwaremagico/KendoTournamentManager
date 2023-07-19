@@ -31,12 +31,7 @@ export class FileService {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
-      })
-    };
-    return this.http.post<ParticipantImage>(url, formData, httpOptions)
+    return this.http.post<ParticipantImage>(url, formData)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding picture to participant`),
@@ -53,12 +48,7 @@ export class FileService {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
-      })
-    };
-    return this.http.post<TournamentImage>(url, formData, httpOptions)
+    return this.http.post<TournamentImage>(url, formData)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding file ${imageType} to tournament ${tournament.id}`),
@@ -72,7 +62,7 @@ export class FileService {
   setBase64Picture(image: ParticipantImage): Observable<ParticipantImage> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants`;
-    return this.http.post<ParticipantImage>(url, image, this.loginService.httpOptions)
+    return this.http.post<ParticipantImage>(url, image)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding picture to participant`),
@@ -86,7 +76,7 @@ export class FileService {
   getParticipantPicture(participant: Participant): Observable<ParticipantImage> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant.id}`;
-    return this.http.get<ParticipantImage>(url, this.loginService.httpOptions)
+    return this.http.get<ParticipantImage>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Getting picture from participant`),
@@ -100,7 +90,7 @@ export class FileService {
   getTournamentPicture(tournament: Tournament, imageType: TournamentImageType): Observable<TournamentImage> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
-    return this.http.get<TournamentImage>(url, this.loginService.httpOptions)
+    return this.http.get<TournamentImage>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Getting picture ${imageType} from tournament ${tournament.id}`),
@@ -114,7 +104,7 @@ export class FileService {
   deleteParticipantPicture(participant: Participant): Observable<void> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participant.id}`;
-    return this.http.delete<void>(url, this.loginService.httpOptions)
+    return this.http.delete<void>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Deleting picture from participant`),
@@ -128,7 +118,7 @@ export class FileService {
   deleteTournamentPicture(tournament: Tournament, imageType: TournamentImageType): Observable<void> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}/type/${imageType}`;
-    return this.http.delete<void>(url, this.loginService.httpOptions)
+    return this.http.delete<void>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Deleting picture ${imageType} from tournament ${tournament.id}`),
