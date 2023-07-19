@@ -38,15 +38,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Random;
 
 @Component
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
-    private static final long JWT_EXPIRATION = 604800000;
+    private static final long JWT_EXPIRATION = 1200000;
     private static final int ID_INDEX = 0;
     private static final int USERNAME_INDEX = 1;
     private static final int IP_INDEX = 2;
     private static final int MAC_INDEX = 3;
+
+    //JWT Secret key
+    private static final int RANDOM_LEFT_LIMIT = 48; // numeral '0'
+    private static final int RANDOM_RIGHT_LIMIT = 122; // letter 'z'
+    private static final int RANDOM_LENGTH = 32; // 32 characters by key
+    private static final Random RANDOM = new Random(); // letter 'z'
 
     private final NetworkController networkController;
 
@@ -54,9 +61,8 @@ public class JwtTokenUtil {
     private final long jwtExpiration;
 
     @Autowired
-    public JwtTokenUtil(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
+    public JwtTokenUtil(@Value("${jwt.expiration}") String jwtExpiration,
                         NetworkController networkController) {
-        this.jwtSecret = jwtSecret;
         this.networkController = networkController;
 
         long calculatedJwtExpiration;
@@ -70,7 +76,15 @@ public class JwtTokenUtil {
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
+        this.jwtSecret = generateRandomSecret();
         this.jwtExpiration = calculatedJwtExpiration;
+    }
+
+    private String generateRandomSecret() {
+        return RANDOM.ints(RANDOM_LEFT_LIMIT, RANDOM_RIGHT_LIMIT + 1)
+                .limit(RANDOM_LENGTH)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
 
