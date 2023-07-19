@@ -20,7 +20,7 @@ export class InvalidJwtInterceptor implements HttpInterceptor {
         //If on JWT, the IP is changed, launch a 409 error. 401 and 423 are for invalid or expired jwt. As Jwt is invalid now, logging again.
         if (error.status === 409 || error.status === 401 || error.status === 423) {
           this.loginService.logout();
-          this.messageService.warningMessage("userloggedOutMessage");
+          this.messageService.warningMessage("userLoggedOutMessage");
           this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
         }
         return throwError(error.message);
