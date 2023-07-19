@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import io.jsonwebtoken.Claims;
@@ -76,7 +77,7 @@ public class JwtTokenUtil {
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
-        this.jwtSecret = generateRandomSecret();
+        this.jwtSecret = "asd123";
         this.jwtExpiration = calculatedJwtExpiration;
     }
 
@@ -116,7 +117,7 @@ public class JwtTokenUtil {
         try {
             return claims.getSubject().split(",")[ID_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
+            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
             return null;
         }
     }
@@ -130,7 +131,7 @@ public class JwtTokenUtil {
         try {
             return claims.getSubject().split(",")[USERNAME_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
+            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
             return null;
         }
     }
@@ -143,7 +144,7 @@ public class JwtTokenUtil {
         try {
             return claims.getSubject().split(",")[IP_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'user IP' on JWT token!");
+            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user IP' on JWT token!");
             return null;
         }
     }
@@ -156,7 +157,7 @@ public class JwtTokenUtil {
         try {
             return claims.getSubject().split(",")[MAC_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
+            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
             return null;
         }
     }
@@ -175,15 +176,15 @@ public class JwtTokenUtil {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Invalid JWT signature '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT signature '{}'", ex.getMessage());
         } catch (MalformedJwtException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
         } catch (ExpiredJwtException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
         } catch (UnsupportedJwtException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Unsupported JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Unsupported JWT token '{}'", ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
         }
         return false;
     }
