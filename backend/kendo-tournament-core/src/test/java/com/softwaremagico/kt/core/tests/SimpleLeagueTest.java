@@ -66,8 +66,8 @@ import java.util.List;
 
 
 @SpringBootTest
-@Test(groups = {"simpleChampionshipTest"})
-public class SimpleChampionshipTest extends AbstractTestNGSpringContextTests {
+@Test(groups = {"leagueTest"})
+public class LeagueTest extends AbstractTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
