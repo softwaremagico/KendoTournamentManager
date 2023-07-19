@@ -7,6 +7,7 @@ export class AuthenticatedUser {
   public name: string;
   public lastname: string;
   public jwt: string;
+  public expires: number;
   public roles: UserRoles[];
 
   constructor() {
