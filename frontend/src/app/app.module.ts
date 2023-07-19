@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
@@ -105,6 +105,7 @@ import {TournamentListModule} from "./views/tournament-list/tournament-list.modu
 import {ParticipantListModule} from "./views/participant-list/participant-list.module";
 import {TournamentBracketsModule} from "./components/tournament-brackets/tournament-brackets.module";
 import {ArrowModule} from "./components/tournament-brackets/arrow/arrow.module";
+import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
 
 
 registerLocaleData(localeES, "es");
@@ -220,6 +221,10 @@ registerLocaleData(localeNL, "nl");
     },
     deps: [TranslateService]
   },
+    {
+      provide: ErrorHandler,
+      useClass: LocalErrorHandler
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
