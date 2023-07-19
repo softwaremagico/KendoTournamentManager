@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
@@ -60,6 +61,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -200,7 +202,7 @@ public class AuthApi {
         return xfHeader.split(",")[0];
     }
 
-    @PreAuthorize("hasAuthority('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -230,7 +232,7 @@ public class AuthApi {
         }
     }
 
-    @PreAuthorize("hasAuthority('ROLE_VIEWER')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -238,7 +240,7 @@ public class AuthApi {
         return authenticatedUserController.getRoles(authentication.getName());
     }
 
-    @PreAuthorize("hasAuthority(@securityService.viewerPrivilege)")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -247,6 +249,8 @@ public class AuthApi {
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
+        JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),
+                new Date(jwtExpiration));
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
                 .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))

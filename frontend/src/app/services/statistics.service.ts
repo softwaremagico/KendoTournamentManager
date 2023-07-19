@@ -27,8 +27,7 @@ export class StatisticsService {
     let url: string = `${this.baseUrl}/tournaments/${tournamentId}/fights`;
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       }),
       params: new HttpParams({
         fromObject: {
