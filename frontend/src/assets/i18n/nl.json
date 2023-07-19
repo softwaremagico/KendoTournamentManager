@@ -553,7 +553,7 @@
   "blockedUserError": "Te veel pogingen! Probeer het later.",
   "backendError": "Kan geen verbinding maken met de backend! Controleer uw implementatie.",
   "userloggedInMessage": "Gebruiker succesvol ingelogd",
-  "userloggedOutMessage": "Gebruikerssessie succesvol afgesloten",
+  "userLoggedOutMessage": "Gebruikerssessie succesvol afgesloten",
   "admin": "Beheerder",
   "editor": "Editor",
   "viewer": "Kijker",

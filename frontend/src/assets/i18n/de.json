@@ -553,7 +553,7 @@
   "blockedUserError": "Zu viele Versuche! Versuchen Sie es später.",
   "backendError": "Cannot connect with the backend! Please, check your deployment.",
   "userloggedInMessage": "Benutzer erfolgreich angemeldet",
-  "userloggedOutMessage": "Benutzersitzung erfolgreich geschlossen",
+  "userLoggedOutMessage": "Benutzersitzung erfolgreich geschlossen",
   "admin": "Administrator",
   "editor": "Editor",
   "viewer": "Zuschauer",
