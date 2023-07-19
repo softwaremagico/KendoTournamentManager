@@ -5,7 +5,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {TournamentService} from "../../services/tournament.service";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
@@ -165,8 +165,8 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   downloadBlogCode() {
     if (this.basicTableData.selectedElement?.id) {
       this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
-        const blob = new Blob([html], {type: 'txt/plain'});
-        const downloadURL = window.URL.createObjectURL(blob);
+        const blob: Blob = new Blob([html], {type: 'txt/plain'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
         anchor.download = "Code - " + this.basicTableData.selectedElement!.name + ".txt";
@@ -178,7 +178,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   downloadAccreditations() {
     if (this.basicTableData.selectedElement) {
-      const dialogRef = this.dialog.open(RoleSelectorDialogBoxComponent, {
+      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -187,12 +187,12 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
           if (this.basicTableData.selectedElement?.id) {
-            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
+            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob): void => {
               if (html !== null) {
-                const blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL = window.URL.createObjectURL(blob);
+                const blob: Blob = new Blob([html], {type: 'application/pdf'});
+                const downloadURL: string = window.URL.createObjectURL(blob);
 
-                const anchor = document.createElement("a");
+                const anchor: HTMLAnchorElement = document.createElement("a");
                 anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
                 anchor.href = downloadURL;
                 anchor.click();
@@ -208,7 +208,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   downloadDiplomas() {
     if (this.basicTableData.selectedElement) {
-      const dialogRef = this.dialog.open(RoleSelectorDialogBoxComponent, {
+      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -219,10 +219,10 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
           if (this.basicTableData.selectedElement?.id) {
             this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
               if (html !== null) {
-                const blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL = window.URL.createObjectURL(blob);
+                const blob: Blob = new Blob([html], {type: 'application/pdf'});
+                const downloadURL: string = window.URL.createObjectURL(blob);
 
-                const anchor = document.createElement("a");
+                const anchor: HTMLAnchorElement = document.createElement("a");
                 anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
                 anchor.href = downloadURL;
                 anchor.click();
