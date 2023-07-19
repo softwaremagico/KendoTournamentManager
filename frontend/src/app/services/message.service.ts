@@ -44,11 +44,13 @@ export class MessageService {
     return (error: any): Observable<T> => {
       //Log error
       const log: Log = new Log();
-      log.message = `${operation} failed: ${error.message}`;
+      if (error) {
+        log.message = `${operation} failed: ${error.message}`;
+      }
       this.loggerService.sendError(log);
 
       //Show error
-      this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${error.message}`);
+      this.errorMessage(`Error connecting to the backend service. ${operation} failed: ${error ? error.message : ""}`);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
