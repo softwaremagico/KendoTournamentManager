@@ -103,6 +103,7 @@ import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.modu
 import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
 import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
 import {HeaderInterceptor} from "./interceptors/header-interceptor";
+import {HttpErrorInterceptor} from "./interceptors/http-error-interceptor";
 
 
 registerLocaleData(localeES, "es");
@@ -223,12 +224,16 @@ registerLocaleData(localeNL, "nl");
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
       multi: true
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
     }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
 
-export function httpTranslateLoader(http: HttpClient) {
+export function httpTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }
