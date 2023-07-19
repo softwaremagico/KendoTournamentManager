@@ -31,9 +31,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BasicTableModule} from "./components/basic/basic-table/basic-table.module";
-import {ParticipantListComponent} from './views/participant-list/participant-list.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {TournamentListComponent} from './views/tournament-list/tournament-list.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {IconModule} from "./components/icons";
 import {registerLocaleData} from "@angular/common";
@@ -103,6 +101,9 @@ import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.modu
 import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
 import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
 import {HeaderInterceptor} from "./interceptors/header-interceptor";
+import {HttpErrorInterceptor} from "./interceptors/http-error-interceptor";
+import {TournamentListModule} from "./views/tournament-list/tournament-list.module";
+import {ParticipantListModule} from "./views/participant-list/participant-list.module";
 import {TournamentBracketsModule} from "./components/tournament-brackets/tournament-brackets.module";
 import {ArrowModule} from "./components/tournament-brackets/arrow/arrow.module";
 
@@ -118,8 +119,6 @@ registerLocaleData(localeNL, "nl");
     AppComponent,
     ClubListComponent,
     LoginComponent,
-    ParticipantListComponent,
-    TournamentListComponent,
     AuthenticatedUserListComponent,
     PasswordsComponent,
     TournamentStatisticsComponent,
@@ -207,6 +206,9 @@ registerLocaleData(localeNL, "nl");
     RadialChartModule,
     GaugeChartModule,
     ProgressBarModule,
+    TournamentListModule,
+    ParticipantListModule
+    ProgressBarModule,
     TournamentBracketsModule,
     ArrowModule
   ],
@@ -227,12 +229,16 @@ registerLocaleData(localeNL, "nl");
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
       multi: true
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
     }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
 
-export function httpTranslateLoader(http: HttpClient) {
+export function httpTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }

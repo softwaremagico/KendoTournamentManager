@@ -69,8 +69,7 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/competitors/pdf';
     return this.http.post<Blob>(url, participants, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -101,8 +100,7 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -145,8 +143,7 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -163,8 +160,7 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/summary/' + tournamentId + '/html';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
