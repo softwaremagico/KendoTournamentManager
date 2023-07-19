@@ -110,8 +110,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       }),
       params: new HttpParams({
         fromObject: {
@@ -137,8 +136,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations/' + roleType;
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -155,8 +153,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       }),
       params: new HttpParams({
         fromObject: {
@@ -179,8 +176,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
