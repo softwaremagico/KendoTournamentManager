@@ -62,12 +62,6 @@ public interface ITournamentManager {
 
     int getIndex(Integer level, Group group);
 
-    Level getLevel(Integer level);
-
-    Integer getNumberOfLevels();
-
-    Integer getLastLevelUsed();
-
     boolean exist(Tournament tournament, Team team);
 
     void removeTeams(Tournament tournament, Integer level);
@@ -93,18 +87,6 @@ public interface ITournamentManager {
      */
     void removeFights(Tournament tournament);
 
-    /**
-     * Returns the level where still are fights not finished.
-     *
-     * @return
-     */
-    Level getCurrentLevel();
-
-    List<Level> getLevels();
-
-    Level getLastLevel();
-
-    boolean isNewLevelNeeded();
 
     void createNextLevel() throws TournamentFinishedException;
 
