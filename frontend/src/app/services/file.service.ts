@@ -31,12 +31,7 @@ export class FileService {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
-      })
-    };
-    return this.http.post<ParticipantImage>(url, formData, httpOptions)
+    return this.http.post<ParticipantImage>(url, formData)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding picture to participant`),
@@ -53,12 +48,7 @@ export class FileService {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("reportProgress", "true");
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
-      })
-    };
-    return this.http.post<TournamentImage>(url, formData, httpOptions)
+    return this.http.post<TournamentImage>(url, formData)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding file ${imageType} to tournament ${tournament.id}`),
