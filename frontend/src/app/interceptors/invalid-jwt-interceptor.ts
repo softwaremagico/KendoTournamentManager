@@ -13,11 +13,11 @@ export class InvalidJwtInterceptor implements HttpInterceptor {
               private messageService: MessageService) {
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    return next.handle(req).pipe(
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return next.handle(request).pipe(
       catchError((error) => {
         //If on JWT, the IP is changed, launch a 409 error. 401 and 423 are for invalid or expired jwt. As Jwt is invalid now, logging again.
+        console.log("----------------------------" , error.status)
         if (error.status === 409 || error.status === 401 || error.status === 423) {
           this.loginService.logout();
           this.messageService.warningMessage("userLoggedOutMessage");

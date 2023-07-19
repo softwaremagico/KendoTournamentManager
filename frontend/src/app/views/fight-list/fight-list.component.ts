@@ -175,11 +175,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   private refreshFights() {
     if (this.tournamentId) {
-      this.tournamentService.get(this.tournamentId).subscribe(tournament => {
+      this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
         this.tournament = tournament;
         this.isWizardEnabled = tournament.type != TournamentType.CUSTOMIZED;
         if (this.tournamentId) {
-          this.groupService.getAllByTournament(this.tournamentId).subscribe(_groups => {
+          this.groupService.getAllByTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
             if (!_groups) {
               this.messageService.errorMessage('No groups on tournament!');
             } else {
@@ -191,14 +191,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  private setGroups(groups: Group[]) {
-    groups.sort((a, b) => {
+  private setGroups(groups: Group[]): void {
+    groups.sort((a: Group, b: Group): number => {
       if (a.level === b.level) {
         return a.index - b.index;
       }
       return a.level - b.level;
     });
-    const fights = groups.flatMap((group) => group.fights);
+    const fights = groups.flatMap((group: Group) => group.fights);
     for (let fight of fights) {
       for (let duel of fight.duels) {
         if (duel.competitor1!.hasAvatar || duel.competitor2!.hasAvatar) {
@@ -220,7 +220,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }, 1000);
   }
 
-  openConfirmationGenerateElementsDialog() {
+  openConfirmationGenerateElementsDialog(): void {
     if (this.groups.length > 0) {
       let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         disableClose: false
@@ -237,7 +237,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  generateElements() {
+  generateElements(): void {
     let dialogRef;
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
       this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
@@ -262,21 +262,21 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  getDuelDefaultSecondsDuration() {
+  getDuelDefaultSecondsDuration(): number {
     if (this.tournament) {
       return this.tournament.duelsDuration % 60;
     }
     return 0;
   }
 
-  getDuelDefaultMinutesDuration() {
+  getDuelDefaultMinutesDuration(): number {
     if (this.tournament) {
       return Math.floor(this.tournament.duelsDuration / 60);
     }
     return 0;
   }
 
-  addElement() {
+  addElement(): void {
     //Ensure that is selected on the typical case.
     if (this.groups.length == 1) {
       this.selectedGroup = this.groups[0];
@@ -332,7 +332,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined) {
+  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined): void {
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '90vw',
       height: '95vh',
