@@ -70,7 +70,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"loopChampionshipTest"})
-public class LoopChampionshipTest extends AbstractTestNGSpringContextTests {
+public class LoopLeagueTest extends AbstractTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
