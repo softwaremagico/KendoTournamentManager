@@ -26,7 +26,7 @@ export class GroupService {
 
   getAll(): Observable<Group[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Group[]>(url, this.loginService.httpOptions)
+    return this.http.get<Group[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all groups`),
@@ -39,7 +39,7 @@ export class GroupService {
 
   update(group: Group): Observable<Group> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Group>(url, group, this.loginService.httpOptions)
+    return this.http.put<Group>(url, group)
       .pipe(
         tap({
           next: (updatedGroup: Group) => this.loggerService.info(`updating group '${updatedGroup}'`),
@@ -52,7 +52,7 @@ export class GroupService {
 
   getAllByTournament(tournamentId: number): Observable<Group[]> {
     const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId;
-    return this.http.get<Group[]>(url, this.loginService.httpOptions)
+    return this.http.get<Group[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched groups from tournament ${tournamentId}`),
@@ -65,7 +65,7 @@ export class GroupService {
 
   setTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + '/teams';
-    return this.http.put<Group>(url, teams, this.loginService.httpOptions)
+    return this.http.put<Group>(url, teams)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating teams for group ${groupId}`),
@@ -78,7 +78,7 @@ export class GroupService {
 
   addTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + '/teams/add';
-    return this.http.patch<Group>(url, teams, this.loginService.httpOptions)
+    return this.http.patch<Group>(url, teams)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding teams to group ${groupId}`),
@@ -91,7 +91,7 @@ export class GroupService {
 
   deleteTeamsFromGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + '/teams/delete';
-    return this.http.patch<Group>(url, teams, this.loginService.httpOptions)
+    return this.http.patch<Group>(url, teams)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Adding teams to group ${groupId}`),
@@ -104,7 +104,7 @@ export class GroupService {
 
   setTeams(teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/teams`;
-    return this.http.put<Group>(url, teams, this.loginService.httpOptions)
+    return this.http.put<Group>(url, teams)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating teams for default group`),
@@ -117,7 +117,7 @@ export class GroupService {
 
   addUnties(groupId: number, duels: Duel[]): Observable<Group> {
     const url: string = `${this.baseUrl}/` + groupId + `/unties`;
-    return this.http.put<Group>(url, duels, this.loginService.httpOptions)
+    return this.http.put<Group>(url, duels)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating teams for default group`),

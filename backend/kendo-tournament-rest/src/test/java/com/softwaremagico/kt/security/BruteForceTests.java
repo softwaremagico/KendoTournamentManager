@@ -139,7 +139,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.status().isLocked())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
         System.out.println("------------------------- End Expected Logged Exception -------------------------");
