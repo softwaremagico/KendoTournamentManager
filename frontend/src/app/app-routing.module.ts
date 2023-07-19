@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {ClubListComponent} from "./views/club-list/club-list.component";
-import {LoggedInService} from './guards/logged-in.service';
+import {LoggedInService} from './interceptors/logged-in.service';
 import {LoginComponent} from './views/login/login.component';
 import {ParticipantListComponent} from "./views/participant-list/participant-list.component";
 import {TournamentListComponent} from "./views/tournament-list/tournament-list.component";
