@@ -8,8 +8,16 @@ import {Group} from "../../models/group";
 })
 export class TournamentBracketsComponent implements OnInit {
 
+  static readonly GROUP_HIGH: number = 100;
+  static readonly GROUP_WIDTH: number = 200;
+  static readonly GROUP_SEPARATION: number = 150;
+  static readonly LEVEL_SEPARATION: number = 100;
+
   @Input()
   groups: Group[];
+
+  @Input()
+  relations: Map<number, number>;
 
   // @ViewChildren('group', {read: ElementRef})
   // public dynComponents: QueryList<ElementRef>;
@@ -46,6 +54,61 @@ export class TournamentBracketsComponent implements OnInit {
     }
     console.log(groupsByLevel)
     return groupsByLevel;
+  }
+
+  getRowTopMargin(row: number): number {
+    return (Math.pow(2, row) - 1) * 100;
+  }
+
+  getGroupSeparation(column: number): number {
+    return ((column * 2 + 1) * TournamentBracketsComponent.GROUP_SEPARATION);
+  }
+
+  getGroupTopSeparation(column: number, group: number): number {
+    if (column == 0) {
+      return group * (TournamentBracketsComponent.GROUP_SEPARATION + TournamentBracketsComponent.GROUP_HIGH);
+    }
+    if (this.groupsByLevel.get(0)) {
+      const maxHeight: number = this.groupsByLevel.get(0)!.length * (TournamentBracketsComponent.GROUP_HIGH + TournamentBracketsComponent.GROUP_SEPARATION);
+      const portion: number = (maxHeight / this.groupsByLevel.get(column)!.length);
+      return (portion * (group + 1)) - portion / 2 - TournamentBracketsComponent.GROUP_HIGH / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
+    }
+    return 0;
+  }
+
+  getGroupLeftSeparation(column: number, group: number): number {
+    return (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION) * column;
+  }
+
+  getArrowX1Coordinate(currentIndex: number, column: number): number {
+    return TournamentBracketsComponent.GROUP_WIDTH * (column + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * column;
+  }
+
+  getArrowY1Coordinate(currentIndex: number, column: number): number {
+    if (this.groupsByLevel.get(currentIndex)) {
+      return this.getGroupTopSeparation(currentIndex, column);
+    }
+    return 0;
+  }
+
+  getArrowX2Coordinate(currentIndex: number, column: number): number {
+    return TournamentBracketsComponent.GROUP_WIDTH * (column + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * (column + 1);
+  }
+
+  getArrowY2Coordinate(currentIndex: number, column: number): number {
+    if (!this.relations || !this.relations.get(currentIndex)) {
+      return 0;
+    }
+    const destinationIndex: number = this.relations.get(currentIndex)!;
+    // return this.getRowTopMargin(row)
+    //   + this.getGroupSeparation(row) * destinationIndex
+    //   + TournamentBracketsComponent.GROUP_HIGH * destinationIndex
+    //   + TournamentBracketsComponent.GROUP_HIGH / 2;
+    if (currentIndex % 2 == 0) {
+      return TournamentBracketsComponent.GROUP_HIGH * (column + 1) + TournamentBracketsComponent.GROUP_HIGH / 2;
+    } else {
+      return -TournamentBracketsComponent.GROUP_HIGH * (column) - TournamentBracketsComponent.GROUP_HIGH / 2;
+    }
   }
 
 }

@@ -22,6 +22,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   appVersion: string;
   groups: Group[];
+  relations: Map<number, number>;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
               private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
@@ -38,7 +39,13 @@ export class LoginComponent {
       group.level = i < 4 ? 0 : (i < 6 ? 1 : 2);
       this.groups.push(group)
     }
-    console.log(this.groups)
+    this.relations = new Map();
+    this.relations.set(0,4);
+    this.relations.set(1,4);
+    this.relations.set(2,5);
+    this.relations.set(3,5);
+    this.relations.set(4,6);
+    this.relations.set(5,6);
   }
 
   login() {
