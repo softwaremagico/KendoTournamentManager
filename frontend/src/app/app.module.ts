@@ -86,7 +86,6 @@ import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
-import {InvalidJwtInterceptor} from "./interceptors/invalid-jwt-interceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
@@ -207,7 +206,7 @@ registerLocaleData(localeNL, "nl");
     GaugeChartModule,
     ProgressBarModule,
     TournamentListModule,
-    ParticipantListModule
+    ParticipantListModule,
     ProgressBarModule,
     TournamentBracketsModule,
     ArrowModule
@@ -222,10 +221,6 @@ registerLocaleData(localeNL, "nl");
     deps: [TranslateService]
   },
     {
-      provide: HTTP_INTERCEPTORS,
-      useClass: InvalidJwtInterceptor,
-      multi: true
-    }, {
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
       multi: true
