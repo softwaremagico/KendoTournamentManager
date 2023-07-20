@@ -117,7 +117,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     private List<Team> getGroupTeams(Tournament tournament, int level) {
         final List<Team> existingTeams = teamProvider.getAll(tournament);
         final List<Team> teams = new ArrayList<>();
-        final List<Group> groups = groupProvider.getGroupsByLevel(tournament, level - 1);
+        final List<Group> groups = groupProvider.getGroups(tournament, level - 1);
         //Repository OrderByIndex not working well...
         groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
         final Group lastGroup = !groups.isEmpty() ? groups.get(groups.size() - 1) : null;
@@ -140,7 +140,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             }
 
             final DrawResolution drawResolution = DrawResolution.getFromTag(extraProperty.getPropertyValue());
-            final Group previousLastGroup = level > 1 ? groupProvider.getGroupsByLevel(tournament, level - 2).get(0) : null;
+            final Group previousLastGroup = level > 1 ? groupProvider.getGroups(tournament, level - 2).get(0) : null;
             switch (drawResolution) {
                 case BOTH_ELIMINATED -> bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
                 case OLDEST_ELIMINATED -> {

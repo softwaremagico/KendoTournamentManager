@@ -54,7 +54,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return getRepository().findByFightsId(fight.getId()).orElse(null);
     }
 
-    public List<Group> getGroupsByLevel(Tournament tournament, Integer level) {
+    public List<Group> getGroups(Tournament tournament, Integer level) {
         return getRepository().findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
     }
 
@@ -93,6 +93,11 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     public Group addGroup(Tournament tournament, Group group) {
         group.setTournament(tournament);
         return getRepository().save(group);
+    }
+
+    public List<Group> addGroups(Tournament tournament, Collection<Group> groups) {
+        groups.forEach(group -> group.setTournament(tournament));
+        return getRepository().saveAll(groups);
     }
 
     public long delete(Tournament tournament) {
