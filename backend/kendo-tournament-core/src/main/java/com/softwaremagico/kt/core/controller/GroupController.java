@@ -44,8 +44,8 @@ import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -63,17 +64,16 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final TournamentProvider tournamentProvider;
     private final FightProvider fightProvider;
     private final FightConverter fightConverter;
-
     private final DuelProvider duelProvider;
-
     private final DuelConverter duelConverter;
-
     private final TeamConverter teamConverter;
+    private final TournamentHandlerSelector tournamentHandlerSelector;
 
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
-                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter) {
+                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter,
+                           TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -82,6 +82,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.duelProvider = duelProvider;
         this.duelConverter = duelConverter;
         this.teamConverter = teamConverter;
+        this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
     @Override
@@ -97,12 +98,19 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username) {
-        //Check that this group does not collide with another one.
-        if (getProvider().deleteGroupByLevelAndIndex(
-                tournamentConverter.reverse(groupDTO.getTournament()), groupDTO.getLevel(), groupDTO.getIndex())) {
-            KendoTournamentLogger.warning(this.getClass(), "Old group removed!");
-        }
-        return super.create(groupDTO, username);
+        return convert(tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).addGroup(
+                tournamentConverter.reverse(groupDTO.getTournament()), reverse(groupDTO)));
+    }
+
+    @Override
+    public void delete(GroupDTO groupDTO) {
+        tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(tournamentConverter.reverse(groupDTO.getTournament()),
+                groupDTO.getLevel(), groupDTO.getIndex());
+    }
+
+    @Override
+    public void delete(Collection<GroupDTO> groupDTOs) {
+        groupDTOs.forEach(groupDTO -> delete(groupDTOs));
     }
 
     public List<GroupDTO> get(TournamentDTO tournament) {

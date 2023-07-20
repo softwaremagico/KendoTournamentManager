@@ -35,6 +35,7 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class TreeTournamentHandler extends LeagueHandler {
 
     private final SimpleGroupFightManager simpleGroupFightManager;
