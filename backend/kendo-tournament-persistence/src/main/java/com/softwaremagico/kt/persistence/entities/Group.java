@@ -94,6 +94,13 @@ public class Group extends Element {
         super();
     }
 
+    public Group(Tournament tournament, int level, int index) {
+        super();
+        setTournament(tournament);
+        setLevel(level);
+        setIndex(index);
+    }
+
     /**
      * If the fightManager are over or fightManager are not needed.
      *

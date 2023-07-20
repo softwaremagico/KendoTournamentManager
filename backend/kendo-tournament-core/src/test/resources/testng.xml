@@ -12,10 +12,12 @@
                 <include name="scoreAchievementTests"/>
                 <include name="darumaAchievementTests"/>
                 <include name="statisticsTests"/>
+                <include name="tournamentTest"/>
             </run>
         </groups>
         <classes>
             <class name="com.softwaremagico.kt.core.tests.SimpleLeagueTest"/>
+            <class name="com.softwaremagico.kt.core.tests.TournamentTest"/>
             <class name="com.softwaremagico.kt.core.tests.LoopLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
