@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {Group} from "../../models/group";
 
 @Component({
@@ -9,7 +9,7 @@ import {Group} from "../../models/group";
 export class TournamentBracketsComponent implements OnInit {
 
   static readonly GROUP_HIGH: number = 100;
-  static readonly GROUP_WIDTH: number = 200;
+  static readonly GROUP_WIDTH: number = 300;
   static readonly GROUP_SEPARATION: number = 150;
   static readonly LEVEL_SEPARATION: number = 100;
 
@@ -27,14 +27,14 @@ export class TournamentBracketsComponent implements OnInit {
   @ViewChild('group-7') group7: ElementRef;
 
 
-  groupsByLevel: Map<number, Group[]>;
+  groupsByLevel: Map<number, Group[]> = new Map();
 
 
-  constructor() {
+  constructor(private cd: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
-      this.groupsByLevel = TournamentBracketsComponent.convert(this.groups);
+    this.groupsByLevel = TournamentBracketsComponent.convert(this.groups);
   }
 
   // ngOnChanges(changes: SimpleChanges): void {
@@ -81,20 +81,23 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getArrowX1Coordinate(column: number, currentIndex: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * (column + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * column;
+    return TournamentBracketsComponent.GROUP_WIDTH * (column + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * column + 5;
   }
 
   getArrowY1Coordinate(column: number, currentIndex: number): number {
-      return this.getGroupTopSeparation(column, currentIndex) + TournamentBracketsComponent.GROUP_HIGH / 2;
+    return this.getGroupTopSeparation(column, currentIndex) + TournamentBracketsComponent.GROUP_HIGH / 2;
   }
 
   getArrowX2Coordinate(column: number, currentIndex: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * column + TournamentBracketsComponent.LEVEL_SEPARATION * column;
+    return TournamentBracketsComponent.GROUP_WIDTH * column + TournamentBracketsComponent.LEVEL_SEPARATION * column + 5;
   }
 
-  getArrowY2Coordinate(column: number, currentIndex: number): number {
-    console.log(column, currentIndex)
-      return this.getGroupTopSeparation(column, currentIndex) + TournamentBracketsComponent.GROUP_HIGH / 2;
+  getArrowY2Coordinate(column: number, sourceIndex: number, destinationIndex: number): number {
+    let correction: number = 15;
+    if (sourceIndex % 2 === 0) {
+      correction = -correction;
+    }
+    return this.getGroupTopSeparation(column, destinationIndex) + TournamentBracketsComponent.GROUP_HIGH / 2 + correction;
   }
 
 }
