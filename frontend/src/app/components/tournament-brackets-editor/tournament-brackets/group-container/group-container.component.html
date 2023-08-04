@@ -2,7 +2,8 @@
      [attr.id]="'group-' + index"
      [ngStyle]="{
           'margin-top':  getGroupTopSeparation(level, index, groupsByLevel) + 'px',
-          'margin-left': getGroupLeftSeparation(level, index) + 'px'
+          'margin-left': getGroupLeftSeparation(level, index) + 'px',
+          'height': groupHigh + 'px'
         }"
      class="group"
      [ngClass]="['group-' + index ,'group-' + level + '-' + index]">
@@ -10,6 +11,7 @@
   <div class="group-content" [class]="'group-content-' + level + '-' + index" (cdkDropListDropped)="dropTeam($event)"
        [cdkDropListData]="teams" cdkDropList
        [cdkDropListSortingDisabled]="false"
-       ></div>
-  <!-- [cdkDropListEnterPredicate]="checkDroppedElement" [cdkDropListDisabled]="isLocked()"-->
+       [cdkDropListEnterPredicate]="checkDroppedElement(level)">
+    <app-team-card class="group-team-card" *ngFor="let team of teams" [team]="team" [minify]="true"></app-team-card>
+  </div>
 </div>

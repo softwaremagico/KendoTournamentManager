@@ -64,29 +64,39 @@ export class TournamentBracketsComponent implements OnInit {
     return ((column * 2 + 1) * TournamentBracketsComponent.GROUP_SEPARATION);
   }
 
-  getGroupTopSeparation(column: number, group: number, groupsByLevel: Map<number, Group[]>): number {
-    if (column == 0) {
-      return group * (TournamentBracketsComponent.GROUP_SEPARATION + TournamentBracketsComponent.GROUP_HIGH);
+  getGroupHigh(level: number, index: number): number {
+    if (this.groupsByLevel && this.groupsByLevel!.get(level) && this.groupsByLevel.get(level)![index]) {
+      const teams: number = this.groupsByLevel.get(level)![index].teams.length;
+      console.log('--->', teams)
+      if (teams && teams > 1) {
+        return teams * 90;
+      }
     }
-    console.log('group', column, group, this.groupsByLevel)
-    if (groupsByLevel && groupsByLevel.get(column)) {
-      const maxHeight: number = groupsByLevel.get(0)!.length * (TournamentBracketsComponent.GROUP_HIGH + TournamentBracketsComponent.GROUP_SEPARATION);
-      const portion: number = (maxHeight / groupsByLevel.get(column)!.length);
-      return (portion * (group + 1)) - portion / 2 - TournamentBracketsComponent.GROUP_HIGH / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
+    return TournamentBracketsComponent.GROUP_HIGH;
+  }
+
+  getGroupTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]>): number {
+    if (level == 0) {
+      return group * (TournamentBracketsComponent.GROUP_SEPARATION + this.getGroupHigh(level, group));
+    }
+    if (groupsByLevel && groupsByLevel.get(level)) {
+      const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(level, group) + TournamentBracketsComponent.GROUP_SEPARATION);
+      const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
+      return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
     }
     return 0;
   }
 
-  getGroupLeftSeparation(column: number, group: number): number {
-    return (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION) * column;
+  getGroupLeftSeparation(level: number, group: number): number {
+    return (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION) * level;
   }
 
-  getArrowX1Coordinate(column: number, currentIndex: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * (column + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * column + 5;
+  getArrowX1Coordinate(level: number, currentIndex: number): number {
+    return TournamentBracketsComponent.GROUP_WIDTH * (level + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * level + 5;
   }
 
-  getArrowY1Coordinate(column: number, currentIndex: number): number {
-    return this.getGroupTopSeparation(column, currentIndex, this.groupsByLevel) + TournamentBracketsComponent.GROUP_HIGH / 2;
+  getArrowY1Coordinate(level: number, currentIndex: number): number {
+    return this.getGroupTopSeparation(level, currentIndex, this.groupsByLevel) + this.getGroupHigh(level, currentIndex) / 2;
   }
 
   getArrowX2Coordinate(column: number, currentIndex: number): number {
@@ -98,7 +108,7 @@ export class TournamentBracketsComponent implements OnInit {
     if (sourceIndex % 2 === 0) {
       correction = -correction;
     }
-    return this.getGroupTopSeparation(column, destinationIndex, this.groupsByLevel) + TournamentBracketsComponent.GROUP_HIGH / 2 + correction;
+    return this.getGroupTopSeparation(column, destinationIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceIndex) / 2 + correction;
   }
 
 }

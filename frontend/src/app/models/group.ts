@@ -6,7 +6,7 @@ import {Element} from "./element";
 
 export class Group extends Element {
   tournament: Tournament;
-  teams: Team[];
+  teams: Team[] = [];
   shiaijo: number;
   level: number;
   index: number;
