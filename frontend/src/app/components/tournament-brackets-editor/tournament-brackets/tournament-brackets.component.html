@@ -5,7 +5,7 @@
                [y2]="getArrowY2Coordinate(level+1, g.src, g.dest)"></app-arrow>
   </div>
   <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
-                       [groupsByLevel]="groupsByLevel"
+                       [groupsByLevel]="groupsByLevel" [totalTeams]="totalTeams"
                        [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation"
                        [getGroupHigh]="getGroupHigh">
   </app-group-container>
