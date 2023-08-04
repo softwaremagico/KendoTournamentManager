@@ -1,7 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
+import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../../models/team";
 import {Group} from "../../../../models/group";
+import {Participant} from "../../../../models/participant";
 
 @Component({
   selector: 'app-group-container',
@@ -35,6 +36,7 @@ export class GroupContainerComponent implements OnInit {
 
   dropTeam(event: CdkDragDrop<Team[], any>): void {
     const team: Team = this.transferCard(event);
+    this.teams.push(team);
   }
 
   private transferCard(event: CdkDragDrop<Team[], any>): Team {
@@ -45,6 +47,14 @@ export class GroupContainerComponent implements OnInit {
       event.currentIndex,
     );
     return event.container.data[event.currentIndex];
+  }
+
+  checkDroppedElement(): boolean {
+    return this.level === 0;
+  }
+
+  isLocked(): boolean {
+    return this.level !== 0;
   }
 
 }
