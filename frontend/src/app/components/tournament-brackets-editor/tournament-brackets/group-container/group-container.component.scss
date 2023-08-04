@@ -1,7 +1,6 @@
 .group {
   position: absolute;
   width: 300px;
-  height: 100px;
   border: 2px solid #001239;
   border-radius: 25px;
   overflow: hidden;
@@ -25,4 +24,8 @@
 .group-content {
   background: #4d6d95;
   width: 100%;
+}
+
+.mat-card.mat-focus-indicator.cdk-drag.team-card.minify {
+  margin: 0;
 }

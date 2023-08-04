@@ -1,15 +1,14 @@
 .container {
   display: flex;
-  background: #6e0309;
 }
 
 .teams-container {
-  background: #5f4ca1;
   height: 100%;
   width: 350px;
+  border: 1px solid #1f1836;
 }
 
-.tournament-brackets{
+.tournament-brackets {
   margin-left: 50px;
   margin-top: 50px;
   flex: 3;
