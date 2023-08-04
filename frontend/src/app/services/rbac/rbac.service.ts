@@ -9,7 +9,6 @@ import {LoginService} from "../login.service";
 })
 export class RbacService {
 
-  private roles: UserRoles[];
   activities: RbacActivity[] = [];
 
   constructor(private userService: UserService, private loginService: LoginService) {
@@ -25,7 +24,6 @@ export class RbacService {
   }
 
   public setRoles(roles: UserRoles[]): void {
-    this.roles = roles;
     this.activities = this.getActivities(roles);
   }
 

@@ -1,0 +1,12 @@
+<div *ngIf="getGroupTopSeparation"
+  [attr.id]="'group-' + index"
+  [ngStyle]="{
+          'margin-top':  getGroupTopSeparation(level, index, groupsByLevel) + 'px',
+          'margin-left': getGroupLeftSeparation(level, index) + 'px'
+        }"
+  class="group"
+  [ngClass]="['group-' + index ,'group-' + level + '-' + index]"
+  (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teams" cdkDropList>
+  <div class="group-title">Group {{index + 1}}</div>
+  <div class="group-content"></div>
+</div>

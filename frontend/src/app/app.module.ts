@@ -103,9 +103,13 @@ import {HeaderInterceptor} from "./interceptors/header-interceptor";
 import {HttpErrorInterceptor} from "./interceptors/http-error-interceptor";
 import {TournamentListModule} from "./views/tournament-list/tournament-list.module";
 import {ParticipantListModule} from "./views/participant-list/participant-list.module";
-import {TournamentBracketsModule} from "./components/tournament-brackets/tournament-brackets.module";
-import {ArrowModule} from "./components/tournament-brackets/arrow/arrow.module";
+import {TournamentBracketsModule} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
+import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
 import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
+import {TournamentBracketsComponent} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.component";
+import {
+  TournamentBracketsEditorModule
+} from "./components/tournament-brackets-editor/tournament-brackets-editor.module";
 
 
 registerLocaleData(localeES, "es");
@@ -210,7 +214,8 @@ registerLocaleData(localeNL, "nl");
     ParticipantListModule,
     ProgressBarModule,
     TournamentBracketsModule,
-    ArrowModule
+    ArrowModule,
+    TournamentBracketsEditorModule,
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
