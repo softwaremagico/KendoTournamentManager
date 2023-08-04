@@ -19,13 +19,8 @@ export class TournamentBracketsComponent implements OnInit {
   @Input()
   relations: Map<number, { src: number, dest: number }[]>;
 
-  // @ViewChildren('group', {read: ElementRef})
-  // public dynComponents: QueryList<ElementRef>;
-
-  @ViewChild('group-0') group0: ElementRef;
-  @ViewChild('group-4') group4: ElementRef;
-  @ViewChild('group-7') group7: ElementRef;
-
+  @Input()
+  totalTeams: number;
 
   groupsByLevel: Map<number, Group[]> = new Map();
 
@@ -64,11 +59,18 @@ export class TournamentBracketsComponent implements OnInit {
     return ((column * 2 + 1) * TournamentBracketsComponent.GROUP_SEPARATION);
   }
 
+  getTeamsByGroup() {
+
+  }
+
   getGroupHigh(level: number, index: number): number {
     if (this.groupsByLevel && this.groupsByLevel!.get(level) && this.groupsByLevel.get(level)![index]) {
+      const estimatedTeams: number = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
       const teams: number = this.groupsByLevel.get(level)![index].teams.length;
-      console.log('***REMOVED***>', teams)
-      if (teams && teams > 1) {
+
+      if (level == 0 && estimatedTeams > 1) {
+        return estimatedTeams * 90;
+      }else if (teams && teams > 1) {
         return teams * 90;
       }
     }
@@ -80,7 +82,7 @@ export class TournamentBracketsComponent implements OnInit {
       return group * (TournamentBracketsComponent.GROUP_SEPARATION + this.getGroupHigh(level, group));
     }
     if (groupsByLevel && groupsByLevel.get(level)) {
-      const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(level, group) + TournamentBracketsComponent.GROUP_SEPARATION);
+      const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + TournamentBracketsComponent.GROUP_SEPARATION);
       const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
       return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
     }
@@ -108,6 +110,7 @@ export class TournamentBracketsComponent implements OnInit {
     if (sourceIndex % 2 === 0) {
       correction = -correction;
     }
+    //console.log(column, sourceIndex, this.getGroupHigh(column, sourceIndex) / 2)
     return this.getGroupTopSeparation(column, destinationIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceIndex) / 2 + correction;
   }
 

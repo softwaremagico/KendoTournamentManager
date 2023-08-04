@@ -21,7 +21,8 @@ export class TournamentBracketsEditorComponent implements OnInit {
   relations: Map<number, { src: number, dest: number }[]>;
 
   teamListData: TeamListData = new TeamListData();
-  teamsOrder: Team[] = [];
+
+  totalTeams: number;
 
   constructor(private teamService: TeamService) {
   }
@@ -36,11 +37,18 @@ export class TournamentBracketsEditorComponent implements OnInit {
     //   this.teamListData.teams = teams;
     //   this.teamListData.filteredTeams = teams;
     // });
-    const teams : Team[] = [];
+    const teams: Team[] = [];
     teams.push(new Team("Team1"));
     teams.push(new Team("Team2"));
     teams.push(new Team("Team3"));
+    teams.push(new Team("Team4"));
+    teams.push(new Team("Team5"));
+    teams.push(new Team("Team6"));
+    teams.push(new Team("Team7"));
+    teams.push(new Team("Team8"));
+    teams.push(new Team("Team9"));
     this.teamListData.teams = teams;
+    this.totalTeams = teams.length;
     this.teamListData.filteredTeams = teams;
   }
 

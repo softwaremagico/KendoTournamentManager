@@ -11,7 +11,7 @@
   <div class="group-content" [class]="'group-content-' + level + '-' + index" (cdkDropListDropped)="dropTeam($event)"
        [cdkDropListData]="teams" cdkDropList
        [cdkDropListSortingDisabled]="false"
-       [cdkDropListEnterPredicate]="checkDroppedElement(level)">
+       [cdkDropListEnterPredicate]="checkDroppedElement(level, estimatedTeams, teams)">
     <app-team-card class="group-team-card" *ngFor="let team of teams" [team]="team" [minify]="true"></app-team-card>
   </div>
 </div>
