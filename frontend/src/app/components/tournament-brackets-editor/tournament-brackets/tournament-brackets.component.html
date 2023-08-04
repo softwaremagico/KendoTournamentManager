@@ -4,7 +4,9 @@
                [x2]="getArrowX2Coordinate(level+1, g.dest)"
                [y2]="getArrowY2Coordinate(level+1, g.src, g.dest)"></app-arrow>
   </div>
-  <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g" [groupsByLevel]="groupsByLevel"
-                       [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation">
+  <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
+                       [groupsByLevel]="groupsByLevel"
+                       [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation"
+                       [getGroupHigh]="getGroupHigh">
   </app-group-container>
 </div>

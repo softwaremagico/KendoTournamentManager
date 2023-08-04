@@ -27,8 +27,8 @@ export class RbacService {
     this.activities = this.getActivities(roles);
   }
 
-  public isAllowed(activity: RbacActivity): boolean {
-    if (!this.activities) {
+  public isAllowed(activity: RbacActivity | undefined): boolean {
+    if (!activity || !this.activities) {
       return false;
     }
     return this.activities.includes(activity);
