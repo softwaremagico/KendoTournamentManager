@@ -4,6 +4,7 @@ import {TournamentBracketsComponent} from "./tournament-brackets.component";
 import {ArrowModule} from "./arrow/arrow.module";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import { GroupContainerComponent } from './group-container/group-container.component';
+import {TeamCardModule} from "../../team-card/team-card.module";
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { GroupContainerComponent } from './group-container/group-container.compo
   imports: [
     CommonModule,
     ArrowModule,
-    DragDropModule
+    DragDropModule,
+    TeamCardModule
   ]
 })
 export class TournamentBracketsModule {
