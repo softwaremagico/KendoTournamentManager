@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  background: #6e0309;
+}
+
+.teams-container {
+  background: #5f4ca1;
+  height: 100%;
+  width: 350px;
+}
+
+.tournament-brackets{
+  margin-left: 50px;
+  margin-top: 50px;
+  flex: 3;
+}
