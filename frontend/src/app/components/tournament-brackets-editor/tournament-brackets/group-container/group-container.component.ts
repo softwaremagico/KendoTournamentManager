@@ -29,14 +29,22 @@ export class GroupContainerComponent implements OnInit {
   @Input()
   getGroupHigh: (level: number, group: number) => number;
 
+  @Input()
+  totalTeams: number;
+
   groupHigh: number = TournamentBracketsComponent.GROUP_HIGH;
 
   teams: Team[] = [];
+
+  estimatedTeams: number;
 
   constructor() {
   }
 
   ngOnInit(): void {
+    this.groupHigh = this.getGroupHigh(this.level, this.index);
+    console.log(this.level, this.index,  this.groupHigh);
+    this.estimatedTeams = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): void {
@@ -55,9 +63,10 @@ export class GroupContainerComponent implements OnInit {
     return event.container.data[event.currentIndex];
   }
 
-  checkDroppedElement(level: number): (drag: CdkDrag, drop: CdkDropList) => boolean {
+  checkDroppedElement(level: number, teamsByGroup: number, teams: Team[]): (drag: CdkDrag, drop: CdkDropList) => boolean {
     return function (drag: CdkDrag, drop: CdkDropList): boolean {
-      return level === 0;
+      console.log(teams.length, teamsByGroup)
+      return level === 0 && teams.length < teamsByGroup + 1;
     };
   }
 
