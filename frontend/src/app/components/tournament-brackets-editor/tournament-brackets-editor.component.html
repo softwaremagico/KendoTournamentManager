@@ -1,8 +1,9 @@
 <div class="container" cdkDropListGroup>
   <div (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
-       cdkDropList
+       cdkDropList cdkDropListSortingDisabled="true"
        class="teams-container">
     <team-list [teamListData]="teamListData"></team-list>
   </div>
-  <app-tournament-brackets class="tournament-brackets" [groups]="groups" [relations]="relations"></app-tournament-brackets>
+  <app-tournament-brackets class="tournament-brackets" [groups]="groups" [relations]="relations" [totalTeams]="totalTeams">
+  </app-tournament-brackets>
 </div>
