@@ -3,6 +3,7 @@ import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk
 import {Team} from "../../../../models/team";
 import {Group} from "../../../../models/group";
 import {TournamentBracketsComponent} from "../tournament-brackets.component";
+import {GroupService} from "../../../../services/group.service";
 
 @Component({
   selector: 'app-group-container',
@@ -38,12 +39,11 @@ export class GroupContainerComponent implements OnInit {
 
   estimatedTeams: number;
 
-  constructor() {
+  constructor(private groupService: GroupService) {
   }
 
   ngOnInit(): void {
     this.groupHigh = this.getGroupHigh(this.level, this.index);
-    console.log(this.level, this.index,  this.groupHigh);
     this.estimatedTeams = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
   }
 
@@ -51,6 +51,7 @@ export class GroupContainerComponent implements OnInit {
     const team: Team = this.transferCard(event);
     this.groupHigh = this.getGroupHigh(this.level, this.index);
     this.groupsByLevel.get(this.level)![this.index].teams = this.teams;
+    //this.groupService.setTeamsToGroup(this.groupsByLevel!.get(this.level)![this.index]!.id!, this.teams);
   }
 
   private transferCard(event: CdkDragDrop<Team[], any>): Team {
@@ -65,7 +66,6 @@ export class GroupContainerComponent implements OnInit {
 
   checkDroppedElement(level: number, teamsByGroup: number, teams: Team[]): (drag: CdkDrag, drop: CdkDropList) => boolean {
     return function (drag: CdkDrag, drop: CdkDropList): boolean {
-      console.log(teams.length, teamsByGroup)
       return level === 0 && teams.length < teamsByGroup + 1;
     };
   }

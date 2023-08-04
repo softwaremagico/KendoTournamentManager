@@ -32,12 +32,6 @@ export class TournamentBracketsComponent implements OnInit {
     this.groupsByLevel = TournamentBracketsComponent.convert(this.groups);
   }
 
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if (changes['groups']) {
-  //     this.groupsByLevel = TournamentBracketsComponent.convert(this.groups);
-  //   }
-  // }
-
   private static convert(groups: Group[]): Map<number, Group[]> {
     const groupsByLevel: Map<number, Group[]> = new Map();
     for (const group of groups) {
@@ -49,18 +43,6 @@ export class TournamentBracketsComponent implements OnInit {
       }
     }
     return groupsByLevel;
-  }
-
-  getRowTopMargin(row: number): number {
-    return (Math.pow(2, row) - 1) * 100;
-  }
-
-  getGroupSeparation(column: number): number {
-    return ((column * 2 + 1) * TournamentBracketsComponent.GROUP_SEPARATION);
-  }
-
-  getTeamsByGroup() {
-
   }
 
   getGroupHigh(level: number, index: number): number {
@@ -93,25 +75,24 @@ export class TournamentBracketsComponent implements OnInit {
     return (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION) * level;
   }
 
-  getArrowX1Coordinate(level: number, currentIndex: number): number {
+  getArrowX1Coordinate(level: number, group: number): number {
     return TournamentBracketsComponent.GROUP_WIDTH * (level + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * level + 5;
   }
 
-  getArrowY1Coordinate(level: number, currentIndex: number): number {
-    return this.getGroupTopSeparation(level, currentIndex, this.groupsByLevel) + this.getGroupHigh(level, currentIndex) / 2;
+  getArrowY1Coordinate(level: number, group: number): number {
+    return this.getGroupTopSeparation(level, group, this.groupsByLevel) + this.getGroupHigh(level, group) / 2;
   }
 
-  getArrowX2Coordinate(column: number, currentIndex: number): number {
+  getArrowX2Coordinate(column: number, group: number): number {
     return TournamentBracketsComponent.GROUP_WIDTH * column + TournamentBracketsComponent.LEVEL_SEPARATION * column + 5;
   }
 
-  getArrowY2Coordinate(column: number, sourceIndex: number, destinationIndex: number): number {
+  getArrowY2Coordinate(column: number, sourceGroupIndex: number, destinationGroupIndex: number): number {
     let correction: number = 15;
-    if (sourceIndex % 2 === 0) {
+    if (sourceGroupIndex % 2 === 0) {
       correction = -correction;
     }
-    //console.log(column, sourceIndex, this.getGroupHigh(column, sourceIndex) / 2)
-    return this.getGroupTopSeparation(column, destinationIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceIndex) / 2 + correction;
+    return this.getGroupTopSeparation(column, destinationGroupIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceGroupIndex) / 2 + correction;
   }
 
 }
