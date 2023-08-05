@@ -34,12 +34,14 @@ export class TournamentBracketsComponent implements OnInit {
 
   private static convert(groups: Group[]): Map<number, Group[]> {
     const groupsByLevel: Map<number, Group[]> = new Map();
-    for (const group of groups) {
-      if (group.level !== undefined) {
-        if (!groupsByLevel.get(group.level)) {
-          groupsByLevel.set(group.level, []);
+    if (groups) {
+      for (const group of groups) {
+        if (group.level !== undefined) {
+          if (!groupsByLevel.get(group.level)) {
+            groupsByLevel.set(group.level, []);
+          }
+          groupsByLevel.get(group.level)?.push(group);
         }
-        groupsByLevel.get(group.level)?.push(group);
       }
     }
     return groupsByLevel;
@@ -52,7 +54,7 @@ export class TournamentBracketsComponent implements OnInit {
 
       if (level == 0 && estimatedTeams > 1) {
         return estimatedTeams * 90;
-      }else if (teams && teams > 1) {
+      } else if (teams && teams > 1) {
         return teams * 90;
       }
     }
