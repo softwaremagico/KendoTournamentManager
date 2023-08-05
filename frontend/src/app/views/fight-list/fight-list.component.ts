@@ -54,6 +54,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   swappedTeams: boolean = false;
   membersOrder: boolean = false;
   isWizardEnabled: boolean;
+  isBracketsEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
   showAvatars: boolean = false;
 
@@ -177,7 +178,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
         this.tournament = tournament;
-        this.isWizardEnabled = tournament.type != TournamentType.CUSTOMIZED;
+        this.isWizardEnabled = tournament.type !== TournamentType.CUSTOMIZED && tournament.type !== TournamentType.CHAMPIONSHIP;
+        this.isBracketsEnabled = tournament.type === TournamentType.CHAMPIONSHIP;
         if (this.tournamentId) {
           this.groupService.getAllByTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
             if (!_groups) {
@@ -237,6 +239,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
+  openBracketsManager(){
+    if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
+      this.router.navigate(['tournaments/fights/championship'], {state: {tournamentId: this.tournament.id}});
+    }
+  }
+
   generateElements(): void {
     let dialogRef;
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
@@ -246,7 +254,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
       });
     } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
-      this.router.navigate(['tournaments/fights/championship'], {state: {tournamentId: this.tournament.id}});
+      this.openBracketsManager();
     }
 
     if (dialogRef) {

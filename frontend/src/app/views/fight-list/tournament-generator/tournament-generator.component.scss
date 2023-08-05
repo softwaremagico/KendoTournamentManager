@@ -1,0 +1,19 @@
+.championship-container {
+  height: 83vh;
+  max-height: 83vh;
+  min-height: 50vh;
+  overflow-y: auto;
+  width: 100%;
+  padding: 20px;
+}
+
+.championship-view {
+  padding: 20px;
+  min-width: 600px;
+}
+
+@media screen and (max-height: 750px) {
+  .championship-container {
+    height: 75vh;
+  }
+}

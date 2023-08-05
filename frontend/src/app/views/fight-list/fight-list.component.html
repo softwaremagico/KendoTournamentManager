@@ -32,6 +32,14 @@
                 matTooltip="{{'wizard' | translate}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
+        <button (click)="openBracketsManager()"
+                *ngIf="isBracketsEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+                [disabled]="(tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'groups' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
+        </button>
         <mat-divider [vertical]="true" class="timer-divider"></mat-divider>
         <button (click)="finishDuel(true)" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
                 [disabled]="!selectedFight || (tournament && tournament.locked)"
