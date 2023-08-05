@@ -75,7 +75,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
     this.groups = [];
-    let state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
@@ -245,6 +245,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         width: '85vw',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
       });
+    } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
+      this.router.navigate(['tournaments/fights/championship'], {state: {tournamentId: this.tournament.id}});
     }
 
     if (dialogRef) {
