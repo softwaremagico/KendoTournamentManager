@@ -1,28 +1,26 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="mat-elevation-z8">
-  <div class="kendo-table">
-    <div class="upper-menu">
-      <div class="cell">
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_CLUB | rbac : this.rbacService.activities)"
-                [matTooltipShowDelay]="500" color="primary"
-                mat-button
-                matTooltip="{{'clubAdd' | translate}}">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_CLUB | rbac : this.rbacService.activities)"
-                [disabled]="!basicTableData.selectedElement"
-                [matTooltipShowDelay]="500" mat-button
-                matTooltip="{{'clubEdit' | translate}}">
-          <mat-icon>create</mat-icon>
-        </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_CLUB | rbac : this.rbacService.activities)"
-                [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
-                color="warn" mat-button
-                matTooltip="{{'clubDelete' | translate}}">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </div>
+<div class="kendo-table">
+  <div class="upper-menu">
+    <div class="cell">
+      <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_CLUB | rbac : this.rbacService.activities)"
+              [matTooltipShowDelay]="500" color="primary"
+              mat-button
+              matTooltip="{{'clubAdd' | translate}}">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_CLUB | rbac : this.rbacService.activities)"
+              [disabled]="!basicTableData.selectedElement"
+              [matTooltipShowDelay]="500" mat-button
+              matTooltip="{{'clubEdit' | translate}}">
+        <mat-icon>create</mat-icon>
+      </button>
+      <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_CLUB | rbac : this.rbacService.activities)"
+              [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
+              color="warn" mat-button
+              matTooltip="{{'clubDelete' | translate}}">
+        <mat-icon>clear</mat-icon>
+      </button>
     </div>
-    <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
   </div>
+  <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
 </div>

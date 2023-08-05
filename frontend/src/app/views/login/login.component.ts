@@ -31,12 +31,13 @@ export class LoginComponent {
     });
   }
 
-  login() {
+  login(): void {
     this.loginService.login(this.loginForm.controls['username'].value, this.loginForm.controls['password'].value).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.loginService.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
-        this.loginService.autoRenewToken(authenticatedUser.jwt, authenticatedUser.expires, (jwt: string, expires: number): void => {
-        });
+        this.loginService.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (jwt: string, expires: number): void => {
+          });
         this.rbacService.setRoles(authenticatedUser.roles);
         let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         this.router.navigate([returnUrl]);
