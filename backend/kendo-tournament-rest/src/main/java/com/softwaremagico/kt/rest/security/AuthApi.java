@@ -241,7 +241,7 @@ public class AuthApi {
     @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public ResponseEntity<String> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
+    public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
         final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);

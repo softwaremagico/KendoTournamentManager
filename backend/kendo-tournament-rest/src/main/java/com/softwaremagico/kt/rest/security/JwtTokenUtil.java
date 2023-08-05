@@ -74,7 +74,7 @@ public class JwtTokenUtil {
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
-        this.jwtSecret = "asd123";
+        this.jwtSecret = generateRandomSecret();
         this.jwtExpiration = calculatedJwtExpiration;
     }
 
