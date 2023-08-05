@@ -14,7 +14,7 @@ import {EnvironmentService} from "../environment.service";
 export class LoginService {
 
   private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
-  private static readonly JWT_RENEW_MARGIN: number = 30000;
+  private static readonly JWT_RENEW_MARGIN: number = 5000;
   private interval: NodeJS.Timeout | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
@@ -69,9 +69,13 @@ export class LoginService {
       //Set current JWT.
       this.setJwtValue(jwt, timeout);
       this.renew().subscribe(
-        (res: HttpResponse<AuthenticatedUser>): void => {
-          const authToken: string | null = res.headers.get('authorization');
-          let expiration: number = Number(res.headers.get('expires'));
+        response => {
+          if (!response) {
+            console.error('No response!!!')
+            throw new Error('Server returned no response');
+          }
+          const authToken: string | null = response.headers.get('authorization');
+          let expiration: number = Number(response.headers.get('expires'));
           if (!authToken || !expiration) {
             throw new Error('Server returned invalid response');
           }
@@ -79,15 +83,15 @@ export class LoginService {
             throw new Error('Server returned invalid expiration time');
           }
           expiration = expiration - (new Date()).getTime() - LoginService.JWT_RENEW_MARGIN;
-          console.log(`Next token expiration time: ${expiration}`);
+          console.info(`Next token expiration time: ${expiration}`);
           callback(authToken, expiration);
-          this.setIntervalRenew(authToken, expiration, callback);
+          this.autoRenewToken(authToken, expiration, callback);
         }
       )
     }, timeout)
   }
 
-  private renew(): Observable<HttpResponse<AuthenticatedUser>> {
-    return this.http.get<HttpResponse<AuthenticatedUser>>(`${this.baseUrl}/jwt/renew`);
+  private renew(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/jwt/renew`, {observe: 'response'});
   }
 }
