@@ -19,6 +19,11 @@ export class LoginService {
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
+    if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
+      this.setIntervalRenew(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+        (jwt: string, expires: number): void => {
+        });
+    }
   }
 
   login(username: string, password: string): Observable<AuthenticatedUser> {
@@ -61,15 +66,13 @@ export class LoginService {
       clearInterval(this.interval);
       this.interval = null;
     }
-    this.setIntervalRenew(jwt, expiration, callback);
+    if (expiration > 0) {
+      this.setIntervalRenew(jwt, expiration, callback);
+    }
   }
 
   private setIntervalRenew(jwt: string, timeout: number, callback: (jwt: string, expiration: number) => void): void {
-    console.info(`Waiting for jwt...`, timeout);
     this.interval = setInterval((): void => {
-      console.info(`Requesting jwt...`);
-      //Set current JWT.
-      this.setJwtValue(jwt, timeout);
       this.renew().subscribe(
         response => {
           if (!response) {
@@ -84,18 +87,18 @@ export class LoginService {
           if (isNaN(expiration)) {
             throw new Error('Server returned invalid expiration time');
           }
-          expiration = (expiration - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN;
-          console.info(`Next token expiration time: ${expiration}`);
+          const renewValue: number = (expiration - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN;
           callback(authToken, expiration);
-          this.autoRenewToken(authToken, expiration, callback);
+          //Set current JWT.
+          this.setJwtValue(authToken, expiration);
+          this.autoRenewToken(authToken, renewValue, callback);
         }
       )
     }, timeout);
   }
 
   private renew(): Observable<any> {
-    console.info(`Requesting new jwt...`);
-    return this.http.get<any>(`${this.baseUrl}/jwt/renew`).pipe(
+    return this.http.get<any>(`${this.baseUrl}/jwt/renew`, {observe: 'response'}).pipe(
       tap({
         next: () => console.info(`Renewing JWT successfully!`)
       })
