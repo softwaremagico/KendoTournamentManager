@@ -119,15 +119,16 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     });
   }
 
-  updateRowData(tournament: Tournament) {
-    this.tournamentService.update(tournament).subscribe(() => {
+  updateRowData(tournament: Tournament): void {
+    this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
         this.messageService.infoMessage('infoTournamentUpdated');
+        this.basicTableData.selectedElement = _tournament;
       }
     );
   }
 
-  deleteRowData(tournament: Tournament) {
-    this.tournamentService.delete(tournament).subscribe(() => {
+  deleteRowData(tournament: Tournament): void {
+    this.tournamentService.delete(tournament).subscribe((): void => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
         this.messageService.infoMessage('infoTournamentDeleted');
         this.basicTableData.selectedElement = undefined;
