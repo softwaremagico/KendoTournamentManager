@@ -7,7 +7,6 @@ import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {AuthenticatedUser} from "../../models/authenticated-user";
-import {Group} from "../../models/group";
 
 const {version: appVersion} = require('../../../../package.json')
 
@@ -21,8 +20,7 @@ export class LoginComponent {
   password: string;
   loginForm: FormGroup;
   appVersion: string;
-  groups: Group[];
-  relations: Map<number, { src: number, dest: number }[]>;
+
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
               private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
@@ -31,17 +29,6 @@ export class LoginComponent {
       username: ['', Validators.email],
       password: ['', Validators.required]
     });
-
-    //TODO(softwaremagico): delete this demo data.
-    this.groups = [];
-    for (let i = 0; i < 7; i++) {
-      const group: Group = new Group();
-      group.level = i < 4 ? 0 : (i < 6 ? 1 : 2);
-      this.groups.push(group)
-    }
-    this.relations = new Map<number, [{ src: number; dest: number }]>();
-    this.relations.set(0, [{src: 0, dest: 0}, {src: 1, dest: 0}, {src: 2, dest:1}, {src: 3, dest:1}]);
-    this.relations.set(1, [{src: 0, dest: 0}, {src: 1, dest: 0}]);
   }
 
   login() {
