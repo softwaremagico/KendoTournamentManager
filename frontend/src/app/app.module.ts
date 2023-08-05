@@ -110,6 +110,7 @@ import {TournamentBracketsComponent} from "./components/tournament-brackets-edit
 import {
   TournamentBracketsEditorModule
 } from "./components/tournament-brackets-editor/tournament-brackets-editor.module";
+import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator/tournament-generator.module";
 
 
 registerLocaleData(localeES, "es");
@@ -216,6 +217,7 @@ registerLocaleData(localeNL, "nl");
     TournamentBracketsModule,
     ArrowModule,
     TournamentBracketsEditorModule,
+    TournamentGeneratorModule,
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
