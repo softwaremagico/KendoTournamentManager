@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from "@angular/common/http";
-import {Observable, throwError} from "rxjs";
-import {catchError, map} from "rxjs/operators";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Observable} from "rxjs";
+import {map, tap} from "rxjs/operators";
 import {CookieService} from "ngx-cookie-service";
 
 import {AuthenticatedUser} from "../models/authenticated-user";
@@ -14,7 +14,7 @@ import {EnvironmentService} from "../environment.service";
 export class LoginService {
 
   private baseUrl: string = this.environmentService.getBackendUrl() + '/auth';
-  private static readonly JWT_RENEW_MARGIN: number = 5000;
+  static readonly JWT_RENEW_MARGIN: number = 20000;
   private interval: NodeJS.Timeout | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
@@ -65,13 +65,15 @@ export class LoginService {
   }
 
   private setIntervalRenew(jwt: string, timeout: number, callback: (jwt: string, expiration: number) => void): void {
+    console.info(`Waiting for jwt...`, timeout);
     this.interval = setInterval((): void => {
+      console.info(`Requesting jwt...`);
       //Set current JWT.
       this.setJwtValue(jwt, timeout);
       this.renew().subscribe(
         response => {
           if (!response) {
-            console.error('No response!!!')
+            console.error('No renew response!!!')
             throw new Error('Server returned no response');
           }
           const authToken: string | null = response.headers.get('authorization');
@@ -82,16 +84,21 @@ export class LoginService {
           if (isNaN(expiration)) {
             throw new Error('Server returned invalid expiration time');
           }
-          expiration = expiration - (new Date()).getTime() - LoginService.JWT_RENEW_MARGIN;
+          expiration = (expiration - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN;
           console.info(`Next token expiration time: ${expiration}`);
           callback(authToken, expiration);
           this.autoRenewToken(authToken, expiration, callback);
         }
       )
-    }, timeout)
+    }, timeout);
   }
 
   private renew(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/jwt/renew`, {observe: 'response'});
+    console.info(`Requesting new jwt...`);
+    return this.http.get<any>(`${this.baseUrl}/jwt/renew`).pipe(
+      tap({
+        next: () => console.info(`Renewing JWT successfully!`)
+      })
+    );
   }
 }
