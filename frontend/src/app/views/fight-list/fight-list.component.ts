@@ -181,7 +181,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         this.isWizardEnabled = tournament.type !== TournamentType.CUSTOMIZED && tournament.type !== TournamentType.CHAMPIONSHIP;
         this.isBracketsEnabled = tournament.type === TournamentType.CHAMPIONSHIP;
         if (this.tournamentId) {
-          this.groupService.getAllByTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
+          this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
             if (!_groups) {
               this.messageService.errorMessage('No groups on tournament!');
             } else {

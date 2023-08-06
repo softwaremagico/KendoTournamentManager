@@ -93,7 +93,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
     });
     //Get tournament groups
-    this.groupService.getAllByTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
+    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
         this.groups = _groups;
       }
     )

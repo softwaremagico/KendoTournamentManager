@@ -50,7 +50,7 @@ export class GroupService {
       );
   }
 
-  getAllByTournament(tournamentId: number): Observable<Group[]> {
+  getFromTournament(tournamentId: number): Observable<Group[]> {
     const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId;
     return this.http.get<Group[]>(url)
       .pipe(
