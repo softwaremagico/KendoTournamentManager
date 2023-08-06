@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -14,11 +14,11 @@ import {GroupService} from "../../services/group.service";
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
-export class TournamentBracketsEditorComponent implements OnInit {
+export class TournamentBracketsEditorComponent implements OnChanges {
 
   @Input()
   tournament: Tournament;
-  
+
   groups: Group[];
 
   //Level -> Src Group -> Dst Group
@@ -31,22 +31,24 @@ export class TournamentBracketsEditorComponent implements OnInit {
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService) {
   }
 
-  ngOnInit(): void {
-    this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
-      if (teams) {
-        teams.sort(function (a: Team, b: Team) {
-          return a.name.localeCompare(b.name);
-        });
-      }
-      this.teamListData.teams = teams;
-      this.teamListData.filteredTeams = teams;
-    });
-    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
-      this.groups = _groups;
-    })
-    this.groupLinkService.getFromTournament(this.tournament.id!).subscribe((_groupRelations: GroupLink[]): void => {
-      this.relations = this.convert(_groupRelations);
-    })
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['tournament'] && this.tournament != undefined) {
+      this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
+        if (teams) {
+          teams.sort(function (a: Team, b: Team) {
+            return a.name.localeCompare(b.name);
+          });
+        }
+        this.teamListData.teams = teams;
+        this.teamListData.filteredTeams = teams;
+      });
+      this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
+        this.groups = _groups;
+      })
+      this.groupLinkService.getFromTournament(this.tournament.id!).subscribe((_groupRelations: GroupLink[]): void => {
+        this.relations = this.convert(_groupRelations);
+      })
+    }
   }
 
 
