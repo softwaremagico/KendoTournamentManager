@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
 
 @Component
@@ -75,7 +74,11 @@ public class JwtTokenUtil {
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
-        this.jwtSecret = Objects.requireNonNullElseGet(jwtSecret, this::generateRandomSecret);
+        if (jwtSecret != null && !jwtSecret.isBlank()) {
+            this.jwtSecret = jwtSecret;
+        } else {
+            this.jwtSecret = generateRandomSecret();
+        }
         this.jwtExpiration = calculatedJwtExpiration;
     }
 
