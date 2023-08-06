@@ -5,6 +5,7 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {Tournament} from "../../../models/tournament";
 import {TournamentService} from "../../../services/tournament.service";
+import {GroupService} from "../../../services/group.service";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -16,12 +17,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   tournamentId: number;
   tournament: Tournament;
 
-  groups: Group[];
-
-  relations: Map<number, { src: number, dest: number }[]>;
-
-
-  constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService) {
+  constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService, private groupService: GroupService) {
     super(rbacService);
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -46,7 +42,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   addGroup(): void {
-
+    this.groupService.addGroup();l
   }
 
   deleteGroup(): void {
