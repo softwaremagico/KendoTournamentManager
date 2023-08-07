@@ -49,7 +49,7 @@ public class GroupLink extends Element {
 
     @Column(name = "winner_index", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
-    private Integer winner;
+    private Integer winner = 0;
 
     public Group getSource() {
         return source;

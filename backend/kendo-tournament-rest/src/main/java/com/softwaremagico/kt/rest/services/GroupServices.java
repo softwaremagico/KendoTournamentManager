@@ -57,7 +57,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
                                  HttpServletRequest request) {
         return getController().getFromTournament(tournamentId);
