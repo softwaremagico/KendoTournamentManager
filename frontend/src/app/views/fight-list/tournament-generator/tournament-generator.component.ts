@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Group} from "../../../models/group";
 import {Router} from "@angular/router";
 import {RbacService} from "../../../services/rbac/rbac.service";
@@ -6,6 +6,9 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {Tournament} from "../../../models/tournament";
 import {TournamentService} from "../../../services/tournament.service";
 import {GroupService} from "../../../services/group.service";
+import {
+  TournamentBracketsEditorComponent
+} from "../../../components/tournament-brackets-editor/tournament-brackets-editor.component";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -13,6 +16,10 @@ import {GroupService} from "../../../services/group.service";
   styleUrls: ['./tournament-generator.component.scss']
 })
 export class TournamentGeneratorComponent extends RbacBasedComponent implements OnInit {
+
+  @ViewChild(TournamentBracketsEditorComponent)
+  tournamentBracketsEditorComponent: TournamentBracketsEditorComponent;
+
 
   tournamentId: number;
   tournament: Tournament;
@@ -42,10 +49,10 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   addGroup(): void {
-    this.groupService.addGroup();l
+    this.tournamentBracketsEditorComponent.addGroup();
   }
 
   deleteGroup(): void {
-
+    this.tournamentBracketsEditorComponent.deleteGroup(this.tournamentBracketsEditorComponent.selectedGroup);
   }
 }
