@@ -1,5 +1,6 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Group} from "../../../models/group";
+import {GroupsUpdatedService} from "../../../services/notifications/groups-updated.service";
 
 @Component({
   selector: 'app-tournament-brackets',
@@ -13,10 +14,6 @@ export class TournamentBracketsComponent implements OnInit {
   static readonly GROUP_SEPARATION: number = 150;
   static readonly LEVEL_SEPARATION: number = 100;
 
-  @Input()
-  groups: Group[];
-
-  @Input()
   relations: Map<number, { src: number, dest: number }[]>;
 
   @Input()
@@ -25,11 +22,19 @@ export class TournamentBracketsComponent implements OnInit {
   groupsByLevel: Map<number, Group[]> = new Map();
 
 
-  constructor() {
+  constructor(private groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {
-    this.groupsByLevel = TournamentBracketsComponent.convert(this.groups);
+    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
+      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
+    });
+    this.groupsUpdatedService.areRelationsUpdated.subscribe((_relations: Map<number, {
+      src: number,
+      dest: number
+    }[]>): void => {
+      this.relations = _relations;
+    });
   }
 
   private static convert(groups: Group[]): Map<number, Group[]> {

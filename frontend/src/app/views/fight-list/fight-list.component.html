@@ -138,7 +138,7 @@
         <h3 [ngClass]="{'group-name-hidden': groups.length < 2}" class="group-name">{{'group' | translate}} {{i +
           1}}</h3>
         <div [ngClass]="{'fights-of-group': groups.length > 1}">
-          <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event[0])"
+          <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
                  [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"

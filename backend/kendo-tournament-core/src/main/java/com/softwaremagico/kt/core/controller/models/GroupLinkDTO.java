@@ -27,7 +27,7 @@ public class GroupLinkDTO extends ElementDTO {
 
     private GroupDTO destination;
 
-    private int winner;
+    private int winner = 0;
 
     public GroupDTO getSource() {
         return source;
