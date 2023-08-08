@@ -29,9 +29,12 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,13 +50,17 @@ public class TreeTournamentHandler extends LeagueHandler {
     private final FightProvider fightProvider;
     private final GroupProvider groupProvider;
 
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
 
     public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
-                                 SimpleGroupFightManager simpleGroupFightManager, FightProvider fightProvider) {
+                                 SimpleGroupFightManager simpleGroupFightManager, FightProvider fightProvider,
+                                 TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
         this.groupProvider = groupProvider;
         this.simpleGroupFightManager = simpleGroupFightManager;
         this.fightProvider = fightProvider;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     private Map<Integer, List<Group>> orderByLevel(List<Group> groups) {
@@ -70,11 +77,26 @@ public class TreeTournamentHandler extends LeagueHandler {
         return groupProvider.getGroups(tournament, level);
     }
 
+    private int getNumberOfWinners(Tournament tournament) {
+        final TournamentExtraProperty numberOfWinnersProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+
+        if (numberOfWinnersProperty != null) {
+            try {
+                return Integer.parseInt(numberOfWinnersProperty.getPropertyValue());
+            } catch (Exception ignore) {
+
+            }
+        }
+        return 1;
+    }
+
     @Override
     public Group addGroup(Tournament tournament, Group group) {
         if (group.getLevel() > 0) {
             throw new InvalidGroupException(this.getClass(), "Groups can only be added at level 0.");
         }
+
+        final int numberOfWinners = getNumberOfWinners(tournament);
 
         final Group savedGroup = groupProvider.addGroup(tournament, group);
 
@@ -83,7 +105,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         final Map<Integer, List<Group>> groupsByLevel = orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            if (groupsByLevel.get(level).size() < (previousLevelSize / 2)) {
+            if (groupsByLevel.get(level).size() < (((previousLevelSize + 1) / 2) * (level == 1 ? numberOfWinners : 1))) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
                 groupsByLevel.get(level).add(group);
@@ -92,7 +114,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         }
 
         //Add extra level if needed.
-        if (groupsByLevel.get(groupsByLevel.size() - 1).size() > 1) {
+        if (groupsByLevel.get(groupsByLevel.size() - 1).size() > 1 || (groupsByLevel.size() == 1 && numberOfWinners > 1)) {
             final Integer newLevel = groupsByLevel.size();
             final Group levelGroup = new Group(tournament, newLevel, 0);
             groupsByLevel.put(newLevel, new ArrayList<>());

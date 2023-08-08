@@ -13,6 +13,7 @@
                 <include name="darumaAchievementTests"/>
                 <include name="statisticsTests"/>
                 <include name="tournamentTest"/>
+                <include name="groupsTest"/>
             </run>
         </groups>
         <classes>
@@ -26,6 +27,7 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TimeAchievementTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
         </classes>
     </test>
 </suite>

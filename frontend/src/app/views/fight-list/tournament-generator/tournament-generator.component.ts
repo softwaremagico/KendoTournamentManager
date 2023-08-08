@@ -53,6 +53,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   deleteGroup(): void {
-    this.tournamentBracketsEditorComponent.deleteGroup(this.tournamentBracketsEditorComponent.selectedGroup);
+    //this.tournamentBracketsEditorComponent.deleteGroup(this.tournamentBracketsEditorComponent.selectedGroup);
+    this.tournamentBracketsEditorComponent.deleteLast();
   }
 }
