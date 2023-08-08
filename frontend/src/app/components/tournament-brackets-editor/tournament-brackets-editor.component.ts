@@ -11,7 +11,7 @@ import {GroupService} from "../../services/group.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
-import {GroupsUpdatedService} from "../../services/notifications/groups-updated.service";
+import {GroupsUpdatedService} from "./tournament-brackets/groups-updated.service";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -54,17 +54,20 @@ export class TournamentBracketsEditorComponent implements OnChanges {
         this.teamListData.teams = teams;
         this.teamListData.filteredTeams = teams;
       });
-
-      this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
-        this.groups = _groups;
-        this.groupsUpdatedService.areGroupsUpdated.next(_groups);
-      });
-
-      this.groupLinkService.getFromTournament(this.tournament.id!).subscribe((_groupRelations: GroupLink[]): void => {
-        this.relations = this.convert(_groupRelations);
-        this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
-      });
+      this.updateData();
     }
+  }
+
+  updateData(): void {
+    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
+      this.groups = _groups;
+      this.groupsUpdatedService.areGroupsUpdated.next(_groups);
+    });
+
+    this.groupLinkService.getFromTournament(this.tournament.id!).subscribe((_groupRelations: GroupLink[]): void => {
+      this.relations = this.convert(_groupRelations);
+      this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
+    });
   }
 
   selectGroup(group: Group): void {
@@ -82,7 +85,10 @@ export class TournamentBracketsEditorComponent implements OnChanges {
         if (!relations.get(groupLink.source!.level!)) {
           relations.set(groupLink.source!.level!, []);
         }
-        relations.get(groupLink.source!.level!)?.push({src: groupLink.source!.id!, dest: groupLink.destination!.id!});
+        relations.get(groupLink.source!.level!)?.push({
+          src: groupLink.source!.index!,
+          dest: groupLink.destination!.index!
+        });
       }
     }
     return relations;
@@ -107,20 +113,23 @@ export class TournamentBracketsEditorComponent implements OnChanges {
     group.index = this.groups.length;
     this.groupService.addGroup(group).subscribe((_group: Group): void => {
       //Refresh all groups, also other levels that can change.
-      this.groupService.getFromTournament(this.tournament!.id!).subscribe((_groups: Group[]): void => {
-        console.log(_groups)
-        this.groups = _groups;
-      });
+      this.updateData();
     });
+  }
+
+  deleteLast(): void {
+    const lastGroup: Group = this.groups.filter((g: Group): boolean => {
+      return g.level === 0;
+    }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+      prev : current)
+    this.deleteGroup(lastGroup);
   }
 
   deleteGroup(group: Group | undefined): void {
     if (group) {
       this.groupService.deleteGroup(group).subscribe((): void => {
         //Refresh all groups, also other levels that can change.
-        this.groupService.getFromTournament(this.tournament!.id!).subscribe((_groups: Group[]): void => {
-          this.groups = _groups;
-        });
+        this.updateData();
       });
     }
   }
