@@ -78,7 +78,8 @@ public class TreeTournamentHandler extends LeagueHandler {
     }
 
     private int getNumberOfWinners(Tournament tournament) {
-        final TournamentExtraProperty numberOfWinnersProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+        final TournamentExtraProperty numberOfWinnersProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
 
         if (numberOfWinnersProperty != null) {
             try {

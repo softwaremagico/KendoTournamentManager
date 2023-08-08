@@ -315,7 +315,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         int teamMember = 0;
 
         MvcResult createResult = this.mockMvc
-                .perform(get("/groups/tournament/" + tournamentDTO.getId())
+                .perform(get("/groups/tournaments/" + tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
@@ -409,7 +409,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         });
 
         createResult = this.mockMvc
-                .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
+                .perform(get("/groups/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
@@ -462,7 +462,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         }
 
         MvcResult createResult = this.mockMvc
-                .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
+                .perform(get("/groups/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
@@ -475,7 +475,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         Assert.assertEquals(tournamentGroups.size(), 1);
 
         MvcResult rankingResult = this.mockMvc
-                .perform(get("/rankings/teams/tournament/{tournamentId}", tournamentDTO.getId())
+                .perform(get("/rankings/teams/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))

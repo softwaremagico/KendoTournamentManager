@@ -56,7 +56,8 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         } catch (Exception e) {
             tournamentWinners = 1;
         }
-        final List<Group> groups = groupProvider.getGroups(tournament);
+        final List<Group> groups = groupProvider.getGroups(tournament).stream().sorted(Comparator.comparing(Group::getLevel)
+                .thenComparing(Group::getIndex)).toList();
         return generateLinks(groups, tournamentWinners, groups.stream().max(Comparator.comparing(Group::getLevel)).orElse(new Group()).getLevel());
     }
 
@@ -64,18 +65,21 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         final List<GroupLink> groupLinks = new ArrayList<>();
         groups.forEach(group -> {
             if (group.getLevel() < tournamentLevels) {
-                for (int i = 0; i < getNumberOfTotalTeamsPassNextRound(group, tournamentWinners); i++) {
+                final int numberOfWinners = getNumberOfTotalTeamsPassNextRound(group, tournamentWinners);
+                for (int winner = 0; winner < numberOfWinners; winner++) {
                     final GroupLink groupLink = new GroupLink();
                     groupLink.setSource(group);
-                    final Group destination = getDestination(group, i, groups);
+                    final Group destination = getDestination(group, numberOfWinners, winner, groups);
                     if (destination != null) {
                         groupLink.setDestination(destination);
                         groupLinks.add(groupLink);
                     }
+                    groupLink.setWinner(winner);
                 }
             }
         });
-        return groupLinks;
+        return groupLinks.stream().sorted(Comparator.<GroupLink, Integer>comparing(o -> o.getSource().getLevel())
+                .thenComparing(o -> o.getSource().getIndex()).thenComparing(GroupLink::getWinner)).toList();
     }
 
     private int getNumberOfTotalTeamsPassNextRound(Group group, int tournamentWinners) {
@@ -85,28 +89,31 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         return 1;
     }
 
-    public Group getDestination(Group sourceGroup, int winnerOrder, List<Group> groups) {
+    public Group getDestination(Group sourceGroup, int numberOfWinners, int winnerOrder, List<Group> groups) {
         final List<Group> currentLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel())).toList();
         final List<Group> nextLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel() + 1)).toList();
         try {
-            return nextLevelGroups.get(obtainPositionOfWinner(sourceGroup.getIndex(), currentLevelGroups.size(), winnerOrder));
+            return nextLevelGroups.get(obtainPositionOfWinner(sourceGroup.getIndex(), currentLevelGroups.size(), numberOfWinners, winnerOrder,
+                    sourceGroup.getLevel()));
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
     }
 
-    private int obtainPositionOfWinner(Integer sourceGroupLevelIndex, Integer sourceGroupLevelSize, int winnerOrder) {
+    private int obtainPositionOfWinner(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder,
+                                       int sourceLevel) {
         if (winnerOrder == 0) {
-            if (sourceGroupLevelIndex % 2 == 0) {
+            if (sourceLevel > 0 || numberOfWinners == 1) {
                 return sourceGroupLevelIndex / 2;
             } else {
-                return (sourceGroupLevelSize - sourceGroupLevelIndex) / 2;
+                return sourceGroupLevelIndex;
             }
         } else if (winnerOrder == 1) {
-            if (sourceGroupLevelIndex % 2 == 0) {
-                return (sourceGroupLevelSize - sourceGroupLevelIndex) / 2;
+            if (sourceLevel > 0) {
+                //+1 for rounding, -1 as list starts in 0.
+                return (sourceGroupLevelSize - sourceGroupLevelIndex + 1) / 2 - 1;
             } else {
-                return sourceGroupLevelIndex / 2;
+                return (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
             }
         } else {
             return -1;

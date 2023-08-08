@@ -90,7 +90,7 @@ export class GroupService {
   }
 
   deleteTeamsFromGroup(groupId: number, teams: Team[]): Observable<Group> {
-    const url: string = `${this.baseUrl}}/${groupId}/teams/delete`;
+    const url: string = `${this.baseUrl}/${groupId}/teams/delete`;
     return this.http.patch<Group>(url, teams)
       .pipe(
         tap({
@@ -116,7 +116,7 @@ export class GroupService {
   }
 
   addUnties(groupId: number, duels: Duel[]): Observable<Group> {
-    const url: string = `${this.baseUrl}/}/${groupId}//unties`;
+    const url: string = `${this.baseUrl}/${groupId}/unties`;
     return this.http.put<Group>(url, duels)
       .pipe(
         tap({
