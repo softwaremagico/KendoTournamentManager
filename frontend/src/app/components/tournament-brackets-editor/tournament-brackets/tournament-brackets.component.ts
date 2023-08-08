@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Group} from "../../../models/group";
-import {GroupsUpdatedService} from "../../../services/notifications/groups-updated.service";
+import {GroupsUpdatedService} from "./groups-updated.service";
 
 @Component({
   selector: 'app-tournament-brackets',
