@@ -141,7 +141,6 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         treeTournamentHandler.addGroup(tournament, generateGroup(5));
         treeTournamentHandler.addGroup(tournament, generateGroup(6));
         treeTournamentHandler.addGroup(tournament, generateGroup(7));
-        treeTournamentHandler.addGroup(tournament, generateGroup(8));
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 15);
     }
@@ -171,7 +170,6 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         treeTournamentHandler.addGroup(tournament, generateGroup(4));
         treeTournamentHandler.addGroup(tournament, generateGroup(5));
         treeTournamentHandler.addGroup(tournament, generateGroup(6));
-        treeTournamentHandler.addGroup(tournament, generateGroup(7));
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 14);
     }
@@ -200,8 +198,6 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         treeTournamentHandler.addGroup(tournament, generateGroup(3));
         treeTournamentHandler.addGroup(tournament, generateGroup(4));
         treeTournamentHandler.addGroup(tournament, generateGroup(5));
-        treeTournamentHandler.addGroup(tournament, generateGroup(6));
-        treeTournamentHandler.addGroup(tournament, generateGroup(7));
 
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 12);
     }
