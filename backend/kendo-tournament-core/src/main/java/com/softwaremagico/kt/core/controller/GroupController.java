@@ -100,6 +100,11 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
     @Override
+    public void deleteById(Integer id) {
+        delete(get(id));
+    }
+
+    @Override
     public void delete(GroupDTO groupDTO) {
         tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(tournamentConverter.reverse(groupDTO.getTournament()),
                 groupDTO.getLevel(), groupDTO.getIndex());
