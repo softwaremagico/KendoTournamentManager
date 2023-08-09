@@ -93,15 +93,22 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         final List<Group> currentLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel())).toList();
         final List<Group> nextLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), sourceGroup.getLevel() + 1)).toList();
         try {
-            return nextLevelGroups.get(obtainPositionOfWinner(sourceGroup.getIndex(), currentLevelGroups.size(), numberOfWinners, winnerOrder,
+            return nextLevelGroups.get(obtainPositionOfWinner(groups, sourceGroup.getIndex(), currentLevelGroups.size(), numberOfWinners, winnerOrder,
                     sourceGroup.getLevel()));
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
     }
 
-    private int obtainPositionOfWinner(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder,
-                                       int sourceLevel) {
+    private int obtainPositionOfWinner(List<Group> groups, int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners,
+                                       int winnerOrder, int sourceLevel) {
+        final List<Group> levelZeroGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), 0)).toList();
+        //Special case: 5 groups and next 3.
+        if (numberOfWinners == 1 && levelZeroGroups.size() % 2 == 1 && sourceLevel == 1 && sourceGroupLevelSize > 0
+                && (sourceGroupLevelSize / 2) % 2 == 1) {
+            return (sourceGroupLevelIndex + 1) / 2;
+        }
+
         if (winnerOrder == 0) {
             if (sourceLevel > 0 || numberOfWinners == 1) {
                 return sourceGroupLevelIndex / 2;
