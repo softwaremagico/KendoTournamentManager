@@ -14,10 +14,10 @@ export class TournamentBracketsComponent implements OnInit {
   static readonly GROUP_SEPARATION: number = 150;
   static readonly LEVEL_SEPARATION: number = 100;
 
-  relations: Map<number, { src: number, dest: number }[]>;
-
   @Input()
   totalTeams: number;
+
+  relations: Map<number, { src: number, dest: number }[]>;
 
   groupsByLevel: Map<number, Group[]> = new Map();
 
@@ -70,7 +70,7 @@ export class TournamentBracketsComponent implements OnInit {
     if (level == 0) {
       return group * (TournamentBracketsComponent.GROUP_SEPARATION + this.getGroupHigh(level, group));
     }
-    if (groupsByLevel &&  groupsByLevel.get(0) && groupsByLevel.get(level)) {
+    if (groupsByLevel && groupsByLevel.get(0) && groupsByLevel.get(level)) {
       const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + TournamentBracketsComponent.GROUP_SEPARATION);
       const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
       return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
