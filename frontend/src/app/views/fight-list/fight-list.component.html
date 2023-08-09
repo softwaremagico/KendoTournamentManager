@@ -50,7 +50,8 @@
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
                 *ngIf="!timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)" [matTooltipShowDelay]="500"
+                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+                [matTooltipShowDelay]="500"
                 class="timer-button"
                 color="primary"
                 mat-button
@@ -59,7 +60,8 @@
         </button>
         <button (click)="showTimer(false)"
                 *ngIf="timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)" [matTooltipShowDelay]="500"
+                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+                [matTooltipShowDelay]="500"
                 class="timer-button"
                 color="primary"
                 mat-button
@@ -136,7 +138,7 @@
     <div class="fight-container">
       <div *ngFor="let group of groups; let i = index" class="fight-list">
         <h3 [ngClass]="{'group-name-hidden': groups.length < 2}" class="group-name">{{'group' | translate}} {{i +
-          1}}</h3>
+        1}}</h3>
         <div [ngClass]="{'fights-of-group': groups.length > 1}">
           <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
