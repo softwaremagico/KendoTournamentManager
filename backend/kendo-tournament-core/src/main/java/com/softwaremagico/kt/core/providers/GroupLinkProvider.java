@@ -102,11 +102,35 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
 
     private int obtainPositionOfWinner(List<Group> groups, int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners,
                                        int winnerOrder, int sourceLevel) {
-        final List<Group> levelZeroGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), 0)).toList();
+        final List<Group> previousLevelGroups;
+        if (sourceLevel > 0) {
+            previousLevelGroups = groups.stream().filter(group -> Objects.equals(group.getLevel(), 0)).toList();
+        } else {
+            previousLevelGroups = new ArrayList<>();
+        }
         //Special case: 5 groups and next 3.
-        if (numberOfWinners == 1 && levelZeroGroups.size() % 2 == 1 && sourceLevel == 1 && sourceGroupLevelSize > 0
-                && (sourceGroupLevelSize / 2) % 2 == 1) {
+        if (numberOfWinners == 1 && previousLevelGroups.size() % 2 == 1 && sourceGroupLevelSize % 2 == 1
+                && previousLevelGroups.size() != sourceGroupLevelSize) {
             return (sourceGroupLevelIndex + 1) / 2;
+        }
+
+        //Odd groups number but two winners each group.
+        if (numberOfWinners == 2 && winnerOrder == 0 && sourceGroupLevelSize % 2 == 1) {
+            if (sourceGroupLevelIndex == 0 || sourceGroupLevelIndex == sourceGroupLevelSize - 1) {
+                return sourceGroupLevelIndex;
+            }
+            return sourceGroupLevelIndex - 1;
+        }
+
+        if (winnerOrder == 1 && sourceGroupLevelSize % 2 == 1) {
+            if (sourceGroupLevelIndex == 0) {
+                return 1;
+            }
+            if (sourceGroupLevelIndex == sourceGroupLevelSize - 1) {
+                return sourceGroupLevelSize - 2;
+
+            }
+            return sourceGroupLevelIndex + 1;
         }
 
         if (winnerOrder == 0) {
