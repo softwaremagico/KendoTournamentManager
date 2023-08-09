@@ -108,13 +108,15 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         } else {
             previousLevelGroups = new ArrayList<>();
         }
-        //Special case: 5 groups and next 3.
+
+        //Special case: two odd number of groups in two consecutive levels. Only one winner. Ensure no team pass two levels without fighting.
         if (numberOfWinners == 1 && previousLevelGroups.size() % 2 == 1 && sourceGroupLevelSize % 2 == 1
                 && previousLevelGroups.size() != sourceGroupLevelSize) {
             return (sourceGroupLevelIndex + 1) / 2;
         }
 
-        //Odd groups number but two winners each group.
+        //Odd groups number but two winners on each group:
+        //First group and last ome to same index. Others to previous ones.
         if (numberOfWinners == 2 && winnerOrder == 0 && sourceGroupLevelSize % 2 == 1) {
             if (sourceGroupLevelIndex == 0 || sourceGroupLevelIndex == sourceGroupLevelSize - 1) {
                 return sourceGroupLevelIndex;
@@ -122,6 +124,7 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
             return sourceGroupLevelIndex - 1;
         }
 
+        //The second winner goes: for first group to first index. Last one goes to the previous one. Others to next one.
         if (winnerOrder == 1 && sourceGroupLevelSize % 2 == 1) {
             if (sourceGroupLevelIndex == 0) {
                 return 1;
@@ -133,13 +136,17 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
             return sourceGroupLevelIndex + 1;
         }
 
+        //Standard case.
         if (winnerOrder == 0) {
+            //Half groups number on next level.
             if (sourceLevel > 0 || numberOfWinners == 1) {
                 return sourceGroupLevelIndex / 2;
             } else {
+                //Same number of groups on next level (needed two winners).
                 return sourceGroupLevelIndex;
             }
         } else if (winnerOrder == 1) {
+            //Second winner in standard case, goes to the opposite group.
             if (sourceLevel > 0) {
                 //+1 for rounding, -1 as list starts in 0.
                 return (sourceGroupLevelSize - sourceGroupLevelIndex + 1) / 2 - 1;
