@@ -70,7 +70,7 @@ export class TournamentBracketsComponent implements OnInit {
     if (level == 0) {
       return group * (TournamentBracketsComponent.GROUP_SEPARATION + this.getGroupHigh(level, group));
     }
-    if (groupsByLevel && groupsByLevel.get(level)) {
+    if (groupsByLevel &&  groupsByLevel.get(0) && groupsByLevel.get(level)) {
       const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + TournamentBracketsComponent.GROUP_SEPARATION);
       const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
       return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
