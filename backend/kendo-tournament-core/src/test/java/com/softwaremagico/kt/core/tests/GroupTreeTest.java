@@ -469,7 +469,6 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
     }
 
 
-
     /*
                 ┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐
                 │Group1││Group2││Group3││Group4││Group5│
@@ -485,7 +484,7 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
                 └─────────┘
     */
     @Test
-    public void particularCaseWithOddGroups() {
+    public void fiveGroups() {
         treeTournamentHandler.addGroup(tournament, generateGroup(0));
         treeTournamentHandler.addGroup(tournament, generateGroup(1));
         treeTournamentHandler.addGroup(tournament, generateGroup(2));
@@ -509,6 +508,140 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
 
         checkLink(groupLinks.get(8), 0, 0);
         checkLink(groupLinks.get(9), 1, 0);
+    }
+
+
+/*
+            ┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐
+            │Group1││Group2││Group3││Group4││Group5│
+            └────┬┬┘└┬────┬┘└┬────┬┘└┬────┬┘└┬────┬┘
+                ┌││──┘   ┌│──┘   ┌│──┘   ┌│──┘    │
+                │└│──┐   │└──┐   │└──┐   │└──┐    │
+            ┌───▽─▽┐┌▽───▽─┐┌▽───▽─┐┌▽───▽─┐┌▽────▽─┐
+            │Group6││Group7││Group8││Group9││Group10│
+            └┬─────┘└┬─────┘└┬─────┘└┬─────┘└┬──────┘
+            ┌▽───────▽┐┌─────▽───────▽┐┌─────▽─┐
+            │Group11  ││Group12       ││Group13│
+            └┬────────┘└┬─────────────┘└┬──────┘
+            ┌▽──────┐┌──▽───────────────▽┐
+            │Group14││Group15            │
+            └┬──────┘└┬──────────────────┘
+            ┌▽────────▽┐
+            │Group16   │
+            └──────────┘
+*/
+
+    @Test
+    public void fiveGroupsTwoWinners() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(2));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(3));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(4));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 16);
+
+        final List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 20);
+
+        checkLink(groupLinks.get(0), 0, 0);
+        checkLink(groupLinks.get(1), 0, 1);
+        checkLink(groupLinks.get(2), 1, 0);
+        checkLink(groupLinks.get(3), 1, 2);
+        checkLink(groupLinks.get(4), 2, 1);
+        checkLink(groupLinks.get(5), 2, 3);
+        checkLink(groupLinks.get(6), 3, 2);
+        checkLink(groupLinks.get(7), 3, 4);
+        checkLink(groupLinks.get(8), 4, 4);
+        checkLink(groupLinks.get(9), 4, 3);
+
+        checkLink(groupLinks.get(10), 0, 0);
+        checkLink(groupLinks.get(11), 1, 0);
+        checkLink(groupLinks.get(12), 2, 1);
+        checkLink(groupLinks.get(13), 3, 1);
+        checkLink(groupLinks.get(14), 4, 2);
+
+        checkLink(groupLinks.get(15), 0, 0);
+        checkLink(groupLinks.get(16), 1, 1);
+        checkLink(groupLinks.get(17), 2, 1);
+
+        checkLink(groupLinks.get(18), 0, 0);
+        checkLink(groupLinks.get(19), 1, 0);
+    }
+
+
+    /*
+                ┌──────┐┌──────┐┌──────┐
+                │Group1││Group2││Group3│
+                └┬─────┘└┬─────┘└┬─────┘
+                ┌▽───────▽┐┌─────▽┐
+                │Group4   ││Group5│
+                └┬────────┘└┬─────┘
+                ┌▽──────────▽┐
+                │Group6      │
+                └────────────┘
+    */
+    @Test
+    public void threeGroups() {
+        treeTournamentHandler.addGroup(tournament, generateGroup(0));
+        treeTournamentHandler.addGroup(tournament, generateGroup(1));
+        treeTournamentHandler.addGroup(tournament, generateGroup(2));
+
+        Assert.assertEquals(groupProvider.getGroups(tournament).size(), 6);
+
+        final List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        Assert.assertEquals(groupLinks.size(), 5);
+
+        checkLink(groupLinks.get(0), 0, 0);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 1);
+
+        checkLink(groupLinks.get(3), 0, 0);
+        checkLink(groupLinks.get(4), 1, 0);
+    }
+
+
+/*
+            ┌──────┐┌──────┐┌──────┐
+            │Group1││Group2││Group3│
+            └────┬┬┘└────┬┬┘└┬────┬┘
+                 ││     ┌││──┘    │
+                 │└──┐  │└│──┐    │
+            ┌────▽─┐┌▽──▽─▽┐┌▽────▽┐
+            │Group5││Group4││Group6│
+            └┬─────┘└┬─────┘└┬─────┘
+            ┌▽───────▽┐┌─────▽┐
+            │Group7   ││Group8│
+            └┬────────┘└┬─────┘
+            ┌▽──────────▽┐
+            │Group9      │
+            └────────────┘
+*/
+
+    @Test
+    public void threeGroupsTwoWinners() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(2));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 9);
+
+        final List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 11);
+
+        checkLink(groupLinks.get(0), 0, 0);
+        checkLink(groupLinks.get(1), 0, 1);
+        checkLink(groupLinks.get(2), 1, 0);
+        checkLink(groupLinks.get(3), 1, 2);
+        checkLink(groupLinks.get(4), 2, 2);
+        checkLink(groupLinks.get(5), 2, 1);
+
+        checkLink(groupLinks.get(6), 0, 0);
+        checkLink(groupLinks.get(7), 1, 0);
+        checkLink(groupLinks.get(8), 2, 1);
+
+        checkLink(groupLinks.get(9), 0, 0);
+        checkLink(groupLinks.get(10), 1, 0);
     }
 
 
