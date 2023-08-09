@@ -469,4 +469,47 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
     }
 
 
+
+    /*
+                ┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐
+                │Group1││Group2││Group3││Group4││Group5│
+                └┬─────┘└┬─────┘└┬─────┘└┬─────┘└┬─────┘
+                ┌▽───────▽┐┌─────▽───────▽┐┌─────▽┐
+                │Group6   ││Group7        ││Group8│
+                └┬────────┘└┬─────────────┘└┬─────┘
+                ┌▽─────┐┌───▽───────────────▽┐
+                │Group9││Group10             │
+                └┬─────┘└┬───────────────────┘
+                ┌▽───────▽┐
+                │Group11  │
+                └─────────┘
+    */
+    @Test
+    public void particularCaseWithOddGroups() {
+        treeTournamentHandler.addGroup(tournament, generateGroup(0));
+        treeTournamentHandler.addGroup(tournament, generateGroup(1));
+        treeTournamentHandler.addGroup(tournament, generateGroup(2));
+        treeTournamentHandler.addGroup(tournament, generateGroup(3));
+        treeTournamentHandler.addGroup(tournament, generateGroup(4));
+
+        Assert.assertEquals(groupProvider.getGroups(tournament).size(), 11);
+
+        final List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        Assert.assertEquals(groupLinks.size(), 10);
+
+        checkLink(groupLinks.get(0), 0, 0);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 1);
+        checkLink(groupLinks.get(3), 3, 1);
+        checkLink(groupLinks.get(4), 4, 2);
+
+        checkLink(groupLinks.get(5), 0, 0);
+        checkLink(groupLinks.get(6), 1, 1);
+        checkLink(groupLinks.get(7), 2, 1);
+
+        checkLink(groupLinks.get(8), 0, 0);
+        checkLink(groupLinks.get(9), 1, 0);
+    }
+
+
 }
