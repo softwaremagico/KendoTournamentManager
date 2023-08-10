@@ -118,16 +118,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public void removeGroup(Group group) {
-        groupProvider.delete(group);
-    }
-
-    @Override
-    public void removeGroups(Tournament tournament, Integer level) {
-        groupProvider.delete(tournament, level);
-    }
-
-    @Override
     public boolean exist(Tournament tournament, Team team) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
