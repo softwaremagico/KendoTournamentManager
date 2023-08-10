@@ -4,7 +4,7 @@ import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
-import {Observable} from "rxjs";
+import {EMPTY, Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Group} from "../models/group";
 import {Team} from "../models/team";
@@ -142,16 +142,20 @@ export class GroupService {
   }
 
   deleteGroup(group: Group): Observable<void> {
-    const url: string = `${this.baseUrl}/${group.id}`;
-    return this.http.delete<void>(url)
-      .pipe(
-        tap({
-          next: () => this.loggerService.info(`Deleting a group`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<void>(`Deleting a group`))
-      );
+    if (group) {
+      const url: string = `${this.baseUrl}/${group.id}`;
+      return this.http.delete<void>(url)
+        .pipe(
+          tap({
+            next: () => this.loggerService.info(`Deleting a group`),
+            error: () => this.systemOverloadService.isBusy.next(false),
+            complete: () => this.systemOverloadService.isBusy.next(false),
+          }),
+          catchError(this.messageService.handleError<void>(`Deleting a group`))
+        );
+    } else {
+      return EMPTY;
+    }
   }
 
 }
