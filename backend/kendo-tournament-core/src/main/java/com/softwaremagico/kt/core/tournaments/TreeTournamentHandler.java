@@ -24,9 +24,7 @@ package com.softwaremagico.kt.core.tournaments;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
-import com.softwaremagico.kt.core.managers.SimpleGroupFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
@@ -45,21 +43,15 @@ import java.util.Map;
 
 @Service
 public class TreeTournamentHandler extends LeagueHandler {
-
-    private final SimpleGroupFightManager simpleGroupFightManager;
-    private final FightProvider fightProvider;
     private final GroupProvider groupProvider;
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 
     public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
-                                 SimpleGroupFightManager simpleGroupFightManager, FightProvider fightProvider,
                                  TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
         this.groupProvider = groupProvider;
-        this.simpleGroupFightManager = simpleGroupFightManager;
-        this.fightProvider = fightProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
@@ -134,14 +126,21 @@ public class TreeTournamentHandler extends LeagueHandler {
         }
 
         groupProvider.deleteGroupByLevelAndIndex(tournament, groupLevel, groupIndex);
+        final int numberOfWinners = getNumberOfWinners(tournament);
 
 
         //Check if inner levels must be decreased on size.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = orderByLevel(tournamentGroups);
-        int previousLevelSize = 0;
+        int previousLevelSize = Integer.MAX_VALUE - 1;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            if (groupsByLevel.get(level).size() > (previousLevelSize / 2)) {
+            // Normal levels, the number of groups must be the half rounded up that the previous one.
+            if ((numberOfWinners == 1 || level > 1)
+                    && (previousLevelSize == 1 || groupsByLevel.get(level).size() > ((previousLevelSize + 1) / 2))) {
+                groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
+                groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
+                // First level with 2 winners must have the same size that level zero.
+            } else if (numberOfWinners == 2 && groupsByLevel.get(level).size() > previousLevelSize) {
                 groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
                 groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
             }

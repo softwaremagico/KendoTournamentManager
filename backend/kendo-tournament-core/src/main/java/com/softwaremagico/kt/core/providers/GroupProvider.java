@@ -103,7 +103,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
 
     public void delete(Tournament tournament, Group group) {
         if (Objects.equals(group.getTournament(), tournament)) {
-            getRepository().delete(group);
+            deleteGroupByLevelAndIndex(tournament, group.getLevel(), group.getIndex());
         }
     }
 
