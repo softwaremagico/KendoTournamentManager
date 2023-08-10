@@ -178,16 +178,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
         this.tournament = tournament;
-        this.isWizardEnabled = tournament.type !== TournamentType.CUSTOMIZED && tournament.type !== TournamentType.CHAMPIONSHIP;
-        this.isBracketsEnabled = tournament.type === TournamentType.CHAMPIONSHIP;
-        if (this.tournamentId) {
-          this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
-            if (!_groups) {
-              this.messageService.errorMessage('No groups on tournament!');
-            } else {
-              this.setGroups(_groups);
-            }
-          });
+        if (tournament) {
+          this.isWizardEnabled = tournament.type !== TournamentType.CUSTOMIZED && tournament.type !== TournamentType.CHAMPIONSHIP;
+          this.isBracketsEnabled = tournament.type === TournamentType.CHAMPIONSHIP;
+          if (this.tournamentId) {
+            this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
+              if (!_groups) {
+                this.messageService.errorMessage('No groups on tournament!');
+              } else {
+                this.setGroups(_groups);
+              }
+            });
+          }
         }
       });
     }
@@ -239,7 +241,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openBracketsManager(){
+  openBracketsManager() {
     if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
       this.router.navigate(['tournaments/fights/championship'], {state: {tournamentId: this.tournament.id}});
     }

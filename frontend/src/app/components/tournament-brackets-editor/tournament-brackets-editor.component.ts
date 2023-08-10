@@ -107,10 +107,13 @@ export class TournamentBracketsEditorComponent implements OnChanges {
   }
 
   addGroup(): void {
+    this.systemOverloadService.isBusy.next(true);
     const group: Group = new Group();
     group.tournament = this.tournament;
     group.level = 0;
-    group.index = this.groups.length;
+    group.index = this.groups.filter((g: Group): boolean => {
+      return g.level === 0;
+    }).length;
     this.groupService.addGroup(group).subscribe((_group: Group): void => {
       //Refresh all groups, also other levels that can change.
       this.updateData();
@@ -121,12 +124,14 @@ export class TournamentBracketsEditorComponent implements OnChanges {
     const lastGroup: Group = this.groups.filter((g: Group): boolean => {
       return g.level === 0;
     }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-      prev : current)
+      prev : current);
+    console.log(lastGroup);
     this.deleteGroup(lastGroup);
   }
 
   deleteGroup(group: Group | undefined): void {
     if (group) {
+      this.systemOverloadService.isBusy.next(true);
       this.groupService.deleteGroup(group).subscribe((): void => {
         //Refresh all groups, also other levels that can change.
         this.updateData();

@@ -53,10 +53,6 @@ public interface ITournamentManager {
 
     void removeGroup(Tournament tournament, Integer level, Integer groupIndex);
 
-    void removeGroup(Group group);
-
-    void removeGroups(Tournament tournament, Integer level);
-
     int getIndex(Integer level, Group group);
 
     boolean exist(Tournament tournament, Team team);
