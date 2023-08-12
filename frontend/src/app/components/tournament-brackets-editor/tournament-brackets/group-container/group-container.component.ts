@@ -4,6 +4,7 @@ import {Team} from "../../../../models/team";
 import {Group} from "../../../../models/group";
 import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {GroupService} from "../../../../services/group.service";
+import {GroupsUpdatedService} from "../groups-updated.service";
 
 @Component({
   selector: 'app-group-container',
@@ -30,7 +31,6 @@ export class GroupContainerComponent implements OnInit {
   @Input()
   getGroupHigh: (level: number, group: number) => number;
 
-  @Input()
   totalTeams: number;
 
   groupHigh: number = TournamentBracketsComponent.GROUP_HIGH;
@@ -39,12 +39,15 @@ export class GroupContainerComponent implements OnInit {
 
   estimatedTeams: number;
 
-  constructor(private groupService: GroupService) {
+  constructor(private groupService: GroupService, private groupsUpdatedService: GroupsUpdatedService) {
   }
 
   ngOnInit(): void {
-    this.groupHigh = this.getGroupHigh(this.level, this.index);
-    this.estimatedTeams = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
+    this.groupsUpdatedService.areTotalTeamsNumberUpdated.subscribe((_totalTeams: number): void => {
+      this.totalTeams = _totalTeams;
+      this.groupHigh = this.getGroupHigh(this.level, this.index);
+      this.estimatedTeams = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
+    })
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): void {
