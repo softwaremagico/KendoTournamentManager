@@ -5,7 +5,7 @@
                [level]="level" [groupSource]="g.src" [groupDestination]="g.dest"></app-arrow>
   </div>
   <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
-                       [groupsByLevel]="groupsByLevel"
+                       [groupsByLevel]="groupsByLevel" [tournament]="tournament"
                        [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation"
                        [getGroupHigh]="getGroupHigh">
   </app-group-container>

@@ -12,6 +12,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {GroupsUpdatedService} from "./tournament-brackets/groups-updated.service";
+import {forkJoin} from "rxjs";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -45,25 +46,31 @@ export class TournamentBracketsEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.systemOverloadService.isBusy.next(true);
     if (changes['tournament'] && this.tournament != undefined) {
-      this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
-        if (teams) {
-          teams.sort(function (a: Team, b: Team) {
-            return a.name.localeCompare(b.name);
-          });
-        }
-        this.teamListData.teams = teams;
-        this.totalTeams = teams.length;
-        this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(teams.length);
-        this.teamListData.filteredTeams = teams;
-      });
       this.updateData();
     }
   }
 
   updateData(): void {
-    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
+    this.systemOverloadService.isBusy.next(true);
+    let teamsRequest = this.teamService.getFromTournament(this.tournament);
+    let groupsRequest = this.groupService.getFromTournament(this.tournament.id!);
+
+    forkJoin([teamsRequest, groupsRequest]).subscribe(([_teams, _groups]): void => {
+      if (_teams) {
+        _teams.sort(function (a: Team, b: Team) {
+          return a.name.localeCompare(b.name);
+        });
+      }
+
       this.groups = _groups;
       this.groupsUpdatedService.areGroupsUpdated.next(_groups);
+      const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
+      _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
+
+      this.teamListData.teams = _teams;
+      this.totalTeams = _teams.length;
+      this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(_teams.length);
+      this.teamListData.filteredTeams = _teams;
     });
 
     this.groupLinkService.getFromTournament(this.tournament.id!).subscribe((_groupRelations: GroupLink[]): void => {
@@ -104,6 +111,7 @@ export class TournamentBracketsEditorComponent implements OnChanges {
       event.previousIndex,
       event.currentIndex,
     );
+    this.groupService.deleteTeamsFromTournament(this.tournament!.id!, this.teamListData.teams).subscribe();
     this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
     this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
   }

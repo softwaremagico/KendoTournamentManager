@@ -1,5 +1,6 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="championship-view">
+  <div class="championship-view-content">
   <div class="upper-menu">
     <div class="cell">
       <button (click)="goBackToFights()"
@@ -24,9 +25,18 @@
         <mat-icon>clear</mat-icon>
       </button>
       <mat-divider [vertical]="true"></mat-divider>
+      <button (click)="openConfirmationGenerateElementsDialog()"
+              *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+              [disabled]="(tournament && tournament.locked)"
+              [matTooltipShowDelay]="500"
+              color="primary" mat-button
+              matTooltip="{{'wizard' | translate}}">
+        <mat-icon>auto_fix_high</mat-icon>
+      </button>
     </div>
   </div>
   <div class="championship-container">
     <app-tournament-brackets-editor [tournament]="tournament"></app-tournament-brackets-editor>
+  </div>
   </div>
 </div>

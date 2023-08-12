@@ -31,6 +31,7 @@ import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -125,6 +126,18 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         group.getTeams().removeAll(teams);
         group.setUpdatedBy(username);
         return getRepository().save(group);
+    }
+
+    public List<Group> deleteTeams(Tournament tournament, List<Team> teams, String username) {
+        final List<Group> groups = getGroups(tournament);
+        final List<Group> groupsUpdated = new ArrayList<>();
+        groups.forEach(group -> {
+            if (group.getTeams().removeAll(teams)) {
+                group.setUpdatedBy(username);
+                groupsUpdated.add(getRepository().save(group));
+            }
+        });
+        return groupsUpdated;
     }
 
     public long count(Tournament tournament) {
