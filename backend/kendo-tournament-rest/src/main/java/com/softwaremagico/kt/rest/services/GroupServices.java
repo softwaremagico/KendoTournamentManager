@@ -30,6 +30,7 @@ import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
+import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -63,6 +64,19 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().getFromTournament(tournamentId);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/level/{level}/index/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GroupDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                        @Parameter(description = "Level of the group", required = true) @PathVariable("tournamentId") Integer level,
+                        @Parameter(description = "Index of the groyup", required = true) @PathVariable("tournamentId") Integer index,
+                        HttpServletRequest request) {
+        if (level == null || index == null) {
+            throw new BadRequestException(this.getClass(), "Level or Index not set!");
+        }
+        return getController().getFromTournament(tournamentId, level, index);
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,11 +100,22 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public GroupDTO deleteTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                               @RequestBody List<TeamDTO> teamsDto,
-                               Authentication authentication,
-                               HttpServletRequest request) {
+    public GroupDTO deleteTeamFromGroup(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
+                                        @RequestBody List<TeamDTO> teamsDto,
+                                        Authentication authentication,
+                                        HttpServletRequest request) {
         return getController().deleteTeams(groupId, teamsDto, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<GroupDTO> deleteTeam(@Parameter(description = "Id of an existing tournament", required = true)
+                                     @PathVariable("tournamentId") Integer tournamentId,
+                                     @RequestBody List<TeamDTO> teamsDto,
+                                     Authentication authentication,
+                                     HttpServletRequest request) {
+        return getController().deleteTeamsFromTournament(tournamentId, teamsDto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")

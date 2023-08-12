@@ -30,10 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SimpleGroupFightManager {
+public class MinimumGroupFightManager {
 
     public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        return createCompleteFightList(tournament, teams, teamsOrder, level, createdBy);
+        return createFightList(tournament, teams, teamsOrder, level, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
@@ -48,8 +48,8 @@ public class SimpleGroupFightManager {
      * @param teamsOrder
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
-                                                  String createdBy) {
+    protected List<Fight> createFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
+                                          String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
         }
