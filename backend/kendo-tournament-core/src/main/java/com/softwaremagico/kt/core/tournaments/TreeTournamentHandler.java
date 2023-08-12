@@ -24,7 +24,10 @@ package com.softwaremagico.kt.core.tournaments;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
+import com.softwaremagico.kt.core.managers.CompleteGroupFightManager;
+import com.softwaremagico.kt.core.managers.MinimumGroupFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
@@ -40,6 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class TreeTournamentHandler extends LeagueHandler {
@@ -47,12 +51,21 @@ public class TreeTournamentHandler extends LeagueHandler {
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
+    private final CompleteGroupFightManager completeGroupFightManager;
+    private final MinimumGroupFightManager minimumGroupFightManager;
+
+    private final FightProvider fightProvider;
+
 
     public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
-                                 TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+                                 TournamentExtraPropertyProvider tournamentExtraPropertyProvider, CompleteGroupFightManager completeGroupFightManager,
+                                 MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
         this.groupProvider = groupProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+        this.completeGroupFightManager = completeGroupFightManager;
+        this.minimumGroupFightManager = minimumGroupFightManager;
+        this.fightProvider = fightProvider;
     }
 
     private Map<Integer, List<Group>> orderByLevel(List<Group> groups) {
@@ -81,6 +94,20 @@ public class TreeTournamentHandler extends LeagueHandler {
             }
         }
         return 1;
+    }
+
+    private boolean getMaxGroupFights(Tournament tournament) {
+        final TournamentExtraProperty maximizeFightsProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
+
+        if (maximizeFightsProperty != null) {
+            try {
+                return Boolean.getBoolean(maximizeFightsProperty.getPropertyValue());
+            } catch (Exception ignore) {
+
+            }
+        }
+        return false;
     }
 
     @Override
@@ -150,6 +177,23 @@ public class TreeTournamentHandler extends LeagueHandler {
 
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        return null;
+        final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+        final List<Fight> createdFights = new ArrayList<>();
+        tournamentGroups.forEach(group -> {
+            if (Objects.equals(group.getLevel(), level)) {
+                final List<Fight> fights;
+                if (getMaxGroupFights(tournament)) {
+                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(),
+                            TeamsOrder.NONE, level, createdBy));
+                } else {
+                    fights = fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
+                            TeamsOrder.NONE, level, createdBy));
+                }
+                group.setFights(fights);
+                groupProvider.save(group);
+                createdFights.addAll(fights);
+            }
+        });
+        return createdFights;
     }
 }

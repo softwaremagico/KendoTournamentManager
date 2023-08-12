@@ -5,6 +5,7 @@ import {Group} from "../../../../models/group";
 import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {GroupService} from "../../../../services/group.service";
 import {GroupsUpdatedService} from "../groups-updated.service";
+import {Tournament} from "../../../../models/tournament";
 
 @Component({
   selector: 'app-group-container',
@@ -23,6 +24,9 @@ export class GroupContainerComponent implements OnInit {
   groupsByLevel: Map<number, Group[]>;
 
   @Input()
+  tournament: Tournament;
+
+  @Input()
   getGroupTopSeparation: (level: number, group: number, groupsByLevel: Map<number, Group[]>) => number;
 
   @Input()
@@ -35,8 +39,6 @@ export class GroupContainerComponent implements OnInit {
 
   groupHigh: number = TournamentBracketsComponent.GROUP_HIGH;
 
-  teams: Team[] = [];
-
   estimatedTeams: number;
 
   constructor(private groupService: GroupService, private groupsUpdatedService: GroupsUpdatedService) {
@@ -47,14 +49,16 @@ export class GroupContainerComponent implements OnInit {
       this.totalTeams = _totalTeams;
       this.groupHigh = this.getGroupHigh(this.level, this.index);
       this.estimatedTeams = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
-    })
+    });
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): void {
     const team: Team = this.transferCard(event);
     this.groupHigh = this.getGroupHigh(this.level, this.index);
-    this.groupsByLevel.get(this.level)![this.index].teams = this.teams;
-    //this.groupService.setTeamsToGroup(this.groupsByLevel!.get(this.level)![this.index]!.id!, this.teams);
+    this.groupService.setTeamsToGroup(this.groupsByLevel!.get(this.level)![this.index]!.id!, this.groupsByLevel.get(this.level)![this.index].teams)
+      .subscribe((_group: Group): void => {
+        this.groupsByLevel!.get(this.level)![this.index] = _group;
+      })
   }
 
   private transferCard(event: CdkDragDrop<Team[], any>): Team {
