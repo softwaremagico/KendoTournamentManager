@@ -1,11 +1,11 @@
 <div class="level" [class]="'level-' + level" *ngFor="let level of groupsByLevel.keys()">
   <div class="arrow-container" *ngFor="let g of relations.get(level)">
-    <app-arrow [x1]="getArrowX1Coordinate(level, g.src)" [y1]="getArrowY1Coordinate(level, g.src)"
-               [x2]="getArrowX2Coordinate(level+1, g.dest)"
-               [y2]="getArrowY2Coordinate(level+1, g.src, g.dest)"></app-arrow>
+    <app-arrow [color]="'#001239'" [getGroupTopSeparation]="getGroupTopSeparation"
+               [getGroupHigh]="getGroupHigh" [groupsByLevel]="groupsByLevel"
+               [level]="level" [groupSource]="g.src" [groupDestination]="g.dest"></app-arrow>
   </div>
   <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
-                       [groupsByLevel]="groupsByLevel" [totalTeams]="totalTeams"
+                       [groupsByLevel]="groupsByLevel"
                        [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation"
                        [getGroupHigh]="getGroupHigh">
   </app-group-container>

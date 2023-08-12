@@ -13,4 +13,6 @@ export class GroupsUpdatedService {
     src: number,
     dest: number
   }[]>> = new BehaviorSubject<Map<number, { src: number, dest: number }[]>>(new Map());
+
+  public areTotalTeamsNumberUpdated: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 }
