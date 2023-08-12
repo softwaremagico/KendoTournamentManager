@@ -14,7 +14,6 @@ export class TournamentBracketsComponent implements OnInit {
   static readonly GROUP_SEPARATION: number = 150;
   static readonly LEVEL_SEPARATION: number = 100;
 
-  @Input()
   totalTeams: number;
 
   relations: Map<number, { src: number, dest: number }[]>;

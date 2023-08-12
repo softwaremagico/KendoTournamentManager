@@ -52,6 +52,8 @@ export class TournamentBracketsEditorComponent implements OnChanges {
           });
         }
         this.teamListData.teams = teams;
+        this.totalTeams = teams.length;
+        this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(teams.length);
         this.teamListData.filteredTeams = teams;
       });
       this.updateData();
@@ -125,7 +127,6 @@ export class TournamentBracketsEditorComponent implements OnChanges {
       return g.level === 0;
     }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
       prev : current);
-    console.log(lastGroup);
     this.deleteGroup(lastGroup);
   }
 
