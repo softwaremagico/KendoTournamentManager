@@ -23,7 +23,7 @@ package com.softwaremagico.kt.core.tournaments;
 
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.managers.SimpleGroupFightManager;
+import com.softwaremagico.kt.core.managers.CompleteGroupFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
@@ -39,16 +39,16 @@ import java.util.List;
 @Service
 public class SimpleLeagueHandler extends LeagueHandler {
 
-    private final SimpleGroupFightManager simpleGroupFightManager;
+    private final CompleteGroupFightManager completeGroupFightManager;
     private final FightProvider fightProvider;
     private final GroupProvider groupProvider;
 
 
     @Autowired
-    public SimpleLeagueHandler(GroupProvider groupProvider, SimpleGroupFightManager simpleGroupFightManager, FightProvider fightProvider,
+    public SimpleLeagueHandler(GroupProvider groupProvider, CompleteGroupFightManager completeGroupFightManager, FightProvider fightProvider,
                                TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
         super(groupProvider, teamProvider, groupConverter, rankingController);
-        this.simpleGroupFightManager = simpleGroupFightManager;
+        this.completeGroupFightManager = completeGroupFightManager;
         this.fightProvider = fightProvider;
         this.groupProvider = groupProvider;
     }
@@ -59,7 +59,7 @@ public class SimpleLeagueHandler extends LeagueHandler {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
-        final List<Fight> fights = fightProvider.saveAll(simpleGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
+        final List<Fight> fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
                 TeamsOrder.NONE, level, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);

@@ -63,6 +63,19 @@ export class GroupService {
       );
   }
 
+  getFromTournamentByIndex(tournamentId: number, level: number, index: number): Observable<Group> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/level/${level}/index/${index}`;
+    return this.http.get<Group>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched group ${level}-${index} from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group>(`gets group ${level}-${index} from tournament ${tournamentId}`))
+      );
+  }
+
   setTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/${groupId}/teams`;
     return this.http.put<Group>(url, teams)
@@ -73,6 +86,19 @@ export class GroupService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<Group>(`updates ${groupId}`))
+      );
+  }
+
+  deleteTeamsFromTournament(tournamentId: number, teams: Team[]): Observable<Group[]> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/teams/delete`;
+    return this.http.patch<Group[]>(url, teams)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Deleting teams from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group[]>(`Deleting teams from tournament ${tournamentId}`))
       );
   }
 

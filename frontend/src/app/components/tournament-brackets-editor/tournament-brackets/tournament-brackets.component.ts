@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Group} from "../../../models/group";
 import {GroupsUpdatedService} from "./groups-updated.service";
+import {Tournament} from "../../../models/tournament";
 
 @Component({
   selector: 'app-tournament-brackets',
@@ -13,6 +14,9 @@ export class TournamentBracketsComponent implements OnInit {
   static readonly GROUP_WIDTH: number = 300;
   static readonly GROUP_SEPARATION: number = 150;
   static readonly LEVEL_SEPARATION: number = 100;
+
+  @Input()
+  tournament: Tournament;
 
   totalTeams: number;
 

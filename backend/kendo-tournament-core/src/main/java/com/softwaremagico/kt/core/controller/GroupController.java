@@ -93,6 +93,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                         ExceptionType.INFO)))));
     }
 
+    public GroupDTO getFromTournament(Integer tournamentId, Integer level, Integer index) {
+        return convert(getProvider().getGroupByLevelAndIndex(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO)), level, index));
+    }
+
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username) {
         return convert(tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).addGroup(
@@ -146,6 +152,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     public GroupDTO deleteTeams(Integer groupId, List<TeamDTO> teams, String username) {
         return convert(getProvider().deleteTeams(groupId, teamConverter.reverseAll(teams), username));
+    }
+
+    public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, List<TeamDTO> teams, String username) {
+        return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
+                        new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
+                teamConverter.reverseAll(teams), username));
     }
 
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {

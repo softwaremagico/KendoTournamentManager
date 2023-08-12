@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
@@ -226,7 +226,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   openConfirmationGenerateElementsDialog(): void {
     if (this.groups.length > 0) {
-      let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
         disableClose: false
       });
       dialogRef.componentInstance.messageTag = "deleteFightsWarning"
@@ -373,12 +373,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
-  createGroupFight(teams: Team[]) {
+  createGroupFight(teams: Team[]): void {
     if (this.tournamentId) {
-      this.groupService.setTeams(teams).subscribe(_group => {
+      this.groupService.setTeams(teams).subscribe((_group: Group): void => {
         this.selectedGroup = _group;
         if (this.tournamentId) {
-          this.fightService.create(this.tournamentId, 0).subscribe(fights => {
+          this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
             this.resetFilter();
             this.selectedGroup!.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
@@ -388,8 +388,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  updateRowData(fight: Fight) {
-    this.fightService.update(fight).subscribe(() => {
+  updateRowData(fight: Fight): void {
+    this.fightService.update(fight).subscribe((): void => {
         this.messageService.infoMessage("infoFightUpdated");
       }
     );
@@ -397,8 +397,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   deleteRowData(fight: Fight) {
     this.fightService.delete(fight).subscribe(() => {
-        this.selectedGroup!.fights = this.selectedGroup!.fights.filter(existing_fight => existing_fight !== fight);
-        this.filteredFights.set(this.selectedGroup!.id!, this.filteredFights.get(this.selectedGroup!.id!)!.filter(existing_fight => existing_fight !== fight));
+        this.selectedGroup!.fights = this.selectedGroup!.fights.filter((existing_fight: Fight): boolean => existing_fight !== fight);
+        this.filteredFights.set(this.selectedGroup!.id!, this.filteredFights.get(this.selectedGroup!.id!)!.filter(
+          (existing_fight: Fight): boolean => existing_fight !== fight));
         this.messageService.infoMessage("fightDeleted");
       }
     );
