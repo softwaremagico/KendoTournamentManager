@@ -20,7 +20,7 @@ export class LoginService {
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               private cookies: CookieService) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
-      this.setIntervalRenew(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+      this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
         (jwt: string, expires: number): void => {
         });
     }
@@ -76,12 +76,16 @@ export class LoginService {
       this.renew().subscribe(
         response => {
           if (!response) {
-            console.error('No renew response!!!')
+            console.error('No renew response!!!');
+            this.autoRenewToken(jwt, -1, (jwt: string, expires: number): void => {
+            });
             throw new Error('Server returned no response');
           }
           const authToken: string | null = response.headers.get('authorization');
           let expiration: number = Number(response.headers.get('expires'));
           if (!authToken || !expiration) {
+            this.autoRenewToken(jwt, -1, (jwt: string, expires: number): void => {
+            });
             throw new Error('Server returned invalid response');
           }
           if (isNaN(expiration)) {

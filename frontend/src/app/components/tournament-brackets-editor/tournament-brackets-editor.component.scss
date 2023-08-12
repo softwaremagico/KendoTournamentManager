@@ -1,6 +1,7 @@
 .container {
   display: flex;
   width: 100%;
+  margin-top: 50px;
 }
 
 .teams-container {
@@ -11,6 +12,5 @@
 
 .tournament-brackets {
   margin-left: 50px;
-  margin-top: 50px;
   flex: 3;
 }
