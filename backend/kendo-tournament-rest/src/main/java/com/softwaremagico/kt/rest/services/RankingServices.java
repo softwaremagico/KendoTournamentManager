@@ -21,9 +21,11 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
@@ -70,13 +72,16 @@ public class RankingServices {
 
     private final HtmlController htmlController;
 
+    private final GroupController groupController;
+
     public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
-                           ParticipantController participantController, HtmlController htmlController) {
+                           ParticipantController participantController, HtmlController htmlController, GroupController groupController) {
         this.rankingController = rankingController;
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
         this.participantController = participantController;
         this.htmlController = htmlController;
+        this.groupController = groupController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -179,6 +184,26 @@ public class RankingServices {
                     .filename(tournament.getName() + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return pdfController.generateTeamsScoreList(locale, tournament, scores).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/teams/groups/{groupId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getTeamsScoreRankingFromGroupAsPdf(@Parameter(description = "Id of an existing group", required = true)
+                                                     @PathVariable("groupId") Integer groupId,
+                                                     Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final GroupDTO groupDTO = groupController.get(groupId);
+        final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(groupDTO);
+        try {
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(groupDTO.getTournament().getName() + "_" + groupDTO.getLevel() + "-" + groupDTO.getIndex()
+                            + " - teams score.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return pdfController.generateTeamsScoreList(locale, groupDTO.getTournament(), scores).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
