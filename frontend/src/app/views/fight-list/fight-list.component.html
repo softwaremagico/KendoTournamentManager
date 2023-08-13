@@ -42,7 +42,7 @@
         </button>
         <mat-divider [vertical]="true" class="timer-divider"></mat-divider>
         <button (click)="finishDuel(true)" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="!selectedFight || (tournament && tournament.locked)"
+                [disabled]="!selectedDuel || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'finishFight' | translate}}">
