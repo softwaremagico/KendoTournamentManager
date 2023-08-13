@@ -10,6 +10,7 @@ import {Team} from "../../models/team";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Group} from "../../models/group";
+import {TournamentType} from "../../models/tournament-type";
 
 @Component({
   selector: 'app-team-ranking',
@@ -41,21 +42,31 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.tournament?.id) {
-      this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe(scoresOfTeams => {
-        this.teamScores = scoresOfTeams;
-      });
+    if (this.tournament) {
+      if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
+        if (this.group) {
+          this.rankingService.getTeamsScoreRankingByGroup(this.group!.id!).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
+            this.teamScores = scoresOfTeams;
+          });
+        }
+      } else {
+        if (this.tournament?.id) {
+          this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
+            this.teamScores = scoresOfTeams;
+          });
+        }
+      }
     }
   }
 
   isDrawWinner(index: number): boolean {
-    return this.teamScores && this.fightsFinished && this.teamScores.filter((scoreOfTeam) => scoreOfTeam.sortingIndex === index).length > 1;
+    return this.teamScores && this.fightsFinished && this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === index).length > 1;
   }
 
   getDrawWinners(index: number): Team[] {
     const teams: Team[] = [];
     if (this.teamScores && this.fightsFinished) {
-      const scores: ScoreOfTeam[] = this.teamScores.filter((scoreOfTeam) => scoreOfTeam.sortingIndex === index);
+      const scores: ScoreOfTeam[] = this.teamScores.filter((scoreOfTeam: ScoreOfTeam): boolean => scoreOfTeam.sortingIndex === index);
       for (const scoreOfTeam of scores) {
         teams.push(scoreOfTeam.team);
       }
@@ -63,24 +74,39 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     return teams;
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  downloadPDF() {
-    if (this.tournament?.id) {
-      this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob) => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-        anchor.download = "Team Ranking - " + this.tournament.name + ".pdf";
-        anchor.href = downloadURL;
-        anchor.click();
-      });
+  downloadPDF(): void {
+    if (this.tournament) {
+      if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
+        if (this.group) {
+          this.rankingService.getTeamsScoreRankingByGroupAsPdf(this.group!.id!).subscribe((pdf: Blob): void => {
+            const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+            const downloadURL: string = window.URL.createObjectURL(blob);
+            const anchor: HTMLAnchorElement = document.createElement("a");
+            anchor.download = `Team Ranking - ${this.tournament.name} (group ${this.group.index + 1}).pdf`;
+            anchor.href = downloadURL;
+            anchor.click();
+          });
+        } else {
+          if (this.tournament?.id) {
+            this.rankingService.getTeamsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
+              const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+              const downloadURL: string = window.URL.createObjectURL(blob);
+              const anchor: HTMLAnchorElement = document.createElement("a");
+              anchor.download = "Team Ranking - " + this.tournament.name + ".pdf";
+              anchor.href = downloadURL;
+              anchor.click();
+            });
+          }
+        }
+      }
     }
   }
 
-  undrawTeams(index: number) {
+  undrawTeams(index: number): void {
     const teams: Team[] = this.getDrawWinners(index);
     this.dialog.open(UndrawTeamsComponent, {
       disableClose: false,
