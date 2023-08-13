@@ -492,7 +492,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (!this.selectedDuel.finishedAt) {
         this.selectedDuel.finishedAt = new Date();
       }
-      this.duelService.update(this.selectedDuel).subscribe((duel: Duel) => {
+      this.duelService.update(this.selectedDuel).subscribe((): void => {
         this.messageService.infoMessage("infoDuelFinished");
         const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
         if (selectedGroup != null) {
@@ -506,7 +506,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (!this.selectFirstUnfinishedDuel()) {
           this.generateNextFights();
         }
-        return duel;
       });
     }
   }
