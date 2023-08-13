@@ -24,6 +24,9 @@ export class TournamentBracketsEditorComponent implements OnChanges {
   @Input()
   tournament: Tournament;
 
+  @Input()
+  droppingDisabled: boolean;
+
   @Output()
   onSelectedGroup: EventEmitter<Group> = new EventEmitter();
 

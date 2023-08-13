@@ -36,7 +36,9 @@
       </div>
     </div>
     <div class="championship-container">
-      <app-tournament-brackets-editor [tournament]="tournament"></app-tournament-brackets-editor>
+      <app-tournament-brackets-editor [tournament]="tournament"
+                                      [droppingDisabled]="groupsDisabled">
+      </app-tournament-brackets-editor>
     </div>
   </div>
 </div>

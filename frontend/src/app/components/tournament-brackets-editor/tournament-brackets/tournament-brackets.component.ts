@@ -18,6 +18,9 @@ export class TournamentBracketsComponent implements OnInit {
   @Input()
   tournament: Tournament;
 
+  @Input()
+  droppingDisabled: boolean;
+
   totalTeams: number;
 
   relations: Map<number, { src: number, dest: number }[]>;
