@@ -147,12 +147,12 @@
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
                  [swapTeams]="swappedTeams"></fight>
 
-        <div class="unties-list">
-          <untie-fight (click)="selectDuel(duel)" *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
-                       [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
-                       [selected]="duel === selectedDuel" [swapColors]="swappedColors"
-                       [swapTeams]="swappedTeams"></untie-fight>
-        </div>
+          <div class="unties-list">
+            <untie-fight (click)="selectDuel(duel)" *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+                         [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
+                         [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                         [swapTeams]="swappedTeams"></untie-fight>
+          </div>
         </div>
       </div>
     </div>

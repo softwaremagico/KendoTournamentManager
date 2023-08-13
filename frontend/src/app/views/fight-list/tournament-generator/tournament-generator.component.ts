@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
@@ -23,6 +23,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   @ViewChild(TournamentBracketsEditorComponent)
   tournamentBracketsEditorComponent: TournamentBracketsEditorComponent;
 
+  groupsDisabled: boolean = true;
 
   tournamentId: number;
   tournament: Tournament;
@@ -37,6 +38,9 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
         this.tournamentId = Number(state['tournamentId']);
       } else {
         this.goBackToFights();
+      }
+      if (state['editionDisabled']) {
+        this.groupsDisabled = state['editionDisabled'] !== 'false';
       }
     } else {
       this.goBackToFights();
