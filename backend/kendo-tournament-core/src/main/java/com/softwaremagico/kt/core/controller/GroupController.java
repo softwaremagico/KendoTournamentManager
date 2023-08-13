@@ -202,7 +202,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     public GroupDTO addUnties(Integer groupId, List<DuelDTO> duelDTOS, String username) {
         final GroupDTO groupDTO = get(groupId);
+        duelDTOS.forEach(duelDTO -> {
+            duelDTO.setCreatedBy(username);
+            duelDTO.setTournament(groupDTO.getTournament());
+        });
         groupDTO.getUnties().addAll(duelDTOS);
+        groupDTO.setUpdatedBy(username);
         return convert(getProvider().save(reverse(groupDTO)));
     }
 

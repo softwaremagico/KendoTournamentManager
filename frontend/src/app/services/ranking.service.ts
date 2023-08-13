@@ -17,7 +17,7 @@ import {CompetitorRanking} from "../models/competitor-ranking";
 })
 export class RankingService {
 
-  private baseUrl : string = this.environmentService.getBackendUrl() + '/rankings';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/rankings';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,
@@ -152,6 +152,23 @@ export class RankingService {
         complete: () => this.systemOverloadService.isBusy.next(false),
       }),
       catchError(this.messageService.handleError<Blob>(`getting teams ranking`))
+    );
+  }
+
+  getTeamsScoreRankingByGroupAsPdf(groupId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/teams/groups/' + groupId + '/pdf';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting group's teams ranking`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting group's teams ranking`))
     );
   }
 

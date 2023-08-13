@@ -26,7 +26,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
 
   tournamentId: number;
   tournament: Tournament;
-  isWizardEnabled: boolean;
+  isWizardEnabled: boolean = true;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
               private dialog: MatDialog, private fightService: FightService, private messageService: MessageService) {
