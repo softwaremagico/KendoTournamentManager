@@ -27,6 +27,9 @@ export class GroupContainerComponent implements OnInit {
   tournament: Tournament;
 
   @Input()
+  droppingDisabled: boolean;
+
+  @Input()
   getGroupTopSeparation: (level: number, group: number, groupsByLevel: Map<number, Group[]>) => number;
 
   @Input()
@@ -71,9 +74,9 @@ export class GroupContainerComponent implements OnInit {
     return event.container.data[event.currentIndex];
   }
 
-  checkDroppedElement(level: number, teamsByGroup: number, teams: Team[]): (drag: CdkDrag, drop: CdkDropList) => boolean {
+  checkDroppedElement(level: number, teamsByGroup: number, teams: Team[], droppingDisabled: boolean): (drag: CdkDrag, drop: CdkDropList) => boolean {
     return function (drag: CdkDrag, drop: CdkDropList): boolean {
-      return level === 0 && teams.length < teamsByGroup + 1;
+      return !droppingDisabled && level === 0 && teams.length < teamsByGroup + 1;
     };
   }
 
