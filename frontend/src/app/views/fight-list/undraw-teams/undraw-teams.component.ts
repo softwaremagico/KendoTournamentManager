@@ -35,9 +35,10 @@ export class UndrawTeamsComponent extends RbacBasedComponent implements OnChange
     this.tournament = data.tournament;
     this.duels = [];
     for (let i = 0; i < this.getTotalDuels(); i++) {
-      const duel = new Duel();
+      const duel: Duel = new Duel();
       duel.totalDuration = data.tournament.duelsDuration;
       duel.type = DuelType.UNDRAW;
+      duel.tournament = data.tournament;
       this.duels[i] = duel;
     }
   }
@@ -67,23 +68,23 @@ export class UndrawTeamsComponent extends RbacBasedComponent implements OnChange
     return true;
   }
 
-  createFights() {
-    this.groupServices.addUnties(this.groupId, this.duels).subscribe(() => {
+  createFights(): void {
+    this.groupServices.addUnties(this.groupId, this.duels).subscribe((): void => {
       this.messageService.infoMessage("addFight");
       this.untieAddedService.isDuelsAdded.next(this.duels);
       this.dialogRef.close();
     });
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  setCompetitor1(duelIndex: number, participant: Participant) {
+  setCompetitor1(duelIndex: number, participant: Participant): void {
     this.duels[duelIndex].competitor1 = participant;
   }
 
-  setCompetitor2(duelIndex: number, participant: Participant) {
+  setCompetitor2(duelIndex: number, participant: Participant): void {
     this.duels[duelIndex].competitor2 = participant;
   }
 }

@@ -77,7 +77,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public Group getGroup(Integer groupId) {
-        return getRepository().getById(groupId);
+        return getRepository().findById(groupId).orElse(null);
     }
 
     public List<Group> getGroups(Collection<Fight> fights) {
