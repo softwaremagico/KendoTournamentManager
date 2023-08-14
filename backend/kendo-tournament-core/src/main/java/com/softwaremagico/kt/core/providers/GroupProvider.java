@@ -140,6 +140,19 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return groupsUpdated;
     }
 
+    public List<Group> deleteTeams(Tournament tournament, String username) {
+        final List<Group> groups = getGroups(tournament);
+        final List<Group> groupsUpdated = new ArrayList<>();
+        groups.forEach(group -> {
+            if (!group.getTeams().isEmpty()) {
+                group.getTeams().clear();
+                group.setUpdatedBy(username);
+                groupsUpdated.add(getRepository().save(group));
+            }
+        });
+        return groupsUpdated;
+    }
+
     public long count(Tournament tournament) {
         return getRepository().countByTournament(tournament);
     }
