@@ -86,6 +86,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   generateElements(): void {
     this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
       this.messageService.infoMessage("infoFightCreated");
+      this.goBackToFights();
     });
   }
 
