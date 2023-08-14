@@ -823,7 +823,8 @@
       "silver": "Asiste a treinta torneos.",
       "gold": "Asiste a cincuenta torneos."
     }
-  }
+  },
+  "removeTeams": "Quitar equipos"
 }
 
 

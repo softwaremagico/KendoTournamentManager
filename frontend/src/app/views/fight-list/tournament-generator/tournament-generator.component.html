@@ -25,6 +25,13 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
+        <button (click)="askToRemoveAllTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'removeTeams' | translate}}">
+          <mat-icon>cleaning_services</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"></mat-divider>
         <button (click)="openConfirmationGenerateElementsDialog()"
                 *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"

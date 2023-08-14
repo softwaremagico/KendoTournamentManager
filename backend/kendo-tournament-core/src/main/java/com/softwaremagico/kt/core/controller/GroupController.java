@@ -154,6 +154,12 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return convert(getProvider().deleteTeams(groupId, teamConverter.reverseAll(teams), username));
     }
 
+    public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, String username) {
+        return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
+                        new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
+                username));
+    }
+
     public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, List<TeamDTO> teams, String username) {
         return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
                         new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),

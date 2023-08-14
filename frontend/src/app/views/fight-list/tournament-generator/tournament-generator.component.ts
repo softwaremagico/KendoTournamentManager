@@ -12,6 +12,11 @@ import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Fight} from "../../../models/fight";
 import {FightService} from "../../../services/fight.service";
 import {MessageService} from "../../../services/message.service";
+import {GroupService} from "../../../services/group.service";
+import {Group} from "../../../models/group";
+import {
+  GroupsUpdatedService
+} from "../../../components/tournament-brackets-editor/tournament-brackets/groups-updated.service";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -30,7 +35,8 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   isWizardEnabled: boolean = true;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
-              private dialog: MatDialog, private fightService: FightService, private messageService: MessageService) {
+              private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
+              private groupService: GroupService, private groupsUpdatedService: GroupsUpdatedService) {
     super(rbacService);
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -81,5 +87,24 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
       this.messageService.infoMessage("infoFightCreated");
     });
+  }
+
+  askToRemoveAllTeams(): void {
+    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: false
+    });
+    dialogRef.componentInstance.messageTag = "questionDeleteTeams"
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.removeAllTeams();
+      }
+    });
+  }
+
+  removeAllTeams(): void {
+    this.groupService.deleteAllTeamsFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
+      this.groupsUpdatedService.areTeamListUpdated.next([]);
+    })
   }
 }
