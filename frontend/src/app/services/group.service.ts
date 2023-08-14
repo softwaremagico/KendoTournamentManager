@@ -102,6 +102,19 @@ export class GroupService {
       );
   }
 
+  deleteAllTeamsFromTournament(tournamentId: number): Observable<Group[]> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/teams/delete`;
+    return this.http.delete<Group[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Removing all teams from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group[]>(`Removing all teams from tournament ${tournamentId}`))
+      );
+  }
+
   addTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
     const url: string = `${this.baseUrl}/${groupId}/teams/add`;
     return this.http.patch<Group>(url, teams)

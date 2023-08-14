@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -19,7 +19,7 @@ import {forkJoin, Observable} from "rxjs";
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
-export class TournamentBracketsEditorComponent implements OnChanges {
+export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   @Input()
   tournament: Tournament;
@@ -44,6 +44,12 @@ export class TournamentBracketsEditorComponent implements OnChanges {
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
               private rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private groupsUpdatedService: GroupsUpdatedService) {
+  }
+
+  ngOnInit() {
+    this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
+      this.updateData();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {

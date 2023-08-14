@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from "rxjs";
 import {Group} from "../../../models/group";
+import {Team} from "../../../models/team";
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,8 @@ import {Group} from "../../../models/group";
 export class GroupsUpdatedService {
 
   public areGroupsUpdated: BehaviorSubject<Group[]> = new BehaviorSubject<Group[]>([]);
+
+  public areTeamListUpdated: BehaviorSubject<Team[]> = new BehaviorSubject<Team[]>([]);
 
   public areRelationsUpdated: BehaviorSubject<Map<number, {
     src: number,
