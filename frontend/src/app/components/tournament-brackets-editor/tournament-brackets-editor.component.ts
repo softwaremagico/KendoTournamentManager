@@ -66,6 +66,7 @@ export class TournamentBracketsEditorComponent implements OnChanges {
         });
       }
 
+      const totalTeams: number = _teams.length;
       this.groups = _groups;
       this.groupsUpdatedService.areGroupsUpdated.next(_groups);
       const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
@@ -73,7 +74,7 @@ export class TournamentBracketsEditorComponent implements OnChanges {
 
       this.teamListData.teams = _teams;
       this.totalTeams = _teams.length;
-      this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(_teams.length);
+      this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(totalTeams);
       this.teamListData.filteredTeams = _teams;
 
       this.relations = this.convert(_groupRelations);
