@@ -10,14 +10,14 @@
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+        <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | rbac : this.rbacService.activities)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
                 matTooltip="{{'addFight' | translate}}">
           <mat-icon>add</mat-icon>
         </button>
-        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.activities)"
+        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.activities)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
@@ -25,7 +25,7 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button (click)="askToRemoveAllTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+        <button (click)="askToRemoveAllTeams()" *ngIf="(RbacActivity.CLEAN_UP_GROUPS | rbac : this.rbacService.activities)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'removeTeams' | translate}}">
