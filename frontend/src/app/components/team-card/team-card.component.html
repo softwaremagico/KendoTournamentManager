@@ -1,4 +1,4 @@
-<mat-card [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify">
+<mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify">
   <mat-card-header class="team-card-header">
     <mat-card-title class="team-card-title">{{team.name}}</mat-card-title>
     <mat-card-subtitle class="team-card-subtitle"></mat-card-subtitle>

@@ -39,9 +39,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
       } else {
         this.goBackToFights();
       }
-      if (state['editionDisabled']) {
-        this.groupsDisabled = state['editionDisabled'] !== 'false';
-      }
+      this.groupsDisabled = state['editionDisabled'];
     } else {
       this.goBackToFights();
     }
