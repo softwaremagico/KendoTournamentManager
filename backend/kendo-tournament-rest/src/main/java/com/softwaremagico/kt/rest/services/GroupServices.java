@@ -38,6 +38,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -108,7 +109,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Removes teams from any group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> deleteTeam(@Parameter(description = "Id of an existing tournament", required = true)
                                      @PathVariable("tournamentId") Integer tournamentId,
@@ -116,6 +117,16 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
                                      Authentication authentication,
                                      HttpServletRequest request) {
         return getController().deleteTeamsFromTournament(tournamentId, teamsDto, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Removes all teams from all groups", security = @SecurityRequirement(name = "bearerAuth"))
+    @DeleteMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<GroupDTO> deleteAllTeam(@Parameter(description = "Id of an existing tournament", required = true)
+                                     @PathVariable("tournamentId") Integer tournamentId,
+                                     Authentication authentication,
+                                     HttpServletRequest request) {
+        return getController().deleteTeamsFromTournament(tournamentId, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
