@@ -12,7 +12,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {GroupsUpdatedService} from "./tournament-brackets/groups-updated.service";
-import {forkJoin} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -55,10 +55,11 @@ export class TournamentBracketsEditorComponent implements OnChanges {
 
   updateData(): void {
     this.systemOverloadService.isBusy.next(true);
-    let teamsRequest = this.teamService.getFromTournament(this.tournament);
-    let groupsRequest = this.groupService.getFromTournament(this.tournament.id!);
+    const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
+    const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
+    const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
 
-    forkJoin([teamsRequest, groupsRequest]).subscribe(([_teams, _groups]): void => {
+    forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
       if (_teams) {
         _teams.sort(function (a: Team, b: Team) {
           return a.name.localeCompare(b.name);
@@ -74,9 +75,7 @@ export class TournamentBracketsEditorComponent implements OnChanges {
       this.totalTeams = _teams.length;
       this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(_teams.length);
       this.teamListData.filteredTeams = _teams;
-    });
 
-    this.groupLinkService.getFromTournament(this.tournament.id!).subscribe((_groupRelations: GroupLink[]): void => {
       this.relations = this.convert(_groupRelations);
       this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
     });
