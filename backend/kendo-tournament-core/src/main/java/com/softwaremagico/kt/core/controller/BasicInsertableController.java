@@ -108,6 +108,10 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         getProvider().delete(reverseAll(entities));
     }
 
+    public void deleteAll() {
+        getProvider().deleteAll();
+    }
+
     protected abstract CONVERTER_REQUEST createConverterRequest(ENTITY entity);
 
     protected List<CONVERTER_REQUEST> createConverterRequest(Collection<ENTITY> entities) {

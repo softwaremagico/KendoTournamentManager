@@ -126,4 +126,8 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
         }
     }
 
+    public void delete(TournamentDTO tournamentDTO) {
+        getProvider().delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
 }
