@@ -150,6 +150,7 @@ public class RankingController {
                 teamConverter.reverseAll(teams),
                 fightConverter.reverseAll(fights),
                 duelConverter.reverseAll(unties),
+                //Checks ranking for same level or globally.
                 checkLevel
         ).stream().map(ScoreOfTeamConverterRequest::new).toList());
     }

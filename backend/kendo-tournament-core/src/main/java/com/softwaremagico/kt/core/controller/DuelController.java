@@ -110,4 +110,8 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         return getProvider().count(tournamentConverter.reverse(tournament));
     }
 
+    public void delete(TournamentDTO tournamentDTO) {
+        getProvider().delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
 }

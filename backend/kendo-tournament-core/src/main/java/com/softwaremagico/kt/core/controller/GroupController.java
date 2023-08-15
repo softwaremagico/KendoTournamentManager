@@ -99,6 +99,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                         ExceptionType.INFO)), level, index));
     }
 
+    public List<Group> getGroups(TournamentDTO tournament, Integer level) {
+        return getProvider().getGroups(tournamentConverter.reverse(tournament), level);
+    }
+
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username) {
         return convert(tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).addGroup(
@@ -219,6 +223,10 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     public long count(TournamentDTO tournament) {
         return getProvider().count(tournamentConverter.reverse(tournament));
+    }
+
+    public long delete(TournamentDTO tournamentDTO) {
+        return getProvider().delete(tournamentConverter.reverse(tournamentDTO));
     }
 
 }
