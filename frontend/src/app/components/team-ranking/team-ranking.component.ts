@@ -11,6 +11,7 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Group} from "../../models/group";
 import {TournamentType} from "../../models/tournament-type";
+import {Action} from "../../action";
 
 @Component({
   selector: 'app-team-ranking',
@@ -75,7 +76,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({action: Action.Cancel});
   }
 
   downloadPDF(): void {
@@ -112,6 +113,6 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       disableClose: false,
       data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
     });
-    this.closeDialog();
+    this.dialogRef.close({action: Action.Update});
   }
 }

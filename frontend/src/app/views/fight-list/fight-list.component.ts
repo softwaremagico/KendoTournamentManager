@@ -440,9 +440,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showTeamsClassification(fightsFinished: boolean): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
-      this.dialog.open(TeamRankingComponent, {
+      const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
         width: '85vw',
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.action === Action.Cancel) {
+        }
       });
     }
   }
