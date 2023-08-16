@@ -239,7 +239,7 @@ public class TreeTournamentHandler extends LeagueHandler {
     }
 
     @Override
-    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+    public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
         //Get next level to continue if exists.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
         if (tournamentGroups == null) {
@@ -262,6 +262,6 @@ public class TreeTournamentHandler extends LeagueHandler {
 
 
         //Generate next Level fights.
-        return createFights(tournament, TeamsOrder.SORTED, nextLevel, createdBy);
+        return createFights(tournament, TeamsOrder.NONE, nextLevel, createdBy);
     }
 }

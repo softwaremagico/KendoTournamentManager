@@ -52,7 +52,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -126,9 +125,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
     public List<GroupDTO> get(TournamentDTO tournament) {
-        final List<GroupDTO> groups = convertAll(getProvider().getGroups(tournamentConverter.reverse(tournament)));
-        groups.sort(Comparator.comparing(GroupDTO::getLevel).thenComparing(GroupDTO::getIndex));
-        return groups;
+        return convertAll(getProvider().getGroups(tournamentConverter.reverse(tournament)));
     }
 
     @Transactional
