@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class TreeTournamentHandler extends LeagueHandler {
@@ -225,6 +226,7 @@ public class TreeTournamentHandler extends LeagueHandler {
     private void populateLevel(Tournament tournament, int level) {
         final List<GroupLink> links = groupLinkProvider.generateLinks(tournament);
         final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level).toList();
+        final Set<Group> groupsOfLevel = new HashSet<>();
         for (GroupLink link : levelLinks) {
             final List<ScoreOfTeamDTO> teamsRanking = rankingController.getTeamsScoreRanking(
                     groupConverter.convert(new GroupConverterRequest(link.getSource())));
@@ -234,8 +236,9 @@ public class TreeTournamentHandler extends LeagueHandler {
                 KendoTournamentLogger.warning(this.getClass(), "Missing data for level '' population with winner '' using ranking:\n\t",
                         level, link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
             }
-            groupProvider.save(link.getDestination());
+            groupsOfLevel.add(link.getDestination());
         }
+        groupProvider.saveAll(groupsOfLevel);
     }
 
     @Override
