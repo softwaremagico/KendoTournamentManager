@@ -43,6 +43,7 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -271,6 +272,79 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
         //Group 2 -> Team011 vs Team16
         Assert.assertEquals(groups.get(1).getTeams().get(0).getName(), "Team11");
         Assert.assertEquals(groups.get(1).getTeams().get(1).getName(), "Team16");
+    }
+
+    @Test(dependsOnMethods = {"populateLevel1"})
+    public void solveLevel1() {
+        final List<Group> groups = groupController.getGroups(tournamentDTO, 1);
+
+        // First group has team1 as winner.
+        groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groups.get(0).getFights().forEach(fight -> {
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+        });
+        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
+
+        // Second group has team16 as winner.
+        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
+        groups.get(1).getFights().forEach(fight -> {
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+        });
+        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team16");
+    }
+
+    @Test(dependsOnMethods = {"solveLevel1"})
+    public void populateLevel2() {
+        treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
+
+        //Check level2 groups' teams.
+        final List<Group> groups = groupController.getGroups(tournamentDTO, 2);
+        Assert.assertEquals(groups.size(), 1);
+
+        //Group 1 -> Team01 vs Team16
+        Assert.assertEquals(groups.get(0).getTeams().get(0).getName(), "Team01");
+        Assert.assertEquals(groups.get(0).getTeams().get(1).getName(), "Team16");
+    }
+
+    @Test(dependsOnMethods = {"populateLevel2"})
+    public void solveLevel2() {
+        final List<Group> groups = groupController.getGroups(tournamentDTO, 2);
+
+        // First group has team1 as winner.
+        groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groups.get(0).getFights().forEach(fight -> {
+            fight.getDuels().forEach(duel -> duel.setFinished(true));
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+        });
+        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
+    }
+
+    @Test(dependsOnMethods = {"solveLevel2"})
+    public void checkFinalRanking() {
+        List<ScoreOfTeam> score = rankingProvider.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
+        Assert.assertEquals(score.get(0).getTeam().getName(), "Team01");
+        Assert.assertEquals(score.get(1).getTeam().getName(), "Team16");
+        //Same score but ordered by name.
+        Assert.assertEquals(score.get(2).getTeam().getName(), "Team06");
+        Assert.assertEquals(score.get(3).getTeam().getName(), "Team11");
+        //Same score but ordered by name.
+        Assert.assertEquals(score.get(4).getTeam().getName(), "Team02");
+        Assert.assertEquals(score.get(5).getTeam().getName(), "Team03");
+        Assert.assertEquals(score.get(6).getTeam().getName(), "Team04");
+        Assert.assertEquals(score.get(7).getTeam().getName(), "Team05");
+        Assert.assertEquals(score.get(8).getTeam().getName(), "Team07");
+        Assert.assertEquals(score.get(9).getTeam().getName(), "Team08");
+        Assert.assertEquals(score.get(10).getTeam().getName(), "Team09");
+        Assert.assertEquals(score.get(11).getTeam().getName(), "Team10");
+        Assert.assertEquals(score.get(12).getTeam().getName(), "Team12");
+        Assert.assertEquals(score.get(13).getTeam().getName(), "Team13");
+        Assert.assertEquals(score.get(14).getTeam().getName(), "Team14");
+        Assert.assertEquals(score.get(15).getTeam().getName(), "Team15");
     }
 
     @AfterClass
