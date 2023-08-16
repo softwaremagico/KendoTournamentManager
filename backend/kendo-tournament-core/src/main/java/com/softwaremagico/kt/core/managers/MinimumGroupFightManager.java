@@ -56,7 +56,7 @@ public class MinimumGroupFightManager {
         final List<Fight> fights = new ArrayList<>();
 
         final List<Team> sortedTeams = TeamSelector.setOrder(teams, teamsOrder);
-        Fight fight = null;
+        Fight fight;
 
         for (int i = 0; i < sortedTeams.size(); i++) {
             if (i % 2 == 0) {
@@ -65,6 +65,11 @@ public class MinimumGroupFightManager {
                 fight = createFight(tournament, sortedTeams.get((i + 1) % sortedTeams.size()), sortedTeams.get((i) % sortedTeams.size()), 0, level, createdBy);
             }
             fights.add(fight);
+
+            //Groups with only two teams has only one fight.
+            if (teams.size() == 2) {
+                break;
+            }
         }
         return fights;
     }

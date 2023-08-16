@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.tests;
+package com.softwaremagico.kt.core.tests.tournament;
 
 /*-
  * #%L
@@ -65,7 +65,6 @@ import java.util.List;
 public class TournamentTest extends AbstractTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
-    private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
     private static final int MEMBERS = 3;
     private static final int TEAMS = 16;

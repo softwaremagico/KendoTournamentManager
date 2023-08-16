@@ -79,7 +79,7 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
             }
         });
         return groupLinks.stream().sorted(Comparator.<GroupLink, Integer>comparing(o -> o.getSource().getLevel())
-                .thenComparing(o -> o.getSource().getIndex()).thenComparing(GroupLink::getWinner)).toList();
+                .thenComparing(GroupLink::getWinner).thenComparing(o -> o.getSource().getIndex())).toList();
     }
 
     private int getNumberOfTotalTeamsPassNextRound(Group group, int tournamentWinners) {

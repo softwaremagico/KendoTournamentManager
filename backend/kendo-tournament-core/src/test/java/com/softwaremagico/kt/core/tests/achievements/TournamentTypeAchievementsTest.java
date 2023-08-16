@@ -37,13 +37,14 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
 @SpringBootTest
-@Test(groups = {"roleAchievementTests"})
+@Test(groups = {"tournamentTypeAchievementTests"})
 public class TournamentTypeAchievementsTest extends AchievementTest {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
@@ -146,6 +147,21 @@ public class TournamentTypeAchievementsTest extends AchievementTest {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(AchievementType.THE_KING);
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theKing);
+    }
+
+    @AfterClass
+    public void deleteTournament() {
+        deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
+                "achievements", "duels_by_fight");
+        deleteFromTables("duels", "fights_by_group");
+        deleteFromTables("fights", "members_of_team", "teams_by_group");
+        deleteFromTables("teams");
+        deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("achievements");
+        deleteFromTables("tournaments");
+        deleteFromTables("participant_image");
+        deleteFromTables("participants");
+        deleteFromTables("clubs");
     }
 
 }
