@@ -64,6 +64,7 @@ public class TournamentExtraPropertyConverter extends ElementConverter<Tournamen
         final TournamentExtraProperty tournamentExtraProperty = new TournamentExtraProperty();
         BeanUtils.copyProperties(to, tournamentExtraProperty, ConverterUtils.getNullPropertyNames(to));
         tournamentExtraProperty.setTournament(tournamentConverter.reverse(to.getTournament()));
+        tournamentExtraProperty.setPropertyKey(to.getPropertyKey());
         return tournamentExtraProperty;
     }
 }
