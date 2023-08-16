@@ -100,7 +100,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     }
 
     @Override
-    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+    public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
         //Generates next group.
         final int level = getNextLevel(tournament);
         final Group group = addGroup(tournament, getGroupTeams(tournament, level), level, 0);

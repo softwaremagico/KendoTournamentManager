@@ -41,7 +41,7 @@ public class MinimumGroupFightManager {
     }
 
     /**
-     * Create a list of fights where all teams fight versus all others.
+     * Create a list of fights where each team has only two fights in a Round Robin way.
      *
      * @param tournament
      * @param teams
@@ -54,32 +54,17 @@ public class MinimumGroupFightManager {
             return new ArrayList<>();
         }
         final List<Fight> fights = new ArrayList<>();
-        final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
 
-        Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
+        final List<Team> sortedTeams = TeamSelector.setOrder(teams, teamsOrder);
         Fight fight = null;
-        Fight lastFight = null;
-        while (teamSelector.remainFights()) {
-            final Team team2 = teamSelector.getNextAdversary(team1, teamsOrder);
-            // Team1 has no more adversaries. Use another one.
-            if (team2 == null) {
-                team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
-                continue;
-            }
-            // Remaining fights sometimes repeat team. Align them.
-            if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-                fight = createFight(tournament, team2, team1, 0, level, createdBy);
-            } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-                fight = createFight(tournament, team1, team2, 0, level, createdBy);
-            } else if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, 0, level, createdBy);
+
+        for (int i = 0; i < sortedTeams.size(); i++) {
+            if (i % 2 == 0) {
+                fight = createFight(tournament, sortedTeams.get((i) % sortedTeams.size()), sortedTeams.get((i + 1) % sortedTeams.size()), 0, level, createdBy);
             } else {
-                fight = createFight(tournament, team2, team1, 0, level, createdBy);
+                fight = createFight(tournament, sortedTeams.get((i + 1) % sortedTeams.size()), sortedTeams.get((i) % sortedTeams.size()), 0, level, createdBy);
             }
             fights.add(fight);
-            lastFight = fight;
-            teamSelector.removeAdversary(team1, team2);
-            team1 = team2;
         }
         return fights;
     }

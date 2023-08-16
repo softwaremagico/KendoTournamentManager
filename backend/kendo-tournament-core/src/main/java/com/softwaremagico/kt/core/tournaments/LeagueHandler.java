@@ -208,7 +208,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+    public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
         return new ArrayList<>();
     }
 }
