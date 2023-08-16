@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,8 +45,13 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         super(repository);
     }
 
+    private List<Group> sort(List<Group> groups) {
+        groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
+        return groups;
+    }
+
     public List<Group> getGroups(Tournament tournament) {
-        return getRepository().findByTournamentOrderByLevelAscIndexAsc(tournament);
+        return sort(getRepository().findByTournamentOrderByLevelAscIndexAsc(tournament));
     }
 
     public Group getGroup(Fight fight) {
@@ -53,7 +59,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroups(Tournament tournament, Integer level) {
-        return getRepository().findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
+        return sort(getRepository().findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level));
     }
 
     public Group getGroupByLevelAndIndex(Tournament tournament, Integer level, Integer index) {
@@ -81,7 +87,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public List<Group> getGroups(Collection<Fight> fights) {
-        return getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).toList());
+        return sort(getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).toList()));
     }
 
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
