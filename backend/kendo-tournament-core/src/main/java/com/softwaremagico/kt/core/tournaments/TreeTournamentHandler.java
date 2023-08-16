@@ -128,20 +128,21 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (group.getLevel() > 0) {
             throw new InvalidGroupException(this.getClass(), "Groups can only be added at level 0.");
         }
-
-        final int numberOfWinners = getNumberOfWinners(tournament);
-
         final Group savedGroup = groupProvider.addGroup(tournament, group);
+        adjustGroupsSize(tournament, getNumberOfWinners(tournament));
+        return savedGroup;
+    }
 
+    public void adjustGroupsSize(Tournament tournament, int numberOfWinners) {
         //Check if inner levels must be increased on size.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
         final Map<Integer, List<Group>> groupsByLevel = orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            if (groupsByLevel.get(level).size() < (((previousLevelSize + 1) / 2) * (level == 1 ? numberOfWinners : 1))) {
+            if (groupsByLevel.get(level).size() < ((((previousLevelSize + 1) * (level == 1 ? numberOfWinners : 1))) / 2)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
-                groupsByLevel.get(level).add(group);
+                groupsByLevel.get(level).add(levelGroup);
             }
             previousLevelSize = groupsByLevel.get(level).size();
         }
@@ -154,9 +155,6 @@ public class TreeTournamentHandler extends LeagueHandler {
             groupsByLevel.get(newLevel).add(levelGroup);
             groupProvider.addGroup(tournament, levelGroup);
         }
-
-
-        return savedGroup;
     }
 
     @Override

@@ -214,7 +214,7 @@ public class PdfController {
             return DEFAULT_NAME_POSITION;
         }
         try {
-            return Float.parseFloat(tournamentExtraPropertyDTO.getValue());
+            return Float.parseFloat(tournamentExtraPropertyDTO.getPropertyValue());
         } catch (Exception e) {
             return DEFAULT_NAME_POSITION;
         }

@@ -28,12 +28,19 @@ public class TournamentExtraPropertyDTO extends ElementDTO {
 
     private TournamentDTO tournament;
 
-    private TournamentExtraPropertyKey property;
+    private TournamentExtraPropertyKey propertyKey;
 
-    private String value;
+    private String propertyValue;
 
     public TournamentExtraPropertyDTO() {
         super();
+    }
+
+    public TournamentExtraPropertyDTO(TournamentDTO tournamentDTO, TournamentExtraPropertyKey propertyKey, String propertyValue) {
+        this();
+        setTournament(tournamentDTO);
+        setPropertyKey(propertyKey);
+        setPropertyValue(propertyValue);
     }
 
     public TournamentDTO getTournament() {
@@ -44,19 +51,19 @@ public class TournamentExtraPropertyDTO extends ElementDTO {
         this.tournament = tournament;
     }
 
-    public TournamentExtraPropertyKey getProperty() {
-        return property;
+    public TournamentExtraPropertyKey getPropertyKey() {
+        return propertyKey;
     }
 
-    public void setProperty(TournamentExtraPropertyKey property) {
-        this.property = property;
+    public void setPropertyKey(TournamentExtraPropertyKey propertyKey) {
+        this.propertyKey = propertyKey;
     }
 
-    public String getValue() {
-        return value;
+    public String getPropertyValue() {
+        return propertyValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
     }
 }

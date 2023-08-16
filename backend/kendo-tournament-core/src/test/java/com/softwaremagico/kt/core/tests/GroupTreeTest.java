@@ -200,12 +200,12 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 14);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 3);
-        checkLink(groupLinks.get(2), 1, 1);
-        checkLink(groupLinks.get(3), 1, 2);
-        checkLink(groupLinks.get(4), 2, 2);
-        checkLink(groupLinks.get(5), 2, 1);
-        checkLink(groupLinks.get(6), 3, 3);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
+        checkLink(groupLinks.get(4), 0, 3);
+        checkLink(groupLinks.get(5), 1, 2);
+        checkLink(groupLinks.get(6), 2, 1);
         checkLink(groupLinks.get(7), 3, 0);
 
         checkLink(groupLinks.get(8), 0, 0);
@@ -226,10 +226,10 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 11);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 1);
-        checkLink(groupLinks.get(2), 1, 0);
-        checkLink(groupLinks.get(3), 1, 2);
-        checkLink(groupLinks.get(4), 2, 2);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 0, 1);
+        checkLink(groupLinks.get(4), 1, 2);
         checkLink(groupLinks.get(5), 2, 1);
 
         checkLink(groupLinks.get(6), 0, 0);
@@ -379,20 +379,20 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 30);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 7);
-        checkLink(groupLinks.get(2), 1, 1);
-        checkLink(groupLinks.get(3), 1, 6);
-        checkLink(groupLinks.get(4), 2, 2);
-        checkLink(groupLinks.get(5), 2, 5);
-        checkLink(groupLinks.get(6), 3, 3);
-        checkLink(groupLinks.get(7), 3, 4);
-        checkLink(groupLinks.get(8), 4, 4);
-        checkLink(groupLinks.get(9), 4, 3);
-        checkLink(groupLinks.get(10), 5, 5);
-        checkLink(groupLinks.get(11), 5, 2);
-        checkLink(groupLinks.get(12), 6, 6);
-        checkLink(groupLinks.get(13), 6, 1);
-        checkLink(groupLinks.get(14), 7, 7);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
+        checkLink(groupLinks.get(4), 4, 4);
+        checkLink(groupLinks.get(5), 5, 5);
+        checkLink(groupLinks.get(6), 6, 6);
+        checkLink(groupLinks.get(7), 7, 7);
+        checkLink(groupLinks.get(8), 0, 7);
+        checkLink(groupLinks.get(9), 1, 6);
+        checkLink(groupLinks.get(10), 2, 5);
+        checkLink(groupLinks.get(11), 3, 4);
+        checkLink(groupLinks.get(12), 4, 3);
+        checkLink(groupLinks.get(13), 5, 2);
+        checkLink(groupLinks.get(14), 6, 1);
         checkLink(groupLinks.get(15), 7, 0);
 
         checkLink(groupLinks.get(16), 0, 0);
@@ -422,18 +422,18 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 27);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 1);
-        checkLink(groupLinks.get(2), 1, 0);
-        checkLink(groupLinks.get(3), 1, 2);
-        checkLink(groupLinks.get(4), 2, 1);
-        checkLink(groupLinks.get(5), 2, 3);
-        checkLink(groupLinks.get(6), 3, 2);
-        checkLink(groupLinks.get(7), 3, 4);
-        checkLink(groupLinks.get(8), 4, 3);
-        checkLink(groupLinks.get(9), 4, 5);
-        checkLink(groupLinks.get(10), 5, 4);
-        checkLink(groupLinks.get(11), 5, 6);
-        checkLink(groupLinks.get(12), 6, 6);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 1);
+        checkLink(groupLinks.get(3), 3, 2);
+        checkLink(groupLinks.get(4), 4, 3);
+        checkLink(groupLinks.get(5), 5, 4);
+        checkLink(groupLinks.get(6), 6, 6);
+        checkLink(groupLinks.get(7), 0, 1);
+        checkLink(groupLinks.get(8), 1, 2);
+        checkLink(groupLinks.get(9), 2, 3);
+        checkLink(groupLinks.get(10), 3, 4);
+        checkLink(groupLinks.get(11), 4, 5);
+        checkLink(groupLinks.get(12), 5, 6);
         checkLink(groupLinks.get(13), 6, 5);
 
         checkLink(groupLinks.get(14), 0, 0);
@@ -462,16 +462,16 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 23);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 5);
-        checkLink(groupLinks.get(2), 1, 1);
-        checkLink(groupLinks.get(3), 1, 4);
-        checkLink(groupLinks.get(4), 2, 2);
-        checkLink(groupLinks.get(5), 2, 3);
-        checkLink(groupLinks.get(6), 3, 3);
-        checkLink(groupLinks.get(7), 3, 2);
-        checkLink(groupLinks.get(8), 4, 4);
-        checkLink(groupLinks.get(9), 4, 1);
-        checkLink(groupLinks.get(10), 5, 5);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
+        checkLink(groupLinks.get(4), 4, 4);
+        checkLink(groupLinks.get(5), 5, 5);
+        checkLink(groupLinks.get(6), 0, 5);
+        checkLink(groupLinks.get(7), 1, 4);
+        checkLink(groupLinks.get(8), 2, 3);
+        checkLink(groupLinks.get(9), 3, 2);
+        checkLink(groupLinks.get(10), 4, 1);
         checkLink(groupLinks.get(11), 5, 0);
 
         checkLink(groupLinks.get(12), 0, 0);
@@ -691,16 +691,16 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 23);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 5);
-        checkLink(groupLinks.get(2), 1, 1);
-        checkLink(groupLinks.get(3), 1, 4);
-        checkLink(groupLinks.get(4), 2, 2);
-        checkLink(groupLinks.get(5), 2, 3);
-        checkLink(groupLinks.get(6), 3, 3);
-        checkLink(groupLinks.get(7), 3, 2);
-        checkLink(groupLinks.get(8), 4, 4);
-        checkLink(groupLinks.get(9), 4, 1);
-        checkLink(groupLinks.get(10), 5, 5);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
+        checkLink(groupLinks.get(4), 4, 4);
+        checkLink(groupLinks.get(5), 5, 5);
+        checkLink(groupLinks.get(6), 0, 5);
+        checkLink(groupLinks.get(7), 1, 4);
+        checkLink(groupLinks.get(8), 2, 3);
+        checkLink(groupLinks.get(9), 3, 2);
+        checkLink(groupLinks.get(10), 4, 1);
         checkLink(groupLinks.get(11), 5, 0);
 
         checkLink(groupLinks.get(12), 0, 0);
@@ -727,14 +727,14 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 20);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 1);
-        checkLink(groupLinks.get(2), 1, 0);
-        checkLink(groupLinks.get(3), 1, 2);
-        checkLink(groupLinks.get(4), 2, 1);
-        checkLink(groupLinks.get(5), 2, 3);
-        checkLink(groupLinks.get(6), 3, 2);
-        checkLink(groupLinks.get(7), 3, 4);
-        checkLink(groupLinks.get(8), 4, 4);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 1);
+        checkLink(groupLinks.get(3), 3, 2);
+        checkLink(groupLinks.get(4), 4, 4);
+        checkLink(groupLinks.get(5), 0, 1);
+        checkLink(groupLinks.get(6), 1, 2);
+        checkLink(groupLinks.get(7), 2, 3);
+        checkLink(groupLinks.get(8), 3, 4);
         checkLink(groupLinks.get(9), 4, 3);
 
         checkLink(groupLinks.get(10), 0, 0);
@@ -828,14 +828,14 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 20);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 1);
-        checkLink(groupLinks.get(2), 1, 0);
-        checkLink(groupLinks.get(3), 1, 2);
-        checkLink(groupLinks.get(4), 2, 1);
-        checkLink(groupLinks.get(5), 2, 3);
-        checkLink(groupLinks.get(6), 3, 2);
-        checkLink(groupLinks.get(7), 3, 4);
-        checkLink(groupLinks.get(8), 4, 4);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 1);
+        checkLink(groupLinks.get(3), 3, 2);
+        checkLink(groupLinks.get(4), 4, 4);
+        checkLink(groupLinks.get(5), 0, 1);
+        checkLink(groupLinks.get(6), 1, 2);
+        checkLink(groupLinks.get(7), 2, 3);
+        checkLink(groupLinks.get(8), 3, 4);
         checkLink(groupLinks.get(9), 4, 3);
 
         checkLink(groupLinks.get(10), 0, 0);
@@ -913,10 +913,10 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 11);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 1);
-        checkLink(groupLinks.get(2), 1, 0);
-        checkLink(groupLinks.get(3), 1, 2);
-        checkLink(groupLinks.get(4), 2, 2);
+        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 0, 1);
+        checkLink(groupLinks.get(4), 1, 2);
         checkLink(groupLinks.get(5), 2, 1);
 
         checkLink(groupLinks.get(6), 0, 0);
@@ -936,8 +936,8 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 6);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 0, 1);
-        checkLink(groupLinks.get(2), 1, 1);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 0, 1);
         checkLink(groupLinks.get(3), 1, 0);
 
         checkLink(groupLinks.get(4), 0, 0);
