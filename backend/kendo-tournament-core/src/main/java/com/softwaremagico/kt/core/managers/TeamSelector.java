@@ -39,14 +39,19 @@ public class TeamSelector {
     private final Map<Team, List<Team>> combination;
 
     protected TeamSelector(List<Team> teams, TeamsOrder teamsOrder) {
-        this.teams = teams;
+        this.teams = setOrder(teams, teamsOrder);
+        combination = getAdversaries();
+    }
+
+    public static List<Team> setOrder(List<Team> teams, TeamsOrder teamsOrder) {
+        final List<Team> sortedTeams = new ArrayList<>(teams);
         switch (teamsOrder) {
-            case SORTED -> Collections.sort(this.teams);
-            case RANDOM -> Collections.shuffle(this.teams);
+            case SORTED -> Collections.sort(sortedTeams);
+            case RANDOM -> Collections.shuffle(sortedTeams);
             default -> {
             }
         }
-        combination = getAdversaries();
+        return sortedTeams;
     }
 
     public List<Team> getAdversaries(Team team) {

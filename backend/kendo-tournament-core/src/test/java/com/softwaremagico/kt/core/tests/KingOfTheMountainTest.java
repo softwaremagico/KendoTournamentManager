@@ -212,7 +212,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"testSimpleWinner"})
     public void nextFight1() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 2);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -231,7 +231,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"nextFight1"})
     public void nextFight2() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 3);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -251,7 +251,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"nextFight2"})
     public void loopStartsAgain() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 4);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -270,7 +270,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"loopStartsAgain"})
     public void team1Loose() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 5);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -289,7 +289,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"team1Loose"})
     public void afterDraw() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 6);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
