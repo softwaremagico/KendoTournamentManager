@@ -212,13 +212,12 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (tournamentGroups == null) {
             return null;
         }
-        Integer nextLevel = null;
         for (Group group : tournamentGroups) {
-            if (group.getFights().isEmpty() && (nextLevel == null || group.getLevel() < nextLevel)) {
-                nextLevel = group.getLevel();
+            if (group.getTeams().isEmpty()) {
+                return group.getLevel();
             }
         }
-        return nextLevel;
+        return null;
     }
 
     private void populateLevel(Tournament tournament, int level) {
@@ -246,13 +245,8 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (tournamentGroups == null) {
             return null;
         }
-        Integer nextLevel = null;
-        for (Group group : tournamentGroups) {
-            if (group.getFights().isEmpty() && (nextLevel == null || group.getLevel() < nextLevel)) {
-                nextLevel = group.getLevel();
-            }
-        }
 
+        final Integer nextLevel = getNextEmptyLevel(tournamentGroups);
         if (nextLevel == null) {
             KendoTournamentLogger.debug(this.getClass(), "No next level to populate!");
             return new ArrayList<>();
