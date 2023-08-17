@@ -226,11 +226,11 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 11);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(1), 1, 1);
         checkLink(groupLinks.get(2), 2, 2);
         checkLink(groupLinks.get(3), 0, 1);
         checkLink(groupLinks.get(4), 1, 2);
-        checkLink(groupLinks.get(5), 2, 1);
+        checkLink(groupLinks.get(5), 2, 0);
 
         checkLink(groupLinks.get(6), 0, 0);
         checkLink(groupLinks.get(7), 1, 0);
@@ -422,11 +422,11 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 27);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 1, 0);
-        checkLink(groupLinks.get(2), 2, 1);
-        checkLink(groupLinks.get(3), 3, 2);
-        checkLink(groupLinks.get(4), 4, 3);
-        checkLink(groupLinks.get(5), 5, 4);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
+        checkLink(groupLinks.get(4), 4, 4);
+        checkLink(groupLinks.get(5), 5, 5);
         checkLink(groupLinks.get(6), 6, 6);
         checkLink(groupLinks.get(7), 0, 1);
         checkLink(groupLinks.get(8), 1, 2);
@@ -434,7 +434,7 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         checkLink(groupLinks.get(10), 3, 4);
         checkLink(groupLinks.get(11), 4, 5);
         checkLink(groupLinks.get(12), 5, 6);
-        checkLink(groupLinks.get(13), 6, 5);
+        checkLink(groupLinks.get(13), 6, 0);
 
         checkLink(groupLinks.get(14), 0, 0);
         checkLink(groupLinks.get(15), 1, 0);
@@ -727,15 +727,15 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 20);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 1, 0);
-        checkLink(groupLinks.get(2), 2, 1);
-        checkLink(groupLinks.get(3), 3, 2);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
         checkLink(groupLinks.get(4), 4, 4);
         checkLink(groupLinks.get(5), 0, 1);
         checkLink(groupLinks.get(6), 1, 2);
         checkLink(groupLinks.get(7), 2, 3);
         checkLink(groupLinks.get(8), 3, 4);
-        checkLink(groupLinks.get(9), 4, 3);
+        checkLink(groupLinks.get(9), 4, 0);
 
         checkLink(groupLinks.get(10), 0, 0);
         checkLink(groupLinks.get(11), 1, 0);
@@ -828,15 +828,15 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 20);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 1, 0);
-        checkLink(groupLinks.get(2), 2, 1);
-        checkLink(groupLinks.get(3), 3, 2);
+        checkLink(groupLinks.get(1), 1, 1);
+        checkLink(groupLinks.get(2), 2, 2);
+        checkLink(groupLinks.get(3), 3, 3);
         checkLink(groupLinks.get(4), 4, 4);
         checkLink(groupLinks.get(5), 0, 1);
         checkLink(groupLinks.get(6), 1, 2);
         checkLink(groupLinks.get(7), 2, 3);
         checkLink(groupLinks.get(8), 3, 4);
-        checkLink(groupLinks.get(9), 4, 3);
+        checkLink(groupLinks.get(9), 4, 0);
 
         checkLink(groupLinks.get(10), 0, 0);
         checkLink(groupLinks.get(11), 1, 0);
@@ -884,13 +884,12 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
     }
 
 
-/*
-            ┌──────┐┌──────┐┌──────┐
-            │Group1││Group2││Group3│
-            └────┬┬┘└────┬┬┘└┬────┬┘
-                 ││     ┌││──┘    │
-                 │└──┐  │└│──┐    │
-            ┌────▽─┐┌▽──▽─▽┐┌▽────▽┐
+/*          ┌──────┐┌──────┐┌──────┐┌──────┐
+            │Group1││Group2││group3││Group3│
+            └────┬┬┘└┬────┬┘└─────┬┘└┬─────┘
+                ┌││──┘   ┌│───────│──┘
+                ││└──┐   │└──┐    │
+            ┌───▽▽─┐┌▽───▽─┐┌▽────▽┐
             │Group5││Group4││Group6│
             └┬─────┘└┬─────┘└┬─────┘
             ┌▽───────▽┐┌─────▽┐
@@ -913,11 +912,11 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 11);
 
         checkLink(groupLinks.get(0), 0, 0);
-        checkLink(groupLinks.get(1), 1, 0);
+        checkLink(groupLinks.get(1), 1, 1);
         checkLink(groupLinks.get(2), 2, 2);
         checkLink(groupLinks.get(3), 0, 1);
         checkLink(groupLinks.get(4), 1, 2);
-        checkLink(groupLinks.get(5), 2, 1);
+        checkLink(groupLinks.get(5), 2, 0);
 
         checkLink(groupLinks.get(6), 0, 0);
         checkLink(groupLinks.get(7), 1, 0);
@@ -950,7 +949,7 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 2);
 
         groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
-        Assert.assertEquals(groupLinks.size(), 1);
+        Assert.assertEquals(groupLinks.size(), 2);
     }
 
 
