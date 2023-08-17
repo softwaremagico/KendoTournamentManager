@@ -116,24 +116,14 @@ public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLin
         }
 
         //Odd groups number but two winners on each group:
-        //First group and last ome to same index. Others to previous ones.
-        if (numberOfWinners == 2 && winnerOrder == 0 && sourceGroupLevelSize % 2 == 1) {
-            if (sourceGroupLevelIndex == 0 || sourceGroupLevelIndex == sourceGroupLevelSize - 1) {
+        if (numberOfWinners == 2 && sourceGroupLevelSize % 2 == 1) {
+            //First on same group.
+            if (winnerOrder == 0) {
                 return sourceGroupLevelIndex;
+            } else if (winnerOrder == 1) {
+                //Second winner to next group. Last one goes to first group.
+                return (sourceGroupLevelIndex + 1) % sourceGroupLevelSize;
             }
-            return sourceGroupLevelIndex - 1;
-        }
-
-        //The second winner goes: for first group to first index. Last one goes to the previous one. Others to next one.
-        if (winnerOrder == 1 && sourceGroupLevelSize % 2 == 1) {
-            if (sourceGroupLevelIndex == 0) {
-                return 1;
-            }
-            if (sourceGroupLevelIndex == sourceGroupLevelSize - 1) {
-                return sourceGroupLevelSize - 2;
-
-            }
-            return sourceGroupLevelIndex + 1;
         }
 
         //Standard case.
