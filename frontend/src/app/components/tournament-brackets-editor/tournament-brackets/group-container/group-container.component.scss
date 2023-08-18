@@ -1,0 +1,31 @@
+.group {
+  position: absolute;
+  width: 300px;
+  border: 2px solid #001239;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  z-index: 15;
+}
+
+.group-title {
+  font-size: 16px;
+  text-transform: uppercase;
+  background: #001239;
+  color: #fff;
+  padding: 0 10px;
+  line-height: 24px;
+  /* Rotate from top left corner (not default) */
+  writing-mode: sideways-lr;
+  text-align: center;
+  height: 100%;
+}
+
+.group-content {
+  background: #4d6d95;
+  width: 100%;
+}
+
+.mat-card.mat-focus-indicator.cdk-drag.team-card.minify {
+  margin: 0;
+}
