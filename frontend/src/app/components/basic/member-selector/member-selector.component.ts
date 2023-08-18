@@ -16,20 +16,20 @@ export class MemberSelectorComponent implements OnChanges {
   members: Participant[];
   selectedMembers: Participant[] = [];
 
-  @Output() selectedMember = new EventEmitter<Participant>();
+  @Output() selectedMember: EventEmitter<Participant> = new EventEmitter<Participant>();
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     //Refresh automatically the team.
     const teamMembers: (Participant | undefined)[] = this.team.members;
     //Removing undefined members.
     this.members = [...teamMembers.flatMap(p => p ? [p] : [])];
   }
 
-  checkDroppedElement(item: CdkDrag<Participant>, drop: CdkDropList) {
+  checkDroppedElement(item: CdkDrag<Participant>, drop: CdkDropList): boolean {
     return drop.data.length === 0;
   }
 
-  dropParticipant(event: CdkDragDrop<Participant[], any>) {
+  dropParticipant(event: CdkDragDrop<Participant[], any>): void {
     this.transferCard(event);
     this.selectedMember.emit(this.selectedMembers[0]);
   }
