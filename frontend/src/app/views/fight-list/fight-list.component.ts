@@ -504,17 +504,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.duelService.update(this.selectedDuel).subscribe((): void => {
         this.messageService.infoMessage("infoDuelFinished");
         const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
+        let showClassification: boolean = true;
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
           if (Group.isFinished(selectedGroup)) {
             //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();
-            //TODO(softwaremagico): This is forcing last group to show classifications two times!
+            showClassification = false;
           }
         }
         // King of the mountain. Generate infinite fights.
         if (!this.selectFirstUnfinishedDuel()) {
-          this.generateNextFights();
+          this.generateNextFights(showClassification);
         }
       });
     }
@@ -541,7 +542,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return null;
   }
 
-  generateNextFights(): void {
+  generateNextFights(showClassification: boolean): void {
     const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
     this.fightService.createNext(this.tournamentId!).subscribe((_fights: Fight[]): void => {
       //Null value means that fights are not created due to an existing draw score.
@@ -550,7 +551,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       } else if (_fights.length > 0) {
         this.refreshFights();
       } else {
-        this.showClassification();
+        if (showClassification) {
+          this.showClassification();
+        }
         this.finishTournament(new Date());
       }
     });
