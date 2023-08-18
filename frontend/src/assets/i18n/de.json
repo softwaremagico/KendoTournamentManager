@@ -295,7 +295,7 @@
   "confirm": "Confirm",
   "ClearCacheLabel": "Clear Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Championship",
+  "championship": "Tournament Brackets",
   "league": "League",
   "tree": "Tournament Brackets",
   "customized": "Custom",
@@ -807,7 +807,8 @@
       "gold": "Nehmen Sie an fünfzig Turnieren teil."
     }
   },
-  "removeTeams": "Teams entfernenn"
+  "removeTeams": "Teams entfernenn",
+  "drawScore": "Es gibt einige Unentschieden, die geklärt werden müssen, bevor zur nächsten Turnierphase übergegangen werden kann."
 }
 
 

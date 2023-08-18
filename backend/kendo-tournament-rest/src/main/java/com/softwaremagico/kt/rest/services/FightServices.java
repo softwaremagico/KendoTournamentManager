@@ -159,7 +159,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
 
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
-    @Operation(summary = "Creates next fights.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Creates next fights. Returns 204 if are not created due to a draw result.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(value = "/create/tournaments/{tournamentId}/next", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> createNext(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
