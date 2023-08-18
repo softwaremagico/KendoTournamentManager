@@ -1,5 +1,5 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {Observable, throwError} from "rxjs";
+import {Observable} from "rxjs";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {catchError} from "rxjs/operators";
@@ -30,12 +30,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             this.loginService.logout();
             this.messageService.warningMessage("userLoggedOutMessage");
             this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}})
-              .then(r => console.log("User redirected to login window."));
+              .then((r: boolean) => console.log("User redirected to login window."));
           } else {
             console.error(`Error from ${error.url}`);
           }
         }
-        return throwError(error.message);
+        throw error;
       })
     )
   }
