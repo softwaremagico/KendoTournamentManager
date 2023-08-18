@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
+import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.managers.CompleteGroupFightManager;
 import com.softwaremagico.kt.core.managers.MinimumGroupFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
@@ -220,13 +221,14 @@ public class TreeTournamentHandler extends LeagueHandler {
         return null;
     }
 
-    private void populateLevel(Tournament tournament, int level) {
+    private void populateLevel(Tournament tournament, int level) throws LevelNotFinishedException {
         final List<GroupLink> links = groupLinkProvider.generateLinks(tournament);
         final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level).toList();
         final Set<Group> groupsOfLevel = new HashSet<>();
         for (GroupLink link : levelLinks) {
             final List<ScoreOfTeamDTO> teamsRanking = rankingController.getTeamsScoreRanking(
                     groupConverter.convert(new GroupConverterRequest(link.getSource())));
+            checkDrawScore(link.getSource(), teamsRanking, link.getWinner());
             if (link.getWinner() != null && teamsRanking.get(link.getWinner()) != null && teamsRanking.get(link.getWinner()).getTeam() != null) {
                 link.getDestination().getTeams().add(teamConverter.reverse(teamsRanking.get(link.getWinner()).getTeam()));
             } else {
@@ -236,6 +238,17 @@ public class TreeTournamentHandler extends LeagueHandler {
             groupsOfLevel.add(link.getDestination());
         }
         groupProvider.saveAll(groupsOfLevel);
+    }
+
+    private void checkDrawScore(Group group, List<ScoreOfTeamDTO> scoresOfTeamsDTO, int numberOfWinners) {
+        for (int i = 0; i <= numberOfWinners; i++) {
+            final int winner = i;
+            final List<ScoreOfTeamDTO> sameLevelScore = scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == winner).toList();
+            if (sameLevelScore.size() > 1) {
+                KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.", sameLevelScore.stream().map(ScoreOfTeamDTO::getTeam).toList());
+                throw new LevelNotFinishedException(this.getClass(), "There is a draw value on winner '" + winner + "' on group '" + group + "'");
+            }
+        }
     }
 
     @Override

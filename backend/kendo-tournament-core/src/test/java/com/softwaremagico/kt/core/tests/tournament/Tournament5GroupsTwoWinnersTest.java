@@ -248,7 +248,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
 
 
         // Second group has team06 winner. And Team04 as second one.
-        groups.get(0).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(1).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(1).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(1).getFights().forEach(fight -> {

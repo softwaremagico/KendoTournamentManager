@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
@@ -113,6 +114,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> userBlockedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage("USER BLOCKED", ex), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(LevelNotFinishedException.class)
+    public ResponseEntity<Object> levelNotFinishedException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage("DRAW SCORE EXISTS", ex), HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(InvalidMacException.class)
