@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.providers;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -34,7 +31,9 @@ import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,16 +45,21 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         super(repository);
     }
 
+    private List<Group> sort(List<Group> groups) {
+        groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
+        return groups;
+    }
+
     public List<Group> getGroups(Tournament tournament) {
-        return getRepository().findByTournamentOrderByLevelAscIndexAsc(tournament);
+        return sort(getRepository().findByTournamentOrderByLevelAscIndexAsc(tournament));
     }
 
     public Group getGroup(Fight fight) {
         return getRepository().findByFightsId(fight.getId()).orElse(null);
     }
 
-    public List<Group> getGroupsByLevel(Tournament tournament, Integer level) {
-        return getRepository().findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level);
+    public List<Group> getGroups(Tournament tournament, Integer level) {
+        return sort(getRepository().findByTournamentAndLevelOrderByLevelAscIndexAsc(tournament, level));
     }
 
     public Group getGroupByLevelAndIndex(Tournament tournament, Integer level, Integer index) {
@@ -79,11 +83,11 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public Group getGroup(Integer groupId) {
-        return getRepository().getById(groupId);
+        return getRepository().findById(groupId).orElse(null);
     }
 
     public List<Group> getGroups(Collection<Fight> fights) {
-        return getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).toList());
+        return sort(getRepository().findDistinctByFightsIdIn(fights.stream().map(Fight::getId).toList()));
     }
 
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
@@ -95,13 +99,18 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         return getRepository().save(group);
     }
 
+    public List<Group> addGroups(Tournament tournament, Collection<Group> groups) {
+        groups.forEach(group -> group.setTournament(tournament));
+        return getRepository().saveAll(groups);
+    }
+
     public long delete(Tournament tournament) {
         return getRepository().deleteByTournament(tournament);
     }
 
     public void delete(Tournament tournament, Group group) {
         if (Objects.equals(group.getTournament(), tournament)) {
-            getRepository().delete(group);
+            deleteGroupByLevelAndIndex(tournament, group.getLevel(), group.getIndex());
         }
     }
 
@@ -123,6 +132,31 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         group.getTeams().removeAll(teams);
         group.setUpdatedBy(username);
         return getRepository().save(group);
+    }
+
+    public List<Group> deleteTeams(Tournament tournament, List<Team> teams, String username) {
+        final List<Group> groups = getGroups(tournament);
+        final List<Group> groupsUpdated = new ArrayList<>();
+        groups.forEach(group -> {
+            if (group.getTeams().removeAll(teams)) {
+                group.setUpdatedBy(username);
+                groupsUpdated.add(getRepository().save(group));
+            }
+        });
+        return groupsUpdated;
+    }
+
+    public List<Group> deleteTeams(Tournament tournament, String username) {
+        final List<Group> groups = getGroups(tournament);
+        final List<Group> groupsUpdated = new ArrayList<>();
+        groups.forEach(group -> {
+            if (!group.getTeams().isEmpty()) {
+                group.getTeams().clear();
+                group.setUpdatedBy(username);
+                groupsUpdated.add(getRepository().save(group));
+            }
+        });
+        return groupsUpdated;
     }
 
     public long count(Tournament tournament) {

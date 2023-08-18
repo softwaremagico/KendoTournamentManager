@@ -24,6 +24,8 @@ import {FightService} from "../../../services/fight.service";
 import {RankingService} from "../../../services/ranking.service";
 import {random} from "../../../utils/random/random";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
+import {Fight} from "../../../models/fight";
+import {Role} from "../../../models/role";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -35,7 +37,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   userListData: UserListData = new UserListData();
   tournament: Tournament;
   teams: Team[];
-  members:Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
+  members: Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
   teamSize: number[];
 
@@ -61,7 +63,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       if (roles === undefined) {
         roles = [];
       }
-      this.userListData.participants = roles.map(role => role.participant);
+      this.userListData.participants = roles.map((role: Role) => role.participant);
       //Block participants.
       if (this.tournament.locked) {
         for (let participant of this.userListData.participants) {
@@ -91,17 +93,17 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       }
     });
     //Get tournament groups
-    this.groupService.getAllByTournament(this.tournament.id!).subscribe(_groups => {
+    this.groupService.getFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
         this.groups = _groups;
       }
     )
     //Prevent removing teams that are on fights
-    this.fightService.getFromTournament(this.tournament).subscribe(_fights => {
+    this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
       let teamInFights: Team[] = [];
       teamInFights.push(..._fights.map(fight => fight.team1));
       teamInFights.push(..._fights.map(fight => fight.team2));
       //Remove duplicates.
-      teamInFights = teamInFights.filter((team, i, a) => i === a.indexOf(team));
+      teamInFights = teamInFights.filter((team: Team, i: number, a: Team[]): boolean => i === a.indexOf(team));
       if (this.teams) {
         for (let team of this.teams) {
           team.locked = teamInFights.some(t => t.id === team.id);
@@ -111,7 +113,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   @HostListener('document:click', ['$event.target'])
-  onClick(element: HTMLElement) {
+  onClick(element: HTMLElement): void {
     if (!element.classList.contains('team-title-editable') && !element.classList.contains('team-header')) {
       if (this.teams) {
         for (let team of this.teams) {
@@ -147,7 +149,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return "";
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
@@ -162,7 +164,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return event.container.data[memberIndex];
   }
 
-  removeFromTeam(event: CdkDragDrop<Participant[], any>) {
+  removeFromTeam(event: CdkDragDrop<Participant[], any>): void {
     // Correct index, as always return the first non-empty.
     const sourceTeam: Team | undefined = this.searchTeam(event as CdkDragDrop<(Participant | undefined)[], any>);
     const movedParticipant: Participant = event.item.data;
@@ -184,13 +186,13 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.userListData.participants.push(movedParticipant);
         this.userListData.filteredParticipants.push(movedParticipant);
 
-        this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-        this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+        this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+        this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
       }
     }
   }
 
-  deleteMemberFromTeam(participant: Participant) {
+  deleteMemberFromTeam(participant: Participant): void {
     this.teamService.deleteByMemberAndTournament(participant, this.tournament).pipe(
       tap(() => {
         this.loggerService.info("infoMemberDeleted");
@@ -201,7 +203,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     });
   }
 
-  dropMember(event: CdkDragDrop<(Participant | undefined)[], any>, team: Team, memberIndex: number) {
+  dropMember(event: CdkDragDrop<(Participant | undefined)[], any>, team: Team, memberIndex: number): void {
     const sourceTeam: Team | undefined = this.searchTeam(event);
     const participant = event.item.data;
     team.members = this.getMembersContainer(team);
@@ -244,7 +246,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  updateTeam(team: Team, member: Participant | undefined) {
+  updateTeam(team: Team, member: Participant | undefined): void {
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
         if (member) {
@@ -264,7 +266,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     ;
   }
 
-  searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>) {
+  searchTeam(event: CdkDragDrop<(Participant | undefined)[], any>): Team | undefined {
     const participant: Participant = event.previousContainer.data[event.previousIndex];
     for (let team of [...this.members.keys()]) {
       if (this.getMembersContainer(team).includes(participant)) {
@@ -283,11 +285,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     };
   }
 
-  isTeamLocked(team: Team) {
+  isTeamLocked(team: Team): boolean {
     return team.locked;
   }
 
-  setEditable(team: Team, editable: boolean) {
+  setEditable(team: Team, editable: boolean): void {
     if (this.tournament.teamSize > 1) {
       team.editing = editable;
     }
@@ -299,7 +301,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.loggerService.info("Team name updated to '" + newTeam.name + "'.")
       }),
       catchError(this.messageService.handleError<Team>("Updating team name to '" + team.name + "'."))
-    ).subscribe(() => {
+    ).subscribe((): void => {
       this.messageService.infoMessage("infoTeamUpdated");
     });
   }
@@ -347,7 +349,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     const teams: Team[] = [];
     teams.push(team);
     this.groupService.deleteTeamsFromGroup(this.groups[0]!.id!, teams).pipe(
-      tap(() => {
+      tap((): void => {
         this.loggerService.info("Team '" + team.name + "' removed from group.");
       }),
       catchError(this.messageService.handleError<Team>("removing team '" + team.name + "' from group."))
@@ -443,7 +445,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return participant;
   }
 
-  generateTeams() {
+  generateTeams(): void {
     if (this.tournament.teamSize === 1) {
       this.assignTeamByParticipant();
     } else {
@@ -451,7 +453,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  assignTeamByParticipant() {
+  assignTeamByParticipant(): void {
     this.teams = [];
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
@@ -477,13 +479,13 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     });
   }
 
-  downloadPDF() {
+  downloadPDF(): void {
     if (this.tournament?.id) {
-      this.teamService.getTeamsByTournament(this.tournament.id).subscribe((pdf: Blob) => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+      this.teamService.getTeamsByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
-        const anchor = document.createElement("a");
+        const anchor: HTMLAnchorElement = document.createElement("a");
         anchor.download = "Team List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();

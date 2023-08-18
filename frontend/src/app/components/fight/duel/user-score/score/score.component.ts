@@ -43,7 +43,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.scoreUpdatedService.isScoreUpdated.subscribe(duel => {
+    this.scoreUpdatedService.isScoreUpdated.subscribe((duel: Duel): void => {
       if (duel == this.duel) {
         this.scoreRepresentation = this.getScoreRepresentation();
         this.setTime();
