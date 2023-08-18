@@ -439,7 +439,7 @@
   "kingOfTheMountain": "King of the Mountain",
   "customChampionship": "Custom Championship",
   "loop": "Loop",
-  "championship": "Championship",
+  "championship": "Tournament Brackets",
   "league": "League",
   "customized": "Custom",
   "addTeamsText": "Add Team",
@@ -834,6 +834,7 @@
       "gold": "Attend to fifty tournaments."
     }
   },
-  "removeTeams": "Remove Teams"
+  "removeTeams": "Remove Teams",
+  "drawScore": "There is some draw scores that must be resolved before passing to the next tournament phase."
 }
 
