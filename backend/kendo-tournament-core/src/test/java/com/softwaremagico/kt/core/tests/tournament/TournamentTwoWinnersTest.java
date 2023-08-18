@@ -236,7 +236,6 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
 
         groups.get(0).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
-        groups.get(0).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
 
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
@@ -434,9 +433,8 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(score.get(3).getTeam().getName(), "Team10");
         //One extra hit!
         Assert.assertEquals(score.get(4).getTeam().getName(), "Team06");
-        //Same score but ordered by name.
-        Assert.assertEquals(score.get(5).getTeam().getName(), "Team03");
-        Assert.assertEquals(score.get(6).getTeam().getName(), "Team11");
+        Assert.assertEquals(score.get(5).getTeam().getName(), "Team11");
+        Assert.assertEquals(score.get(6).getTeam().getName(), "Team03");
         //One less hit!
         Assert.assertEquals(score.get(7).getTeam().getName(), "Team15");
         //Same score but ordered by name.
