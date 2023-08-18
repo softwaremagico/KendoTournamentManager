@@ -507,8 +507,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
           if (Group.isFinished(selectedGroup)) {
-            //Shows group classification. And there a tie score can be solved.
+            //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();
+            //TODO(softwaremagico): This is forcing last group to show classifications two times!
           }
         }
         // King of the mountain. Generate infinite fights.
@@ -541,23 +542,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   generateNextFights(): void {
-    this.fightService.createNext(this.tournamentId!).subscribe({
-      next: (_fights: Fight[]): void => {
-        //New fights are created.
-        if (_fights.length > 0) {
-          this.refreshFights();
-          //Nothing else to do.
-        } else {
-          this.showClassification();
-          this.finishTournament(new Date());
-        }
-      },
-      error: (error): void => {
-        //LevelNotFinishedException
-        if (error.status == 409) {
-          console.log('***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-')
-        }
-        console.error(error);
+    const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
+    this.fightService.createNext(this.tournamentId!).subscribe((_fights: Fight[]): void => {
+      //Null value means that fights are not created due to an existing draw score.
+      if (_fights === null) {
+        //Do nothing. A Draw fight that must be solved.
+      } else if (_fights.length > 0) {
+        this.refreshFights();
+      } else {
+        this.showClassification();
+        this.finishTournament(new Date());
       }
     });
   }

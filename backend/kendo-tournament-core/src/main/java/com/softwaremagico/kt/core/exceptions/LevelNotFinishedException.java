@@ -26,7 +26,7 @@ import com.softwaremagico.kt.logger.LoggedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.CONFLICT)
+@ResponseStatus(HttpStatus.NO_CONTENT)
 public class LevelNotFinishedException extends LoggedException {
 
     public LevelNotFinishedException(Class<?> clazz, String message, ExceptionType type) {

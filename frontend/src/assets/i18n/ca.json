@@ -299,7 +299,7 @@
   "confirm": "Confirmar",
   "ClearCacheLabel": "Pulix la Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Campeonat",
+  "championship": "Torneig en Arbre",
   "league": "Lliga",
   "tree": "Torneig en Arbre",
   "customized": "Personalizat",
@@ -819,7 +819,8 @@
       "gold": "Assisteix a cinquanta tornejos."
     }
   },
-  "removeTeams": "Treure Equips"
+  "removeTeams": "Treure Equips",
+  "drawScore": "Hi ha alguns empats que s'han de resoldre abans de passar a la següent fase del torneig."
 }
 
 
