@@ -11,6 +11,9 @@ export class TeamListComponent implements OnInit {
   @Input()
   teamListData: TeamListData;
 
+  @Input()
+  minify: boolean = false;
+
   ngOnInit(): void {
     // This is intentional
   }
