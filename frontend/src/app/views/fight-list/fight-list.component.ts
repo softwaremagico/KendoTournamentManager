@@ -541,12 +541,23 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   generateNextFights(): void {
-    this.fightService.createNext(this.tournamentId!).subscribe((_fights: Fight[]): void => {
-      if (_fights.length > 0) {
-        this.refreshFights();
-      } else {
-        this.showClassification();
-        this.finishTournament(new Date());
+    this.fightService.createNext(this.tournamentId!).subscribe({
+      next: (_fights: Fight[]): void => {
+        //New fights are created.
+        if (_fights.length > 0) {
+          this.refreshFights();
+          //Nothing else to do.
+        } else {
+          this.showClassification();
+          this.finishTournament(new Date());
+        }
+      },
+      error: (error): void => {
+        //LevelNotFinishedException
+        if (error.status == 409) {
+          console.log('----------------------')
+        }
+        console.error(error);
       }
     });
   }
