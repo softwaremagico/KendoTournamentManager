@@ -7,3 +7,9 @@ ul {
   width: 300px;
   box-shadow: 0px 2px 1px -1px var(--card-shadow1), 0px 1px 1px 0px var(--card-shadow2), 0px 1px 3px 0px var(--card-shadow3) !important;
 }
+
+.team-card.minify {
+  margin: 0;
+  border-radius: 0;
+  border: 2px #1f1836;
+}
