@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -43,10 +40,9 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -55,7 +51,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -64,19 +60,16 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final TournamentProvider tournamentProvider;
     private final FightProvider fightProvider;
     private final FightConverter fightConverter;
-
     private final DuelProvider duelProvider;
-
     private final DuelConverter duelConverter;
-
     private final TeamConverter teamConverter;
-
-    private final TeamProvider teamProvider;
+    private final TournamentHandlerSelector tournamentHandlerSelector;
 
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
-                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter, TeamProvider teamProvider) {
+                           DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter,
+                           TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -85,7 +78,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.duelProvider = duelProvider;
         this.duelConverter = duelConverter;
         this.teamConverter = teamConverter;
-        this.teamProvider = teamProvider;
+        this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
     @Override
@@ -99,20 +92,40 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                         ExceptionType.INFO)))));
     }
 
+    public GroupDTO getFromTournament(Integer tournamentId, Integer level, Integer index) {
+        return convert(getProvider().getGroupByLevelAndIndex(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO)), level, index));
+    }
+
+    public List<Group> getGroups(TournamentDTO tournament, Integer level) {
+        return getProvider().getGroups(tournamentConverter.reverse(tournament), level);
+    }
+
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username) {
-        //Check that this group does not collide with another one.
-        if (getProvider().deleteGroupByLevelAndIndex(
-                tournamentConverter.reverse(groupDTO.getTournament()), groupDTO.getLevel(), groupDTO.getIndex())) {
-            KendoTournamentLogger.warning(this.getClass(), "Old group removed!");
-        }
-        return super.create(groupDTO, username);
+        return convert(tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).addGroup(
+                tournamentConverter.reverse(groupDTO.getTournament()), reverse(groupDTO)));
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        delete(get(id));
+    }
+
+    @Override
+    public void delete(GroupDTO groupDTO) {
+        tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(tournamentConverter.reverse(groupDTO.getTournament()),
+                groupDTO.getLevel(), groupDTO.getIndex());
+    }
+
+    @Override
+    public void delete(Collection<GroupDTO> groupDTOs) {
+        groupDTOs.forEach(groupDTO -> delete(groupDTOs));
     }
 
     public List<GroupDTO> get(TournamentDTO tournament) {
-        final List<GroupDTO> groups = convertAll(getProvider().getGroups(tournamentConverter.reverse(tournament)));
-        groups.sort(Comparator.comparing(GroupDTO::getLevel).thenComparing(GroupDTO::getIndex));
-        return groups;
+        return convertAll(getProvider().getGroups(tournamentConverter.reverse(tournament)));
     }
 
     @Transactional
@@ -140,6 +153,18 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     public GroupDTO deleteTeams(Integer groupId, List<TeamDTO> teams, String username) {
         return convert(getProvider().deleteTeams(groupId, teamConverter.reverseAll(teams), username));
+    }
+
+    public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, String username) {
+        return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
+                        new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
+                username));
+    }
+
+    public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, List<TeamDTO> teams, String username) {
+        return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
+                        new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
+                teamConverter.reverseAll(teams), username));
     }
 
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
@@ -184,12 +209,21 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
     public GroupDTO addUnties(Integer groupId, List<DuelDTO> duelDTOS, String username) {
         final GroupDTO groupDTO = get(groupId);
+        duelDTOS.forEach(duelDTO -> {
+            duelDTO.setCreatedBy(username);
+            duelDTO.setTournament(groupDTO.getTournament());
+        });
         groupDTO.getUnties().addAll(duelDTOS);
+        groupDTO.setUpdatedBy(username);
         return convert(getProvider().save(reverse(groupDTO)));
     }
 
     public long count(TournamentDTO tournament) {
         return getProvider().count(tournamentConverter.reverse(tournament));
+    }
+
+    public long delete(TournamentDTO tournamentDTO) {
+        return getProvider().delete(tournamentConverter.reverse(tournamentDTO));
     }
 
 }

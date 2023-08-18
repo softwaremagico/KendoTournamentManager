@@ -485,6 +485,7 @@
   "teamsRanking": "Ranking of teams",
   "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
   "group": "Pool",
+  "groups": "Pools",
   "undraw": "Undraw",
   "addFightMessage": "The match has been added correctly.",
   "seconds": "seconds",
@@ -832,6 +833,7 @@
       "silver": "Attend to thirty tournaments.",
       "gold": "Attend to fifty tournaments."
     }
-  }
+  },
+  "removeTeams": "Remove Teams"
 }
 
