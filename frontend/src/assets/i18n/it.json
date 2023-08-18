@@ -297,7 +297,7 @@
   "confirm": "Confermare",
   "ClearCacheLabel": "Pulire la Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Campionato",
+  "championship": "Torneo in Albero",
   "league": "Liga",
   "tree": "Torneo in Albero",
   "customized": "Personalizzato",
@@ -813,7 +813,8 @@
       "gold": "Partecipa a cinquanta tornei."
     }
   },
-  "removeTeams": "Rimuovi squadre"
+  "removeTeams": "Rimuovi squadre",
+  "drawScore": "Ci sono alcuni punteggi di pareggio che devono essere risolti prima di passare alla fase successiva del torneo."
 }
 
 

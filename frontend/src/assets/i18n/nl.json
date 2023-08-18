@@ -807,7 +807,8 @@
       "gold": "Bezoek vijftig toernooien."
     }
   },
-  "removeTeams": "Teams verwijderen"
+  "removeTeams": "Teams verwijderen",
+  "drawScore": "Er zijn enkele gelijkspelscores die moeten worden opgelost voordat u doorgaat naar de volgende toernooifase."
 }
 
 
