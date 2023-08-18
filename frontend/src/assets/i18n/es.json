@@ -293,7 +293,7 @@
   "confirm": "Confirmar",
   "ClearCacheLabel": "Limpar Cache",
   "bloggerStatistics": "Código Blogger",
-  "championship": "Campeonato",
+  "championship": "Torneo en Árbol",
   "league": "Liga",
   "tree": "Torneo en Árbol",
   "customized": "Personalizado",
@@ -824,7 +824,8 @@
       "gold": "Asiste a cincuenta torneos."
     }
   },
-  "removeTeams": "Quitar equipos"
+  "removeTeams": "Quitar equipos",
+  "drawScore": "Hay algunos empates que deben resolverse antes de pasar a la siguiente fase del torneo."
 }
 
 

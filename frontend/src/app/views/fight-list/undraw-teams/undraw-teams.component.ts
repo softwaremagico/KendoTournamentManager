@@ -10,6 +10,7 @@ import {GroupService} from "../../../services/group.service";
 import {MessageService} from "../../../services/message.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
+import {Action} from "../../../action";
 
 @Component({
   selector: 'app-undraw-teams',
@@ -72,12 +73,12 @@ export class UndrawTeamsComponent extends RbacBasedComponent implements OnChange
     this.groupServices.addUnties(this.groupId, this.duels).subscribe((): void => {
       this.messageService.infoMessage("addFight");
       this.untieAddedService.isDuelsAdded.next(this.duels);
-      this.dialogRef.close();
+      this.dialogRef.close({action: Action.Update, draws: false});
     });
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({action: Action.Cancel, draws: true});
   }
 
   setCompetitor1(duelIndex: number, participant: Participant): void {

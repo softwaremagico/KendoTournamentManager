@@ -120,7 +120,7 @@ public class TeamSelector {
 
     public boolean remainFights() {
         for (final Team team : teams) {
-            if (combination.get(team).size() > 0) {
+            if (!combination.get(team).isEmpty()) {
                 return true;
             }
         }
