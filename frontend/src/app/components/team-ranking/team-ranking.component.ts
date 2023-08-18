@@ -3,7 +3,7 @@ import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
-import {Subject} from "rxjs";
+import {forkJoin, Observable, Subject} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {UndrawTeamsComponent} from "../../views/fight-list/undraw-teams/undraw-teams.component";
 import {Team} from "../../models/team";
@@ -12,6 +12,10 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {Group} from "../../models/group";
 import {TournamentType} from "../../models/tournament-type";
 import {Action} from "../../action";
+import {TournamentExtendedPropertiesService} from "../../services/tournament-extended-properties.service";
+import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
+import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'app-team-ranking',
@@ -25,6 +29,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   fightsFinished: boolean;
   group: Group;
   showIndex: boolean | undefined;
+  existsDraws: boolean = false;
 
   private destroy$: Subject<void> = new Subject<void>();
   _loading = false;
@@ -35,6 +40,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
                 showIndex: boolean | undefined,
               },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
+              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
               rbacService: RbacService) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -46,8 +52,15 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
         if (this.group) {
-          this.rankingService.getTeamsScoreRankingByGroup(this.group!.id!).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
-            this.teamScores = scoresOfTeams;
+          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group!.id!);
+          const winnersRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+
+          forkJoin([rankingRequest, winnersRequest]).subscribe(([_scoresOfTeams, _numberOfWinners]): void => {
+            this.teamScores = _scoresOfTeams;
+            if (this.isDrawWinner(0) || (_numberOfWinners && _numberOfWinners.value == "2" && this.isDrawWinner(1))) {
+              this.messageService.warningMessage("drawScore");
+              this.existsDraws = true;
+            }
           });
         }
       } else {
@@ -76,7 +89,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.dialogRef.close({action: Action.Cancel});
+    this.dialogRef.close({action: Action.Cancel, draws: this.existsDraws});
   }
 
   downloadPDF(): void {
@@ -113,6 +126,10 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       disableClose: false,
       data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
     });
-    this.dialogRef.close({action: Action.Update});
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result.action === Action.Update) {
+        this.dialogRef.close({action: Action.Update, draws: result.draws});
+      }
+    });
   }
 }

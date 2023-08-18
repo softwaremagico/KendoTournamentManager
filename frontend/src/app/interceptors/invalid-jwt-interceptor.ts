@@ -22,7 +22,7 @@ export class InvalidJwtInterceptor implements HttpInterceptor {
           this.messageService.warningMessage("userLoggedOutMessage");
           this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
         }
-        return throwError(error.message);
+        throw error;
       })
     )
   }

@@ -4,8 +4,8 @@ import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
-import {Observable} from "rxjs";
-import {catchError, tap} from "rxjs/operators";
+import {Observable, of} from "rxjs";
+import {catchError, map, tap} from "rxjs/operators";
 import {Fight} from "../models/fight";
 import {Tournament} from "../models/tournament";
 import {SystemOverloadService} from "./notifications/system-overload.service";
@@ -131,7 +131,8 @@ export class FightService {
     const url: string = `${this.baseUrl}`;
     return this.http.put<Fight>(url, fight)
       .pipe(
-        tap({next:(_updatedFight: Fight) => this.loggerService.info(`updating fight`),
+        tap({
+          next: (_updatedFight: Fight) => this.loggerService.info(`updating fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
@@ -143,7 +144,8 @@ export class FightService {
     const url: string = `${this.baseUrl}/all`;
     return this.http.put<Fight[]>(url, fights)
       .pipe(
-        tap({next:(_updatedFight: Fight[]) => this.loggerService.info(`updating fight`),
+        tap({
+          next: (_updatedFight: Fight[]) => this.loggerService.info(`updating fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
@@ -155,7 +157,8 @@ export class FightService {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/levels/' + level;
     return this.http.put<Fight[]>(url, undefined)
       .pipe(
-        tap({next:(_newFight: Fight[]) => this.loggerService.info(`adding fight`),
+        tap({
+          next: (_newFight: Fight[]) => this.loggerService.info(`adding fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
@@ -165,13 +168,15 @@ export class FightService {
 
   createNext(tournamentId: number): Observable<Fight[]> {
     const url: string = `${this.baseUrl}` + '/create/tournaments/' + tournamentId + '/next';
-    return this.http.put<Fight[]>(url, undefined)
+    return this.http.put<Fight[]>(url, undefined, {observe: 'response'})
       .pipe(
-        tap({next:(_newFight: Fight[]) => this.loggerService.info(`generating next fights`),
-          error: () => this.systemOverloadService.isBusy.next(false),
-          complete: () => this.systemOverloadService.isBusy.next(false),
-        }),
-        catchError(this.messageService.handleError<Fight[]>(`generating next fights`))
+        map((response: any) => {
+          //204 means that fights are not created due to an existing draw score.
+          if (response.status === 204) {
+            return of(null);
+          }
+          return response.body;
+        })
       );
   }
 
@@ -195,7 +200,8 @@ export class FightService {
     const url: string = `${this.baseUrl}/duels`;
     return this.http.put<Fight>(url, fight)
       .pipe(
-        tap({next:(_updatedFight: Fight) => this.loggerService.info(`generating duels for a fight`),
+        tap({
+          next: (_updatedFight: Fight) => this.loggerService.info(`generating duels for a fight`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
