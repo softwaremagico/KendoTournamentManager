@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
@@ -33,6 +33,9 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   tournamentId: number;
   tournament: Tournament;
   isWizardEnabled: boolean = true;
+  groups: Group[];
+  groupsLevelZero: Group[] = [];
+  totalTeams: number;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
               private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
@@ -62,7 +65,9 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   addGroup(): void {
-    this.tournamentBracketsEditorComponent.addGroup();
+    if (this.groupsLevelZero.length < this.totalTeams / 2) {
+      this.tournamentBracketsEditorComponent.addGroup();
+    }
   }
 
   deleteGroup(): void {
@@ -107,5 +112,16 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     this.groupService.deleteAllTeamsFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
+  }
+
+  groupsUpdated(groups: Group[]): void {
+    this.groups = groups;
+    this.groupsLevelZero = this.groups.filter((g: Group): boolean => {
+      return g.level === 0;
+    });
+  }
+
+  teamsSizeUpdated(totalTeams: number): void {
+    this.totalTeams = totalTeams;
   }
 }
