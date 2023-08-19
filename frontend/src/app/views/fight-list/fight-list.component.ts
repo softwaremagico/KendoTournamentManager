@@ -225,7 +225,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   openConfirmationGenerateElementsDialog(): void {
-    if (this.groups.length > 0) {
+    if (this.getFights().length > 0) {
       let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
         disableClose: false
       });
@@ -387,6 +387,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             this.resetFilter();
             this.selectedGroup!.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
+            this.refreshFights();
           });
         }
       });
