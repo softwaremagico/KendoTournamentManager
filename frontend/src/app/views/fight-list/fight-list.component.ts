@@ -225,7 +225,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   openConfirmationGenerateElementsDialog(): void {
-    if (this.groups.length > 0) {
+    if (this.getFights().length > 0) {
       let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
         disableClose: false
       });
@@ -387,6 +387,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             this.resetFilter();
             this.selectedGroup!.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
+            this.refreshFights();
           });
         }
       });
@@ -507,7 +508,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         let showClassification: boolean = true;
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
-          if (Group.isFinished(selectedGroup)) {
+          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
             //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();
             showClassification = false;
@@ -515,7 +516,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
         // King of the mountain. Generate infinite fights.
         if (!this.selectFirstUnfinishedDuel()) {
-          this.generateNextFights(showClassification);
+          this.generateNextFights(showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN);
         }
       });
     }
