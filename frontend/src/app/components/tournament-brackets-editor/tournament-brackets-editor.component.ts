@@ -30,6 +30,12 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
   @Output()
   onSelectedGroup: EventEmitter<Group> = new EventEmitter();
 
+  @Output()
+  onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
+
+  @Output()
+  onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
+
   groups: Group[];
 
   selectedGroup: Group;
@@ -72,15 +78,16 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
         });
       }
 
-      const totalTeams: number = _teams.length;
       this.groups = _groups;
+      this.onGroupsUpdated.emit(_groups);
       this.groupsUpdatedService.areGroupsUpdated.next(_groups);
       const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
       _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
 
       this.teamListData.teams = _teams;
       this.totalTeams = _teams.length;
-      this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(totalTeams);
+      this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
+      this.onTeamsLengthUpdated.next(_teams.length);
       this.teamListData.filteredTeams = _teams;
 
       this.relations = this.convert(_groupRelations);

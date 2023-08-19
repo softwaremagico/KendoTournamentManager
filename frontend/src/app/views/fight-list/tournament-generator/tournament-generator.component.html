@@ -11,7 +11,7 @@
           <mat-icon>arrow_back</mat-icon>
         </button>
         <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | rbac : this.rbacService.activities)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
+                [disabled]="!(groupsLevelZero.length < totalTeams / 2) || groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
                 matTooltip="{{'addFight' | translate}}">
@@ -25,7 +25,8 @@
           <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
-        <button (click)="askToRemoveAllTeams()" *ngIf="(RbacActivity.CLEAN_UP_GROUPS | rbac : this.rbacService.activities)"
+        <button (click)="askToRemoveAllTeams()"
+                *ngIf="(RbacActivity.CLEAN_UP_GROUPS | rbac : this.rbacService.activities)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'removeTeams' | translate}}">
@@ -44,7 +45,9 @@
     </div>
     <div class="championship-container">
       <app-tournament-brackets-editor [tournament]="tournament"
-                                      [droppingDisabled]="groupsDisabled">
+                                      [droppingDisabled]="groupsDisabled"
+                                      (onGroupsUpdated)="groupsUpdated($event)"
+                                      (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
       </app-tournament-brackets-editor>
     </div>
   </div>
