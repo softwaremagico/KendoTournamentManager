@@ -221,15 +221,20 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         }
         kingIndex.getAndIncrement();
         // Avoid to repeat a winner.
+        Integer forbiddenWinner = null;
         for (final Team winner : winners) {
-            if (teams.indexOf(winner) == kingIndex.get() % teams.size()) {
-                kingIndex.getAndIncrement();
+            if (teams.indexOf(winner) == (kingIndex.get() % teams.size())) {
+                forbiddenWinner = kingIndex.getAndIncrement();
             }
         }
         // Avoid to repeat a looser.
         for (final Team looser : loosers) {
-            if (teams.indexOf(looser) == kingIndex.get() % teams.size()) {
+            if (teams.indexOf(looser) == (kingIndex.get() % teams.size())) {
                 kingIndex.getAndIncrement();
+                //Avoid the new one is still the winner.
+                if (forbiddenWinner != null && (kingIndex.get() % teams.size()) == (forbiddenWinner % teams.size())) {
+                    kingIndex.getAndIncrement();
+                }
             }
         }
 
