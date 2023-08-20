@@ -29,11 +29,13 @@ of the previous version of this software. The goal is to have enough flexibility
 not the other way around.
 
 This tool is a complete rebuild from the old
-tool [Kendo Tournament Generator](https://sourceforge.net/projects/kendotournament/files/) with the
+tool Kendo Tournament Generator [[1]](https://sourceforge.net/projects/kendotournament/files/) [[2]](https://github.com/softwaremagico/KendoTournament) with the
 effort of adapting it to more modern technologies. The new architecture allows the deployment of this tool as a web
 application -rather than a desktop application- allowing some advantages such as better compatibility between devices,
 as now can be used in any Android/iOS through a browser. Also improves the scoring synchronization between multiple
 devices as now everything can be centralized into the cloud.
+
+If you are looking for a desktop application, please go to [Kendo Tournament Generator](https://github.com/softwaremagico/KendoTournament) that maybe suites better to your needs. But if you want some professional tool that is accessible online, this is the project you are looking for. 
 
 ## Installation
 
