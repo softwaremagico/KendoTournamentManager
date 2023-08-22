@@ -1,10 +1,26 @@
-<div [matMenuTriggerFor]="menu" class="fault">
+<div [matMenuTriggerFor]="menu" class="fault" *ngIf="!locked">
   <mat-menu #menu="matMenu">
     <button (click)="updateFault(true)" *ngIf="this.duel.competitor1 !== null && this.duel.competitor2 !== null"
             mat-menu-item>{{'fault' | translate}}
     </button>
     <button (click)="updateFault(false)" mat-menu-item>{{'clear' | translate}}</button>
   </mat-menu>
+  <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+       this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
+       class="fault-content">
+    <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
+         [ngClass]="{
+          'left-border': onLeftBorder,
+          'center': !onRightBorder && !onLeftBorder,
+          'right-border': onRightBorder
+        }"
+         class="tooltiptext">
+      <mat-icon>timer</mat-icon>
+    </div>
+  </div>
+</div>
+<!-- Fault representation when menu is disabled -->
+<div class="fault" *ngIf="locked">
   <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
        this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
        class="fault-content">

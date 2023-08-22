@@ -4,7 +4,7 @@ import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
-import {Observable} from "rxjs";
+import {EMPTY, Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Group} from "../models/group";
 import {Team} from "../models/team";
@@ -50,8 +50,8 @@ export class GroupService {
       );
   }
 
-  getAllByTournament(tournamentId: number): Observable<Group[]> {
-    const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId;
+  getFromTournament(tournamentId: number): Observable<Group[]> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}`;
     return this.http.get<Group[]>(url)
       .pipe(
         tap({
@@ -63,8 +63,21 @@ export class GroupService {
       );
   }
 
+  getFromTournamentByIndex(tournamentId: number, level: number, index: number): Observable<Group> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/level/${level}/index/${index}`;
+    return this.http.get<Group>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched group ${level}-${index} from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group>(`gets group ${level}-${index} from tournament ${tournamentId}`))
+      );
+  }
+
   setTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
-    const url: string = `${this.baseUrl}/` + groupId + '/teams';
+    const url: string = `${this.baseUrl}/${groupId}/teams`;
     return this.http.put<Group>(url, teams)
       .pipe(
         tap({
@@ -76,8 +89,34 @@ export class GroupService {
       );
   }
 
+  deleteTeamsFromTournament(tournamentId: number, teams: Team[]): Observable<Group[]> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/teams/delete`;
+    return this.http.patch<Group[]>(url, teams)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Deleting teams from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group[]>(`Deleting teams from tournament ${tournamentId}`))
+      );
+  }
+
+  deleteAllTeamsFromTournament(tournamentId: number): Observable<Group[]> {
+    const url: string = `${this.baseUrl}/tournaments/${tournamentId}/teams/delete`;
+    return this.http.delete<Group[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Removing all teams from tournament ${tournamentId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group[]>(`Removing all teams from tournament ${tournamentId}`))
+      );
+  }
+
   addTeamsToGroup(groupId: number, teams: Team[]): Observable<Group> {
-    const url: string = `${this.baseUrl}/` + groupId + '/teams/add';
+    const url: string = `${this.baseUrl}/${groupId}/teams/add`;
     return this.http.patch<Group>(url, teams)
       .pipe(
         tap({
@@ -90,7 +129,7 @@ export class GroupService {
   }
 
   deleteTeamsFromGroup(groupId: number, teams: Team[]): Observable<Group> {
-    const url: string = `${this.baseUrl}/` + groupId + '/teams/delete';
+    const url: string = `${this.baseUrl}/${groupId}/teams/delete`;
     return this.http.patch<Group>(url, teams)
       .pipe(
         tap({
@@ -116,7 +155,7 @@ export class GroupService {
   }
 
   addUnties(groupId: number, duels: Duel[]): Observable<Group> {
-    const url: string = `${this.baseUrl}/` + groupId + `/unties`;
+    const url: string = `${this.baseUrl}/${groupId}/unties`;
     return this.http.put<Group>(url, duels)
       .pipe(
         tap({
@@ -126,6 +165,36 @@ export class GroupService {
         }),
         catchError(this.messageService.handleError<Group>(`updates teams for default group`))
       );
+  }
+
+  addGroup(group: Group): Observable<Group> {
+    const url: string = `${this.baseUrl}`;
+    return this.http.post<Group>(url, group)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`Adding a new group`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Group>(`Adding a new group`))
+      );
+  }
+
+  deleteGroup(group: Group): Observable<void> {
+    if (group) {
+      const url: string = `${this.baseUrl}/${group.id}`;
+      return this.http.delete<void>(url)
+        .pipe(
+          tap({
+            next: () => this.loggerService.info(`Deleting a group`),
+            error: () => this.systemOverloadService.isBusy.next(false),
+            complete: () => this.systemOverloadService.isBusy.next(false),
+          }),
+          catchError(this.messageService.handleError<void>(`Deleting a group`))
+        );
+    } else {
+      return EMPTY;
+    }
   }
 
 }

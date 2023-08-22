@@ -21,4 +21,5 @@ import {MatButtonModule} from "@angular/material/button";
     MatButtonModule
   ]
 })
-export class TeamRankingModule { }
+export class TeamRankingModule {
+}

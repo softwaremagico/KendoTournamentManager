@@ -6,7 +6,7 @@ import {Element} from "./element";
 
 export class Group extends Element {
   tournament: Tournament;
-  teams: Team[];
+  teams: Team[] = [];
   shiaijo: number;
   level: number;
   index: number;
@@ -47,5 +47,37 @@ export class Group extends Element {
     const instance: Group = new Group();
     this.copy(data, instance);
     return instance;
+  }
+
+  public isFinished(): boolean {
+    for (const fight of this.fights) {
+      for (const duel of fight.duels) {
+        if (!duel.finished) {
+          return false;
+        }
+      }
+      for (const duel of this.unties) {
+        if (!duel.finished) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public static isFinished(group: Group): boolean {
+    for (const fight of group.fights) {
+      for (const duel of fight.duels) {
+        if (!duel.finished) {
+          return false;
+        }
+      }
+      for (const duel of group.unties) {
+        if (!duel.finished) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
