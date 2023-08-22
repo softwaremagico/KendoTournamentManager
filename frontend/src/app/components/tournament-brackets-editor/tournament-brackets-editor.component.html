@@ -1,0 +1,10 @@
+<div class="container" cdkDropListGroup>
+  <div *ngIf="!droppingDisabled"
+       (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+       cdkDropList cdkDropListSortingDisabled="true"
+       class="teams-container">
+    <team-list [teamListData]="teamListData" [minify]="true"></team-list>
+  </div>
+  <app-tournament-brackets class="tournament-brackets" [tournament]="tournament" [droppingDisabled]="droppingDisabled">
+  </app-tournament-brackets>
+</div>
