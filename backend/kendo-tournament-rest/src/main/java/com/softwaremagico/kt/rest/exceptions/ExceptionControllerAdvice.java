@@ -125,7 +125,19 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidMacException.class)
     public ResponseEntity<Object> invalidMacException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("IP INVALID", ex), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ErrorMessage("MAC INVALID", ex), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidIpException.class)
+    public ResponseEntity<Object> invalidIpException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage("INVALID IP", ex), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(InvalidJwtException.class)
+    public ResponseEntity<Object> invalidJwtException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage("INVALID JWT", ex), HttpStatus.UNAUTHORIZED);
     }
 
     private String getStacktrace(Throwable e) {

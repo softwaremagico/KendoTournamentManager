@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
+import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -99,7 +100,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String token = header.split(" ")[1].trim();
         if (!jwtTokenUtil.validate(token)) {
             JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
-            chain.doFilter(request, response);
+            try {
+                chain.doFilter(request, response);
+            } catch (Exception e) {
+                //No other filters validates it.
+                throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
+            }
             return;
         }
 
@@ -140,7 +146,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private List<String> getClientIpAddress(HttpServletRequest request) {
         for (final String header : HEADERS_TO_TRY) {
             final String ip = request.getHeader(header);
-            if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
                 return ip.contains(",") ? Arrays.asList(ip.split(",")) : Collections.singletonList(ip);
             }
         }
