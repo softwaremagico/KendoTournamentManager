@@ -1,7 +1,10 @@
 <div [class.left]="left" [class.right]="!left" class="user-score">
-  <score *ngIf="!left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"></score>
-  <score *ngIf="!left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"></score>
-  <fault *ngIf="!left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></fault>
+  <score *ngIf="!left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
+  <score *ngIf="!left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
+  <fault *ngIf="!left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></fault>
   <app-participant-picture *ngIf="showAvatar && !left" [participant]="getParticipant()"
                            class="participant-picture"></app-participant-picture>
   <user-name [duel]="duel" [left]="left" [memberIndex]="duelIndex" [participant]="getParticipant()"
@@ -9,7 +12,10 @@
              class="user-name"></user-name>
   <app-participant-picture *ngIf="showAvatar && left" [participant]="getParticipant()"
                            class="participant-picture"></app-participant-picture>
-  <fault *ngIf="left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></fault>
-  <score *ngIf="left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"></score>
-  <score *ngIf="left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"></score>
+  <fault *ngIf="left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></fault>
+  <score *ngIf="left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
+  <score *ngIf="left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
 </div>

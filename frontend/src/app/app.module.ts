@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
@@ -86,7 +86,6 @@ import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
-import {InvalidJwtInterceptor} from "./interceptors/invalid-jwt-interceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
@@ -104,6 +103,14 @@ import {HeaderInterceptor} from "./interceptors/header-interceptor";
 import {HttpErrorInterceptor} from "./interceptors/http-error-interceptor";
 import {TournamentListModule} from "./views/tournament-list/tournament-list.module";
 import {ParticipantListModule} from "./views/participant-list/participant-list.module";
+import {TournamentBracketsModule} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
+import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
+import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
+import {TournamentBracketsComponent} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.component";
+import {
+  TournamentBracketsEditorModule
+} from "./components/tournament-brackets-editor/tournament-brackets-editor.module";
+import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator/tournament-generator.module";
 
 
 registerLocaleData(localeES, "es");
@@ -205,7 +212,12 @@ registerLocaleData(localeNL, "nl");
     GaugeChartModule,
     ProgressBarModule,
     TournamentListModule,
-    ParticipantListModule
+    ParticipantListModule,
+    ProgressBarModule,
+    TournamentBracketsModule,
+    ArrowModule,
+    TournamentBracketsEditorModule,
+    TournamentGeneratorModule,
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
@@ -217,10 +229,10 @@ registerLocaleData(localeNL, "nl");
     deps: [TranslateService]
   },
     {
-      provide: HTTP_INTERCEPTORS,
-      useClass: InvalidJwtInterceptor,
-      multi: true
-    }, {
+      provide: ErrorHandler,
+      useClass: LocalErrorHandler
+    },
+    {
       provide: HTTP_INTERCEPTORS,
       useClass: HeaderInterceptor,
       multi: true
