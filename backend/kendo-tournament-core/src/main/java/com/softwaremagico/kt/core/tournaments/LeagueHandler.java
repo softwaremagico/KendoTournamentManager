@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.tournaments;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -90,11 +87,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public Integer getNumberOfLevels() {
-        return 1;
-    }
-
-    @Override
     public List<Group> getGroups(Tournament tournament, Integer level) {
         if (level == 0) {
             return getGroups(tournament);
@@ -123,21 +115,6 @@ public abstract class LeagueHandler implements ITournamentManager {
         if (level == 0 && groupIndex == 0) {
             groupProvider.delete(tournament);
         }
-    }
-
-    @Override
-    public void removeGroup(Group group) {
-        groupProvider.delete(group);
-    }
-
-    @Override
-    public void removeGroups(Tournament tournament, Integer level) {
-        groupProvider.delete(tournament, level);
-    }
-
-    @Override
-    public Level getLevel(Integer level) {
-        return null;
     }
 
     @Override
@@ -171,11 +148,6 @@ public abstract class LeagueHandler implements ITournamentManager {
             return getGroup(tournament);
         }
         return null;
-    }
-
-    @Override
-    public Integer getLastLevelUsed() {
-        return 0;
     }
 
     @Override
@@ -214,29 +186,8 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public Level getCurrentLevel() {
-        return null;
-    }
-
-    @Override
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
         return groupProvider.getGroupsByShiaijo(tournament, shiaijo);
-    }
-
-    @Override
-    public List<Level> getLevels() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public Level getLastLevel() {
-        return getLevel(0);
-    }
-
-    @Override
-    public boolean isNewLevelNeeded() {
-        // Only one level is needed.
-        return false;
     }
 
     @Override
@@ -257,7 +208,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+    public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
         return new ArrayList<>();
     }
 }

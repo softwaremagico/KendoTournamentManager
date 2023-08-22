@@ -9,7 +9,6 @@ import {LoginService} from "../login.service";
 })
 export class RbacService {
 
-  private roles: UserRoles[];
   activities: RbacActivity[] = [];
 
   constructor(private userService: UserService, private loginService: LoginService) {
@@ -25,12 +24,11 @@ export class RbacService {
   }
 
   public setRoles(roles: UserRoles[]): void {
-    this.roles = roles;
     this.activities = this.getActivities(roles);
   }
 
-  public isAllowed(activity: RbacActivity): boolean {
-    if (!this.activities) {
+  public isAllowed(activity: RbacActivity | undefined): boolean {
+    if (!activity || !this.activities) {
       return false;
     }
     return this.activities.includes(activity);

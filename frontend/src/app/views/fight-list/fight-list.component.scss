@@ -1,6 +1,6 @@
 .fight-container {
-  height: 83vh;
-  max-height: 83vh;
+  height: 80vh;
+  max-height: 80vh;
   min-height: 50vh;
   overflow-y: auto;
 }
@@ -18,8 +18,9 @@
   width: 100%;
 }
 
-.fights-table .upper-menu {
-  margin-top: 10px;
+.fights-table {
+  padding: 20px;
+  min-width: 600px;
 }
 
 .fights-of-group {

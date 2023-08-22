@@ -10,6 +10,13 @@ export class Team extends Element {
   //A locked team cannot be deleted as has fights.
   public locked: boolean = true;
 
+  constructor(name?: string) {
+    super();
+    if (name) {
+      this.name = name;
+    }
+  }
+
   public static override copy(source: Team, target: Team): void {
     Element.copy(source, target);
     target.name = source.name;
