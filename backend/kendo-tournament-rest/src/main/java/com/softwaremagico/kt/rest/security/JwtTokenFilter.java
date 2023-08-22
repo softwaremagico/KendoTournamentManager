@@ -89,7 +89,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (ObjectUtils.isEmpty(header) || !header.startsWith("Bearer ")) {
             chain.doFilter(request, response);
-            JwtFilterLogger.debug(this.getClass().getName(), "No Bearer token found on headers");
+            if (request.getContextPath() != null && !request.getContextPath().contains("health-check")) {
+                JwtFilterLogger.debug(this.getClass(), "No Bearer token found on headers");
+            }
             return;
         }
 
