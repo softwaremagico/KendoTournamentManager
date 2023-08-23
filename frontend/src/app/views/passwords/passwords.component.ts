@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {
   AbstractControl,
-  FormControl,
-  FormGroup,
+  UntypedFormControl,
+  UntypedFormGroup,
   FormGroupDirective,
   NgForm,
   ValidationErrors,
@@ -28,10 +28,10 @@ export class PasswordsComponent extends RbacBasedComponent implements OnInit {
   repeatedPassword: string;
   matcher = new MyErrorStateMatcher();
 
-  passwordForm = new FormGroup({
-    oldPassword: new FormControl('', Validators.required),
-    newPassword: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
-    repeatPassword: new FormControl('', Validators.required)
+  passwordForm = new UntypedFormGroup({
+    oldPassword: new UntypedFormControl('', Validators.required),
+    newPassword: new UntypedFormControl('', [Validators.required, Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
+    repeatPassword: new UntypedFormControl('', Validators.required)
   }, {validators: confirmPasswordValidator, updateOn: 'change'});
 
   constructor(private userService: UserService, private messageService: MessageService, rbacService: RbacService) {
@@ -65,7 +65,7 @@ export class PasswordsComponent extends RbacBasedComponent implements OnInit {
 }
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+  isErrorState(control: UntypedFormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const invalidCtrl = !!(control?.invalid && control?.parent?.dirty);
     const invalidParent = !!(control?.parent?.invalid && control?.parent?.dirty);
 
