@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ProgressSpinnerMode} from "@angular/material/progress-spinner";
-import {ThemePalette} from "@angular/material/core/common-behaviors/color";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {KendoComponent} from "../kendo-component";
 import {takeUntil} from "rxjs";
+import {ThemePalette} from "@angular/material/core";
 
 @Component({
   selector: 'app-mat-spinner-overlay',
