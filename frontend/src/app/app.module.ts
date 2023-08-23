@@ -8,7 +8,6 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
@@ -36,7 +35,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {IconModule} from "./components/icons";
 import {registerLocaleData} from "@angular/common";
 import localeES from "@angular/common/locales/es";
-import localeCAT from "@angular/common/locales/ca-ES-VALENCIA";
+import localeCAT from "@angular/common/locales/ca-ES-valencia";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
@@ -132,7 +131,6 @@ registerLocaleData(localeNL, "nl");
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
     HttpClientModule,
     MatToolbarModule,
     MatSidenavModule,

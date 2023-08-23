@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 
 import {LoginService} from "../../services/login.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {MessageService} from "../../services/message.service";
 import {LoggerService} from "../../services/logger.service";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -18,12 +18,12 @@ const {version: appVersion} = require('../../../../package.json')
 export class LoginComponent {
   username: string;
   password: string;
-  loginForm: FormGroup;
+  loginForm: UntypedFormGroup;
   appVersion: string;
 
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
-              private formBuilder: FormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
+              private formBuilder: UntypedFormBuilder, private messageService: MessageService, private loggerService: LoggerService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
