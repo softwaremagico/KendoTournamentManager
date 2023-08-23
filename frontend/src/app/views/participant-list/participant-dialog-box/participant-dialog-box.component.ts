@@ -2,7 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Participant} from "../../../models/participant";
 import {Club} from "../../../models/club";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Observable, startWith} from "rxjs";
 import {map} from "rxjs/operators";
 import {Action} from "../../../action";
@@ -20,7 +20,7 @@ import {MessageService} from "../../../services/message.service";
 })
 export class ParticipantDialogBoxComponent extends RbacBasedComponent implements OnInit {
 
-  formControl = new FormControl();
+  formControl = new UntypedFormControl();
   filteredOptions: Observable<Club[]>;
 
 
@@ -30,7 +30,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   actionName: string;
   clubs: Club[];
 
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
 
   participantPicture: string | undefined;
 
@@ -46,11 +46,11 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.clubs = data.clubs;
     this.participantPicture = undefined;
 
-    this.registerForm = new FormGroup({
-      name: new FormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
-      lastname: new FormControl(this.participant.lastname, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
-      idCard: new FormControl(this.participant.idCard, [Validators.required, Validators.maxLength(20)]),
-      club: new FormControl(this.participant.club, [Validators.required])
+    this.registerForm = new UntypedFormGroup({
+      name: new UntypedFormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
+      lastname: new UntypedFormControl(this.participant.lastname, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      idCard: new UntypedFormControl(this.participant.idCard, [Validators.required, Validators.maxLength(20)]),
+      club: new UntypedFormControl(this.participant.club, [Validators.required])
     },);
   }
 
