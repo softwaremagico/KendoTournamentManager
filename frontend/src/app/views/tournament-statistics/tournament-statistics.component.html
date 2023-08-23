@@ -34,11 +34,11 @@
           <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td>{{'teams' | translate}}:</td>
-              <td>{{tournamentStatistics?.numberOfTeams}}</td>
+              <td>{{tournamentStatistics.numberOfTeams}}</td>
             </tr>
             <tr>
               <td>{{'tournamentTeamSize' | translate}}:</td>
-              <td>{{tournamentStatistics?.teamSize}}</td>
+              <td>{{tournamentStatistics.teamSize}}</td>
             </tr>
           </table>
         </div>
@@ -51,27 +51,27 @@
           <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td>{{'createdAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics?.tournamentCreatedAt)}}</td>
+              <td>{{convertDate(tournamentStatistics.tournamentCreatedAt)}}</td>
             </tr>
             <tr>
               <td>{{'lockedAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics?.tournamentLockedAt)}}</td>
+              <td>{{convertDate(tournamentStatistics.tournamentLockedAt)}}</td>
             </tr>
             <tr>
               <td>{{'fightsStartedAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics?.tournamentFightStatistics?.fightsStartedAt)}}</td>
+              <td>{{convertDate(tournamentStatistics.tournamentFightStatistics?.fightsStartedAt)}}</td>
             </tr>
             <tr>
               <td>{{'fightsFinishedAt' | translate}}:</td>
-              <td>{{convertDate(tournamentStatistics?.tournamentFightStatistics?.fightsFinishedAt)}}</td>
+              <td>{{convertDate(tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt)}}</td>
             </tr>
             <tr>
               <td>{{'fightsDuration' | translate}}:</td>
-              <td>{{convertSeconds(tournamentStatistics?.tournamentFightStatistics?.duelsDuration())}}</td>
+              <td>{{convertSeconds(tournamentStatistics.tournamentFightStatistics?.duelsDuration())}}</td>
             </tr>
             <tr>
               <td>{{'fightsAverage' | translate}}:</td>
-              <td>{{convertSeconds(tournamentStatistics?.tournamentFightStatistics?.averageTime)}}</td>
+              <td>{{convertSeconds(tournamentStatistics.tournamentFightStatistics?.averageTime)}}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
@@ -81,7 +81,7 @@
           <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
             <tr>
               <td class="single">{{'faults' | translate}}
-                : {{tournamentStatistics?.tournamentFightStatistics?.faults}}
+                : {{tournamentStatistics.tournamentFightStatistics?.faults}}
               </td>
             </tr>
           </table>
