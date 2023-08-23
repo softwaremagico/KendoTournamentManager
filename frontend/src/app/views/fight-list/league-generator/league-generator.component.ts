@@ -10,7 +10,7 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentType} from "../../../models/tournament-type";
 import {TournamentService} from "../../../services/tournament.service";
-import {FormControl} from "@angular/forms";
+import {UntypedFormControl} from "@angular/forms";
 import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
 import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
@@ -33,7 +33,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   drawResolution: DrawResolution[];
   selectedDrawResolution: DrawResolution;
-  avoidDuplicates = new FormControl('', []);
+  avoidDuplicates = new UntypedFormControl('', []);
   needsDrawResolution: boolean;
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,

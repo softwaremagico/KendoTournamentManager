@@ -6,7 +6,7 @@ import {Action} from "../../../action";
 import {ScoreType} from "../../../models/score-type";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {TournamentImageSelectorComponent} from "./tournament-image-selector/tournament-image-selector.component";
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
@@ -32,7 +32,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
   selectedScore: ScoreType;
 
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>, rbacService: RbacService,
@@ -53,28 +53,28 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
       this.selectedScore = ScoreType.INTERNATIONAL
     }
 
-    this.registerForm = new FormGroup({
-      tournamentName: new FormControl({
+    this.registerForm = new UntypedFormGroup({
+      tournamentName: new UntypedFormControl({
         value: this.tournament.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.minLength(4), Validators.maxLength(50)]),
-      shiaijos: new FormControl({
+      shiaijos: new UntypedFormControl({
         value: this.tournament.shiaijos,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      tournamentType: new FormControl({
+      tournamentType: new UntypedFormControl({
         value: this.tournament.type,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
-      teamSize: new FormControl({
+      teamSize: new UntypedFormControl({
         value: this.tournament.teamSize,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      duelsDuration: new FormControl({
+      duelsDuration: new UntypedFormControl({
         value: this.tournament.duelsDuration,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.maxLength(20)]),
-      scoreTypes: new FormControl({
+      scoreTypes: new UntypedFormControl({
         value: this.tournament.tournamentScore?.scoreType,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required])
