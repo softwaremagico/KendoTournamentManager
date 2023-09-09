@@ -43,10 +43,10 @@ import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -80,15 +80,6 @@ public class TreeTournamentHandler extends LeagueHandler {
         this.groupLinkProvider = groupLinkProvider;
         this.groupConverter = groupConverter;
         this.teamConverter = teamConverter;
-    }
-
-    private Map<Integer, List<Group>> orderByLevel(List<Group> groups) {
-        final Map<Integer, List<Group>> sortedGroups = new HashMap<>();
-        groups.forEach(group -> {
-            sortedGroups.computeIfAbsent(group.getLevel(), k -> new ArrayList<>());
-            sortedGroups.get(group.getLevel()).add(group);
-        });
-        return sortedGroups;
     }
 
     @Override
@@ -137,7 +128,7 @@ public class TreeTournamentHandler extends LeagueHandler {
     public void adjustGroupsSize(Tournament tournament, int numberOfWinners) {
         //Check if inner levels must be increased on size.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
-        final Map<Integer, List<Group>> groupsByLevel = orderByLevel(tournamentGroups);
+        final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
             if (groupsByLevel.get(level).size() < ((((previousLevelSize + 1) * (level == 1 ? numberOfWinners : 1))) / 2)) {
@@ -170,7 +161,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
         //Check if inner levels must be decreased on size.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
-        final Map<Integer, List<Group>> groupsByLevel = orderByLevel(tournamentGroups);
+        final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = Integer.MAX_VALUE - 1;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
             // Normal levels, the number of groups must be the half rounded up that the previous one.

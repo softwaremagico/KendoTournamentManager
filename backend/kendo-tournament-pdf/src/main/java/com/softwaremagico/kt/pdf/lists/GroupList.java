@@ -32,27 +32,36 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.ParentList;
-import com.softwaremagico.kt.utils.NameUtils;
+import com.softwaremagico.kt.utils.GroupUtils;
+import org.springframework.context.MessageSource;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-public class TeamList extends ParentList {
+public class GroupList extends ParentList {
 
     private static final float[] TABLE_WIDTH = {0.46f, 0.08f, 0.46f};
     private static final int BORDER = 0;
+
+    private final MessageSource messageSource;
+    private final Locale locale;
+
     private final TournamentDTO tournament;
 
-    private final List<TeamDTO> teams;
+    private final List<GroupDTO> groups;
 
-    public TeamList(TournamentDTO tournament, List<TeamDTO> teams) {
+    public GroupList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<GroupDTO> groups) {
+        this.messageSource = messageSource;
+        this.locale = locale;
         this.tournament = tournament;
-        this.teams = teams;
+        this.groups = groups;
     }
 
     @Override
@@ -63,23 +72,13 @@ public class TeamList extends ParentList {
         mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
-    public PdfPTable teamTable(TeamDTO teamDTO) {
+    public PdfPTable groupTable(GroupDTO groupDTO) {
         final PdfPTable teamTable = new PdfPTable(1);
 
-        teamTable.addCell(getHeader4(NameUtils.getShortName(teamDTO), 0));
+        teamTable.addCell(getHeader4(messageSource.getMessage("tournament.group", null, locale) + " " + (groupDTO.getIndex() + 1), 0));
 
-        for (final ParticipantDTO member : teamDTO.getMembers()) {
-            String memberName;
-            try {
-                if (member.getLastname() != null && member.getLastname().length() > 0) {
-                    memberName = NameUtils.getLastnameName(member);
-                } else {
-                    memberName = " ";
-                }
-            } catch (NullPointerException npe) {
-                memberName = " ";
-            }
-            teamTable.addCell(getCell(memberName));
+        for (final TeamDTO teamDTO : groupDTO.getTeams()) {
+            teamTable.addCell(getCell(teamDTO.getName()));
         }
 
         return teamTable;
@@ -94,25 +93,51 @@ public class TeamList extends ParentList {
 
         mainTable.addCell(getEmptyRow());
 
-
-        if (teams.isEmpty()) {
-            throw new EmptyPdfBodyException("No existing teams");
+        if (groups.isEmpty()) {
+            throw new EmptyPdfBodyException("No existing groups");
         }
 
-        for (int i = 0; i < teams.size(); i++) {
-            cell = new PdfPCell(teamTable(teams.get(i)));
-            cell.setColspan(1);
-            mainTable.addCell(cell);
+        final Map<Integer, List<GroupDTO>> groupsByLevel = GroupUtils.orderDTOByLevel(groups);
 
-            if (i % 2 == 0) {
-                p = new Paragraph(" ");
-                cell = new PdfPCell(p);
-                cell.setBorderWidth(BORDER);
+        for (int level = 0; level < groupsByLevel.size(); level++) {
+            //Check if level is empty!
+            boolean empty = true;
+            for (GroupDTO groupDTO : groupsByLevel.get(level)) {
+                if (!groupDTO.getTeams().isEmpty()) {
+                    empty = false;
+                    break;
+                }
+            }
+
+            if (empty) {
+                continue;
+            }
+
+            //Show level header.
+            if (groupsByLevel.size() > 1) {
+                mainTable.addCell(getHeader3(messageSource.getMessage("tournament.phase", null, locale) + " " + (level + 1), 0));
+            }
+            for (int i = 0; i < groupsByLevel.get(level).size(); i++) {
+                cell = new PdfPCell(groupTable(groupsByLevel.get(level).get(i)));
                 cell.setColspan(1);
                 mainTable.addCell(cell);
+
+                if (i % 2 == 0) {
+                    p = new Paragraph(" ");
+                    cell = new PdfPCell(p);
+                    cell.setBorderWidth(BORDER);
+                    cell.setColspan(1);
+                    mainTable.addCell(cell);
+                } else {
+                    mainTable.addCell(getEmptyRow());
+                }
             }
+            mainTable.completeRow();
+
+            //Spaces between levels.
+            mainTable.addCell(getEmptyRow());
+            mainTable.addCell(getEmptyRow());
         }
-        mainTable.completeRow();
     }
 
     @Override

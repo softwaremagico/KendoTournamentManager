@@ -43,7 +43,7 @@ export class TournamentBracketsComponent implements OnInit {
     });
   }
 
-  private static convert(groups: Group[]): Map<number, Group[]> {
+  public static convert(groups: Group[]): Map<number, Group[]> {
     const groupsByLevel: Map<number, Group[]> = new Map();
     if (groups) {
       for (const group of groups) {

@@ -90,6 +90,7 @@ export class RbacService {
       RbacActivity.CAN_LOGOUT,
       RbacActivity.CHANGE_LANGUAGE,
       RbacActivity.VIEW_TOURNAMENT_STATISTICS,
+      RbacActivity.DOWNLOAD_GROUPS_PDF
     ];
   }
 
