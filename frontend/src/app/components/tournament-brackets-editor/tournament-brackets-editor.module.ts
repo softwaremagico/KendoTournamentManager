@@ -5,6 +5,8 @@ import {TournamentBracketsModule} from "./tournament-brackets/tournament-bracket
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TeamCardModule} from "../team-card/team-card.module";
 import {TeamListModule} from "../basic/team-list/team-list.module";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 
 
@@ -15,12 +17,14 @@ import {TeamListModule} from "../basic/team-list/team-list.module";
   exports:[
     TournamentBracketsEditorComponent
   ],
-  imports: [
-    CommonModule,
-    TournamentBracketsModule,
-    DragDropModule,
-    TeamCardModule,
-    TeamListModule
-  ]
+    imports: [
+        CommonModule,
+        TournamentBracketsModule,
+        DragDropModule,
+        TeamCardModule,
+        TeamListModule,
+        MatButtonModule,
+        MatIconModule
+    ]
 })
 export class TournamentBracketsEditorModule { }
