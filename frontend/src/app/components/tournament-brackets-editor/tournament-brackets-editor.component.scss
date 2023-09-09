@@ -14,3 +14,9 @@
   margin-left: 50px;
   flex: 3;
 }
+
+.floating-button {
+  position: absolute;
+  z-index: 100;
+  right: 50px;
+}
