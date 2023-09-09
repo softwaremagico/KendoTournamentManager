@@ -238,9 +238,15 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (let group of sortedGroups) {
       if (group.level >= showedLevel.length) {
         showedLevel.push(true);
+        //Hide level label if it hasn't fights on any of its groups.
+        const groupsOfLevelWithFights: Group[] = sortedGroups.filter(group => group.level == showedLevel.length - 1 && group.fights.length > 0);
+        if (groupsOfLevelWithFights.length == 0) {
+          showedLevel[showedLevel.length - 1] = false;
+        }
       }
       this.showLevelOfGroup.set(group, showedLevel[group.level]);
       showedLevel[group.level] = false;
+
     }
     this.showLevelTags = showedLevel.length > 1;
   }
