@@ -181,6 +181,7 @@
   "nextLevel": "Els partits d'aquesta ronda han finalitzat. Vols passar a la següent fase del campionat?",
   "group": "Grup",
   "groups": "Grups",
+  "level": "Fase",
   "ToolTipEditable": "Feu doble clik per obtindre opcions extra.",
   "ToolTipNotEditable": "Els equips aniran completant-se automàticament segons es resolguen els partits.",
   "noTeams": "No hi ha equips dins d'aquest grup!",

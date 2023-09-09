@@ -55,7 +55,7 @@ import java.util.Objects;
 /**
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
  */
-public class FightSummaryPDF extends ParentList {
+public class FightSummary extends ParentList {
     private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
     private static final int DEFAULT_CELL_HEIGHT = 50;
     private static final int FIGHT_BORDER = 1;
@@ -66,7 +66,7 @@ public class FightSummaryPDF extends ParentList {
     private final List<GroupDTO> groups;
     private final List<FightDTO> fights;
 
-    public FightSummaryPDF(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<GroupDTO> groups, Integer shiaijo) {
+    public FightSummary(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<GroupDTO> groups, Integer shiaijo) {
         this.tournament = tournament;
         this.messageSource = messageSource;
         this.locale = locale;
