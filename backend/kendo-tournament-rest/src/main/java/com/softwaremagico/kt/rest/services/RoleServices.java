@@ -90,7 +90,7 @@ public class RoleServices extends BasicServices<Role, RoleDTO, RoleRepository,
                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - role list.pdf").build();
+                .filename(tournament.getName() + " - club list.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
             return pdfController.generateClubList(locale, tournament).generate();

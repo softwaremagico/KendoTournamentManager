@@ -486,6 +486,7 @@
   "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
   "group": "Pool",
   "groups": "Pools",
+  "level": "Phase",
   "undraw": "Undraw",
   "addFightMessage": "The match has been added correctly.",
   "seconds": "seconds",
