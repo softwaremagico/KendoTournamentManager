@@ -1,4 +1,14 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -13,6 +23,9 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {GroupsUpdatedService} from "./tournament-brackets/groups-updated.service";
 import {forkJoin, Observable} from "rxjs";
+import jspdf from 'jspdf';
+import domToImage from 'dom-to-image';
+import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -35,6 +48,11 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   @Output()
   onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
+
+
+  @ViewChild('tournamentBracketsComponent', {read: ElementRef})
+  public tournamentBracketsComponent: ElementRef;
+
 
   groups: Group[];
 
@@ -67,32 +85,34 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   updateData(): void {
     this.systemOverloadService.isBusy.next(true);
-    const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
-    const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
-    const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
+    if (this.tournament) {
+      const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
+      const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
+      const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
 
-    forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
-      if (_teams) {
-        _teams.sort(function (a: Team, b: Team) {
-          return a.name.localeCompare(b.name);
-        });
-      }
+      forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
+        if (_teams) {
+          _teams.sort(function (a: Team, b: Team) {
+            return a.name.localeCompare(b.name);
+          });
+        }
 
-      this.groups = _groups;
-      this.onGroupsUpdated.emit(_groups);
-      this.groupsUpdatedService.areGroupsUpdated.next(_groups);
-      const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
-      _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
+        this.groups = _groups;
+        this.onGroupsUpdated.emit(_groups);
+        this.groupsUpdatedService.areGroupsUpdated.next(_groups);
+        const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
+        _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
 
-      this.teamListData.teams = _teams;
-      this.totalTeams = _teams.length;
-      this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
-      this.onTeamsLengthUpdated.next(_teams.length);
-      this.teamListData.filteredTeams = _teams;
+        this.teamListData.teams = _teams;
+        this.totalTeams = _teams.length;
+        this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
+        this.onTeamsLengthUpdated.next(_teams.length);
+        this.teamListData.filteredTeams = _teams;
 
-      this.relations = this.convert(_groupRelations);
-      this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
-    });
+        this.relations = this.convert(_groupRelations);
+        this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
+      });
+    }
   }
 
   selectGroup(group: Group): void {
@@ -162,6 +182,21 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
         this.updateData();
       });
     }
+  }
+
+  public downloadAsPdf(): void {
+    const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
+    const height = groupsByLevel.get(0)?.length! * 300;
+    const width = groupsByLevel.size! * 500;
+    let orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
+    let imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
+    domToImage.toPng(this.tournamentBracketsComponent.nativeElement, {width: width, height: height}).then(result => {
+      const jsPdfOptions = {orientation: orientation, unit: imageUnit, format: [width + 50, height]};
+      const pdf = new jspdf(jsPdfOptions);
+      pdf.addImage(result, 'PNG', 0, 25, width, height);
+      pdf.save(this.tournament.name + '.pdf');
+    }).catch(error => {
+    });
   }
 
 }
