@@ -101,12 +101,12 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
         this.onGroupsUpdated.emit(_groups);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
         const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
+        this.onTeamsLengthUpdated.next(_teams.length);
         _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
 
         this.teamListData.teams = _teams;
         this.totalTeams = _teams.length;
         this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
-        this.onTeamsLengthUpdated.next(_teams.length);
         this.teamListData.filteredTeams = _teams;
 
         this.relations = this.convert(_groupRelations);
