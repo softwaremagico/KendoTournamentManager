@@ -14,6 +14,7 @@
   right: 0;
   background-color: var(--background-color);
 }
+
 .mat-toolbar {
   height: 7vh;
 }
@@ -75,7 +76,7 @@ a {
 
 // Side menu
 .mat-sidenav-container {
-  min-height: 93vh;
+  min-height: 90vh;
 }
 
 .side-menu {
@@ -110,7 +111,16 @@ a {
 }
 
 @media screen and (min-width: 960px) {
-  .side-menu{
+  .side-menu {
+    display: none !important;
+  }
+  .button-menu{
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .upper-menu-container {
     display: none !important;
   }
 }
