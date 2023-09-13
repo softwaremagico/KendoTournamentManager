@@ -32,9 +32,9 @@ import java.util.Locale;
 /**
  * Creates a Fight Sheet to be used by hand. All fights are empty.
  */
-public class EmptyFightsListPDF extends FightSummaryPDF {
+public class EmptyFightsList extends FightSummary {
 
-    protected EmptyFightsListPDF(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<GroupDTO> groups, Integer shiaijo) {
+    protected EmptyFightsList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<GroupDTO> groups, Integer shiaijo) {
         super(messageSource, locale, tournament, groups, shiaijo);
     }
 

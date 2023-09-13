@@ -175,6 +175,7 @@
   "nextLevel": "Los partidos the esta ronda han acabado. ¿Quieres pasar a la siguiente fase del campeonato?",
   "group": "Grupo",
   "groups": "Grupos",
+  "level": "Fase",
   "ToolTipEditable": "Haz doble click para obtener opciones extra.",
   "ToolTipNotEditable": "Los equipos se irán completando automáticamente según ser resuelvan los partidos.",
   "noTeams": "No hay equipos dentro de este grupo!",
