@@ -5,6 +5,11 @@
        class="teams-container">
     <team-list [teamListData]="teamListData" [minify]="true"></team-list>
   </div>
-  <app-tournament-brackets class="tournament-brackets" [tournament]="tournament" [droppingDisabled]="droppingDisabled">
+  <button (click)="downloadAsPdf()"
+          class="floating-button" color="picture" mat-flat-button mat-mini-fab
+          type="button">
+    <mat-icon>download_file</mat-icon>
+  </button>
+  <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets" [tournament]="tournament" [droppingDisabled]="droppingDisabled">
   </app-tournament-brackets>
 </div>
