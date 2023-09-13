@@ -179,6 +179,7 @@
   "nextLevel": "Gli incontri di questa ronda sono finiti. Si vuole passare alla fase successiva del campionato",
   "group": "Gruppo",
   "groups": "Gruppi",
+  "level": "Fase",
   "ToolTipEditable": "Fare doppio click per ottenere le opzioni extra",
   "ToolTipNotEditable": "Le squadre si completeranno automaticamente mentre si realizzano gli incontri",
   "noTeams": "Non ci sono squadre dentro questo gruppo!",
