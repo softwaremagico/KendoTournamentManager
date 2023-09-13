@@ -11,7 +11,6 @@
 
 .fight-list {
   width: 99%;
-  min-height: 100px;
 }
 
 .unties-list {
@@ -74,6 +73,14 @@
   .competitors-classification {
     display: none !important;
   }
+}
+
+h2.level-name {
+  justify-content: center;
+  display: flex;
+  font-size: 25px;
+  padding-top: 40px;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 800px) {

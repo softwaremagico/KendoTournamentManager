@@ -62,6 +62,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   resetTimerPosition: Subject<boolean> = new Subject();
 
+  showLevelTags: boolean = false;
+  showLevelOfGroup: Map<Group, boolean> = new Map<Group, boolean>;
+
+
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
@@ -211,6 +215,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
     }
     this.groups = groups;
+
+    //Set level tags
+    this.setLevelTagVisibility(groups);
+
     if (groups.length > 0) {
       this.selectedGroup = groups[0];
     }
@@ -222,6 +230,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         this.showTeamsClassification(true);
       }
     }, 1000);
+  }
+
+  private setLevelTagVisibility(sortedGroups: Group[]): void {
+    const showedLevel: boolean [] = []
+    this.showLevelOfGroup = new Map<Group, boolean>();
+    for (let group of sortedGroups) {
+      if (group.level >= showedLevel.length) {
+        showedLevel.push(true);
+      }
+      this.showLevelOfGroup.set(group, showedLevel[group.level]);
+      showedLevel[group.level] = false;
+    }
+    this.showLevelTags = showedLevel.length > 1;
   }
 
   openConfirmationGenerateElementsDialog(): void {
