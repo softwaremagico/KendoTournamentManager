@@ -41,10 +41,11 @@ import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
-import com.softwaremagico.kt.pdf.lists.FightSummaryPDF;
+import com.softwaremagico.kt.pdf.lists.FightSummary;
 import com.softwaremagico.kt.pdf.lists.FightsList;
+import com.softwaremagico.kt.pdf.lists.GroupList;
 import com.softwaremagico.kt.pdf.lists.RoleList;
-import com.softwaremagico.kt.pdf.lists.TeamListPDF;
+import com.softwaremagico.kt.pdf.lists.TeamList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -108,18 +109,22 @@ public class PdfController {
         return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
     }
 
-    public TeamListPDF generateTeamList(TournamentDTO tournamentDTO) {
+    public TeamList generateTeamList(TournamentDTO tournamentDTO) {
         final List<TeamDTO> teams = teamController.getAllByTournament(tournamentDTO, null);
         teams.sort(Comparator.comparing(TeamDTO::getName));
-        return new TeamListPDF(tournamentDTO, teams);
+        return new TeamList(tournamentDTO, teams);
+    }
+
+    public GroupList generateGroupList(Locale locale, TournamentDTO tournamentDTO) {
+        return new GroupList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
     }
 
     public FightsList generateFightsList(Locale locale, TournamentDTO tournamentDTO) {
         return new FightsList(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO));
     }
 
-    public FightSummaryPDF generateFightsSummaryList(Locale locale, TournamentDTO tournamentDTO) {
-        return new FightSummaryPDF(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO), null);
+    public FightSummary generateFightsSummaryList(Locale locale, TournamentDTO tournamentDTO) {
+        return new FightSummary(messageSource, locale, tournamentDTO, groupController.get(tournamentDTO), null);
     }
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO, Boolean onlyNews,
