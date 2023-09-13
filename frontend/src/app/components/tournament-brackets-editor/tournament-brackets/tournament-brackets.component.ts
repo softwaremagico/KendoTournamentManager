@@ -67,7 +67,6 @@ export class TournamentBracketsComponent implements OnInit {
           teams = this.groupsByLevel.get(level)![i].teams.length;
         }
       }
-      //const teams: number = this.groupsByLevel.get(level)![index].teams.length;
 
       if (level == 0 && Math.max(estimatedTeams, teams) > 1) {
         return Math.max(estimatedTeams, teams) * 60;
