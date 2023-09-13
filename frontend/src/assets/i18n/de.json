@@ -177,6 +177,7 @@
   "nextLevel": "Alle Kämpfe der Runde sind zuende. Wollen Sie mit der nächsten Runde weitermachen?",
   "group": "Pool",
   "groups": "Pools",
+  "level": "Runde",
   "ToolTipEditable": "Doppelklick für mehr Optionen.",
   "ToolTipNotEditable": "Die Teams werden eingesetzt, während die Kämpfe erstellt werden.",
   "noTeams": "Es sind keine Teams in diesem Pool eingefügt!",

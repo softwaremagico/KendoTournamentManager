@@ -22,12 +22,18 @@ package com.softwaremagico.kt.rest.services;
  */
 
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
+import com.softwaremagico.kt.pdf.InvalidXmlElementException;
+import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
@@ -35,6 +41,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -48,13 +57,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/groups")
 public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepository, GroupProvider, GroupConverterRequest, GroupConverter, GroupController> {
+    private final PdfController pdfController;
+    private final TournamentController tournamentController;
 
-    public GroupServices(GroupController groupController) {
+    public GroupServices(GroupController groupController, PdfController pdfController, TournamentController tournamentController) {
         super(groupController);
+        this.pdfController = pdfController;
+        this.tournamentController = tournamentController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -123,9 +137,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @Operation(summary = "Removes all teams from all groups", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> deleteAllTeam(@Parameter(description = "Id of an existing tournament", required = true)
-                                     @PathVariable("tournamentId") Integer tournamentId,
-                                     Authentication authentication,
-                                     HttpServletRequest request) {
+                                        @PathVariable("tournamentId") Integer tournamentId,
+                                        Authentication authentication,
+                                        HttpServletRequest request) {
         return getController().deleteTeamsFromTournament(tournamentId, authentication.getName());
     }
 
@@ -146,5 +160,23 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
                               Authentication authentication,
                               HttpServletRequest request) {
         return getController().addUnties(groupId, duelDTOs, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all groups from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                            Integer tournamentId,
+                                            Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + " - group list.pdf").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        try {
+            return pdfController.generateGroupList(locale, tournament).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
     }
 }
