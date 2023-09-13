@@ -45,10 +45,10 @@ export class LoginComponent {
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
       },
       error: (error): void => {
-        if (error.includes(401)) {
+        if (error.status === 401) {
           this.loggerService.info(`Error logging: ` + error);
           this.messageService.errorMessage("deniedUserError");
-        } else if (error.includes(423)) {
+        } else if (error.status === 423) {
           this.loggerService.info(`Blocked IP!: ` + error);
           this.messageService.warningMessage("blockedUserError");
         } else {

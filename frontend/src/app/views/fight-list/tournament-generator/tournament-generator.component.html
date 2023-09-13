@@ -41,6 +41,14 @@
                 matTooltip="{{'wizard' | translate}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button (click)="downloadPDF()"
+                *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.activities)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'wizard' | translate}}">
+          <mat-icon>file_download</mat-icon>
+        </button>
       </div>
     </div>
     <div class="championship-container">

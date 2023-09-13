@@ -42,7 +42,7 @@ import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
 
-public class TeamListPDF extends ParentList {
+public class TeamList extends ParentList {
 
     private static final float[] TABLE_WIDTH = {0.46f, 0.08f, 0.46f};
     private static final int BORDER = 0;
@@ -50,7 +50,7 @@ public class TeamListPDF extends ParentList {
 
     private final List<TeamDTO> teams;
 
-    public TeamListPDF(TournamentDTO tournament, List<TeamDTO> teams) {
+    public TeamList(TournamentDTO tournament, List<TeamDTO> teams) {
         this.tournament = tournament;
         this.teams = teams;
     }

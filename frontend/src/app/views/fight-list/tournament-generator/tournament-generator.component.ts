@@ -17,6 +17,7 @@ import {Group} from "../../../models/group";
 import {
   GroupsUpdatedService
 } from "../../../components/tournament-brackets-editor/tournament-brackets/groups-updated.service";
+import {TeamService} from "../../../services/team.service";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -123,5 +124,19 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
 
   teamsSizeUpdated(totalTeams: number): void {
     this.totalTeams = totalTeams;
+  }
+
+  downloadPDF(): void {
+    if (this.tournament?.id) {
+      this.groupService.getGroupsByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
+
+        const anchor: HTMLAnchorElement = document.createElement("a");
+        anchor.download = "Group List - " + this.tournament.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
+      });
+    }
   }
 }
