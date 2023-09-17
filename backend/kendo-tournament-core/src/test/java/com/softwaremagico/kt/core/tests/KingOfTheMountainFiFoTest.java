@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.tests;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -227,7 +224,7 @@ public class KingOfTheMountainFiFoTest extends AbstractTestNGSpringContextTests 
 
     @Test(dependsOnMethods = {"testSimpleWinner"})
     public void nextFight1() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 2);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -246,7 +243,7 @@ public class KingOfTheMountainFiFoTest extends AbstractTestNGSpringContextTests 
 
     @Test(dependsOnMethods = {"nextFight1"})
     public void nextFight2() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 3);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -266,7 +263,7 @@ public class KingOfTheMountainFiFoTest extends AbstractTestNGSpringContextTests 
 
     @Test(dependsOnMethods = {"nextFight2"})
     public void loopStartsAgain() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 4);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -286,7 +283,7 @@ public class KingOfTheMountainFiFoTest extends AbstractTestNGSpringContextTests 
 
     @Test(dependsOnMethods = {"loopStartsAgain"})
     public void team1Loose() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 5);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -305,7 +302,7 @@ public class KingOfTheMountainFiFoTest extends AbstractTestNGSpringContextTests 
 
     @Test(dependsOnMethods = {"team1Loose"})
     public void afterDraw() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 6);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);

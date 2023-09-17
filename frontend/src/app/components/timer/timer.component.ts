@@ -42,14 +42,14 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   minutes: number;
   seconds: number;
-  private clockHandler: NodeJS.Timeout;
+  private clockHandler: NodeJS.Timeout | null;
   elapsedSeconds: number = 0;
   private alarmOn: boolean;
   totalTime: number;
   increasedTime: number = 0;
-  started = false;
-  minutesEditable = false;
-  secondsEditable = false;
+  started: boolean = false;
+  minutesEditable: boolean = false;
+  secondsEditable: boolean = false;
   private clickedElement: HTMLElement;
 
   timerPosition: Point = {x: 0, y: 0};
@@ -68,7 +68,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.screenHeight = window.innerHeight;
 
     const self: TimerComponent = this;
-    this.clockHandler = setInterval(function () {
+    this.clockHandler = setInterval(function (): void {
       self.secondElapsed.apply(self);
     }, 1000);
     this.timeChangedService.isElapsedTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(elapsedTime => {
@@ -80,6 +80,13 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     });
 
     this.resetTimerPosition.subscribe(() => this.timerPosition = {x: 0, y: 0});
+  }
+
+  override ngOnDestroy(): void {
+    if (this.clockHandler != null) {
+      clearInterval(this.clockHandler);
+      this.clockHandler = null;
+    }
   }
 
   @HostListener('window:resize', ['$event'])

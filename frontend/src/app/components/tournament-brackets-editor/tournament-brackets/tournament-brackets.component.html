@@ -1,0 +1,12 @@
+<div class="level" [class]="'level-' + level" *ngFor="let level of groupsByLevel.keys()">
+  <div class="arrow-container" *ngFor="let g of relations.get(level)">
+    <app-arrow [color]="'#001239'" [getGroupTopSeparation]="getGroupTopSeparation"
+               [getGroupHigh]="getGroupHigh" [groupsByLevel]="groupsByLevel"
+               [level]="level" [groupSource]="g.src" [groupDestination]="g.dest"></app-arrow>
+  </div>
+  <app-group-container *ngFor="let group of groupsByLevel.get(level); let g = index" [level]="level" [index]="g"
+                       [groupsByLevel]="groupsByLevel" [tournament]="tournament" [droppingDisabled]="droppingDisabled"
+                       [getGroupLeftSeparation]="getGroupLeftSeparation" [getGroupTopSeparation]="getGroupTopSeparation"
+                       [getGroupHigh]="getGroupHigh">
+  </app-group-container>
+</div>

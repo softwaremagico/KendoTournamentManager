@@ -180,6 +180,8 @@
   "PassLabel": "Nombre de guanyadors",
   "nextLevel": "Els partits d'aquesta ronda han finalitzat. Vols passar a la següent fase del campionat?",
   "group": "Grup",
+  "groups": "Grups",
+  "level": "Fase",
   "ToolTipEditable": "Feu doble clik per obtindre opcions extra.",
   "ToolTipNotEditable": "Els equips aniran completant-se automàticament segons es resolguen els partits.",
   "noTeams": "No hi ha equips dins d'aquest grup!",
@@ -298,9 +300,9 @@
   "confirm": "Confirmar",
   "ClearCacheLabel": "Pulix la Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Campeonat",
+  "championship": "Torneig en Arbre",
   "league": "Lliga",
-  "tree": "Campeonat en Arbre",
+  "tree": "Torneig en Arbre",
   "customized": "Personalizat",
   "customChampionship": "Personalizat",
   "loop": "Roda",
@@ -476,9 +478,10 @@
   "organizer": "Organitzador",
   "press": "Premsa",
   "deniedUserError": "Usuari o contrasenya invàlids",
+  "blockedUserError": "Massa intents! Prova-ho més tard.",
   "backendError": "¡Impossible connectar amb el backend! Si us plau, comprova la teva instal·lació.",
   "userloggedInMessage": "Usuari registrat correctament.",
-  "userloggedOutMessage": "La sessió d'usuari s'ha tancat correctament",
+  "userLoggedOutMessage": "La sessió d'usuari s'ha tancat correctament",
   "wizard": "Assistent",
   "download": "Descarregar",
   "disablePopUpBlocker": "Si us plau, desactiveu el vostre bloquejador de finestres emergents i torneu-ho a provar.",
@@ -816,7 +819,9 @@
       "silver": "Assisteix a trenta tornejos.",
       "gold": "Assisteix a cinquanta tornejos."
     }
-  }
+  },
+  "removeTeams": "Treure Equips",
+  "drawScore": "Hi ha alguns empats que s'han de resoldre abans de passar a la següent fase del torneig."
 }
 
 

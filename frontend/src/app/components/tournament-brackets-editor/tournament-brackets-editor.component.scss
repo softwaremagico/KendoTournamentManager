@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.teams-container {
+  height: 100%;
+  width: 350px;
+  border: 1px solid #1f1836;
+}
+
+.tournament-brackets {
+  margin-left: 50px;
+  flex: 3;
+}
+
+.floating-button {
+  position: absolute;
+  z-index: 100;
+  right: 50px;
+}

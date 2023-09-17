@@ -28,7 +28,8 @@ database.encryption.key=mypassword
 #### JWT secret key
 
 This setting configures the encryption token used for the communication between the frontend and the backend. Any value
-is fine here meanwhile is kept secret.
+is fine here meanwhile is kept secret. If `jwt_secret` is left empty, the system will generate a random one on start.
+Random is more secure, but any user will be forced to log in into the system again if the server is restarted.
 
 ```
 jwt.secret=anotherpassword

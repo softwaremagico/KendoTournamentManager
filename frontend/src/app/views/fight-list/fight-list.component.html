@@ -32,9 +32,17 @@
                 matTooltip="{{'wizard' | translate}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
+        <button (click)="openBracketsManager()"
+                *ngIf="isBracketsEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+                [disabled]="(tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'groups' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
+        </button>
         <mat-divider [vertical]="true" class="timer-divider"></mat-divider>
         <button (click)="finishDuel(true)" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="!selectedFight || (tournament && tournament.locked)"
+                [disabled]="!selectedDuel || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'finishFight' | translate}}">
@@ -42,7 +50,8 @@
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
                 *ngIf="!timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)" [matTooltipShowDelay]="500"
+                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+                [matTooltipShowDelay]="500"
                 class="timer-button"
                 color="primary"
                 mat-button
@@ -51,7 +60,8 @@
         </button>
         <button (click)="showTimer(false)"
                 *ngIf="timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="showSelectedRelatedButton() && !canStartFight(selectedDuel)" [matTooltipShowDelay]="500"
+                [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
+                [matTooltipShowDelay]="500"
                 class="timer-button"
                 color="primary"
                 mat-button
@@ -126,21 +136,24 @@
                [startingMinutes]="getDuelDefaultMinutesDuration()"
                [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
     <div class="fight-container">
-      <div *ngFor="let group of groups; let i = index" class="fight-list">
-        <h3 [ngClass]="{'group-name-hidden': groups.length < 2}" class="group-name">{{'group' | translate}} {{i +
-          1}}</h3>
-        <div [ngClass]="{'fights-of-group': groups.length > 1}">
-          <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event[0])"
+      <div *ngFor="let group of groups" class="fight-list">
+        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group)" [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+            class="level-name">{{'level' | translate}} {{group.level + 1}}</h2>
+        <h3 [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+            class="group-name">{{'group' | translate}} {{group.index + 1}}</h3>
+        <div [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
+          <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
                  [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
                  [swapTeams]="swappedTeams"></fight>
-        </div>
-        <div class="unties-list">
-          <untie-fight (click)="selectDuel(duel)" *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
-                       [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
-                       [selected]="duel === selectedDuel" [swapColors]="swappedColors"
-                       [swapTeams]="swappedTeams"></untie-fight>
+
+          <div class="unties-list">
+            <untie-fight (click)="selectDuel(duel)" *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+                         [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
+                         [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                         [swapTeams]="swappedTeams"></untie-fight>
+          </div>
         </div>
       </div>
     </div>

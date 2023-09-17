@@ -178,6 +178,8 @@
   "PassLabel": "Numero di vincitori",
   "nextLevel": "Gli incontri di questa ronda sono finiti. Si vuole passare alla fase successiva del campionato",
   "group": "Gruppo",
+  "groups": "Gruppi",
+  "level": "Fase",
   "ToolTipEditable": "Fare doppio click per ottenere le opzioni extra",
   "ToolTipNotEditable": "Le squadre si completeranno automaticamente mentre si realizzano gli incontri",
   "noTeams": "Non ci sono squadre dentro questo gruppo!",
@@ -296,9 +298,9 @@
   "confirm": "Confermare",
   "ClearCacheLabel": "Pulire la Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Campionato",
+  "championship": "Torneo in Albero",
   "league": "Liga",
-  "tree": "Campionato",
+  "tree": "Torneo in Albero",
   "customized": "Personalizzato",
   "customChampionship": "Personalizzato",
   "loop": "Loop",
@@ -555,8 +557,11 @@
   "timerResetWarning": "Sei sicuro di voler azzerare l'ora?",
   "logoutWarning": "Sei sicuro di voler uscire?",
   "logout": "Disconnettersi",
+  "deniedUserError": "Utente o password non validi.",
+  "blockedUserError": "Troppi tentativi! Prova più tardi.",
+  "backendError": "Impossibile connettersi con il backend! Per favore, controlla la tua implementazione.",
   "userloggedInMessage": "L'utente ha effettuato l'accesso con successo",
-  "userloggedOutMessage": "L'utente si è disconnesso correttamente",
+  "userLoggedOutMessage": "L'utente si è disconnesso correttamente",
   "admin": "Amministratore",
   "editor": "Editore",
   "viewer": "Spettatore",
@@ -808,7 +813,9 @@
       "silver": "Partecipa a trenta tornei.",
       "gold": "Partecipa a cinquanta tornei."
     }
-  }
+  },
+  "removeTeams": "Rimuovi squadre",
+  "drawScore": "Ci sono alcuni punteggi di pareggio che devono essere risolti prima di passare alla fase successiva del torneo."
 }
 
 

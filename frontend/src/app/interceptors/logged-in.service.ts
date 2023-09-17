@@ -13,12 +13,14 @@ export class LoggedInService implements CanActivate {
   constructor(private router: Router, public loginService: LoginService) {
   }
 
-  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (this.loginService.getJwtValue()) {
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
       return true;
     }
+
+    console.error("Invalid jwt")
 
     // not logged in so redirect to login page with the return url
     this.router.navigate(['/login'], {queryParams: {returnUrl: state.url}});

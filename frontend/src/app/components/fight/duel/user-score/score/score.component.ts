@@ -27,6 +27,9 @@ export class ScoreComponent implements OnInit, OnChanges {
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  locked: boolean = true;
+
   scoreRepresentation: string;
 
   timeRepresentation: string | undefined;
@@ -43,7 +46,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.scoreUpdatedService.isScoreUpdated.subscribe(duel => {
+    this.scoreUpdatedService.isScoreUpdated.subscribe((duel: Duel): void => {
       if (duel == this.duel) {
         this.scoreRepresentation = this.getScoreRepresentation();
         this.setTime();
@@ -160,6 +163,9 @@ export class ScoreComponent implements OnInit, OnChanges {
   }
 
   possibleScores(): Score[] {
+    if (this.locked) {
+      return [];
+    }
     if (this.left) {
       if (!this.swapTeams) {
         if (!this.duel.competitor1) {

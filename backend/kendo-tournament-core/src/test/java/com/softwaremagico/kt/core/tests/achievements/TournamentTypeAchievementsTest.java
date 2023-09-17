@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.tests.achievements;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -48,8 +45,8 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 @SpringBootTest
-@Test(groups = {"roleAchievementTests"})
-public class TournamentTypeAchievementsTest extends TournamentTestUtils {
+@Test(groups = {"tournamentTypeAchievementTests"})
+public class TournamentTypeAchievementsTest extends AchievementTest {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -151,6 +148,21 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(AchievementType.THE_KING);
         Assert.assertEquals(achievementsDTOs.size(), 1);
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theKing);
+    }
+
+    @AfterClass
+    public void deleteTournament() {
+        deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
+                "achievements", "duels_by_fight");
+        deleteFromTables("duels", "fights_by_group");
+        deleteFromTables("fights", "members_of_team", "teams_by_group");
+        deleteFromTables("teams");
+        deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("achievements");
+        deleteFromTables("tournaments");
+        deleteFromTables("participant_image");
+        deleteFromTables("participants");
+        deleteFromTables("clubs");
     }
 
     @AfterClass

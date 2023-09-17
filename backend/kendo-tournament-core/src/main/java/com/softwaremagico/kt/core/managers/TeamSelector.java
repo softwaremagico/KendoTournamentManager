@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.managers;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -42,14 +39,19 @@ public class TeamSelector {
     private final Map<Team, List<Team>> combination;
 
     protected TeamSelector(List<Team> teams, TeamsOrder teamsOrder) {
-        this.teams = teams;
+        this.teams = setOrder(teams, teamsOrder);
+        combination = getAdversaries();
+    }
+
+    public static List<Team> setOrder(List<Team> teams, TeamsOrder teamsOrder) {
+        final List<Team> sortedTeams = new ArrayList<>(teams);
         switch (teamsOrder) {
-            case SORTED -> Collections.sort(this.teams);
-            case RANDOM -> Collections.shuffle(this.teams);
+            case SORTED -> Collections.sort(sortedTeams);
+            case RANDOM -> Collections.shuffle(sortedTeams);
             default -> {
             }
         }
-        combination = getAdversaries();
+        return sortedTeams;
     }
 
     public List<Team> getAdversaries(Team team) {
@@ -118,7 +120,7 @@ public class TeamSelector {
 
     public boolean remainFights() {
         for (final Team team : teams) {
-            if (combination.get(team).size() > 0) {
+            if (!combination.get(team).isEmpty()) {
                 return true;
             }
         }
