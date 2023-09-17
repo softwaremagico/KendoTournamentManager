@@ -174,6 +174,8 @@
   "PassLabel": "Numero de ganadores",
   "nextLevel": "Los partidos the esta ronda han acabado. ¿Quieres pasar a la siguiente fase del campeonato?",
   "group": "Grupo",
+  "groups": "Grupos",
+  "level": "Fase",
   "ToolTipEditable": "Haz doble click para obtener opciones extra.",
   "ToolTipNotEditable": "Los equipos se irán completando automáticamente según ser resuelvan los partidos.",
   "noTeams": "No hay equipos dentro de este grupo!",
@@ -292,9 +294,9 @@
   "confirm": "Confirmar",
   "ClearCacheLabel": "Limpar Cache",
   "bloggerStatistics": "Código Blogger",
-  "championship": "Campeonato",
+  "championship": "Torneo en Árbol",
   "league": "Liga",
-  "tree": "Campeonato",
+  "tree": "Torneo en Árbol",
   "customized": "Personalizado",
   "customChampionship": "Personalizado",
   "loop": "Rueda",
@@ -470,9 +472,10 @@
   "organizer": "Organizador",
   "press": "Prensa",
   "deniedUserError": "Usuario o contraseña inválidos.",
+  "blockedUserError": "¡Demasiados intentos! Pruébalo más tarde.",
   "backendError": "¡Imposible conectar con el backend! Por favor, comprueba tu instalación.",
   "userloggedInMessage": "Usuario registrado correctamente.",
-  "userloggedOutMessage": "La sesión del usuario se ha cerrado correctamente",
+  "userLoggedOutMessage": "La sesión del usuario se ha cerrado correctamente",
   "accept": "Aceptar",
   "cancel": "Cancelar",
   "delete": "Borrar",
@@ -821,7 +824,9 @@
       "silver": "Asiste a treinta torneos.",
       "gold": "Asiste a cincuenta torneos."
     }
-  }
+  },
+  "removeTeams": "Quitar equipos",
+  "drawScore": "Hay algunos empates que deben resolverse antes de pasar a la siguiente fase del torneo."
 }
 
 

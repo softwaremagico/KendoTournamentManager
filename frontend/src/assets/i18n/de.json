@@ -176,6 +176,8 @@
   "PassLabel": "Anzahl Gewinne",
   "nextLevel": "Alle Kämpfe der Runde sind zuende. Wollen Sie mit der nächsten Runde weitermachen?",
   "group": "Pool",
+  "groups": "Pools",
+  "level": "Runde",
   "ToolTipEditable": "Doppelklick für mehr Optionen.",
   "ToolTipNotEditable": "Die Teams werden eingesetzt, während die Kämpfe erstellt werden.",
   "noTeams": "Es sind keine Teams in diesem Pool eingefügt!",
@@ -294,9 +296,9 @@
   "confirm": "Confirm",
   "ClearCacheLabel": "Clear Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Championship",
+  "championship": "Tournament Brackets",
   "league": "League",
-  "tree": "Championship",
+  "tree": "Tournament Brackets",
   "customized": "Custom",
   "customChampionship": "Custom",
   "loop": "Loop",
@@ -549,8 +551,11 @@
   "timerResetWarning": "Möchten Sie die Uhrzeit wirklich zurücksetzen?",
   "logoutWarning": "Möchten Sie sich wirklich abmelden?",
   "logout": "Ausloggen",
+  "deniedUserError": "Es kann keine Verbindung zum Backend hergestellt werden! Bitte überprüfen Sie Ihre Bereitstellung.",
+  "blockedUserError": "Zu viele Versuche! Versuchen Sie es später.",
+  "backendError": "Cannot connect with the backend! Please, check your deployment.",
   "userloggedInMessage": "Benutzer erfolgreich angemeldet",
-  "userloggedOutMessage": "Benutzersitzung erfolgreich geschlossen",
+  "userLoggedOutMessage": "Benutzersitzung erfolgreich geschlossen",
   "admin": "Administrator",
   "editor": "Editor",
   "viewer": "Zuschauer",
@@ -802,7 +807,9 @@
       "silver": "Nehmen Sie an dreißig Turnieren teil.",
       "gold": "Nehmen Sie an fünfzig Turnieren teil."
     }
-  }
+  },
+  "removeTeams": "Teams entfernenn",
+  "drawScore": "Es gibt einige Unentschieden, die geklärt werden müssen, bevor zur nächsten Turnierphase übergegangen werden kann."
 }
 
 

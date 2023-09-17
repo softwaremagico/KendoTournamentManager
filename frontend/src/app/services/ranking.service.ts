@@ -17,7 +17,7 @@ import {CompetitorRanking} from "../models/competitor-ranking";
 })
 export class RankingService {
 
-  private baseUrl : string = this.environmentService.getBackendUrl() + '/rankings';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/rankings';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,
@@ -25,8 +25,8 @@ export class RankingService {
   }
 
   getCompetitorsScoreRankingByGroup(groupId: number): Observable<ScoreOfCompetitor[]> {
-    const url: string = `${this.baseUrl}` + '/competitors/group/' + groupId;
-    return this.http.get<ScoreOfCompetitor[]>(url, this.loginService.httpOptions)
+    const url: string = `${this.baseUrl}` + '/competitors/groups/' + groupId;
+    return this.http.get<ScoreOfCompetitor[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
@@ -38,8 +38,8 @@ export class RankingService {
   }
 
   getCompetitorsScoreRankingByTournament(tournamentId: number): Observable<ScoreOfCompetitor[]> {
-    const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId;
-    return this.http.get<ScoreOfCompetitor[]>(url, this.loginService.httpOptions)
+    const url: string = `${this.baseUrl}` + '/competitors/tournaments/' + tournamentId;
+    return this.http.get<ScoreOfCompetitor[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
@@ -53,7 +53,7 @@ export class RankingService {
   getCompetitorsGlobalScoreRanking(participants: Participant[] | undefined): Observable<ScoreOfCompetitor[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors';
-    return this.http.post<ScoreOfCompetitor[]>(url, participants, this.loginService.httpOptions)
+    return this.http.post<ScoreOfCompetitor[]>(url, participants)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
@@ -69,8 +69,7 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/competitors/pdf';
     return this.http.post<Blob>(url, participants, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -85,7 +84,7 @@ export class RankingService {
   getCompetitorsRanking(participantId: number): Observable<CompetitorRanking> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + `/competitors/${participantId}`;
-    return this.http.get<CompetitorRanking>(url, this.loginService.httpOptions)
+    return this.http.get<CompetitorRanking>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitor ${participantId} ranking`),
@@ -98,11 +97,10 @@ export class RankingService {
 
   getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}` + '/competitors/tournament/' + tournamentId + '/pdf';
+    const url: string = `${this.baseUrl}` + '/competitors/tournaments/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -115,8 +113,8 @@ export class RankingService {
   }
 
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
-    const url: string = `${this.baseUrl}` + '/teams/group/' + groupId;
-    return this.http.get<ScoreOfTeam[]>(url, this.loginService.httpOptions)
+    const url: string = `${this.baseUrl}` + '/teams/groups/' + groupId;
+    return this.http.get<ScoreOfTeam[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting teams ranking`),
@@ -128,8 +126,8 @@ export class RankingService {
   }
 
   getTeamsScoreRankingByTournament(tournamentId: number): Observable<ScoreOfTeam[]> {
-    const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId;
-    return this.http.get<ScoreOfTeam[]>(url, this.loginService.httpOptions)
+    const url: string = `${this.baseUrl}` + '/teams/tournaments/' + tournamentId;
+    return this.http.get<ScoreOfTeam[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting teams ranking`),
@@ -142,11 +140,10 @@ export class RankingService {
 
   getTeamsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}` + '/teams/tournament/' + tournamentId + '/pdf';
+    const url: string = `${this.baseUrl}` + '/teams/tournaments/' + tournamentId + '/pdf';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -158,13 +155,29 @@ export class RankingService {
     );
   }
 
+  getTeamsScoreRankingByGroupAsPdf(groupId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/teams/groups/' + groupId + '/pdf';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting group's teams ranking`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting group's teams ranking`))
+    );
+  }
+
   getTournamentSummaryAsHtml(tournamentId: number): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/summary/' + tournamentId + '/html';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({

@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
@@ -8,7 +8,6 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
@@ -31,14 +30,12 @@ import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BasicTableModule} from "./components/basic/basic-table/basic-table.module";
-import {ParticipantListComponent} from './views/participant-list/participant-list.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {TournamentListComponent} from './views/tournament-list/tournament-list.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {IconModule} from "./components/icons";
 import {registerLocaleData} from "@angular/common";
 import localeES from "@angular/common/locales/es";
-import localeCAT from "@angular/common/locales/ca-ES-VALENCIA";
+import localeCAT from "@angular/common/locales/ca-ES-valencia";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
@@ -88,7 +85,6 @@ import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
-import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
@@ -102,6 +98,18 @@ import {RadialChartModule} from "./components/charts/radial-chart/radial-chart.m
 import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.module";
 import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
 import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
+import {HeaderInterceptor} from "./interceptors/header-interceptor";
+import {HttpErrorInterceptor} from "./interceptors/http-error-interceptor";
+import {TournamentListModule} from "./views/tournament-list/tournament-list.module";
+import {ParticipantListModule} from "./views/participant-list/participant-list.module";
+import {TournamentBracketsModule} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
+import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
+import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
+import {TournamentBracketsComponent} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.component";
+import {
+  TournamentBracketsEditorModule
+} from "./components/tournament-brackets-editor/tournament-brackets-editor.module";
+import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator/tournament-generator.module";
 
 
 registerLocaleData(localeES, "es");
@@ -115,8 +123,6 @@ registerLocaleData(localeNL, "nl");
     AppComponent,
     ClubListComponent,
     LoginComponent,
-    ParticipantListComponent,
-    TournamentListComponent,
     AuthenticatedUserListComponent,
     PasswordsComponent,
     TournamentStatisticsComponent,
@@ -125,7 +131,6 @@ registerLocaleData(localeNL, "nl");
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    FlexLayoutModule,
     HttpClientModule,
     MatToolbarModule,
     MatSidenavModule,
@@ -203,27 +208,42 @@ registerLocaleData(localeNL, "nl");
     NgApexchartsModule,
     RadialChartModule,
     GaugeChartModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TournamentListModule,
+    ParticipantListModule,
+    ProgressBarModule,
+    TournamentBracketsModule,
+    ArrowModule,
+    TournamentBracketsEditorModule,
+    TournamentGeneratorModule,
   ],
   providers: [CookieService, {
     provide: MatPaginatorIntl,
     useFactory: (translate: TranslateService) => {
-      const service = new PaginatorI18n();
+      const service: PaginatorI18n = new PaginatorI18n();
       service.injectTranslateService(translate);
       return service;
     },
     deps: [TranslateService]
   },
     {
+      provide: ErrorHandler,
+      useClass: LocalErrorHandler
+    },
+    {
       provide: HTTP_INTERCEPTORS,
-      useClass: InvalidJwtInterceptor,
+      useClass: HeaderInterceptor,
       multi: true
-    },],
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
 
-export function httpTranslateLoader(http: HttpClient) {
+export function httpTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }

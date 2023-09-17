@@ -1,15 +1,13 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div cdkDropListGroup class="league-creator">
   <div (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
-       cdkDropList
-       class="teams-container">
+       cdkDropList class="teams-container">
     <team-list [teamListData]="teamListData"></team-list>
   </div>
   <div class="sorted-teams">
     <h2>{{'teamsOrder' | translate}}</h2>
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
-         cdkDropList
-         class="final-team-list">
+         cdkDropList class="final-team-list">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
     <div *ngIf="canHaveDuplicated || needsDrawResolution" class="extra-properties">

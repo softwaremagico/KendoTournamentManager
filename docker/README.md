@@ -52,7 +52,8 @@ database_port=5432
 ## Security passwords
 
 Variable `jwt_secret` is used for encrypting JWT token related to the REST API authorization. Please change it and avoid
-using the default one.
+using the default one. If `jwt_secret` is left empty, the system will generate a random one on start. Random is more
+secure, but any user will be forced to log in into the system again if the server is restarted.
 
 Variable `database_encryption_key` will encrypt the database content, to ensure a higher level of privacy. If you want
 to check the content of your database using any other external software, please leave this variable with a blank value.

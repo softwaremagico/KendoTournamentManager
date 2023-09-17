@@ -5,7 +5,7 @@ import {Tournament} from "../../../../models/tournament";
 import {RbacService} from "../../../../services/rbac/rbac.service";
 import {TranslateService} from "@ngx-translate/core";
 import {MessageService} from "../../../../services/message.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../../services/rbac/rbac.activity";
 import {Action} from "../../../../action";
 
@@ -18,7 +18,7 @@ export class TournamentScoreEditorComponent extends RbacBasedComponent {
   tournament: Tournament;
   title: string;
 
-  formScore: FormGroup;
+  formScore: UntypedFormGroup;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentScoreEditorComponent>, rbacService: RbacService, public translateService: TranslateService,
@@ -27,12 +27,12 @@ export class TournamentScoreEditorComponent extends RbacBasedComponent {
     this.tournament = data.tournament;
     this.title = data.title;
 
-    this.formScore = new FormGroup({
-      pointsByVictory: new FormControl({
+    this.formScore = new UntypedFormGroup({
+      pointsByVictory: new UntypedFormControl({
         value: this.tournament.tournamentScore.pointsByVictory,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      pointsByDraw: new FormControl({
+      pointsByDraw: new UntypedFormControl({
         value: this.tournament.tournamentScore.pointsByDraw,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
