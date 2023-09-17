@@ -7,14 +7,15 @@
         http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
     <service>
-        <jsr107:defaults enable-management="true" enable-statistics="true" default-template="default-cache-template">
-            <jsr107:cache name="competitors-ranking" template="competitors-ranking-template"/>
-            <jsr107:cache name="duels-duration-average" template="duels-duration-average-template"/>
+        <jsr107:defaults enable-management="true" enable-statistics="true" default-template="default">
+            <jsr107:cache name="competitors-ranking" template="default"/>
+            <jsr107:cache name="tournaments-by-id" template="short-time-cache-template"/>
+            <jsr107:cache name="duels-duration-average" template="default"/>
         </jsr107:defaults>
     </service>
 
 
-    <cache-template name="default-cache-template">
+    <cache-template name="default">
         <listeners>
             <listener>
                 <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
@@ -28,16 +29,16 @@
             </listener>
         </listeners>
         <resources>
-            <heap>2000</heap>
-            <offheap unit="MB">100</offheap>
+            <heap>2</heap>
+            <offheap unit="MB">2</offheap>
         </resources>
     </cache-template>
 
-    <cache-template name="competitors-ranking-template">
+    <cache-template name="short-time-cache-template">
         <key-type>java.lang.Long</key-type>
         <value-type>com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO</value-type>
         <expiry>
-            <ttl>30</ttl>
+            <ttl>10</ttl>
         </expiry>
 
         <listeners>
@@ -54,37 +55,29 @@
         </listeners>
 
         <resources>
-            <heap>2</heap>
             <offheap unit="MB">1</offheap>
         </resources>
     </cache-template>
 
-    <cache-template name="duels-duration-average-template">
-        <key-type>java.lang.Long</key-type>
-        <value-type>com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO</value-type>
-        <expiry>
-            <ttl>30</ttl>
-        </expiry>
 
-        <listeners>
-            <listener>
-                <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
-                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
-                <event-ordering-mode>UNORDERED</event-ordering-mode>
-                <events-to-fire-on>CREATED</events-to-fire-on>
-                <events-to-fire-on>EXPIRED</events-to-fire-on>
-            </listener>
-        </listeners>
-
-        <resources>
-            <heap>2</heap>
-            <offheap unit="MB">1</offheap>
-        </resources>
-    </cache-template>
-
-    <cache alias="duels-duration-average" uses-template="duels-duration-average-template">
+    <cache alias="duels-duration-average" uses-template="default">
         <key-type>java.lang.String</key-type>
         <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="competitors-ranking" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="ranking" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="tournaments-by-id" uses-template="short-time-cache-template">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
     </cache>
 
 </config>

@@ -26,6 +26,9 @@ import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRep
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,9 +36,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
+    private static final int CACHE_EXPIRATION_TIME = 20 * 1000;
     public static final int DEFAULT_TEAM_SIZE = 3;
     private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
 
@@ -50,12 +55,14 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
                 type != null ? type : TournamentType.LEAGUE, createdBy));
     }
 
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public void delete(Tournament tournament) {
         tournamentExtraPropertyRepository.deleteByTournament(tournament);
         getRepository().delete(tournament);
     }
 
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public Tournament update(Tournament tournament) {
         if (tournament.isLocked() && tournament.getLockedAt() == null) {
@@ -102,4 +109,15 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         }
     }
 
+
+    @Cacheable(cacheNames = "tournaments-by-id", key = "#id")
+    public Optional<Tournament> get(Integer id) {
+        return getRepository().findById(id);
+    }
+
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
+    @Scheduled(fixedDelay = CACHE_EXPIRATION_TIME)
+    public void reportCacheEvict() {
+        //Only for handling Spring cache.
+    }
 }

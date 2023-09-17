@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.InvalidPropertyException;
@@ -57,19 +58,25 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
     protected FightDTO convertElement(FightConverterRequest from) {
         final FightDTO fightDTO = new FightDTO();
         BeanUtils.copyProperties(from.getEntity(), fightDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        fightDTO.setTeam1(teamConverter.convert(
-                new TeamConverterRequest(from.getEntity().getTeam1())));
-        fightDTO.setTeam2(teamConverter.convert(
-                new TeamConverterRequest(from.getEntity().getTeam2())));
+
+        //Getting the tournamnet to send to duels and avoid hundreds of calls.
+        Tournament tournament;
         try {
-            fightDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(from.getEntity().getTournament())));
+            tournament = from.getEntity().getTournament();
+            fightDTO.setTournament(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
         } catch (LazyInitializationException | InvalidPropertyException e) {
-            fightDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+            tournament = tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null);
+            fightDTO.setTournament(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
         }
+
+        fightDTO.setTeam1(teamConverter.convert(
+                new TeamConverterRequest(from.getEntity().getTeam1(), tournament)));
+        fightDTO.setTeam2(teamConverter.convert(
+                new TeamConverterRequest(from.getEntity().getTeam2(), tournament)));
+
         fightDTO.setDuels(new ArrayList<>());
-        from.getEntity().getDuels().forEach(duel -> fightDTO.getDuels().add(duelConverter.convert(new DuelConverterRequest(duel))));
+        final Tournament finalTournament = tournament;
+        from.getEntity().getDuels().forEach(duel -> fightDTO.getDuels().add(duelConverter.convert(new DuelConverterRequest(duel, finalTournament))));
         return fightDTO;
     }
 
