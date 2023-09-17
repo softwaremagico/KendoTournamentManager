@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #L%
  */
 
+import com.softwaremagico.kt.core.TournamentTestUtils;
 import com.softwaremagico.kt.core.controller.AchievementController;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
@@ -42,7 +43,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"darumaAchievementTests"})
-public class TimeAchievementTest extends AchievementTest {
+public class TimeTournamentTestUtils extends TournamentTestUtils {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -263,17 +264,7 @@ public class TimeAchievementTest extends AchievementTest {
     }
 
     @AfterClass
-    public void deleteTournament() {
-        deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
-                "achievements", "duels_by_fight");
-        deleteFromTables("duels", "fights_by_group");
-        deleteFromTables("fights", "members_of_team", "teams_by_group");
-        deleteFromTables("teams");
-        deleteFromTables("tournament_groups", "roles");
-        deleteFromTables("achievements");
-        deleteFromTables("tournaments");
-        deleteFromTables("participant_image");
-        deleteFromTables("participants");
-        deleteFromTables("clubs");
+    public void wipeOut() {
+        super.wipeOut();
     }
 }

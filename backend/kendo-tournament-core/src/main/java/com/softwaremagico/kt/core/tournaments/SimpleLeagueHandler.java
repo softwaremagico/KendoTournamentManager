@@ -28,9 +28,12 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +49,9 @@ public class SimpleLeagueHandler extends LeagueHandler {
 
     @Autowired
     public SimpleLeagueHandler(GroupProvider groupProvider, CompleteGroupFightManager completeGroupFightManager, FightProvider fightProvider,
-                               TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
-        super(groupProvider, teamProvider, groupConverter, rankingController);
+                               TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
+                               TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
         this.completeGroupFightManager = completeGroupFightManager;
         this.fightProvider = fightProvider;
         this.groupProvider = groupProvider;
@@ -59,8 +63,9 @@ public class SimpleLeagueHandler extends LeagueHandler {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
+        final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
         final List<Fight> fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
-                TeamsOrder.NONE, level, createdBy));
+                TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);
         groupProvider.save(group);
