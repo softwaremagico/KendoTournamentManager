@@ -67,7 +67,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
     private static final String TOURNAMENT_NAME = "scoreChampionshipTest";
-    private static Tournament tournament = null;
+    private Tournament tournament = null;
 
 
     @Autowired

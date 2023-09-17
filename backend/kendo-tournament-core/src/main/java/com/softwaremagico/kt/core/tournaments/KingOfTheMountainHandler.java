@@ -66,7 +66,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                                     GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter,
                                     RankingController rankingController, TeamConverter teamConverter, TournamentProvider tournamentProvider,
                                     TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        super(groupProvider, teamProvider, groupConverter, rankingController);
+        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
         this.kingOfTheMountainFightManager = kingOfTheMountainFightManager;
         this.fightProvider = fightProvider;
         this.groupProvider = groupProvider;
