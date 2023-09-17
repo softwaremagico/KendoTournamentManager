@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.InvalidPropertyException;
@@ -54,13 +55,22 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
         final TeamDTO teamDTO = new TeamDTO();
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
+
+        Tournament tournament;
         try {
-            teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(from.getEntity().getTournament())));
+            //Converter can have the tournament defined already.
+            if (from.getTournament() != null) {
+                tournament = from.getTournament();
+            } else {
+                tournament = from.getEntity().getTournament();
+            }
         } catch (LazyInitializationException | InvalidPropertyException e) {
-            teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+            tournament = tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null);
         }
+
+        teamDTO.setTournament(tournamentConverter.convert(
+                new TournamentConverterRequest(tournament)));
+
         from.getEntity().getMembers().forEach(member ->
                 teamDTO.getMembers().add(participantConverter.convert(new ParticipantConverterRequest(member))));
         return teamDTO;

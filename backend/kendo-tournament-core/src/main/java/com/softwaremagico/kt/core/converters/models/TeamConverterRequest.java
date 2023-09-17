@@ -22,9 +22,22 @@ package com.softwaremagico.kt.core.converters.models;
  */
 
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 
 public class TeamConverterRequest extends ConverterRequest<Team> {
+    private final Tournament tournament;
+
     public TeamConverterRequest(Team entity) {
         super(entity);
+        this.tournament = null;
+    }
+
+    public TeamConverterRequest(Team entity, Tournament tournament) {
+        super(entity);
+        this.tournament = tournament;
+    }
+
+    public Tournament getTournament() {
+        return tournament;
     }
 }

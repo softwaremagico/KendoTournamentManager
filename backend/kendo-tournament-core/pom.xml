@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+            <classifier>jakarta</classifier>
             <version>${ehcache.version}</version>
         </dependency>
         <dependency>

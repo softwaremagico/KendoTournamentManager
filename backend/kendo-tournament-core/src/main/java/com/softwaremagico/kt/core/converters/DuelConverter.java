@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.InvalidPropertyException;
@@ -58,13 +59,19 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
                 new ParticipantConverterRequest(from.getEntity().getCompetitor1())));
         duelDTO.setCompetitor2(participantConverter.convert(
                 new ParticipantConverterRequest(from.getEntity().getCompetitor2())));
+        Tournament tournament;
         try {
-            duelDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(from.getEntity().getTournament())));
+            //Converter can have the tournament defined already.
+            if (from.getTournament() != null) {
+                tournament = from.getTournament();
+            } else {
+                tournament = from.getEntity().getTournament();
+            }
         } catch (LazyInitializationException | InvalidPropertyException e) {
-            duelDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+            tournament = tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null);
         }
+        duelDTO.setTournament(tournamentConverter.convert(
+                new TournamentConverterRequest(tournament)));
         return duelDTO;
     }
 
