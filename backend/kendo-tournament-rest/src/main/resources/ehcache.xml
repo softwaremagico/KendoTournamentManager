@@ -7,12 +7,33 @@
         http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
     <service>
-        <jsr107:defaults enable-management="true" enable-statistics="true" default-template="default">
+        <jsr107:defaults jsr-107-compliant-atomics="true" enable-management="true" enable-statistics="true" default-template="default">
             <jsr107:cache name="competitors-ranking" template="default"/>
-            <jsr107:cache name="tournaments-by-id" template="short-time-cache-template"/>
+            <jsr107:cache name="tournamentsById" template="short-time-cache-template"/>
             <jsr107:cache name="duels-duration-average" template="default"/>
         </jsr107:defaults>
     </service>
+
+
+    <cache alias="duels-duration-average" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="competitors-ranking" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="ranking" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="tournamentsById" uses-template="short-time-cache-template">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
+    </cache>
 
 
     <cache-template name="default">
@@ -58,26 +79,5 @@
             <offheap unit="MB">1</offheap>
         </resources>
     </cache-template>
-
-
-    <cache alias="duels-duration-average" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.lang.Long</value-type>
-    </cache>
-
-    <cache alias="competitors-ranking" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.lang.Long</value-type>
-    </cache>
-
-    <cache alias="ranking" uses-template="default">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.lang.Long</value-type>
-    </cache>
-
-    <cache alias="tournaments-by-id" uses-template="short-time-cache-template">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
-    </cache>
 
 </config>

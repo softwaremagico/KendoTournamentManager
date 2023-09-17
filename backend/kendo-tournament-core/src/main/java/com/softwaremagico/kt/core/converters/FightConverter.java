@@ -59,7 +59,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
         final FightDTO fightDTO = new FightDTO();
         BeanUtils.copyProperties(from.getEntity(), fightDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
 
-        //Getting the tournamnet to send to duels and avoid hundreds of calls.
+        //Getting the tournament to send to duels and avoid hundreds of calls.
         Tournament tournament;
         try {
             tournament = from.getEntity().getTournament();
