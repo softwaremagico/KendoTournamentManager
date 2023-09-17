@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -44,8 +45,9 @@ public class LoopLeagueHandler extends LeagueHandler {
 
 
     public LoopLeagueHandler(GroupProvider groupProvider, LoopGroupFightManager loopGroupFightManager, FightProvider fightProvider,
-                             TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
-        super(groupProvider, teamProvider, groupConverter, rankingController);
+                             TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
+                             TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
         this.loopGroupFightManager = loopGroupFightManager;
         this.fightProvider = fightProvider;
         this.groupProvider = groupProvider;
