@@ -21,21 +21,26 @@ package com.softwaremagico.kt.persistence.values;
  * #L%
  */
 
-public enum TournamentExtraPropertyKey {
-    MAXIMIZE_FIGHTS,
-    KING_INDEX,
-    KING_DRAW_RESOLUTION,
-    DIPLOMA_NAME_HEIGHT,
-    NUMBER_OF_WINNERS,
-    LEAGUE_FIGHTS_ORDER_GENERATION;
+public enum LeagueFightsOrder {
 
+    //For 3 teams, the league order will be:
 
-    public static TournamentExtraPropertyKey getType(String name) {
-        for (final TournamentExtraPropertyKey type : TournamentExtraPropertyKey.values()) {
-            if (type.name().equalsIgnoreCase(name)) {
-                return type;
+    // 1 - 2
+    // 3 - 2
+    // 3 - 1
+    FIFO,
+
+    // 1 - 2
+    // 1 - 3
+    // 2 - 3
+    LIFO;
+
+    public static LeagueFightsOrder get(String tag) {
+        for (LeagueFightsOrder leagueFightsOrder : LeagueFightsOrder.values()) {
+            if (leagueFightsOrder.name().equalsIgnoreCase(tag)) {
+                return leagueFightsOrder;
             }
         }
-        return null;
+        return LeagueFightsOrder.FIFO;
     }
 }

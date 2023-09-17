@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.exceptions.CustomTournamentFightsException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,8 @@ public class CustomLeagueHandler extends LeagueHandler {
 
 
     public CustomLeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter,
-                               RankingController rankingController) {
-        super(groupProvider, teamProvider, groupConverter, rankingController);
+                               RankingController rankingController, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
     }
 
     @Override
