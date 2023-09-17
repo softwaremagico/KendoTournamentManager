@@ -32,8 +32,8 @@ import java.util.List;
 @Service
 public class CompleteGroupFightManager {
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        return createCompleteFightList(tournament, teams, teamsOrder, level, createdBy);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, boolean fifo, String createdBy) {
+        return createCompleteFightList(tournament, teams, teamsOrder, level, fifo, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
@@ -48,7 +48,7 @@ public class CompleteGroupFightManager {
      * @param teamsOrder
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
+    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, boolean fifo,
                                                   String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
@@ -79,7 +79,10 @@ public class CompleteGroupFightManager {
             fights.add(fight);
             lastFight = fight;
             teamSelector.removeAdversary(team1, team2);
-            team1 = team2;
+            //Depending on the league strategy for fight generation, the second fight can start with team1 or team2.
+            if (fifo || fights.size() != 1) {
+                team1 = team2;
+            }
         }
         return fights;
     }

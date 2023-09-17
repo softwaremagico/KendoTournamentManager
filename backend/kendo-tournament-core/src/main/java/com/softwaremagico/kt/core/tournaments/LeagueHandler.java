@@ -29,10 +29,14 @@ import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +51,17 @@ public abstract class LeagueHandler implements ITournamentManager {
     private final GroupConverter groupConverter;
     private final RankingController rankingController;
 
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
 
     @Autowired
-    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
+    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
+                         TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
         this.groupConverter = groupConverter;
         this.rankingController = rankingController;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     protected Group getGroup(Tournament tournament) {
@@ -84,6 +92,16 @@ public abstract class LeagueHandler implements ITournamentManager {
         group.setIndex(index);
         group.setTeams(teams);
         return addGroup(tournament, group);
+    }
+
+    protected TournamentExtraProperty getLeagueFightsOrder(Tournament tournament) {
+        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION);
+        if (extraProperty == null) {
+            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()));
+        }
+        return extraProperty;
     }
 
     @Override

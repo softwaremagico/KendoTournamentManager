@@ -4,6 +4,7 @@
         <groups>
             <run>
                 <include name="leagueTest"/>
+                <include name="simpleChampionshipTest"/>
                 <include name="loopChampionshipTest"/>
                 <include name="kingOfTheMountainTest"/>
                 <include name="converterTests"/>
@@ -22,6 +23,7 @@
             </run>
         </groups>
         <classes>
+            <class name="com.softwaremagico.kt.core.tests.LeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.SimpleLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentTwoWinnersTest"/>
@@ -36,7 +38,7 @@
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
-            <class name="com.softwaremagico.kt.core.tests.achievements.TimeAchievementTest"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
