@@ -27,8 +27,7 @@ export class StatisticsService {
     let url: string = `${this.baseUrl}/tournaments/${tournamentId}/fights`;
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       }),
       params: new HttpParams({
         fromObject: {
@@ -51,7 +50,7 @@ export class StatisticsService {
   getTournamentStatistics(tournamentId: number): Observable<TournamentStatistics> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/tournaments/${tournamentId}`;
-    return this.http.get<TournamentStatistics>(url, this.loginService.httpOptions)
+    return this.http.get<TournamentStatistics>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched statistics from tournament id=${tournamentId}`),
@@ -64,7 +63,7 @@ export class StatisticsService {
 
   getPreviousTournamentStatistics(tournamentId: number, tournamentsToRetrieve: number): Observable<TournamentStatistics[]> {
     const url: string = `${this.baseUrl}/tournaments/${tournamentId}/previous/${tournamentsToRetrieve}`;
-    return this.http.get<TournamentStatistics[]>(url, this.loginService.httpOptions)
+    return this.http.get<TournamentStatistics[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched statistics from tournament id=${tournamentId}`),
@@ -78,7 +77,7 @@ export class StatisticsService {
   getParticipantStatistics(participantId: number): Observable<ParticipantStatistics> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/participants/${participantId}`;
-    return this.http.get<ParticipantStatistics>(url, this.loginService.httpOptions)
+    return this.http.get<ParticipantStatistics>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched statistics from participant id=${participantId}`),

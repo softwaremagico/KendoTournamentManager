@@ -23,7 +23,7 @@ export class AchievementsService {
 
   getParticipantAchievements(participantId: number): Observable<Achievement[]> {
     const url: string = `${this.baseUrl}` + '/participants/' + participantId;
-    return this.http.get<Achievement[]>(url, this.loginService.httpOptions)
+    return this.http.get<Achievement[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors achievements`),
@@ -36,7 +36,7 @@ export class AchievementsService {
 
   getTournamentAchievements(tournamentId: number): Observable<Achievement[]> {
     const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId;
-    return this.http.get<Achievement[]>(url, this.loginService.httpOptions)
+    return this.http.get<Achievement[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting tournaments achievements`),
@@ -49,7 +49,7 @@ export class AchievementsService {
 
   regenerateTournamentAchievements(tournamentId: number): Observable<Achievement[]> {
     const url: string = `${this.baseUrl}` + '/tournaments/' + tournamentId;
-    return this.http.patch<Achievement[]>(url, null, this.loginService.httpOptions)
+    return this.http.patch<Achievement[]>(url, null)
       .pipe(
         tap({
           next: () => this.loggerService.info(`generating tournaments achievements`),

@@ -9,6 +9,7 @@ ARG database_type
 ARG database_dialect
 ARG database_port
 ARG database_encryption_key
+ARG jwt_expiration
 ARG jwt_secret
 ARG jwt_ip_check
 
@@ -37,6 +38,7 @@ RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
     #rm /opt/${project_name}/${project_name}/BOOT-INF/lib/mysql-connector* && \
     #Update properties
     sed -i "s|database\.encryption\.key.*|database\.encryption\.key=${database_encryption_key}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|jwt\.expiration.*|jwt.expiration=${jwt_expiration}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|jwt\.secret.*|jwt.secret=${jwt_secret}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|jwt\.ip\.check.*|jwt.ip.check=${jwt_ip_check}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.platform.*|spring.kendo.datasource.platform=${database_type}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \

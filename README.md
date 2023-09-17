@@ -8,7 +8,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-447.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-496.5h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -29,11 +29,13 @@ of the previous version of this software. The goal is to have enough flexibility
 not the other way around.
 
 This tool is a complete rebuild from the old
-tool [Kendo Tournament Generator](https://sourceforge.net/projects/kendotournament/files/) with the
+tool Kendo Tournament Generator [[1]](https://sourceforge.net/projects/kendotournament/files/) [[2]](https://github.com/softwaremagico/KendoTournament) with the
 effort of adapting it to more modern technologies. The new architecture allows the deployment of this tool as a web
 application -rather than a desktop application- allowing some advantages such as better compatibility between devices,
 as now can be used in any Android/iOS through a browser. Also improves the scoring synchronization between multiple
 devices as now everything can be centralized into the cloud.
+
+If you are looking for a desktop application, please go to [Kendo Tournament Generator](https://github.com/softwaremagico/KendoTournament) that maybe suites better to your needs. But if you want some professional tool that is accessible online, this is the project you are looking for. 
 
 ## Installation
 
@@ -127,8 +129,8 @@ devices is not recommended due to the physical size of the screen.
 
 ## Default credentials.
 
-The default user is `admin@test.com` with password `asd123`. This user is an admin user that can create new users. Remember
-to change the password or remove this account.
+The default user is `admin@test.com` with password `asd123`. This user is an admin user that can create new users.
+Remember to change the password or remove this account.
 
 # Contributing to Kendo Tournament Manager v2
 

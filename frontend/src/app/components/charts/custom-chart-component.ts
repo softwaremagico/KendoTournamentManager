@@ -75,7 +75,7 @@ export abstract class CustomChartComponent implements OnInit {
   protected toolTextTipColor: string = "#000000"
   protected darkMode: boolean;
 
-  constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
+  protected constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
     this.darkMode = userSessionService.getNightMode();
   }
 

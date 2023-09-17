@@ -136,7 +136,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   openStatistics() {
     if (this.basicTableData.selectedElement) {
       this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/participant/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
+      this.router.navigate(['/participants/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
     }
   }
 

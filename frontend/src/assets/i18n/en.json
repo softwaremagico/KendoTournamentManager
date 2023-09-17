@@ -254,7 +254,7 @@
   "ByActionRadioButton": "By Action",
   "ClearCacheLabel": "Clear Cache",
   "bloggerStatistics": "Blogger code",
-  "tree": "Championship",
+  "tree": "Tournament Brackets",
   "maxFightsCheckBox": "Create all possible matches.",
   "redTeamButton": "Red Team",
   "whiteTeamButton": "White Team",
@@ -439,7 +439,7 @@
   "kingOfTheMountain": "King of the Mountain",
   "customChampionship": "Custom Championship",
   "loop": "Loop",
-  "championship": "Championship",
+  "championship": "Tournament Brackets",
   "league": "League",
   "customized": "Custom",
   "addTeamsText": "Add Team",
@@ -455,9 +455,10 @@
   "draw": "Draw",
   "fault": "Fault",
   "deniedUserError": "Invalid user or password.",
+  "blockedUserError": "Too many attempts! Try it later.",
   "backendError": "Cannot connect with the backend! Please, check your deployment.",
   "userloggedInMessage": "User logged in successfully",
-  "userloggedOutMessage": "User session closed successfully",
+  "userLoggedOutMessage": "User session closed successfully",
   "accept": "Accept",
   "cancel": "Cancel",
   "delete": "Delete",
@@ -484,6 +485,8 @@
   "teamsRanking": "Ranking of teams",
   "disablePopUpBlocker": "Please disable your Pop-up blocker and try again.",
   "group": "Pool",
+  "groups": "Pools",
+  "level": "Phase",
   "undraw": "Undraw",
   "addFightMessage": "The match has been added correctly.",
   "seconds": "seconds",
@@ -831,6 +834,8 @@
       "silver": "Attend to thirty tournaments.",
       "gold": "Attend to fifty tournaments."
     }
-  }
+  },
+  "removeTeams": "Remove Teams",
+  "drawScore": "There is some draw scores that must be resolved before passing to the next tournament phase."
 }
 

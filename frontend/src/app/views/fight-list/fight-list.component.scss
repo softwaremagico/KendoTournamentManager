@@ -1,6 +1,6 @@
 .fight-container {
-  height: 83vh;
-  max-height: 83vh;
+  height: 80vh;
+  max-height: 80vh;
   min-height: 50vh;
   overflow-y: auto;
 }
@@ -11,15 +11,15 @@
 
 .fight-list {
   width: 99%;
-  min-height: 100px;
 }
 
 .unties-list {
   width: 100%;
 }
 
-.fights-table .upper-menu {
-  margin-top: 10px;
+.fights-table {
+  padding: 20px;
+  min-width: 600px;
 }
 
 .fights-of-group {
@@ -73,6 +73,14 @@
   .competitors-classification {
     display: none !important;
   }
+}
+
+h2.level-name {
+  justify-content: center;
+  display: flex;
+  font-size: 25px;
+  padding-top: 40px;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 800px) {
