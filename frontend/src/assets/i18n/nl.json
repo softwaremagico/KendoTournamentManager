@@ -176,6 +176,8 @@
   "PassLabel": "Aantal gewonnen",
   "nextLevel": "Alle wedstrijden in de poule zijn voorbij. Wil je verder gaan met het toernooi?",
   "group": "Groep",
+  "groups": "Groepen",
+  "level": "Fase",
   "ToolTipEditable": "Dubbelklik voor meer opties.",
   "ToolTipNotEditable": "Teams zullen worden toegevoegd als de wedstrijden voorbij zijn.",
   "noTeams": "Er is geen team toegevoegd aan deze groep!",
@@ -549,8 +551,11 @@
   "timerResetWarning": "Weet je zeker dat je de tijd wilt resetten?",
   "logoutWarning": "Weet u zeker dat u wilt uitloggen?",
   "logout": "Uitloggen",
+  "deniedUserError": "Ongeldige gebruiker of wachtwoord.",
+  "blockedUserError": "Te veel pogingen! Probeer het later.",
+  "backendError": "Kan geen verbinding maken met de backend! Controleer uw implementatie.",
   "userloggedInMessage": "Gebruiker succesvol ingelogd",
-  "userloggedOutMessage": "Gebruikerssessie succesvol afgesloten",
+  "userLoggedOutMessage": "Gebruikerssessie succesvol afgesloten",
   "admin": "Beheerder",
   "editor": "Editor",
   "viewer": "Kijker",
@@ -802,7 +807,9 @@
       "silver": "Bezoek dertig toernooien.",
       "gold": "Bezoek vijftig toernooien."
     }
-  }
+  },
+  "removeTeams": "Teams verwijderen",
+  "drawScore": "Er zijn enkele gelijkspelscores die moeten worden opgelost voordat u doorgaat naar de volgende toernooifase."
 }
 
 

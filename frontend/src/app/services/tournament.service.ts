@@ -27,10 +27,7 @@ export class TournamentService {
   getAll(): Observable<Tournament[]> {
     const url: string = `${this.baseUrl}`;
 
-    // Why is not set yet????
-    this.loginService.httpOptions.headers.get('Authorization');
-
-    return this.http.get<Tournament[]>(url, this.loginService.httpOptions)
+    return this.http.get<Tournament[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all Tournaments`),
@@ -43,7 +40,7 @@ export class TournamentService {
 
   get(id: number): Observable<Tournament> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Tournament>(url, this.loginService.httpOptions)
+    return this.http.get<Tournament>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched tournament id=${id}`),
@@ -56,7 +53,7 @@ export class TournamentService {
 
   deleteById(id: number) {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url, this.loginService.httpOptions)
+    this.http.delete(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting tournament id=${id}`),
@@ -69,7 +66,7 @@ export class TournamentService {
 
   delete(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Tournament>(url, tournament, this.loginService.httpOptions)
+    return this.http.post<Tournament>(url, tournament)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting tournament ${tournament}`),
@@ -82,7 +79,7 @@ export class TournamentService {
 
   add(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Tournament>(url, tournament, this.loginService.httpOptions)
+    return this.http.post<Tournament>(url, tournament)
       .pipe(
         tap({
           next: () => (newTournament: Tournament) => this.loggerService.info(`adding tournament ${newTournament}`),
@@ -97,7 +94,7 @@ export class TournamentService {
   update(tournament: Tournament): Observable<Tournament> {
     const url: string = `${this.baseUrl}`;
     this.systemOverloadService.isBusy.next(true);
-    return this.http.put<Tournament>(url, tournament, this.loginService.httpOptions)
+    return this.http.put<Tournament>(url, tournament)
       .pipe(
         tap({
           next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
@@ -113,8 +110,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       }),
       params: new HttpParams({
         fromObject: {
@@ -140,8 +136,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations/' + roleType;
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -158,8 +153,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       }),
       params: new HttpParams({
         fromObject: {
@@ -182,8 +176,7 @@ export class TournamentService {
     const url: string = `${this.baseUrl}/` + tournamentId + '/diplomas';
     return this.http.post<Blob>(url, participant, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.loginService.getJwtValue()
+        'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
@@ -195,23 +188,4 @@ export class TournamentService {
     );
   }
 
-  errorHandler(error: HttpErrorResponse): Observable<never> {
-    if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      console.log(error.status)
-      // The backend returned an unsuccessful response code.
-      if (error.status == 404) {
-        this.messageService.warningMessage('noResults');
-      } else {
-        // The response body may contain clues as to what went wrong,
-        console.error(
-          `Backend returned code ${error.status}, ` +
-          `body was: ${error.error}`);
-      }
-    }
-    // return an observable with a user-facing error message
-    return throwError(() => new Error(error.message));
-  }
 }

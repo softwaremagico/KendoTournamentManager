@@ -10,7 +10,7 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {TournamentType} from "../../../models/tournament-type";
 import {TournamentService} from "../../../services/tournament.service";
-import {FormControl} from "@angular/forms";
+import {UntypedFormControl} from "@angular/forms";
 import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
 import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
@@ -33,14 +33,18 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   tournament: Tournament;
   drawResolution: DrawResolution[];
   selectedDrawResolution: DrawResolution;
-  avoidDuplicates = new FormControl('', []);
+  avoidDuplicates = new UntypedFormControl('', []);
   needsDrawResolution: boolean;
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
               private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
               private messageService: MessageService,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, tournament: Tournament }) {
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+                title: string,
+                action: Action,
+                tournament: Tournament
+              }) {
     super(rbacService);
     this.title = data.title;
     this.action = data.action;
@@ -54,7 +58,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   ngOnInit(): void {
     if (this.canHaveDuplicated) {
       this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
-        .subscribe(_tournamentProperty => {
+        .subscribe((_tournamentProperty: TournamentExtendedProperty): void => {
           if (_tournamentProperty) {
             this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() !== "true");
           } else {
@@ -64,7 +68,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     }
     if (this.needsDrawResolution) {
       this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.KING_DRAW_RESOLUTION)
-        .subscribe(_tournamentProperty => {
+        .subscribe((_tournamentProperty: TournamentExtendedProperty): void => {
           if (_tournamentProperty) {
             this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.value);
           } else {
@@ -72,9 +76,9 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
           }
         });
     }
-    this.teamService.getFromTournament(this.tournament).subscribe(teams => {
+    this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
       if (teams) {
-        teams.sort(function (a, b) {
+        teams.sort(function (a: Team, b: Team) {
           return a.name.localeCompare(b.name);
         });
       }
@@ -86,7 +90,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
       tournamentProperty.tournament = this.tournament;
       tournamentProperty.value = !avoidDuplicates + "";
       tournamentProperty.property = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
-      this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+      this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
         this.messageService.infoMessage('infoTournamentUpdated');
       });
     });
@@ -110,18 +114,18 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     return event.container.data[event.currentIndex];
   }
 
-  removeTeam(event: CdkDragDrop<Team[], any>) {
+  removeTeam(event: CdkDragDrop<Team[], any>): void {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
       event.previousIndex,
       event.currentIndex,
     );
-    this.teamListData.filteredTeams.sort((a, b) => a.name.localeCompare(b.name));
-    this.teamListData.teams.sort((a, b) => a.name.localeCompare(b.name));
+    this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
+    this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
   }
 
-  dropTeam(event: CdkDragDrop<Team[], any>) {
+  dropTeam(event: CdkDragDrop<Team[], any>): void {
     const team: Team = this.transferCard(event);
     if (this.teamListData.teams.includes(team)) {
       this.teamListData.teams.splice(this.teamListData.teams.indexOf(team), 1);
@@ -133,7 +137,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
 
   sortedTeams() {
     this.teamsOrder.push(...this.teamListData.teams);
-    this.teamsOrder.sort(function (a, b) {
+    this.teamsOrder.sort(function (a: Team, b: Team) {
       return a.name.localeCompare(b.name);
     });
     this.teamListData.filteredTeams.splice(0, this.teamListData.filteredTeams.length);

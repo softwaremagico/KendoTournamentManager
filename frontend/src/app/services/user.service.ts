@@ -27,7 +27,7 @@ export class UserService {
 
   getAll(): Observable<AuthenticatedUser[]> {
     const url: string = `${this.baseUrl}/register`;
-    return this.http.get<AuthenticatedUser[]>(url, this.loginService.httpOptions)
+    return this.http.get<AuthenticatedUser[]>(url)
       .pipe(
         map(_users => {
           for (let user of _users) {
@@ -46,7 +46,7 @@ export class UserService {
 
   add(authenticatedUser: AuthenticatedUser): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/register`;
-    return this.http.post<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
+    return this.http.post<AuthenticatedUser>(url, authenticatedUser)
       .pipe(
         tap({
           next: (_authenticatedUser: AuthenticatedUser) => {
@@ -73,7 +73,7 @@ export class UserService {
 
   update(authenticatedUser: AuthenticatedUser): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/register`;
-    return this.http.patch<AuthenticatedUser>(url, authenticatedUser, this.loginService.httpOptions)
+    return this.http.patch<AuthenticatedUser>(url, authenticatedUser)
       .pipe(
         tap({
           next: (_authenticatedUser: AuthenticatedUser) => this.loggerService.info(`updating user ${_authenticatedUser}`),
@@ -86,7 +86,7 @@ export class UserService {
 
   delete(authenticatedUser: AuthenticatedUser): Observable<AuthenticatedUser> {
     const url: string = `${this.baseUrl}/register/` + authenticatedUser.username;
-    return this.http.delete<AuthenticatedUser>(url, this.loginService.httpOptions)
+    return this.http.delete<AuthenticatedUser>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting user ${authenticatedUser}`),
@@ -102,7 +102,7 @@ export class UserService {
     return this.http.post<void>(url, {
       oldPassword: oldPassword,
       newPassword: newPassword
-    }, this.loginService.httpOptions)
+    })
       .pipe(
         tap({
           next: () => this.loggerService.info(`Updating password!`),
@@ -115,7 +115,7 @@ export class UserService {
 
   getRoles(): Observable<UserRoles[]> {
     const url: string = `${this.baseUrl}/roles`;
-    return this.http.get<UserRoles[]>(url, this.loginService.httpOptions)
+    return this.http.get<UserRoles[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`Getting roles for user`),

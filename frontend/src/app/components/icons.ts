@@ -30,7 +30,8 @@ export class IconModule {
       .addSvgIcon("attack", this.setPath(`${this.path}/attack.svg`))
       .addSvgIcon("defense", this.setPath(`${this.path}/defense.svg`))
       .addSvgIcon("willpower", this.setPath(`${this.path}/willpower.svg`))
-      .addSvgIcon("match", this.setPath(`${this.path}/match.svg`));
+      .addSvgIcon("match", this.setPath(`${this.path}/match.svg`))
+      .addSvgIcon("brackets", this.setPath(`${this.path}/brackets.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

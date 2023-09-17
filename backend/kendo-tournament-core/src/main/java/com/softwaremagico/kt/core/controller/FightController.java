@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -36,17 +33,13 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.core.tournaments.CustomLeagueHandler;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
-import com.softwaremagico.kt.core.tournaments.KingOfTheMountainHandler;
-import com.softwaremagico.kt.core.tournaments.LoopLeagueHandler;
-import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
+import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
-import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -60,25 +53,18 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final GroupProvider groupProvider;
-    private final SimpleLeagueHandler simpleLeagueHandler;
+    private final TournamentHandlerSelector tournamentHandlerSelector;
 
-    private final CustomLeagueHandler customTournamentHandler;
-    private final LoopLeagueHandler loopLeagueHandler;
-    private final KingOfTheMountainHandler kingOfTheMountainHandler;
 
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
-                           TournamentProvider tournamentProvider, GroupProvider groupProvider, SimpleLeagueHandler simpleLeagueHandler,
-                           CustomLeagueHandler customTournamentHandler, LoopLeagueHandler loopLeagueHandler,
-                           KingOfTheMountainHandler kingOfTheMountainHandler) {
+                           TournamentProvider tournamentProvider, GroupProvider groupProvider,
+                           TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.groupProvider = groupProvider;
-        this.simpleLeagueHandler = simpleLeagueHandler;
-        this.customTournamentHandler = customTournamentHandler;
-        this.loopLeagueHandler = loopLeagueHandler;
-        this.kingOfTheMountainHandler = kingOfTheMountainHandler;
+        this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
     @Override
@@ -162,7 +148,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final Tournament tournament = (tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
-        final ITournamentManager selectedManager = selectManager(tournament.getType());
+        final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
             final List<Fight> createdFights = getProvider().saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
             tournamentProvider.markAsFinished(tournament, false);
@@ -175,38 +161,15 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final Tournament tournament = (tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
-        final ITournamentManager selectedManager = selectManager(tournament.getType());
+        final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = getProvider().saveAll(selectedManager.createNextFights(tournament, createdBy));
-            tournamentProvider.markAsFinished(tournament, false);
+            final List<Fight> createdFights = getProvider().saveAll(selectedManager.generateNextFights(tournament, createdBy));
+            if (!createdFights.isEmpty()) {
+                tournamentProvider.markAsFinished(tournament, false);
+            }
             return convertAll(createdFights);
         }
         return new ArrayList<>();
-    }
-
-    private ITournamentManager selectManager(TournamentType type) {
-        switch (type) {
-            case LOOP:
-                return loopLeagueHandler;
-            case TREE:
-            case CHAMPIONSHIP:
-                //manager = new Championship(tournament);
-                //manager.fillGroups();
-                break;
-            case CUSTOM_CHAMPIONSHIP:
-                //manager = new CustomChampionship(tournament);
-                //manager.fillGroups();
-                break;
-            case CUSTOMIZED:
-                return customTournamentHandler;
-            case KING_OF_THE_MOUNTAIN:
-                return kingOfTheMountainHandler;
-            case LEAGUE:
-                return simpleLeagueHandler;
-            default:
-                break;
-        }
-        return null;
     }
 
 }

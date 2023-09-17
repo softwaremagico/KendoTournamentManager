@@ -24,6 +24,9 @@ export class FaultComponent implements OnInit, OnChanges {
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  locked: boolean = true;
+
   timeRepresentation: string | undefined;
 
   mouseX: number | undefined;

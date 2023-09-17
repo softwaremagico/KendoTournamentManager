@@ -6,21 +6,18 @@ package com.softwaremagico.kt.logger;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -99,7 +96,7 @@ public class KendoTournamentLogger extends BasicLogger {
 
     /**
      * To log java exceptions and log also the stack trace. If enabled, also can
-     * send an email to the administrator to alert of the error.
+     * email the administrator to alert of the error.
      *
      * @param className       the name of the class to log.
      * @param messageTemplate string with static text as template.
@@ -107,6 +104,10 @@ public class KendoTournamentLogger extends BasicLogger {
      */
     public static void errorMessage(String className, String messageTemplate, Object... arguments) {
         errorMessageNotification(LOGGER, className, messageTemplate, arguments);
+    }
+
+    public static void errorMessage(Class<?> clazz, String messageTemplate, Object... arguments) {
+        errorMessage(clazz.getName(), messageTemplate, arguments);
     }
 
     public static void errorMessage(Object object, Throwable throwable) {
