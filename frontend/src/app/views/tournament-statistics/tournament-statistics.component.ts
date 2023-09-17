@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -33,7 +33,7 @@ import {AchievementsService} from "../../services/achievements.service";
   templateUrl: './tournament-statistics.component.html',
   styleUrls: ['./tournament-statistics.component.scss']
 })
-export class TournamentStatisticsComponent extends RbacBasedComponent implements OnInit, OnDestroy {
+export class TournamentStatisticsComponent extends RbacBasedComponent implements OnInit, OnDestroy, AfterViewInit {
 
   pipe: DatePipe;
 
@@ -103,9 +103,14 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
 
   ngOnInit(): void {
+
+  }
+
+  ngAfterViewInit(): void {
     this.generateStatistics();
     this.generateCompetitorsRanking();
   }
+
 
   generateStatistics(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
