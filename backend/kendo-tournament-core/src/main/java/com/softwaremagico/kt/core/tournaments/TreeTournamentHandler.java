@@ -42,6 +42,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class TreeTournamentHandler extends LeagueHandler {
                                  TournamentExtraPropertyProvider tournamentExtraPropertyProvider, CompleteGroupFightManager completeGroupFightManager,
                                  MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider, GroupLinkProvider groupLinkProvider,
                                  TeamConverter teamConverter) {
-        super(groupProvider, teamProvider, groupConverter, rankingController);
+        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
         this.rankingController = rankingController;
         this.groupProvider = groupProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
@@ -186,8 +187,9 @@ public class TreeTournamentHandler extends LeagueHandler {
             if (Objects.equals(group.getLevel(), level)) {
                 final List<Fight> fights;
                 if (getMaxGroupFights(tournament)) {
+                    final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
                     fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, createdBy));
+                            TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
                 } else {
                     fights = fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
                             TeamsOrder.NONE, level, createdBy));
