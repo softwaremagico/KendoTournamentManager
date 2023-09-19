@@ -8,7 +8,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-495h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-497h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -130,8 +130,7 @@ devices is not recommended due to the physical size of the screen.
 ## Default credentials.
 
 The default user is `admin@test.com` with password `asd123`. This user is an admin user that can create new users.
-Remember
-to change the password or remove this account.
+Remember to change the password or remove this account.
 
 # Contributing to Kendo Tournament Manager v2
 

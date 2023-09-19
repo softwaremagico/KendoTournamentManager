@@ -331,6 +331,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         deleteFromTables("fights", "members_of_team", "teams_by_group");
         deleteFromTables("teams");
         deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("achievements", "tournament_extra_properties");
         deleteFromTables("tournaments");
         deleteFromTables("participant_image");
         deleteFromTables("participants");
