@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.core.tests.achievements;
+package com.softwaremagico.kt.core;
 
 /*-
  * #%L
@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AchievementTest extends AbstractTransactionalTestNGSpringContextTests {
+public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
@@ -177,6 +177,20 @@ public abstract class AchievementTest extends AbstractTransactionalTestNGSpringC
         generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
         addTeams(tournamentDTO, members);
         return tournamentDTO;
+    }
+
+    public void wipeOut() {
+        deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
+                "achievements", "duels_by_fight");
+        deleteFromTables("duels", "fights_by_group");
+        deleteFromTables("fights", "members_of_team", "teams_by_group");
+        deleteFromTables("teams");
+        deleteFromTables("tournament_groups", "roles");
+        deleteFromTables("achievements", "tournament_extra_properties");
+        deleteFromTables("tournaments");
+        deleteFromTables("participant_image");
+        deleteFromTables("participants");
+        deleteFromTables("clubs");
     }
 
 }

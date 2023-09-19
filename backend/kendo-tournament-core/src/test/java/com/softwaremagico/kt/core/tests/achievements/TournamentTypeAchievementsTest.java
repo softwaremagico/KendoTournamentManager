@@ -10,17 +10,18 @@ package com.softwaremagico.kt.core.tests.achievements;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import com.softwaremagico.kt.core.TournamentTestUtils;
 import com.softwaremagico.kt.core.controller.AchievementController;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.RoleController;
@@ -45,7 +46,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"tournamentTypeAchievementTests"})
-public class TournamentTypeAchievementsTest extends AchievementTest {
+public class TournamentTypeAchievementsTest extends TournamentTestUtils {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -150,18 +151,7 @@ public class TournamentTypeAchievementsTest extends AchievementTest {
     }
 
     @AfterClass
-    public void deleteTournament() {
-        deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
-                "achievements", "duels_by_fight");
-        deleteFromTables("duels", "fights_by_group");
-        deleteFromTables("fights", "members_of_team", "teams_by_group");
-        deleteFromTables("teams");
-        deleteFromTables("tournament_groups", "roles");
-        deleteFromTables("achievements");
-        deleteFromTables("tournaments");
-        deleteFromTables("participant_image");
-        deleteFromTables("participants");
-        deleteFromTables("clubs");
+    public void wipeOut() {
+        super.wipeOut();
     }
-
 }
