@@ -54,14 +54,14 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
                 type != null ? type : TournamentType.LEAGUE, createdBy));
     }
 
-    @CacheEvict(allEntries = true, value = {"tournamentsById"})
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public void delete(Tournament tournament) {
         tournamentExtraPropertyRepository.deleteByTournament(tournament);
         getRepository().delete(tournament);
     }
 
-    @CacheEvict(allEntries = true, value = {"tournamentsById"})
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public Tournament update(Tournament tournament) {
         if (tournament.isLocked() && tournament.getLockedAt() == null) {
@@ -98,7 +98,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
     }
 
-    @CacheEvict(allEntries = true, value = {"tournamentsById"})
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     public void markAsFinished(Tournament tournament, boolean finish) {
         if (finish && tournament.getFinishedAt() == null) {
             tournament.updateFinishedAt(LocalDateTime.now());
@@ -110,9 +110,8 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
 
-    @Cacheable(cacheNames = "tournamentsById", key = "#id", unless = "#result == null")
+    @Cacheable(value = "tournaments-by-id", key = "#id")
     public Optional<Tournament> get(Integer id) {
         return getRepository().findById(id);
     }
-
 }
