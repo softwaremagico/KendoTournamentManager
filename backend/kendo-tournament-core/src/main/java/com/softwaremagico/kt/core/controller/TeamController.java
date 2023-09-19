@@ -91,7 +91,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
         if (teamDTO.getName() == null) {
             teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
-        return super.create(teamDTO, username);
+        final TeamDTO storedTeamDTO = super.create(teamDTO, username);
+        storedTeamDTO.setTournament(teamDTO.getTournament());
+        return storedTeamDTO;
     }
 
     public List<TeamDTO> create(TournamentDTO tournamentDTO, String createdBy) {
