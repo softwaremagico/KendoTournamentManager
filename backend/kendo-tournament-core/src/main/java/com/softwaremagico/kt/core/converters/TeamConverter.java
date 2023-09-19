@@ -27,7 +27,6 @@ import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.InvalidPropertyException;
@@ -56,20 +55,19 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
 
-        Tournament tournament;
         try {
             //Converter can have the tournament defined already.
             if (from.getTournament() != null) {
-                tournament = from.getTournament();
+                teamDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getTournament())));
             } else {
-                tournament = from.getEntity().getTournament();
+                teamDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getEntity().getTournament())));
             }
         } catch (LazyInitializationException | InvalidPropertyException e) {
-            tournament = tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null);
+            teamDTO.setTournament(tournamentConverter.convert(
+                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
         }
-
-        teamDTO.setTournament(tournamentConverter.convert(
-                new TournamentConverterRequest(tournament)));
 
         from.getEntity().getMembers().forEach(member ->
                 teamDTO.getMembers().add(participantConverter.convert(new ParticipantConverterRequest(member))));

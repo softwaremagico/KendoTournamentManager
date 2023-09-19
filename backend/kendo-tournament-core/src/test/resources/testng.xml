@@ -1,5 +1,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite thread-count="1" verbose="1" name="KendoTournament">
+    <listeners>
+        <listener class-name="com.softwaremagico.kt.logger.TestListener"/>
+    </listeners>
+
     <test name="KendoTournament" enabled="true" preserve-order="true">
         <groups>
             <run>
