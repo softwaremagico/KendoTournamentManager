@@ -76,7 +76,7 @@ public class LoopLeagueTest extends AbstractTestNGSpringContextTests {
     private static final int TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
     private static final boolean MAXIMIZE_FIGHTS = true;
-    private static Tournament tournament = null;
+    private Tournament tournament = null;
 
     @Autowired
     private TournamentProvider tournamentProvider;
