@@ -118,11 +118,6 @@ public class CacheEventLogger extends BasicLogger implements CacheEventListener<
 
     @Override
     public void onEvent(CacheEvent<?, ?> cacheEvent) {
-        System.out.println("######################################################################################");
-        System.out.println("######################################################################################");
-        System.out.println("######################################################################################");
-        System.out.println("######################################################################################");
-        System.out.println("######################################################################################");
         debug(this.getClass(), "Cache updated for '{}' value changed from '{}' to '{}'",
                 cacheEvent.getKey(), cacheEvent.getOldValue(), cacheEvent.getNewValue());
     }
