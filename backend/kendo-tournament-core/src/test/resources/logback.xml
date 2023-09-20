@@ -23,6 +23,9 @@
     <logger name="com.softwaremagico.kt.logger.CacheEventLogger" additivity="false" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="com.softwaremagico.kt.logger.TestLogging" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
     <!-- Default ones -->
     <logger name="org.springframework" additivity="false" level="INFO">

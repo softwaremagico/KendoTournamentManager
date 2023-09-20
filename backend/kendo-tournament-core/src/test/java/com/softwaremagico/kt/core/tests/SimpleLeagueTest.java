@@ -161,6 +161,13 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dependsOnMethods = "addTournament")
+    public void checkingCache(){
+        tournamentProvider.get(tournament.getId());
+        tournamentProvider.get(tournament.getId());
+        tournamentProvider.get(tournament.getId());
+    }
+
+    @Test(dependsOnMethods = "addTournament")
     public void addGroup() {
         final Group group = new Group();
         group.setTournament(tournament);
