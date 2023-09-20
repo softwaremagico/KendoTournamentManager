@@ -54,13 +54,21 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
         final TeamDTO teamDTO = new TeamDTO();
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
+
         try {
-            teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(from.getEntity().getTournament())));
+            //Converter can have the tournament defined already.
+            if (from.getTournament() != null) {
+                teamDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getTournament())));
+            } else {
+                teamDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getEntity().getTournament())));
+            }
         } catch (LazyInitializationException | InvalidPropertyException e) {
             teamDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
         }
+
         from.getEntity().getMembers().forEach(member ->
                 teamDTO.getMembers().add(participantConverter.convert(new ParticipantConverterRequest(member))));
         return teamDTO;

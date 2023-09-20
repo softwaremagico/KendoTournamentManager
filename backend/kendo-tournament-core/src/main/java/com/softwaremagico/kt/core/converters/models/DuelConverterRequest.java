@@ -22,9 +22,22 @@ package com.softwaremagico.kt.core.converters.models;
  */
 
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 
 public class DuelConverterRequest extends ConverterRequest<Duel> {
+    private final Tournament tournament;
+
     public DuelConverterRequest(Duel entity) {
         super(entity);
+        this.tournament = null;
+    }
+
+    public DuelConverterRequest(Duel entity, Tournament tournament) {
+        super(entity);
+        this.tournament = tournament;
+    }
+
+    public Tournament getTournament() {
+        return tournament;
     }
 }
