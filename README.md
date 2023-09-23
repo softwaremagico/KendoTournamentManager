@@ -51,7 +51,7 @@ file `kendo-tournament-frontend.zip` on the server as a standard web page.
 
 #### Deploy the backend
 
-The backend is released as a standalone JAR file. You need Java JRE 11 or superior to run this application. You can
+The backend is released as a standalone JAR file. You need Java JRE 17 or superior to run this application. You can
 execute it manually by typing the next command:
 
 ```
