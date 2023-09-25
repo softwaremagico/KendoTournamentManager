@@ -39,6 +39,8 @@ If you are looking for a desktop application, please go to [Kendo Tournament Gen
 
 ## Installation
 
+For an extended explanation about the installation, please check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation)
+
 ### From a release version
 
 Download the release you want to use from this git project. You will find two different files, one for the frontend and
@@ -126,6 +128,8 @@ environment and tablets. Has a responsive design that fits well in almost all de
 devices is not recommended due to the physical size of the screen.
 
 # Using the application
+
+You can check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/) for a more extended description of how this application can be used. 
 
 ## Default credentials.
 
