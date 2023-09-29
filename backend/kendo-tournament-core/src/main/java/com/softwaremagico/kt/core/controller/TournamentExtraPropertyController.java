@@ -74,5 +74,8 @@ public class TournamentExtraPropertyController extends BasicInsertableController
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key));
     }
 
+    public List<TournamentExtraPropertyDTO> getLatest(String username) {
+        return convertAll(getProvider().getLatestPropertiesByCreatedBy(username));
+    }
 
 }
