@@ -89,4 +89,11 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Get latest selected properties from a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/latest", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TournamentExtraPropertyDTO> getLatest(Authentication authentication, HttpServletRequest request) {
+        return tournamentExtraPropertyController.getLatest(authentication.getName());
+    }
+
 }

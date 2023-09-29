@@ -1,0 +1,16 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<h1 mat-dialog-title>{{title}}</h1>
+<div class="options">
+<!***REMOVED*** <mat-slide-toggle *ngIf="canHaveDuplicated"-->
+<!***REMOVED***                   [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}-->
+<!***REMOVED*** </mat-slide-toggle>-->
+<!***REMOVED*** <mat-form-field *ngIf="needsDrawResolution">-->
+<!***REMOVED***   <mat-label>{{'drawResolution' | translate}}</mat-label>-->
+<!***REMOVED***   <mat-select (selectionChange)="select($event.value)" [(value)]="selectedDrawResolution">-->
+<!***REMOVED***     <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"-->
+<!***REMOVED***                 [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">-->
+<!***REMOVED***       {{getDrawResolutionTranslationTag(resolution) | translate}}-->
+<!***REMOVED***     </mat-option>-->
+<!***REMOVED***   </mat-select>-->
+<!***REMOVED*** </mat-form-field>-->
+</div>

@@ -46,6 +46,10 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         return getRepository().findByTournamentAndPropertyKey(tournament, key);
     }
 
+    public List<TournamentExtraProperty> getLatestPropertiesByCreatedBy(String createdBy) {
+        return getRepository().findDistinctPropertyKeyByCreatedBy(createdBy);
+    }
+
     public int delete(Tournament tournament) {
         return getRepository().deleteByTournament(tournament);
     }
