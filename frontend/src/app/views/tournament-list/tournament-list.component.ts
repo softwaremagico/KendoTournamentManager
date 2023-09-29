@@ -68,7 +68,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   addElement(): void {
-    const tournament = new Tournament();
+    const tournament: Tournament = new Tournament();
     tournament.duelsDuration = Tournament.DEFAULT_DUELS_DURATION;
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
