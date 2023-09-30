@@ -2,12 +2,12 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div class="options">
 
-  <mat-slide-toggle *ngIf="needsMaximizeFights" checked="{{areFightsMaximized}}" (change)="maxFightsToggle($event)">
+  <mat-slide-toggle *ngIf="needsMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)">
     {{'avoidDuplicateFights' | translate }}
   </mat-slide-toggle>
 
-  <mat-slide-toggle *ngIf="needsFifoWinner" checked="{{firstInFirstOut}}" (change)="fifoToggle($event)"
-                    [matTooltipShowDelay]="500" matTooltip="{{'leagueFifoHint' | translate}}">
+  <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
+                    [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
     {{'leagueFifo' | translate }}
   </mat-slide-toggle>
 
