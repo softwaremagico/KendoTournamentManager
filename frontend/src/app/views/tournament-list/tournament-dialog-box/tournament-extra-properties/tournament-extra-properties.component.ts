@@ -65,8 +65,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
           this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
         }
         if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-          --- Not updating the switch value on the html!!!
-          this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
+          this.firstInFirstOut = (_tournamentProperty.propertyValue.toLowerCase() == "true");
         }
       }
     });
