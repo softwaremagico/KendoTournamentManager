@@ -11,6 +11,7 @@ import {DrawResolution} from "../../../../models/draw-resolution";
 import {TournamentExtendedProperty} from "../../../../models/tournament-extended-property.model";
 import {TournamentExtraPropertyKey} from "../../../../models/tournament-extra-property-key";
 import {TournamentExtendedPropertiesService} from "../../../../services/tournament-extended-properties.service";
+import {MatSlideToggleChange} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-tournament-extra-properties',
@@ -49,19 +50,23 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     this.needsMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
     this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
+
+    this.defaultValue();
   }
 
   ngOnInit() {
     this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
       for (const _tournamentProperty of _tournamentSelection) {
-        if (_tournamentProperty.property == TournamentExtraPropertyKey.KING_DRAW_RESOLUTION) {
-          this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.value);
+
+        if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.KING_DRAW_RESOLUTION) {
+          this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.propertyValue);
         }
-        if (_tournamentProperty.property == TournamentExtraPropertyKey.MAXIMIZE_FIGHTS) {
-          this.areFightsMaximized = (_tournamentProperty.value.toLowerCase() == "true");
+        if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.MAXIMIZE_FIGHTS) {
+          this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
         }
-        if (_tournamentProperty.property == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-          this.areFightsMaximized = (_tournamentProperty.value.toLowerCase() == "true");
+        if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
+          --- Not updating the switch value on the html!!!
+          this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
         }
       }
     });
@@ -88,12 +93,12 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   }
 
 
-  select(drawResolution: DrawResolution) {
+  selectDrawResolution(drawResolution: DrawResolution) {
     this.selectedDrawResolution = drawResolution;
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
-    tournamentProperty.value = drawResolution;
-    tournamentProperty.property = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
+    tournamentProperty.propertyValue = drawResolution;
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });
@@ -101,5 +106,25 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
 
   closeDialog() {
     this.dialogRef.close();
+  }
+
+  fifoToggle($event: MatSlideToggleChange) {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
+  maxFightsToggle($event: MatSlideToggleChange) {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
   }
 }
