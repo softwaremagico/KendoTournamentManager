@@ -33,6 +33,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
   selectedScore: ScoreType;
 
+  cancel: Action.Cancel;
   registerForm: UntypedFormGroup;
 
   constructor(
@@ -93,11 +94,11 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     if (this.tournament.tournamentScore) {
       this.tournament.tournamentScore.scoreType = this.registerForm.get('scoreTypes')!.value;
     }
-    this.closeDialog();
+    this.closeDialog(Action.Add);
   }
 
-  closeDialog() {
-    this.dialogRef.close({action: Action.Cancel, data: this.tournament});
+  closeDialog(action: Action) {
+    this.dialogRef.close({action: action, data: this.tournament});
   }
 
   getTournamentTypeTranslationTag(tournamentType: TournamentType): string {
