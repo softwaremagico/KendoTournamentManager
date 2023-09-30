@@ -10,8 +10,8 @@
          cdkDropList class="final-team-list">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
-    <div *ngIf="canHaveDuplicated || needsDrawResolution" class="extra-properties">
-      <mat-slide-toggle *ngIf="canHaveDuplicated"
+    <div *ngIf="maximizeFights || needsDrawResolution" class="extra-properties">
+      <mat-slide-toggle *ngIf="maximizeFights"
                         [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}
       </mat-slide-toggle>
       <mat-form-field *ngIf="needsDrawResolution">
