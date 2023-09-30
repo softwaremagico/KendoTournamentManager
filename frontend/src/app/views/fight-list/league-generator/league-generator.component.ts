@@ -29,7 +29,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   action: Action;
   actionName: string;
   teamsOrder: Team[] = [];
-  canHaveDuplicated: boolean;
+  maximizeFights: boolean;
   tournament: Tournament;
   drawResolution: DrawResolution[];
   selectedDrawResolution: DrawResolution;
@@ -51,18 +51,18 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
     this.drawResolution = DrawResolution.toArray();
-    this.canHaveDuplicated = TournamentType.canHaveDuplicates(this.tournament.type);
+    this.maximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
   }
 
   ngOnInit(): void {
-    if (this.canHaveDuplicated) {
+    if (this.maximizeFights) {
       this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
         .subscribe((_tournamentProperty: TournamentExtendedProperty): void => {
           if (_tournamentProperty) {
             this.avoidDuplicates.setValue(_tournamentProperty.value.toLowerCase() !== "true");
           } else {
-            this.avoidDuplicates.setValue(false);
+            this.avoidDuplicates.setValue(TournamentExtraPropertyKey.getDefaultMaximizedFights());
           }
         });
     }
@@ -72,7 +72,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
           if (_tournamentProperty) {
             this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.value);
           } else {
-            this.selectedDrawResolution = DrawResolution.BOTH_ELIMINATED;
+            this.selectedDrawResolution = TournamentExtraPropertyKey.getDefaultKingDrawResolutions();
           }
         });
     }
