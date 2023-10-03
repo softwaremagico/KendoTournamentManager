@@ -44,7 +44,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   ngOnInit(): void {
     this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT).subscribe(_tournamentProperty => {
       if (_tournamentProperty) {
-        this.sliderValue = parseFloat(_tournamentProperty.value) * 100;
+        this.sliderValue = parseFloat(_tournamentProperty.propertyValue) * 100;
       } else {
         this.sliderValue = 50;
       }
@@ -110,8 +110,8 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
 
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
-    tournamentProperty.value = (value / 100).toString();
-    tournamentProperty.property = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
+    tournamentProperty.propertyValue = (value / 100).toString();
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe();
   }
 
