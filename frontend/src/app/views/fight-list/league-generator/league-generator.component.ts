@@ -35,14 +35,16 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   avoidDuplicates = new UntypedFormControl('', []);
 
   //Enable
-  needsMaximizeFights: boolean;
+  canMaximizeFights: boolean;
   needsDrawResolution: boolean;
   needsFifoWinner: boolean;
+  canAvoidDuplicatedFights:boolean;
 
   //Values
   areFightsMaximized: boolean;
   firstInFirstOut: boolean;
   selectedDrawResolution: DrawResolution;
+  avoidDuplicatedFights: boolean;
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
               private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
@@ -60,15 +62,16 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.tournament = data.tournament;
     this.drawResolution = DrawResolution.toArray();
 
-    this.needsMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
+    this.canMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
     this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
+    this.canAvoidDuplicatedFights = TournamentType.avoidsDuplicatedFights(this.tournament.type);
 
     this.defaultPropertiesValue();
   }
 
   ngOnInit(): void {
-    if (this.needsMaximizeFights || this.needsDrawResolution || this.needsFifoWinner) {
+    if (this.canMaximizeFights || this.needsDrawResolution || this.needsFifoWinner) {
       this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
         if (_tournamentSelection) {
           for (const _tournamentProperty of _tournamentSelection) {
@@ -110,6 +113,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.areFightsMaximized = TournamentExtraPropertyKey.getDefaultMaximizedFights();
     this.selectedDrawResolution = TournamentExtraPropertyKey.getDefaultKingDrawResolutions();
     this.firstInFirstOut = TournamentExtraPropertyKey.getDefaultLeagueFightsOrderGeneration();
+    this.avoidDuplicatedFights = TournamentExtraPropertyKey.avoidDuplicateFightsGeneration();
   }
 
   acceptAction() {
@@ -190,6 +194,16 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     return DrawResolution.toCamel(drawResolution) + "Hint";
   }
 
+  maxFightsToggle($event: MatSlideToggleChange): void {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.MAXIMIZE_FIGHTS;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
   selectDrawResolution(drawResolution: DrawResolution): void {
     this.selectedDrawResolution = drawResolution;
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
@@ -207,6 +221,16 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     tournamentProperty.propertyValue = $event.checked + "";
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(():void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
+  avoidDuplicatesToggle($event: MatSlideToggleChange): void {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.AVOID_DUPLICATES;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }
