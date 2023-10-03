@@ -2,7 +2,12 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div class="options">
 
-  <mat-slide-toggle *ngIf="needsMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)">
+  <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
+                    [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
+    {{'maximizeFights' | translate }}
+  </mat-slide-toggle>
+
+  <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights" (change)="avoidDuplicatesToggle($event)">
     {{'avoidDuplicateFights' | translate }}
   </mat-slide-toggle>
 
