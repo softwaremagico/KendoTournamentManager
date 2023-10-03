@@ -2,11 +2,6 @@
 <link href="tournament-dialog-box.component.scss" rel="stylesheet"><h1 mat-dialog-title>{{title}}</h1>
 <div class="form-layout" mat-dialog-content>
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
-    <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="tournamentName" matInput
-             placeholder="{{'competitionName' | translate}}"
-             required>
-    </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentType' | translate}}</mat-label>
       <mat-select [(value)]="tournament.type" formControlName="tournamentType">
@@ -15,7 +10,20 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-
+    <div class="types">
+      <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
+        <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="tournamentName"
+               matInput
+               placeholder="{{'competitionName' | translate}}"
+               required>
+      </mat-form-field>
+      <button (click)="openCustomProperties()" class="edit-score-button" [disabled]="tournament.id==undefined"
+              color="primary" mat-flat-button
+              mat-raised-button
+              type="button">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
           || this.selectedType == typeLeague || this.selectedType == typeKing" formControlName="shiaijos" matInput
@@ -74,7 +82,7 @@
         <mat-icon>done</mat-icon>
         {{actionName.toLowerCase() | translate}}
       </button>
-      <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
+      <button (click)="closeDialog(cancel)" color="warn" mat-flat-button mat-raised-button
               type="button">{{'cancel' | translate}}
       </button>
     </div>
