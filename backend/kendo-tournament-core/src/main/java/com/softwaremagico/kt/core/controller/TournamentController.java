@@ -61,7 +61,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     @Autowired
     public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, TeamProvider teamProvider,
-                                RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+                                RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider,
+                                TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(provider, converter);
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;

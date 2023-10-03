@@ -55,11 +55,11 @@ export class TournamentExtendedPropertiesService {
     return this.http.post<TournamentExtendedProperty>(url, tournamentExtendedProperty)
       .pipe(
         tap({
-          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`adding property ${newTournamentExtendedProperty.value}`),
+          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`adding property ${newTournamentExtendedProperty.propertyValue}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty>(`adding ${tournamentExtendedProperty.value}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty>(`adding ${tournamentExtendedProperty.propertyValue}`))
       );
   }
 
@@ -68,11 +68,11 @@ export class TournamentExtendedPropertiesService {
     return this.http.put<TournamentExtendedProperty>(url, tournamentExtendedProperty)
       .pipe(
         tap({
-          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`updating property ${newTournamentExtendedProperty.value}`),
+          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`updating property ${newTournamentExtendedProperty.propertyValue}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty>(`updating ${tournamentExtendedProperty.value}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty>(`updating ${tournamentExtendedProperty.propertyValue}`))
       );
   }
 }

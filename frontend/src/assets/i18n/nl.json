@@ -809,7 +809,10 @@
     }
   },
   "removeTeams": "Teams verwijderen",
-  "drawScore": "Er zijn enkele gelijkspelscores die moeten worden opgelost voordat u doorgaat naar de volgende toernooifase."
+  "drawScore": "Er zijn enkele gelijkspelscores die moeten worden opgelost voordat u doorgaat naar de volgende toernooifase.",
+  "leagueFifo": "Het eerste team is als eerste uitgeschakeld bij het genereren van de volgende wedstrijd.",
+  "leagueFifoHint": "Bij het genereren van de wedstrijden selecteert u bij de eerste het team dat wordt vervangen. Indien waar, wordt het eerste team vervangen door het derde. Als dit niet waar is, wordt de tweede vervangen door de derde. Als dit bijvoorbeeld is geselecteerd, zijn de gevechten: '1-2, 3-2, 3-1'. Maar zo niet, dan wordt het: '1-2, 1-3, 2-3.",
+  "tournamentProperties": "Toernooi-eigenschappen"
 }
 
 
