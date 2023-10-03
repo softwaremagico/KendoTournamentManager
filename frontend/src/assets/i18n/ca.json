@@ -578,6 +578,8 @@
   "chronometerOff": "Amagar cronòmetre",
   "fields": "Camps",
   "avoidDuplicateFights": "Evitar partits duplicats",
+  "maximizeFights": "Genera el nombre màxim de partits.",
+  "maximizeFightsHint": "Tots els equips s'enfrontaran contra tots els altres equips si aquesta opció és seleccionada.",
   "estimatedFights": "Nombre estimat de partits",
   "estimatedDuels": "Nombre estimat de combats",
   "estimatedTime": "Temps necessari estimat",

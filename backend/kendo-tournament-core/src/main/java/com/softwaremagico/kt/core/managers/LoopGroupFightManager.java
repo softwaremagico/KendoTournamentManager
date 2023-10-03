@@ -66,7 +66,7 @@ public class LoopGroupFightManager {
         final List<Team> remainingTeams = remainingFights.getTeams();
 
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
+                TournamentExtraPropertyKey.AVOID_DUPLICATES);
         final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getPropertyValue());
 
         for (final Team team : remainingTeams) {

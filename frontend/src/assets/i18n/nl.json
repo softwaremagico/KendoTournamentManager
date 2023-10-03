@@ -566,6 +566,8 @@
   "chronometerOff": "Stopwatch verbergen",
   "fields": "Veld",
   "avoidDuplicateFights": "Vermijd dubbele overeenkomsten",
+  "maximizeFights": "Genereer het maximale aantal overeenkomsten.",
+  "maximizeFightsHint": "Als deze optie is geselecteerd, spelen alle teams tegen alle andere teams.",
   "estimatedFights": "Geschat aantal wedstrijden",
   "estimatedDuels": "Geschat aantal aanvallen",
   "estimatedTime": "Geschatte benodigde tijd",

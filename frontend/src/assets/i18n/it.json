@@ -572,6 +572,8 @@
   "chronometerOff": "Nascondi cronometro",
   "fields": "Campi",
   "avoidDuplicateFights": "Evita combatti duplicati",
+  "maximizeFights": "Genera il numero massimo di corrispondenze.",
+  "maximizeFightsHint": "Tutte le squadre giocheranno contro tutte le altre squadre se questa opzione è selezionata.",
   "estimatedFights": "Numero stimato di incontri",
   "estimatedDuels": "Numero stimato di duelli",
   "estimatedTime": "Tempo stimato necessario",
