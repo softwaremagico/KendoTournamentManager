@@ -32,14 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -87,6 +80,13 @@ public class TournamentExtraPropertiesServices {
                                              Authentication authentication, HttpServletRequest request) {
         tournamentExtraPropertyDTO.setCreatedBy(authentication.getName());
         return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Get latest selected properties from a user.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/latest", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TournamentExtraPropertyDTO> getLatest(Authentication authentication, HttpServletRequest request) {
+        return tournamentExtraPropertyController.getLatest(authentication.getName());
     }
 
 }

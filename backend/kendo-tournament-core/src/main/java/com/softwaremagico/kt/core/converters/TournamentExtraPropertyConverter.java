@@ -28,7 +28,7 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -49,7 +49,7 @@ public class TournamentExtraPropertyConverter extends ElementConverter<Tournamen
         try {
             tournamentExtraPropertyDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
+        } catch (LazyInitializationException | FatalBeanException e) {
             tournamentExtraPropertyDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
         }

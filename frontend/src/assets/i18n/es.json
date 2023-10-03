@@ -826,7 +826,10 @@
     }
   },
   "removeTeams": "Quitar equipos",
-  "drawScore": "Hay algunos empates que deben resolverse antes de pasar a la siguiente fase del torneo."
+  "drawScore": "Hay algunos empates que deben resolverse antes de pasar a la siguiente fase del torneo.",
+  "leagueFifo": "El primer equipo será el primero en salir al generar el siguiente partido.",
+  "leagueFifoHint": "Al generar los partidos, en el primero se selecciona el equipo que es reemplazado. Si se activa, el primer equipo será reemplazado por el tercero. Si se desactiva, el segundo será reemplazado por el tercero. Por ejemplo, para los equipos 1, 2 y 3, si se selecciona los combates serán: '1-2, 3-2, 3-1'. Pero si no, será: '1-2, 1-3, 2-3.",
+  "tournamentProperties": "Propiedades del Torneo"
 }
 
 
