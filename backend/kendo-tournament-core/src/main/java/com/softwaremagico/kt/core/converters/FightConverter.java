@@ -31,7 +31,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +64,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
         try {
             tournament = from.getEntity().getTournament();
             fightDTO.setTournament(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
+        } catch (LazyInitializationException | FatalBeanException e) {
             tournament = tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null);
             fightDTO.setTournament(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
         }

@@ -11,6 +11,7 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {TournamentImageSelectorComponent} from "./tournament-image-selector/tournament-image-selector.component";
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
 import {TranslateService} from "@ngx-translate/core";
+import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/tournament-extra-properties.component";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -32,6 +33,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
   selectedScore: ScoreType;
 
+  cancel: Action.Cancel;
   registerForm: UntypedFormGroup;
 
   constructor(
@@ -92,11 +94,11 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     if (this.tournament.tournamentScore) {
       this.tournament.tournamentScore.scoreType = this.registerForm.get('scoreTypes')!.value;
     }
-    this.closeDialog();
+    this.closeDialog(Action.Add);
   }
 
-  closeDialog() {
-    this.dialogRef.close({action: this.action, data: this.tournament});
+  closeDialog(action: Action) {
+    this.dialogRef.close({action: action, data: this.tournament});
   }
 
   getTournamentTypeTranslationTag(tournamentType: TournamentType): string {
@@ -140,7 +142,15 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     });
   }
 
-  selectScore(score: ScoreType) {
+  selectScore(score: ScoreType): void {
     this.selectedScore = score;
+  }
+
+  openCustomProperties() {
+    const dialogRef = this.dialog.open(TournamentExtraPropertiesComponent, {
+      data: {
+        title: this.translateService.instant('tournamentProperties'), action: Action.Add, tournament: this.tournament
+      }
+    });
   }
 }

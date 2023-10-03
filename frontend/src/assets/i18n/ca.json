@@ -821,7 +821,10 @@
     }
   },
   "removeTeams": "Treure Equips",
-  "drawScore": "Hi ha alguns empats que s'han de resoldre abans de passar a la següent fase del torneig."
+  "drawScore": "Hi ha alguns empats que s'han de resoldre abans de passar a la següent fase del torneig.",
+  "leagueFifo": "El primer equip serà el primer en sortir en generar el següent partit.",
+  "leagueFifoHint": "En generar els partits, al primer se selecciona l'equip que és reemplaçat. Si s'activa, el primer equip serà substituït pel tercer. Si es desactiva, el segon serà reemplaçat pel tercer. Per exemple, per als equips 1, 2 i 3, si se selecciona els combats seran: '1-2, 3-2, 3-1'. Però si no, serà: '1-2, 1-3, 2-3.",
+  "tournamentProperties": "Propietats del torneig"
 }
 
 
