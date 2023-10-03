@@ -30,7 +30,7 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -56,14 +56,14 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
         try {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
+        } catch (LazyInitializationException | FatalBeanException e) {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
             achievementDTO.setParticipant(participantConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
+        } catch (LazyInitializationException | FatalBeanException e) {
             achievementDTO.setParticipant(participantConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }

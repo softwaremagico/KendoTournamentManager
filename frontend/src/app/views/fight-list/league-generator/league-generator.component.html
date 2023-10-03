@@ -10,19 +10,23 @@
          cdkDropList class="final-team-list">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
-    <div *ngIf="canHaveDuplicated || needsDrawResolution" class="extra-properties">
-      <mat-slide-toggle *ngIf="canHaveDuplicated"
+    <div *ngIf="needsMaximizeFights || needsDrawResolution || needsFifoWinner" class="extra-properties">
+      <mat-slide-toggle *ngIf="needsMaximizeFights"
                         [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}
       </mat-slide-toggle>
       <mat-form-field *ngIf="needsDrawResolution">
         <mat-label>{{'drawResolution' | translate}}</mat-label>
-        <mat-select (selectionChange)="select($event.value)" [(value)]="selectedDrawResolution">
+        <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
           <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
                       [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
             {{getDrawResolutionTranslationTag(resolution) | translate}}
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
+                        [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
+        {{'leagueFifo' | translate }}
+      </mat-slide-toggle>
     </div>
   </div>
 </div>
