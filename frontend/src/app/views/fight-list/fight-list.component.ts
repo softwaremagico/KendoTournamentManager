@@ -75,8 +75,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private translateService: TranslateService, rbacService: RbacService,
               private systemOverloadService: SystemOverloadService) {
     super(rbacService);
-    this.swappedColors = this.userSessionService.getSwappedColors();
-    this.swappedTeams = this.userSessionService.getSwappedTeams();
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
     this.groups = [];
@@ -93,6 +91,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   ngOnInit(): void {
+    this.swappedColors = this.userSessionService.getSwappedColors();
+    this.swappedTeams = this.userSessionService.getSwappedTeams();
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.refreshFights();
     this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
