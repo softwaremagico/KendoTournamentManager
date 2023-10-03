@@ -94,7 +94,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     if (this.tournament.tournamentScore) {
       this.tournament.tournamentScore.scoreType = this.registerForm.get('scoreTypes')!.value;
     }
-    this.closeDialog(Action.Add);
+    this.closeDialog(this.action);
   }
 
   closeDialog(action: Action) {
