@@ -36,6 +36,10 @@ export namespace TournamentType {
   }
 
   export function canMaximizeFights(type: TournamentType | undefined): boolean {
+    return type === TournamentType.CHAMPIONSHIP;
+  }
+
+  export function avoidsDuplicatedFights(type: TournamentType | undefined): boolean {
     return type === TournamentType.LOOP;
   }
 
