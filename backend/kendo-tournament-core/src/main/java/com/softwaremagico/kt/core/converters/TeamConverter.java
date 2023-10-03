@@ -29,7 +29,7 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +64,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
                 teamDTO.setTournament(tournamentConverter.convert(
                         new TournamentConverterRequest(from.getEntity().getTournament())));
             }
-        } catch (LazyInitializationException | InvalidPropertyException e) {
+        } catch (LazyInitializationException | FatalBeanException e) {
             teamDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
         }

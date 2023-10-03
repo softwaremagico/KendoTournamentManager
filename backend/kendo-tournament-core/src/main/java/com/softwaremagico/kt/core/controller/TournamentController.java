@@ -29,9 +29,11 @@ import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,16 +56,20 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     private final DuelProvider duelProvider;
 
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
 
     @Autowired
     public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, TeamProvider teamProvider,
-                                RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider) {
+                                RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider,
+                                TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(provider, converter);
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
         this.roleProvider = roleProvider;
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     @Override
@@ -122,5 +128,14 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
         return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
+    }
+
+    private void setDefaultProperties(TournamentDTO tournamentDTO, String username) {
+        final List<TournamentExtraProperty> properties = tournamentExtraPropertyProvider.getLatestPropertiesByCreatedBy(username);
+        properties.forEach(tournamentExtraProperty -> {
+            tournamentExtraProperty.setId(null);
+            tournamentExtraProperty.setTournament(getConverter().reverse(tournamentDTO));
+        });
+        tournamentExtraPropertyProvider.save(properties);
     }
 }
