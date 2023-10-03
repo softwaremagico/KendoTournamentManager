@@ -37,6 +37,7 @@ import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -86,6 +87,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         return createdTournamentDTO;
     }
 
+    @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public TournamentDTO update(TournamentDTO tournamentDTO, String username) {
         //If a tournament is locked we can define it as finished (maybe fights are not finished by time).

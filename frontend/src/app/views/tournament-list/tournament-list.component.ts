@@ -120,9 +120,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   updateRowData(tournament: Tournament): void {
-    this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
+    this.tournamentService.update(tournament).subscribe((): void => {
         this.messageService.infoMessage('infoTournamentUpdated');
-        this.basicTableData.selectedElement = _tournament;
+        this.basicTableData.selectedElement = tournament;
       }
     );
   }
