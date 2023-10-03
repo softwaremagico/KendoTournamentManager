@@ -16,6 +16,7 @@ import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-prope
 import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
 import {MessageService} from "../../../services/message.service";
 import {DrawResolution} from "../../../models/draw-resolution";
+import {MatSlideToggleChange} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-league-generator',
@@ -29,12 +30,19 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
   action: Action;
   actionName: string;
   teamsOrder: Team[] = [];
-  maximizeFights: boolean;
   tournament: Tournament;
   drawResolution: DrawResolution[];
-  selectedDrawResolution: DrawResolution;
   avoidDuplicates = new UntypedFormControl('', []);
+
+  //Enable
+  needsMaximizeFights: boolean;
   needsDrawResolution: boolean;
+  needsFifoWinner: boolean;
+
+  //Values
+  areFightsMaximized: boolean;
+  firstInFirstOut: boolean;
+  selectedDrawResolution: DrawResolution;
 
   constructor(public dialogRef: MatDialogRef<LeagueGeneratorComponent>,
               private teamService: TeamService, rbacService: RbacService, private tournamentService: TournamentService,
@@ -51,31 +59,33 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
     this.drawResolution = DrawResolution.toArray();
-    this.maximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
+
+    this.needsMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
+    this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
+
+    this.defaultPropertiesValue();
   }
 
   ngOnInit(): void {
-    if (this.maximizeFights) {
-      this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS)
-        .subscribe((_tournamentProperty: TournamentExtendedProperty): void => {
-          if (_tournamentProperty) {
-            this.avoidDuplicates.setValue(_tournamentProperty.propertyValue.toLowerCase() !== "true");
-          } else {
-            this.avoidDuplicates.setValue(TournamentExtraPropertyKey.getDefaultMaximizedFights());
+    if (this.needsMaximizeFights || this.needsDrawResolution || this.needsFifoWinner) {
+      this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
+        if (_tournamentSelection) {
+          for (const _tournamentProperty of _tournamentSelection) {
+            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.KING_DRAW_RESOLUTION) {
+              this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.propertyValue);
+            }
+            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.MAXIMIZE_FIGHTS) {
+              this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
+            }
+            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
+              this.firstInFirstOut = (_tournamentProperty.propertyValue.toLowerCase() == "true");
+            }
           }
-        });
+        }
+      });
     }
-    if (this.needsDrawResolution) {
-      this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.KING_DRAW_RESOLUTION)
-        .subscribe((_tournamentProperty: TournamentExtendedProperty): void => {
-          if (_tournamentProperty) {
-            this.selectedDrawResolution = DrawResolution.getByKey(_tournamentProperty.propertyValue);
-          } else {
-            this.selectedDrawResolution = TournamentExtraPropertyKey.getDefaultKingDrawResolutions();
-          }
-        });
-    }
+
     this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
       if (teams) {
         teams.sort(function (a: Team, b: Team) {
@@ -94,6 +104,12 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
         this.messageService.infoMessage('infoTournamentUpdated');
       });
     });
+  }
+
+  defaultPropertiesValue(): void {
+    this.areFightsMaximized = TournamentExtraPropertyKey.getDefaultMaximizedFights();
+    this.selectedDrawResolution = TournamentExtraPropertyKey.getDefaultKingDrawResolutions();
+    this.firstInFirstOut = TournamentExtraPropertyKey.getDefaultLeagueFightsOrderGeneration();
   }
 
   acceptAction() {
@@ -174,13 +190,23 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     return DrawResolution.toCamel(drawResolution) + "Hint";
   }
 
-  select(drawResolution: DrawResolution) {
+  selectDrawResolution(drawResolution: DrawResolution): void {
     this.selectedDrawResolution = drawResolution;
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = drawResolution;
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(():void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
+  fifoToggle($event: MatSlideToggleChange): void {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(():void => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }

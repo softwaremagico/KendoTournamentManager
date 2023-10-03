@@ -17,7 +17,7 @@
                placeholder="{{'competitionName' | translate}}"
                required>
       </mat-form-field>
-      <button (click)="openCustomProperties()" class="edit-score-button"
+      <button (click)="openCustomProperties()" class="edit-score-button" [disabled]="tournament.id==undefined"
               color="primary" mat-flat-button
               mat-raised-button
               type="button">
