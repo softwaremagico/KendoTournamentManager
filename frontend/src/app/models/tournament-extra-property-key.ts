@@ -2,6 +2,7 @@ import {DrawResolution} from "./draw-resolution";
 
 export enum TournamentExtraPropertyKey {
   MAXIMIZE_FIGHTS = 'MAXIMIZE_FIGHTS',
+  AVOID_DUPLICATES = 'AVOID_DUPLICATES',
   KING_INDEX = 'KING_INDEX',
   KING_DRAW_RESOLUTION = 'KING_DRAW_RESOLUTION',
   DIPLOMA_NAME_HEIGHT = 'DIPLOMA_NAME_HEIGHT',
@@ -20,6 +21,10 @@ export namespace TournamentExtraPropertyKey {
   }
 
   export function getDefaultLeagueFightsOrderGeneration(): boolean {
+    return true;
+  }
+
+  export function avoidDuplicateFightsGeneration(): boolean {
     return true;
   }
 

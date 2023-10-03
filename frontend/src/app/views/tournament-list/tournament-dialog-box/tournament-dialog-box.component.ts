@@ -30,6 +30,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   typeLoop: TournamentType = TournamentType.LOOP;
   typeLeague: TournamentType = TournamentType.LEAGUE;
   typeKing: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  typeCustom: TournamentType = TournamentType.CUSTOMIZED;
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
   selectedScore: ScoreType;
 

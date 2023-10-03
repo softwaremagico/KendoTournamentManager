@@ -23,6 +23,7 @@ package com.softwaremagico.kt.persistence.values;
 
 public enum TournamentExtraPropertyKey {
     MAXIMIZE_FIGHTS,
+    AVOID_DUPLICATES,
     KING_INDEX,
     KING_DRAW_RESOLUTION,
     DIPLOMA_NAME_HEIGHT,
