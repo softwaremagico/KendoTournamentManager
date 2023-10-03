@@ -9,6 +9,8 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {TranslateModule} from "@ngx-translate/core";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -25,9 +27,12 @@ import {TranslateModule} from "@ngx-translate/core";
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
+    MatButtonModule,
     MatSlideToggleModule,
     MatTooltipModule,
     TranslateModule,
+    ReactiveFormsModule,
+    FormsModule,
   ]
 })
 export class TournamentExtraPropertiesModule {

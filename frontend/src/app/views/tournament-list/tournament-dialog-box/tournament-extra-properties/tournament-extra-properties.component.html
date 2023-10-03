@@ -1,16 +1,30 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <h1 mat-dialog-title>{{title}}</h1>
 <div class="options">
-<!--  <mat-slide-toggle *ngIf="canHaveDuplicated"-->
-<!--                    [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}-->
-<!--  </mat-slide-toggle>-->
-<!--  <mat-form-field *ngIf="needsDrawResolution">-->
-<!--    <mat-label>{{'drawResolution' | translate}}</mat-label>-->
-<!--    <mat-select (selectionChange)="select($event.value)" [(value)]="selectedDrawResolution">-->
-<!--      <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"-->
-<!--                  [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">-->
-<!--        {{getDrawResolutionTranslationTag(resolution) | translate}}-->
-<!--      </mat-option>-->
-<!--    </mat-select>-->
-<!--  </mat-form-field>-->
+
+  <mat-slide-toggle *ngIf="needsMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)">
+    {{'avoidDuplicateFights' | translate }}
+  </mat-slide-toggle>
+
+  <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
+                    [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
+    {{'leagueFifo' | translate }}
+  </mat-slide-toggle>
+
+
+  <mat-form-field *ngIf="needsDrawResolution">
+    <mat-label>{{'drawResolution' | translate}}</mat-label>
+    <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
+      <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
+                  [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
+        {{getDrawResolutionTranslationTag(resolution) | translate}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+<div class="button-container" mat-dialog-actions>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button
+          type="button">{{'close' | translate}}
+  </button>
 </div>
