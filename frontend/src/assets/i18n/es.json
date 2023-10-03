@@ -583,6 +583,8 @@
   "chronometerOff": "Ocutlar cronómetro",
   "fields": "Campos",
   "avoidDuplicateFights": "Evita partidos duplicados",
+  "maximizeFights": "Genera el número máximo de partidos.",
+  "maximizeFightsHint": "Todos los equipos se enfrentarán contra todos los demás equipos si esta opción es seleccionada.",
   "estimatedFights": "Número estimado de partidos",
   "estimatedDuels": "Número estimado de combates",
   "estimatedTime": "Tiempo necesario estimado",
