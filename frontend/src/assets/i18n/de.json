@@ -815,7 +815,8 @@
   "drawScore": "Es gibt einige Unentschieden, die geklärt werden müssen, bevor zur nächsten Turnierphase übergegangen werden kann.",
   "leagueFifo": "Bei der Generierung des nächsten Spiels ist die erste Mannschaft die erste, die ausscheidet.",
   "leagueFifoHint": "Beim Generieren der Spiele wird im ersten Spiel die Mannschaft ausgewählt, die ersetzt wird. Bei Aktivierung wird die erste Mannschaft durch die dritte ersetzt. Bei Deaktivierung wird die zweite durch die dritte ersetzt. Wenn diese Option ausgewählt ist, lauten die Spiele für die Mannschaften 1, 2 und 3 beispielsweise wie folgt: '1-2, 3-2, 3-1'. Aber wenn nicht, lautet es: '1-2, 1-3, 2-3.'",
-  "tournamentProperties": "Turniereigenschaften"
+  "tournamentProperties": "Turniereigenschaften",
+  "tournamentCloneWarning": "Sie werden das Turnier verdoppeln. Sind Sie sicher, dass Sie fortfahren?"
 }
 
 

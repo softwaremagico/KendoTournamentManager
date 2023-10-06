@@ -128,6 +128,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         return factorial(numberOfTeams) / (2 * factorial(numberOfTeams - 2));
     }
 
+
     private static int factorial(Integer n) {
         int total = 1;
         while (n > 1) {
@@ -136,6 +137,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         }
         return total;
     }
+
 
     private void resetGroup(Group group, String createdBy) {
         group.getFights().forEach(fight -> {
@@ -146,10 +148,12 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         groupProvider.save(group);
     }
 
+
     @Test
     public void addClub() {
         club = clubProvider.save(new Club(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY));
     }
+
 
     @Test(dependsOnMethods = "addClub")
     public void addParticipants() {
@@ -157,6 +161,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
             participantProvider.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club));
         }
     }
+
 
     @Test(dependsOnMethods = "addParticipants")
     public void addTournament() {
@@ -166,12 +171,14 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
 
+
     @Test(dependsOnMethods = "addTournament")
     public void checkingCache() {
         tournamentProvider.get(tournament.getId());
         tournamentProvider.get(tournament.getId());
         tournamentProvider.get(tournament.getId());
     }
+
 
     @Test(dependsOnMethods = "addTournament")
     public void addGroup() {
@@ -183,6 +190,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupProvider.count(), 1);
     }
 
+
     @Test(dependsOnMethods = {"addTournament"})
     public void addRoles() {
         for (Participant competitor : participantProvider.getAll()) {
@@ -190,6 +198,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         }
         Assert.assertEquals(roleProvider.count(tournament), participantProvider.count());
     }
+
 
     @Test(dependsOnMethods = {"addGroup"})
     public void addTeams() {
@@ -226,6 +235,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(TEAMS, teamProvider.count(tournament));
     }
 
+
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
         List<Fight> tournamentFights = simpleLeagueHandler.createFights(tournament, TeamsOrder.SORTED, 0, null);
@@ -242,6 +252,40 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         }
     }
 
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void cloneTournament() {
+        final TournamentDTO clonedTournamentDTO = tournamentController.clone(tournament.getId(), null);
+        clonedTournament = tournamentConverter.reverse(clonedTournamentDTO);
+        Assert.assertEquals(teamProvider.count(clonedTournament), teamProvider.count(tournament));
+        Assert.assertEquals(roleProvider.count(clonedTournament), roleProvider.count(tournament));
+        Assert.assertEquals(fightProvider.count(clonedTournament), 0);
+        Assert.assertEquals(groupProvider.count(clonedTournament), 1);
+    }
+
+
+    @Test(dependsOnMethods = {"cloneTournament"})
+    public void createFightsOnCloned() {
+        List<Team> tournamentTeams = teamProvider.getAll(clonedTournament);
+        final Group group = groupProvider.getGroups(clonedTournament).get(0);
+
+        groupProvider.addTeams(group.getId(), tournamentTeams, null);
+
+        List<Fight> tournamentFights = simpleLeagueHandler.createFights(clonedTournament, TeamsOrder.SORTED, 0, null);
+        //Check group has been created.
+        Assert.assertEquals(simpleLeagueHandler.getGroups(clonedTournament).size(), 1);
+        Assert.assertEquals(groupProvider.getGroups(clonedTournament).get(0).getFights().size(), tournamentFights.size());
+
+        Assert.assertEquals(tournamentFights.size(), getNumberOfCombats(TEAMS));
+
+        // Checker than teams have not crossed colors.
+        for (int i = 0; i < tournamentFights.size() - 1; i++) {
+            Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam2(), tournamentFights.get(i).getTeam1());
+            Assert.assertNotEquals(tournamentFights.get(i + 1).getTeam1(), tournamentFights.get(i).getTeam2());
+        }
+    }
+
+
     @Test(dependsOnMethods = {"createFights"})
     public void checkStatistics() {
         final Group group = groupProvider.getGroups(tournament).get(0);
@@ -252,7 +296,8 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentFightStatisticsDTO.getDuelsNumber().intValue(), group.getFights().size() * MEMBERS);
     }
 
-    @Test(dependsOnMethods = {"createFights"})
+
+    @Test(dependsOnMethods = {"createFights", "cloneTournament"})
     public void testSimpleWinner() {
         while (!fightProvider.areOver(tournament)) {
             Fight currentFight = fightProvider.getCurrent(tournament);
@@ -276,10 +321,33 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
 
+    @Test(dependsOnMethods = {"testSimpleWinner", "createFightsOnCloned"})
+    public void testDifferentWinnerOnCloned() {
+        while (!fightProvider.areOver(clonedTournament)) {
+            Fight currentFight = fightProvider.getCurrent(clonedTournament);
+
+            // Second duel won
+            currentFight.getDuels().get(1).addCompetitor2Score(Score.KOTE);
+            currentFight.getDuels().get(1).addCompetitor2Score(Score.KOTE);
+            currentFight.getDuels().forEach(duel -> duel.setFinished(true));
+
+            fightProvider.save(currentFight);
+        }
+
+        List<ScoreOfTeam> teamsScore = rankingProvider.getTeamsScoreRanking(clonedTournament);
+
+        for (int i = 0; i < teamsScore.size() - 1; i++) {
+            Assert.assertTrue(teamsScore.get(i).getWonFights() >= teamsScore.get(i + 1).getWonFights());
+            Assert.assertTrue(teamsScore.get(i).getWonDuels() >= teamsScore.get(i + 1).getWonDuels());
+            Assert.assertTrue(teamsScore.get(i).getHits() >= teamsScore.get(i + 1).getHits());
+        }
+
+        resetGroup(groupProvider.getGroups(clonedTournament).get(0), null);
+    }
+
+
     /**
      * Draw team1 and team3.
-     *
-     * @
      */
     @Test(dependsOnMethods = {"createFights", "testSimpleWinner"})
     public void testDrawWinner() {
@@ -327,10 +395,9 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
 
+
     /**
      * Draw team1, team3 and team5.
-     *
-     * @
      */
     @Test(dependsOnMethods = {"createFights", "testDrawWinner"})
     public void testDrawVariousWinner() {
@@ -395,15 +462,6 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), rankingTeams.get(2));
     }
 
-    @Test(dependsOnMethods = {"createFights", "testDrawWinner"})
-    public void cloneTournament() {
-        final TournamentDTO clonedTournamentDTO = tournamentController.clone(tournament.getId(), null);
-        clonedTournament = tournamentConverter.reverse(clonedTournamentDTO);
-        Assert.assertEquals(teamProvider.count(clonedTournament), teamProvider.count(tournament));
-        Assert.assertEquals(roleProvider.count(clonedTournament), roleProvider.count(tournament));
-        Assert.assertEquals(fightProvider.count(clonedTournament), 0);
-        Assert.assertEquals(groupProvider.count(clonedTournament), 1);
-    }
 
     @AfterClass
     public void deleteTournament() {
