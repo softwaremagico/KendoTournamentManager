@@ -16,6 +16,13 @@
                 matTooltip="{{'tournamentEdit' | translate}}">
           <mat-icon>create</mat-icon>
         </button>
+        <button (click)="cloneElement()" *ngIf="(RbacActivity.READ_ONE_TOURNAMENT | rbac : this.rbacService.activities)"
+                [disabled]="!basicTableData.selectedElement"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'tournamentClone' | translate}}">
+          <mat-icon>content_copy</mat-icon>
+        </button>
         <button (click)="addRoles()" *ngIf="(RbacActivity.CREATE_ROLE | rbac : this.rbacService.activities)"
                 [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
                 color="primary" mat-button

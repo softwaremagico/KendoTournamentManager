@@ -263,5 +263,13 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }
-}
 
+  cloneElement() {
+    this.tournamentService.clone(this.basicTableData.selectedElement?.id!).subscribe((_tournament: Tournament): void => {
+      this.basicTableData.dataSource.data.push(_tournament);
+      this.basicTableData.dataSource._updateChangeSubscription();
+      this.basicTableData.selectItem(_tournament);
+      this.messageService.infoMessage('infoTournamentStored');
+    });
+  }
+}

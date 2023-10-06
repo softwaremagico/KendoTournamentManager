@@ -493,6 +493,7 @@
   "tournamentDuelsDurations": "Durata dei Combattimenti",
   "tournamentAdd": "Aggiungi Torneo",
   "tournamentEdit": "Modifica Torneo",
+  "tournamentClone": "Duplica Torneo",
   "tournamentDelete": "Elimina Torneo",
   "tournamentDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?",
   "infoTournamentStored": "Il torneo è stato memorizzato.",

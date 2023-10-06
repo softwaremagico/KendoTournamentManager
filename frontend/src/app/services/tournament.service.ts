@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {LoginService} from "./login.service";
-import {Observable, throwError} from "rxjs";
+import {Observable} from "rxjs";
 import {Tournament} from "../models/tournament";
 import {catchError, tap} from "rxjs/operators";
 import {MessageService} from "./message.service";
@@ -102,6 +102,19 @@ export class TournamentService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
+      );
+  }
+
+  clone(id: number): Observable<Tournament> {
+    const url: string = `${this.baseUrl}/${id}/clone`;
+    return this.http.get<Tournament>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`cloned tournament id=${id}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Tournament>(`clone id=${id}`))
       );
   }
 
