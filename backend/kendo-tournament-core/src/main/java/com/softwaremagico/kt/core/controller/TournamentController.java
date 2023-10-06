@@ -30,17 +30,23 @@ import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
+import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -59,11 +65,14 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
+    private final TournamentImageProvider tournamentImageProvider;
+
 
     @Autowired
     public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, TeamProvider teamProvider,
                                 RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider,
-                                TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+                                TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
+                                TournamentImageProvider tournamentImageProvider) {
         super(provider, converter);
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
@@ -71,6 +80,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+        this.tournamentImageProvider = tournamentImageProvider;
     }
 
     @Override
@@ -110,6 +120,65 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         group.setCreatedBy(username);
         groupProvider.addGroup(reverse(tournamentDTO), group);
         return tournamentDTO;
+    }
+
+    public TournamentDTO clone(Integer tournamentId, String username) {
+        return clone(get(tournamentId), username);
+    }
+
+    public TournamentDTO clone(TournamentDTO tournamentDTO, String username) {
+        //Clone Tournament
+        final Tournament sourceTournament = reverse(tournamentDTO);
+
+        final List<Role> sourceRoles = roleProvider.getAll(sourceTournament);
+
+        final List<Team> sourceTeams = teamProvider.getAll(sourceTournament);
+
+        final List<TournamentExtraProperty> sourceProperties = tournamentExtraPropertyProvider.getAll(sourceTournament);
+
+        final List<TournamentImage> images = tournamentImageProvider.getAll(sourceTournament);
+
+        //Update tournament
+        sourceTournament.setName(NameUtils.getNameCopy(sourceTournament));
+        sourceTournament.setId(null);
+        sourceTournament.setCreatedBy(username);
+        if (sourceTournament.getTournamentScore() != null) {
+            sourceTournament.getTournamentScore().setId(null);
+        }
+
+        final Tournament clonedTournament = getProvider().save(sourceTournament);
+
+        sourceRoles.forEach(role -> {
+            role.setTournament(clonedTournament);
+            role.setId(null);
+        });
+        roleProvider.saveAll(sourceRoles);
+
+        sourceTeams.forEach(team -> {
+            team.setTournament(clonedTournament);
+            team.setId(null);
+            team.setMembers(new ArrayList<>(team.getMembers()));
+        });
+        teamProvider.saveAll(sourceTeams);
+
+        sourceProperties.forEach(property -> {
+            property.setTournament(clonedTournament);
+            property.setId(null);
+        });
+        tournamentExtraPropertyProvider.saveAll(sourceProperties);
+
+        images.forEach(image -> {
+            image.setTournament(clonedTournament);
+            image.setId(null);
+        });
+        tournamentImageProvider.saveAll(images);
+
+        //Add default group:
+        final Group group = new Group();
+        group.setCreatedBy(username);
+        groupProvider.addGroup(clonedTournament, group);
+
+        return convert(clonedTournament);
     }
 
     @Override
