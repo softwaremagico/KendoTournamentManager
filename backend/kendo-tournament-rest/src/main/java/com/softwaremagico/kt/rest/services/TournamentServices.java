@@ -175,4 +175,13 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Creates a new tournament from the selected one.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "{tournamentId}/clone", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TournamentDTO clone(@Parameter(description = "Id of an existing tournament", required = true)
+                               @PathVariable("tournamentId") Integer tournamentId,
+                               Authentication authentication, HttpServletRequest request) {
+        return getController().clone(tournamentId, authentication.getName());
+    }
 }

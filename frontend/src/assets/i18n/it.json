@@ -493,6 +493,7 @@
   "tournamentDuelsDurations": "Durata dei Combattimenti",
   "tournamentAdd": "Aggiungi Torneo",
   "tournamentEdit": "Modifica Torneo",
+  "tournamentClone": "Duplica Torneo",
   "tournamentDelete": "Elimina Torneo",
   "tournamentDeleteQuestion": "Sei sicuro di eliminare <strong>{{name}}</strong>?",
   "infoTournamentStored": "Il torneo è stato memorizzato.",
@@ -820,7 +821,8 @@
   "drawScore": "Ci sono alcuni punteggi di pareggio che devono essere risolti prima di passare alla fase successiva del torneo.",
   "leagueFifo": "La prima squadra sarà la prima a essere eliminata quando verrà generata la partita successiva.",
   "leagueFifoHint": "Quando si generano le partite, nella prima viene selezionata la squadra che viene sostituita. Se attivato, la prima squadra sarà sostituita dalla terza. Se disabilitato, il secondo verrà sostituito dal terzo. Ad esempio, per le squadre 1, 2 e 3, se selezionate le partite saranno: '1-2, 3-2, 3-1'. Altrimenti sarà: '1-2, 1-3, 2-3.",
-  "tournamentProperties": "Proprietà del torneo"
+  "tournamentProperties": "Proprietà del torneo",
+  "tournamentCloneWarning": "Raddoppierai il torneo. Sei sicuro di continuare?"
 }
 
 

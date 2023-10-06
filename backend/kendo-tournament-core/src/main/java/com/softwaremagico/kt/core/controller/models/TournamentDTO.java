@@ -22,11 +22,12 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.utils.IName;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class TournamentDTO extends ElementDTO {
+public class TournamentDTO extends ElementDTO implements IName {
 
     private String name;
 
