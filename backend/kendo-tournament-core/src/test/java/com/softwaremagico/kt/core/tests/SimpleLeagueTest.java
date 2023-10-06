@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -23,6 +23,8 @@ package com.softwaremagico.kt.core.tests;
 
 
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
+import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -73,6 +75,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
     private static final int TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
     private static Tournament tournament = null;
+    private static Tournament clonedTournament = null;
 
     @Autowired
     private TournamentProvider tournamentProvider;
@@ -115,6 +118,9 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private FightStatisticsController fightStatisticsController;
+
+    @Autowired
+    private TournamentController tournamentController;
 
     private Club club;
 
@@ -161,7 +167,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dependsOnMethods = "addTournament")
-    public void checkingCache(){
+    public void checkingCache() {
         tournamentProvider.get(tournament.getId());
         tournamentProvider.get(tournament.getId());
         tournamentProvider.get(tournament.getId());
@@ -389,6 +395,16 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(teamProvider.get(tournament, "Team01").get(), rankingTeams.get(2));
     }
 
+    @Test(dependsOnMethods = {"createFights", "testDrawWinner"})
+    public void cloneTournament() {
+        final TournamentDTO clonedTournamentDTO = tournamentController.clone(tournament.getId(), null);
+        clonedTournament = tournamentConverter.reverse(clonedTournamentDTO);
+        Assert.assertEquals(teamProvider.count(clonedTournament), teamProvider.count(tournament));
+        Assert.assertEquals(roleProvider.count(clonedTournament), roleProvider.count(tournament));
+        Assert.assertEquals(fightProvider.count(clonedTournament), 0);
+        Assert.assertEquals(groupProvider.count(clonedTournament), 1);
+    }
+
     @AfterClass
     public void deleteTournament() {
         groupProvider.delete(tournament);
@@ -397,6 +413,14 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
         teamProvider.delete(tournament);
         roleProvider.delete(tournament);
         tournamentProvider.delete(tournament);
+
+        groupProvider.delete(clonedTournament);
+        fightProvider.delete(clonedTournament);
+        duelProvider.delete(clonedTournament);
+        teamProvider.delete(clonedTournament);
+        roleProvider.delete(clonedTournament);
+        tournamentProvider.delete(clonedTournament);
+
         participantProvider.deleteAll();
         clubProvider.delete(club);
         Assert.assertEquals(fightProvider.count(), 0);

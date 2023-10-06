@@ -22,7 +22,7 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
-import com.softwaremagico.kt.utils.ITeamName;
+import com.softwaremagico.kt.utils.IName;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -52,7 +52,7 @@ import java.util.Locale;
 @Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "tournament"}), indexes = {
         @Index(name = "ind_tournament", columnList = "tournament"),
 })
-public class Team extends Element implements Comparable<Team>, ITeamName {
+public class Team extends Element implements Comparable<Team>, IName {
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
