@@ -23,7 +23,7 @@ package com.softwaremagico.kt.core.controller;
 
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -78,7 +78,7 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
         return convert(getProvider().estimateByMembers(tournamentConverter.reverse(tournamentDTO)));
     }
 
-    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
+    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<DTO> teams) {
         return estimate(tournamentDTO, tournamentDTO.getTeamSize(), teams);
     }
 
@@ -86,7 +86,7 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
         return estimate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).toList()));
     }
 
-    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
+    public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, int teamSize, Collection<DTO> teams) {
         if (tournamentDTO == null || teams == null || teams.size() < 2) {
             return null;
         }
@@ -102,15 +102,15 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
         }
     }
 
-    private TournamentFightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
+    private TournamentFightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<DTO> teams) {
         return convert(getProvider().estimateLeagueStatistics(teamSize, teamConverter.reverseAll(teams)));
     }
 
-    private TournamentFightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
+    private TournamentFightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<DTO> teams) {
         return convert(getProvider().estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO), teamSize, teamConverter.reverseAll(teams)));
     }
 
-    private int getDuels(int fightByTeam, int teamSize, Collection<TeamDTO> teams) {
+    private int getDuels(int fightByTeam, int teamSize, Collection<DTO> teams) {
         final AtomicInteger counter = new AtomicInteger();
         final AtomicInteger missingMembers = new AtomicInteger();
 
@@ -130,10 +130,10 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
      * @param participants  the list of members that will participate on the tournament.
      * @return a list of transient teams.
      */
-    private List<TeamDTO> emulateTeams(TournamentDTO tournamentDTO, Collection<ParticipantDTO> participants) {
+    private List<DTO> emulateTeams(TournamentDTO tournamentDTO, Collection<ParticipantDTO> participants) {
         int teamIndex = 0;
-        final List<TeamDTO> teams = new ArrayList<>();
-        TeamDTO team = null;
+        final List<DTO> teams = new ArrayList<>();
+        DTO team = null;
         int teamMember = 0;
 
 
@@ -141,7 +141,7 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
             // Create a new team.
             if (team == null) {
                 teamIndex++;
-                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                team = new DTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
                 teamMember = 0;
             }
 

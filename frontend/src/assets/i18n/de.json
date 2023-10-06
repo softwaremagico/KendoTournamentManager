@@ -484,6 +484,7 @@
   "tournamentDuelsDurations": "Duell-Dauer",
   "tournamentAdd": "Turnier Hinzufügen",
   "tournamentEdit": "Turnier Bearbeiten",
+  "tournamentClone": "Doppeltes Turnier",
   "tournamentDelete": "Turnier Löschent",
   "tournamentDeleteQuestion": "Möchten sie <strong>{{name}}</strong> wirklich löschen?",
   "infoTournamentStored": "Das turnier wurde gespeichert.",

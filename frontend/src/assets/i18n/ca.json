@@ -501,6 +501,7 @@
   "tournamentDuelsDurations": "Durada dels Duels",
   "tournamentAdd": "Afegeix un torneig",
   "tournamentEdit": "Edita el torneig",
+  "tournamentClone": "Duplicar torneig",
   "tournamentDelete": "Suprimeix el torneig",
   "tournamentDeleteQuestion": "Esteu segur que suprimiu <strong>{{name}}</strong>?",
   "infoTournamentStored": "S'ha guardat el torneig.",
