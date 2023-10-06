@@ -21,7 +21,7 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
-public interface ITeamName {
+public interface IName {
 
     String getName();
 }

@@ -484,6 +484,7 @@
   "tournamentDuelsDurations": "Duur van Gevechten",
   "tournamentAdd": "Toernooi Toevoegen",
   "tournamentEdit": "Toernooi Bewerken",
+  "tournamentClone": "Dubbel toernooi",
   "tournamentDelete": "Toernooi Verwijderen",
   "tournamentDeleteQuestion": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
   "infoTournamentStored": "Het toernooi is opgeslagen.",
@@ -814,7 +815,8 @@
   "drawScore": "Er zijn enkele gelijkspelscores die moeten worden opgelost voordat u doorgaat naar de volgende toernooifase.",
   "leagueFifo": "Het eerste team is als eerste uitgeschakeld bij het genereren van de volgende wedstrijd.",
   "leagueFifoHint": "Bij het genereren van de wedstrijden wordt in de eerste wedstrijd het team dat wordt vervangen geselecteerd. Indien geactiveerd, wordt het eerste team vervangen door het derde. Indien uitgeschakeld, wordt de tweede vervangen door de derde. Voor teams 1, 2 en 3 zijn de wedstrijden, indien geselecteerd, bijvoorbeeld: '1-2, 3-2, 3-1'. Maar zo niet, dan wordt het: '1-2, 1-3, 2-3.",
-  "tournamentProperties": "Toernooi-eigenschappen"
+  "tournamentProperties": "Toernooi-eigenschappen",
+  "tournamentCloneWarning": "Je gaat het toernooi verdubbelen. Weet je zeker dat je doorgaat?"
 }
 
 
