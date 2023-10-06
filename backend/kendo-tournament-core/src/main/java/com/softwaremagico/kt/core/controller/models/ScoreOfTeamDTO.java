@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class ScoreOfTeamDTO {
 
-    private TeamDTO team;
+    private DTO team;
     @JsonIgnore
     private List<FightDTO> fights;
     @JsonIgnore
@@ -48,18 +48,18 @@ public class ScoreOfTeamDTO {
 
     }
 
-    public ScoreOfTeamDTO(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
+    public ScoreOfTeamDTO(DTO team, List<FightDTO> fights, List<DuelDTO> unties) {
         this.team = team;
         this.fights = fights;
         this.unties = unties;
         update();
     }
 
-    public TeamDTO getTeam() {
+    public DTO getTeam() {
         return team;
     }
 
-    public void setTeam(TeamDTO team) {
+    public void setTeam(DTO team) {
         this.team = team;
     }
 
@@ -97,7 +97,7 @@ public class ScoreOfTeamDTO {
     public void setWonFights() {
         wonFights = 0;
         for (final FightDTO fight : fights) {
-            final TeamDTO winner = fight.getWinner();
+            final DTO winner = fight.getWinner();
             if (winner != null && winner.equals(team)) {
                 wonFights++;
             }

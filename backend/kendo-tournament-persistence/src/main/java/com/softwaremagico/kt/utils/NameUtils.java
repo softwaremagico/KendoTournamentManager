@@ -27,6 +27,7 @@ public final class NameUtils {
     private static final int NAME_PREFIX = 3;
     private static final int MAX_ALLOWED_NAME_LENGTH = 20;
 
+    private static final String COPY_SUFFIX = " - Copy";
 
     private NameUtils() {
 
@@ -223,17 +224,33 @@ public final class NameUtils {
         return acronym;
     }
 
-    public static String getShortName(ITeamName teamName) {
-        return getShortName(teamName, MAX_ALLOWED_NAME_LENGTH);
+    public static String getShortName(IName nameItem) {
+        return getShortName(nameItem, MAX_ALLOWED_NAME_LENGTH);
     }
 
-    public static String getShortName(ITeamName teamName, int length) {
-        if (teamName.getName().length() <= length) {
-            return teamName.getName();
+    public static String getShortName(IName nameItem, int length) {
+        if (nameItem.getName().length() <= length) {
+            return nameItem.getName();
         } else {
-            return teamName.getName().substring(0, length - NAME_PREFIX).trim() + ". "
-                    + teamName.getName().substring(teamName.getName().length() - 2).trim();
+            return nameItem.getName().substring(0, length - NAME_PREFIX).trim() + ". "
+                    + nameItem.getName().substring(nameItem.getName().length() - 2).trim();
         }
+    }
+
+    public static String getNameCopy(IName nameItem) {
+        if (nameItem.getName() != null) {
+            if (nameItem.getName().contains(COPY_SUFFIX)) {
+                final String index = nameItem.getName().substring(nameItem.getName().indexOf(COPY_SUFFIX + " #") + (COPY_SUFFIX + " #").length()).trim();
+                try {
+                    return nameItem.getName().substring(0, nameItem.getName().indexOf(COPY_SUFFIX)).trim() + COPY_SUFFIX + " #" + (Integer.parseInt(index) + 1);
+                } catch (Exception e) {
+                    return nameItem.getName() + " #2";
+                }
+            } else {
+                return nameItem.getName() + COPY_SUFFIX;
+            }
+        }
+        return nameItem.getName();
     }
 
 }

@@ -21,13 +21,13 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-import com.softwaremagico.kt.utils.ITeamName;
+import com.softwaremagico.kt.utils.IName;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TeamDTO extends ElementDTO implements ITeamName {
+public class DTO extends ElementDTO implements IName {
 
     private String name;
 
@@ -37,12 +37,12 @@ public class TeamDTO extends ElementDTO implements ITeamName {
 
     private Integer group;
 
-    public TeamDTO() {
+    public DTO() {
         super();
         members = new ArrayList<>();
     }
 
-    public TeamDTO(String name, TournamentDTO tournament) {
+    public DTO(String name, TournamentDTO tournament) {
         this();
         setName(name);
         setTournament(tournament);
@@ -93,7 +93,7 @@ public class TeamDTO extends ElementDTO implements ITeamName {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TeamDTO teamDTO)) {
+        if (!(o instanceof DTO teamDTO)) {
             return false;
         }
         if (!super.equals(o)) {

@@ -33,7 +33,7 @@ import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
@@ -110,8 +110,8 @@ public class PdfController {
     }
 
     public TeamList generateTeamList(TournamentDTO tournamentDTO) {
-        final List<TeamDTO> teams = teamController.getAllByTournament(tournamentDTO, null);
-        teams.sort(Comparator.comparing(TeamDTO::getName));
+        final List<DTO> teams = teamController.getAllByTournament(tournamentDTO, null);
+        teams.sort(Comparator.comparing(DTO::getName));
         return new TeamList(tournamentDTO, teams);
     }
 
