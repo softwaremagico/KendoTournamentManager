@@ -484,6 +484,7 @@
   "tournamentDuelsDurations": "Duur van Gevechten",
   "tournamentAdd": "Toernooi Toevoegen",
   "tournamentEdit": "Toernooi Bewerken",
+  "tournamentClone": "Dubbel toernooi",
   "tournamentDelete": "Toernooi Verwijderen",
   "tournamentDeleteQuestion": "Weet je zeker dat je <strong>{{name}}</strong> wilt verwijderen?",
   "infoTournamentStored": "Het toernooi is opgeslagen.",

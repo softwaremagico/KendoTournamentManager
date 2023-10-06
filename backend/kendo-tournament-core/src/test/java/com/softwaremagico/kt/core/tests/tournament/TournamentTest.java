@@ -34,7 +34,7 @@ import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
@@ -165,7 +165,7 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"add4Groups"})
     public void addTeams() {
         int teamIndex = 0;
-        TeamDTO team = null;
+        DTO team = null;
         int teamMember = 0;
 
         final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
@@ -174,7 +174,7 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
             // Create a new team.
             if (team == null) {
                 teamIndex++;
-                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                team = new DTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
                 teamMember = 0;
             }
 

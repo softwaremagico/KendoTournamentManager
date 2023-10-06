@@ -514,6 +514,7 @@
   "tournamentDuelsDurations": "Duels Duration",
   "tournamentAdd": "Add tournament",
   "tournamentEdit": "Edit tournament",
+  "tournamentClone": "Clone tournament",
   "tournamentDelete": "Delete tournament",
   "tournamentDeleteQuestion": "Are you sure to delete <strong>{{name}}</strong>?",
   "infoTournamentStored": "The tournament has been stored.",
