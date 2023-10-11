@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.logger.RestServerLogger;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -81,20 +82,32 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(generateCorsConfigurationSource())).csrf(AbstractHttpConfigurer::disable)
+        http
+                //Disable cors headers
+                .cors(cors -> cors.configurationSource(generateCorsConfigurationSource()))
+                //Disable csrf protection
+                .csrf(AbstractHttpConfigurer::disable)
+                //Sessions should be stateless
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
                         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
-                        httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint((request, response, ex) -> response.sendError(
-                                HttpServletResponse.SC_UNAUTHORIZED,
-                                ex.getMessage()
-                        )))
+                        httpSecurityExceptionHandlingConfigurer
+                                .authenticationEntryPoint((request, response, ex) -> {
+                                    RestServerLogger.severe(this.getClass().getName(), ex.getMessage());
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+                                })
+                                .accessDeniedHandler((request, response, ex) -> {
+                                    RestServerLogger.severe(this.getClass().getName(), ex.getMessage());
+                                    response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
+                                })
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().authenticated());
         return http.build();
     }
+
 
     private CorsConfigurationSource generateCorsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
