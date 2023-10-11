@@ -24,6 +24,7 @@ import {
 } from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
+import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-tournament-list',
@@ -263,5 +264,30 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }
-}
 
+  openCloneTournament(): void {
+    if (this.basicTableData.selectedElement) {
+      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
+        disableClose: false
+      });
+      dialogRef.componentInstance.messageTag = "tournamentCloneWarning"
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.cloneElement();
+        }
+      });
+    }
+  }
+
+  cloneElement() {
+    const tournamentId: number = this.basicTableData.selectedElement?.id!;
+    this.basicTableData.selectedElement = undefined;
+    this.tournamentService.clone(tournamentId).subscribe((_tournament: Tournament): void => {
+      this.basicTableData.dataSource.data.push(_tournament);
+      this.basicTableData.selectItem(_tournament);
+      this.basicTableData.dataSource._updateChangeSubscription();
+      this.messageService.infoMessage('infoTournamentStored');
+    });
+  }
+}
