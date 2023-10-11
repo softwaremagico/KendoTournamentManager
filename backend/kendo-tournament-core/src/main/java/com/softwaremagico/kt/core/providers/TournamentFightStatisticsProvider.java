@@ -131,8 +131,8 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     public TournamentFightStatistics estimateLoopStatistics(Tournament tournament, int teamSize, Collection<Team> teams) {
         final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
-        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getPropertyValue());
+                TournamentExtraPropertyKey.AVOID_DUPLICATES);
+        final boolean maximizeFights = property != null && !Boolean.parseBoolean(property.getPropertyValue());
         if (maximizeFights) {
             tournamentFightStatistics.setFightsNumber(((long) teams.size() * (teams.size() - 1)));
             tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1) * 2);
