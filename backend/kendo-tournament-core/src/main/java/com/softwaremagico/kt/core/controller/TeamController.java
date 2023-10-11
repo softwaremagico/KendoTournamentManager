@@ -22,7 +22,7 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Controller
-public class TeamController extends BasicInsertableController<Team, TeamDTO, TeamRepository,
+public class TeamController extends BasicInsertableController<Team, DTO, TeamRepository,
         TeamProvider, TeamConverterRequest, TeamConverter> {
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
@@ -63,18 +63,18 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
         return new TeamConverterRequest(entity);
     }
 
-    public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO, String createdBy) {
-        final List<TeamDTO> teams = convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO)));
+    public List<DTO> getAllByTournament(TournamentDTO tournamentDTO, String createdBy) {
+        final List<DTO> teams = convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO)));
         if (teams.isEmpty()) {
             return convertAll(getProvider().createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
         }
         return teams;
     }
 
-    public List<TeamDTO> getAllByTournament(Integer tournamentId, String createdBy) {
+    public List<DTO> getAllByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        final List<TeamDTO> teams = convertAll(getProvider().getAll(tournament));
+        final List<DTO> teams = convertAll(getProvider().getAll(tournament));
         if (teams.isEmpty()) {
             return convertAll(getProvider().createDefaultTeams(tournament, createdBy));
         }
@@ -87,21 +87,21 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public TeamDTO create(TeamDTO teamDTO, String username) {
+    public DTO create(DTO teamDTO, String username) {
         if (teamDTO.getName() == null) {
             teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
-        final TeamDTO storedTeamDTO = super.create(teamDTO, username);
+        final DTO storedTeamDTO = super.create(teamDTO, username);
         storedTeamDTO.setTournament(teamDTO.getTournament());
         return storedTeamDTO;
     }
 
-    public List<TeamDTO> create(TournamentDTO tournamentDTO, String createdBy) {
+    public List<DTO> create(TournamentDTO tournamentDTO, String createdBy) {
         return convertAll(getProvider().createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
     }
 
     @Override
-    public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username) {
+    public List<DTO> create(Collection<DTO> teamsDTOs, String username) {
         teamsDTOs.forEach(teamDTO -> {
             if (teamDTO.getName() == null) {
                 teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
@@ -110,7 +110,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
         return super.create(teamsDTOs, username);
     }
 
-    public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
+    public DTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
         final Team team = getProvider().delete(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(member)).orElse(null);
         if (team != null) {
             return convert(team);
@@ -123,7 +123,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public TeamDTO update(TeamDTO teamDTO, String username) {
+    public DTO update(DTO teamDTO, String username) {
         teamDTO.setUpdatedBy(username);
         validate(teamDTO);
         final Team dbTeam = super.getProvider().save(reverse(teamDTO));
@@ -136,7 +136,7 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public void validate(TeamDTO teamDTO) throws ValidateBadRequestException {
+    public void validate(DTO teamDTO) throws ValidateBadRequestException {
         if (teamDTO == null || teamDTO.getTournament() == null) {
             throw new ValidateBadRequestException(getClass(), "Team data is missing");
         }
