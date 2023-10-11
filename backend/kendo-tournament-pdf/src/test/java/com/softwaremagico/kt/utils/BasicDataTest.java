@@ -34,7 +34,7 @@ import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -59,7 +59,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected TournamentDTO tournament;
     protected List<ParticipantDTO> members;
     protected List<RoleDTO> roles;
-    protected List<TeamDTO> teams;
+    protected List<DTO> teams;
     protected GroupDTO group;
     protected List<FightDTO> fights;
     @Autowired
@@ -107,16 +107,16 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         return roleController.create(new RoleDTO(tournament, referee, RoleType.REFEREE), null);
     }
 
-    protected List<TeamDTO> createTeams(List<ParticipantDTO> members, TournamentDTO tournament) {
-        List<TeamDTO> teams = new ArrayList<>();
+    protected List<DTO> createTeams(List<ParticipantDTO> members, TournamentDTO tournament) {
+        List<DTO> teams = new ArrayList<>();
         int teamIndex = 0;
-        TeamDTO team = null;
+        DTO team = null;
         int teamMember = 0;
         for (ParticipantDTO competitor : members) {
             // Create a new team.
             if (team == null) {
                 teamIndex++;
-                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournament);
+                team = new DTO("Team" + String.format("%02d", teamIndex), tournament);
                 teamMember = 0;
                 team = teamController.create(team, null);
                 teams.add(team);
@@ -136,7 +136,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         return teams;
     }
 
-    protected GroupDTO createGroup(TournamentDTO tournament, List<TeamDTO> teams) {
+    protected GroupDTO createGroup(TournamentDTO tournament, List<DTO> teams) {
         final GroupDTO group = new GroupDTO();
         group.setTournament(tournament);
         group.setLevel(0);
@@ -144,7 +144,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         return groupController.create(group, null);
     }
 
-    protected List<FightDTO> createFights(TournamentDTO tournament, List<TeamDTO> teams, GroupDTO group) {
+    protected List<FightDTO> createFights(TournamentDTO tournament, List<DTO> teams, GroupDTO group) {
         List<FightDTO> fights = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
             FightDTO fightDTO = new FightDTO(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL);

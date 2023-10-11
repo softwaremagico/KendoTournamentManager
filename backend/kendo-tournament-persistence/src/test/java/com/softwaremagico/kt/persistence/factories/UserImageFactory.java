@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.utils;
+package com.softwaremagico.kt.persistence.factories;
 
 /*-
  * #%L

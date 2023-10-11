@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class FightDTO extends ElementDTO {
-    private TeamDTO team1;
-    private TeamDTO team2;
+    private DTO team1;
+    private DTO team2;
     private TournamentDTO tournament;
     private Integer shiaijo;
     private List<DuelDTO> duels = new ArrayList<>();
@@ -39,7 +39,7 @@ public class FightDTO extends ElementDTO {
         super();
     }
 
-    public FightDTO(TournamentDTO tournament, TeamDTO team1, TeamDTO team2, Integer shiaijo, Integer level) {
+    public FightDTO(TournamentDTO tournament, DTO team1, DTO team2, Integer shiaijo, Integer level) {
         this();
         setTournament(tournament);
         setTeam1(team1);
@@ -49,19 +49,19 @@ public class FightDTO extends ElementDTO {
     }
 
 
-    public TeamDTO getTeam1() {
+    public DTO getTeam1() {
         return team1;
     }
 
-    public void setTeam1(TeamDTO team1) {
+    public void setTeam1(DTO team1) {
         this.team1 = team1;
     }
 
-    public TeamDTO getTeam2() {
+    public DTO getTeam2() {
         return team2;
     }
 
-    public void setTeam2(TeamDTO team2) {
+    public void setTeam2(DTO team2) {
         this.team2 = team2;
     }
 
@@ -109,7 +109,7 @@ public class FightDTO extends ElementDTO {
         return duels.stream().anyMatch(DuelDTO::isOver);
     }
 
-    public TeamDTO getWinner() {
+    public DTO getWinner() {
         int points = 0;
         for (int i = 0; i < getDuels().size(); i++) {
             points += getDuels().get(i).getWinner();
@@ -145,7 +145,7 @@ public class FightDTO extends ElementDTO {
         return getWinner() == null;
     }
 
-    public int getWonDuels(TeamDTO team) {
+    public int getWonDuels(DTO team) {
         if (Objects.equals(team1, team)) {
             return (int) getDuels().stream().filter(duel -> duel.getWinner() == -1).count();
         }
@@ -155,7 +155,7 @@ public class FightDTO extends ElementDTO {
         return 0;
     }
 
-    public Integer getDrawDuels(TeamDTO team) {
+    public Integer getDrawDuels(DTO team) {
         int drawDuels = 0;
         if ((getTeam1().equals(team) || getTeam2().equals(team))) {
             drawDuels = (int) getDuels().stream().filter(duel -> duel.getWinner() == 0).count();
@@ -178,7 +178,7 @@ public class FightDTO extends ElementDTO {
         return score;
     }
 
-    public Integer getScore(TeamDTO team) {
+    public Integer getScore(DTO team) {
         if (Objects.equals(team1, team)) {
             return getScoreTeam1();
         }

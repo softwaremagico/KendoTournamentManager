@@ -514,6 +514,7 @@
   "tournamentDuelsDurations": "Duels Duration",
   "tournamentAdd": "Add tournament",
   "tournamentEdit": "Edit tournament",
+  "tournamentClone": "Clone tournament",
   "tournamentDelete": "Delete tournament",
   "tournamentDeleteQuestion": "Are you sure to delete <strong>{{name}}</strong>?",
   "infoTournamentStored": "The tournament has been stored.",
@@ -841,6 +842,7 @@
   "drawScore": "There is some draw scores that must be resolved before passing to the next tournament phase.",
   "leagueFifo": "First team will be the first out when generating the next match.",
   "leagueFifoHint": "When generating the fights, on the first one selects the team that is replaced. If true, the first team will be replaced by the third one. If false, the second will be replaced by the third one. As an example, if it is selected for teams 1, 2 and 3, the fights will be: '1-2, 3-2, 3-1'. But if not, will be: '1-2, 1-3, 2-3.",
-  "tournamentProperties": "Tournament Properties"
+  "tournamentProperties": "Tournament Properties",
+  "tournamentCloneWarning": "You are going to duplicate the tournament. Are you sure to continue?"
 }
 

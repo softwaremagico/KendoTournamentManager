@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
@@ -77,7 +77,7 @@ public class GroupList extends ParentList {
 
         teamTable.addCell(getHeader4(messageSource.getMessage("tournament.group", null, locale) + " " + (groupDTO.getIndex() + 1), 0));
 
-        for (final TeamDTO teamDTO : groupDTO.getTeams()) {
+        for (final DTO teamDTO : groupDTO.getTeams()) {
             teamTable.addCell(getCell(teamDTO.getName()));
         }
 
