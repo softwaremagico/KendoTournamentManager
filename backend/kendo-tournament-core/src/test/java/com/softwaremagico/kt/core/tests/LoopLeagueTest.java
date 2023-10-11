@@ -75,7 +75,7 @@ public class LoopLeagueTest extends AbstractTestNGSpringContextTests {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 6;
     private static final String TOURNAMENT_NAME = "simpleChampionshipTest";
-    private static final boolean MAXIMIZE_FIGHTS = true;
+    private static final boolean AVOID_DUPLICATES = false;
     private Tournament tournament = null;
 
     @Autowired
@@ -156,7 +156,7 @@ public class LoopLeagueTest extends AbstractTestNGSpringContextTests {
         Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LOOP, null);
         tournament = tournamentProvider.save(newTournament);
         TournamentExtraProperty tournamentExtraProperty =
-                new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, MAXIMIZE_FIGHTS + "");
+                new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.AVOID_DUPLICATES, AVOID_DUPLICATES + "");
         tournamentExtraPropertyProvider.save(tournamentExtraProperty);
         Assert.assertEquals(tournamentProvider.count(), 1);
     }
