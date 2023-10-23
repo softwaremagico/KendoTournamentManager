@@ -32,6 +32,7 @@ export class IconModule {
       .addSvgIcon("willpower", this.setPath(`${this.path}/willpower.svg`))
       .addSvgIcon("match", this.setPath(`${this.path}/match.svg`))
       .addSvgIcon("brackets", this.setPath(`${this.path}/brackets.svg`))
+      .addSvgIcon("unfinish", this.setPath(`${this.path}/unfinish.svg`))
       .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`));
   }
 

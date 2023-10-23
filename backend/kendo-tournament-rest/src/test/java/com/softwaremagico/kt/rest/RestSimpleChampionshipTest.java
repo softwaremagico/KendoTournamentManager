@@ -23,7 +23,6 @@ package com.softwaremagico.kt.rest;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
@@ -32,11 +31,11 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -62,6 +61,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -322,9 +322,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> groupsDTO = objectMapper.readValue(createResult.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        List<GroupDTO> groupsDTO = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), GroupDTO[].class));
 
         createResult = this.mockMvc
                 .perform(get("/participants")
@@ -334,9 +332,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<ParticipantDTO> participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        ParticipantDTO[] participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(), ParticipantDTO[].class);
 
         for (ParticipantDTO competitor : participantDTOs) {
             // Create a new team.
@@ -405,8 +401,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<FightDTO> tournamentFights = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<FightDTO> tournamentFights = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), FightDTO[].class));
 
         createResult = this.mockMvc
                 .perform(get("/groups/tournaments/{tournamentId}", tournamentDTO.getId())
@@ -416,8 +411,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<GroupDTO> tournamentGroups = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), GroupDTO[].class));
 
         //Check group has been created.
         Assert.assertEquals(tournamentGroups.size(), 1);
@@ -469,8 +463,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<GroupDTO> tournamentGroups = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), GroupDTO[].class));
 
         Assert.assertEquals(tournamentGroups.size(), 1);
 
@@ -482,8 +475,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<ScoreOfTeam> scores = objectMapper.readValue(rankingResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<ScoreOfTeam> scores = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), ScoreOfTeam[].class));
 
 
         for (int i = 0; i < scores.size() - 1; i++) {

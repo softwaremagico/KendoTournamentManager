@@ -41,12 +41,21 @@
           <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
         </button>
         <mat-divider [vertical]="true" class="timer-divider"></mat-divider>
-        <button (click)="finishDuel(true)" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+        <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)
+                && (!selectedDuel || selectedDuel?.finished == false)"
                 [disabled]="!selectedDuel || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'finishFight' | translate}}">
           <mat-icon>check_circle</mat-icon>
+        </button>
+        <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)
+                && selectedDuel?.finished == true"
+                [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | rbac : this.rbacService.activities)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'reopenFight' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="unfinish"></mat-icon>
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
                 *ngIf="!timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
@@ -128,7 +137,7 @@
     </div>
     <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
     <app-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
-               (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel($event[0])"
+               (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
                (timeDurationChanged)="updateDuelDuration($event[0])"
                (timerClosed)="showTimer(false)"
                [editable]="tournament && !tournament.locked" [hidden]="!timer"
@@ -137,7 +146,8 @@
                [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
     <div class="fight-container">
       <div *ngFor="let group of groups" class="fight-list">
-        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group)" [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group)"
+            [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="level-name">{{'level' | translate}} {{group.level + 1}}</h2>
         <h3 [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="group-name">{{'group' | translate}} {{group.index + 1}}</h3>

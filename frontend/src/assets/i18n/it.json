@@ -55,6 +55,7 @@
   "PreviousButton": "Incontro anteriore",
   "NextButton": "Incontro successivo",
   "finishFight": "Finire incontro",
+  "reopenFight": "Riprendi l'incontro",
   "DeleteFightButton": "Cancellare incontro",
   "AddFightButton": "Aggiungere incontro",
   "GenerateButton": "Generare lista",
