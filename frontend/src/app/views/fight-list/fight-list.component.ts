@@ -518,14 +518,27 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
+  removeIpponScores(duel: Duel): void {
+    for (let i: number = 0; i < duel.competitor1Score.length; i++) {
+      if (duel.competitor1Score[i] == Score.IPPON) {
+        duel.competitor1Score = [];
+      }
+    }
+    for (let i: number = 0; i < duel.competitor2Score.length; i++) {
+      if (duel.competitor2Score[i] == Score.IPPON) {
+        duel.competitor2Score = [];
+      }
+    }
+  }
+
   canStartFight(duel: Duel | undefined): boolean {
     return duel?.competitor1 !== null && duel?.competitor2 !== null;
   }
 
-  finishDuel(finished: boolean): void {
+  finishDuel(): void {
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
-      this.selectedDuel.finished = finished;
+      this.selectedDuel.finished = true;
       if (!this.selectedDuel.finishedAt) {
         this.selectedDuel.finishedAt = new Date();
       }
@@ -545,6 +558,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         if (!this.selectFirstUnfinishedDuel()) {
           this.generateNextFights(showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN);
         }
+      });
+    }
+  }
+
+  unfinishDuel(): void {
+    if (this.selectedDuel) {
+      this.removeIpponScores(this.selectedDuel);
+      this.selectedDuel.finished = false;
+      this.selectedDuel.finishedAt = undefined;
+      this.duelService.update(this.selectedDuel).subscribe((): void => {
       });
     }
   }
