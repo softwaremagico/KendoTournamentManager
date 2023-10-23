@@ -55,6 +55,7 @@
   "PreviousButton": "Vorheriger Kampf",
   "NextButton": "Nächster Kampf",
   "finishFight": "Kampfende",
+  "reopenFight": "Spiel fortsetzen",
   "DeleteFightButton": "Lösche Kampf",
   "AddFightButton": "Kampf hinzufügen",
   "GenerateButton": "Liste erstellen",
