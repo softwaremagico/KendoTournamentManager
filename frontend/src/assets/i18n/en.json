@@ -51,6 +51,7 @@
   "PreviousButton": "Previous Match",
   "NextButton": "Next Match",
   "finishFight": "Finish Match",
+  "reopenFight": "Reopen Match",
   "DeleteFightButton": "Delete Match",
   "AddFightButton": "Add Match",
   "GenerateButton": "Generate List",
