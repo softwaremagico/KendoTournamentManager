@@ -51,6 +51,7 @@
   "PreviousButton": "Partido Anterior",
   "NextButton": "Partido Siguiente",
   "finishFight": "Concluir Partido",
+  "reopenFight": "Reanudar Partido",
   "DeleteFightButton": "Borrar Partido",
   "AddFightButton": "Añadir Partido",
   "GenerateButton": "Generar Listado",
