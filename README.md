@@ -153,6 +153,10 @@ To contribute to the code of Kendo Tournament Manager v2, follow these steps:
 Alternatively see the GitHub documentation
 on [creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
 
+## Translations
+
+If you are not a programmer, but still you want to have this software available in your language, you can easly contribute on the translations using [Weblate](https://weblate.org). With weblate you can contribute on improving the translations, fixing existing issues or adding new languages if desired. No programming skills are needed. Only the will to help. To start translating, please access [this link to get more information](https://hosted.weblate.org/projects/kendotournamentmanager/). 
+
 ### Contributors
 
 <a href="https://github.com/softwaremagico/KendoTournamentManager/graphs/contributors">
