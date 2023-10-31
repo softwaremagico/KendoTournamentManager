@@ -75,6 +75,7 @@
             <version>42.6.0</version>
         </dependency>
 
+        <!-- Caching dependencies -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
