@@ -21,16 +21,8 @@ package com.softwaremagico.kt;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
-import java.net.URISyntaxException;
 
 @Configuration
 @EnableCaching
@@ -78,18 +70,18 @@ public class EhcacheConfig {
 //        return cacheManager;
 //    }
 
-    @Bean
-    public CacheManager ehcacheManager() {
-        final CachingProvider cachingProvider = Caching.getCachingProvider();
-        final CacheManager manager;
-        try {
-            manager = cachingProvider.getCacheManager(
-                    getClass().getResource("/ehcache.xml").toURI(),
-                    getClass().getClassLoader());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        final Cache<Integer, Tournament> readyCache = manager.getCache("tournamentById", Integer.class, Tournament.class);
-        return manager;
-    }
+//    @Bean
+//    public CacheManager ehcacheManager() {
+//        final CachingProvider cachingProvider = Caching.getCachingProvider();
+//        final CacheManager manager;
+//        try {
+//            manager = cachingProvider.getCacheManager(
+//                    getClass().getResource("/ehcache.xml").toURI(),
+//                    getClass().getClassLoader());
+//        } catch (URISyntaxException e) {
+//            throw new RuntimeException(e);
+//        }
+//        final Cache<Integer, Tournament> readyCache = manager.getCache("tournamentById", Integer.class, Tournament.class);
+//        return manager;
+//    }
 }
