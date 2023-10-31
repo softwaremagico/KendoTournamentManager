@@ -107,6 +107,9 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
     </logger>
+    <logger name="org.ehcache.core.EhcacheManager" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
     <!***REMOVED***For showing hibernate statistics -->
     <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false"
             level="ERROR">
