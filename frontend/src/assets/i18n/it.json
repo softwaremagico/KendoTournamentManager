@@ -176,7 +176,7 @@
   "WonMatches": "Incontri vinti",
   "DrawMatches": "Incontri pareggiati",
   "LostFights": "Incontri persi",
-  "PassLabel": "Numero di vincitori",
+  "winnerNumber": "Numero di vincitori",
   "nextLevel": "Gli incontri di questa ronda sono finiti. Si vuole passare alla fase successiva del campionato",
   "group": "Gruppo",
   "groups": "Gruppi",
