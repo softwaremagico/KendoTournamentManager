@@ -126,6 +126,17 @@ public class TreeTournamentHandler extends LeagueHandler {
         return savedGroup;
     }
 
+    /**
+     * Clean up all inner levels and recalculate them.
+     *
+     * @param tournament      The tournament to be updated.
+     * @param numberOfWinners Number of winners that pass from level one to level two.
+     */
+    public void recreateGroupSize(Tournament tournament, int numberOfWinners) {
+        groupProvider.delete(tournament, 1);
+        adjustGroupsSize(tournament, numberOfWinners);
+    }
+
     public void adjustGroupsSize(Tournament tournament, int numberOfWinners) {
         //Check if inner levels must be increased on size.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
