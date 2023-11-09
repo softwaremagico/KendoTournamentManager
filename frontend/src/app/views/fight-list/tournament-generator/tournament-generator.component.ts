@@ -5,7 +5,7 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {Tournament} from "../../../models/tournament";
 import {TournamentService} from "../../../services/tournament.service";
 import {
-    TournamentBracketsEditorComponent
+  TournamentBracketsEditorComponent
 } from "../../../components/tournament-brackets-editor/tournament-brackets-editor.component";
 import {ConfirmationDialogComponent} from "../../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
@@ -15,7 +15,7 @@ import {MessageService} from "../../../services/message.service";
 import {GroupService} from "../../../services/group.service";
 import {Group} from "../../../models/group";
 import {
-    GroupsUpdatedService
+  GroupsUpdatedService
 } from "../../../components/tournament-brackets-editor/tournament-brackets/groups-updated.service";
 import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
 import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
@@ -175,9 +175,9 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
         tournamentProperty.tournament = this.tournament;
         tournamentProperty.propertyValue = numberOfWinners + "";
         tournamentProperty.propertyKey = TournamentExtraPropertyKey.NUMBER_OF_WINNERS;
-        this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
+        this.tournamentService.setNumberOfWinners(this.tournament, numberOfWinners).subscribe((): void => {
+            this.numberOfWinnersUpdatedService.numberOfWinners.next(numberOfWinners);
             this.messageService.infoMessage('infoTournamentUpdated');
         });
-        this.numberOfWinnersUpdatedService.numberOfWinners.next(numberOfWinners);
     }
 }
