@@ -31,6 +31,9 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
+import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
+import {TournamentExtendedPropertiesService} from "../../services/tournament-extended-properties.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -65,6 +68,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showLevelTags: boolean = false;
   showLevelOfGroup: Map<Group, boolean> = new Map<Group, boolean>;
 
+  numberOfWinners: number = 1;
+
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -73,7 +78,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               private translateService: TranslateService, rbacService: RbacService,
-              private systemOverloadService: SystemOverloadService) {
+              private systemOverloadService: SystemOverloadService,
+              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -94,7 +100,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.refreshFights();
+    if (this.tournamentId) {
+      this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
+        this.tournament = tournament;
+        this.refreshFights();
+        this.refreshWinner();
+      });
+    }
     this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
       this.refreshFights();
     });
@@ -179,21 +191,35 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   private refreshFights(): void {
-    if (this.tournamentId) {
-      this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
-        this.tournament = tournament;
-        if (tournament) {
-          this.isWizardEnabled = tournament.type !== TournamentType.CUSTOMIZED && tournament.type !== TournamentType.CHAMPIONSHIP;
-          this.isBracketsEnabled = tournament.type === TournamentType.CHAMPIONSHIP;
-          if (this.tournamentId) {
-            this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
-              if (!_groups) {
-                this.messageService.errorMessage('No groups on tournament!');
-              } else {
-                this.setGroups(_groups);
-              }
-            });
+    if (this.tournament) {
+      this.isWizardEnabled = this.tournament.type !== TournamentType.CUSTOMIZED && this.tournament.type !== TournamentType.CHAMPIONSHIP;
+      this.isBracketsEnabled = this.tournament.type === TournamentType.CHAMPIONSHIP;
+      if (this.tournamentId) {
+        this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
+          if (!_groups) {
+            this.messageService.errorMessage('No groups on tournament!');
+          } else {
+            this.setGroups(_groups);
           }
+        });
+      }
+    }
+  }
+
+  private refreshWinner(): void {
+    console.log(this.tournament.type)
+    if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
+      this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
+        console.log(_tournamentSelection);
+        if (_tournamentSelection) {
+          for (const _tournamentProperty of _tournamentSelection) {
+            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
+              this.numberOfWinners = Number(_tournamentProperty.propertyValue.toLowerCase());
+            }
+          }
+        }
+        if (this.numberOfWinners == undefined) {
+          this.numberOfWinners = 1;
         }
       });
     }
@@ -778,5 +804,17 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   resetFilter(): void {
     this.filter('');
     this.resetFilterValue.next(true);
+  }
+
+  changeNumberOfWinners(numberOfWinners: number): void {
+    this.numberOfWinners = numberOfWinners;
+
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = numberOfWinners + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.NUMBER_OF_WINNERS;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
   }
 }
