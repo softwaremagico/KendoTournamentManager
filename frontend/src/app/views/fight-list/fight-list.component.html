@@ -40,22 +40,6 @@
                 matTooltip="{{'groups' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
         </button>
-        <button (click)="changeNumberOfWinners(2)"
-                *ngIf="isBracketsEnabled && (numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
-                [disabled]="(tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'winnerNumber' | translate}}">
-          <mat-icon class="kendo-icon" svgIcon="oneWinner"></mat-icon>
-        </button>
-        <button (click)="changeNumberOfWinners(1)"
-                *ngIf="isBracketsEnabled && (numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
-                [disabled]="(tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'winnerNumber' | translate}}">
-          <mat-icon class="kendo-icon" svgIcon="twoWinners"></mat-icon>
-        </button>
         <mat-divider [vertical]="true" class="timer-divider"></mat-divider>
         <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)
                 && (!selectedDuel || selectedDuel?.finished == false)"
