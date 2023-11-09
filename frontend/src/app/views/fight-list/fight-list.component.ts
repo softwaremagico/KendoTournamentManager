@@ -68,8 +68,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showLevelTags: boolean = false;
   showLevelOfGroup: Map<Group, boolean> = new Map<Group, boolean>;
 
-  numberOfWinners: number = 1;
-
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -77,9 +75,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              private translateService: TranslateService, rbacService: RbacService,
-              private systemOverloadService: SystemOverloadService,
-              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService) {
+              rbacService: RbacService,
+              private systemOverloadService: SystemOverloadService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -104,7 +101,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
         this.tournament = tournament;
         this.refreshFights();
-        this.refreshWinner();
       });
     }
     this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
@@ -203,25 +199,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
           }
         });
       }
-    }
-  }
-
-  private refreshWinner(): void {
-    console.log(this.tournament.type)
-    if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
-      this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
-        console.log(_tournamentSelection);
-        if (_tournamentSelection) {
-          for (const _tournamentProperty of _tournamentSelection) {
-            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
-              this.numberOfWinners = Number(_tournamentProperty.propertyValue.toLowerCase());
-            }
-          }
-        }
-        if (this.numberOfWinners == undefined) {
-          this.numberOfWinners = 1;
-        }
-      });
     }
   }
 
@@ -806,15 +783,5 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.resetFilterValue.next(true);
   }
 
-  changeNumberOfWinners(numberOfWinners: number): void {
-    this.numberOfWinners = numberOfWinners;
 
-    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
-    tournamentProperty.tournament = this.tournament;
-    tournamentProperty.propertyValue = numberOfWinners + "";
-    tournamentProperty.propertyKey = TournamentExtraPropertyKey.NUMBER_OF_WINNERS;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
-      this.messageService.infoMessage('infoTournamentUpdated');
-    });
-  }
 }
