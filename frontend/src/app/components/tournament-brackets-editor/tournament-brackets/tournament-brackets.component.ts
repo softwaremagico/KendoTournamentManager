@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Group} from "../../../models/group";
 import {GroupsUpdatedService} from "./groups-updated.service";
 import {Tournament} from "../../../models/tournament";
-import {NumberOfWinnersUpdatedService} from "../../../services/notifications/number-of-winners-updated.service";
 
 @Component({
     selector: 'app-tournament-brackets',
@@ -28,10 +27,8 @@ export class TournamentBracketsComponent implements OnInit {
 
     groupsByLevel: Map<number, Group[]> = new Map();
 
-    numberOfWinnersFirstLevel: number;
 
-
-    constructor(private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
+    constructor(private groupsUpdatedService: GroupsUpdatedService) {
     }
 
     ngOnInit(): void {
@@ -44,9 +41,6 @@ export class TournamentBracketsComponent implements OnInit {
         }[]>): void => {
             this.relations = _relations;
         });
-        this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
-            this.numberOfWinnersFirstLevel = numberOfWinners;
-        })
     }
 
     public static convert(groups: Group[]): Map<number, Group[]> {

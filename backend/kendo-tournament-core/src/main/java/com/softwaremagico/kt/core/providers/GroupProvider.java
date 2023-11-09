@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.logger.ExceptionType;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -115,7 +116,15 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public long delete(Tournament tournament, Integer level) {
-        return getRepository().deleteByTournamentAndLevel(tournament, level);
+        final List<Group> groups = getRepository().findByTournamentOrderByLevelAscIndexAsc(tournament);
+        long deleted = 0;
+        if (!groups.isEmpty()) {
+            for (int i = level; i < groups.get(groups.size() - 1).getLevel(); i++) {
+                deleted += getRepository().deleteByTournamentAndLevel(tournament, i);
+            }
+        }
+        KendoTournamentLogger.debug(this.getClass(), "Deleted '{}' groups.", deleted);
+        return deleted;
     }
 
     public Group addTeams(Integer groupId, List<Team> teams, String username) {

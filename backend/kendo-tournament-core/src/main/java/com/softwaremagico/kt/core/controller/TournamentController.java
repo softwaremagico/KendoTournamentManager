@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
@@ -32,6 +33,10 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.ITournamentManager;
+import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
+import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -39,6 +44,7 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +73,15 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     private final TournamentImageProvider tournamentImageProvider;
 
+    private final TournamentHandlerSelector tournamentHandlerSelector;
+
 
     @Autowired
     public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, TeamProvider teamProvider,
                                 RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider,
                                 TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
-                                TournamentImageProvider tournamentImageProvider) {
+                                TournamentImageProvider tournamentImageProvider,
+                                TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
@@ -81,6 +90,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         this.duelProvider = duelProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
         this.tournamentImageProvider = tournamentImageProvider;
+        this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
     @Override
@@ -179,6 +189,20 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         groupProvider.addGroup(clonedTournament, group);
 
         return convert(clonedTournament);
+    }
+
+    public void setNumberOfWinners(Integer tournamentId, Integer numberOfWinners, String updatedBy) {
+        final Tournament tournament = getProvider().get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                TournamentExtraPropertyKey.NUMBER_OF_WINNERS, String.valueOf(numberOfWinners)));
+        final ITournamentManager tournamentManager = tournamentHandlerSelector.selectManager(tournament.getType());
+        if (tournamentManager instanceof TreeTournamentHandler) {
+            ((TreeTournamentHandler) tournamentManager).recreateGroupSize(tournament, numberOfWinners);
+            KendoTournamentLogger.info(this.getClass(), "Updated tournament '{}' with number of winners '{}' by '{}'", tournament, numberOfWinners, updatedBy);
+        } else {
+            KendoTournamentLogger.warning(this.getClass(), "Cannot change the number of winners as tournament is of type '{}'.", tournament.getType());
+        }
     }
 
     @Override
