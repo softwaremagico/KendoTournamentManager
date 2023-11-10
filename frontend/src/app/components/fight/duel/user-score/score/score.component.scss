@@ -22,7 +22,7 @@
   position: relative;
 }
 
-.point .tooltipText {
+.point .tooltiptext {
   visibility: hidden;
   width: 200px;
   min-height: 50px;
@@ -45,20 +45,20 @@
   transition: opacity 0.3s;
 }
 
-.point .tooltipText.left-border {
+.point .tooltiptext.left-border {
   margin-left: -40px;
 }
 
-.point .tooltipText.right-border {
+.point .tooltiptext.right-border {
   margin-left: -260px;
 }
 
-.point .tooltipText.center {
+.point .tooltiptext.center {
   margin-left: -100px;
 }
 
 /* Tooltip arrow */
-.point .tooltipText::after {
+.point .tooltiptext::after {
   content: "";
   position: absolute;
   top: -18%;
@@ -71,7 +71,7 @@
 
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.point:hover .tooltipText {
+.point:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
 }
