@@ -24,6 +24,7 @@
                 <include name="tournament5GroupsTwoWinnersTest"/>
                 <include name="tournamentLevelNotFinishedTest"/>
                 <include name="groupsTest"/>
+                <include name="numberOfWinners"/>
             </run>
         </groups>
         <classes>
@@ -46,6 +47,7 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
+            <class name="com.softwaremagico.kt.core.tests.NumberOfWinners"/>
         </classes>
     </test>
 </suite>

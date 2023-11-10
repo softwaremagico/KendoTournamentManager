@@ -17,14 +17,6 @@
                 matTooltip="{{'addFight' | translate}}">
           <mat-icon>add</mat-icon>
         </button>
-        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.activities)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | translate}}">
-          <mat-icon>clear</mat-icon>
-        </button>
-        <mat-divider [vertical]="true"></mat-divider>
         <button (click)="changeNumberOfWinners(2)"
                 *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
                 [disabled]="(tournament && tournament.locked)"
@@ -32,6 +24,13 @@
                 color="primary" mat-button
                 matTooltip="{{'winnerNumber' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="oneWinner"></mat-icon>
+        </button>
+        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.activities)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                class="delete-button" color="warn" mat-button
+                matTooltip="{{'delete' | translate}}">
+          <mat-icon>clear</mat-icon>
         </button>
         <button (click)="changeNumberOfWinners(1)"
                 *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
@@ -49,7 +48,6 @@
                 matTooltip="{{'removeTeams' | translate}}">
           <mat-icon>cleaning_services</mat-icon>
         </button>
-        <mat-divider [vertical]="true"></mat-divider>
         <button (click)="openConfirmationGenerateElementsDialog()"
                 *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
                 [disabled]="groupsDisabled || (tournament && tournament.locked)"
@@ -63,7 +61,7 @@
                 *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.activities)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
-                matTooltip="{{'wizard' | translate}}">
+                matTooltip="{{'download' | translate}}">
           <mat-icon>file_download</mat-icon>
         </button>
       </div>
