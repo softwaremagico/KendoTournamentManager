@@ -33,7 +33,9 @@ export class IconModule {
       .addSvgIcon("match", this.setPath(`${this.path}/match.svg`))
       .addSvgIcon("brackets", this.setPath(`${this.path}/brackets.svg`))
       .addSvgIcon("unfinish", this.setPath(`${this.path}/unfinish.svg`))
-      .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`));
+      .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`))
+      .addSvgIcon("oneWinner", this.setPath(`${this.path}/oneWinner.svg`))
+      .addSvgIcon("twoWinners", this.setPath(`${this.path}/twoWinners.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {
