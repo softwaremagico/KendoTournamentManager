@@ -153,7 +153,7 @@
   "WonMatches": "Won matches",
   "DrawMatches": "Draw matches",
   "LostFights": "Lost matches",
-  "PassLabel": "Number of winners",
+  "winnerNumber": "Number of winners",
   "nextLevel": "All round's matches are over. Do you want to continue in the next phase of the league?",
   "ToolTipEditable": "Double click for more options.",
   "ToolTipNotEditable": "Teams will be inserted while the combats are solved.",

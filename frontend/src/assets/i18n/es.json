@@ -172,7 +172,7 @@
     "WonMatches": "Partidos ganados",
     "DrawMatches": "Partidos empatados",
     "LostFights": "Partidos perdidos",
-    "PassLabel": "Numero de ganadores",
+    "winnerNumber": "Numero de ganadores",
     "nextLevel": "Los partidos the esta ronda han acabado. ¿Quieres pasar a la siguiente fase del campeonato?",
     "group": "Grupo",
     "groups": "Grupos",

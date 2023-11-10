@@ -21,8 +21,8 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -32,12 +32,15 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,15 +50,17 @@ public class TeamController extends BasicInsertableController<Team, DTO, TeamRep
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
+    private final GroupRepository groupRepository;
 
 
     @Autowired
     public TeamController(TeamProvider provider, TeamConverter converter, TournamentProvider tournamentProvider,
-                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter) {
+                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter, GroupRepository groupRepository) {
         super(provider, converter);
         this.tournamentProvider = tournamentProvider;
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -119,7 +124,12 @@ public class TeamController extends BasicInsertableController<Team, DTO, TeamRep
     }
 
     public void delete(TournamentDTO tournamentDTO) {
-        getProvider().delete(tournamentConverter.reverse(tournamentDTO));
+        final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
+        //Remove teams from groups or will be a ConstraintViolationException SQL error.
+        final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament);
+        groups.forEach(group -> group.setTeams(new ArrayList<>()));
+        groupRepository.saveAll(groups);
+        getProvider().delete(tournament);
     }
 
     @Override
