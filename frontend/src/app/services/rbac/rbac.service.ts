@@ -37,7 +37,7 @@ export class RbacService {
   private getActivities(roles: string[]): RbacActivity[] {
     let activities: RbacActivity[] = this.getGuestActivities();
     for (const role of roles) {
-      switch (role) {
+      switch (role.toLowerCase()) {
         case 'admin':
           activities = activities.concat(this.getAdminActivities());
           break;
