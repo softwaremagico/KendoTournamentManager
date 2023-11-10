@@ -174,7 +174,7 @@
   "WonMatches": "Gewonnene Wettkämpfe",
   "DrawMatches": "Unentschiedene Wettkämpfe",
   "LostFights": "Verlorene Kämpfe",
-  "PassLabel": "Anzahl Gewinne",
+  "winnerNumber": "Anzahl Gewinne",
   "nextLevel": "Alle Kämpfe der Runde sind zuende. Wollen Sie mit der nächsten Runde weitermachen?",
   "group": "Pool",
   "groups": "Pools",

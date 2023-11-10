@@ -40,6 +40,11 @@ public final class GroupUtils {
             sortedGroups.computeIfAbsent(group.getLevel(), k -> new ArrayList<>());
             sortedGroups.get(group.getLevel()).add(group);
         });
+        //Complete empty levels if any.
+        final int maxLevel = groups.stream().mapToInt(Group::getLevel).max().orElse(-1);
+        for (int level = 0; level < maxLevel; level++) {
+            sortedGroups.computeIfAbsent(level, k -> new ArrayList<>());
+        }
         return sortedGroups;
     }
 

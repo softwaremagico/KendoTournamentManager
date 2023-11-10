@@ -57,4 +57,12 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
     public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
         return getRepository().deleteByTournamentAndPropertyKey(tournament, key);
     }
+
+    public TournamentExtraProperty save(TournamentExtraProperty entity) {
+        final TournamentExtraProperty oldValue = getRepository().findByTournamentAndPropertyKey(entity.getTournament(), entity.getPropertyKey());
+        if (oldValue != null) {
+            getRepository().delete(oldValue);
+        }
+        return getRepository().save(entity);
+    }
 }
