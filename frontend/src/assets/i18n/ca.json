@@ -178,7 +178,7 @@
   "WonMatches": "Partits guanyats",
   "DrawMatches": "Partits empatats",
   "LostFights": "Partits perduts",
-  "PassLabel": "Nombre de guanyadors",
+  "winnerNumber": "Nombre de guanyadors",
   "nextLevel": "Els partits d'aquesta ronda han finalitzat. Vols passar a la següent fase del campionat?",
   "group": "Grup",
   "groups": "Grups",

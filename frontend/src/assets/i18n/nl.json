@@ -174,7 +174,7 @@
   "WonMatches": "Gewonnen competitie",
   "DrawMatches": "Gelijke competitie",
   "LostFights": "Verloren wedstrijden",
-  "PassLabel": "Aantal gewonnen",
+  "winnerNumber": "Aantal gewonnen",
   "nextLevel": "Alle wedstrijden in de poule zijn voorbij. Wil je verder gaan met het toernooi?",
   "group": "Groep",
   "groups": "Groepen",
