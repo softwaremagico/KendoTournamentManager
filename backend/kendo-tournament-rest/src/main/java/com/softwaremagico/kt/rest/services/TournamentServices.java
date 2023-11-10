@@ -52,6 +52,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -183,5 +184,17 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                @PathVariable("tournamentId") Integer tournamentId,
                                Authentication authentication, HttpServletRequest request) {
         return getController().clone(tournamentId, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Set the number of winners that pass from level one to level two.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "{tournamentId}/winners/{numberOfWinners}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void numberOfWinners(@Parameter(description = "Id of an existing tournament", required = true)
+                                @PathVariable("tournamentId") Integer tournamentId,
+                                @Parameter(description = "Number of winners", required = true)
+                                @PathVariable("numberOfWinners") Integer numberOfWinners,
+                                Authentication authentication, HttpServletRequest request) {
+        getController().setNumberOfWinners(tournamentId, numberOfWinners, authentication.getName());
     }
 }
