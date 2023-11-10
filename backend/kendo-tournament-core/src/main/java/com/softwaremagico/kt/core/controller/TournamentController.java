@@ -46,6 +46,7 @@ import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.utils.GroupUtils;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -54,6 +55,7 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
@@ -194,10 +196,20 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     public void setNumberOfWinners(Integer tournamentId, Integer numberOfWinners, String updatedBy) {
         final Tournament tournament = getProvider().get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                TournamentExtraPropertyKey.NUMBER_OF_WINNERS, String.valueOf(numberOfWinners)));
         final ITournamentManager tournamentManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (tournamentManager instanceof TreeTournamentHandler) {
+            tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.NUMBER_OF_WINNERS, String.valueOf(numberOfWinners)));
+
+            //Update winners in group
+            final List<Group> groups = groupProvider.getGroups(tournament);
+            final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
+            if (groupsByLevel.get(0) != null) {
+                groupsByLevel.get(0).forEach(group -> group.setNumberOfWinners(numberOfWinners));
+                groupProvider.saveAll(groupsByLevel.get(0));
+            }
+
+            //Resize tournament
             ((TreeTournamentHandler) tournamentManager).recreateGroupSize(tournament, numberOfWinners);
             KendoTournamentLogger.info(this.getClass(), "Updated tournament '{}' with number of winners '{}' by '{}'", tournament, numberOfWinners, updatedBy);
         } else {
