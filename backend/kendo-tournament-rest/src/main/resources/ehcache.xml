@@ -14,6 +14,9 @@
 
 
     <cache-template name="default">
+        <expiry>
+            <tti unit="minutes">10</tti>
+        </expiry>
         <listeners>
             <listener>
                 <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
@@ -27,11 +30,16 @@
             </listener>
         </listeners>
         <resources>
-            <offheap unit="MB">2</offheap>
+            <offheap unit="MB">10</offheap>
+            <disk persistent="true" unit="MB">20</disk>
         </resources>
     </cache-template>
 
     <cache-template name="short-time-cache-template">
+        <expiry>
+            <tti unit="seconds">20</tti>
+        </expiry>
+
         <listeners>
             <listener>
                 <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
@@ -46,7 +54,8 @@
         </listeners>
 
         <resources>
-            <offheap unit="MB">2</offheap>
+            <heap>1000</heap>
+            <offheap unit="MB">10</offheap>
         </resources>
     </cache-template>
 
@@ -69,7 +78,6 @@
     <cache alias="tournaments-by-id" uses-template="short-time-cache-template">
         <key-type>java.lang.Integer</key-type>
         <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
-        <heap>10</heap>
     </cache>
 
 </config>
