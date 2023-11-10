@@ -37,7 +37,7 @@
 
     <cache-template name="short-time-cache-template">
         <expiry>
-            <tti unit="seconds">20</tti>
+            <tti unit="seconds">200</tti>
         </expiry>
 
         <listeners>
