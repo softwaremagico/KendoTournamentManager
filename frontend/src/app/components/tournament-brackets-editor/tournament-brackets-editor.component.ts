@@ -1,13 +1,13 @@
 import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SimpleChanges,
-    ViewChild
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
@@ -26,6 +26,7 @@ import {forkJoin, Observable} from "rxjs";
 import jsPDF from 'jspdf';
 import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
+import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 
 @Component({
     selector: 'app-tournament-brackets-editor',
@@ -65,15 +66,21 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
     totalTeams: number;
 
+    numberOfWinnersFirstLevel: number;
+
     constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
                 private rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-                private groupsUpdatedService: GroupsUpdatedService) {
+                private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
     }
 
     ngOnInit() {
         this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
             this.updateData();
         });
+        this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
+            this.numberOfWinnersFirstLevel = numberOfWinners;
+            this.updateData();
+        })
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -211,7 +218,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     }
 
     private getRatio(width: number, height: number): number {
-        return 500/height;
+        return 500 / height;
     }
 
     private getMM(pixels: number): number {
