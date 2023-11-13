@@ -822,6 +822,10 @@
       "bronze": "Assisteix a vint tornejos.",
       "silver": "Assisteix a trenta tornejos.",
       "gold": "Assisteix a cinquanta tornejos."
+    },
+    "stormtrooperSyndrome": {
+      "title": "Efecte stormtrooper",
+      "description": "Un equip falla tots els punts en un torneig."
     }
   },
   "removeTeams": "Treure Equips",

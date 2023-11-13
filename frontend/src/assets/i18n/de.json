@@ -810,6 +810,10 @@
       "bronze": "Nehmen Sie an zwanzig Turnieren teil.",
       "silver": "Nehmen Sie an dreißig Turnieren teil.",
       "gold": "Nehmen Sie an fünfzig Turnieren teil."
+    },
+    "stormtrooperSyndrome": {
+      "title": "Stormtrooper-Effekt",
+      "description": "Einem Team fehlen in einem Turnier alle Punkte."
     }
   },
   "removeTeams": "Teams entfernenn",
