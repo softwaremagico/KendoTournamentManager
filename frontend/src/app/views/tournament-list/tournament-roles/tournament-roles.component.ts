@@ -73,7 +73,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         if (this.tournament.locked) {
           participant.locked = participant.locked || this.tournament.locked;
         }
-        if (participant.hasAvatar) {
+        if (participant?.hasAvatar) {
           this.showAvatars = true;
         }
       }
