@@ -745,11 +745,7 @@
     },
     "boneBreaker": {
       "title": "Bone breaker",
-      "description": "Lose a fight by two Hansokus.",
-      "normal": "",
-      "bronze": "",
-      "silver": "",
-      "gold": ""
+      "description": "Lose a fight by two Hansokus."
     },
     "flexibleAsBamboo": {
       "title": "Flexible as bamboo",
@@ -837,6 +833,10 @@
       "bronze": "Attend to twenty tournaments.",
       "silver": "Attend to thirty tournaments.",
       "gold": "Attend to fifty tournaments."
+    },
+    "stormtrooperSyndrome": {
+      "title": "Stormtrooper Syndrome",
+      "description": "A team miss all points on a tournament."
     }
   },
   "removeTeams": "Remove Teams",

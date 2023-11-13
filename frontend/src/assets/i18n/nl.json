@@ -810,6 +810,10 @@
       "bronze": "Bezoek twintig toernooien.",
       "silver": "Bezoek dertig toernooien.",
       "gold": "Bezoek vijftig toernooien."
+    },
+    "stormtrooperSyndrome": {
+      "title": "Stormtrooper-effect",
+      "description": "Een team mist alle punten in een toernooi."
     }
   },
   "removeTeams": "Teams verwijderen",
