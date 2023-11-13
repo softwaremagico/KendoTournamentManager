@@ -28,7 +28,7 @@ public class GroupDTO extends ElementDTO {
 
     private TournamentDTO tournament;
 
-    private List<DTO> teams;
+    private List<TeamDTO> teams;
 
     private Integer shiaijo;
 
@@ -50,11 +50,11 @@ public class GroupDTO extends ElementDTO {
         this.tournament = tournamentDTO;
     }
 
-    public List<DTO> getTeams() {
+    public List<TeamDTO> getTeams() {
         return teams;
     }
 
-    public void setTeams(List<DTO> teams) {
+    public void setTeams(List<TeamDTO> teams) {
         this.teams = teams;
     }
 
