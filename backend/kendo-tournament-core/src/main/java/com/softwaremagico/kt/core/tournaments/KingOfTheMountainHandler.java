@@ -22,7 +22,7 @@ package com.softwaremagico.kt.core.tournaments;
  */
 
 import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
@@ -118,7 +118,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         //Repository OrderByIndex not working well...
         groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
         final Group lastGroup = !groups.isEmpty() ? groups.get(groups.size() - 1) : null;
-        final Map<Integer, List<DTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
+        final Map<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
         //Previous winner with no draw
         if (lastGroup != null && ranking.get(0) != null && ranking.get(0).size() == 1) {
             final Team previousWinner = teamConverter.reverse(ranking.get(0).get(0));
