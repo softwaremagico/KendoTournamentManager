@@ -826,7 +826,11 @@
     },
     "stormtrooperSyndrome": {
       "title": "Efecto stormtrooper",
-      "description": "Un equipo falla todos los puntos en un torneo."
+      "description": "Un equipo falla todos los puntos en un torneo.",
+      "normal": "Conseguido para un torneo.",
+      "bronze": "Logrado durante al menos dos torneos.",
+      "silver": "Logrado durante al menos tres torneos.",
+      "gold": "Logrado durante al menos cinco torneos."
     }
   },
   "removeTeams": "Quitar equipos",

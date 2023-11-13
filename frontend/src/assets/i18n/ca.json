@@ -825,7 +825,11 @@
     },
     "stormtrooperSyndrome": {
       "title": "Efecte stormtrooper",
-      "description": "Un equip falla tots els punts en un torneig."
+      "description": "Un equip falla tots els punts en un torneig.",
+      "normal": "Aconseguit en un torneig.",
+      "bronze": "Aconseguit en almenys dos tornejos successius.",
+      "silver": "Aconseguit en almenys tres tornejos successius.",
+      "gold": "Aconseguit en almenys cinc tornejos successius."
     }
   },
   "removeTeams": "Treure Equips",
