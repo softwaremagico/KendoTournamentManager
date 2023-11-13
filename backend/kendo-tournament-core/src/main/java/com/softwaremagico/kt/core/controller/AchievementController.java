@@ -33,16 +33,20 @@ import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.AchievementProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
@@ -120,7 +124,11 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final RoleProvider roleProvider;
 
+    private final TeamProvider teamProvider;
+
     private final AchievementProvider achievementProvider;
+
+    private final FightProvider fightProvider;
 
     private final DuelProvider duelProvider;
 
@@ -134,6 +142,10 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private List<Duel> duelsFromTournament;
 
+    private List<Team> teamsFromTournament;
+
+    private List<Fight> fightsFromTournament;
+
     private Map<Participant, List<Score>> scoresByParticipant = null;
     private Map<Participant, List<Score>> scoresReceivedByParticipant = null;
     private Map<Participant, Long> totalScoreFromParticipant = null;
@@ -145,7 +157,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
                                     TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
                                     ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                                    RoleProvider roleProvider, AchievementProvider achievementProvider, DuelProvider duelProvider,
+                                    RoleProvider roleProvider, TeamProvider teamProvider, AchievementProvider achievementProvider,
+                                    FightProvider fightProvider, DuelProvider duelProvider,
                                     RankingProvider rankingProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
@@ -153,7 +166,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.participantProvider = participantProvider;
         this.participantConverter = participantConverter;
         this.roleProvider = roleProvider;
+        this.teamProvider = teamProvider;
         this.achievementProvider = achievementProvider;
+        this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.rankingProvider = rankingProvider;
     }
@@ -182,6 +197,20 @@ public class AchievementController extends BasicInsertableController<Achievement
             duelsFromTournament = duelProvider.get(tournament);
         }
         return duelsFromTournament;
+    }
+
+    private List<Team> getTeamsFromTournament() {
+        if (teamsFromTournament == null) {
+            teamsFromTournament = teamProvider.getAll(tournament);
+        }
+        return teamsFromTournament;
+    }
+
+    private List<Fight> getFightsFromTournament() {
+        if (fightsFromTournament == null) {
+            fightsFromTournament = fightProvider.getFights(tournament);
+        }
+        return fightsFromTournament;
     }
 
     private Map<Participant, List<Score>> getScoresByParticipant() {
@@ -324,6 +353,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.totalScoreFromParticipant = null;
         this.totalScoreAgainstParticipant = null;
         this.rolesByParticipant = null;
+        this.fightsFromTournament = null;
+        this.teamsFromTournament = null;
 
         //Remove any achievement already calculated.
         getProvider().delete(tournament);
@@ -363,6 +394,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTisButAScratchAchievement(tournament));
         achievementsGenerated.addAll(generateFirstBloodAchievement(tournament));
         achievementsGenerated.addAll(generateDarumaAchievement(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
@@ -437,6 +469,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateDarumaAchievementBronze(tournament));
         achievementsGenerated.addAll(generateDarumaAchievementSilver(tournament));
         achievementsGenerated.addAll(generateDarumaAchievementGold(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -718,7 +753,7 @@ public class AchievementController extends BasicInsertableController<Achievement
                 competitors.remove(duel.getCompetitor1());
             }
             //No hits against him
-            if (duel.getCompetitor2Score().size() > 0) {
+            if (!duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
             }
             //Max score competitor 2.
@@ -726,7 +761,7 @@ public class AchievementController extends BasicInsertableController<Achievement
                 competitors.remove(duel.getCompetitor2());
             }
             //No hits against him
-            if (duel.getCompetitor1Score().size() > 0) {
+            if (!duel.getCompetitor1Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor2());
             }
         });
@@ -1071,10 +1106,10 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheCastleAchievement(Tournament tournament) {
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
-            if (duel.getCompetitor2Score().size() > 0) {
+            if (!duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
             }
-            if (duel.getCompetitor1Score().size() > 0) {
+            if (!duel.getCompetitor1Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor2());
             }
         });
@@ -1122,7 +1157,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
-            if (duel.getCompetitor1Score().size() > 0 || duel.getCompetitor2Score().size() > 0) {
+            if (!duel.getCompetitor1Score().isEmpty() || !duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
                 competitors.remove(duel.getCompetitor2());
             }
@@ -1809,5 +1844,63 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         return generateAchievement(AchievementType.DARUMA, AchievementGrade.GOLD, participantsDaruma, tournament);
+    }
+
+    /***
+     * Be in a team, and all members of the teams does no score in the entire tournament.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievement(Tournament tournament) {
+        final List<Team> teams = new ArrayList<>(getTeamsFromTournament());
+        //Ensure that team is in fights.
+        final Set<Team> teamsWithFights = new HashSet<>();
+        getFightsFromTournament().forEach(fight -> {
+            //Remove a tournament if it has some score.
+            fight.getDuels().forEach(duel -> {
+                if (!duel.getCompetitor1Score().isEmpty()) {
+                    teams.remove(fight.getTeam1());
+                }
+                if (!duel.getCompetitor2Score().isEmpty()) {
+                    teams.remove(fight.getTeam2());
+                }
+            });
+            teamsWithFights.add(fight.getTeam1());
+            teamsWithFights.add(fight.getTeam2());
+        });
+        teams.retainAll(teamsWithFights);
+        return generateAchievement(AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.NORMAL,
+                teams.stream().flatMap(team -> team.getMembers().stream()).toList(), tournament);
+    }
+
+    /**
+     * Achievement for the stormtrooper syndrome in two tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE,
+                AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.BRONZE);
+    }
+
+    /***
+     * Achievement for the stormtrooper syndrome in three tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievementSilver(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER,
+                AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.SILVER);
+    }
+
+    /***
+     * Achievement for the stormtrooper syndrome in five tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievementGold(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD,
+                AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.GOLD);
     }
 }
