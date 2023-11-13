@@ -26,6 +26,7 @@ import {random} from "../../../utils/random/random";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {Fight} from "../../../models/fight";
 import {Role} from "../../../models/role";
+import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -183,8 +184,12 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.deleteMemberFromTeam(movedParticipant);
         this.updateTeam(sourceTeam, undefined);
         //Add to user list.
-        this.userListData.participants.push(movedParticipant);
-        this.userListData.filteredParticipants.push(movedParticipant);
+        if (!this.userListData.participants.includes(movedParticipant)) {
+          this.userListData.participants.push(movedParticipant);
+        }
+        if (!this.userListData.filteredParticipants.includes(movedParticipant)) {
+          this.userListData.filteredParticipants.push(movedParticipant);
+        }
 
         this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
         this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
@@ -343,8 +348,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
       }
     }
-    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
 
     const teams: Team[] = [];
     teams.push(team);
@@ -372,7 +377,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
 
-    this.rankingService.getCompetitorsGlobalScoreRanking(participants).subscribe(_scoreRanking => {
+    this.rankingService.getCompetitorsGlobalScoreRanking(participants).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
       for (let team of this.teams) {
         team.members = [];
         for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
@@ -466,7 +471,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       team.members[0] = member;
       this.teams.push(team);
     }
-    this.teamService.setAll(this.teams).subscribe(_teams => {
+    this.teamService.setAll(this.teams).subscribe((_teams: Team[]): void => {
       this.messageService.infoMessage("infoTeamsAdded");
       this.teams = _teams
       this.userListData.participants = [];
