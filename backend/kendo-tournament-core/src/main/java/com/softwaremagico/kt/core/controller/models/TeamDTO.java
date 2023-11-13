@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DTO extends ElementDTO implements IName {
+public class TeamDTO extends ElementDTO implements IName {
 
     private String name;
 
@@ -37,12 +37,12 @@ public class DTO extends ElementDTO implements IName {
 
     private Integer group;
 
-    public DTO() {
+    public TeamDTO() {
         super();
         members = new ArrayList<>();
     }
 
-    public DTO(String name, TournamentDTO tournament) {
+    public TeamDTO(String name, TournamentDTO tournament) {
         this();
         setName(name);
         setTournament(tournament);
@@ -93,7 +93,7 @@ public class DTO extends ElementDTO implements IName {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DTO teamDTO)) {
+        if (!(o instanceof TeamDTO teamDTO)) {
             return false;
         }
         if (!super.equals(o)) {
