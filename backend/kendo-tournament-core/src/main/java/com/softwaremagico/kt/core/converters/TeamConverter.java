@@ -21,7 +21,7 @@ package com.softwaremagico.kt.core.converters;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
-public class TeamConverter extends ElementConverter<Team, DTO, TeamConverterRequest> {
+public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverterRequest> {
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
     private final TournamentProvider tournamentProvider;
@@ -50,8 +50,8 @@ public class TeamConverter extends ElementConverter<Team, DTO, TeamConverterRequ
 
 
     @Override
-    protected DTO convertElement(TeamConverterRequest from) {
-        final DTO teamDTO = new DTO();
+    protected TeamDTO convertElement(TeamConverterRequest from) {
+        final TeamDTO teamDTO = new TeamDTO();
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
 
@@ -75,7 +75,7 @@ public class TeamConverter extends ElementConverter<Team, DTO, TeamConverterRequ
     }
 
     @Override
-    public Team reverse(DTO to) {
+    public Team reverse(TeamDTO to) {
         if (to == null) {
             return null;
         }
