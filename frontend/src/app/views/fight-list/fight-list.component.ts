@@ -15,7 +15,6 @@ import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {TeamRankingComponent} from "../../components/team-ranking/team-ranking.component";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
-import {TranslateService} from "@ngx-translate/core";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
@@ -31,9 +30,6 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
-import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
-import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
-import {TournamentExtendedPropertiesService} from "../../services/tournament-extended-properties.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -212,7 +208,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     const fights: Fight[] = groups.flatMap((group: Group) => group.fights);
     for (let fight of fights) {
       for (let duel of fight.duels) {
-        if (duel.competitor1!.hasAvatar || duel.competitor2!.hasAvatar) {
+        if (duel.competitor1?.hasAvatar || duel.competitor2?.hasAvatar) {
           this.showAvatars = true;
         }
       }

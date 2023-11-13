@@ -27,7 +27,7 @@ import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
@@ -105,9 +105,9 @@ public class RankingController {
         this.scoreOfTeamConverter = scoreOfTeamConverter;
     }
 
-    private static Set<ParticipantDTO> getParticipants(List<DTO> teams) {
+    private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
         final Set<ParticipantDTO> allCompetitors = new HashSet<>();
-        for (final DTO team : teams) {
+        for (final TeamDTO team : teams) {
             allCompetitors.addAll(team.getMembers());
         }
         return allCompetitors;
@@ -117,7 +117,7 @@ public class RankingController {
         return tournament == null || tournament.getType() != TournamentType.KING_OF_THE_MOUNTAIN;
     }
 
-    public List<DTO> getTeamsRanking(GroupDTO groupDTO) {
+    public List<TeamDTO> getTeamsRanking(GroupDTO groupDTO) {
         return teamConverter.convertAll(rankingProvider.getTeamsRanking(groupConverter.reverse(groupDTO))
                 .stream().map(TeamConverterRequest::new).toList());
     }
@@ -143,7 +143,7 @@ public class RankingController {
                 groupDTO.getTeams(), groupDTO.getFights(), groupDTO.getUnties(), checkLevel(groupDTO.getTournament()));
     }
 
-    public List<ScoreOfTeamDTO> getTeamsScoreRanking(ScoreType type, List<DTO> teams, List<FightDTO> fights, List<DuelDTO> unties,
+    public List<ScoreOfTeamDTO> getTeamsScoreRanking(ScoreType type, List<TeamDTO> teams, List<FightDTO> fights, List<DuelDTO> unties,
                                                      boolean checkLevel) {
         return scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRanking(
                 type,
@@ -165,18 +165,18 @@ public class RankingController {
      *
      * @return classification of the teams
      */
-    public Map<Integer, List<DTO>> getTeamsByPosition(GroupDTO groupDTO) {
+    public Map<Integer, List<TeamDTO>> getTeamsByPosition(GroupDTO groupDTO) {
         final Map<Integer, List<Team>> teamsByPosition = rankingProvider.getTeamsByPosition(groupConverter.reverse(groupDTO));
-        final Map<Integer, List<DTO>> teamsByPositionDTO = new HashMap<>();
+        final Map<Integer, List<TeamDTO>> teamsByPositionDTO = new HashMap<>();
         teamsByPosition.keySet().forEach(key -> teamsByPositionDTO.put(key, teamConverter.convertAll(teamsByPosition.get(key)
                 .stream().map(TeamConverterRequest::new).toList())));
         return teamsByPositionDTO;
     }
 
-    public List<DTO> getFirstTeamsWithDrawScore(GroupDTO groupDTO, Integer maxWinners) {
-        final Map<Integer, List<DTO>> teamsByPosition = getTeamsByPosition(groupDTO);
+    public List<TeamDTO> getFirstTeamsWithDrawScore(GroupDTO groupDTO, Integer maxWinners) {
+        final Map<Integer, List<TeamDTO>> teamsByPosition = getTeamsByPosition(groupDTO);
         for (int i = 0; i < maxWinners; i++) {
-            final List<DTO> teamsInDraw = teamsByPosition.get(i);
+            final List<TeamDTO> teamsInDraw = teamsByPosition.get(i);
             if (teamsInDraw.size() > 1) {
                 return teamsInDraw;
             }
@@ -184,8 +184,8 @@ public class RankingController {
         return new ArrayList<>();
     }
 
-    public DTO getTeam(GroupDTO groupDTO, Integer order) {
-        final List<DTO> teamsOrder = getTeamsRanking(groupDTO);
+    public TeamDTO getTeam(GroupDTO groupDTO, Integer order) {
+        final List<TeamDTO> teamsOrder = getTeamsRanking(groupDTO);
         if (order >= 0 && order < teamsOrder.size()) {
             return teamsOrder.get(order);
         }
@@ -262,7 +262,7 @@ public class RankingController {
                 .getScoreOfCompetitor(groupConverter.reverse(groupDTO), order)));
     }
 
-    public Integer getOrder(GroupDTO groupDTO, DTO teamDTO) {
+    public Integer getOrder(GroupDTO groupDTO, TeamDTO teamDTO) {
         return rankingProvider.getOrder(groupConverter.reverse(groupDTO), teamConverter.reverse(teamDTO));
     }
 
