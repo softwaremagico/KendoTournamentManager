@@ -22,7 +22,7 @@ package com.softwaremagico.kt.core.tournaments;
  */
 
 import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
@@ -215,7 +215,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public boolean hasDrawScore(Group group) {
-        final List<DTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
+        final List<TeamDTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
                 groupConverter.convert(new GroupConverterRequest(group)), group.getNumberOfWinners());
         return (teamsInDraw != null);
     }
