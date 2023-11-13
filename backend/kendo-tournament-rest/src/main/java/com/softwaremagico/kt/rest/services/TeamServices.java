@@ -26,7 +26,7 @@ import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantInTournamentDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantsInTournamentDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
@@ -63,7 +63,7 @@ import java.util.Locale;
 
 @RestController
 @RequestMapping("/teams")
-public class TeamServices extends BasicServices<Team, DTO, TeamRepository,
+public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         TeamProvider, TeamConverterRequest, TeamConverter, TeamController> {
 
     private final TournamentController tournamentController;
@@ -80,8 +80,8 @@ public class TeamServices extends BasicServices<Team, DTO, TeamRepository,
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                            Authentication authentication, HttpServletRequest request) {
+    public List<TeamDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
+                                Authentication authentication, HttpServletRequest request) {
         return getController().getAllByTournament(tournamentId, authentication.getName());
     }
 
@@ -97,8 +97,8 @@ public class TeamServices extends BasicServices<Team, DTO, TeamRepository,
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DTO> getAll(@RequestBody TournamentDTO tournamentDto,
-                            Authentication authentication, HttpServletRequest request) {
+    public List<TeamDTO> getAll(@RequestBody TournamentDTO tournamentDto,
+                                Authentication authentication, HttpServletRequest request) {
         return getController().getAllByTournament(tournamentDto, authentication.getName());
     }
 
@@ -106,8 +106,8 @@ public class TeamServices extends BasicServices<Team, DTO, TeamRepository,
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generates default teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DTO> create(@RequestBody TournamentDTO tournamentDto,
-                            Authentication authentication, HttpServletRequest request) {
+    public List<TeamDTO> create(@RequestBody TournamentDTO tournamentDto,
+                                Authentication authentication, HttpServletRequest request) {
         return getController().create(tournamentDto, authentication.getName());
     }
 
@@ -123,7 +123,7 @@ public class TeamServices extends BasicServices<Team, DTO, TeamRepository,
     @Operation(summary = "Defines the teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/set", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DTO> set(@RequestBody List<DTO> teamsDTOs, Authentication authentication, HttpServletRequest request) {
+    public List<TeamDTO> set(@RequestBody List<TeamDTO> teamsDTOs, Authentication authentication, HttpServletRequest request) {
         if (teamsDTOs == null || teamsDTOs.isEmpty()) {
             throw new BadRequestException(getClass(), "Team data is missing");
         }
@@ -140,7 +140,7 @@ public class TeamServices extends BasicServices<Team, DTO, TeamRepository,
     @Operation(summary = "Deletes a member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DTO delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
+    public TeamDTO delete(@RequestBody ParticipantInTournamentDTO participantInTournament, HttpServletRequest request) {
         return getController().delete(participantInTournament.getTournament(), participantInTournament.getParticipant());
     }
 
