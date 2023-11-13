@@ -31,11 +31,11 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -311,7 +311,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     @Test(dependsOnMethods = {"addRoles"})
     public void addTeams() throws Exception {
         int teamIndex = 0;
-        DTO team = null;
+        TeamDTO team = null;
         int teamMember = 0;
 
         MvcResult createResult = this.mockMvc
@@ -338,7 +338,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             // Create a new team.
             if (team == null) {
                 teamIndex++;
-                team = new DTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
                 teamMember = 0;
             }
 
@@ -354,7 +354,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
-            team = fromJson(createResult.getResponse().getContentAsString(), DTO.class);
+            team = fromJson(createResult.getResponse().getContentAsString(), TeamDTO.class);
             Assert.assertEquals(team.getTournament(), tournamentDTO);
             Assert.assertEquals(team.getName(), team.getName());
 

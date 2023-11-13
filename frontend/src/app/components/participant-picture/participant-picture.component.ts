@@ -4,6 +4,7 @@ import {FileService} from "../../services/file.service";
 import {NameUtilsService} from "../../services/name-utils.service";
 import {PictureDialogBoxComponent} from "./picture-dialog-box/picture-dialog-box.component";
 import {MatDialog} from "@angular/material/dialog";
+import {ParticipantImage} from "../../models/participant-image.model";
 
 @Component({
   selector: 'app-participant-picture',
@@ -22,8 +23,8 @@ export class ParticipantPictureComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.participant! && this.participant.hasAvatar) {
-      this.fileService.getParticipantPicture(this.participant).subscribe(_picture => {
+    if (this.participant?.hasAvatar) {
+      this.fileService.getParticipantPicture(this.participant).subscribe((_picture: ParticipantImage): void => {
         if (_picture) {
           this.participantPicture = _picture.base64;
         } else {
