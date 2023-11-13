@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
@@ -147,11 +147,11 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return create(groupDTO, null);
     }
 
-    public GroupDTO addTeams(Integer groupId, List<DTO> teams, String username) {
+    public GroupDTO addTeams(Integer groupId, List<TeamDTO> teams, String username) {
         return convert(getProvider().addTeams(groupId, teamConverter.reverseAll(teams), username));
     }
 
-    public GroupDTO deleteTeams(Integer groupId, List<DTO> teams, String username) {
+    public GroupDTO deleteTeams(Integer groupId, List<TeamDTO> teams, String username) {
         return convert(getProvider().deleteTeams(groupId, teamConverter.reverseAll(teams), username));
     }
 
@@ -161,13 +161,13 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                 username));
     }
 
-    public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, List<DTO> teams, String username) {
+    public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, List<TeamDTO> teams, String username) {
         return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
                         new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
                 teamConverter.reverseAll(teams), username));
     }
 
-    public GroupDTO setTeams(Integer groupId, List<DTO> teams, String username) {
+    public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
         GroupDTO groupDTO = get(groupId);
 
         final List<FightDTO> fights = new ArrayList<>(groupDTO.getFights());
@@ -185,7 +185,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return convert(getProvider().save(reverse(groupDTO)));
     }
 
-    public GroupDTO setTeams(List<DTO> teams, String username) {
+    public GroupDTO setTeams(List<TeamDTO> teams, String username) {
         if (teams.isEmpty()) {
             throw new TeamNotFoundException(this.getClass(), "No teams found!");
         }

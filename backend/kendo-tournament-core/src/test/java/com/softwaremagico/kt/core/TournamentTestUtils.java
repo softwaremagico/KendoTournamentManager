@@ -32,7 +32,7 @@ import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -135,7 +135,7 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
         List<RoleDTO> competitorsRolesDTO = roleController.get(tournamentDTO, RoleType.COMPETITOR);
 
         int teamIndex = 0;
-        DTO teamDTO = null;
+        TeamDTO teamDTO = null;
         int teamMember = 0;
 
         final GroupDTO groupDTO = groupController.get(tournamentDTO).get(0);
@@ -144,7 +144,7 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
             // Create a new team.
             if (teamDTO == null) {
                 teamIndex++;
-                teamDTO = new DTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                teamDTO = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
                 teamMember = 0;
             }
 
