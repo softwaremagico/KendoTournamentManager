@@ -813,7 +813,11 @@
     },
     "stormtrooperSyndrome": {
       "title": "Stormtrooper-Effekt",
-      "description": "Einem Team fehlen in einem Turnier alle Punkte."
+      "description": "Einem Team fehlen in einem Turnier alle Punkte.",
+      "normal": "Für ein Turnier erreicht.",
+      "bronze": "Erreicht in mindestens zwei aufeinanderfolgenden Turnieren erreicht.",
+      "silver": "Erreicht in mindestens drei aufeinanderfolgenden Turnieren erreicht.",
+      "gold": "Während mindestens fünf aufeinanderfolgenden Turnieren erreicht."
     }
   },
   "removeTeams": "Teams entfernenn",

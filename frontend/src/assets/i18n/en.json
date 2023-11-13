@@ -836,7 +836,11 @@
     },
     "stormtrooperSyndrome": {
       "title": "Stormtrooper Syndrome",
-      "description": "A team miss all points on a tournament."
+      "description": "A team miss all points on a tournament.",
+      "normal": "Achieved for one tournament.",
+      "bronze": "Achieved for at least two consecutive tournaments.",
+      "silver": "Achieved for at least three consecutive tournaments.",
+      "gold": "Achieved for at least five consecutive tournaments."
     }
   },
   "removeTeams": "Remove Teams",
