@@ -813,7 +813,11 @@
     },
     "stormtrooperSyndrome": {
       "title": "Stormtrooper-effect",
-      "description": "Een team mist alle punten in een toernooi."
+      "description": "Een team mist alle punten in een toernooi.",
+      "normal": "Bereikt voor één toernooi.",
+      "bronze": "Behaald tijdens ten minste twee opeenvolgende toernooien.",
+      "silver": "Behaald tijdens ten minste drie opeenvolgende toernooien.",
+      "gold": "Behaald tijdens ten minste vijf opeenvolgende toernooien."
     }
   },
   "removeTeams": "Teams verwijderen",
