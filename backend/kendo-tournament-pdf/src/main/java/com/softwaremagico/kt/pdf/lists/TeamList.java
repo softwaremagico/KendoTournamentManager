@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
@@ -48,9 +48,9 @@ public class TeamList extends ParentList {
     private static final int BORDER = 0;
     private final TournamentDTO tournament;
 
-    private final List<DTO> teams;
+    private final List<TeamDTO> teams;
 
-    public TeamList(TournamentDTO tournament, List<DTO> teams) {
+    public TeamList(TournamentDTO tournament, List<TeamDTO> teams) {
         this.tournament = tournament;
         this.teams = teams;
     }
@@ -63,7 +63,7 @@ public class TeamList extends ParentList {
         mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
-    public PdfPTable teamTable(DTO teamDTO) {
+    public PdfPTable teamTable(TeamDTO teamDTO) {
         final PdfPTable teamTable = new PdfPTable(1);
 
         teamTable.addCell(getHeader4(NameUtils.getShortName(teamDTO), 0));
