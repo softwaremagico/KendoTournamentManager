@@ -816,6 +816,10 @@
       "bronze": "Partecipa a venti tornei.",
       "silver": "Partecipa a trenta tornei.",
       "gold": "Partecipa a cinquanta tornei."
+    },
+    "stormtrooperSyndrome": {
+      "title": "Effetto Stormtrooper",
+      "description": "Una squadra sbaglia tutti i punti in un torneo."
     }
   },
   "removeTeams": "Rimuovi squadre",
