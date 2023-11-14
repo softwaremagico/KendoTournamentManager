@@ -250,6 +250,9 @@ public class RankingController {
     }
 
     public CompetitorRanking getCompetitorRanking(ParticipantDTO participantDTO) {
+        if (participantDTO == null) {
+            return null;
+        }
         return rankingProvider.getCompetitorRanking(participantConverter.reverse(participantDTO));
     }
 
