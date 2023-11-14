@@ -44,6 +44,8 @@ export enum AchievementType {
 
   DARUMA = 'DARUMA',
 
+  STORMTROOPER_SYNDROME = 'STORMTROOPER_SYNDROME',
+
 }
 
 export namespace AchievementType {
