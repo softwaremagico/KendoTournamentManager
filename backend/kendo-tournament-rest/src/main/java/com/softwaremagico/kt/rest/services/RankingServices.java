@@ -32,6 +32,7 @@ import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.html.controller.HtmlController;
+import com.softwaremagico.kt.html.controller.ZipController;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.InvalidXmlElementException;
@@ -46,6 +47,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -74,14 +77,18 @@ public class RankingServices {
 
     private final GroupController groupController;
 
+    private final ZipController zipController;
+
     public RankingServices(RankingController rankingController, PdfController pdfController, TournamentController tournamentController,
-                           ParticipantController participantController, HtmlController htmlController, GroupController groupController) {
+                           ParticipantController participantController, HtmlController htmlController, GroupController groupController,
+                           ZipController zipController) {
         this.rankingController = rankingController;
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
         this.participantController = participantController;
         this.htmlController = htmlController;
         this.groupController = groupController;
+        this.zipController = zipController;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -222,5 +229,18 @@ public class RankingServices {
                 .filename(tournament.getName() + ".txt").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Download all files as a zip", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/tournament/{tournamentId}/zip")
+    public byte[] startByEmail(@Parameter(description = "Id of an existing tournament", required = true)
+                               @PathVariable("tournamentId") Integer tournamentId, Locale locale,
+                               Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + ".zip").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        return zipController.createZipData(locale, tournament);
     }
 }
