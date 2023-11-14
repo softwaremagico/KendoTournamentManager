@@ -56,8 +56,10 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
         teamDTO.setMembers(new ArrayList<>());
 
         try {
-            //Converter can have the tournament defined already.
-            if (from.getTournament() != null) {
+            if (from.getTournamentDTO() != null) {
+                teamDTO.setTournament(from.getTournamentDTO());
+            } else if (from.getTournament() != null) {
+                //Converter can have the tournament defined already.
                 teamDTO.setTournament(tournamentConverter.convert(
                         new TournamentConverterRequest(from.getTournament())));
             } else {
