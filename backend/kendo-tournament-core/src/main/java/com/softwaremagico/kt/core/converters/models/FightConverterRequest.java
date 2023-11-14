@@ -21,23 +21,37 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 
 public class FightConverterRequest extends ConverterRequest<Fight> {
     private final Tournament tournament;
+    private final TournamentDTO tournamentDTO;
 
     public FightConverterRequest(Fight entity) {
         super(entity);
         this.tournament = null;
+        this.tournamentDTO = null;
     }
 
     public FightConverterRequest(Fight entity, Tournament tournament) {
         super(entity);
         this.tournament = tournament;
+        this.tournamentDTO = null;
+    }
+
+    public FightConverterRequest(Fight entity, TournamentDTO tournamentDTO) {
+        super(entity);
+        this.tournamentDTO = tournamentDTO;
+        this.tournament = null;
     }
 
     public Tournament getTournament() {
         return tournament;
+    }
+
+    public TournamentDTO getTournamentDTO() {
+        return tournamentDTO;
     }
 }
