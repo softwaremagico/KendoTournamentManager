@@ -22,10 +22,12 @@ package com.softwaremagico.kt.core.converters;
  */
 
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ScoreOfTeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -42,21 +44,27 @@ public class ScoreOfTeamConverter extends ElementConverter<ScoreOfTeam, ScoreOfT
 
     private final DuelConverter duelConverter;
 
-    public ScoreOfTeamConverter(TeamConverter teamConverter, FightConverter fightConverter, DuelConverter duelConverter) {
+    private final TournamentConverter tournamentConverter;
+
+    public ScoreOfTeamConverter(TeamConverter teamConverter, FightConverter fightConverter, DuelConverter duelConverter,
+                                TournamentConverter tournamentConverter) {
         this.teamConverter = teamConverter;
         this.fightConverter = fightConverter;
         this.duelConverter = duelConverter;
+        this.tournamentConverter = tournamentConverter;
     }
 
     @Override
     protected ScoreOfTeamDTO convertElement(ScoreOfTeamConverterRequest from) {
         final ScoreOfTeamDTO scoreOfTeamDTO = new ScoreOfTeamDTO();
         BeanUtils.copyProperties(from.getEntity(), scoreOfTeamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        scoreOfTeamDTO.setTeam(teamConverter.convert(new TeamConverterRequest(from.getEntity().getTeam())));
+        final TournamentDTO tournamentDTO = tournamentConverter.convertElement(
+                new TournamentConverterRequest(from.getEntity().getTeam().getTournament()));
+        scoreOfTeamDTO.setTeam(teamConverter.convert(new TeamConverterRequest(from.getEntity().getTeam(), tournamentDTO)));
         scoreOfTeamDTO.setFights(fightConverter.convertAll(from.getEntity().getFights().stream()
-                .map(FightConverterRequest::new).toList()));
+                .map(fight -> new FightConverterRequest(fight, tournamentDTO)).toList()));
         scoreOfTeamDTO.setUnties(duelConverter.convertAll(from.getEntity().getUnties().stream()
-                .map(DuelConverterRequest::new).toList()));
+                .map(duel -> new DuelConverterRequest(duel, tournamentDTO)).toList()));
         return scoreOfTeamDTO;
     }
 
