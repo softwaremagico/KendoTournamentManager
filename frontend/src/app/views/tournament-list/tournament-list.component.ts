@@ -89,7 +89,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  openDialog(title: string, action: Action, tournament: Tournament) {
+  openDialog(title: string, action: Action, tournament: Tournament): void {
     const dialogRef = this.dialog.open(TournamentDialogBoxComponent, {
       width: '600px',
       data: {
@@ -111,7 +111,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     });
   }
 
-  addRowData(tournament: Tournament) {
+  addRowData(tournament: Tournament): void {
     this.tournamentService.add(tournament).subscribe(_tournament => {
       this.basicTableData.dataSource.data.push(_tournament);
       this.basicTableData.dataSource._updateChangeSubscription();
@@ -164,9 +164,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  downloadBlogCode() {
+  downloadBlogCode(): void {
     if (this.basicTableData.selectedElement?.id) {
-      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
+      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
         const blob: Blob = new Blob([html], {type: 'txt/plain'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
@@ -178,7 +178,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  downloadAccreditations() {
+  downloadAccreditations(): void {
     if (this.basicTableData.selectedElement) {
       const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
@@ -208,7 +208,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  downloadDiplomas() {
+  downloadDiplomas(): void {
     if (this.basicTableData.selectedElement) {
       const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
@@ -258,7 +258,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     return (argument as Tournament).locked;
   }
 
-  openStatistics() {
+  openStatistics(): void {
     if (this.basicTableData.selectedElement) {
       this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
       this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
@@ -280,7 +280,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  cloneElement() {
+  cloneElement(): void {
     const tournamentId: number = this.basicTableData.selectedElement?.id!;
     this.basicTableData.selectedElement = undefined;
     this.tournamentService.clone(tournamentId).subscribe((_tournament: Tournament): void => {
@@ -289,5 +289,19 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
       this.basicTableData.dataSource._updateChangeSubscription();
       this.messageService.infoMessage('infoTournamentStored');
     });
+  }
+
+  downloadZip(): void {
+    if (this.basicTableData.selectedElement?.id) {
+      this.rankingService.getAllListAsZip(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
+        const blob: Blob = new Blob([html], {type: 'application/zip'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
+
+        const anchor = document.createElement("a");
+        anchor.download = this.basicTableData.selectedElement!.name + ".zip";
+        anchor.href = downloadURL;
+        anchor.click();
+      });
+    }
   }
 }

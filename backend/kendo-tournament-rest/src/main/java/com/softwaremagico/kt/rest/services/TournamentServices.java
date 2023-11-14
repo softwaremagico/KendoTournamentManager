@@ -59,6 +59,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -70,6 +72,15 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     public TournamentServices(TournamentController tournamentController, PdfController pdfController) {
         super(tournamentController);
         this.pdfController = pdfController;
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TournamentDTO> getAll(HttpServletRequest request) {
+        final List<TournamentDTO> tournaments = super.getAll(request);
+        tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt).reversed());
+        return tournaments;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
