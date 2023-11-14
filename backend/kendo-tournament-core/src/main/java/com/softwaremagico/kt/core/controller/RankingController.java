@@ -233,7 +233,7 @@ public class RankingController {
         return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT);
     }
 
-    @Cacheable("competitors-ranking")
+
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
         final List<Tournament> tournaments = tournamentProvider.getAll();
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
