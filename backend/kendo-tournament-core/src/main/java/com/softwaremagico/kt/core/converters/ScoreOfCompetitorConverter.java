@@ -73,7 +73,11 @@ public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetit
 
         Set<Tournament> tournaments;
         try {
-            tournaments = from.getEntity().getFights().stream().map(Fight::getTournament).collect(Collectors.toSet());
+            if (from.getTournaments() != null) {
+                tournaments = new HashSet<>(from.getTournaments());
+            } else {
+                tournaments = from.getEntity().getFights().stream().map(Fight::getTournament).collect(Collectors.toSet());
+            }
         } catch (LazyInitializationException e) {
             tournaments = new HashSet<>(tournamentProvider.findByIdIn(from.getEntity().getFights().stream()
                     .map(fight -> fight.getTournament().getId()).collect(Collectors.toSet())));
