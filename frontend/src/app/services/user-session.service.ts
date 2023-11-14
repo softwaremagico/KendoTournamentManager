@@ -9,7 +9,7 @@ export class UserSessionService {
   constructor(private cookies: CookieService) {
   }
 
-  setLanguage(language: string | undefined) {
+  setLanguage(language: string | undefined): void {
     if (language) {
       this.cookies.set("selectedLanguage", language);
     } else {
@@ -21,7 +21,7 @@ export class UserSessionService {
     return this.cookies.get("selectedLanguage");
   }
 
-  setSelectedTournament(tournamentId: string | undefined) {
+  setSelectedTournament(tournamentId: string | undefined): void {
     if (tournamentId) {
       sessionStorage.setItem("lastSelectedTournament", tournamentId);
     } else {
@@ -33,7 +33,7 @@ export class UserSessionService {
     return sessionStorage.getItem("lastSelectedTournament");
   }
 
-  setSelectedParticipant(participantId: string | undefined) {
+  setSelectedParticipant(participantId: string | undefined): void {
     if (participantId) {
       sessionStorage.setItem("lastSelectedParticipant", participantId);
     } else {
@@ -45,7 +45,7 @@ export class UserSessionService {
     return sessionStorage.getItem("lastSelectedParticipant");
   }
 
-  setItemsPerPage(pageSize: number | undefined) {
+  setItemsPerPage(pageSize: number | undefined): void {
     if (pageSize) {
       sessionStorage.setItem("itemsPerPage", pageSize.toString());
     } else {
@@ -57,7 +57,7 @@ export class UserSessionService {
     return Number(sessionStorage.getItem("itemsPerPage"));
   }
 
-  setSwappedColors(swappedColors: boolean) {
+  setSwappedColors(swappedColors: boolean): void {
     if (swappedColors) {
       sessionStorage.setItem("swappedColors", swappedColors.toString());
     } else {
@@ -69,7 +69,7 @@ export class UserSessionService {
     return Boolean(sessionStorage.getItem("swappedColors"));
   }
 
-  setSwappedTeams(swappedTeams: boolean) {
+  setSwappedTeams(swappedTeams: boolean): void {
     if (swappedTeams) {
       sessionStorage.setItem("swappedTeams", swappedTeams.toString());
     } else {
@@ -81,7 +81,7 @@ export class UserSessionService {
     return Boolean(sessionStorage.getItem("swappedTeams"));
   }
 
-  setNightMode(nightMode: boolean) {
+  setNightMode(nightMode: boolean): void {
     if (nightMode) {
       sessionStorage.setItem("nightMode", nightMode.toString());
     } else {
