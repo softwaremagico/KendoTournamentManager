@@ -1852,6 +1852,10 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return the generated achievements.
      */
     private List<Achievement> generateStormtrooperSyndromeAchievement(Tournament tournament) {
+        if (tournament.getTeamSize() == 1) {
+            return new ArrayList<>();
+        }
+
         final List<Team> teams = new ArrayList<>(getTeamsFromTournament());
         //Ensure that team is in fights.
         final Set<Team> teamsWithFights = new HashSet<>();
