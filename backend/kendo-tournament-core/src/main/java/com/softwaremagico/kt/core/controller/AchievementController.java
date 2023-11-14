@@ -112,6 +112,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
     private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
+    private static final int MIN_TOURNAMENT_FIGHTS = 12;
 
 
     private final TournamentConverter tournamentConverter;
@@ -575,6 +576,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateBillyTheKidAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         int minTime = tournament.getDuelsDuration();
         Participant participant = null;
         for (final Duel duel : getDuelsFromTournament()) {
@@ -697,6 +701,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTerminatorAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
@@ -747,6 +754,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateJuggernautAchievement(Tournament tournament) {
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         getDuelsFromTournament().forEach(duel -> {
             //Max score competitor 1.
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
@@ -1104,6 +1114,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (!duel.getCompetitor2Score().isEmpty()) {
@@ -1155,6 +1168,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (!duel.getCompetitor1Score().isEmpty() || !duel.getCompetitor2Score().isEmpty()) {
@@ -1307,6 +1323,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Duel> duels = new ArrayList<>(getDuelsFromTournament());
         final List<Participant> woodcutters = new ArrayList<>(getParticipantsFromTournament());
         //Only applied to competitors.
@@ -1852,10 +1871,12 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return the generated achievements.
      */
     private List<Achievement> generateStormtrooperSyndromeAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         if (tournament.getTeamSize() == 1) {
             return new ArrayList<>();
         }
-
         final List<Team> teams = new ArrayList<>(getTeamsFromTournament());
         //Ensure that team is in fights.
         final Set<Team> teamsWithFights = new HashSet<>();
