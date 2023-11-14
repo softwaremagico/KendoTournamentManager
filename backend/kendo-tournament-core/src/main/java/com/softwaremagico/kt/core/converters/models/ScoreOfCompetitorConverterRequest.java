@@ -22,9 +22,25 @@ package com.softwaremagico.kt.core.converters.models;
  */
 
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+
+import java.util.Collection;
 
 public class ScoreOfCompetitorConverterRequest extends ConverterRequest<ScoreOfCompetitor> {
+
+    private final Collection<Tournament> tournaments;
+
     public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity) {
         super(entity);
+        this.tournaments = null;
+    }
+
+    public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity, Collection<Tournament> tournaments) {
+        super(entity);
+        this.tournaments = tournaments;
+    }
+
+    public Collection<Tournament> getTournaments() {
+        return tournaments;
     }
 }
