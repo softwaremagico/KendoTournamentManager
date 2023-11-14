@@ -67,7 +67,9 @@ public enum AchievementType {
 
     FIRST_BLOOD,
 
-    DARUMA;
+    DARUMA,
+
+    STORMTROOPER_SYNDROME;
 
 
     public static AchievementType getType(String name) {
