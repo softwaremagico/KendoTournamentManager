@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -195,8 +196,8 @@ public class RankingProvider {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<Fight> fights = fightProvider.getAll();
         final List<Duel> unties = duelProvider.getUnties();
-        final List<Participant> competitors = roleProvider.getAll().stream()
-                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant).toList();
+        final Set<Participant> competitors = roleProvider.getAll().stream()
+                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant).collect(Collectors.toSet());
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }
