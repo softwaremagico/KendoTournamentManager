@@ -45,9 +45,11 @@ import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.cache.annotation.CacheEvict;
@@ -88,11 +90,13 @@ public class RankingController {
 
     private final ScoreOfTeamConverter scoreOfTeamConverter;
 
+    private final TournamentProvider tournamentProvider;
+
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
                              TeamConverter teamConverter, DuelConverter duelConverter, ParticipantConverter participantConverter,
                              RankingProvider rankingProvider, ScoreOfCompetitorConverter scoreOfCompetitorConverter,
-                             ScoreOfTeamConverter scoreOfTeamConverter) {
+                             ScoreOfTeamConverter scoreOfTeamConverter, TournamentProvider tournamentProvider) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
         this.tournamentConverter = tournamentConverter;
@@ -103,6 +107,7 @@ public class RankingController {
         this.rankingProvider = rankingProvider;
         this.scoreOfCompetitorConverter = scoreOfCompetitorConverter;
         this.scoreOfTeamConverter = scoreOfTeamConverter;
+        this.tournamentProvider = tournamentProvider;
     }
 
     private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
@@ -230,11 +235,12 @@ public class RankingController {
 
     @Cacheable("competitors-ranking")
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
+        final List<Tournament> tournaments = tournamentProvider.getAll();
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
                         participantConverter.reverseAll(competitors),
                         scoreType
                 )
-                .stream().map(ScoreOfCompetitorConverterRequest::new).toList());
+                .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor, tournaments)).toList());
     }
 
     @Cacheable("competitors-ranking")
