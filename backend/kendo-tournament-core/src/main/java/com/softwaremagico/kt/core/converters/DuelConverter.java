@@ -59,8 +59,10 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
         duelDTO.setCompetitor2(participantConverter.convert(
                 new ParticipantConverterRequest(from.getEntity().getCompetitor2())));
         try {
-            //Converter can have the tournament defined already.
-            if (from.getTournament() != null) {
+            if (from.getTournamentDTO() != null) {
+                duelDTO.setTournament(from.getTournamentDTO());
+            } else if (from.getTournament() != null) {
+                //Converter can have the tournament defined already.
                 duelDTO.setTournament(tournamentConverter.convert(
                         new TournamentConverterRequest(from.getTournament())));
             } else {

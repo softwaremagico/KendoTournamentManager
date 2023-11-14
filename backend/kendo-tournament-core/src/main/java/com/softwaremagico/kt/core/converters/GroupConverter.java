@@ -58,13 +58,13 @@ public class GroupConverter extends ElementConverter<Group, GroupDTO, GroupConve
                 new TournamentConverterRequest(from.getEntity().getTournament())));
         groupDTO.setFights(new ArrayList<>());
         from.getEntity().getFights().forEach(fight ->
-                groupDTO.getFights().add(fightConverter.convert(new FightConverterRequest(fight))));
+                groupDTO.getFights().add(fightConverter.convert(new FightConverterRequest(fight, groupDTO.getTournament()))));
         groupDTO.setUnties(new ArrayList<>());
         from.getEntity().getUnties().forEach(duel ->
-                groupDTO.getUnties().add(duelConverter.convert(new DuelConverterRequest(duel))));
+                groupDTO.getUnties().add(duelConverter.convert(new DuelConverterRequest(duel, groupDTO.getTournament()))));
         groupDTO.setTeams(new ArrayList<>());
         from.getEntity().getTeams().forEach(team ->
-                groupDTO.getTeams().add(teamConverter.convert(new TeamConverterRequest(team))));
+                groupDTO.getTeams().add(teamConverter.convert(new TeamConverterRequest(team, groupDTO.getTournament()))));
         return groupDTO;
     }
 
