@@ -82,4 +82,8 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
     public long count() {
         return repository.count();
     }
+
+    public List<ENTITY> findByIdIn(Collection<KEY> ids) {
+        return getRepository().findAllById(ids);
+    }
 }
