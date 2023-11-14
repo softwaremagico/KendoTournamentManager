@@ -32,6 +32,10 @@
     </cache-template>
 
     <cache-template name="short-time-cache-template">
+        <expiry>
+            <tti unit="seconds">200</tti>
+        </expiry>
+
         <listeners>
             <listener>
                 <class>com.softwaremagico.kt.logger.CacheEventLogger</class>

@@ -54,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -107,7 +108,7 @@ public class RankingServices {
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestBody(required = false) Set<ParticipantDTO> participants,
                                                                        HttpServletRequest request) {
-        return rankingController.getCompetitorsGlobalScoreRanking(participants);
+        return rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -115,7 +116,7 @@ public class RankingServices {
     @PostMapping(value = "/competitors/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
     public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestBody(required = false) Set<ParticipantDTO> participants,
                                                         Locale locale, HttpServletResponse response, HttpServletRequest request) {
-        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants);
+        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>());
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename("competitors score.pdf").build();
