@@ -96,6 +96,13 @@
               matTooltip="{{'diplomasHint' | translate}}">
         <mat-icon class="kendo-icon" svgIcon="diplomas"></mat-icon>
       </button>
+      <button (click)="downloadZip()" *ngIf="(RbacActivity.READ_ALL_RANKINGS | rbac : this.rbacService.activities)"
+              [disabled]="!basicTableData.selectedElement"
+              [matTooltipShowDelay]="500"
+              color="primary" mat-button
+              matTooltip="{{'tournamentListAsZip' | translate}}">
+        <mat-icon>folder_zip</mat-icon>
+      </button>
     </div>
   </div>
 </div>
