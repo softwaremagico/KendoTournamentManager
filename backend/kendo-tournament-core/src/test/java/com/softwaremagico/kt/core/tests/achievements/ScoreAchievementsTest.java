@@ -63,6 +63,8 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
 
     private static final String TOURNAMENT3_NAME = "Tournament 3";
 
+    private static final String TOURNAMENT4_NAME = "Tournament 4";
+
     @Autowired
     private TournamentController tournamentController;
 
@@ -78,6 +80,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     private TournamentDTO tournament1DTO;
     private TournamentDTO tournament2DTO;
     private TournamentDTO tournament3DTO;
+    private TournamentDTO tournament4DTO;
 
     private ParticipantDTO woodCutter;
 
@@ -251,6 +254,56 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         achievementController.generateAchievements(tournament3DTO);
     }
 
+    @BeforeClass(dependsOnMethods = "prepareTournament3")
+    public void prepareTournament4() {
+        tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
+        //Create Tournament
+        List<FightDTO> fightDTOs = fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null);
+
+        //Team1 and Team2 no scores. Team1 has no scores neither against itself.
+
+        //Team1 vs Team2
+        fightDTOs.get(0).getDuels().get(0).setFinished(true);
+        fightDTOs.get(0).getDuels().get(1).setFinished(true);
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+
+        //Team3 vs Team2
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(68);
+        fightDTOs.get(1).getDuels().get(0).setFinished(true);
+        fightDTOs.get(1).getDuels().get(1).setFinished(true);
+        fightDTOs.get(1).getDuels().get(2).setFinished(true);
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+
+        //Team3 vs Team4
+        fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(2).getDuels().get(0).addCompetitor1ScoreTime(68);
+        fightDTOs.get(2).getDuels().get(0).setFinished(true);
+        fightDTOs.get(2).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(2).getDuels().get(1).addCompetitor2ScoreTime(68);
+        fightDTOs.get(2).getDuels().get(1).setFinished(true);
+        fightDTOs.get(2).getDuels().get(2).setFinished(true);
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+
+        fightDTOs.get(3).getDuels().get(0).setFinished(true);
+        fightDTOs.get(3).getDuels().get(1).setFinished(true);
+        fightDTOs.get(3).getDuels().get(2).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+
+        fightDTOs.get(4).getDuels().get(0).setFinished(true);
+        fightDTOs.get(4).getDuels().get(1).setFinished(true);
+        fightDTOs.get(4).getDuels().get(2).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+
+        fightDTOs.get(5).getDuels().get(0).setFinished(true);
+        fightDTOs.get(5).getDuels().get(1).setFinished(true);
+        fightDTOs.get(5).getDuels().get(2).setFinished(true);
+        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null));
+
+        achievementController.generateAchievements(tournament4DTO);
+    }
+
     @Test
     public void checkWoodCutterAchievement() {
         List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament1DTO, AchievementType.WOODCUTTER);
@@ -378,6 +431,13 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
 
         //Only Participant5, Participant7, Participant8, Participant9, Participant10, Participant11
         achievementsDTOs = achievementController.getAchievements(tournament3DTO, AchievementType.FIRST_BLOOD, AchievementGrade.NORMAL);
+        Assert.assertEquals(achievementsDTOs.size(), 6);
+    }
+
+    @Test
+    public void stormtrooperAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament4DTO, AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.NORMAL);
+        //Only Participant0, Participant1, Participant2, Participant3, Participant4, Participant5
         Assert.assertEquals(achievementsDTOs.size(), 6);
     }
 
