@@ -1439,8 +1439,10 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievement(Tournament tournament) {
-        final List<Participant> participants = participantProvider.findParticipantsWithRoleNotInTournaments(tournament, RoleType.COMPETITOR,
-                tournamentProvider.getPreviousTo(tournament));
+        final List<Participant> participants = participantProvider.get(tournament, RoleType.COMPETITOR);
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL,
+                getParticipantsFromTournament()).forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
