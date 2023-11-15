@@ -219,10 +219,10 @@ public class RankingProvider {
         return scores;
     }
 
-    public CompetitorRanking getCompetitorRanking(Participant participantDTO) {
+    public CompetitorRanking getCompetitorRanking(Participant participant) {
         final List<ScoreOfCompetitor> ranking = getCompetitorGlobalRanking(ScoreType.DEFAULT);
         return new CompetitorRanking(IntStream.range(0, ranking.size())
-                .filter(i -> Objects.equals(participantDTO, ranking.get(i).getCompetitor()))
+                .filter(i -> Objects.equals(participant, ranking.get(i).getCompetitor()))
                 .findFirst().orElse(ranking.size() - 1), ranking.size());
     }
 
