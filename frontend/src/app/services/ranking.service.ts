@@ -189,4 +189,21 @@ export class RankingService {
     );
   }
 
+  getAllListAsZip(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId + '/zip';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting tournament lists as zip`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting tournament lists as zip`))
+    );
+  }
+
 }
