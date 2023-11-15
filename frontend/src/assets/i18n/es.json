@@ -850,5 +850,6 @@
   "men": "Men",
   "logIn": "Acceso",
   "tsuki": "Tsuki",
-  "kote": "Kote"
+  "kote": "Kote",
+  "tournamentListAsZip": "Descargar todas las listas en PDF en un archivo zip."
 }
