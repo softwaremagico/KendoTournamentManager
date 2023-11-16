@@ -114,6 +114,7 @@
   "TournamentStatisticsMenu": "Por campeonato",
   "TeamTopTenMenuItem": "Clasificación",
   "competitorsRanking": "Clasificación por competidores",
+  "competitorsClubRanking": "Clasificación por competidores pertenecientes a un club.",
   "DefineFightsMenu": "Definir campeonato como",
   "FightMenuItem": "Liga sencilla",
   "LeagueTreeMenuItem": "Campeonato en árbol",

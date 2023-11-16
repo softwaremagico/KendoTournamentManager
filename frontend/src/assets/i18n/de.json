@@ -118,6 +118,7 @@
   "TournamentStatisticsMenu": "pro Wettkampf",
   "TeamTopTenMenuItem": "Klassifikation",
   "competitorsRanking": "Klassifikation nach Teilnehmer",
+  "competitorsClubRanking": "Klassifizierung nach vereinszugehörigen Teilnehmern.",
   "DefineFightsMenu": "Erstelle Wettkampf als",
   "FightMenuItem": "Einfachen Wettkampf",
   "LeagueTreeMenuItem": "Wettkampf Baum",
