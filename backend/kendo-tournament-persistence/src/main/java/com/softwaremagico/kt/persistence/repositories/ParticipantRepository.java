@@ -21,6 +21,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
@@ -75,4 +76,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
             """)
     List<Participant> findParticipantsWithRoleNotInTournaments(@Param("tournament") Tournament tournament, @Param("roleType") RoleType roleType,
                                                                @Param("olderTournaments") Collection<Tournament> olderTournaments);
+
+    List<Participant> findByClub(Club club);
 }
