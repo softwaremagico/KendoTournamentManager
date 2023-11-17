@@ -24,18 +24,23 @@ package com.softwaremagico.kt.core.converters;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
+import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ParticipantConverter extends ElementConverter<Participant, ParticipantDTO, ParticipantConverterRequest> {
     private final ClubConverter clubConverter;
+    private final ClubProvider clubProvider;
 
     @Autowired
-    public ParticipantConverter(ClubConverter clubConverter) {
+    public ParticipantConverter(ClubConverter clubConverter, ClubProvider clubProvider) {
         this.clubConverter = clubConverter;
+        this.clubProvider = clubProvider;
     }
 
 
@@ -43,7 +48,17 @@ public class ParticipantConverter extends ElementConverter<Participant, Particip
     protected ParticipantDTO convertElement(ParticipantConverterRequest from) {
         final ParticipantDTO participantDTO = new ParticipantDTO();
         BeanUtils.copyProperties(from.getEntity(), participantDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        participantDTO.setClub(clubConverter.convert(new ClubConverterRequest(from.getEntity().getClub())));
+
+        try {
+            if (from.getClub() != null) {
+                participantDTO.setClub(from.getClubDTO());
+            } else {
+                participantDTO.setClub(clubConverter.convert(new ClubConverterRequest(from.getEntity().getClub())));
+            }
+        } catch (LazyInitializationException | FatalBeanException e) {
+            participantDTO.setClub(clubConverter.convert(
+                    new ClubConverterRequest(clubProvider.get(from.getEntity().getClub().getId()).orElse(null))));
+        }
         return participantDTO;
     }
 
