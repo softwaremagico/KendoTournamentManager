@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -156,5 +157,12 @@ public class NumberOfWinners extends AbstractTestNGSpringContextTests {
 
         checkLink(groupLinks.get(0), 0, 0, 0);
         checkLink(groupLinks.get(1), 1, 0, 0);
+    }
+
+    @AfterClass
+    public void deleteTournament() {
+        groupProvider.deleteAll();
+        tournamentExtraPropertyProvider.deleteAll();
+        tournamentProvider.deleteAll();
     }
 }
