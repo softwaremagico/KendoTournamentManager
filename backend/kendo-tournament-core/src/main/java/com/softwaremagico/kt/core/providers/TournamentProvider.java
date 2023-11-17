@@ -80,6 +80,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         properties.forEach(tournamentExtraProperty -> {
             newProperties.add(TournamentExtraProperty.copy(tournamentExtraProperty));
             newProperties.get(newProperties.size() - 1).setTournament(tournament);
+            newProperties.get(newProperties.size() - 1).setCreatedBy(username);
         });
         if (!newProperties.isEmpty()) {
             tournamentExtraPropertyRepository.saveAll(newProperties);
