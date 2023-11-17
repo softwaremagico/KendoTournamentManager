@@ -73,6 +73,14 @@ public class TournamentExtraProperty extends Element {
         this.propertyValue = propertyValue;
     }
 
+    public TournamentExtraProperty(Tournament tournament, TournamentExtraPropertyKey propertyKey, String propertyValue, String createdBy) {
+        this();
+        this.tournament = tournament;
+        this.propertyKey = propertyKey;
+        this.propertyValue = propertyValue;
+        this.setCreatedBy(createdBy);
+    }
+
     public Tournament getTournament() {
         return tournament;
     }
