@@ -18,6 +18,8 @@ import org.testng.annotations.Test;
 @Test(groups = {"tournamentExtraProperties"})
 public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSpringContextTests {
 
+    private final static String USER = "Me";
+
     @Autowired
     private TournamentProvider tournamentProvider;
 
@@ -29,26 +31,26 @@ public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSp
 
     @Test
     public void checkDefaultProperties() {
-        Tournament tournament1 = new Tournament("Tournament1", 1, 3, TournamentType.LEAGUE, null);
+        Tournament tournament1 = new Tournament("Tournament1", 1, 3, TournamentType.LEAGUE, USER);
         tournament1 = tournamentProvider.save(tournament1);
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament1).size(), 0);
 
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament1, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament1, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2", USER));
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament1).size(), 1);
 
         //Another tournament
-        Tournament tournament2 = new Tournament("Tournament2", 1, 3, TournamentType.LEAGUE, null);
+        Tournament tournament2 = new Tournament("Tournament2", 1, 3, TournamentType.LEAGUE, USER);
         tournament2 = tournamentProvider.save(tournament2);
         //Has a default one.
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).size(), 1);
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).get(0).getPropertyValue(), "2");
 
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament2, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1"));
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament2, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "true"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament2, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1", USER));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament2, TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "true", USER));
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).size(), 2);
 
         //Another tournament
-        Tournament tournament3 = new Tournament("Tournament3", 1, 3, TournamentType.LEAGUE, null);
+        Tournament tournament3 = new Tournament("Tournament3", 1, 3, TournamentType.LEAGUE, USER);
         tournament3 = tournamentProvider.save(tournament3);
         //Has a default one.
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament3).size(), 2);
