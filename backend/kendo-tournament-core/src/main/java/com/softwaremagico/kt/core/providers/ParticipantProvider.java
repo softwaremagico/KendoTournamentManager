@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
@@ -84,5 +85,9 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             sortedParticipants.add(participantsById.get(id));
         }
         return sortedParticipants;
+    }
+
+    public List<Participant> get(Club club) {
+        return getRepository().findByClub(club);
     }
 }
