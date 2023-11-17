@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.pdf.PdfTheme;
 
 public class FooterEvent extends PdfPageEventHelper {
-    private static final int BOTTOM_MARGIN = 20;
+    private static final int BOTTOM_MARGIN = 0;
 
     /**
      * Adds a footer to every page
