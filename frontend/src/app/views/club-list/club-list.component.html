@@ -23,4 +23,13 @@
     </div>
   </div>
   <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
+  <div class="bottom-menu">
+    <button (click)="showCompetitorsClassification()"
+            *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
+            [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
+            color="primary" mat-button
+            matTooltip="{{'competitorsClubRanking' | translate}}">
+      <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+    </button>
+  </div>
 </div>
