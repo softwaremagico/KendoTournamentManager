@@ -30,7 +30,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import java.awt.*;
+import java.awt.Color;
 
 public abstract class ParentList extends PdfDocument {
 
