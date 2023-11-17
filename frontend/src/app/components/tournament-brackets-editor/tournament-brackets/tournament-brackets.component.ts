@@ -23,7 +23,7 @@ export class TournamentBracketsComponent implements OnInit {
 
     totalTeams: number;
 
-    relations: Map<number, { src: number, dest: number }[]>;
+    relations: Map<number, { src: number, dest: number, winner:number }[]>;
 
     groupsByLevel: Map<number, Group[]> = new Map();
 
@@ -37,7 +37,8 @@ export class TournamentBracketsComponent implements OnInit {
         });
         this.groupsUpdatedService.areRelationsUpdated.subscribe((_relations: Map<number, {
             src: number,
-            dest: number
+            dest: number,
+            winner: number,
         }[]>): void => {
             this.relations = _relations;
         });
