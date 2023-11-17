@@ -22,9 +22,11 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,6 +37,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -49,16 +52,47 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         this.tournamentExtraPropertyRepository = tournamentExtraPropertyRepository;
     }
 
+    @Transactional
+    @Override
+    public Tournament save(Tournament entity) {
+        final boolean newEntity = entity.getId() == null;
+        final Tournament tournament = super.save(entity);
+        //Only for new tournaments.
+        if (newEntity) {
+            setDefaultProperties(tournament, tournament.getCreatedBy());
+        }
+        return tournament;
+    }
+
+
     public Tournament save(String name, Integer shiaijos, Integer teamSize, TournamentType type, String createdBy) {
-        return getRepository().save(new Tournament(name, shiaijos != null ? shiaijos : 1, teamSize != null ? teamSize : DEFAULT_TEAM_SIZE,
+        final Tournament tournament = getRepository().save(new Tournament(name, shiaijos != null ? shiaijos : 1,
+                teamSize != null ? teamSize : DEFAULT_TEAM_SIZE,
                 type != null ? type : TournamentType.LEAGUE, createdBy));
+        setDefaultProperties(tournament, createdBy);
+        return tournament;
+    }
+
+    private void setDefaultProperties(Tournament tournament, String username) {
+        final List<TournamentExtraProperty> properties = tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(username);
+        properties.removeIf(tournamentExtraProperty -> Objects.equals(tournamentExtraProperty.getTournament().getId(), tournament.getId()));
+        final List<TournamentExtraProperty> newProperties = new ArrayList<>();
+        properties.forEach(tournamentExtraProperty -> {
+            newProperties.add(TournamentExtraProperty.copy(tournamentExtraProperty));
+            newProperties.get(newProperties.size() - 1).setTournament(tournament);
+        });
+        if (!newProperties.isEmpty()) {
+            tournamentExtraPropertyRepository.saveAll(newProperties);
+        }
     }
 
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
     public void delete(Tournament tournament) {
-        tournamentExtraPropertyRepository.deleteByTournament(tournament);
-        getRepository().delete(tournament);
+        if (tournament != null) {
+            tournamentExtraPropertyRepository.deleteByTournament(tournament);
+            getRepository().delete(tournament);
+        }
     }
 
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})

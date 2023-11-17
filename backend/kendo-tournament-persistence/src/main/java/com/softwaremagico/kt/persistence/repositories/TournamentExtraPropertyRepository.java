@@ -38,10 +38,12 @@ public interface TournamentExtraPropertyRepository extends JpaRepository<Tournam
 
     TournamentExtraProperty findByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
 
+    TournamentExtraProperty findFirstByPropertyKeyOrderByCreatedAtDesc(TournamentExtraPropertyKey tournamentExtraPropertyKey);
+
     int deleteByTournament(Tournament tournament);
 
     int deleteByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
 
-    List<TournamentExtraProperty> findDistinctPropertyKeyByCreatedBy(String createdBy);
+    List<TournamentExtraProperty> findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(String createdBy);
 
 }
