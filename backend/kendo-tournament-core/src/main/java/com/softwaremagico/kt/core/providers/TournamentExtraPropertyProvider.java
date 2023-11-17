@@ -25,7 +25,6 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,12 +55,12 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         return getRepository().deleteByTournament(tournament);
     }
 
-    @Transactional
-    public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
-        return getRepository().deleteByTournamentAndPropertyKey(tournament, key);
+
+    public void deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
+        getRepository().deleteByTournamentAndPropertyKey(tournament, key);
+        getRepository().flush();
     }
 
-    @Transactional
     @Override
     public TournamentExtraProperty save(TournamentExtraProperty entity) {
         deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
