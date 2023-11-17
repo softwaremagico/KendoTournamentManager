@@ -120,6 +120,7 @@
   "TournamentStatisticsMenu": "Campionat",
   "TeamTopTenMenuItem": "Classificació",
   "competitorsRanking": "Classificació per competidors",
+  "competitorsClubRanking": "Classificació per competidors pertanyents a un club.",
   "DefineFightsMenu": "Definir lliga",
   "FightMenuItem": "Lliga senzilla",
   "LeagueTreeMenuItem": "Lliga en arbre",

@@ -112,7 +112,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
     private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
-    private static final int MIN_TOURNAMENT_FIGHTS = 12;
+    private static final int MIN_TOURNAMENT_FIGHTS = 5;
 
 
     private final TournamentConverter tournamentConverter;
