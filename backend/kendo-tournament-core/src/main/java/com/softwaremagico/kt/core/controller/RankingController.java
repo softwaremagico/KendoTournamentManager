@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.ClubConverter;
 import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
@@ -37,19 +38,28 @@ import com.softwaremagico.kt.core.converters.ScoreOfCompetitorConverter;
 import com.softwaremagico.kt.core.converters.ScoreOfTeamConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ScoreOfCompetitorConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ScoreOfTeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
+import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
+import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.cache.annotation.CacheEvict;
@@ -92,11 +102,21 @@ public class RankingController {
 
     private final TournamentProvider tournamentProvider;
 
+    private final ClubProvider clubProvider;
+
+    private final ParticipantProvider participantProvider;
+
+    private final ClubConverter clubConverter;
+
+    private final RoleProvider roleProvider;
+
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
                              TeamConverter teamConverter, DuelConverter duelConverter, ParticipantConverter participantConverter,
                              RankingProvider rankingProvider, ScoreOfCompetitorConverter scoreOfCompetitorConverter,
-                             ScoreOfTeamConverter scoreOfTeamConverter, TournamentProvider tournamentProvider) {
+                             ScoreOfTeamConverter scoreOfTeamConverter, TournamentProvider tournamentProvider,
+                             ClubProvider clubProvider, ParticipantProvider participantProvider, ClubConverter clubConverter,
+                             RoleProvider roleProvider) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
         this.tournamentConverter = tournamentConverter;
@@ -108,6 +128,10 @@ public class RankingController {
         this.scoreOfCompetitorConverter = scoreOfCompetitorConverter;
         this.scoreOfTeamConverter = scoreOfTeamConverter;
         this.tournamentProvider = tournamentProvider;
+        this.clubProvider = clubProvider;
+        this.participantProvider = participantProvider;
+        this.clubConverter = clubConverter;
+        this.roleProvider = roleProvider;
     }
 
     private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
@@ -227,6 +251,16 @@ public class RankingController {
                 duelConverter.reverseAll(unties),
                 tournamentConverter.reverse(tournamentDTO)
         ).stream().map(ScoreOfCompetitorConverterRequest::new).toList());
+    }
+
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRankingByClub(Integer clubId) {
+        final Club club = clubProvider.get(clubId).orElseThrow(() ->
+                new ClubNotFoundException(this.getClass(), "No club found with id '" + clubId + "'"));
+        final List<Participant> participants = participantProvider.get(club);
+        final List<Role> competitorRoles = roleProvider.get(participants, RoleType.COMPETITOR);
+        participants.retainAll(competitorRoles.stream().map(Role::getParticipant).collect(Collectors.toSet()));
+        return getCompetitorsGlobalScoreRanking(participantConverter.convertAll(participants.stream()
+                .map(participant -> new ParticipantConverterRequest(participant, clubConverter.convert(new ClubConverterRequest(club)))).toList()));
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors) {

@@ -135,6 +135,34 @@ public class RankingServices {
         }
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitors/clubs/{clubId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@Parameter(description = "Id of an existing club", required = true)
+                                                                       @PathVariable("clubId") Integer clubId,
+                                                                       HttpServletRequest request) {
+        return rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitors/clubs/{clubId}/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
+    public byte[] getCompetitorsGlobalScoreRankingByClubAsPdf(@Parameter(description = "Id of an existing club", required = true)
+                                                              @PathVariable("clubId") Integer clubId,
+                                                              Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
+        try {
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename("club score.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participant global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
