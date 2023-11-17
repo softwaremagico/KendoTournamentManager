@@ -25,9 +25,11 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -47,22 +49,29 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
     }
 
     public List<TournamentExtraProperty> getLatestPropertiesByCreatedBy(String createdBy) {
-        return getRepository().findDistinctPropertyKeyByCreatedBy(createdBy);
+        return getRepository().findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(createdBy);
     }
 
     public int delete(Tournament tournament) {
         return getRepository().deleteByTournament(tournament);
     }
 
+    @Transactional
     public int deleteByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
         return getRepository().deleteByTournamentAndPropertyKey(tournament, key);
     }
 
+    @Transactional
+    @Override
     public TournamentExtraProperty save(TournamentExtraProperty entity) {
-        final TournamentExtraProperty oldValue = getRepository().findByTournamentAndPropertyKey(entity.getTournament(), entity.getPropertyKey());
-        if (oldValue != null) {
-            getRepository().delete(oldValue);
-        }
+        deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
         return getRepository().save(entity);
+    }
+
+    @Override
+    public List<TournamentExtraProperty> saveAll(Collection<TournamentExtraProperty> tournamentExtraProperties) {
+        tournamentExtraProperties.forEach(tournamentExtraProperty ->
+                deleteByTournamentAndProperty(tournamentExtraProperty.getTournament(), tournamentExtraProperty.getPropertyKey()));
+        return super.saveAll(tournamentExtraProperties);
     }
 }
