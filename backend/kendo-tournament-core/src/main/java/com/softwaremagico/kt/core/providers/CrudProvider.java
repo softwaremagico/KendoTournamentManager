@@ -79,6 +79,10 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         repository.deleteAll();
     }
 
+    public void deleteAll(Collection<ENTITY> entities) {
+        repository.deleteAll(entities);
+    }
+
     public long count() {
         return repository.count();
     }
