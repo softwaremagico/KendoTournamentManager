@@ -45,7 +45,8 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
   }
 
   showAllElements(): void {
-    this.clubService.getAll().subscribe(clubs => {
+    this.clubService.getAll().subscribe((clubs: Club[]): void => {
+      clubs.sort((a: Club, b: Club) => a.name.localeCompare(b.name));
       this.basicTableData.dataSource.data = clubs;
     });
   }

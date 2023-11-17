@@ -94,7 +94,7 @@ public class PdfController {
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
-        return new CompetitorsScoreList(messageSource, locale, tournament, competitorTopTen);
+        return new CompetitorsScoreList(messageSource, locale, tournament, competitorTopTen, true);
     }
 
     public TeamsScoreList generateTeamsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfTeamDTO> teamsTopTen) {
