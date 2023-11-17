@@ -73,6 +73,14 @@ public class TournamentExtraProperty extends Element {
         this.propertyValue = propertyValue;
     }
 
+    public TournamentExtraProperty(Tournament tournament, TournamentExtraPropertyKey propertyKey, String propertyValue, String createdBy) {
+        this();
+        this.tournament = tournament;
+        this.propertyKey = propertyKey;
+        this.propertyValue = propertyValue;
+        this.setCreatedBy(createdBy);
+    }
+
     public Tournament getTournament() {
         return tournament;
     }
@@ -95,5 +103,13 @@ public class TournamentExtraProperty extends Element {
 
     public void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
+    }
+
+    public static TournamentExtraProperty copy(TournamentExtraProperty tournamentExtraProperty) {
+        final TournamentExtraProperty newTournamentExtraProperty = new TournamentExtraProperty();
+        newTournamentExtraProperty.setTournament(tournamentExtraProperty.getTournament());
+        newTournamentExtraProperty.setPropertyKey(tournamentExtraProperty.getPropertyKey());
+        newTournamentExtraProperty.setPropertyValue(tournamentExtraProperty.getPropertyValue());
+        return newTournamentExtraProperty;
     }
 }
