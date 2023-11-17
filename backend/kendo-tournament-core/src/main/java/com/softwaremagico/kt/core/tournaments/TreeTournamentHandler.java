@@ -143,7 +143,12 @@ public class TreeTournamentHandler extends LeagueHandler {
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            if (groupsByLevel.get(level).size() < ((((previousLevelSize + 1) * (level == 1 ? numberOfWinners : 1))) / 2)) {
+            while (groupsByLevel.get(level).size()
+                    < ((((previousLevelSize
+                    // add +1 unless number of winners 2. This +1 will be rounded later but is needed if even teams pass from previous level.
+                    + (level == 1 && numberOfWinners == 2 ? 0 : 1))
+                    //Check on level 1 the number of winners.
+                    * (level == 1 ? numberOfWinners : 1))) / 2)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
                 groupsByLevel.get(level).add(levelGroup);
