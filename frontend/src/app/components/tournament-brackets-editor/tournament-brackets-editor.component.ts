@@ -29,200 +29,201 @@ import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brac
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 
 @Component({
-    selector: 'app-tournament-brackets-editor',
-    templateUrl: './tournament-brackets-editor.component.html',
-    styleUrls: ['./tournament-brackets-editor.component.scss']
+  selector: 'app-tournament-brackets-editor',
+  templateUrl: './tournament-brackets-editor.component.html',
+  styleUrls: ['./tournament-brackets-editor.component.scss']
 })
 export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
-    @Input()
-    tournament: Tournament;
+  @Input()
+  tournament: Tournament;
 
-    @Input()
-    droppingDisabled: boolean;
+  @Input()
+  droppingDisabled: boolean;
 
-    @Output()
-    onSelectedGroup: EventEmitter<Group> = new EventEmitter();
+  @Output()
+  onSelectedGroup: EventEmitter<Group> = new EventEmitter();
 
-    @Output()
-    onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
+  @Output()
+  onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
 
-    @Output()
-    onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
-
-
-    @ViewChild('tournamentBracketsComponent', {read: ElementRef})
-    public tournamentBracketsComponent: ElementRef;
+  @Output()
+  onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
 
-    groups: Group[];
+  @ViewChild('tournamentBracketsComponent', {read: ElementRef})
+  public tournamentBracketsComponent: ElementRef;
 
-    selectedGroup: Group;
 
-    //Level -> Src Group -> Dst Group
-    relations: Map<number, { src: number, dest: number }[]>;
+  groups: Group[];
 
-    teamListData: TeamListData = new TeamListData();
+  selectedGroup: Group;
 
-    totalTeams: number;
+  //Level -> Src Group -> Dst Group
+  relations: Map<number, { src: number, dest: number }[]>;
 
-    numberOfWinnersFirstLevel: number;
+  teamListData: TeamListData = new TeamListData();
 
-    constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-                private rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-                private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
+  totalTeams: number;
+
+  numberOfWinnersFirstLevel: number;
+
+  constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
+              private rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
+  }
+
+  ngOnInit() {
+    this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
+      this.updateData();
+    });
+    this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
+      this.numberOfWinnersFirstLevel = numberOfWinners;
+      this.updateData();
+    })
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.systemOverloadService.isBusy.next(true);
+    if (changes['tournament'] && this.tournament != undefined) {
+      this.updateData();
     }
+  }
 
-    ngOnInit() {
-        this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
-            this.updateData();
+  updateData(): void {
+    this.systemOverloadService.isBusy.next(true);
+    if (this.tournament) {
+      const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
+      const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
+      const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
+
+      forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
+        if (_teams) {
+          _teams.sort(function (a: Team, b: Team) {
+            return a.name.localeCompare(b.name);
+          });
+        }
+
+        this.groups = _groups;
+        this.onGroupsUpdated.emit(_groups);
+        this.groupsUpdatedService.areGroupsUpdated.next(_groups);
+        const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
+        this.onTeamsLengthUpdated.next(_teams.length);
+        this.totalTeams = _teams.length;
+        _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
+
+        this.teamListData.teams = _teams;
+        this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
+        this.teamListData.filteredTeams = _teams;
+
+        this.relations = this.convert(_groupRelations);
+        this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
+      });
+    }
+  }
+
+  selectGroup(group: Group): void {
+    if (this.rbacService.isAllowed(RbacActivity.SELECT_GROUP)) {
+      this.selectedGroup = group;
+      this.onSelectedGroup.emit(group);
+    }
+  }
+
+
+  convert(groupRelations: GroupLink[]): Map<number, { src: number, dest: number, winner: number }[]> {
+    const relations: Map<number, { src: number, dest: number, winner: number }[]> = new Map();
+    if (groupRelations) {
+      for (const groupLink of groupRelations) {
+        if (!relations.get(groupLink.source!.level!)) {
+          relations.set(groupLink.source!.level!, []);
+        }
+        relations.get(groupLink.source!.level!)?.push({
+          src: groupLink.source!.index!,
+          dest: groupLink.destination!.index!,
+          winner: groupLink.winner
         });
-        this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
-            this.numberOfWinnersFirstLevel = numberOfWinners;
-            this.updateData();
-        })
+      }
     }
+    return relations;
+  }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        this.systemOverloadService.isBusy.next(true);
-        if (changes['tournament'] && this.tournament != undefined) {
-            this.updateData();
-        }
+
+  removeTeam(event: CdkDragDrop<Team[], any>): void {
+    transferArrayItem(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,
+    );
+    this.groupService.deleteTeamsFromTournament(this.tournament!.id!, this.teamListData.teams).subscribe();
+    this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
+    this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
+  }
+
+  addGroup(): void {
+    this.systemOverloadService.isBusy.next(true);
+    const group: Group = new Group();
+    group.tournament = this.tournament;
+    group.level = 0;
+    group.index = this.groups.filter((g: Group): boolean => {
+      return g.level === 0;
+    }).length;
+    this.groupService.addGroup(group).subscribe((_group: Group): void => {
+      //Refresh all groups, also other levels that can change.
+      this.updateData();
+    });
+  }
+
+  deleteLast(): void {
+    const lastGroup: Group = this.groups.filter((g: Group): boolean => {
+      return g.level === 0;
+    }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+      prev : current);
+    this.deleteGroup(lastGroup);
+  }
+
+  deleteGroup(group: Group | undefined): void {
+    if (group) {
+      this.systemOverloadService.isBusy.next(true);
+      this.groupService.deleteGroup(group).subscribe((): void => {
+        //Refresh all groups, also other levels that can change.
+        this.updateData();
+      });
     }
+  }
 
-    updateData(): void {
-        this.systemOverloadService.isBusy.next(true);
-        if (this.tournament) {
-            const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
-            const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
-            const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
+  public downloadAsPdf(): void {
+    const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
+    const height: number = groupsByLevel.get(0)?.length! * TournamentBracketsComponent.GROUP_SEPARATION + this.totalTeams * 100;
+    //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
+    const width: number = (groupsByLevel.size! + 1) * (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION + 100);
+    const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
+    const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
+    const widthMM: number = this.getMM(width);
+    const heightMM: number = this.getMM(height);
+    const ratio: number = this.getRatio(widthMM, heightMM);
+    domToImage.toPng(this.tournamentBracketsComponent.nativeElement, {
+      width: width,
+      height: height
+    }).then(result => {
+      const jsPdfOptions = {
+        orientation: orientation,
+        unit: imageUnit,
+        format: "a4",
+      };
+      const pdf: jsPDF = new jsPDF(jsPdfOptions);
+      pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);
+      pdf.save(this.tournament.name + '.pdf');
+    }).catch(error => {
+    });
+  }
 
-            forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
-                if (_teams) {
-                    _teams.sort(function (a: Team, b: Team) {
-                        return a.name.localeCompare(b.name);
-                    });
-                }
+  private getRatio(width: number, height: number): number {
+    return 500 / height;
+  }
 
-                this.groups = _groups;
-                this.onGroupsUpdated.emit(_groups);
-                this.groupsUpdatedService.areGroupsUpdated.next(_groups);
-                const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
-                this.onTeamsLengthUpdated.next(_teams.length);
-                this.totalTeams = _teams.length;
-                _teams = _teams.filter((item: Team): boolean => groupTeamsIds.indexOf(item.id!) === -1);
-
-                this.teamListData.teams = _teams;
-                this.groupsUpdatedService.areTotalTeamsNumberUpdated.next(this.totalTeams);
-                this.teamListData.filteredTeams = _teams;
-
-                this.relations = this.convert(_groupRelations);
-                this.groupsUpdatedService.areRelationsUpdated.next(this.convert(_groupRelations));
-            });
-        }
-    }
-
-    selectGroup(group: Group): void {
-        if (this.rbacService.isAllowed(RbacActivity.SELECT_GROUP)) {
-            this.selectedGroup = group;
-            this.onSelectedGroup.emit(group);
-        }
-    }
-
-
-    convert(groupRelations: GroupLink[]): Map<number, { src: number, dest: number }[]> {
-        const relations: Map<number, { src: number, dest: number }[]> = new Map();
-        if (groupRelations) {
-            for (const groupLink of groupRelations) {
-                if (!relations.get(groupLink.source!.level!)) {
-                    relations.set(groupLink.source!.level!, []);
-                }
-                relations.get(groupLink.source!.level!)?.push({
-                    src: groupLink.source!.index!,
-                    dest: groupLink.destination!.index!
-                });
-            }
-        }
-        return relations;
-    }
-
-
-    removeTeam(event: CdkDragDrop<Team[], any>): void {
-        transferArrayItem(
-            event.previousContainer.data,
-            event.container.data,
-            event.previousIndex,
-            event.currentIndex,
-        );
-        this.groupService.deleteTeamsFromTournament(this.tournament!.id!, this.teamListData.teams).subscribe();
-        this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
-        this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
-    }
-
-    addGroup(): void {
-        this.systemOverloadService.isBusy.next(true);
-        const group: Group = new Group();
-        group.tournament = this.tournament;
-        group.level = 0;
-        group.index = this.groups.filter((g: Group): boolean => {
-            return g.level === 0;
-        }).length;
-        this.groupService.addGroup(group).subscribe((_group: Group): void => {
-            //Refresh all groups, also other levels that can change.
-            this.updateData();
-        });
-    }
-
-    deleteLast(): void {
-        const lastGroup: Group = this.groups.filter((g: Group): boolean => {
-            return g.level === 0;
-        }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-            prev : current);
-        this.deleteGroup(lastGroup);
-    }
-
-    deleteGroup(group: Group | undefined): void {
-        if (group) {
-            this.systemOverloadService.isBusy.next(true);
-            this.groupService.deleteGroup(group).subscribe((): void => {
-                //Refresh all groups, also other levels that can change.
-                this.updateData();
-            });
-        }
-    }
-
-    public downloadAsPdf(): void {
-        const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
-        const height: number = groupsByLevel.get(0)?.length! * TournamentBracketsComponent.GROUP_SEPARATION + this.totalTeams * 100;
-        //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-        const width: number = (groupsByLevel.size! + 1) * (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION + 100);
-        const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
-        const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
-        const widthMM: number = this.getMM(width);
-        const heightMM: number = this.getMM(height);
-        const ratio: number = this.getRatio(widthMM, heightMM);
-        domToImage.toPng(this.tournamentBracketsComponent.nativeElement, {
-            width: width,
-            height: height
-        }).then(result => {
-            const jsPdfOptions = {
-                orientation: orientation,
-                unit: imageUnit,
-                format: "a4",
-            };
-            const pdf: jsPDF = new jsPDF(jsPdfOptions);
-            pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);
-            pdf.save(this.tournament.name + '.pdf');
-        }).catch(error => {
-        });
-    }
-
-    private getRatio(width: number, height: number): number {
-        return 500 / height;
-    }
-
-    private getMM(pixels: number): number {
-        return (pixels * 25.4) / (window.devicePixelRatio * 96);
-    }
+  private getMM(pixels: number): number {
+    return (pixels * 25.4) / (window.devicePixelRatio * 96);
+  }
 
 }

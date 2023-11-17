@@ -47,7 +47,7 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
-            <class name="com.softwaremagico.kt.core.tests.NumberOfWinners"/>
+            <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
         </classes>
     </test>
 </suite>

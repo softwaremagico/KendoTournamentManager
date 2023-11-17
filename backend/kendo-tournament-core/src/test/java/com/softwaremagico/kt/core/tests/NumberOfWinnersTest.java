@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -37,15 +37,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"numberOfWinners"})
-public class NumberOfWinners extends AbstractTestNGSpringContextTests {
+public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
 
-    private static final String TOURNAMENT_NAME = "TournamentTest";
     private static final String TOURNAMENT_TWO_WINNERS_NAME = "TournamentTest2";
     private static final int MEMBERS = 3;
 
@@ -81,6 +81,13 @@ public class NumberOfWinners extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLink.getSource().getIndex(), source);
         Assert.assertEquals(groupLink.getDestination().getIndex(), destination);
         Assert.assertEquals(groupLink.getWinner(), winner);
+    }
+
+    @AfterMethod
+    public void removeGroups() {
+        groupProvider.deleteAll();
+        tournamentExtraPropertyProvider.deleteAll();
+        tournamentProvider.deleteAll();
     }
 
     @Test
@@ -156,5 +163,22 @@ public class NumberOfWinners extends AbstractTestNGSpringContextTests {
 
         checkLink(groupLinks.get(0), 0, 0, 0);
         checkLink(groupLinks.get(1), 1, 0, 0);
+    }
+
+    @Test
+    public void addingAndRemovingGroupsWithTwoWinners() {
+        Tournament tournamentChangingWinners = new Tournament(TOURNAMENT_TWO_WINNERS_NAME, 1, MEMBERS, TournamentType.TREE, null);
+        tournamentChangingWinners = tournamentProvider.save(tournamentChangingWinners);
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1"));
+
+
+        treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(0, tournamentChangingWinners));
+        treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(1, tournamentChangingWinners));
+        treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(2, tournamentChangingWinners));
+        treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(3, tournamentChangingWinners));
+
+        tournamentController.setNumberOfWinners(tournamentChangingWinners.getId(), 2, null);
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentChangingWinners).size(), 11);
     }
 }
