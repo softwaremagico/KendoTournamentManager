@@ -25,13 +25,6 @@
                 matTooltip="{{'winnerNumber' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
         </button>
-        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.activities)"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | translate}}">
-          <mat-icon>clear</mat-icon>
-        </button>
         <button (click)="changeNumberOfWinners(1)"
                 *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
                 [disabled]="(tournament && tournament.locked)"
@@ -39,6 +32,13 @@
                 color="primary" mat-button
                 matTooltip="{{'winnerNumber' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
+        </button>
+        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.activities)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                class="delete-button" color="warn" mat-button
+                matTooltip="{{'delete' | translate}}">
+          <mat-icon>clear</mat-icon>
         </button>
         <mat-divider [vertical]="true"></mat-divider>
         <button (click)="askToRemoveAllTeams()"
