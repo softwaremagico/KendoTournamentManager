@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {GroupsUpdatedService} from "../groups-updated.service";
 import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {Group} from "../../../../models/group";
@@ -33,6 +33,9 @@ export class ArrowComponent implements OnInit {
 
   @Input()
   groupDestination: number;
+
+  @Input()
+  winner: number = 1;
 
   totalTeams: number;
 
