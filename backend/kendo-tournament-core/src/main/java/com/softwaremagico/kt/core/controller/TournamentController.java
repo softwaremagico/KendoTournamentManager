@@ -236,13 +236,4 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
         return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
     }
-
-    private void setDefaultProperties(TournamentDTO tournamentDTO, String username) {
-        final List<TournamentExtraProperty> properties = tournamentExtraPropertyProvider.getLatestPropertiesByCreatedBy(username);
-        properties.forEach(tournamentExtraProperty -> {
-            tournamentExtraProperty.setId(null);
-            tournamentExtraProperty.setTournament(getConverter().reverse(tournamentDTO));
-        });
-        tournamentExtraPropertyProvider.save(properties);
-    }
 }
