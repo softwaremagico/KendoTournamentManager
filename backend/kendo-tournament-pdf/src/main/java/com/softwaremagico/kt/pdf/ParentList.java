@@ -30,9 +30,11 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import java.awt.Color;
+import java.awt.*;
 
 public abstract class ParentList extends PdfDocument {
+
+    protected static final float MIN_HEADER_HIGH = 50f;
     protected static final int FOOTER_BORDER = 0;
     protected static final int HEADER_BORDER = 0;
     protected static final int CELL_BORDER = 0;
@@ -269,7 +271,6 @@ public abstract class ParentList extends PdfDocument {
                 PdfTheme.HEADER_FONT_SIZE);
         createFooterRow(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.FOOTER_FONT_SIZE);
-        createRowSeparator(mainTable);
         createBodyRows(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.FONT_SIZE);
         createRowSeparator(mainTable);
