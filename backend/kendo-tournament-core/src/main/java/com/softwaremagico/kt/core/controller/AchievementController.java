@@ -1876,7 +1876,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
             return new ArrayList<>();
         }
-        if (tournament.getTeamSize() == 1) {
+        if (tournament.getTeamSize() < TournamentProvider.DEFAULT_TEAM_SIZE) {
             return new ArrayList<>();
         }
         final List<Team> teams = new ArrayList<>(getTeamsFromTournament());
