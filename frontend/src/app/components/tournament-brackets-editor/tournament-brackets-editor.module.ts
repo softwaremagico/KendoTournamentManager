@@ -10,6 +10,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import {MatDialogModule} from "@angular/material/dialog";
     MatIconModule,
     RbacModule,
     TranslateModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTooltipModule
   ]
 })
 export class TournamentBracketsEditorModule { }
