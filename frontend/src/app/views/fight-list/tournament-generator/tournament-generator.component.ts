@@ -14,9 +14,6 @@ import {FightService} from "../../../services/fight.service";
 import {MessageService} from "../../../services/message.service";
 import {GroupService} from "../../../services/group.service";
 import {Group} from "../../../models/group";
-import {
-  GroupsUpdatedService
-} from "../../../components/tournament-brackets-editor/tournament-brackets/groups-updated.service";
 import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
 import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
 import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
@@ -46,7 +43,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
 
     constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
                 private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
-                private groupService: GroupService, private groupsUpdatedService: GroupsUpdatedService,
+                private groupService: GroupService,
                 private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
                 private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
         super(rbacService);
@@ -103,25 +100,6 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
             this.messageService.infoMessage("infoFightCreated");
             this.goBackToFights();
         });
-    }
-
-    askToRemoveAllTeams(): void {
-        let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-            disableClose: false
-        });
-        dialogRef.componentInstance.messageTag = "questionDeleteTeams"
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.removeAllTeams();
-            }
-        });
-    }
-
-    removeAllTeams(): void {
-        this.groupService.deleteAllTeamsFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
-            this.groupsUpdatedService.areTeamListUpdated.next([]);
-        })
     }
 
     groupsUpdated(groups: Group[]): void {
