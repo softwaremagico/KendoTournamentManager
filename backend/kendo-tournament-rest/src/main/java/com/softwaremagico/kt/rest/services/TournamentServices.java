@@ -79,7 +79,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentDTO> getAll(HttpServletRequest request) {
         final List<TournamentDTO> tournaments = super.getAll(request);
-        tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt).reversed());
+        tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())).reversed());
         return tournaments;
     }
 
