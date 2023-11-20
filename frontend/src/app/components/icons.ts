@@ -36,7 +36,8 @@ export class IconModule {
       .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`))
       .addSvgIcon("one-winner", this.setPath(`${this.path}/one-winner.svg`))
       .addSvgIcon("two-winners", this.setPath(`${this.path}/two-winners.svg`))
-      .addSvgIcon("zip-file", this.setPath(`${this.path}/zip-file.svg`));
+      .addSvgIcon("zip-file", this.setPath(`${this.path}/zip-file.svg`))
+      .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {
