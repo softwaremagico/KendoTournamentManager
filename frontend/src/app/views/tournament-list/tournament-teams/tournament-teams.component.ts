@@ -391,7 +391,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
         this.members.set(team, team.members);
         this.teamService.update(team).pipe(
-          tap((newTeam: Team) => {
+          tap((newTeam: Team): void => {
             this.loggerService.info("Team '" + newTeam.name + "' updated.");
           }),
           catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
