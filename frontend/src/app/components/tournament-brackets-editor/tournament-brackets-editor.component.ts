@@ -27,6 +27,7 @@ import jsPDF from 'jspdf';
 import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
+import {random} from "../../utils/random/random";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -205,7 +206,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     domToImage.toPng(this.tournamentBracketsComponent.nativeElement, {
       width: width,
       height: height
-    }).then(result => {
+    }).then((result: string): void => {
       const jsPdfOptions = {
         orientation: orientation,
         unit: imageUnit,
@@ -226,4 +227,46 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     return (pixels * 25.4) / (window.devicePixelRatio * 96);
   }
 
+  balancedGroups(): void {
+
+  }
+
+  randomGroups(): void {
+    let groups: Group[] = this.groups;
+    //Select group from level 0.
+    groups = groups.filter((group: Group): boolean => group.level == 0);
+    const teamsNumber: number = this.teamListData.teams.length;
+    for (let i = 0; i < teamsNumber; i++) {
+      const team: Team = this.getRandomTeam(this.teamListData.teams);
+      if (team) {
+        //Get group with fewer teams.
+        groups.sort((a: Group, b: Group): number => {
+          return a.teams.length - b.teams.length;
+        });
+        const selectedGroup: Group = groups[0];
+        //Add team to group
+        selectedGroup.teams.push(team);
+        this.teamListData.teams.splice(this.teamListData.teams.indexOf(team), 1);
+      }
+    }
+
+    this.updateGroupsTeams(groups);
+  }
+
+  updateGroupsTeams(groups: Group[]): void {
+    //Send final teams
+    let observables: Observable<any>[] = [];
+    for (const group of groups) {
+      observables.push(this.groupService.addTeamsToGroup(group!.id!, group.teams));
+    }
+    //Ensure all groups are updated.
+    forkJoin(observables)
+      .subscribe((): void => {
+        this.updateData();
+      });
+  }
+
+  getRandomTeam(teams: Team[]): Team {
+    return teams[Math.floor(random() * teams.length)];
+  }
 }
