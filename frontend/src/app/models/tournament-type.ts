@@ -50,6 +50,13 @@ export namespace TournamentType {
   export function needsFifoWinner(type: TournamentType | undefined): boolean {
     return type === TournamentType.CHAMPIONSHIP || type === TournamentType.LEAGUE;
   }
+
+  /**
+   * Has a default group that is automatically handled by the system.
+   */
+  export function usesDefaultGroup(type: TournamentType | undefined): boolean {
+    return type !== TournamentType.CHAMPIONSHIP;
+  }
 }
 
 
