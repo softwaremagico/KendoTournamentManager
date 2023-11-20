@@ -129,8 +129,15 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
     public long countTournamentsAfter(LocalDateTime createdAfter) {
+        if (createdAfter == null) {
+            return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt() != null
+                    && tournament.getCreatedAt().isAfter(LocalDateTime.now().minusYears(1)
+                    .with(LocalTime.MIN))).count();
+
+        }
         //Due to LocalDateTime encryption countByGreaterThan is not working very well.
-        return getRepository().findAll().stream().filter(tournament -> tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
+        return getRepository().findAll().stream().filter(tournament ->
+                tournament.getCreatedAt() != null && tournament.getCreatedAt().isAfter(createdAfter.with(LocalTime.MIN))).count();
     }
 
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
