@@ -44,8 +44,8 @@
   <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
           class="fight-button" mat-flat-button
           mat-raised-button>
-    <mat-icon>auto_fix_high</mat-icon>
-    {{'wizard' | translate}}
+    <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
+    {{'sorted' | translate}}
   </button>
   <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
           class="fight-button" mat-flat-button
