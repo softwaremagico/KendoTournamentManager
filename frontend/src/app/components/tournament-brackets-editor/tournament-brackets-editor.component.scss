@@ -6,7 +6,7 @@
 
 .teams-container {
   height: 100%;
-  width: 350px;
+  width: 420px;
   border: 1px solid #1f1836;
 }
 
@@ -19,4 +19,20 @@
   position: absolute;
   z-index: 100;
   right: 50px;
+}
+
+.button-container {
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+}
+
+.mat-raised-button {
+  width: 120px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  column-gap: 20px;
+  justify-content: center;
 }
