@@ -540,7 +540,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateGradeAchievementsByDays(Tournament tournament, AchievementType achievementType, AchievementGrade achievementGrade,
                                                               Integer amount) {
-        if (achievementGrade == null || achievementGrade.equals(AchievementGrade.NORMAL)) {
+        if (achievementGrade == null || achievementGrade.equals(AchievementGrade.NORMAL) || tournament.getCreatedAt() == null) {
             return new ArrayList<>();
         }
         final List<Achievement> winnersAchievements = achievementProvider.getAfter(tournament, achievementType,
@@ -917,7 +917,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheNeverEndingStoryAchievement(Tournament tournament) {
         //Get older of 10 years
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
-                participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
+                tournament.getCreatedAt() != null && participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL)
                 .stream().map(Achievement::getParticipant).toList();
@@ -933,6 +933,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementBronze(Tournament tournament) {
         //Get older of 10 years
+        if (tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
                 participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_BRONZE))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
@@ -950,6 +953,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementSilver(Tournament tournament) {
         //Get older of 10 years
+        if (tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
                 participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_SILVER))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
@@ -967,6 +973,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementGold(Tournament tournament) {
         //Get older of 10 years
+        if (tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
                 participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_GOLD))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
