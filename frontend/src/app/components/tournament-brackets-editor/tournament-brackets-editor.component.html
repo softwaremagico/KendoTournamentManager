@@ -7,17 +7,27 @@
       <team-list [teamListData]="teamListData" [minify]="true"></team-list>
     </div>
     <div class="button-container" mat-dialog-actions>
-      <button (click)="balancedGroups()"
-        mat-flat-button
-        mat-raised-button>
-        <mat-icon>auto_fix_high</mat-icon>
-        {{'wizard' | translate}}
+      <button (click)="sortedGroups()"
+              [disabled]="groupsDisabled || (tournament && tournament.locked)"
+              mat-flat-button
+              mat-raised-button>
+        <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
+        {{'sorted' | translate}}
       </button>
       <button (click)="randomGroups()"
-        mat-flat-button
-        mat-raised-button>
+              [disabled]="groupsDisabled || (tournament && tournament.locked)"
+              mat-flat-button
+              mat-raised-button>
         <mat-icon>casino</mat-icon>
         {{'random' | translate}}
+      </button>
+      <button (click)="askToRemoveAllTeams()"
+              [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
+              mat-flat-button
+              mat-raised-button
+              matTooltip="{{'removeTeams' | translate}}">
+        <mat-icon>cleaning_services</mat-icon>
+        {{'clean' | translate}}
       </button>
     </div>
   </div>

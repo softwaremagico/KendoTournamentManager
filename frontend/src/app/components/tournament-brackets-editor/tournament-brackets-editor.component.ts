@@ -28,6 +28,8 @@ import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
 import {NumberOfWinnersUpdatedService} from "../../services/notifications/number-of-winners-updated.service";
 import {random} from "../../utils/random/random";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -41,6 +43,9 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   @Input()
   droppingDisabled: boolean;
+
+  @Input()
+  groupsDisabled: boolean = true;
 
   @Output()
   onSelectedGroup: EventEmitter<Group> = new EventEmitter();
@@ -70,7 +75,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
   numberOfWinnersFirstLevel: number;
 
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              private rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
   }
 
@@ -227,16 +232,34 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     return (pixels * 25.4) / (window.devicePixelRatio * 96);
   }
 
-  balancedGroups(): void {
+  sortedGroups(): void {
+    let groups: Group[] = this.groups;
+    //Select group from level 0.
+    groups = groups.filter((group: Group): boolean => group.level == 0);
 
+    let teams: Team[] = this.teamListData.teams;
+    teams.sort((a: Team, b: Team): number => a.name > b.name ? 1 : -1);
+    while (teams.length > 0) {
+      //Get group with fewer teams.
+      groups.sort((a: Group, b: Group): number => {
+        if (a.teams.length === b.teams.length) {
+          return a.index - b.index;
+        }
+        return a.teams.length - b.teams.length;
+      });
+      const selectedGroup: Group = groups[0];
+      //Add team to group
+      selectedGroup.teams.push(teams[0]);
+      this.teamListData.teams.splice(this.teamListData.teams.indexOf(teams[0]), 1);
+    }
+    this.updateGroupsTeams(groups);
   }
 
   randomGroups(): void {
     let groups: Group[] = this.groups;
     //Select group from level 0.
     groups = groups.filter((group: Group): boolean => group.level == 0);
-    const teamsNumber: number = this.teamListData.teams.length;
-    for (let i = 0; i < teamsNumber; i++) {
+    while (this.teamListData.teams.length > 0) {
       const team: Team = this.getRandomTeam(this.teamListData.teams);
       if (team) {
         //Get group with fewer teams.
@@ -268,5 +291,24 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   getRandomTeam(teams: Team[]): Team {
     return teams[Math.floor(random() * teams.length)];
+  }
+
+  askToRemoveAllTeams(): void {
+    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
+      disableClose: false
+    });
+    dialogRef.componentInstance.messageTag = "questionDeleteTeams"
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.removeAllTeams();
+      }
+    });
+  }
+
+  removeAllTeams(): void {
+    this.groupService.deleteAllTeamsFromTournament(this.tournament!.id!).subscribe((_groups: Group[]): void => {
+      this.groupsUpdatedService.areTeamListUpdated.next([]);
+    })
   }
 }
