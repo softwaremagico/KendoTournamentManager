@@ -6,7 +6,7 @@
          class="teams-container">
       <team-list [teamListData]="teamListData" [minify]="true"></team-list>
     </div>
-    <div class="button-container" mat-dialog-actions>
+    <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
       <button (click)="sortedGroups()"
               [disabled]="groupsDisabled || (tournament && tournament.locked)"
               mat-flat-button
