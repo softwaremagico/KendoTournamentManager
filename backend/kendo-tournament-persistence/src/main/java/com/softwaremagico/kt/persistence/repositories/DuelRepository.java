@@ -45,10 +45,10 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     List<Duel> findByTournament(Tournament tournament);
 
-    @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u WHERE u.competitor1 IN :participants OR u.competitor2 IN :participants")
+    @Query("SELECT d FROM Duel d WHERE (d.competitor1 IN :participants OR d.competitor2 IN :participants) AND d.type='UNDRAW'")
     List<Duel> findUntiesByParticipantIn(@Param("participants") Collection<Participant> participants);
 
-    @Query("SELECT g.unties FROM Group g LEFT JOIN g.unties u")
+    @Query("SELECT d FROM Duel d WHERE d.type='UNDRAW'")
     List<Duel> findAllUnties();
 
     @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
