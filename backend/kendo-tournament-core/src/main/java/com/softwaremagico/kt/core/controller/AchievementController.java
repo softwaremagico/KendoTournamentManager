@@ -284,6 +284,15 @@ public class AchievementController extends BasicInsertableController<Achievement
         return rolesByParticipant;
     }
 
+    private Map<Participant, List<Role>> getRolesByParticipantUntil(Tournament tournament) {
+        final Map<Participant, List<Role>> roles = new HashMap<>();
+        for (Map.Entry<Participant, List<Role>> entry : getRolesByParticipant().entrySet()) {
+            roles.put(entry.getKey(), entry.getValue().stream().filter(role ->
+                    role.getTournament().getCreatedAt().isBefore(tournament.getCreatedAt())).toList());
+        }
+        return roles;
+    }
+
 
     public List<AchievementDTO> getParticipantAchievements(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
@@ -326,8 +335,8 @@ public class AchievementController extends BasicInsertableController<Achievement
                 .map(TournamentConverterRequest::new).collect(Collectors.toList()));
         tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt));
         final List<AchievementDTO> achievementsGenerated = new ArrayList<>();
+        achievementProvider.deleteAll();
         for (final TournamentDTO tournament : tournaments) {
-            deleteAchievements(tournament);
             achievementsGenerated.addAll(generateAchievements(tournament));
         }
         return achievementsGenerated;
@@ -917,7 +926,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheNeverEndingStoryAchievement(Tournament tournament) {
         //Get older of 10 years
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
-                tournament.getCreatedAt() != null && participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS)))
+                        tournament.getCreatedAt() != null && participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS)))
                 .collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL)
@@ -1470,8 +1479,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateSweatyTenuguiAchievement(Tournament tournament) {
         final List<Participant> participants = participantProvider.get(tournament, RoleType.COMPETITOR);
         //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL,
-                getParticipantsFromTournament()).forEach(participants::remove);
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
@@ -1482,18 +1491,18 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementBronze(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
-        //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE,
-                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
         //Remove the ones that has no the required number of tournaments.
-        final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
+        final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE) {
                 participants.remove(participant);
             }
         });
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE, participants, tournament);
     }
 
@@ -1504,18 +1513,18 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementSilver(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
-        //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER,
-                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
         //Remove the ones that has no the required number of tournaments.
-        final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
+        final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER) {
                 participants.remove(participant);
             }
         });
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER, participants, tournament);
     }
 
@@ -1527,9 +1536,6 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateSweatyTenuguiAchievementGold(Tournament tournament) {
         final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
-        //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD,
-                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
@@ -1538,6 +1544,9 @@ public class AchievementController extends BasicInsertableController<Achievement
                 participants.remove(participant);
             }
         });
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD, participants, tournament);
     }
 
