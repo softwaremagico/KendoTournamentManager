@@ -61,6 +61,11 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);
 
+    @Query("SELECT a.participant FROM Achievement a WHERE a.achievementType=:achievementType AND"
+            + " a.achievementGrade=:achievementGrade")
+    List<Participant> findParticipantsWithAchievementAndGrade(
+            @Param("achievementType") AchievementType achievementType, @Param("achievementGrade") AchievementGrade achievementGrade);
+
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType AND"
             + " a.achievementGrade=:achievementGrade")
     List<Participant> findParticipantsWithAchievementAndGradeFromList(
