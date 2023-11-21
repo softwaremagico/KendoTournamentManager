@@ -19,7 +19,7 @@
         </button>
         <button (click)="changeNumberOfWinners(2)"
                 *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
-                [disabled]="(tournament && tournament.locked)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'winnerNumber' | translate}}">
@@ -27,7 +27,7 @@
         </button>
         <button (click)="changeNumberOfWinners(1)"
                 *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
-                [disabled]="(tournament && tournament.locked)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'winnerNumber' | translate}}">
