@@ -74,7 +74,7 @@ public class Group extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer index = 0;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
     @OrderColumn(name = "group_index")
     private List<Fight> fights;
