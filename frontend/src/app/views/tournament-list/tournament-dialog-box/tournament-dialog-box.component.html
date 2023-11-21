@@ -1,5 +1,5 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<link href="tournament-dialog-box.component.scss" rel="stylesheet"><h1 mat-dialog-title>{{title}}</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div class="form-layout" mat-dialog-content>
     <form (ngSubmit)="doAction()" [formGroup]="registerForm">
         <mat-form-field *ngIf="actionName != 'Delete'">
