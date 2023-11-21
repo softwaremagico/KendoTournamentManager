@@ -30,6 +30,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   group: Group;
   showIndex: boolean | undefined;
   existsDraws: boolean = false;
+  numberOfWinners: number;
 
   private destroy$: Subject<void> = new Subject<void>();
   _loading = false;
@@ -57,6 +58,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
           forkJoin([rankingRequest, winnersRequest]).subscribe(([_scoresOfTeams, _numberOfWinners]): void => {
             this.teamScores = _scoresOfTeams;
+            this.numberOfWinners = _numberOfWinners !== undefined ? Number(_numberOfWinners.propertyValue) : 1;
             if (this.isDrawWinner(0) || (_numberOfWinners && _numberOfWinners.propertyValue == "2" && this.isDrawWinner(1))) {
               this.messageService.warningMessage("drawScore");
               this.existsDraws = true;
@@ -71,6 +73,16 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
         }
       }
     }
+  }
+
+  importantDrawWinner(): boolean {
+    for (let i = 0; i < this.numberOfWinners; i++) {
+      if (this.isDrawWinner(i)) {
+        console.log("Found draws on index ", i);
+        return true;
+      }
+    }
+    return false;
   }
 
   isDrawWinner(index: number): boolean {
@@ -114,6 +126,14 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
             anchor.click();
           });
         }
+      }
+    }
+  }
+
+  undrawAllTeams(): void {
+    for (let i = 0; i < this.numberOfWinners; i++) {
+      if (this.isDrawWinner(i)) {
+        this.undrawTeams(i);
       }
     }
   }
