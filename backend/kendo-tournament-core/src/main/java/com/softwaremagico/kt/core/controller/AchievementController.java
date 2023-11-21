@@ -917,7 +917,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheNeverEndingStoryAchievement(Tournament tournament) {
         //Get older of 10 years
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
-                tournament.getCreatedAt() != null && participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
+                tournament.getCreatedAt() != null && participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS)))
+                .collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL)
                 .stream().map(Achievement::getParticipant).toList();
