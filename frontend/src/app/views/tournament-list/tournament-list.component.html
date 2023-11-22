@@ -90,14 +90,14 @@
       </button>
       <button (click)="downloadAccreditations()"
               *ngIf="(RbacActivity.PRINT_ACCREDITATIONS | rbac : this.rbacService.activities)"
-              [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
+              [disabled]="!basicTableData.selectedElement"
               [matTooltipShowDelay]="500"
               color="primary" mat-button
               matTooltip="{{'accreditationsHint' | translate}}">
         <mat-icon>badge</mat-icon>
       </button>
       <button (click)="downloadDiplomas()" *ngIf="(RbacActivity.PRINT_DIPLOMAS | rbac : this.rbacService.activities)"
-              [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
+              [disabled]="!basicTableData.selectedElement"
               [matTooltipShowDelay]="500"
               color="primary" mat-button
               matTooltip="{{'diplomasHint' | translate}}">
