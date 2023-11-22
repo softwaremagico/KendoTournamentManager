@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
@@ -58,7 +59,6 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -74,6 +74,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
@@ -269,12 +270,14 @@ public class RankingController {
 
 
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
-        final List<Tournament> tournaments = tournamentProvider.getAll();
+        final Map<Integer, ClubDTO> clubsById = competitors.stream()
+                .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity()));
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
                         participantConverter.reverseAll(competitors),
                         scoreType
                 )
-                .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor, tournaments)).toList());
+                .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor,
+                        clubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
     }
 
     @Cacheable("competitors-ranking")
