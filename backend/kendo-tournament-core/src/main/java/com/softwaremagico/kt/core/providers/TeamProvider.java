@@ -25,6 +25,7 @@ import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -39,10 +40,13 @@ import java.util.Optional;
 public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
     private final RoleProvider roleProvider;
 
+    private final GroupRepository groupRepository;
+
     @Autowired
-    public TeamProvider(TeamRepository repository, RoleProvider roleProvider) {
+    public TeamProvider(TeamRepository repository, RoleProvider roleProvider, GroupRepository groupRepository) {
         super(repository);
         this.roleProvider = roleProvider;
+        this.groupRepository = groupRepository;
     }
 
     public Team update(Team team, List<Participant> members) {
