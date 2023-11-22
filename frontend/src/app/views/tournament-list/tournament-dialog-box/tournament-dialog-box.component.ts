@@ -60,7 +60,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
       tournamentName: new UntypedFormControl({
         value: this.tournament.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(50)]),
+      }, [Validators.required, Validators.minLength(4), Validators.maxLength(60)]),
       shiaijos: new UntypedFormControl({
         value: this.tournament.shiaijos,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
