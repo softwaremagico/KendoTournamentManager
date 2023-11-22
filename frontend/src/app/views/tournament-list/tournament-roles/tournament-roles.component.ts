@@ -125,6 +125,12 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       this.messageService.infoMessage("infoRoleDeleted");
       this.statisticsChangedService.areStatisticsChanged.next(true);
     });
+    if (!this.userListData.filteredParticipants.includes(participant)) {
+      this.userListData.filteredParticipants.push(participant);
+    }
+    if (!this.userListData.participants.includes(participant)) {
+      this.userListData.participants.push(participant);
+    }
     this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
     this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
   }
