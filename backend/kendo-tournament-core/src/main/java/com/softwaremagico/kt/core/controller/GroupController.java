@@ -143,6 +143,16 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         //Remove all fights and duels from the group. Will be added on the update.
         convert(getProvider().save(reverse(oldGroupDTO)));
 
+        //Ensure that the group contains the teams of the fight.
+        groupDTO.getFights().forEach(fightDTO -> {
+            if (!groupDTO.getTeams().contains(fightDTO.getTeam1())) {
+                groupDTO.getTeams().add(fightDTO.getTeam1());
+            }
+            if (!groupDTO.getTeams().contains(fightDTO.getTeam2())) {
+                groupDTO.getTeams().add(fightDTO.getTeam2());
+            }
+        });
+
         groupDTO.setUpdatedBy(username);
         return create(groupDTO, null);
     }
