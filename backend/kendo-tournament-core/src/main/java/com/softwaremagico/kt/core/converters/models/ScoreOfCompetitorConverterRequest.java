@@ -21,26 +21,38 @@ package com.softwaremagico.kt.core.converters.models;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
-import com.softwaremagico.kt.persistence.entities.Tournament;
-
-import java.util.Collection;
+import com.softwaremagico.kt.persistence.entities.Club;
 
 public class ScoreOfCompetitorConverterRequest extends ConverterRequest<ScoreOfCompetitor> {
 
-    private final Collection<Tournament> tournaments;
+    private final Club club;
+    private final ClubDTO clubDTO;
 
     public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity) {
         super(entity);
-        this.tournaments = null;
+        this.club = null;
+        this.clubDTO = null;
     }
 
-    public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity, Collection<Tournament> tournaments) {
+    public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity, Club club) {
         super(entity);
-        this.tournaments = tournaments;
+        this.club = club;
+        this.clubDTO = null;
     }
 
-    public Collection<Tournament> getTournaments() {
-        return tournaments;
+    public ScoreOfCompetitorConverterRequest(ScoreOfCompetitor entity, ClubDTO clubDTO) {
+        super(entity);
+        this.club = null;
+        this.clubDTO = clubDTO;
+    }
+
+    public Club getClub() {
+        return club;
+    }
+
+    public ClubDTO getClubDTO() {
+        return clubDTO;
     }
 }
