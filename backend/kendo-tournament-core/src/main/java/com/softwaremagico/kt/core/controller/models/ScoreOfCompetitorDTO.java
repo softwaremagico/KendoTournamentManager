@@ -25,16 +25,9 @@ package com.softwaremagico.kt.core.controller.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.utils.NameUtils;
 
-import java.util.List;
-import java.util.Objects;
-
 public class ScoreOfCompetitorDTO {
 
-    @JsonIgnore
-    private List<FightDTO> fights;
     private ParticipantDTO competitor;
-    @JsonIgnore
-    private List<DuelDTO> unties;
     private Integer wonDuels = null;
     private Integer drawDuels = null;
     private Integer untieDuels = null;
@@ -50,45 +43,11 @@ public class ScoreOfCompetitorDTO {
 
     }
 
-    public ScoreOfCompetitorDTO(ParticipantDTO competitor, List<FightDTO> fights, List<DuelDTO> unties, boolean countNotOver) {
+    public ScoreOfCompetitorDTO(ParticipantDTO competitor, boolean countNotOver) {
         this.competitor = competitor;
-        this.fights = fights;
-        this.unties = unties;
         this.countNotOver = countNotOver;
-        update();
     }
 
-    public List<FightDTO> getFights() {
-        return fights;
-    }
-
-    public void setFights(List<FightDTO> fights) {
-        this.fights = fights;
-    }
-
-    public List<DuelDTO> getUnties() {
-        return unties;
-    }
-
-    public void setUnties(List<DuelDTO> unties) {
-        this.unties = unties;
-    }
-
-    public void update() {
-        wonFights = null;
-        drawFights = null;
-        wonDuels = null;
-        drawDuels = null;
-        hits = null;
-        setDuelsWon();
-        setDuelsDraw();
-        setDuelsDone();
-        setFightsWon();
-        setFightsDraw();
-        setUntieDuels();
-        setUntieHits();
-        setHits();
-    }
 
     public ParticipantDTO getCompetitor() {
         return competitor;
@@ -96,85 +55,6 @@ public class ScoreOfCompetitorDTO {
 
     public void setCompetitor(ParticipantDTO competitor) {
         this.competitor = competitor;
-    }
-
-    public void setDuelsDone() {
-        duelsDone = 0;
-        fights.forEach(fight -> {
-            if (fight.isOver() || countNotOver) {
-                duelsDone += fight.getDuels(competitor).size();
-            }
-        });
-    }
-
-    public void setDuelsWon() {
-        wonDuels = 0;
-        fights.forEach(fight -> {
-            if (fight.isOver() || countNotOver) {
-                wonDuels += fight.getDuelsWon(competitor);
-            }
-        });
-    }
-
-    public void setFightsWon() {
-        wonFights = 0;
-        for (final FightDTO fight : fights) {
-            if (fight.isOver() || countNotOver) {
-                if (fight.isWon(competitor)) {
-                    wonFights++;
-                }
-            }
-        }
-    }
-
-    public void setFightsDraw() {
-        drawFights = 0;
-        for (final FightDTO fight : fights) {
-            if (fight.isOver() || countNotOver) {
-                if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
-                        || fight.getTeam2().isMember(competitor))) {
-                    drawFights++;
-                }
-            }
-        }
-    }
-
-    public void setDuelsDraw() {
-        drawDuels = 0;
-        for (final FightDTO fight : fights) {
-            if (fight.isOver() || countNotOver) {
-                drawDuels += fight.getDrawDuels(competitor);
-            }
-        }
-    }
-
-    public void setHits() {
-        hits = 0;
-        for (final FightDTO fight : fights) {
-            hits += fight.getScore(competitor);
-        }
-    }
-
-    public void setUntieDuels() {
-        untieDuels = 0;
-        unties.forEach(duel -> {
-            if (Objects.equals(duel.getCompetitor1(), competitor) && duel.getWinner() == -1) {
-                untieDuels++;
-            } else if (Objects.equals(duel.getCompetitor2(), competitor) && duel.getWinner() == 1) {
-                untieDuels++;
-            }
-        });
-    }
-
-    public void setUntieHits() {
-        untieHits = 0;
-        unties.forEach(duel -> {
-            if (Objects.equals(duel.getCompetitor1(), competitor)) {
-                untieHits += duel.getCompetitor1ScoreValue();
-            } else if (Objects.equals(duel.getCompetitor2(), competitor)) {
-                untieHits += duel.getCompetitor2ScoreValue();
-            }
-        });
     }
 
     public Integer getWonDuels() {
@@ -193,12 +73,28 @@ public class ScoreOfCompetitorDTO {
         this.drawDuels = drawDuels;
     }
 
+    public Integer getUntieDuels() {
+        return untieDuels;
+    }
+
+    public void setUntieDuels(Integer untieDuels) {
+        this.untieDuels = untieDuels;
+    }
+
     public Integer getHits() {
         return hits;
     }
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getUntieHits() {
+        return untieHits;
+    }
+
+    public void setUntieHits(Integer untieHits) {
+        this.untieHits = untieHits;
     }
 
     public Integer getDuelsDone() {
@@ -223,22 +119,6 @@ public class ScoreOfCompetitorDTO {
 
     public void setDrawFights(Integer drawFights) {
         this.drawFights = drawFights;
-    }
-
-    public Integer getUntieDuels() {
-        return untieDuels;
-    }
-
-    public void setUntieDuels(Integer untieDuels) {
-        this.untieDuels = untieDuels;
-    }
-
-    public Integer getUntieHits() {
-        return untieHits;
-    }
-
-    public void setUntieHits(Integer untieHits) {
-        this.untieHits = untieHits;
     }
 
     public boolean isCountNotOver() {
