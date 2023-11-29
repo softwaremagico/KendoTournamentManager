@@ -24,8 +24,8 @@ package com.softwaremagico.kt.core.converters;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentExtraPropertyConverterRequest;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -35,11 +35,11 @@ import org.springframework.stereotype.Component;
 public class TournamentExtraPropertyConverter extends ElementConverter<TournamentExtraProperty, TournamentExtraPropertyDTO,
         TournamentExtraPropertyConverterRequest> {
     private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
 
-    public TournamentExtraPropertyConverter(TournamentConverter tournamentConverter, TournamentProvider tournamentProvider) {
+    public TournamentExtraPropertyConverter(TournamentConverter tournamentConverter, TournamentRepository tournamentRepository) {
         this.tournamentConverter = tournamentConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TournamentExtraPropertyConverter extends ElementConverter<Tournamen
                     new TournamentConverterRequest(from.getEntity().getTournament())));
         } catch (LazyInitializationException | FatalBeanException e) {
             tournamentExtraPropertyDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         return tournamentExtraPropertyDTO;
     }

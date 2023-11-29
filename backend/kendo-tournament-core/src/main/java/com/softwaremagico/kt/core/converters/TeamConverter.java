@@ -25,8 +25,8 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -39,13 +39,13 @@ import java.util.ArrayList;
 public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverterRequest> {
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public TeamConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter, TournamentProvider tournamentProvider) {
+    public TeamConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter, TournamentRepository tournamentRepository) {
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
     }
 
 
@@ -68,7 +68,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
             }
         } catch (LazyInitializationException | FatalBeanException e) {
             teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
 
         from.getEntity().getMembers().forEach(member ->
