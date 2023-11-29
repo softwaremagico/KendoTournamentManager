@@ -23,39 +23,13 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.statistics.ParticipantStatistics;
 import com.softwaremagico.kt.core.statistics.ParticipantStatisticsRepository;
-import com.softwaremagico.kt.persistence.entities.Participant;
-import com.softwaremagico.kt.persistence.values.RoleType;
-import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ParticipantStatisticsProvider extends CrudProvider<ParticipantStatistics, Integer, ParticipantStatisticsRepository> {
 
-    private final ParticipantFightStatisticsProvider fightStatisticsProvider;
 
-    private final RoleProvider roleProvider;
-
-    private final TournamentProvider tournamentProvider;
-
-    protected ParticipantStatisticsProvider(ParticipantStatisticsRepository repository, ParticipantFightStatisticsProvider fightStatisticsProvider,
-                                            RoleProvider roleProvider, TournamentProvider tournamentProvider) {
+    protected ParticipantStatisticsProvider(ParticipantStatisticsRepository repository) {
         super(repository);
-        this.fightStatisticsProvider = fightStatisticsProvider;
-        this.roleProvider = roleProvider;
-        this.tournamentProvider = tournamentProvider;
-    }
-
-    public ParticipantStatistics get(Participant participant) {
-        final ParticipantStatistics participantStatistics = new ParticipantStatistics();
-        participantStatistics.setFightStatistics(fightStatisticsProvider.get(participant));
-        participantStatistics.setParticipantId(participant.getId());
-        participantStatistics.setParticipantName(NameUtils.getLastnameName(participant));
-        for (final RoleType roleType : RoleType.values()) {
-            participantStatistics.addRolePerformed(roleType, roleProvider.count(participant, roleType));
-        }
-        participantStatistics.setTournaments((int) participantStatistics.getRolesPerformed().values().stream().mapToDouble(d -> d).sum());
-        participantStatistics.setTotalTournaments(tournamentProvider.countTournamentsAfter(participant.getCreatedAt()));
-        participantStatistics.setParticipantCreatedAt(participant.getCreatedAt());
-        return participantStatistics;
     }
 }
