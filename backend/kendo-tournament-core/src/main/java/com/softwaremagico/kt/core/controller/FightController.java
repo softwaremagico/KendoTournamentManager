@@ -37,14 +37,12 @@ import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
-import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -82,31 +80,8 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         return convertAll(getProvider().getFights(tournamentConverter.reverse(tournamentDTO)));
     }
 
-    @Override
-    public void delete(FightDTO entity) {
-        final Fight fight = reverse(entity);
-        final Group group = groupProvider.getGroup(fight);
-        group.getFights().remove(fight);
-        groupProvider.save(group);
-        getProvider().delete(fight);
-    }
-
     public void delete(TournamentDTO tournamentDTO) {
-        groupProvider.getGroups(tournamentConverter.reverse(tournamentDTO)).forEach(group -> {
-            group.setFights(new ArrayList<>());
-            groupProvider.save(group);
-        });
         getProvider().delete(tournamentConverter.reverse(tournamentDTO));
-    }
-
-    @Override
-    public void delete(Collection<FightDTO> entities) {
-        final List<Fight> fights = reverseAll(entities);
-        groupProvider.getGroups(fights).forEach(group -> {
-            group.getFights().removeAll(fights);
-            groupProvider.save(group);
-        });
-        getProvider().delete(fights);
     }
 
     public FightDTO generateDuels(FightDTO fightDTO, String createdBy) {
