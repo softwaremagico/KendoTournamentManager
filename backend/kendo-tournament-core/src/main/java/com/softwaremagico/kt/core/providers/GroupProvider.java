@@ -21,13 +21,17 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.DuelRepository;
+import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +47,14 @@ import java.util.Objects;
 @Service
 public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository> {
 
+    private final FightRepository fightRepository;
+    private final DuelRepository duelRepository;
+
     @Autowired
-    public GroupProvider(GroupRepository repository) {
+    public GroupProvider(GroupRepository repository, FightRepository fightRepository, DuelRepository duelRepository) {
         super(repository);
+        this.fightRepository = fightRepository;
+        this.duelRepository = duelRepository;
     }
 
     private List<Group> sort(List<Group> groups) {
@@ -203,5 +212,24 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
 
     public long count(Tournament tournament) {
         return getRepository().countByTournament(tournament);
+    }
+
+    public Group setTeams(Integer groupId, List<Team> teams, String username) {
+        Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Group with id '" + groupId + "' not found.",
+                ExceptionType.INFO));
+
+        final List<Fight> fights = new ArrayList<>(group.getFights());
+        group.getFights().clear();
+        fightRepository.deleteAll(fights);
+
+        final List<Duel> unties = new ArrayList<>(group.getUnties());
+        group.getUnties().clear();
+        duelRepository.deleteAll(unties);
+
+        group.getTeams().clear();
+        group = save(group);
+        group.setTeams(teams);
+        group.setUpdatedBy(username);
+        return save(group);
     }
 }
