@@ -21,11 +21,10 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.exceptions.CustomTournamentFightsException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -38,9 +37,9 @@ import java.util.List;
 public class CustomLeagueHandler extends LeagueHandler {
 
 
-    public CustomLeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter,
-                               RankingController rankingController, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
+    public CustomLeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider,
+                               RankingProvider rankingProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+        super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
     }
 
     @Override
