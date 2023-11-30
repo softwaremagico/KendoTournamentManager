@@ -22,21 +22,16 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
-import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
-import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Duel;
-import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,18 +87,11 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
     }
 
     public List<DuelDTO> getUntiesFromGroup(Integer groupId) {
-        final Group group = groupProvider.getGroup(groupId);
-        final GroupDTO groupDTO = groupConverter.convert(new GroupConverterRequest(group));
-        return groupDTO.getUnties();
+        return convertAll(getProvider().getUntiesFromGroup(groupId));
     }
 
     public List<DuelDTO> getUntiesFromTournament(Integer tournamentId) {
-        final List<Group> groups = groupProvider.getGroups(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
-                        ExceptionType.INFO)));
-        final List<GroupDTO> groupDTO = groupConverter.convertAll(groups.stream()
-                .map(GroupConverterRequest::new).toList());
-        return groupDTO.stream().flatMap(group -> group.getUnties().stream()).toList();
+        return convertAll(getProvider().getUntiesFromTournament(tournamentId));
     }
 
     public long count(TournamentDTO tournament) {

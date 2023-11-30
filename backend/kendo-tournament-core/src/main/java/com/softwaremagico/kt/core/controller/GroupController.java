@@ -178,21 +178,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
-        GroupDTO groupDTO = get(groupId);
-
-        final List<FightDTO> fights = new ArrayList<>(groupDTO.getFights());
-        groupDTO.getFights().clear();
-        fightProvider.delete(fightConverter.reverseAll(fights));
-
-        final List<DuelDTO> unties = new ArrayList<>(groupDTO.getUnties());
-        groupDTO.getUnties().clear();
-        duelProvider.delete(duelConverter.reverseAll(unties));
-
-        groupDTO.getTeams().clear();
-        groupDTO = convert(getProvider().save(reverse(groupDTO)));
-        groupDTO.setTeams(teams);
-        groupDTO.setUpdatedBy(username);
-        return convert(getProvider().save(reverse(groupDTO)));
+        return convert(getProvider().setTeams(groupId, teamConverter.reverseAll(teams), username));
     }
 
     public GroupDTO setTeams(List<TeamDTO> teams, String username) {
