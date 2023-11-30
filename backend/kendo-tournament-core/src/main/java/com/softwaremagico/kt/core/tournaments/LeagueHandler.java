@@ -21,13 +21,10 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -48,19 +45,17 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     private final GroupProvider groupProvider;
     private final TeamProvider teamProvider;
-    private final GroupConverter groupConverter;
-    private final RankingController rankingController;
+    private final RankingProvider rankingProvider;
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 
     @Autowired
-    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
+    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
                          TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
-        this.groupConverter = groupConverter;
-        this.rankingController = rankingController;
+        this.rankingProvider = rankingProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
@@ -215,8 +210,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public boolean hasDrawScore(Group group) {
-        final List<TeamDTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
-                groupConverter.convert(new GroupConverterRequest(group)), group.getNumberOfWinners());
+        final List<Team> teamsInDraw = rankingProvider.getFirstTeamsWithDrawScore(group, group.getNumberOfWinners());
         return (teamsInDraw != null);
     }
 

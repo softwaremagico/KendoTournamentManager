@@ -43,6 +43,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -68,7 +69,7 @@ public class RankingProvider {
 
     private final ParticipantProvider participantProvider;
 
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
 
     private final GroupProvider groupProvider;
 
@@ -77,11 +78,11 @@ public class RankingProvider {
     private final TeamProvider teamProvider;
 
     public RankingProvider(FightProvider fightProvider, DuelProvider duelProvider, ParticipantProvider participantProvider,
-                           TournamentProvider tournamentProvider, GroupProvider groupProvider, RoleProvider roleProvider, TeamProvider teamProvider) {
+                           TournamentRepository tournamentRepository, GroupProvider groupProvider, RoleProvider roleProvider, TeamProvider teamProvider) {
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.participantProvider = participantProvider;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
         this.groupProvider = groupProvider;
         this.roleProvider = roleProvider;
         this.teamProvider = teamProvider;
@@ -142,7 +143,7 @@ public class RankingProvider {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+        final Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
         return getCompetitorsScoreRanking(tournament);
     }
@@ -177,7 +178,7 @@ public class RankingProvider {
     }
 
     public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+        final Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
         return getTeamsScoreRanking(tournament);
     }
