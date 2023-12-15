@@ -11,23 +11,25 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
 import {ParticipantPictureModule} from "../../../components/participant-picture/participant-picture.module";
+import {MatSelectModule} from "@angular/material/select";
 
 
 @NgModule({
   declarations: [ParticipantDialogBoxComponent],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    TranslateModule,
-    FormsModule,
-    MatAutocompleteModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    RbacModule,
-    MatInputModule,
-    MatDialogModule,
-    MatButtonModule,
-    ParticipantPictureModule
-  ]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        TranslateModule,
+        FormsModule,
+        MatAutocompleteModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        RbacModule,
+        MatInputModule,
+        MatDialogModule,
+        MatButtonModule,
+        ParticipantPictureModule,
+        MatSelectModule
+    ]
 })
 export class ParticipantDialogBoxModule { }
