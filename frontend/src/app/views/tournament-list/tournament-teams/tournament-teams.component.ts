@@ -65,7 +65,9 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       if (roles === undefined) {
         roles = [];
       }
-      this.userListData.participants = roles.map((role: Role) => role.participant);
+      this.userListData.participants = roles.map((role: Role) => role.participant).sort(function (a: Participant, b: Participant) {
+        return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
+      });
       //Block participants.
       if (this.tournament.locked) {
         for (let participant of this.userListData.participants) {
