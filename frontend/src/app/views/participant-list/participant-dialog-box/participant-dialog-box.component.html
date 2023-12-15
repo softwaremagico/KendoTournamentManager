@@ -20,21 +20,18 @@
         </mat-form-field>
         <mat-form-field *ngIf="actionName != 'Delete'">
           <mat-label>{{ 'club' | translate}}</mat-label>
-          <input [formControl]="formControl" [matAutocomplete]="auto"
-                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)"
-                 attr.aria-label="{{ 'club' | translate}}" formControlName="club" matInput
-                 placeholder="{{ 'filter' | translate}}"
-                 required
-                 type="text">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClub">
-            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.name}}
+          <mat-select [compareWith]="compareClubs"
+                      [(value)]="participant.club"
+                      [disabled]="rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)"
+                      formControlName="club">
+            <mat-option *ngFor="let club of clubs" [value]="club">
+              {{club.name}}
             </mat-option>
-          </mat-autocomplete>
+          </mat-select>
         </mat-form-field>
         <ng-template #elseTemplate>
-    <span
-      [innerHTML]="'participantDeleteQuestion' | translate : {name: participant.name, lastname: participant.lastname}"></span>
+          <span
+            [innerHTML]="'participantDeleteQuestion' | translate : {name: participant.name, lastname: participant.lastname}"></span>
         </ng-template>
       </div>
       <div *ngIf="participantPicture" class="picture-container">
