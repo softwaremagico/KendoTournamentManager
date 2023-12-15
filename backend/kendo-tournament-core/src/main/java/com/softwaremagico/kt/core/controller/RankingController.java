@@ -271,7 +271,7 @@ public class RankingController {
 
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
         final Map<Integer, ClubDTO> clubsById = competitors.stream()
-                .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity()));
+                .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity(), (r1, r2) -> r1));
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
                         participantConverter.reverseAll(competitors),
                         scoreType
