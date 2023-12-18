@@ -39,7 +39,7 @@
   visibility: hidden;
 }
 
-@media screen and (max-height: 750px) {
+@media screen and (max-height: 850px) {
   .fight-container {
     height: 75vh;
   }
@@ -64,7 +64,7 @@
 }
 
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1100px) {
 
   .member-order {
     display: none !important;
@@ -83,7 +83,7 @@ h2.level-name {
   font-weight: bold;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 900px) {
   .timer-button {
     display: none !important;
   }
