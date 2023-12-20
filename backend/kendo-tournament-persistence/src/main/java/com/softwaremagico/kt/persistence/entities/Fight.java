@@ -171,7 +171,7 @@ public class Fight extends Element {
     }
 
     public boolean isOver() {
-        return duels.stream().anyMatch(Duel::isOver);
+        return duels.stream().allMatch(Duel::isOver);
     }
 
     public Integer getLevel() {
