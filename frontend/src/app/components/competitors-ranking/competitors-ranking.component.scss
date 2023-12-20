@@ -12,6 +12,14 @@
   margin: 2vw;
 }
 
+.competitor-ranking-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: white;
+  height: 60px;
+}
+
 .competitor-ranking-header {
   max-width: 20vw;
   min-width: 100px;
@@ -32,6 +40,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.competitor-ranking-value.competitor-name {
+  text-align: left;
 }
 
 .competitor-ranking-value.selected {
