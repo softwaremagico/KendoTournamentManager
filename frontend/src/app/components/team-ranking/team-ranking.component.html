@@ -2,6 +2,7 @@
 <div class="table-container">
   <table class="team-ranking-table">
     <caption class="table-caption">{{'teamsRanking' | translate}}</caption>
+    <thead>
     <tr>
       <th class="team-ranking-header">{{'team' | translate}}</th>
       <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
@@ -10,6 +11,7 @@
       <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
       <th class="team-ranking-header">{{'histsWon' | translate}}</th>
     </tr>
+    </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
       <td [ngClass]="{'finished': fightsFinished,
           'winner': teamScore.sortingIndex===0 && fightsFinished,

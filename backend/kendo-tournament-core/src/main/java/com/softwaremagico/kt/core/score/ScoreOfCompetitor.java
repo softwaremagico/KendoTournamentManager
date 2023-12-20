@@ -46,6 +46,7 @@ public class ScoreOfCompetitor {
     private Integer duelsDone = null;
     private Integer wonFights = null;
     private Integer drawFights = null;
+    private Integer totalFights = null;
     @JsonIgnore
     private boolean countNotOver = false;
 
@@ -83,6 +84,7 @@ public class ScoreOfCompetitor {
         wonDuels = null;
         drawDuels = null;
         hits = null;
+        totalFights = null;
         setDuelsWon();
         setDuelsDraw();
         setDuelsDone();
@@ -91,6 +93,7 @@ public class ScoreOfCompetitor {
         setUntieDuels();
         setUntieHits();
         setHits();
+        setTotalFights();
     }
 
     public Participant getCompetitor() {
@@ -138,6 +141,16 @@ public class ScoreOfCompetitor {
                         || fight.getTeam2().isMember(competitor))) {
                     drawFights++;
                 }
+            }
+        }
+    }
+
+    public void setTotalFights() {
+        totalFights = 0;
+        for (final Fight fight : fights) {
+            if (fight.isOver() && fight.getTeam1().isMember(competitor)
+                    || fight.getTeam2().isMember(competitor)) {
+                totalFights++;
             }
         }
     }
@@ -250,6 +263,14 @@ public class ScoreOfCompetitor {
 
     public void setCountNotOver(boolean countNotOver) {
         this.countNotOver = countNotOver;
+    }
+
+    public Integer getTotalFights() {
+        return totalFights;
+    }
+
+    public void setTotalFights(Integer totalFights) {
+        this.totalFights = totalFights;
     }
 
     @Override
