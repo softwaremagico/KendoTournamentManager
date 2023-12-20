@@ -142,6 +142,7 @@
   "duelsDraw": "Draw fights",
   "duelsLost": "Lost fights",
   "histsWon": "Hits",
+  "totalFights": "Total matches",
   "all": "All",
   "PerformedHitStatistics": "Performed hits",
   "ReceivedHitStatistics": "Received hits",
