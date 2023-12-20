@@ -10,6 +10,7 @@ export class ScoreOfCompetitor {
   public drawFights: number;
   public untieDuels: number;
   public untieHits: number;
+  public totalFights: number;
 
   public static copy(source: ScoreOfCompetitor, target: ScoreOfCompetitor): void {
     target.wonDuels = source.wonDuels;
@@ -18,6 +19,7 @@ export class ScoreOfCompetitor {
     target.duelsDone = source.duelsDone;
     target.wonFights = source.wonFights;
     target.drawFights = source.drawFights;
+    target.totalFights = source.totalFights;
     if (source.competitor !== undefined) {
       target.competitor = Participant.clone(source.competitor);
     }
