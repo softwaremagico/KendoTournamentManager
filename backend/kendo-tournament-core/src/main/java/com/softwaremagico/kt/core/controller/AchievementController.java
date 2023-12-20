@@ -592,6 +592,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         Participant participant = null;
         for (final Duel duel : getDuelsFromTournament()) {
             for (final Integer time : duel.getCompetitor1ScoreTime()) {
+                if (time == null) {
+                    continue;
+                }
                 //Billy cannot be a draw time.
                 if (time == minTime && !Objects.equals(participant, duel.getCompetitor1())) {
                     participant = null;
@@ -601,6 +604,9 @@ public class AchievementController extends BasicInsertableController<Achievement
                 }
             }
             for (final Integer time : duel.getCompetitor2ScoreTime()) {
+                if (time == null) {
+                    continue;
+                }
                 //Billy cannot be a draw time.
                 if (time == minTime && !Objects.equals(participant, duel.getCompetitor2())) {
                     participant = null;

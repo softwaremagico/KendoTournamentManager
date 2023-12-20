@@ -38,6 +38,7 @@ import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.ParentList;
+import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.List;
@@ -79,7 +80,7 @@ public class TeamList extends ParentList {
             } catch (NullPointerException npe) {
                 memberName = " ";
             }
-            teamTable.addCell(getCell(memberName));
+            teamTable.addCell(getCell(memberName, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_LEFT));
         }
 
         return teamTable;
