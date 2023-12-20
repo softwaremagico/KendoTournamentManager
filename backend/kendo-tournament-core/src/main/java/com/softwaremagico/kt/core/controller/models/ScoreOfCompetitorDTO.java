@@ -36,6 +36,7 @@ public class ScoreOfCompetitorDTO {
     private Integer duelsDone = null;
     private Integer wonFights = null;
     private Integer drawFights = null;
+    private Integer totalFights = null;
     @JsonIgnore
     private boolean countNotOver = false;
 
@@ -127,6 +128,14 @@ public class ScoreOfCompetitorDTO {
 
     public void setCountNotOver(boolean countNotOver) {
         this.countNotOver = countNotOver;
+    }
+
+    public Integer getTotalFights() {
+        return totalFights;
+    }
+
+    public void setTotalFights(Integer totalFights) {
+        this.totalFights = totalFights;
     }
 
     @Override
