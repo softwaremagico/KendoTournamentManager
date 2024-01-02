@@ -101,7 +101,7 @@ public class FightSummary extends ParentList {
             } else {
                 return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             return "";
         }
     }

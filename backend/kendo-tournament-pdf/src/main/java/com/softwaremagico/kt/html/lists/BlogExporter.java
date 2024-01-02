@@ -34,6 +34,7 @@ import com.softwaremagico.kt.utils.ShiaijoName;
 import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -68,7 +69,8 @@ public class BlogExporter {
         this.roles = roles;
         this.groups = groups;
         this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
-        this.competitors = competitors;
+        this.competitors = new ArrayList<>(competitors);
+        this.competitors.sort(Comparator.comparing(NameUtils::getLastnameName));
         this.scoreOfTeams = scoreOfTeams;
         this.scoreOfCompetitors = scoreOfCompetitors;
     }
@@ -285,7 +287,7 @@ public class BlogExporter {
             } else {
                 return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             return "";
         }
     }

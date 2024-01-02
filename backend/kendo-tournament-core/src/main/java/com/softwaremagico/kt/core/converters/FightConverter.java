@@ -26,8 +26,8 @@ import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -40,15 +40,15 @@ import java.util.ArrayList;
 public class FightConverter extends ElementConverter<Fight, FightDTO, FightConverterRequest> {
     private final TeamConverter teamConverter;
     private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
     private final DuelConverter duelConverter;
 
     @Autowired
-    public FightConverter(TeamConverter teamConverter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
+    public FightConverter(TeamConverter teamConverter, TournamentConverter tournamentConverter, TournamentRepository tournamentRepository,
                           DuelConverter duelConverter) {
         this.teamConverter = teamConverter;
         this.tournamentConverter = tournamentConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
         this.duelConverter = duelConverter;
     }
 
@@ -71,7 +71,7 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
             }
         } catch (LazyInitializationException | FatalBeanException e) {
             fightDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
 
         //Getting the tournament to send to duels and avoid hundreds of calls.

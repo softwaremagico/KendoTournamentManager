@@ -24,8 +24,8 @@ package com.softwaremagico.kt.core.converters;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
-import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.repositories.ClubRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -35,12 +35,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParticipantConverter extends ElementConverter<Participant, ParticipantDTO, ParticipantConverterRequest> {
     private final ClubConverter clubConverter;
-    private final ClubProvider clubProvider;
+    private final ClubRepository clubRepository;
 
     @Autowired
-    public ParticipantConverter(ClubConverter clubConverter, ClubProvider clubProvider) {
+    public ParticipantConverter(ClubConverter clubConverter, ClubRepository clubRepository) {
         this.clubConverter = clubConverter;
-        this.clubProvider = clubProvider;
+        this.clubRepository = clubRepository;
     }
 
 
@@ -57,7 +57,7 @@ public class ParticipantConverter extends ElementConverter<Participant, Particip
             }
         } catch (LazyInitializationException | FatalBeanException e) {
             participantDTO.setClub(clubConverter.convert(
-                    new ClubConverterRequest(clubProvider.get(from.getEntity().getClub().getId()).orElse(null))));
+                    new ClubConverterRequest(clubRepository.findById(from.getEntity().getClub().getId()).orElse(null))));
         }
         return participantDTO;
     }

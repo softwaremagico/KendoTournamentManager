@@ -21,18 +21,13 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.managers.KingOfTheMountainFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -55,26 +50,19 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     private final FightProvider fightProvider;
     private final GroupProvider groupProvider;
     private final TeamProvider teamProvider;
-    private final RankingController rankingController;
-    private final GroupConverter groupConverter;
-    private final TeamConverter teamConverter;
-
-    private final TournamentProvider tournamentProvider;
+    private final RankingProvider rankingProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
     public KingOfTheMountainHandler(KingOfTheMountainFightManager kingOfTheMountainFightManager, FightProvider fightProvider,
-                                    GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter,
-                                    RankingController rankingController, TeamConverter teamConverter, TournamentProvider tournamentProvider,
+                                    GroupProvider groupProvider, TeamProvider teamProvider,
+                                    RankingProvider rankingProvider,
                                     TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
+        super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.kingOfTheMountainFightManager = kingOfTheMountainFightManager;
         this.fightProvider = fightProvider;
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
-        this.rankingController = rankingController;
-        this.groupConverter = groupConverter;
-        this.teamConverter = teamConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.rankingProvider = rankingProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
@@ -118,11 +106,11 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         //Repository OrderByIndex not working well...
         groups.sort(Comparator.comparing(Group::getLevel).thenComparing(Group::getIndex));
         final Group lastGroup = !groups.isEmpty() ? groups.get(groups.size() - 1) : null;
-        final Map<Integer, List<TeamDTO>> ranking = rankingController.getTeamsByPosition(groupConverter.convert(new GroupConverterRequest(lastGroup)));
+        final Map<Integer, List<Team>> ranking = rankingProvider.getTeamsByPosition(lastGroup);
         //Previous winner with no draw
         if (lastGroup != null && ranking.get(0) != null && ranking.get(0).size() == 1) {
-            final Team previousWinner = teamConverter.reverse(ranking.get(0).get(0));
-            final Team previousLooser = teamConverter.reverse(ranking.get(1).get(0));
+            final Team previousWinner = ranking.get(0).get(0);
+            final Team previousLooser = ranking.get(1).get(0);
             //Next team on the list. Looser is the other team on the previous group.
             teams.add(getNextTeam(existingTeams, Collections.singletonList(previousWinner), Collections.singletonList(previousLooser), tournament));
             //Add winner on the same color
@@ -139,28 +127,27 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             final DrawResolution drawResolution = DrawResolution.getFromTag(extraProperty.getPropertyValue());
             final Group previousLastGroup = level > 1 ? groupProvider.getGroups(tournament, level - 2).get(0) : null;
             switch (drawResolution) {
-                case BOTH_ELIMINATED ->
-                        bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
+                case BOTH_ELIMINATED -> bothEliminated(existingTeams, teams, ranking.get(0), tournament);
                 case OLDEST_ELIMINATED -> {
                     if (previousLastGroup == null) {
-                        bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
+                        bothEliminated(existingTeams, teams, ranking.get(0), tournament);
                     } else {
                         final List<Team> previousLastGroupTeams = previousLastGroup.getTeams();
                         if (lastGroup != null) {
                             previousLastGroupTeams.retainAll(lastGroup.getTeams());
                         }
-                        oldestEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), previousLastGroupTeams, tournament, lastGroup);
+                        oldestEliminated(existingTeams, teams, ranking.get(0), previousLastGroupTeams, tournament, lastGroup);
                     }
                 }
                 case NEWEST_ELIMINATED -> {
                     if (previousLastGroup == null) {
-                        bothEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), tournament);
+                        bothEliminated(existingTeams, teams, ranking.get(0), tournament);
                     } else {
                         final List<Team> previousLastGroupTeams = previousLastGroup.getTeams();
                         if (lastGroup != null) {
                             previousLastGroupTeams.retainAll(lastGroup.getTeams());
                         }
-                        newestEliminated(existingTeams, teams, teamConverter.reverseAll(ranking.get(0)), previousLastGroupTeams, tournament, lastGroup);
+                        newestEliminated(existingTeams, teams, ranking.get(0), previousLastGroupTeams, tournament, lastGroup);
                     }
                 }
                 default -> {
