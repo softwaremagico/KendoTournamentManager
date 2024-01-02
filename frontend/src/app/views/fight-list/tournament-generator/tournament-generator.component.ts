@@ -128,10 +128,8 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     }
 
     private refreshWinner(): void {
-        console.log(this.tournament.type)
         if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
             this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
-                console.log(_tournamentSelection);
                 if (_tournamentSelection) {
                     for (const _tournamentProperty of _tournamentSelection) {
                         if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
