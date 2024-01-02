@@ -106,6 +106,7 @@ import {
   TournamentBracketsModule
 } from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
 import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
+import {ShiaijoModule} from "./components/tournament-brackets-editor/tournament-brackets/shiaijo/shiaijo.module";
 import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
 import {
   TournamentBracketsEditorModule
@@ -219,6 +220,7 @@ registerLocaleData(localeNL, "nl");
     ProgressBarModule,
     TournamentBracketsModule,
     ArrowModule,
+    ShiaijoModule,
     TournamentBracketsEditorModule,
     TournamentGeneratorModule,
   ],
