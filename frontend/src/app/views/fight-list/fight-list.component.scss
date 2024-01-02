@@ -39,13 +39,35 @@
   visibility: hidden;
 }
 
-@media screen and (max-height: 850px) {
-  .fight-container {
-    height: 75vh;
-  }
+.filter-shiaijo {
+  display: inline-block;
+  font-size: 18px;
+  color: var(--primay-color);
 }
 
-@media screen and (max-width: 1250px) {
+.shiaijo-label {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.shiaijo-name {
+  display: inline-block;
+  font-weight: bold;
+  border: 1px solid var(--primay-color);
+  padding-left: 4px;
+  padding-right: 4px;
+  cursor: pointer;
+}
+
+h2.level-name {
+  justify-content: center;
+  display: flex;
+  font-size: 25px;
+  padding-top: 40px;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 1450px) {
   .download-button {
     display: none !important;
   }
@@ -53,6 +75,13 @@
   .download-divider {
     display: none !important;
   }
+
+  .shiaijo-label {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 1300px) {
 
   .exchange-colors {
     display: none !important;
@@ -75,15 +104,7 @@
   }
 }
 
-h2.level-name {
-  justify-content: center;
-  display: flex;
-  font-size: 25px;
-  padding-top: 40px;
-  font-weight: bold;
-}
-
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 950px) {
   .timer-button {
     display: none !important;
   }
@@ -99,6 +120,10 @@ h2.level-name {
   .delete-button {
     display: none !important;
   }
+}
 
-
+@media screen and (max-height: 850px) {
+  .fight-container {
+    height: 75vh;
+  }
 }
