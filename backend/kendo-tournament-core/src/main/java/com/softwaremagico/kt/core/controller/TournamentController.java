@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
@@ -33,29 +32,17 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
-import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Group;
-import com.softwaremagico.kt.persistence.entities.Role;
-import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
-import com.softwaremagico.kt.persistence.entities.TournamentImage;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
-import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
-import com.softwaremagico.kt.utils.GroupUtils;
-import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
@@ -125,13 +112,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
-        final TournamentDTO tournamentDTO = convert(getProvider().save(new Tournament(name, shiaijos != null ? shiaijos : 1,
-                teamSize != null ? teamSize : TournamentProvider.DEFAULT_TEAM_SIZE, type != null ? type : TournamentType.LEAGUE, username)));
-        //Add default group:
-        final Group group = new Group();
-        group.setCreatedBy(username);
-        groupProvider.addGroup(reverse(tournamentDTO), group);
-        return tournamentDTO;
+        return convert(getProvider().create(name, shiaijos, teamSize, type, username));
     }
 
     public TournamentDTO clone(Integer tournamentId, String username) {
@@ -139,98 +120,16 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     public TournamentDTO clone(TournamentDTO tournamentDTO, String username) {
-        //Clone Tournament
-        final Tournament sourceTournament = reverse(tournamentDTO);
-
-        final List<Role> sourceRoles = roleProvider.getAll(sourceTournament);
-
-        final List<Team> sourceTeams = teamProvider.getAll(sourceTournament);
-
-        final List<TournamentExtraProperty> sourceProperties = tournamentExtraPropertyProvider.getAll(sourceTournament);
-
-        final List<TournamentImage> images = tournamentImageProvider.getAll(sourceTournament);
-
-        //Update tournament
-        sourceTournament.setName(NameUtils.getNameCopy(sourceTournament));
-        sourceTournament.setId(null);
-        sourceTournament.setCreatedBy(username);
-        if (sourceTournament.getTournamentScore() != null) {
-            sourceTournament.getTournamentScore().setId(null);
-        }
-
-        final Tournament clonedTournament = getProvider().save(sourceTournament);
-
-        sourceRoles.forEach(role -> {
-            role.setTournament(clonedTournament);
-            role.setId(null);
-        });
-        roleProvider.saveAll(sourceRoles);
-
-        sourceTeams.forEach(team -> {
-            team.setTournament(clonedTournament);
-            team.setId(null);
-            team.setMembers(new ArrayList<>(team.getMembers()));
-        });
-        teamProvider.saveAll(sourceTeams);
-
-        sourceProperties.forEach(property -> {
-            property.setTournament(clonedTournament);
-            property.setId(null);
-        });
-        tournamentExtraPropertyProvider.saveAll(sourceProperties);
-
-        images.forEach(image -> {
-            image.setTournament(clonedTournament);
-            image.setId(null);
-        });
-        tournamentImageProvider.saveAll(images);
-
-        //Add default group:
-        final Group group = new Group();
-        group.setCreatedBy(username);
-        groupProvider.addGroup(clonedTournament, group);
-
-        return convert(clonedTournament);
+        return convert(getProvider().clone(reverse(tournamentDTO), username));
     }
 
     public void setNumberOfWinners(Integer tournamentId, Integer numberOfWinners, String updatedBy) {
-        final Tournament tournament = getProvider().get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        final ITournamentManager tournamentManager = tournamentHandlerSelector.selectManager(tournament.getType());
-        if (tournamentManager instanceof TreeTournamentHandler) {
-            tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.NUMBER_OF_WINNERS, String.valueOf(numberOfWinners)));
-
-            //Update winners in group
-            final List<Group> groups = groupProvider.getGroups(tournament);
-            final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
-            if (groupsByLevel.get(0) != null) {
-                groupsByLevel.get(0).forEach(group -> group.setNumberOfWinners(numberOfWinners));
-                groupProvider.saveAll(groupsByLevel.get(0));
-            }
-
-            //Resize tournament
-            ((TreeTournamentHandler) tournamentManager).recreateGroupSize(tournament, numberOfWinners);
-            KendoTournamentLogger.info(this.getClass(), "Updated tournament '{}' with number of winners '{}' by '{}'", tournament, numberOfWinners, updatedBy);
-        } else {
-            KendoTournamentLogger.warning(this.getClass(), "Cannot change the number of winners as tournament is of type '{}'.", tournament.getType());
-        }
+        getProvider().setNumberOfWinners(tournamentId, numberOfWinners, updatedBy);
     }
 
     @Override
     public void deleteById(Integer id) {
         delete(get(id));
-    }
-
-    @Override
-    public void delete(TournamentDTO entity) {
-        final Tournament tournament = reverse(entity);
-        groupProvider.delete(tournament);
-        fightProvider.delete(tournament);
-        duelProvider.delete(tournament);
-        teamProvider.delete(tournament);
-        roleProvider.delete(tournament);
-        getProvider().delete(tournament);
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
