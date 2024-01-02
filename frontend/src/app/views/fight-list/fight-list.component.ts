@@ -30,6 +30,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-fight-list',
@@ -64,6 +65,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showLevelTags: boolean = false;
   showLevelOfGroup: Map<Group, boolean> = new Map<Group, boolean>;
 
+  selectedShiaijo: number = -1;
+
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -71,7 +74,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              rbacService: RbacService,
+              rbacService: RbacService, private translateService: TranslateService,
               private systemOverloadService: SystemOverloadService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
@@ -746,15 +749,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
     for (const group of this.groups) {
       if (group.fights) {
-        this.filteredFights.set(group.id!, group.fights.filter(fight =>
-          fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-          fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-          fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) ||
-          fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "")))));
+        this.filteredFights.set(group.id!, group.fights.filter((fight: Fight): boolean =>
+          (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
+            fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+            fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+            fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) ||
+            fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))))));
       } else {
         this.filteredFights.set(group.id!, []);
       }
@@ -779,5 +783,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.resetFilterValue.next(true);
   }
 
+  getShiaijoTag(): string {
+    if (this.selectedShiaijo < 0) {
+      return this.translateService.instant('-');
+    }
+    return Tournament.SHIAIJO_NAMES[this.selectedShiaijo];
+  }
 
+
+  changeShiaijo(): void {
+    this.selectedShiaijo++;
+    if (this.tournament.shiaijos && this.selectedShiaijo >= this.tournament.shiaijos) {
+      this.selectedShiaijo = -1;
+    }
+    this.resetFilter();
+  }
 }
