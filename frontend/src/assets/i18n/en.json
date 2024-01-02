@@ -124,7 +124,7 @@
   "TreeMonitorMenuItem": "Ranking",
   "AccreditationMenuItem": "Accreditation cards",
   "HelpMenuItem": "Help",
-  "FightAreaNoDots": "Shiaijo",
+  "shiaijo": "Shiaijo",
   "deleteFights": "Do you want to remove the previous generated matches?",
   "Team1Label": "Team 1st",
   "Team2Label": "Team 2nd",
