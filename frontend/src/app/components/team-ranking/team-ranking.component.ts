@@ -58,7 +58,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
           forkJoin([rankingRequest, winnersRequest]).subscribe(([_scoresOfTeams, _numberOfWinners]): void => {
             this.teamScores = _scoresOfTeams;
-            this.numberOfWinners = _numberOfWinners !== undefined ? Number(_numberOfWinners.propertyValue) : 1;
+            this.numberOfWinners = _numberOfWinners ? Number(_numberOfWinners.propertyValue) : 1;
             if (this.isDrawWinner(0) || (_numberOfWinners && _numberOfWinners.propertyValue == "2" && this.isDrawWinner(1))) {
               this.messageService.warningMessage("drawScore");
               this.existsDraws = true;

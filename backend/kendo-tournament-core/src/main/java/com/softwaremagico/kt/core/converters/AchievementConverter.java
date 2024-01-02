@@ -26,8 +26,8 @@ import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -36,14 +36,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class AchievementConverter extends ElementConverter<Achievement, AchievementDTO, AchievementConverterRequest> {
     private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
     private final ParticipantConverter participantConverter;
     private final ParticipantProvider participantProvider;
 
-    public AchievementConverter(TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
+    public AchievementConverter(TournamentConverter tournamentConverter, TournamentRepository tournamentRepository,
                                 ParticipantConverter participantConverter, ParticipantProvider participantProvider) {
         this.tournamentConverter = tournamentConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
         this.participantConverter = participantConverter;
         this.participantProvider = participantProvider;
     }
@@ -58,7 +58,7 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
                     new TournamentConverterRequest(from.getEntity().getTournament())));
         } catch (LazyInitializationException | FatalBeanException e) {
             achievementDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
             achievementDTO.setParticipant(participantConverter.convert(

@@ -21,18 +21,18 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.managers.CompleteGroupFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.repositories.FightRepository;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,18 +43,20 @@ import java.util.List;
 public class SimpleLeagueHandler extends LeagueHandler {
 
     private final CompleteGroupFightManager completeGroupFightManager;
-    private final FightProvider fightProvider;
-    private final GroupProvider groupProvider;
+
+    private final FightRepository fightRepository;
+    private final GroupRepository groupRepository;
 
 
     @Autowired
-    public SimpleLeagueHandler(GroupProvider groupProvider, CompleteGroupFightManager completeGroupFightManager, FightProvider fightProvider,
-                               TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
-                               TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
+    public SimpleLeagueHandler(GroupProvider groupProvider, CompleteGroupFightManager completeGroupFightManager,
+                               TeamProvider teamProvider, RankingProvider rankingProvider,
+                               TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
+                               FightRepository fightRepository, GroupRepository groupRepository) {
+        super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.completeGroupFightManager = completeGroupFightManager;
-        this.fightProvider = fightProvider;
-        this.groupProvider = groupProvider;
+        this.fightRepository = fightRepository;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -64,11 +66,11 @@ public class SimpleLeagueHandler extends LeagueHandler {
         }
         //Automatically generates the group if needed in getGroup.
         final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
-        final List<Fight> fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
+        final List<Fight> fights = fightRepository.saveAll(completeGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
                 TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);
-        groupProvider.save(group);
+        groupRepository.save(group);
         return fights;
     }
 }
