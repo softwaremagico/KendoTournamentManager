@@ -135,6 +135,14 @@
         </button>
       </div>
     </div>
+    <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1">
+      <div class="shiaijo-label">
+        {{'shiaijo'| translate}}
+      </div>
+      <div class="shiaijo-name" (click)="changeShiaijo()">
+        {{getShiaijoTag()}}
+      </div>
+    </div>
     <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
     <app-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
                (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
