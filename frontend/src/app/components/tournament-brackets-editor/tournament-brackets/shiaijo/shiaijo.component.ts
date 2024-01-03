@@ -3,6 +3,7 @@ import {Group} from "../../../../models/group";
 import {GroupsUpdatedService} from "../groups-updated.service";
 import {BracketsMeasures} from "../brackets-measures";
 import {TournamentBracketsComponent} from "../tournament-brackets.component";
+import {Tournament} from "../../../../models/tournament";
 
 @Component({
   selector: 'app-shiaijo',
@@ -116,5 +117,13 @@ export class ShiaijoComponent {
       return this.groupsByLevel.get(0)!.filter((_group: Group): boolean => _group.shiaijo == shiaijo);
     }
     return [];
+  }
+
+  getPreviousShiaijoName(): string {
+    return Tournament.SHIAIJO_NAMES[this.shiaijo];
+  }
+
+  getNextShiaijoName(): string {
+    return Tournament.SHIAIJO_NAMES[this.shiaijo+1];
   }
 }
