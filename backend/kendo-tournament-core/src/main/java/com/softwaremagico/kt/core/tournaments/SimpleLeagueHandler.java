@@ -67,7 +67,7 @@ public class SimpleLeagueHandler extends LeagueHandler {
         //Automatically generates the group if needed in getGroup.
         final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
         final List<Fight> fights = fightRepository.saveAll(completeGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
-                TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
+                TeamsOrder.NONE, level, 0, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);
         groupRepository.save(group);
