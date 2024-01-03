@@ -123,7 +123,6 @@ export class TournamentBracketsComponent implements OnInit {
         shiaijosByLevel.set(key, [...Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(key)?.length! - 1))).keys()]);
       }
     }
-    console.log(shiaijosByLevel)
     return shiaijosByLevel;
   }
 
