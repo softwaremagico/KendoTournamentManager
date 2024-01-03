@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Group} from "../../../models/group";
 import {GroupsUpdatedService} from "./groups-updated.service";
 import {Tournament} from "../../../models/tournament";
+import {BracketsMeasures} from "./brackets-measures";
 
 @Component({
   selector: 'app-tournament-brackets',
@@ -9,11 +10,6 @@ import {Tournament} from "../../../models/tournament";
   styleUrls: ['./tournament-brackets.component.scss']
 })
 export class TournamentBracketsComponent implements OnInit {
-
-  static readonly GROUP_HIGH: number = 100;
-  static readonly GROUP_WIDTH: number = 300;
-  static readonly GROUP_SEPARATION: number = 150;
-  static readonly LEVEL_SEPARATION: number = 100;
 
   @Input()
   tournament: Tournament;
@@ -78,27 +74,27 @@ export class TournamentBracketsComponent implements OnInit {
         return teams * 60;
       }
     }
-    return TournamentBracketsComponent.GROUP_HIGH;
+    return BracketsMeasures.GROUP_HIGH;
   }
 
   getGroupTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number {
     if (level == 0) {
-      return group * (TournamentBracketsComponent.GROUP_SEPARATION + this.getGroupHigh(level, group));
+      return group * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(level, group));
     }
     if (groupsByLevel && groupsByLevel.get(0) && groupsByLevel.get(level)) {
-      const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + TournamentBracketsComponent.GROUP_SEPARATION);
+      const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + BracketsMeasures.GROUP_SEPARATION);
       const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
-      return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - TournamentBracketsComponent.GROUP_SEPARATION / 2
+      return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - BracketsMeasures.GROUP_SEPARATION / 2
     }
     return 0;
   }
 
   getGroupLeftSeparation(level: number, group: number): number {
-    return (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION) * level;
+    return (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION) * level;
   }
 
   getArrowX1Coordinate(level: number, group: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * (level + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * level + 5;
+    return BracketsMeasures.GROUP_WIDTH * (level + 1) + BracketsMeasures.LEVEL_SEPARATION * level + 5;
   }
 
   getArrowY1Coordinate(level: number, group: number): number {
@@ -106,7 +102,7 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getArrowX2Coordinate(column: number, group: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * column + TournamentBracketsComponent.LEVEL_SEPARATION * column + 5;
+    return BracketsMeasures.GROUP_WIDTH * column + BracketsMeasures.LEVEL_SEPARATION * column + 5;
   }
 
   getArrowY2Coordinate(column: number, sourceGroupIndex: number, destinationGroupIndex: number): number {
