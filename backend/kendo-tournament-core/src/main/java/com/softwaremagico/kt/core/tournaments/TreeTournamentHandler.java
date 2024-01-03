@@ -224,11 +224,11 @@ public class TreeTournamentHandler extends LeagueHandler {
                 final List<Fight> fights;
                 if (getMaxGroupFights(tournament)) {
                     final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
-                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
+                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(), TeamsOrder.NONE,
+                            level, group.getShiaijo(), LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
                 } else {
                     fights = fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, createdBy));
+                            TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
                 }
                 group.setFights(fights);
                 groupProvider.save(group);
