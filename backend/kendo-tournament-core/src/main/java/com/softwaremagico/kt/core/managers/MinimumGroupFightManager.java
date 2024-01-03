@@ -32,8 +32,8 @@ import java.util.List;
 @Service
 public class MinimumGroupFightManager {
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        return createFightList(tournament, teams, teamsOrder, level, createdBy);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, Integer shiaijo, String createdBy) {
+        return createFightList(tournament, teams, teamsOrder, level, shiaijo, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
@@ -49,7 +49,7 @@ public class MinimumGroupFightManager {
      * @return
      */
     protected List<Fight> createFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
-                                          String createdBy) {
+                                          Integer shiaijo, String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
         }
@@ -60,9 +60,11 @@ public class MinimumGroupFightManager {
 
         for (int i = 0; i < sortedTeams.size(); i++) {
             if (i % 2 == 0) {
-                fight = createFight(tournament, sortedTeams.get((i) % sortedTeams.size()), sortedTeams.get((i + 1) % sortedTeams.size()), 0, level, createdBy);
+                fight = createFight(tournament, sortedTeams.get((i) % sortedTeams.size()), sortedTeams.get((i + 1) % sortedTeams.size()),
+                        shiaijo, level, createdBy);
             } else {
-                fight = createFight(tournament, sortedTeams.get((i + 1) % sortedTeams.size()), sortedTeams.get((i) % sortedTeams.size()), 0, level, createdBy);
+                fight = createFight(tournament, sortedTeams.get((i + 1) % sortedTeams.size()), sortedTeams.get((i) % sortedTeams.size()),
+                        shiaijo, level, createdBy);
             }
             fights.add(fight);
 
