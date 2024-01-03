@@ -1,0 +1,12 @@
+<svg [attr.height]="height + 30" [attr.width]="width + 300">
+  <style>
+    .shiaijo-label {
+      font: italic 13px sans-serif;
+    }
+  </style>
+  <text [attr.x]="x1+10" [attr.y]="y1 - 10" class="shiaijo-label">Shiaijo {{getPreviousShiaijoName()}}</text>
+  <line [attr.x1]="x1" [attr.y1]="y1" [attr.x2]="x2" [attr.y2]="y2" [style.stroke]="color"
+        [style.stroke-dasharray]="'10 5 10'"/>
+  <text [attr.x]="x1+10" [attr.y]="y1 + 20" class="shiaijo-label">Shiaijo {{getNextShiaijoName()}}</text>
+</svg>
+

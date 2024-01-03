@@ -21,7 +21,6 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.managers.CompleteGroupFightManager;
@@ -61,13 +60,11 @@ public class TreeTournamentHandler extends LeagueHandler {
     private final FightProvider fightProvider;
     private final GroupLinkProvider groupLinkProvider;
     private final RankingProvider rankingProvider;
-    private final TeamConverter teamConverter;
 
 
     public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
                                  TournamentExtraPropertyProvider tournamentExtraPropertyProvider, CompleteGroupFightManager completeGroupFightManager,
-                                 MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider, GroupLinkProvider groupLinkProvider,
-                                 TeamConverter teamConverter) {
+                                 MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider, GroupLinkProvider groupLinkProvider) {
         super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.rankingProvider = rankingProvider;
         this.groupProvider = groupProvider;
@@ -76,7 +73,6 @@ public class TreeTournamentHandler extends LeagueHandler {
         this.minimumGroupFightManager = minimumGroupFightManager;
         this.fightProvider = fightProvider;
         this.groupLinkProvider = groupLinkProvider;
-        this.teamConverter = teamConverter;
     }
 
     @Override
@@ -119,6 +115,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         }
         final Group savedGroup = groupProvider.addGroup(tournament, group);
         adjustGroupsSize(tournament, getNumberOfWinners(tournament));
+        adjustGroupsShiaijos(tournament);
         return savedGroup;
     }
 
@@ -162,6 +159,32 @@ public class TreeTournamentHandler extends LeagueHandler {
         }
     }
 
+    public void adjustGroupsShiaijos(Tournament tournament) {
+        if (tournament.getShiaijos() > 1) {
+            final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+            final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
+            for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
+                final int groupsByShiaijo = groupsByLevel.get(level).size() / tournament.getShiaijos();
+                int currentShiaijo = 0;
+                int groupsInCurrentShiaijo = 0;
+                for (Group group : groupsByLevel.get(level)) {
+                    if (groupsInCurrentShiaijo >= (currentShiaijo < groupsByLevel.get(level).size() % tournament.getShiaijos()
+                            ? groupsByShiaijo + 1 : groupsByShiaijo)) {
+                        currentShiaijo++;
+                        groupsInCurrentShiaijo = 0;
+                    }
+                    //Correct shiaijo if needed.
+                    if (group.getShiaijo() != currentShiaijo) {
+                        KendoTournamentLogger.info(this.getClass(), "Adjusting shiaijo for group '{}' to '{}'", group, currentShiaijo);
+                        group.setShiaijo(currentShiaijo);
+                        groupProvider.save(group);
+                    }
+                    groupsInCurrentShiaijo++;
+                }
+            }
+        }
+    }
+
     @Override
     public void removeGroup(Tournament tournament, Integer groupLevel, Integer groupIndex) {
         if (groupLevel > 0) {
@@ -189,6 +212,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             }
             previousLevelSize = groupsByLevel.get(level).size();
         }
+        adjustGroupsShiaijos(tournament);
     }
 
     @Override
@@ -200,11 +224,11 @@ public class TreeTournamentHandler extends LeagueHandler {
                 final List<Fight> fights;
                 if (getMaxGroupFights(tournament)) {
                     final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
-                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
+                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(), TeamsOrder.NONE,
+                            level, group.getShiaijo(), LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
                 } else {
                     fights = fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, createdBy));
+                            TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
                 }
                 group.setFights(fights);
                 groupProvider.save(group);

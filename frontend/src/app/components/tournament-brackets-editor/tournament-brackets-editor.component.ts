@@ -30,6 +30,7 @@ import {NumberOfWinnersUpdatedService} from "../../services/notifications/number
 import {random} from "../../utils/random/random";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
+import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
@@ -79,7 +80,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
       this.updateData();
     });
@@ -200,9 +201,9 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   public downloadAsPdf(): void {
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
-    const height: number = groupsByLevel.get(0)?.length! * TournamentBracketsComponent.GROUP_SEPARATION + this.totalTeams * 100;
+    const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
     //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size! + 1) * (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION + 100);
+    const width: number = (groupsByLevel.size! + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
     const widthMM: number = this.getMM(width);
