@@ -154,12 +154,14 @@
                [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
     <div class="fight-container">
       <div *ngFor="let group of groups" class="fight-list">
-        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group)"
+        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="level-name">{{'level' | translate}} {{group.level + 1}}</h2>
-        <h3 [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+        <h3 *ngIf="filteredFights.get(group.id!)?.length! > 0"
+            [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="group-name">{{'group' | translate}} {{group.index + 1}}</h3>
-        <div [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
+        <div *ngIf="filteredFights.get(group.id!)?.length! > 0"
+             [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
           <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
                  [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"

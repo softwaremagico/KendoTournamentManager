@@ -32,8 +32,8 @@ import java.util.List;
 @Service
 public class CompleteGroupFightManager {
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, boolean fifo, String createdBy) {
-        return createCompleteFightList(tournament, teams, teamsOrder, level, fifo, createdBy);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, Integer shiaijo, boolean fifo, String createdBy) {
+        return createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
@@ -48,7 +48,7 @@ public class CompleteGroupFightManager {
      * @param teamsOrder
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, boolean fifo,
+    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, Integer shiaijo, boolean fifo,
                                                   String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
@@ -68,13 +68,13 @@ public class CompleteGroupFightManager {
             }
             // Remaining fights sometimes repeat team. Align them.
             if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-                fight = createFight(tournament, team2, team1, 0, level, createdBy);
+                fight = createFight(tournament, team2, team1, shiaijo, level, createdBy);
             } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-                fight = createFight(tournament, team1, team2, 0, level, createdBy);
+                fight = createFight(tournament, team1, team2, shiaijo, level, createdBy);
             } else if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, 0, level, createdBy);
+                fight = createFight(tournament, team1, team2, shiaijo, level, createdBy);
             } else {
-                fight = createFight(tournament, team2, team1, 0, level, createdBy);
+                fight = createFight(tournament, team2, team1, shiaijo, level, createdBy);
             }
             fights.add(fight);
             lastFight = fight;
