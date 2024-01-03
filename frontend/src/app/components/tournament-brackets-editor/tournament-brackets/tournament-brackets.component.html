@@ -4,8 +4,7 @@
     [getGroupHigh]="getGroupHigh"
     [groupsByLevel]="groupsByLevel"
     [totalShiaijos]="tournament.shiaijos"
-    [shiajo]="shiaijo"
-    [groups]="getGroupsInShiaijo(shiaijo, 0)"></app-shiaijo>
+    [shiaijo]="shiaijo"></app-shiaijo>
 </div>
 <div class="level" [class]="'level-' + level" *ngFor="let level of groupsByLevel.keys()">
   <div class="arrow-container" *ngFor="let g of relations.get(level)">
