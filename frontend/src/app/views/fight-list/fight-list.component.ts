@@ -41,6 +41,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   filteredFights: Map<number, Fight[]>;
   filteredUnties: Map<number, Duel[]>;
+  //Check if a level label must be shown or not.
+  filteredLevels: number[];
 
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
@@ -79,6 +81,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
+    this.filteredLevels = [];
     this.groups = [];
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -248,8 +251,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
       this.showLevelOfGroup.set(group, showedLevel[group.level]);
       showedLevel[group.level] = false;
-
     }
+
     this.showLevelTags = showedLevel.length > 1;
   }
 
@@ -746,6 +749,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
+    this.filteredLevels = [];
 
     for (const group of this.groups) {
       if (group.fights) {
@@ -775,6 +779,15 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             (duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""))));
       } else {
         this.filteredUnties.set(group.id!, []);
+      }
+
+      //Check if a level label must be shown or not.
+      for (let fights of this.filteredFights.values()) {
+        for (let fight of fights) {
+          if (!this.filteredLevels.includes(fight.level)) {
+            this.filteredLevels.push(fight.level);
+          }
+        }
       }
     }
   }
