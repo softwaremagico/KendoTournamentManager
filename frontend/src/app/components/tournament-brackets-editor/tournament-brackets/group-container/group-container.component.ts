@@ -6,6 +6,7 @@ import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {GroupService} from "../../../../services/group.service";
 import {GroupsUpdatedService} from "../groups-updated.service";
 import {Tournament} from "../../../../models/tournament";
+import {BracketsMeasures} from "../brackets-measures";
 
 @Component({
   selector: 'app-group-container',
@@ -40,7 +41,7 @@ export class GroupContainerComponent implements OnInit {
 
   totalTeams: number;
 
-  groupHigh: number = TournamentBracketsComponent.GROUP_HIGH;
+  groupHigh: number = BracketsMeasures.GROUP_HIGH;
 
   estimatedTeams: number;
 
