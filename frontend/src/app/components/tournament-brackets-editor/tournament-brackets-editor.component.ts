@@ -80,7 +80,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
       this.updateData();
     });

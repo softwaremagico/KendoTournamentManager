@@ -1,10 +1,13 @@
-<div class="shiaijo-separator" *ngFor="let shiaijo of shiaijos">
-  <app-shiaijo
-    [getGroupTopSeparation]="getGroupTopSeparation"
-    [getGroupHigh]="getGroupHigh"
-    [groupsByLevel]="groupsByLevel"
-    [totalShiaijos]="tournament.shiaijos"
-    [shiaijo]="shiaijo"></app-shiaijo>
+<div class="shiaijo-column" *ngFor="let shiaijoLevel of shiaijosByLevel.keys()">
+  <div class="shiaijo-separator" *ngFor="let shiaijo of shiaijosByLevel.get(shiaijoLevel)">
+    <app-shiaijo
+      [getGroupTopSeparation]="getGroupTopSeparation"
+      [getGroupHigh]="getGroupHigh"
+      [groupsByLevel]="groupsByLevel"
+      [totalShiaijos]="tournament.shiaijos"
+      [level]="shiaijoLevel"
+      [shiaijo]="shiaijo"></app-shiaijo>
+  </div>
 </div>
 <div class="level" [class]="'level-' + level" *ngFor="let level of groupsByLevel.keys()">
   <div class="arrow-container" *ngFor="let g of relations.get(level)">
