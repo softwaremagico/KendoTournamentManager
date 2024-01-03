@@ -164,22 +164,25 @@ public class TreeTournamentHandler extends LeagueHandler {
             final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
             final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
             for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-                final int groupsByShiaijo = (int) Math.ceil(groupsByLevel.get(level).size() / (double) tournament.getShiaijos());
-                groupsByLevel.get(level).forEach(group -> {
+                final int groupsByShiaijo = groupsByLevel.get(level).size() / tournament.getShiaijos();
+                int currentShiaijo = 0;
+                int groupsInCurrentShiaijo = 0;
+                for (Group group : groupsByLevel.get(level)) {
+                    if (groupsInCurrentShiaijo >= (currentShiaijo < groupsByLevel.get(level).size() % tournament.getShiaijos()
+                            ? groupsByShiaijo + 1 : groupsByShiaijo)) {
+                        currentShiaijo++;
+                        groupsInCurrentShiaijo = 0;
+                    }
                     //Correct shiaijo if needed.
-                    final int correctedShiaijo = getShiaijo(group, groupsByShiaijo);
-                    if (group.getShiaijo() != correctedShiaijo) {
-                        KendoTournamentLogger.info(this.getClass(), "Adjusting shiaijo fro group '{}' to '{}'", group, correctedShiaijo);
-                        group.setShiaijo(correctedShiaijo);
+                    if (group.getShiaijo() != currentShiaijo) {
+                        KendoTournamentLogger.info(this.getClass(), "Adjusting shiaijo for group '{}' to '{}'", group, currentShiaijo);
+                        group.setShiaijo(currentShiaijo);
                         groupProvider.save(group);
                     }
-                });
+                    groupsInCurrentShiaijo++;
+                }
             }
         }
-    }
-
-    private int getShiaijo(Group group, int groupsByShiaijo) {
-        return group.getIndex() / groupsByShiaijo;
     }
 
     @Override

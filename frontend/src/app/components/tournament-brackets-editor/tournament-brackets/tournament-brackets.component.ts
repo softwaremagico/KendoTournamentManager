@@ -21,7 +21,7 @@ export class TournamentBracketsComponent implements OnInit {
 
   relations: Map<number, { src: number, dest: number, winner: number }[]>;
 
-  shiaijos: number[];
+  shiaijosByLevel: Map<number, number[]> = new Map();
 
   groupsByLevel: Map<number, Group[]> = new Map();
 
@@ -32,7 +32,7 @@ export class TournamentBracketsComponent implements OnInit {
   ngOnInit(): void {
     this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
       this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
-      this.shiaijos = this.getShiaijos();
+      this.shiaijosByLevel = this.getShiaijos();
     });
     this.groupsUpdatedService.areRelationsUpdated.subscribe((_relations: Map<number, {
       src: number,
@@ -113,11 +113,18 @@ export class TournamentBracketsComponent implements OnInit {
     return this.getGroupTopSeparation(column, destinationGroupIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceGroupIndex) / 2 + correction;
   }
 
-  getShiaijos(): number[] {
-    if (!this.tournament.shiaijos || this.groupsByLevel.get(0)?.length! <= 1) {
-      return [...Array(0).keys()];
+  getShiaijos(): Map<number, number[]> {
+    const shiaijosByLevel: Map<number, number[]> = new Map();
+    for (let key of this.groupsByLevel.keys()) {
+      shiaijosByLevel.set(key, []);
+      if (!this.tournament.shiaijos || this.groupsByLevel.get(key)?.length! <= 1) {
+        shiaijosByLevel.set(key, [...Array(0).keys()]);
+      } else {
+        shiaijosByLevel.set(key, [...Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(key)?.length! - 1))).keys()]);
+      }
     }
-    return [...Array(Math.min(this.tournament.shiaijos - 1, (this.groupsByLevel.get(0)?.length! - 1))).keys()];
+    console.log(shiaijosByLevel)
+    return shiaijosByLevel;
   }
 
   getGroupsInShiaijo(shiaijo: number, level: number): Group[] {
