@@ -8,6 +8,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -33,12 +34,12 @@ public class WebSocketController {
     }
 
     /**
-     * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_TOPIC} + {@value #FIGHTS_MAPPING}.
+     * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #FIGHTS_MAPPING}.
      *
      * @param fight the fight to send.
      * @return
      */
-    @SendTo(WebSocketConfiguration.SOCKET_TOPIC + FIGHTS_MAPPING)
+    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING)
     public MessageContent sendFight(FightDTO fight) {
         try {
             return new MessageContent(Fight.class.getSimpleName(), toJson(fight));
@@ -49,12 +50,12 @@ public class WebSocketController {
     }
 
     /**
-     * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_TOPIC} + {@value #MESSAGES_MAPPING}.
+     * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #MESSAGES_MAPPING}.
      *
      * @param message the message to send.
      * @return
      */
-    @SendTo(WebSocketConfiguration.SOCKET_TOPIC + MESSAGES_MAPPING)
+    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING)
     public MessageContent sendMessage(String message) {
         try {
             return new MessageContent(String.class.getSimpleName(), message);
@@ -66,14 +67,14 @@ public class WebSocketController {
 
     /**
      * Sends back a message. For testing purposes.
-     * Listens to: {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_PREFIX} + {@value #ECHO_MAPPING}.
-     * Sends to: {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_TOPIC} + {@value #MESSAGES_MAPPING}.
+     * Listens to: {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_RECEIVE_PREFIX} + {@value #ECHO_MAPPING}.
+     * Sends to: {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #MESSAGES_MAPPING}.
      *
      * @param message
      * @return
      */
     @MessageMapping(ECHO_MAPPING)
-    @SendTo(WebSocketConfiguration.SOCKET_TOPIC + MESSAGES_MAPPING)
+    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING)
     public MessageContent echo(String message) {
         System.out.println("##################################################################3");
         KendoTournamentLogger.info(this.getClass(), "Received message '{}'.", message);
@@ -83,5 +84,17 @@ public class WebSocketController {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
         return null;
+    }
+
+    @MessageMapping("/welcome")
+    @SendTo("/topic/greetings")
+    public String greeting(String payload) {
+        System.out.println("Generating new greeting message for " + payload);
+        return "Hello, " + payload + "!";
+    }
+
+    @SubscribeMapping("/chat")
+    public MessageContent sendWelcomeMessageOnSubscription() {
+        return new MessageContent(String.class.getSimpleName(), "Testing");
     }
 }
