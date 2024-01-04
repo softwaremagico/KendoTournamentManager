@@ -63,7 +63,6 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
@@ -280,7 +279,6 @@ public class RankingController {
                         clubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
     }
 
-    @Cacheable("competitors-ranking")
     public List<ScoreOfCompetitorDTO> getCompetitorGlobalRanking(ScoreType scoreType) {
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorGlobalRanking(scoreType).stream()
                 .map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toSet()));
