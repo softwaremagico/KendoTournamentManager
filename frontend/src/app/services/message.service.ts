@@ -1,20 +1,38 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy, OnInit} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable, of} from "rxjs";
+import {Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
+import {Message} from "@stomp/stompjs/esm6";
+import {RxStompService} from "../websockets/rx-stomp.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class MessageService {
+export class MessageService implements OnInit, OnDestroy {
+
+  private topicSubscription: Subscription;
 
   constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
-              private loggerService: LoggerService) {
+              private loggerService: LoggerService, private rxStompService: RxStompService) {
   }
 
-  private openSnackBar(message: string, cssClass: string, duration: number, action?: string) {
+  ngOnInit(): void {
+    console.log('***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-')
+    this.topicSubscription = this.rxStompService.watch('/frontend/messages').subscribe((message: Message): void => {
+      console.log(message.body);
+    });
+    this.rxStompService.publish({ destination: '/websockets/echo', body: 'Testing....' });
+  }
+
+
+  ngOnDestroy(): void {
+    this.topicSubscription.unsubscribe();
+  }
+
+
+  private openSnackBar(message: string, cssClass: string, duration: number, action?: string): void {
     this.snackBar.open(this.translateService.instant(message), action, {
       duration: duration,
       panelClass: [cssClass, 'message-service'],
@@ -57,7 +75,7 @@ export class MessageService {
     };
   }
 
-  logOnlyError<T>(operation = 'operation', result?: T) {
+  logOnlyError<T>(operation: string = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       //Log error
       const log: Log = new Log();
