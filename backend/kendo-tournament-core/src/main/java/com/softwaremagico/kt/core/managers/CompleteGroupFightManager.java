@@ -32,7 +32,8 @@ import java.util.List;
 @Service
 public class CompleteGroupFightManager {
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, Integer shiaijo, boolean fifo, String createdBy) {
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
+                                    Integer shiaijo, boolean fifo, String createdBy) {
         return createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
