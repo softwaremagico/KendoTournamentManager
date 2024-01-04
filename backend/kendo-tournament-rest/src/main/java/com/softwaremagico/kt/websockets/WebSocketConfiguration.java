@@ -11,24 +11,24 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
     //Where is listening to messages
-    public static final String SOCKET_PREFIX = "/websockets";
+    public static final String SOCKET_RECEIVE_PREFIX = "/app";
 
     //Where messages will be sent.
-    public static final String SOCKET_TOPIC = "/frontend";
+    public static final String SOCKET_SEND_PREFIX = "/topic";
 
     //URL where the client must subscribe.
-    public static final String SOCKETS_ROOT = "/sockets";
+    public static final String SOCKETS_ROOT_URL = "/ws-endpoint";
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(SOCKETS_ROOT)
+        registry.addEndpoint(SOCKETS_ROOT_URL)
                 .setAllowedOrigins("*")
                 .withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes(SOCKET_PREFIX)
-                .enableSimpleBroker(SOCKET_TOPIC);
+        registry.setApplicationDestinationPrefixes(SOCKET_RECEIVE_PREFIX)
+                .enableSimpleBroker(SOCKET_SEND_PREFIX);
     }
 }
