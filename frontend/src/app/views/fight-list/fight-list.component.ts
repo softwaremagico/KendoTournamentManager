@@ -24,13 +24,15 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
-import {Subject, takeUntil} from "rxjs";
+import {Subject, Subscription, takeUntil} from "rxjs";
 import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RxStompService} from "../../websockets/rx-stomp.service";
+import {Message} from "@stomp/stompjs";
 
 @Component({
   selector: 'app-fight-list',
@@ -69,6 +71,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectedShiaijo: number = -1;
 
+  private topicSubscription: Subscription;
+
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
               private groupService: GroupService, private duelService: DuelService,
@@ -77,7 +81,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslateService,
-              private systemOverloadService: SystemOverloadService) {
+              private systemOverloadService: SystemOverloadService,
+              private rxStompService: RxStompService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -148,6 +153,15 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
+
+    this.topicSubscription = this.rxStompService.watch('/frontend/fights').subscribe((message: Message): void => {
+      console.log(message.body);
+    });
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.topicSubscription.unsubscribe();
   }
 
   private replaceGroup(group: Group): void {

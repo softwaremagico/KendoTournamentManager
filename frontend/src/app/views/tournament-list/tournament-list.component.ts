@@ -25,6 +25,7 @@ import {
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
+import {RxStompService} from "../../websockets/rx-stomp.service";
 
 @Component({
   selector: 'app-tournament-list',
@@ -42,7 +43,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
-              private achievementsService: AchievementsService) {
+              private achievementsService: AchievementsService, private rxStompService: RxStompService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'type', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
@@ -52,6 +53,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   ngOnInit(): void {
     this.showAllElements();
+    this.rxStompService.publish({ destination: '/websockets/echo', body: 'Testing....' });
   }
 
   showAllElements(): void {
