@@ -57,7 +57,12 @@ public class WebSecurityConfig {
             "/info/**",
             "/auth/public/**",
             //Websockets
-            WebSocketConfiguration.SOCKETS_ROOT_URL
+            WebSocketConfiguration.SOCKETS_ROOT_URL,
+            WebSocketConfiguration.SOCKET_RECEIVE_PREFIX,
+            WebSocketConfiguration.SOCKET_SEND_PREFIX,
+            WebSocketConfiguration.SOCKETS_ROOT_URL + "/**",
+            WebSocketConfiguration.SOCKET_RECEIVE_PREFIX + "/**",
+            WebSocketConfiguration.SOCKET_SEND_PREFIX + "/**"
     };
 
     private final JwtTokenFilter jwtTokenFilter;
