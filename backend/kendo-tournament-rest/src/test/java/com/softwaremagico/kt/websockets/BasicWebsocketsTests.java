@@ -2,22 +2,21 @@ package com.softwaremagico.kt.websockets;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.messaging.converter.StringMessageConverter;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.web.socket.WebSocketHttpHeaders;
+import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.sockjs.client.SockJsClient;
-import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -38,21 +37,27 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private WebSocketStompClient webSocketStompClient;
 
+    private final WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+
     private String getWsPath() {
-        return String.format("ws://localhost:%d/%s", port, WebSocketConfiguration.SOCKET_RECEIVE_PREFIX);
+        return String.format("ws://localhost:%d/kendo-tournament-backend/%s", port, WebSocketConfiguration.SOCKET_RECEIVE_PREFIX);
     }
 
 
-    @BeforeClass
+    @BeforeMethod
     public void setup() throws ExecutionException, InterruptedException, TimeoutException {
-        webSocketStompClient = new WebSocketStompClient(new SockJsClient(
-                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
+        WebSocketClient webSocketClient = new StandardWebSocketClient();
+        this.webSocketStompClient = new WebSocketStompClient(webSocketClient);
+        this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-        StompSession session = webSocketStompClient.connectAsync(String.format("ws://localhost:%d/ws-endpoint", port, WebSocketConfiguration.SOCKETS_ROOT_URL),
-                new StompSessionHandlerAdapter() {
-                }).get(1, TimeUnit.SECONDS);
-
-        webSocketStompClient.setMessageConverter(new StringMessageConverter());
+//        webSocketStompClient = new WebSocketStompClient(new SockJsClient(
+//                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
+//
+//        StompSession session = webSocketStompClient.connectAsync(String.format("ws://localhost:%d/%s", port, WebSocketConfiguration.SOCKETS_ROOT_URL),
+//                new StompSessionHandlerAdapter() {
+//                }).get(1, TimeUnit.SECONDS);
+//
+//        webSocketStompClient.setMessageConverter(new StringMessageConverter());
     }
 
 
@@ -60,7 +65,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void echoTest() throws ExecutionException, InterruptedException, TimeoutException {
         BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
 
-        StompSession session = webSocketStompClient.connectAsync(String.format("ws://localhost:%d/ws-endpoint", port, WebSocketConfiguration.SOCKETS_ROOT_URL),
+        StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
