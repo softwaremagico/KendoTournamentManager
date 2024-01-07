@@ -76,7 +76,6 @@ public class WebSocketController {
     @MessageMapping(ECHO_MAPPING)
     @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING)
     public MessageContent echo(String message) {
-        System.out.println("##################################################################3");
         KendoTournamentLogger.info(this.getClass(), "Received message '{}'.", message);
         try {
             return new MessageContent(String.class.getSimpleName(), message);
@@ -89,8 +88,7 @@ public class WebSocketController {
     @MessageMapping("/welcome")
     @SendTo("/topic/greetings")
     public String greeting(String payload) {
-        System.out.println("Generating new greeting message for " + payload);
-        return "Hello, " + payload + "!";
+        return payload;
     }
 
     @SubscribeMapping("/chat")
