@@ -61,7 +61,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
 
     private String getWsPath() {
-        return String.format("ws://127.0.0.1:%d/kendo-tournament-backend/%s", port, WebSocketConfiguration.SOCKET_RECEIVE_PREFIX);
+        return String.format("ws://127.0.0.1:%d/kendo-tournament-backend/%s", port, WebSocketConfiguration.SOCKETS_STOMP_URL);
     }
 
     @BeforeClass
@@ -78,15 +78,6 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
         this.webSocketStompClient = new WebSocketStompClient(webSocketClient);
         this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
-
-//        webSocketStompClient = new WebSocketStompClient(new SockJsClient(
-//                List.of(new WebSocketTransport(new StandardWebSocketClient()))));
-//
-//        StompSession session = webSocketStompClient.connectAsync(getWsPath(),
-//                new StompSessionHandlerAdapter() {
-//                }).get(1, TimeUnit.SECONDS);
-//
-//        webSocketStompClient.setMessageConverter(new StringMessageConverter());
     }
 
 
@@ -114,7 +105,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         session.send("/app/welcome", TESTING_MESSAGE);
 
         await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("Hello, Mike!", blockingQueue.poll()));
+                .untilAsserted(() -> Assert.assertEquals(blockingQueue.poll(), "Hello, Mike!"));
     }
 
 }
