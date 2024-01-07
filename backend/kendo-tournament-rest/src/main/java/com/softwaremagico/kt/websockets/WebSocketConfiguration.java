@@ -17,13 +17,12 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public static final String SOCKET_SEND_PREFIX = "/topic";
 
     //URL where the client must subscribe.
-    public static final String SOCKETS_ROOT_URL = "/ws-endpoint";
+    public static final String SOCKETS_STOMP_URL = "/ws-endpoint";
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(SOCKETS_ROOT_URL)
-                .setAllowedOrigins("*")
-                .withSockJS();
+        registry.addEndpoint(SOCKETS_STOMP_URL)
+                .setAllowedOrigins("*");
     }
 
     @Override
