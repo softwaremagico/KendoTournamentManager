@@ -6,8 +6,11 @@ import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.websockets.models.MessageContent;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -26,19 +29,15 @@ public class WebSocketController {
         return objectMapper.writeValueAsString(object);
     }
 
-    @MessageMapping(FIGHTS_MAPPING)
-    public void readFight(FightDTO fight) {
-
-    }
-
     /**
      * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #FIGHTS_MAPPING}.
      *
      * @param fight the fight to send.
      * @return
      */
+    @MessageMapping(FIGHTS_MAPPING)
     @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING)
-    public MessageContent sendFight(FightDTO fight) {
+    public MessageContent sendFight(@Payload FightDTO fight) {
         try {
             return new MessageContent(Fight.class.getSimpleName(), toJson(fight));
         } catch (Exception e) {
@@ -61,6 +60,12 @@ public class WebSocketController {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
         return null;
+    }
+
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    public String handleException(Throwable exception) {
+        return exception.getMessage();
     }
 
 }
