@@ -8,14 +8,12 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 @Controller
 public class WebSocketController {
 
     public static final String FIGHTS_MAPPING = "/fights";
-    public static final String ECHO_MAPPING = "/echo";
     public static final String MESSAGES_MAPPING = "/messages";
 
     private final ObjectMapper objectMapper;
@@ -65,34 +63,4 @@ public class WebSocketController {
         return null;
     }
 
-    /**
-     * Sends back a message. For testing purposes.
-     * Listens to: {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_RECEIVE_PREFIX} + {@value #ECHO_MAPPING}.
-     * Sends to: {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #MESSAGES_MAPPING}.
-     *
-     * @param message
-     * @return
-     */
-    @MessageMapping(ECHO_MAPPING)
-    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING)
-    public MessageContent echo(String message) {
-        KendoTournamentLogger.info(this.getClass(), "Received message '{}'.", message);
-        try {
-            return new MessageContent(String.class.getSimpleName(), message);
-        } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass(), e);
-        }
-        return null;
-    }
-
-    @MessageMapping("/welcome")
-    @SendTo("/topic/greetings")
-    public String greeting(String payload) {
-        return payload;
-    }
-
-    @SubscribeMapping("/chat")
-    public MessageContent sendWelcomeMessageOnSubscription() {
-        return new MessageContent(String.class.getSimpleName(), "Testing");
-    }
 }
