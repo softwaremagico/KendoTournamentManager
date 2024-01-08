@@ -6,7 +6,6 @@ import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
-import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,12 +20,17 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.Transport;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -98,7 +102,12 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     @BeforeMethod
     public void setup() {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
-        this.webSocketStompClient = new WebSocketStompClient(webSocketClient);
+
+        List<Transport> transports = new ArrayList<>();
+        transports.add(new WebSocketTransport(webSocketClient));
+        SockJsClient sockJsClient = new SockJsClient(transports);
+
+        this.webSocketStompClient = new WebSocketStompClient(sockJsClient);
         this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
@@ -125,13 +134,13 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return MessageContent.class;
+                return FightDTO.class;
             }
 
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                final MessageContent message = (MessageContent) payload;
-                blockingQueue.add(fromJson(message.getPayload(), FightDTO.class));
+                //final MessageContent message = (MessageContent) payload;
+                blockingQueue.add((FightDTO) payload);
             }
         });
 
