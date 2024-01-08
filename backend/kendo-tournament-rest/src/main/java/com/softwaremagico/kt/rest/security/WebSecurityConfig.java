@@ -22,7 +22,6 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.logger.RestServerLogger;
-import com.softwaremagico.kt.websockets.WebSocketConfiguration;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,14 +54,7 @@ public class WebSecurityConfig {
             // Own
             "/",
             "/info/**",
-            "/auth/public/**",
-            //Websockets
-            WebSocketConfiguration.SOCKETS_STOMP_URL,
-            WebSocketConfiguration.SOCKET_RECEIVE_PREFIX,
-            WebSocketConfiguration.SOCKET_SEND_PREFIX,
-            WebSocketConfiguration.SOCKETS_STOMP_URL + "/**",
-            WebSocketConfiguration.SOCKET_RECEIVE_PREFIX + "/**",
-            WebSocketConfiguration.SOCKET_SEND_PREFIX + "/**"
+            "/auth/public/**"
     };
 
     private final JwtTokenFilter jwtTokenFilter;
