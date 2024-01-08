@@ -1,6 +1,28 @@
 package com.softwaremagico.kt.websockets;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (Rest)
+ * %%
+ * Copyright (C) 2021 - 2024 Softwaremagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.EchoWebSocketController;
+import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
@@ -21,6 +43,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -59,11 +82,16 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     private AuthenticatedUserController authenticatedUserController;
 
     @Autowired
+    private AuthenticatedUserProvider authenticatedUserProvider;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     private WebSocketStompClient webSocketStompClient;
 
     private WebSocketHttpHeaders headers;
+
+    private  AuthenticatedUser authenticatedUser;
 
 
     private String getWsPath() {
@@ -72,7 +100,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void authentication() {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+        authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         headers = new WebSocketHttpHeaders();
         headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken(authenticatedUser, "127.0.0.1"));
@@ -117,6 +145,11 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(TESTING_MESSAGE));
+    }
+
+    @AfterClass
+    public void deleteUser() {
+        authenticatedUserProvider.delete(authenticatedUser);
     }
 
 }
