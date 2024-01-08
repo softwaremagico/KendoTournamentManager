@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -17,7 +17,6 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -29,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -66,7 +66,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void authentication() {
-       AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
+        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         headers = new WebSocketHttpHeaders();
         headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken(authenticatedUser, "127.0.0.1"));
@@ -74,10 +74,10 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
 
     @BeforeMethod
-    public void setup() throws ExecutionException, InterruptedException, TimeoutException {
+    public void setup() {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
         this.webSocketStompClient = new WebSocketStompClient(webSocketClient);
-        this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        this.webSocketStompClient.setMessageConverter(new StringMessageConverter());
     }
 
 
@@ -105,7 +105,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         session.send("/app/welcome", TESTING_MESSAGE);
 
         await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals(blockingQueue.poll(), "Hello, Mike!"));
+                .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(TESTING_MESSAGE));
     }
 
 }
