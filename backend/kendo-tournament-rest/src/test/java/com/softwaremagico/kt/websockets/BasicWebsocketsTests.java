@@ -89,7 +89,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
-        session.subscribe("/topic/greetings", new StompFrameHandler() {
+        session.subscribe("/topic/echo", new StompFrameHandler() {
 
             @Override
             public Type getPayloadType(StompHeaders headers) {
