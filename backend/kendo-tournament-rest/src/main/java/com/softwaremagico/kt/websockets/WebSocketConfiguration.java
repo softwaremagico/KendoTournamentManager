@@ -15,9 +15,10 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     //Where messages will be sent.
     public static final String SOCKET_SEND_PREFIX = "/topic";
+    public static final String SOCKET_ERROR_PREFIX = "/error";
 
     //URL where the client must subscribe.
-    public static final String SOCKETS_STOMP_URL = "/ws-endpoint";
+    public static final String SOCKETS_STOMP_URL = "/websockets";
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -27,7 +28,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes(SOCKET_RECEIVE_PREFIX)
+        registry.setApplicationDestinationPrefixes(SOCKET_RECEIVE_PREFIX, SOCKET_ERROR_PREFIX)
                 .enableSimpleBroker(SOCKET_SEND_PREFIX);
     }
 }

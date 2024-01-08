@@ -1,15 +1,18 @@
 package com.softwaremagico.kt.websockets;
 
-import com.softwaremagico.kt.EchoWebSocketController;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
+import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.messaging.converter.StringMessageConverter;
-import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
@@ -18,6 +21,7 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -34,9 +38,9 @@ import static org.awaitility.Awaitility.await;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@Test(groups = "websockets")
+@Test(groups = "fightsWebsockets")
 @AutoConfigureMockMvc(addFilters = false)
-public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
+public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private final static String USER_FIRST_NAME = "Test";
     private final static String USER_LAST_NAME = "User";
@@ -44,8 +48,6 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
-
-    private static final String TESTING_MESSAGE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus iaculis leo purus, vitae finibus felis fringilla eget.";
 
     @LocalServerPort
     private Integer port;
@@ -56,9 +58,28 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private WebSocketController webSocketController;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private WebSocketStompClient webSocketStompClient;
 
     private WebSocketHttpHeaders headers;
+
+    private <T> String toJson(T object) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(object);
+    }
+
+    private <T> T fromJson(String payload, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(payload, clazz);
+        } catch (JsonProcessingException e) {
+            Assert.fail("Cannot convert JSON", e);
+            return null;
+        }
+    }
 
 
     private String getWsPath() {
@@ -78,35 +99,49 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void setup() {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
         this.webSocketStompClient = new WebSocketStompClient(webSocketClient);
-        this.webSocketStompClient.setMessageConverter(new StringMessageConverter());
+        this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
 
     @Test
-    public void echoTest() throws ExecutionException, InterruptedException, TimeoutException {
-        BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
+    public void fightUpdated() throws ExecutionException, InterruptedException, TimeoutException {
+        BlockingQueue<FightDTO> blockingQueue = new ArrayBlockingQueue<>(1);
 
         StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
-        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + EchoWebSocketController.ECHO_MAPPING, new StompFrameHandler() {
+        session.subscribe(WebSocketConfiguration.SOCKET_SEND_PREFIX + WebSocketController.FIGHTS_MAPPING, new StompSessionHandlerAdapter() {
+
+            @Override
+            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                System.out.println("Connected!");
+            }
+
+            @Override
+            public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
+                throw new RuntimeException("Failure in WebSocket handling", exception);
+            }
 
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return String.class;
+                return MessageContent.class;
             }
 
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                blockingQueue.add((String) payload);
+                final MessageContent message = (MessageContent) payload;
+                blockingQueue.add(fromJson(message.getPayload(), FightDTO.class));
             }
         });
 
-        session.send(WebSocketConfiguration.SOCKET_RECEIVE_PREFIX + EchoWebSocketController.ECHO_INBOUND_MAPPING, TESTING_MESSAGE);
+        final FightDTO fightDTO = new FightDTO();
+        fightDTO.setShiaijo(3);
+
+        session.send(WebSocketConfiguration.SOCKET_RECEIVE_PREFIX + WebSocketController.FIGHTS_MAPPING, fightDTO);
 
         await().atMost(1, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(TESTING_MESSAGE));
+                .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(fightDTO));
     }
 
 }

@@ -15,6 +15,7 @@
                 <include name="userRegister"/>
                 <include name="passwordTests"/>
                 <include name="websockets"/>
+                <include name="fightsWebsockets"/>
             </run>
         </groups>
         <classes>
@@ -26,6 +27,7 @@
             <class name="com.softwaremagico.kt.rest.RestSimpleChampionshipTest"/>
             <class name="com.softwaremagico.kt.rest.UserRegisterTests"/>
             <class name="com.softwaremagico.kt.websockets.BasicWebsocketsTests"/>
+            <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
         </classes>
     </test>
 </suite>
