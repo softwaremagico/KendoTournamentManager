@@ -43,9 +43,6 @@ import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.sockjs.client.SockJsClient;
-import org.springframework.web.socket.sockjs.client.Transport;
-import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -53,8 +50,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -131,12 +126,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     @BeforeMethod
     public void setup() {
         WebSocketClient webSocketClient = new StandardWebSocketClient();
-
-        List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(webSocketClient));
-        SockJsClient sockJsClient = new SockJsClient(transports);
-
-        this.webSocketStompClient = new WebSocketStompClient(sockJsClient);
+        this.webSocketStompClient = new WebSocketStompClient(webSocketClient);
         this.webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
     }
 
