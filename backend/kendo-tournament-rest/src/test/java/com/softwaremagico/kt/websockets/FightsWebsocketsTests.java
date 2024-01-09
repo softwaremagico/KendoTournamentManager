@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
+import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -162,13 +163,13 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return FightDTO.class;
+                return MessageContent.class;
             }
 
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                //final MessageContent message = (MessageContent) payload;
-                blockingQueue.add((FightDTO) payload);
+                final MessageContent message = (MessageContent) payload;
+                blockingQueue.add(fromJson(message.getPayload(), FightDTO.class));
             }
         });
 
