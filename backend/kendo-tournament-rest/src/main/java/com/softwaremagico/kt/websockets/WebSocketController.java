@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -62,7 +63,7 @@ public class WebSocketController {
     @SubscribeMapping(FIGHTS_MAPPING)
     public MessageContent sendFight(@Payload FightDTO fight) {
         try {
-            return new MessageContent(FightDTO.class.getSimpleName(), toJson(fight));
+            return new MessageContent(Fight.class.getSimpleName(), toJson(fight));
         } catch (Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }

@@ -23,7 +23,7 @@ package com.softwaremagico.kt.websockets.models;
 
 public class MessageContent {
 
-    //private String topic;
+    private String topic;
     private String payload;
 
     public MessageContent() {
@@ -31,7 +31,7 @@ public class MessageContent {
     }
 
     public MessageContent(String topic, String payload) {
-        //this.topic = topic;
+        this.topic = topic;
         this.payload = payload;
     }
 
@@ -43,11 +43,11 @@ public class MessageContent {
         this.payload = payload;
     }
 
-//    public String getTopic() {
-//        return topic;
-//    }
-//
-//    public void setTopic(String topic) {
-//        this.topic = topic;
-//    }
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 }
