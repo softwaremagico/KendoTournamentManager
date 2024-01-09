@@ -4,13 +4,6 @@ import {environment} from '../../environments/environment';
 export const frontendRxStompConfig: RxStompConfig = {
   brokerURL: environment.websocketsUrl,
 
-  // Headers
-  // Typical keys: login, passcode, host
-  connectHeaders: {
-    login: 'guest',
-    passcode: 'guest',
-  },
-
   // How often to heartbeat?
   // Interval in milliseconds, set to 0 to disable
   heartbeatIncoming: 0, // Typical value 0 - disabled
@@ -27,4 +20,14 @@ export const frontendRxStompConfig: RxStompConfig = {
   debug: (msg: string): void => {
     console.log(new Date(), msg);
   },
+
+  beforeConnect: (stompClient: any): Promise<void> => {
+    return new Promise<void>((resolve, _): void => {
+      const token: string | null = localStorage.getItem('jwt');
+      stompClient.connectHeaders = {
+        Authorization: 'Bearer ' + token
+      };
+      resolve();
+    });
+  }
 };
