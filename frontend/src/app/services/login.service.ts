@@ -49,6 +49,7 @@ export class LoginService {
   }
 
   public setJwtValue(token: string, expires: number): void {
+    localStorage.setItem("jwt", token);
     this.cookies.set("jwt", token);
     this.cookies.set("jwt_expires", expires.toString());
   }
