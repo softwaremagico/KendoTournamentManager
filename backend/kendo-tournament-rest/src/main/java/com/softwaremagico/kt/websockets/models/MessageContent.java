@@ -10,12 +10,12 @@ package com.softwaremagico.kt.websockets.models;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -23,11 +23,15 @@ package com.softwaremagico.kt.websockets.models;
 
 public class MessageContent {
 
-    private final String topic;
+    //private String topic;
     private String payload;
 
+    public MessageContent() {
+
+    }
+
     public MessageContent(String topic, String payload) {
-        this.topic = topic;
+        //this.topic = topic;
         this.payload = payload;
     }
 
@@ -38,4 +42,12 @@ public class MessageContent {
     public void setPayload(String payload) {
         this.payload = payload;
     }
+
+//    public String getTopic() {
+//        return topic;
+//    }
+//
+//    public void setTopic(String topic) {
+//        this.topic = topic;
+//    }
 }

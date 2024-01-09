@@ -10,12 +10,12 @@ package com.softwaremagico.kt.websockets;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -39,6 +39,7 @@ public class WebSocketController {
 
     public static final String FIGHTS_MAPPING = "/fights";
     public static final String MESSAGES_MAPPING = "/messages";
+    public static final String ERRORS_MAPPING = "/errors";
 
     private final ObjectMapper objectMapper;
 
@@ -59,9 +60,9 @@ public class WebSocketController {
     @MessageMapping(FIGHTS_MAPPING)
     @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING)
     @SubscribeMapping(FIGHTS_MAPPING)
-    public FightDTO sendFight(@Payload FightDTO fight) {
+    public MessageContent sendFight(@Payload FightDTO fight) {
         try {
-            return fight;
+            return new MessageContent(FightDTO.class.getSimpleName(), toJson(fight));
         } catch (Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
@@ -85,7 +86,7 @@ public class WebSocketController {
     }
 
     @MessageExceptionHandler
-    @SendToUser("/queue/errors")
+    @SendToUser(WebSocketConfiguration.SOCKET_SEND_PREFIX + ERRORS_MAPPING)
     public String handleException(Throwable exception) {
         return exception.getMessage();
     }
