@@ -98,7 +98,7 @@ public class WebSocketController {
     @MessageMapping(ECHO_MAPPING)
     @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + ECHO_MAPPING)
     public String echo(String payload) {
-        return payload;
+        return "Echoing... " + payload;
     }
 
 }

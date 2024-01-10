@@ -22,6 +22,7 @@ package com.softwaremagico.kt.websockets;
  */
 
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -51,7 +52,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     private static final String JWT_CUSTOM_HEADER = "JWT-Token";
 
     //Where is listening to messages
-    public static final String SOCKET_RECEIVE_PREFIX = "/app";
+    public static final String SOCKET_RECEIVE_PREFIX = "/backend";
 
     //Where messages will be sent.
     public static final String SOCKET_SEND_PREFIX = "/topic";
@@ -94,9 +95,13 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                     final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
                     try {
                         jwtTokenUtil.getUsername(jwtToken.get(0));
-                        accessor.setUser(new UserPrincipal(jwtTokenUtil.getUsername(jwtToken.get(0))));
-                        KendoTournamentLogger.debug(this.getClass(), "JWT token accepted for websockets.");
-                        webSocketController.sendMessage("Connected!");
+                        final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
+                        if (username != null && !username.isEmpty()) {
+                            accessor.setUser(new UserPrincipal(username));
+                            KendoTournamentLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
+                        } else {
+                            throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
+                        }
                     } catch (Exception e) {
                         //Unauthorized.
                         KendoTournamentLogger.warning(this.getClass(), "Invalid Token for websockets!");
