@@ -26,6 +26,7 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 import {RxStompService} from "../../websockets/rx-stomp.service";
+import {Message} from "@stomp/stompjs";
 
 @Component({
   selector: 'app-tournament-list',
@@ -53,7 +54,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   ngOnInit(): void {
     this.showAllElements();
-    this.rxStompService.publish({ destination: '/websockets/echo', body: 'Testing....' });
+    this.rxStompService.watch('/topic/echo').subscribe((message: Message): void => {
+      console.log('--->', message.body);
+    });
   }
 
   showAllElements(): void {
@@ -71,6 +74,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   addElement(): void {
+    this.rxStompService.publish({ destination: '/backend/echo', body: 'Sending test....' });
     const tournament: Tournament = new Tournament();
     tournament.duelsDuration = Tournament.DEFAULT_DUELS_DURATION;
     tournament.type = Tournament.DEFAULT_TYPE;
