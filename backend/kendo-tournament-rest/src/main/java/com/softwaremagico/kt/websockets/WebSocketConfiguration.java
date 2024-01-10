@@ -21,7 +21,8 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -33,16 +34,21 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+import java.security.Principal;
+import java.util.List;
 
 @Configuration
 @EnableWebSocketMessageBroker
 @Order(Ordered.HIGHEST_PRECEDENCE + WebSocketConfiguration.ORDER)
 public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
     static final int ORDER = 99;
+
+    private static final String JWT_CUSTOM_HEADER = "JWT-Token";
 
     //Where is listening to messages
     public static final String SOCKET_RECEIVE_PREFIX = "/app";
@@ -53,6 +59,15 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     //URL where the client must subscribe.
     public static final String SOCKETS_STOMP_URL = "/websockets";
+
+    private final JwtTokenUtil jwtTokenUtil;
+
+    private final WebSocketController webSocketController;
+
+    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil, WebSocketController webSocketController) {
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.webSocketController = webSocketController;
+    }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -71,18 +86,38 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
+                message.getHeaders();
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) accessor.getHeader("simpUser");
-                    if (usernamePasswordAuthenticationToken != null) {
-                        accessor.setUser((AuthenticatedUser) usernamePasswordAuthenticationToken.getPrincipal());
+                    final LinkedMultiValueMap<String, String> nativeHeaders = (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
+                    final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
+                    try {
+                        jwtTokenUtil.getUsername(jwtToken.get(0));
+                        accessor.setUser(new UserPrincipal(jwtTokenUtil.getUsername(jwtToken.get(0))));
+                        KendoTournamentLogger.debug(this.getClass(), "JWT token accepted for websockets.");
+                        webSocketController.sendMessage("Connected!");
+                    } catch (Exception e) {
+                        //Unauthorized.
+                        KendoTournamentLogger.warning(this.getClass(), "Invalid Token for websockets!");
                     }
-//                    Authentication user = ...; // access authentication header(s)
-//                    accessor.setUser(user);
                 }
                 return message;
             }
         });
+    }
+
+    static class UserPrincipal implements Principal {
+
+        private final String name;
+
+        UserPrincipal(String userName) {
+            this.name = userName;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
     }
 }

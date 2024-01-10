@@ -42,7 +42,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +50,7 @@ import java.util.Set;
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
-public class AuthenticatedUser implements UserDetails, Principal {
+public class AuthenticatedUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

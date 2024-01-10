@@ -22,10 +22,10 @@ export const frontendRxStompConfig: RxStompConfig = {
   },
 
   beforeConnect: (stompClient: any): Promise<void> => {
-    return new Promise<void>((resolve, _): void => {
+    return new Promise<void>((resolve, reject): void => {
       const token: string | null = localStorage.getItem('jwt');
-      stompClient.connectHeaders = {
-        Authorization: 'Bearer ' + token
+      stompClient._stompClient.connectHeaders = {
+        "JWT-Token" : token
       };
       resolve();
     });
