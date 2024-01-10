@@ -42,6 +42,9 @@ public class WebSocketController {
     public static final String MESSAGES_MAPPING = "/messages";
     public static final String ERRORS_MAPPING = "/errors";
 
+    public static final String ECHO_MAPPING = "/echo";
+    public static final String ECHO_INBOUND_MAPPING = "/welcome";
+
     private final ObjectMapper objectMapper;
 
     public WebSocketController(ObjectMapper objectMapper) {
@@ -90,6 +93,12 @@ public class WebSocketController {
     @SendToUser(WebSocketConfiguration.SOCKET_SEND_PREFIX + ERRORS_MAPPING)
     public String handleException(Throwable exception) {
         return exception.getMessage();
+    }
+
+    @MessageMapping(ECHO_MAPPING)
+    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + ECHO_MAPPING)
+    public String echo(String payload) {
+        return payload;
     }
 
 }

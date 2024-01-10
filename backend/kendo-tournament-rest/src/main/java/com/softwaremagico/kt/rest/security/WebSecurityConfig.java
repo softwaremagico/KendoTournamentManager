@@ -54,7 +54,9 @@ public class WebSecurityConfig {
             // Own
             "/",
             "/info/**",
-            "/auth/public/**"
+            "/auth/public/**",
+            //Websockets uses custom security.
+            "/websockets/**"
     };
 
     private final JwtTokenFilter jwtTokenFilter;
