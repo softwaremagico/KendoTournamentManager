@@ -19,11 +19,9 @@ export class MessageService implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-')
-    this.topicSubscription = this.rxStompService.watch('/frontend/messages').subscribe((message: Message): void => {
+    this.topicSubscription = this.rxStompService.watch('/topic/messages').subscribe((message: Message): void => {
       console.log(message.body);
     });
-    this.rxStompService.publish({ destination: '/websockets/echo', body: 'Testing....' });
   }
 
 
