@@ -154,7 +154,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
 
-    this.topicSubscription = this.rxStompService.watch('/frontend/fights').subscribe((message: Message): void => {
+    this.topicSubscription = this.rxStompService.watch('/topic/fights').subscribe((message: Message): void => {
       console.log(message.body);
     });
   }
