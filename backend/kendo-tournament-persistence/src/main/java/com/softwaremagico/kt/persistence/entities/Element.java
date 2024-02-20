@@ -33,6 +33,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.MappedSuperclass;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.Version;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -63,6 +64,9 @@ public abstract class Element {
     @Column(name = "updated_by")
     @Convert(converter = StringCryptoConverter.class)
     private String updatedBy;
+
+    @Version
+    private Integer version;
 
     public Integer getId() {
         return id;
@@ -119,5 +123,13 @@ public abstract class Element {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }
