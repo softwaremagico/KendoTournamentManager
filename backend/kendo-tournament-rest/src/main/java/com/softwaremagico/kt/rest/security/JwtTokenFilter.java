@@ -4,31 +4,34 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
+import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -39,12 +42,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -87,14 +90,30 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (ObjectUtils.isEmpty(header) || !header.startsWith("Bearer ")) {
             chain.doFilter(request, response);
+            if (request.getContextPath() != null && !request.getContextPath().contains("health-check")) {
+                JwtFilterLogger.debug(this.getClass(), "No Bearer token found on headers");
+            }
             return;
         }
 
         // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
         if (!jwtTokenUtil.validate(token)) {
-            chain.doFilter(request, response);
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT token invalid!");
+            try {
+                chain.doFilter(request, response);
+            } catch (Exception e) {
+                //No other filters validates it.
+                throw new InvalidJwtException(this.getClass(), "Invalid JWT token issued.");
+            }
             return;
+        }
+
+        if (JwtFilterLogger.isDebugEnabled()) {
+            JwtFilterLogger.debug(this.getClass().getName(), "\nJWT Obtained:\n"
+                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
+                    jwtTokenUtil.getExpirationDate(token), jwtTokenUtil.getUserId(token), jwtTokenUtil.getUsername(token),
+                    jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
         }
 
         // Get user identity and set it on the spring security context
@@ -127,7 +146,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private List<String> getClientIpAddress(HttpServletRequest request) {
         for (final String header : HEADERS_TO_TRY) {
             final String ip = request.getHeader(header);
-            if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
                 return ip.contains(",") ? Arrays.asList(ip.split(",")) : Collections.singletonList(ip);
             }
         }

@@ -43,9 +43,9 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
 
   ngOnInit(): void {
     this.selectCamera();
-    navigator.mediaDevices.enumerateDevices().then(devices => {
-      this.availableCameras = devices.filter((device) => device.kind === "videoinput").length;
-    })
+    navigator.mediaDevices.enumerateDevices().then((devices: MediaDeviceInfo[]): void => {
+      this.availableCameras = devices.filter((device: MediaDeviceInfo): boolean => device.kind === "videoinput").length;
+    }).catch(() => console.error('Cannot select camera!'));
   }
 
   closeDialog() {
@@ -87,9 +87,9 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
         image.imageFormat = ImageFormat.BASE64;
         image.participant = this.participant;
         image.base64 = imageDataAsBase64;
-        this.fileService.setBase64Picture(image).subscribe(_picture => {
+        this.fileService.setBase64Picture(image).subscribe((_picture: ParticipantImage): void => {
           this.messageService.infoMessage('infoPictureStored');
-          this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
+          this.pictureUpdatedService.isPictureUpdated.next(_picture.base64);
           this.closeDialog();
         });
       }
@@ -115,13 +115,13 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
       const file: File | null = fileList.item(0);
       if (!file || file.size < 4096 || file.size > 2097152) {
         const parameters: object = {minSize: '4096', maxSize: '' + (2097152 / (1024 * 1024))};
-        this.translateService.get('invalidFileSize', parameters).subscribe((res: string) => {
+        this.translateService.get('invalidFileSize', parameters).subscribe((res: string): void => {
           this.messageService.errorMessage(res);
         });
       } else {
-        this.fileService.setParticipantFilePicture(file, this.participant).subscribe(_picture => {
+        this.fileService.setParticipantFilePicture(file, this.participant).subscribe((_picture: ParticipantImage): void => {
           this.messageService.infoMessage('infoPictureStored');
-          this.pictureUpdatedService.isPictureUpdated.next(_picture!.base64);
+          this.pictureUpdatedService.isPictureUpdated.next(_picture.base64);
           this.closeDialog();
         });
       }

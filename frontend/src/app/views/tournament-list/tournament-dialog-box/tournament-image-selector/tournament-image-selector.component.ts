@@ -44,7 +44,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   ngOnInit(): void {
     this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT).subscribe(_tournamentProperty => {
       if (_tournamentProperty) {
-        this.sliderValue = parseFloat(_tournamentProperty.value) * 100;
+        this.sliderValue = parseFloat(_tournamentProperty.propertyValue) * 100;
       } else {
         this.sliderValue = 50;
       }
@@ -62,7 +62,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
           this.messageService.errorMessage(res);
         });
       } else {
-        const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file!.type);
+        const imageCompression: ImageCompression | undefined = ImageCompression.getByType(file.type);
         if (imageCompression) {
           this.fileService.setTournamentFilePicture(file, this.tournament, this.insertedTournamentImageType, imageCompression).subscribe(_picture => {
             this.messageService.infoMessage('infoPictureStored');
@@ -110,8 +110,8 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
 
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
-    tournamentProperty.value = (value / 100).toString();
-    tournamentProperty.property = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
+    tournamentProperty.propertyValue = (value / 100).toString();
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.DIPLOMA_NAME_HEIGHT;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe();
   }
 
@@ -136,7 +136,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
   }
 
   downloadPreview(insertedTournamentImageType: TournamentImageType) {
-    if (this.tournament && this.tournament.id) {
+    if (this.tournament!.id) {
       const participant: Participant = new Participant();
       this.translateService.get('nameExample').subscribe((res: string) => {
         const names: string[] = res.split(' ');

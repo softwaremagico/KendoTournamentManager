@@ -4,39 +4,50 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 
-import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
-import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentScore;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -98,7 +109,7 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
     private TeamConverter teamConverter;
 
     @Autowired
-    private RankingController rankingController;
+    private RankingProvider rankingProvider;
 
     private Club club;
 
@@ -199,7 +210,7 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
-        List<Fight> tournamentFights = simpleLeagueHandler.createFights(tournament, TeamsOrder.SORTED,  0, null);
+        List<Fight> tournamentFights = simpleLeagueHandler.createFights(tournament, TeamsOrder.SORTED, 0, null);
         //Check group has been created.
         Assert.assertEquals(simpleLeagueHandler.getGroups(tournament).size(), 1);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(0).getFights().size(), tournamentFights.size());
@@ -245,11 +256,11 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
         // Team01 has more duels won, but less draw fights than team3 and team4.
         // Tam03 has less draw duels but more hits than team4. In European,
         // win Team04
-        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team04").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team03").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+        List<ScoreOfTeam> scores = rankingProvider.getTeamsScoreRanking(tournament);
+        Assert.assertEquals(scores.get(0).getTeam(), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(scores.get(1).getTeam(), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(scores.get(2).getTeam(), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(scores.get(3).getTeam(), teamProvider.get(tournament, "Team01").get());
 
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
@@ -286,11 +297,11 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
         // Team01 has more duels won, but less draw fights than team3 and team4.
         // Tam03 has less draw duels but more hits than team4. In International,
         // win Team03
-        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team03").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team04").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+        List<ScoreOfTeam> scores = rankingProvider.getTeamsScoreRanking(tournament);
+        Assert.assertEquals(scores.get(0).getTeam(), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(scores.get(1).getTeam(), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(scores.get(2).getTeam(), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(scores.get(3).getTeam(), teamProvider.get(tournament, "Team01").get());
 
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
@@ -327,11 +338,11 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
         // Team01 has more duels won, but less draw fights than team3 and team4.
         // Tam03 has less draw duels but more hits than team4. In Classic,
         // win Team03
-        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team03").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team04").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+        List<ScoreOfTeam> scores = rankingProvider.getTeamsScoreRanking(tournament);
+        Assert.assertEquals(scores.get(0).getTeam(), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(scores.get(1).getTeam(), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(scores.get(2).getTeam(), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(scores.get(3).getTeam(), teamProvider.get(tournament, "Team01").get());
 
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }
@@ -369,11 +380,11 @@ public class ScoreTest extends AbstractTestNGSpringContextTests {
         // Team01 has more duels won, but less draw fights than team3 and team4.
         // Tam03 has less draw duels but more hits than team4. In WInOverDraws,
         // win Team03
-        List<ScoreOfTeam> scores = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
-        Assert.assertEquals(teamConverter.reverse(scores.get(0).getTeam()), teamProvider.get(tournament, "Team04").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(1).getTeam()), teamProvider.get(tournament, "Team03").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(2).getTeam()), teamProvider.get(tournament, "Team02").get());
-        Assert.assertEquals(teamConverter.reverse(scores.get(3).getTeam()), teamProvider.get(tournament, "Team01").get());
+        List<ScoreOfTeam> scores = rankingProvider.getTeamsScoreRanking(tournament);
+        Assert.assertEquals(scores.get(0).getTeam(), teamProvider.get(tournament, "Team04").get());
+        Assert.assertEquals(scores.get(1).getTeam(), teamProvider.get(tournament, "Team03").get());
+        Assert.assertEquals(scores.get(2).getTeam(), teamProvider.get(tournament, "Team02").get());
+        Assert.assertEquals(scores.get(3).getTeam(), teamProvider.get(tournament, "Team01").get());
 
         resetGroup(groupProvider.getGroups(tournament).get(0), null);
     }

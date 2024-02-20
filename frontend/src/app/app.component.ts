@@ -1,7 +1,7 @@
 import {Component, HostBinding, Renderer2} from '@angular/core';
 import {TranslateService} from "@ngx-translate/core";
 import {LoginService} from "./services/login.service";
-import {LoggedInService} from "./guards/logged-in.service";
+import {LoggedInService} from "./interceptors/logged-in.service";
 import {UserSessionService} from "./services/user-session.service";
 import {ConfirmationDialogComponent} from "./components/basic/confirmation-dialog/confirmation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
@@ -10,6 +10,7 @@ import {MessageService} from "./services/message.service";
 import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
 import {OverlayContainer} from "@angular/cdk/overlay";
+import {DarkModeService} from "./services/notifications/dark-mode.service";
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,8 @@ export class AppComponent extends RbacBasedComponent {
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
               private overlay: OverlayContainer, private _renderer: Renderer2,
-              private messageService: MessageService, rbacService: RbacService) {
+              private messageService: MessageService, rbacService: RbacService,
+              private darkModeService: DarkModeService) {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');
@@ -39,7 +41,7 @@ export class AppComponent extends RbacBasedComponent {
     this.setDarkModeTheme();
   }
 
-  toggleMenu(selectedRow: string) {
+  toggleMenu(selectedRow: string): void {
     if (this.selectedRow === selectedRow) {
       this.selectedRow = '';
     } else {
@@ -47,7 +49,7 @@ export class AppComponent extends RbacBasedComponent {
     }
   }
 
-  switchLanguage(lang: string) {
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
     this.selectedLanguage = lang;
     this.userSessionService.setLanguage(lang);
@@ -64,19 +66,20 @@ export class AppComponent extends RbacBasedComponent {
         this.loginService.logout();
         this.rbacService.setRoles([]);
         this.loggedIn = false;
-        this.messageService.infoMessage("userloggedOutMessage");
+        this.messageService.infoMessage("userLoggedOutMessage");
         this.router.navigate(['/login'], {queryParams: {returnUrl: "/tournaments"}});
       }
     });
   }
 
-  switchDarkMode() {
+  switchDarkMode(): void {
     this.nightModeEnabled = !this.nightModeEnabled;
     this.userSessionService.setNightMode(this.nightModeEnabled);
+    this.darkModeService.darkModeSwitched.next(this.nightModeEnabled);
     this.setDarkModeTheme();
   }
 
-  private setDarkModeTheme(){
+  private setDarkModeTheme(): void {
     this.className = this.nightModeEnabled ? 'dark-mode' : '';
     if (this.nightModeEnabled) {
       this.overlay.getContainerElement().classList.add('dark-mode');

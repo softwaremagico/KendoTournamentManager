@@ -42,7 +42,7 @@ export class NameUtilsService {
     return finalResult.join(" ");
   }
 
-  getLastnameName(participant: Participant | undefined): string {
+  getLastnameNameCamelCase(participant: Participant | undefined): string {
     if (!participant) return "";
     return this.spacesToCamel(participant.lastname + " " + this.getShortName(participant));
   }
@@ -75,14 +75,8 @@ export class NameUtilsService {
     return participant.name.slice(nameUpperIndex, 1) + participant.lastname.slice(lastnameUpperIndex, 1);
   }
 
-  getDisplayName(participant
-                   :
-                   Participant | undefined, resolution
-                   :
-                   number
-  ):
-    string {
-    if (resolution > 1500) {
+  getDisplayName(participant: Participant | undefined, resolution?: number): string {
+    if (!resolution || resolution > 1500) {
       return this.getLastname(participant) + ', ' + this.getName(participant);
     } else if (resolution > 1200) {
       return this.getLastname(participant) + ', ' + this.getShortName(participant);
@@ -96,10 +90,7 @@ export class NameUtilsService {
   }
 
 
-  spacesToCamel(value
-                  :
-                  string
-  ) {
+  spacesToCamel(value: string) {
     return value.toLowerCase()
       .replace(/ (.)/g, function ($1) {
         return $1.toUpperCase();

@@ -1,0 +1,42 @@
+<div class="container" cdkDropListGroup>
+  <div>
+    <div *ngIf="!droppingDisabled"
+         (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+         cdkDropList cdkDropListSortingDisabled="true"
+         class="teams-container">
+      <team-list [teamListData]="teamListData" [minify]="true"></team-list>
+    </div>
+    <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
+      <button (click)="sortedGroups()"
+              [disabled]="groupsDisabled || (tournament && tournament.locked)"
+              mat-flat-button
+              mat-raised-button>
+        <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
+        {{'sorted' | translate}}
+      </button>
+      <button (click)="randomGroups()"
+              [disabled]="groupsDisabled || (tournament && tournament.locked)"
+              mat-flat-button
+              mat-raised-button>
+        <mat-icon>casino</mat-icon>
+        {{'random' | translate}}
+      </button>
+      <button (click)="askToRemoveAllTeams()"
+              [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
+              mat-flat-button
+              mat-raised-button
+              matTooltip="{{'removeTeams' | translate}}">
+        <mat-icon>cleaning_services</mat-icon>
+        {{'clean' | translate}}
+      </button>
+    </div>
+  </div>
+  <button (click)="downloadAsPdf()"
+          class="floating-button" color="picture" mat-flat-button mat-mini-fab
+          type="button">
+    <mat-icon>download_file</mat-icon>
+  </button>
+  <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets" [tournament]="tournament"
+                           [droppingDisabled]="droppingDisabled">
+  </app-tournament-brackets>
+</div>

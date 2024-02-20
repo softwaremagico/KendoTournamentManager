@@ -1,58 +1,64 @@
-<div class="app-timer" cdkDrag [cdkDragFreeDragPosition]="timerPosition" (cdkDragEnded)="dragEnd($event)">
+<div (cdkDragEnded)="dragEnd($event)" [cdkDragFreeDragPosition]="timerPosition" cdkDrag class="app-timer">
   <div class="container">
-    <mat-icon class="drag-icon" cdkDragHandle>drag_handle</mat-icon>
-    <div class="timer" [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished()}">
+    <mat-icon cdkDragHandle class="drag-icon">drag_handle</mat-icon>
+    <div [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished(), 'pause': isPaused()}"
+         class="timer">
       <div class="time">
         <span (dblclick)="setMinutesEditable(true)" *ngIf="!minutesEditable">{{toDoubleDigit(minutes)}}</span>
-        <input type=number class="timer-edition timer-edition-minutes" *ngIf="minutesEditable" [value]="this.minutes"
-               oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
-               min="0" max="20" placeholder='00'
-               (keyup)="validateInputMinutes($event)"
-               (keyup.enter)="setMinutesEditable(false)"/>
+        <input (keyup)="validateInputMinutes($event)" (keyup.enter)="setMinutesEditable(false)" *ngIf="minutesEditable"
+               [value]="this.minutes"
+               class="timer-edition timer-edition-minutes"
+               max="20" min="0" oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
+               placeholder='00'
+               type=number/>
         <span>:</span>
         <span (dblclick)="setSecondsEditable(true)" *ngIf="!secondsEditable">{{toDoubleDigit(seconds)}}</span>
-        <input type=number class="timer-edition timer-edition-seconds" *ngIf="secondsEditable" [value]="this.seconds"
-               oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
-               min="0" max="59" placeholder='00'
-               (keyup)="validateInputSeconds($event)"
-               (keyup.enter)="setSecondsEditable(false)"/>
+        <input (keyup)="validateInputSeconds($event)" (keyup.enter)="setSecondsEditable(false)" *ngIf="secondsEditable"
+               [value]="this.seconds"
+               class="timer-edition timer-edition-seconds"
+               max="59" min="0" oninput="if (this.value.length > 2) this.value = this.value.slice(0, this.maxLength);"
+               placeholder='00'
+               type=number/>
       </div>
     </div>
-    <div class="timer-buttons" [class.non-editable]="!editable">
-      <button class="rewind timer-button" (click)="addTime(-60)"
+    <div [class.non-editable]="!editable" class="timer-buttons">
+      <button (click)="addTime(-60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">-1'
+              class="rewind timer-button">-1'
       </button>
-      <button class="rewind timer-button" (click)="addTime(-10)"
+      <button (click)="addTime(-10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">-10"
+              class="rewind timer-button">-10"
       </button>
-      <button class="play timer-button" (click)="startTimer()" [hidden]="started"
+      <button (click)="startTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
+              [hidden]="started"
+              class="play timer-button">
         <mat-icon>play_arrow</mat-icon>
       </button>
-      <button class="pause timer-button" (click)="pauseTimer()" [hidden]="!started"
+      <button (click)="pauseTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
+              [hidden]="!started"
+              class="pause timer-button">
         <mat-icon>pause</mat-icon>
       </button>
-      <button class="stop timer-button" (click)="finishTimer()"
+      <button (click)="finishTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
+              class="stop timer-button">
         <mat-icon>check_circle</mat-icon>
       </button>
-      <button class="restore timer-button" (click)="restoreTimer()" [disabled]="this.elapsedSeconds === 0 || !editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)">
+      <button (click)="restoreTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+              [disabled]="this.elapsedSeconds === 0 || !editable"
+              class="restore timer-button">
         <mat-icon>restore</mat-icon>
       </button>
-      <button class="forward timer-button" (click)="addTime(+10)"
+      <button (click)="addTime(+10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">+10"
+              class="forward timer-button">+10"
       </button>
-      <button class="forward timer-button" (click)="addTime(+60)"
+      <button (click)="addTime(+60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
               [disabled]="!editable"
-              *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)">+1'
+              class="forward timer-button">+1'
       </button>
     </div>
   </div>

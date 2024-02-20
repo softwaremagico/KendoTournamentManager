@@ -1,21 +1,25 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <h1 mat-dialog-title>{{title}}</h1>
-<div mat-dialog-content class="form-layout">
-  <form [formGroup]="formScore" (ngSubmit)="setTournamentPoints()">
+<div class="form-layout" mat-dialog-content>
+  <form (ngSubmit)="setTournamentPoints()" [formGroup]="formScore">
     <mat-form-field>
-      <input formControlName="pointsByVictory" placeholder="{{'pointsByVictory' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)" formControlName="pointsByVictory"
+             matInput placeholder="{{'pointsByVictory' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field>
-      <input formControlName="pointsByDraw" placeholder="{{'pointsByDraw' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT_SCORE)" formControlName="pointsByDraw"
+             matInput placeholder="{{'pointsByDraw' | translate}}"
+             required>
     </mat-form-field>
-    <div mat-dialog-actions class="button-container">
-      <button mat-raised-button type="submit" value="Submit"
-              [disabled]="formScore.invalid" mat-flat-button
-              color="primary" *ngIf="(RbacActivity.EDIT_TOURNAMENT_SCORE | rbac : this.rbacService.activities)">
+    <div class="button-container" mat-dialog-actions>
+      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT_SCORE | rbac : this.rbacService.activities)"
+              [disabled]="formScore.invalid" color="primary"
+              mat-flat-button mat-raised-button
+              type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{'close' | translate}}</button>
+        {{'close' | translate}}
+      </button>
     </div>
   </form>
 </div>

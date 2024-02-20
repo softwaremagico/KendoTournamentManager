@@ -6,27 +6,22 @@ package com.softwaremagico.kt.persistence.values;
  * %%
  * Copyright (C) 2008 - 2012 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *  
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *  
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *  
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 public enum Score {
@@ -52,34 +47,11 @@ public enum Score {
     private final char abbreviation;
     private final char enhancedAbbreviation;
     private final String name;
-    private static final HashMap<String, Image> existingScore = new HashMap<>();
 
     Score(String name, char abbreviation, char enhancedAbbreviation) {
         this.abbreviation = abbreviation;
         this.name = name;
         this.enhancedAbbreviation = enhancedAbbreviation;
-    }
-
-    /**
-     * Abbreviation for simple fonts.
-     *
-     * @return
-     */
-    public char getAbbreviation() {
-        return abbreviation;
-    }
-
-    /**
-     * Abbreviation for fonts with complex symbols.
-     *
-     * @return
-     */
-    public char getEnhancedAbbreviation() {
-        return enhancedAbbreviation;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public static Score getScore(char abbreviation) {
@@ -113,5 +85,27 @@ public enum Score {
         points.add(IPPON);
         points.add(HANSOKU);
         return points;
+    }
+
+    /**
+     * Abbreviation for simple fonts.
+     *
+     * @return
+     */
+    public char getAbbreviation() {
+        return abbreviation;
+    }
+
+    /**
+     * Abbreviation for fonts with complex symbols.
+     *
+     * @return
+     */
+    public char getEnhancedAbbreviation() {
+        return enhancedAbbreviation;
+    }
+
+    public String getName() {
+        return name;
     }
 }

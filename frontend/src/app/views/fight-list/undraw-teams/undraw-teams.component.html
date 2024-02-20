@@ -4,24 +4,27 @@
     <mat-tab *ngFor="let team of teams; let i = index"
              [label]="teams[(i%(teams.length))].name + ' - ' +teams[((i+1)%(teams.length))].name">
       <div class="undraw-generator">
-        <app-member-selector [team]="teams[(i%(teams.length))]"
-                             (selectedMember)="setCompetitor1(i, $event)"></app-member-selector>
-        <app-member-selector [team]="teams[((i+1)%(teams.length))]"
-                             (selectedMember)="setCompetitor2(i, $event)"></app-member-selector>
+        <app-member-selector (selectedMember)="setCompetitor1(i, $event)"
+                             [team]="teams[(i%(teams.length))]"></app-member-selector>
+        <app-member-selector (selectedMember)="setCompetitor2(i, $event)"
+                             [team]="teams[((i+1)%(teams.length))]"></app-member-selector>
       </div>
     </mat-tab>
   </mat-tab-group>
   <div *ngIf="totalDuels == 1">
     <div class="undraw-generator">
-      <app-member-selector [team]="teams[0]" (selectedMember)="setCompetitor1(0, $event)"></app-member-selector>
-      <app-member-selector [team]="teams[1]" (selectedMember)="setCompetitor2(0, $event)"></app-member-selector>
+      <app-member-selector (selectedMember)="setCompetitor1(0, $event)" [team]="teams[0]"></app-member-selector>
+      <app-member-selector (selectedMember)="setCompetitor2(0, $event)" [team]="teams[1]"></app-member-selector>
     </div>
   </div>
-  <div mat-dialog-actions class="button-container">
-    <button mat-raised-button (click)="createFights()" mat-flat-button color="primary"
-            *ngIf="(RbacActivity.CREATE_DUEL | rbac : this.rbacService.activities)"
-            [disabled]="!duelsCompleted()">{{'accept' | translate}}</button>
-    <button mat-raised-button (click)="closeDialog()" mat-flat-button
-            color="secondary">{{'cancel' | translate}}</button>
+  <div class="button-container" mat-dialog-actions>
+    <button (click)="createFights()" *ngIf="(RbacActivity.CREATE_DUEL | rbac : this.rbacService.activities)"
+            [disabled]="!duelsCompleted()" color="primary"
+            mat-flat-button
+            mat-raised-button>{{'accept' | translate}}
+    </button>
+    <button (click)="closeDialog()" color="secondary" mat-flat-button
+            mat-raised-button>{{'cancel' | translate}}
+    </button>
   </div>
 </div>

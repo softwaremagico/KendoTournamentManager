@@ -27,7 +27,7 @@ services:
       - external
     ports:
       - "443:443"
-    #      - "80:80"    # Enable this if you are using certbot as a docker container.
+      - "80:80"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - rproxy-settings:/etc/nginx/conf.d
@@ -57,6 +57,7 @@ services:
       args:
         - release
         - machine_domain
+        - protocol
     image: kendo-tournament-frontend
     restart: always
     networks:
@@ -95,7 +96,9 @@ services:
         - database_dialect
         - database_port
         - database_encryption_key
+        - jwt_expiration
         - jwt_secret
+        - jwt_ip_check
     image: kendo-tournament-backend
     restart: always
     networks:

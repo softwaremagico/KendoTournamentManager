@@ -4,23 +4,20 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -32,13 +29,12 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
-import com.softwaremagico.kt.persistence.entities.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class TournamentExtraPropertyController extends BasicInsertableController<TournamentExtraProperty, TournamentExtraPropertyDTO,
@@ -63,21 +59,23 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
-        provider.deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getProperty());
+        getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
         dto.setUpdatedBy(username);
         return create(dto, null);
     }
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {
-        return converter.convertAll(provider.getAll(tournamentProvider.get(tournamentId)
-                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")))
-                .stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
     }
 
     public TournamentExtraPropertyDTO getByTournamentAndProperty(Integer tournamentId, TournamentExtraPropertyKey key) {
-        return converter.convert(new TournamentExtraPropertyConverterRequest(provider.getByTournamentAndProperty(tournamentProvider.get(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key)));
+        return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key));
     }
 
+    public List<TournamentExtraPropertyDTO> getLatest(String username) {
+        return convertAll(getProvider().getLatestPropertiesByCreatedBy(username));
+    }
 
 }

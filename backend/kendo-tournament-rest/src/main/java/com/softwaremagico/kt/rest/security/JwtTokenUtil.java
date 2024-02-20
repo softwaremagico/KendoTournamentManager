@@ -4,39 +4,54 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
+import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Random;
 
 @Component
 public class JwtTokenUtil {
     private static final String JWT_ISSUER = "com.softwaremagico";
-    private static final long JWT_EXPIRATION = 604800000;
+    private static final long JWT_EXPIRATION = 1200000;
+    private static final int ID_INDEX = 0;
+    private static final int USERNAME_INDEX = 1;
+    private static final int IP_INDEX = 2;
+    private static final int MAC_INDEX = 3;
+
+    //JWT Secret key
+    private static final int RANDOM_LEFT_LIMIT = 48; // numeral '0'
+    private static final int RANDOM_RIGHT_LIMIT = 122; // letter 'z'
+    private static final int RANDOM_LENGTH = 32; // 32 characters by key
+    private static final Random RANDOM = new Random(); // letter 'z'
 
     private final NetworkController networkController;
 
@@ -44,9 +59,8 @@ public class JwtTokenUtil {
     private final long jwtExpiration;
 
     @Autowired
-    public JwtTokenUtil(@Value("${jwt.secret}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
+    public JwtTokenUtil(@Value("${jwt.secret:#{null}}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
                         NetworkController networkController) {
-        this.jwtSecret = jwtSecret;
         this.networkController = networkController;
 
         long calculatedJwtExpiration;
@@ -60,7 +74,19 @@ public class JwtTokenUtil {
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
+        if (jwtSecret != null && !jwtSecret.isBlank()) {
+            this.jwtSecret = jwtSecret;
+        } else {
+            this.jwtSecret = generateRandomSecret();
+        }
         this.jwtExpiration = calculatedJwtExpiration;
+    }
+
+    private String generateRandomSecret() {
+        return RANDOM.ints(RANDOM_LEFT_LIMIT, RANDOM_RIGHT_LIMIT + 1)
+                .limit(RANDOM_LENGTH)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
 
@@ -74,6 +100,15 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+    /**
+     * Gets current expiration time in milliseconds.
+     *
+     * @return unix epoch time in milliseconds.
+     */
+    public long getJwtExpirationTime() {
+        return (System.currentTimeMillis() + jwtExpiration);
+    }
+
     public String getUserId(String token) {
         final Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -81,9 +116,9 @@ public class JwtTokenUtil {
                 .getBody();
 
         try {
-            return claims.getSubject().split(",")[0];
+            return claims.getSubject().split(",")[ID_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
+            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user id' on JWT token!");
             return null;
         }
     }
@@ -95,9 +130,9 @@ public class JwtTokenUtil {
                 .getBody();
 
         try {
-            return claims.getSubject().split(",")[1];
+            return claims.getSubject().split(",")[USERNAME_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
+            JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
             return null;
         }
     }
@@ -108,9 +143,9 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
         try {
-            return claims.getSubject().split(",")[2];
+            return claims.getSubject().split(",")[IP_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'user IP' on JWT token!");
+            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'user IP' on JWT token!");
             return null;
         }
     }
@@ -121,9 +156,9 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
         try {
-            return claims.getSubject().split(",")[3];
+            return claims.getSubject().split(",")[MAC_INDEX];
         } catch (Exception e) {
-            RestServerLogger.warning(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
+            JwtFilterLogger.debug(this.getClass().getName(), "No filed 'host MAC' on JWT token!");
             return null;
         }
     }
@@ -142,15 +177,15 @@ public class JwtTokenUtil {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Invalid JWT signature '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT signature '{}'", ex.getMessage());
         } catch (MalformedJwtException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Invalid JWT token '{}'", ex.getMessage());
         } catch (ExpiredJwtException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Expired JWT token '{}'", ex.getMessage());
         } catch (UnsupportedJwtException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "Unsupported JWT token '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "Unsupported JWT token '{}'", ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            RestServerLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
+            JwtFilterLogger.errorMessage(this.getClass().getName(), "JWT claims string is empty '{}'", ex.getMessage());
         }
         return false;
     }
