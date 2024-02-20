@@ -4,31 +4,30 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.utils.IName;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class TournamentDTO extends ElementDTO {
+public class TournamentDTO extends ElementDTO implements IName {
 
     private String name;
 
@@ -43,6 +42,12 @@ public class TournamentDTO extends ElementDTO {
     private Integer duelsDuration;
 
     private boolean locked;
+
+    private LocalDateTime lockedAt;
+
+    private LocalDateTime startedAt;
+
+    private LocalDateTime finishedAt;
 
     public TournamentDTO() {
         super();
@@ -113,6 +118,30 @@ public class TournamentDTO extends ElementDTO {
         this.locked = locked;
     }
 
+    public LocalDateTime getLockedAt() {
+        return lockedAt;
+    }
+
+    public void setLockedAt(LocalDateTime lockedAt) {
+        this.lockedAt = lockedAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
+    }
+
     @Override
     public String toString() {
         if (getName() != null) {
@@ -126,13 +155,12 @@ public class TournamentDTO extends ElementDTO {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TournamentDTO)) {
+        if (!(o instanceof TournamentDTO that)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-        final TournamentDTO that = (TournamentDTO) o;
         return getName().equals(that.getName()) && getShiaijos().equals(that.getShiaijos()) && getTeamSize().equals(that.getTeamSize())
                 && getType() == that.getType() && Objects.equals(getTournamentScore(), that.getTournamentScore());
     }

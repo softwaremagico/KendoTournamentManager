@@ -3,23 +3,42 @@
   <div class="kendo-table">
     <div class="upper-menu">
       <div class="cell">
-        <button mat-button color="primary" (click)="addElement()" [matTooltipShowDelay]="500"
-                matTooltip="{{'participantAdd' | translate}}"
-                *ngIf="(RbacActivity.CREATE_PARTICIPANT | rbac : this.rbacService.activities)">
+        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_PARTICIPANT | rbac : this.rbacService.activities)"
+                [matTooltipShowDelay]="500" color="primary"
+                mat-button
+                matTooltip="{{'participantAdd' | translate}}">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button [disabled]="!basicTableData.selectedElement" (click)="editElement()"
-                [matTooltipShowDelay]="500" matTooltip="{{'participantEdit' | translate}}"
-                *ngIf="(RbacActivity.READ_ONE_PARTICIPANT | rbac : this.rbacService.activities)">
+        <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_PARTICIPANT | rbac : this.rbacService.activities)"
+                [disabled]="!basicTableData.selectedElement"
+                [matTooltipShowDelay]="500" mat-button
+                matTooltip="{{'participantEdit' | translate}}">
           <mat-icon>create</mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()"
-                [matTooltipShowDelay]="500" matTooltip="{{'participantDelete' | translate}}"
-                *ngIf="(RbacActivity.DELETE_PARTICIPANT | rbac : this.rbacService.activities)">
+        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_PARTICIPANT | rbac : this.rbacService.activities)"
+                [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
+                color="warn" mat-button
+                matTooltip="{{'participantDelete' | translate}}">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
     </div>
     <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
+    <div class="bottom-menu">
+      <button (click)="openStatistics()"
+              *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.activities)"
+              [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
+              color="primary" mat-button
+              matTooltip="{{'titleStatistics' | translate}}">
+        <mat-icon>bar_chart</mat-icon>
+      </button>
+      <button (click)="showCompetitorsClassification()"
+              *ngIf="(RbacActivity.READ_ALL_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
+              [matTooltipShowDelay]="500"
+              color="primary" mat-button
+              matTooltip="{{'competitorsRanking' | translate}}">
+        <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
+      </button>
+    </div>
   </div>
 </div>

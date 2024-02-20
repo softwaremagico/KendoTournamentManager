@@ -1,10 +1,37 @@
-<div class="fault" [matMenuTriggerFor]="menu">
+<div [matMenuTriggerFor]="menu" class="fault" *ngIf="!locked">
   <mat-menu #menu="matMenu">
-    <button mat-menu-item *ngIf="this.duel.competitor1 !== null && this.duel.competitor2 !== null"
-            (click)="updateFault(true)">{{'fault' | translate}}</button>
-    <button mat-menu-item (click)="updateFault(false)">{{'clear' | translate}}</button>
+    <button (click)="updateFault(true)" *ngIf="this.duel.competitor1 !== null && this.duel.competitor2 !== null"
+            mat-menu-item>{{'fault' | translate}}
+    </button>
+    <button (click)="updateFault(false)" mat-menu-item>{{'clear' | translate}}</button>
   </mat-menu>
-  <div class="fault-content"
-       *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams)?this.duel.competitor1Fault != null && this.duel.competitor1Fault:this.duel.competitor2Fault != null && this.duel.competitor2Fault">
+  <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+       this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
+       class="fault-content">
+    <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
+         [ngClass]="{
+          'left-border': onLeftBorder,
+          'center': !onRightBorder && !onLeftBorder,
+          'right-border': onRightBorder
+        }"
+         class="tooltiptext">
+      <mat-icon>timer</mat-icon>
+    </div>
+  </div>
+</div>
+<!***REMOVED***Fault representation when menu is disabled -->
+<div class="fault" *ngIf="locked">
+  <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
+       this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
+       class="fault-content">
+    <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
+         [ngClass]="{
+          'left-border': onLeftBorder,
+          'center': !onRightBorder && !onLeftBorder,
+          'right-border': onRightBorder
+        }"
+         class="tooltiptext">
+      <mat-icon>timer</mat-icon>
+    </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-<div mat-dialog-content class="form-layout">
+<div class="form-layout" mat-dialog-content>
   <span class="example-list-section">
     <ul>
      <li *ngFor="let roleType of roleTypes">
@@ -8,16 +8,19 @@
      </li>
     </ul>
   </span>
-  <div mat-dialog-actions class="button-container">
-    <button mat-raised-button type="button"  (click)="setRoles(false)"
-            mat-flat-button color="primary">
+  <div class="button-container" mat-dialog-actions>
+    <button (click)="setRoles(false)" color="primary" mat-flat-button
+            mat-raised-button type="button">
       <mat-icon>done</mat-icon>
-      {{'all' | translate}}</button>
-    <button mat-raised-button type="button"  (click)="setRoles(true)"
-            mat-flat-button color="picture">
+      {{'all' | translate}}
+    </button>
+    <button (click)="setRoles(true)" color="picture" mat-flat-button
+            mat-raised-button type="button">
       <mat-icon>done</mat-icon>
-      {{'onlyNews' | translate}}</button>
-    <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
-            color="warn">{{'cancel' | translate}}</button>
+      {{'onlyNews' | translate}}
+    </button>
+    <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
+            type="button">{{'cancel' | translate}}
+    </button>
   </div>
 </div>

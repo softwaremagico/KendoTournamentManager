@@ -4,23 +4,20 @@ package com.softwaremagico.kt.core.score;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -34,20 +31,20 @@ public class ScoreOfCompetitorCustom implements Comparator<ScoreOfCompetitor> {
 
     @Override
     public int compare(ScoreOfCompetitor scoreOfCompetitor1, ScoreOfCompetitor scoreOfCompetitor2) {
-        if (!scoreOfCompetitor1.fights.isEmpty()) {
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+        if (!scoreOfCompetitor1.getFights().isEmpty()) {
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory()
                     + scoreOfCompetitor1.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw() > scoreOfCompetitor2.getWonDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return -1;
             }
 
-            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory()
+            if (scoreOfCompetitor1.getWonDuels() * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory()
                     + scoreOfCompetitor1.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
-                    * scoreOfCompetitor1.fights.get(0).getTournament().getTournamentScore().getPointsByDraw()) {
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw() < scoreOfCompetitor2.getWonDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByVictory() + scoreOfCompetitor2.getDrawDuels()
+                    * scoreOfCompetitor1.getFights().get(0).getTournament().getTournamentScore().getPointsByDraw()) {
                 return 1;
             }
 

@@ -4,43 +4,59 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "duels")
+@Table(name = "duels", indexes = {
+        @Index(name = "ind_tournament", columnList = "tournament"),
+        @Index(name = "ind_competitor1", columnList = "competitor1"),
+        @Index(name = "ind_competitor2", columnList = "competitor2")
+})
 public class Duel extends Element {
     public static final int DEFAULT_DURATION = 1;
     public static final int POINTS_TO_WIN = 2;
@@ -57,22 +73,26 @@ public class Duel extends Element {
     @CollectionTable(name = "competitor_1_score")
     @Fetch(value = FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
+    @OrderColumn(name = "score_index")
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score")
     @Fetch(value = FetchMode.SUBSELECT)
     @Enumerated(EnumType.STRING)
+    @OrderColumn(name = "score_index")
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_1_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
+    @OrderColumn(name = "score_index")
     private List<Integer> competitor1ScoreTime = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "competitor_2_score_time")
     @Fetch(value = FetchMode.SUBSELECT)
+    @OrderColumn(name = "score_index")
     private List<Integer> competitor2ScoreTime = new ArrayList<>();
 
     @Column(name = "competitor_1_fault_time")
@@ -97,7 +117,6 @@ public class Duel extends Element {
     private DuelType type;
 
     @Column(name = "duration")
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer duration;
 
     @Column(name = "finished")
@@ -111,6 +130,14 @@ public class Duel extends Element {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament", nullable = false)
     private Tournament tournament;
+
+    @Column(name = "started_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime startedAt;
+
+    @Column(name = "finished_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime finishedAt;
 
     public Duel() {
         super();
@@ -141,10 +168,6 @@ public class Duel extends Element {
         this.competitor2 = competitor2;
     }
 
-    public void setCompetitor1Score(List<Score> competitor1Score) {
-        this.competitor1Score = competitor1Score;
-    }
-
     public void addCompetitor1Score(Score score) {
         if (this.competitor1Score == null) {
             this.competitor1Score = new ArrayList<>();
@@ -154,6 +177,10 @@ public class Duel extends Element {
 
     public List<Score> getCompetitor1Score() {
         return competitor1Score;
+    }
+
+    public void setCompetitor1Score(List<Score> competitor1Score) {
+        this.competitor1Score = competitor1Score;
     }
 
     public List<Score> getCompetitor2Score() {
@@ -200,8 +227,7 @@ public class Duel extends Element {
     /**
      * Gets the winner of the duel.
      *
-     * @return -1 if player of first team, 0 if draw, 1 if player of second
-     * tiem.
+     * @return -1 if player of first team, 0 if drawn, 1 if player of second team.
      */
     public int getWinner() {
         return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
@@ -285,5 +311,21 @@ public class Duel extends Element {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 }

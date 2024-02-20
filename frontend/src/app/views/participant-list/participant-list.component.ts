@@ -15,6 +15,9 @@ import {Action} from "../../action";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
+import {Router} from "@angular/router";
+import {UserSessionService} from "../../services/user-session.service";
+import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 
 @Component({
   selector: 'app-participant-list',
@@ -30,7 +33,8 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
 
-  constructor(private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
+  constructor(private router: Router, private userSessionService: UserSessionService,
+              private participantService: ParticipantService, public dialog: MatDialog, private messageService: MessageService,
               private clubService: ClubService, private translateService: TranslateService, rbacService: RbacService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'idCard', 'name', 'lastname', 'clubName', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
@@ -127,6 +131,20 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   disableRow(argument: any): boolean {
     return false;
+  }
+
+  openStatistics() {
+    if (this.basicTableData.selectedElement) {
+      this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
+      this.router.navigate(['/participants/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
+    }
+  }
+
+  showCompetitorsClassification() {
+    this.dialog.open(CompetitorsRankingComponent, {
+      width: '85vw',
+      data: {competitor: this.basicTableData.selectedElement, showIndex: true}
+    });
   }
 
 }

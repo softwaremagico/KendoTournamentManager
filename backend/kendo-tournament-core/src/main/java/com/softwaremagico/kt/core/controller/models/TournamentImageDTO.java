@@ -4,28 +4,25 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.softwaremagico.kt.persistence.entities.ImageCompression;
+import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 
 import java.util.Base64;
@@ -76,12 +73,9 @@ public class TournamentImageDTO extends ElementDTO {
         if (data == null) {
             return null;
         }
-        switch (imageCompression) {
-            case JPG:
-                return IMAGE_JPG_BASE_64 + Base64.getEncoder().encodeToString(data);
-            case PNG:
-                return IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
-        }
-        return null;
+        return switch (imageCompression) {
+            case JPG -> IMAGE_JPG_BASE_64 + Base64.getEncoder().encodeToString(data);
+            case PNG -> IMAGE_PNG_BASE_64 + Base64.getEncoder().encodeToString(data);
+        };
     }
 }

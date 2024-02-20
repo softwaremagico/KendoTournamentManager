@@ -4,41 +4,53 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.TournamentTypeCryptoConverter;
+import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import com.softwaremagico.kt.utils.IName;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
-public class Tournament extends Element {
+public class Tournament extends Element implements IName {
+    private static final int DEFAULT_DURATION = 180;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
@@ -63,11 +75,23 @@ public class Tournament extends Element {
 
     @Column(name = "duels_duration", nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
-    private Integer duelsDuration = 180;
+    private Integer duelsDuration = DEFAULT_DURATION;
 
     @Column(name = "locked", nullable = false)
     @Convert(converter = BooleanCryptoConverter.class)
     private boolean locked = false;
+
+    @Column(name = "locked_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime lockedAt;
+
+    @Column(name = "started_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime startedAt;
+
+    @Column(name = "finished_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime finishedAt;
 
     public Tournament() {
         super();
@@ -142,6 +166,39 @@ public class Tournament extends Element {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    public LocalDateTime getLockedAt() {
+        return lockedAt;
+    }
+
+    public void setLockedAt(LocalDateTime lockedAt) {
+        this.lockedAt = lockedAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public void updateFinishedAt(LocalDateTime finishedAt) {
+        if (this.finishedAt == null) {
+            this.finishedAt = finishedAt;
+            //Reset if new fights are added
+        } else if (finishedAt == null) {
+            this.finishedAt = null;
+        }
+    }
+
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
+    public void setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
     }
 
     @Override

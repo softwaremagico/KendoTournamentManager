@@ -53,10 +53,16 @@
     <logger name="com.softwaremagico.kt.logger.RestServerLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="com.softwaremagico.kt.logger.JwtFilterLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
     <logger name="com.softwaremagico.kt.logger.RestServerExceptionLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.softwaremagico.kt.logger.PdfExporterLog" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.softwaremagico.kt.logger.CacheEventLogger" additivity="false" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
@@ -97,6 +103,14 @@
     <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" additivity="false" level="ERROR">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
+    </logger>
+    <logger name="org.ehcache.core.EhcacheManager" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <!***REMOVED***For showing hibernate statistics -->
+    <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false"
+            level="ERROR">
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <root level="ERROR">

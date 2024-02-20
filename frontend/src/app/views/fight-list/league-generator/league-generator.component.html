@@ -1,49 +1,67 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="league-creator" cdkDropListGroup>
-  <div cdkDropList class="teams-container"
-       [cdkDropListData]="teamListData.filteredTeams"
-       (cdkDropListDropped)="removeTeam($event)">
+<div cdkDropListGroup class="league-creator">
+  <div (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+       cdkDropList class="teams-container">
     <team-list [teamListData]="teamListData"></team-list>
   </div>
   <div class="sorted-teams">
     <h2>{{'teamsOrder' | translate}}</h2>
-    <div class="final-team-list" cdkDropList
-         [cdkDropListData]="teamsOrder"
-         (cdkDropListDropped)="dropTeam($event)">
+    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
+         cdkDropList class="final-team-list">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
-    <div class="extra-properties" *ngIf="canHaveDuplicated || needsDrawResolution">
-      <mat-slide-toggle *ngIf="canHaveDuplicated"
-                        [formControl]="avoidDuplicates">{{'avoidDuplicateFights' | translate }}</mat-slide-toggle>
+
+    <div *ngIf="canMaximizeFights || needsDrawResolution || needsFifoWinner || canAvoidDuplicatedFights" class="extra-properties">
+      <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
+                        [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
+        {{'maximizeFights' | translate }}
+      </mat-slide-toggle>
+
+      <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights" (change)="avoidDuplicatesToggle($event)">
+        {{'avoidDuplicateFights' | translate }}
+      </mat-slide-toggle>
+
+
       <mat-form-field *ngIf="needsDrawResolution">
         <mat-label>{{'drawResolution' | translate}}</mat-label>
-        <mat-select [(value)]="selectedDrawResolution" (selectionChange)="select($event.value)">
-          <mat-option *ngFor="let resolution of drawResolution" [value]="resolution"
-                      [matTooltipShowDelay]="500" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
+        <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
+          <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
+                      [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
             {{getDrawResolutionTranslationTag(resolution) | translate}}
           </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
+                        [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
+        {{'leagueFifo' | translate }}
+      </mat-slide-toggle>
     </div>
+
   </div>
 </div>
-<div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="sortedTeams()" mat-flat-button class="fight-button"
-          *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
-    <mat-icon>auto_fix_high</mat-icon>
-    {{'wizard' | translate}}
+<div class="button-container" mat-dialog-actions>
+  <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+          class="fight-button" mat-flat-button
+          mat-raised-button>
+    <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
+    {{'sorted' | translate}}
   </button>
-  <button mat-raised-button (click)="randomTeams()" mat-flat-button class="fight-button"
-          *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)">
+  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+          class="fight-button" mat-flat-button
+          mat-raised-button>
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
-  <button mat-raised-button (click)="acceptAction()" mat-flat-button color="primary" class="fight-button"
-          *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
-          [disabled]="teamsOrder.length===0 || teamListData.teams.length>0">
+  <button (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+          [disabled]="teamsOrder.length===0 || teamListData.teams.length>0" class="fight-button" color="primary"
+          mat-flat-button
+          mat-raised-button>
     <mat-icon>done</mat-icon>
-    {{'accept' | translate}}</button>
-  <button mat-raised-button (click)="cancelDialog()" mat-flat-button color="accent">
+    {{'accept' | translate}}
+  </button>
+  <button (click)="cancelDialog()" color="accent" mat-flat-button mat-raised-button>
     <mat-icon>cancel</mat-icon>
-    {{'cancel' | translate}}</button>
+    {{'cancel' | translate}}
+  </button>
 </div>

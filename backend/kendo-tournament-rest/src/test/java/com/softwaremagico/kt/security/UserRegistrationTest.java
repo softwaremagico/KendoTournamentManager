@@ -4,23 +4,20 @@ package com.softwaremagico.kt.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -61,16 +58,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 @Test(groups = "userRegistration")
 public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
-
     public static final String USER_NAME_2 = "Goku";
     public static final String USER_FIRST_NAME_2 = "Goku";
     public static final String USER_LAST_NAME_2 = "Son";
-
+    private final static String USER_NAME = "user";
+    private final static String USER_FIRST_NAME = "Test";
+    private final static String USER_LAST_NAME = "User";
     private final static String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+    private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
 
     @Autowired
     private WebApplicationContext context;
@@ -105,9 +100,7 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
 
-        authenticatedUserController.findAll().forEach(authenticatedUser -> {
-            authenticatedUserController.delete(authenticatedUser);
-        });
+        authenticatedUserController.findAll().forEach(authenticatedUser -> authenticatedUserController.delete(authenticatedUser));
     }
 
     @Test

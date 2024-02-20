@@ -1,5 +1,5 @@
 <ng-container *ngIf="overlay;else progressSpinner">
-  <div class="overlay" [hidden]="!showSpinner && !waitBigOperation">
+  <div [hidden]="!showSpinner && !waitBigOperation" class="overlay">
     <div class="center">
       <ng-template [ngTemplateOutlet]="progressSpinner"></ng-template>
     </div>
@@ -7,9 +7,9 @@
 </ng-container>
 <ng-template #progressSpinner>
   <mat-progress-spinner
+    [color]="color"
     [diameter]="diameter"
     [mode]="mode"
-    [color]="color"
     [strokeWidth]="strokeWidth"
     [value]="value">
   </mat-progress-spinner>

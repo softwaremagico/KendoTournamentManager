@@ -2,6 +2,7 @@ import {Element} from "./element";
 import {Participant} from "./participant";
 import {Score} from "./score";
 import {DuelType} from "./duel-type";
+import {Tournament} from "./tournament";
 
 export class Duel extends Element {
   public competitor1?: Participant;
@@ -12,12 +13,15 @@ export class Duel extends Element {
   public competitor2Score: Score[];
   public competitor1ScoreTime: number[];
   public competitor2ScoreTime: number[];
-  public competitor1FaultTime: number;
-  public competitor2FaultTime: number;
+  public competitor1FaultTime: number | undefined;
+  public competitor2FaultTime: number | undefined;
   public type: DuelType;
   public duration?: number;
   public totalDuration?: number;
   public finished: boolean;
+  public startedAt: Date | undefined;
+  public finishedAt: Date | undefined;
+  public tournament: Tournament;
 
   public static override copy(source: Duel, target: Duel): void {
     Element.copy(source, target);
@@ -46,6 +50,11 @@ export class Duel extends Element {
     target.competitor1FaultTime = source.competitor1FaultTime;
     target.competitor2FaultTime = source.competitor2FaultTime;
     target.finished = source.finished;
+    target.startedAt = source.startedAt;
+    target.finishedAt = source.finishedAt;
+    if (source.tournament) {
+      target.tournament = Tournament.clone(source.tournament);
+    }
   }
 
   public static clone(data: Duel): Duel {

@@ -6,11 +6,12 @@ import {Action} from "../../../action";
 import {ScoreType} from "../../../models/score-type";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {TournamentImageSelectorComponent} from "./tournament-image-selector/tournament-image-selector.component";
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
 import {TranslateService} from "@ngx-translate/core";
+import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/tournament-extra-properties.component";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -29,10 +30,12 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   typeLoop: TournamentType = TournamentType.LOOP;
   typeLeague: TournamentType = TournamentType.LEAGUE;
   typeKing: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  typeCustom: TournamentType = TournamentType.CUSTOMIZED;
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
   selectedScore: ScoreType;
 
-  registerForm: FormGroup;
+  cancel: Action.Cancel;
+  registerForm: UntypedFormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<TournamentDialogBoxComponent>, rbacService: RbacService,
@@ -47,34 +50,34 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.tournamentType = TournamentType.toArray();
     this.scoreTypes = ScoreType.toArray();
     this.selectedType = this.tournament.type;
-    if (this.tournament.tournamentScore && this.tournament.tournamentScore.scoreType) {
+    if (this.tournament.tournamentScore?.scoreType) {
       this.selectedScore = this.tournament.tournamentScore.scoreType;
     } else {
       this.selectedScore = ScoreType.INTERNATIONAL
     }
 
-    this.registerForm = new FormGroup({
-      tournamentName: new FormControl({
+    this.registerForm = new UntypedFormGroup({
+      tournamentName: new UntypedFormControl({
         value: this.tournament.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
-      shiaijos: new FormControl({
+      }, [Validators.required, Validators.minLength(4), Validators.maxLength(60)]),
+      shiaijos: new UntypedFormControl({
         value: this.tournament.shiaijos,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      tournamentType: new FormControl({
+      tournamentType: new UntypedFormControl({
         value: this.tournament.type,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
-      teamSize: new FormControl({
+      teamSize: new UntypedFormControl({
         value: this.tournament.teamSize,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.pattern("^[0-9]*$")]),
-      duelsDuration: new FormControl({
+      duelsDuration: new UntypedFormControl({
         value: this.tournament.duelsDuration,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.maxLength(20)]),
-      scoreTypes: new FormControl({
+      scoreTypes: new UntypedFormControl({
         value: this.tournament.tournamentScore?.scoreType,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required])
@@ -83,7 +86,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.disableShiaijos();
   }
 
-  doAction() {
+  doAction(): void {
     this.tournament.name = this.registerForm.get('tournamentName')!.value;
     this.tournament.shiaijos = this.registerForm.get('shiaijos')!.value;
     this.tournament.type = this.registerForm.get('tournamentType')!.value;
@@ -92,11 +95,11 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     if (this.tournament.tournamentScore) {
       this.tournament.tournamentScore.scoreType = this.registerForm.get('scoreTypes')!.value;
     }
-    this.closeDialog();
+    this.closeDialog(this.action);
   }
 
-  closeDialog() {
-    this.dialogRef.close({action: this.action, data: this.tournament});
+  closeDialog(action: Action): void {
+    this.dialogRef.close({action: action, data: this.tournament});
   }
 
   getTournamentTypeTranslationTag(tournamentType: TournamentType): string {
@@ -106,7 +109,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     return TournamentType.toCamel(tournamentType);
   }
 
-  addPicture() {
+  addPicture(): void {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
       data: {
         title: "", action: Action.Add, tournament: this.tournament
@@ -115,7 +118,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     dialogRef.afterClosed().subscribe();
   }
 
-  disableShiaijos() {
+  disableShiaijos(): void {
     if (this.selectedType == TournamentType.KING_OF_THE_MOUNTAIN || this.selectedType == TournamentType.LEAGUE || this.selectedType == TournamentType.LOOP) {
       this.registerForm.controls['shiaijos'].disable();
       this.registerForm.controls['shiaijos'].setValue(1);
@@ -124,12 +127,12 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     }
   }
 
-  select(type: TournamentType) {
+  select(type: TournamentType): void {
     this.selectedType = type;
     this.disableShiaijos();
   }
 
-  openScoreDefinition() {
+  openScoreDefinition(): void {
     const dialogRef = this.dialog.open(TournamentScoreEditorComponent, {
       data: {
         title: this.translateService.instant('scoreRules'), action: Action.Add, tournament: this.tournament
@@ -137,11 +140,18 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.tournament = result.data;
-      console.log(this.tournament)
     });
   }
 
-  selectScore(score: ScoreType) {
+  selectScore(score: ScoreType): void {
     this.selectedScore = score;
+  }
+
+  openCustomProperties(): void {
+    const dialogRef = this.dialog.open(TournamentExtraPropertiesComponent, {
+      data: {
+        title: this.translateService.instant('tournamentProperties'), action: Action.Add, tournament: this.tournament
+      }
+    });
   }
 }

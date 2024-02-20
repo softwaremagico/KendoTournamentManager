@@ -35,19 +35,21 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @Output() onTimerFinished: EventEmitter<boolean[]> = new EventEmitter();
   @Output() onTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() onSoftTimerChanged: EventEmitter<any> = new EventEmitter();
+  @Output() onPlayPressed: EventEmitter<any> = new EventEmitter();
   @Output() timeDurationChanged: EventEmitter<any> = new EventEmitter();
   @Output() timerClosed: EventEmitter<any> = new EventEmitter();
 
   minutes: number;
   seconds: number;
-  private clockHandler: NodeJS.Timeout;
+  private clockHandler: NodeJS.Timeout | null;
   elapsedSeconds: number = 0;
   private alarmOn: boolean;
   totalTime: number;
   increasedTime: number = 0;
-  started = false;
-  minutesEditable = false;
-  secondsEditable = false;
+  started: boolean = false;
+  minutesEditable: boolean = false;
+  secondsEditable: boolean = false;
   private clickedElement: HTMLElement;
 
   timerPosition: Point = {x: 0, y: 0};
@@ -66,7 +68,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.screenHeight = window.innerHeight;
 
     const self: TimerComponent = this;
-    this.clockHandler = setInterval(function () {
+    this.clockHandler = setInterval(function (): void {
       self.secondElapsed.apply(self);
     }, 1000);
     this.timeChangedService.isElapsedTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(elapsedTime => {
@@ -78,6 +80,13 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     });
 
     this.resetTimerPosition.subscribe(() => this.timerPosition = {x: 0, y: 0});
+  }
+
+  override ngOnDestroy(): void {
+    if (this.clockHandler != null) {
+      clearInterval(this.clockHandler);
+      this.clockHandler = null;
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -129,6 +138,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   startTimer() {
     this.started = true;
+    this.onPlayPressed.emit([this.elapsedSeconds]);
   };
 
   pauseTimer() {
@@ -197,6 +207,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.elapsedSeconds++;
     if (this.seconds % 3 == 0) {
       this.onTimerChanged.emit([this.elapsedSeconds]);
+    } else {
+      this.onSoftTimerChanged.emit([this.elapsedSeconds]);
     }
   }
 
@@ -206,6 +218,10 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   isAlmostFinished(): boolean {
     return this.minutes == 0 && this.seconds <= 10;
+  }
+
+  isPaused(): boolean {
+    return !this.started && this.elapsedSeconds > 0;
   }
 
   toDoubleDigit(num: number): string {

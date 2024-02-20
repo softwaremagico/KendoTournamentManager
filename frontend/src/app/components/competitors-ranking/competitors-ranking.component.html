@@ -1,0 +1,38 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<div class="table-container">
+  <table class="competitor-ranking-table">
+    <caption class="table-caption">{{'competitorsRanking' | translate}}</caption>
+    <thead>
+      <tr>
+        <th class="competitor-ranking-header">{{'competitor' | translate}}</th>
+        <th class="competitor-ranking-header">{{'duelsWon' | translate}}</th>
+        <th class="competitor-ranking-header">{{'duelsDraw' | translate}}</th>
+        <th class="competitor-ranking-header">{{'histsWon' | translate}}</th>
+        <th class="competitor-ranking-header">{{'totalFights' | translate}}</th>
+      </tr>
+    </thead>
+    <tr *ngFor="let scoreOfCompetitor of competitorsScore; let i = index">
+      <td [id]="scoreOfCompetitor.competitor.id" [ngClass]="{
+          'selected': competitor?.id === scoreOfCompetitor.competitor.id
+        }"
+          class="competitor-ranking-value competitor-name">{{showIndex ? i + 1 + ". " : ""}}{{scoreOfCompetitor.competitor.lastname}}
+        , {{scoreOfCompetitor.competitor.name}}
+      </td>
+      <td
+        class="competitor-ranking-value">{{scoreOfCompetitor.wonDuels}}{{(scoreOfCompetitor.untieDuels ? "*" : "")}}
+      </td>
+      <td class="competitor-ranking-value">{{scoreOfCompetitor.drawDuels}}</td>
+      <td class="competitor-ranking-value">{{scoreOfCompetitor.hits}}{{(scoreOfCompetitor.untieHits ? "*" : "")}}</td>
+      <td class="competitor-ranking-value">{{scoreOfCompetitor.totalFights}}</td>
+    </tr>
+  </table>
+</div>
+<div class="button-container" mat-dialog-actions>
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
+          mat-flat-button
+          mat-raised-button>
+    <mat-icon>file_download</mat-icon>
+    {{'download' | translate}}
+  </button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
+</div>
