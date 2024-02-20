@@ -1,8 +1,8 @@
 <div class="participant-picture">
-  <div class="container" *ngIf="participantPicture" (dblclick)="openImage()">
-    <img class="picture" alt="Participant's Picture" src="{{ participantPicture }}"/>
+  <div (dblclick)="openImage()" *ngIf="participantPicture" class="container">
+    <img alt="Participant's Picture" class="picture" src="{{ participantPicture }}"/>
   </div>
-  <div class="container" *ngIf="!participantPicture" [style]="circleStyle">
+  <div *ngIf="!participantPicture" [style]="circleStyle" class="container">
     <span class="initials">{{this.participantInitials}}</span>
   </div>
 </div>

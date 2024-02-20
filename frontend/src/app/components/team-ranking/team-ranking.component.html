@@ -1,0 +1,44 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<div class="table-container">
+  <table class="team-ranking-table">
+    <caption class="table-caption">{{'teamsRanking' | translate}}</caption>
+    <thead>
+    <tr>
+      <th class="team-ranking-header">{{'team' | translate}}</th>
+      <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
+      <th class="team-ranking-header">{{'fightsDraw' | translate}}</th>
+      <th class="team-ranking-header">{{'duelsWon' | translate}}</th>
+      <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
+      <th class="team-ranking-header">{{'histsWon' | translate}}</th>
+    </tr>
+    </thead>
+    <tr *ngFor="let teamScore of teamScores; let i = index">
+      <td [ngClass]="{'finished': fightsFinished,
+          'winner': teamScore.sortingIndex===0 && fightsFinished,
+          'finalist': teamScore.sortingIndex===1 && fightsFinished,
+          'semifinalist': teamScore.sortingIndex===2 && fightsFinished,
+          'draw': (teamScore.sortingIndex===0 && isDrawWinner(0)) ||
+          (teamScore.sortingIndex===1 && isDrawWinner(1)) ||
+          (teamScore.sortingIndex===2 && isDrawWinner(2))}"
+          class="team-ranking-value team-name">{{showIndex ? i + 1 + ". " : ""}}{{teamScore.team.name}}
+      </td>
+      <td class="team-ranking-value">{{teamScore.wonFights}}</td>
+      <td class="team-ranking-value">{{teamScore.drawFights}}</td>
+      <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
+      <td class="team-ranking-value">{{teamScore.drawDuels}}</td>
+      <td class="team-ranking-value">{{teamScore.hits}}{{(teamScore.untieDuels ? "*" : "")}}</td>
+    </tr>
+  </table>
+</div>
+<div class="button-container" mat-dialog-actions>
+  <button (click)="downloadPDF()" mat-flat-button mat-raised-button>
+    <mat-icon>file_download</mat-icon>
+    {{'download' | translate}}
+  </button>
+  <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
+  (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)" mat-flat-button mat-raised-button>
+    <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
+    {{'undraw' | translate}}
+  </button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
+</div>

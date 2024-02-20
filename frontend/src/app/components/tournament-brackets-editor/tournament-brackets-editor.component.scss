@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.teams-container {
+  height: 100%;
+  width: 420px;
+  border: 1px solid #1f1836;
+}
+
+.tournament-brackets {
+  margin-left: 50px;
+  flex: 3;
+}
+
+.floating-button {
+  position: absolute;
+  z-index: 100;
+  right: 50px;
+}
+
+.button-container {
+  text-align: center;
+  width: 100%;
+  padding: 10px;
+}
+
+.mat-raised-button {
+  width: 120px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  column-gap: 20px;
+  justify-content: center;
+}

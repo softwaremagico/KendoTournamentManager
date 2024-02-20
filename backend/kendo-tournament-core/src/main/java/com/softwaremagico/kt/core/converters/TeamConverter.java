@@ -4,23 +4,20 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -28,11 +25,11 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,13 +39,13 @@ import java.util.ArrayList;
 public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverterRequest> {
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public TeamConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter, TournamentProvider tournamentProvider) {
+    public TeamConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter, TournamentRepository tournamentRepository) {
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
     }
 
 
@@ -57,13 +54,23 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
         final TeamDTO teamDTO = new TeamDTO();
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
+
         try {
+            if (from.getTournamentDTO() != null) {
+                teamDTO.setTournament(from.getTournamentDTO());
+            } else if (from.getTournament() != null) {
+                //Converter can have the tournament defined already.
+                teamDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getTournament())));
+            } else {
+                teamDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getEntity().getTournament())));
+            }
+        } catch (LazyInitializationException | FatalBeanException e) {
             teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
-            teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
+
         from.getEntity().getMembers().forEach(member ->
                 teamDTO.getMembers().add(participantConverter.convert(new ParticipantConverterRequest(member))));
         return teamDTO;

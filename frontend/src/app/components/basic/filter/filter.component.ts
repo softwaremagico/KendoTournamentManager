@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
+import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 
 @Component({
   selector: 'app-filter',
@@ -16,10 +17,16 @@ export class FilterComponent implements OnInit {
 
   @Input() resetValue: Subject<boolean> = new Subject<boolean>();
 
+  constructor(private filterResetService: FilterResetService) {
+  }
+
   ngOnInit() {
     this.resetValue.subscribe(() => {
       this.reset();
     });
+    this.filterResetService.resetFilter.subscribe(() => {
+      this.reset();
+    })
   }
 
   filter(event: Event) {

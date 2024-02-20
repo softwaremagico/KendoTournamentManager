@@ -1,44 +1,47 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div class="teams-container" cdkDropListGroup>
-  <div cdkDropList [attr.data-tournament-size]="tournament.teamSize" class="users-container"
+<div cdkDropListGroup class="teams-container">
+  <div (cdkDropListDropped)="removeFromTeam($event)" [attr.data-tournament-size]="tournament.teamSize"
        [cdkDropListData]="userListData.filteredParticipants"
-       (cdkDropListDropped)="removeFromTeam($event)">
+       cdkDropList
+       class="users-container">
     <user-list [userListData]="userListData"></user-list>
   </div>
   <div class="right-panel">
-    <app-fight-statistics-panel [tournament]="tournament" [teams]="true"></app-fight-statistics-panel>
+    <app-fight-statistics-panel [teams]="true" [tournament]="tournament"></app-fight-statistics-panel>
     <div class="teams">
-      <div class="teams-location" *ngFor="let team of teams">
+      <div *ngFor="let team of teams" class="teams-location">
         <div>
-          <h2 class="team-header" *ngIf="!team.editing"
-              (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))">{{team.name}}</h2>
-          <button mat-button color="warn"
+          <h2 (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))" *ngIf="!team.editing"
+              class="team-header">{{team.name}}</h2>
+          <button (click)="deleteTeam(team)"
                   *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.activities)"
-                  (click)="deleteTeam(team)">
+                  color="warn"
+                  mat-button>
             <mat-icon>clear</mat-icon>
           </button>
         </div>
-        <input class="team-title-editable" *ngIf="team.editing"
-               (keyup.enter)="setEditable(team, false); updateTeamName(team)"
-               [(ngModel)]="team.name" type="text"/>
-        <div class="input-padding" *ngIf="team.editing"></div>
-        <div class="team" [class.small]="this.tournament.teamSize===1"
-             [attr.data-tournament-size]="tournament.teamSize" [attr.data-team]="team">
-          <div class="team-member-room" *ngFor="let i of teamSize"
-               cdkDropList
+        <input (keyup.enter)="setEditable(team, false); updateTeamName(team)" *ngIf="team.editing"
+               [(ngModel)]="team.name"
+               class="team-title-editable" type="text"/>
+        <div *ngIf="team.editing" class="input-padding"></div>
+        <div [attr.data-team]="team" [attr.data-tournament-size]="tournament.teamSize"
+             [class.small]="this.tournament.teamSize===1" class="team">
+          <div (cdkDropListDropped)="dropMember($event, team, i)" *ngFor="let i of teamSize"
                [cdkDropListData]="getMembersContainer(team)"
-               (cdkDropListDropped)="dropMember($event, team, i)"
+               [cdkDropListDisabled]="isTeamLocked(team)"
                [cdkDropListEnterPredicate]="dropListEnterPredicate(i, team)"
-               [cdkDropListDisabled]="isTeamLocked(team)">
-            <mat-card class="user-card"
-                      *ngIf="members!==undefined && members.get(team)!==undefined
+               cdkDropList
+               class="team-member-room">
+            <mat-card *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
-                      cdkDrag [cdkDragData]="getMember(team, i)"
-                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.activities) || getMember(team, i)!.locked">
+                      [cdkDragData]="getMember(team, i)"
+                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.activities) || getMember(team, i)!.locked"
+                      cdkDrag
+                      class="user-card">
               <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
                 <mat-card-title>{{getCardTitle(team, i)}}</mat-card-title>
                 <mat-card-subtitle>{{getCardSubTitle(team, i)}}</mat-card-subtitle>
-                <mat-icon class="locked" *ngIf="team.locked" color="warn" matTooltip="{{'elementInUse' | translate}}">
+                <mat-icon *ngIf="team.locked" class="locked" color="warn" matTooltip="{{'elementInUse' | translate}}">
                   block
                 </mat-icon>
               </mat-card-header>
@@ -48,23 +51,30 @@
           </div>
         </div>
       </div>
-      <div class="new-team" (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)">
-        <div class="row">{{'addTeamToTournament' | translate}} </div>
+      <div (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)" class="new-team">
+        <div class="row">{{'addTeamToTournament' | translate}}</div>
       </div>
     </div>
   </div>
 </div>
-<div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="generateTeams()"
-          *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)"
-          mat-flat-button>
+<div class="button-container" mat-dialog-actions>
+  <button (click)="generateTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)"
+          mat-flat-button
+          mat-raised-button>
     <mat-icon>auto_fix_high</mat-icon>
     {{'wizard' | translate}}
   </button>
-  <button mat-raised-button (click)="randomTeams()" mat-flat-button
-          *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)">
+  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)"
+          mat-flat-button
+          mat-raised-button>
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
-  <button mat-raised-button (click)="closeDialog()" mat-flat-button color="primary">{{'close' | translate}}</button>
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)"
+          mat-flat-button
+          mat-raised-button>
+    <mat-icon>file_download</mat-icon>
+    {{'download' | translate}}
+  </button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
 </div>

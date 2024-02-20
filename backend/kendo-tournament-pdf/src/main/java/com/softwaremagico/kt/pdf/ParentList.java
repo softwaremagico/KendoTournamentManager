@@ -4,23 +4,20 @@ package com.softwaremagico.kt.pdf;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -33,9 +30,11 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import java.awt.*;
+import java.awt.Color;
 
 public abstract class ParentList extends PdfDocument {
+
+    protected static final float MIN_HEADER_HIGH = 50f;
     protected static final int FOOTER_BORDER = 0;
     protected static final int HEADER_BORDER = 0;
     protected static final int CELL_BORDER = 0;
@@ -44,6 +43,12 @@ public abstract class ParentList extends PdfDocument {
 
     protected static final int TABLE_BORDER = 0;
     private static final float HEADER_SEPARATOR = 20f;
+
+    private static final int BOTTOM_PADDING = 15;
+
+    private static final int FONT_BIG_EXTRA_SIZE = 10;
+    private static final int FONT_MEDIUM_EXTRA_SIZE = 6;
+    private static final int FONT_SMALL_EXTRA_SIZE = 4;
 
 
     /**
@@ -117,6 +122,11 @@ public abstract class ParentList extends PdfDocument {
         return cell;
     }
 
+    public PdfPCell getCell(String text) {
+        return getCell(text, PdfTheme.getBasicFont(), 1, Element.ALIGN_LEFT);
+    }
+
+
     public PdfPCell getCell(String text, int colspan, int align) {
         return getCell(text, PdfTheme.getBasicFont(), colspan, align);
     }
@@ -157,7 +167,7 @@ public abstract class ParentList extends PdfDocument {
      */
     public PdfPCell getHeader(String text, int border, int align, int fontSize) {
         final PdfPCell cell = getCell(text, border, getTableWidths().length, align, new Color(255, 255, 255), PdfTheme.getTitleFont(), fontSize, Font.BOLD);
-        cell.setPaddingBottom(15);
+        cell.setPaddingBottom(BOTTOM_PADDING);
         return cell;
     }
 
@@ -169,7 +179,7 @@ public abstract class ParentList extends PdfDocument {
      * @return
      */
     public PdfPCell getHeader1(String text, int border) {
-        return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + 10);
+        return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + FONT_BIG_EXTRA_SIZE);
     }
 
     /**
@@ -181,7 +191,7 @@ public abstract class ParentList extends PdfDocument {
      * @return
      */
     public PdfPCell getHeader1(String text, int border, int align) {
-        return getHeader(text, border, align, PdfTheme.FONT_SIZE + 10);
+        return getHeader(text, border, align, PdfTheme.FONT_SIZE + FONT_BIG_EXTRA_SIZE);
     }
 
     /**
@@ -192,7 +202,7 @@ public abstract class ParentList extends PdfDocument {
      * @return
      */
     public PdfPCell getHeader2(String text, int border) {
-        return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + 6);
+        return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + FONT_MEDIUM_EXTRA_SIZE);
     }
 
     /**
@@ -204,7 +214,7 @@ public abstract class ParentList extends PdfDocument {
      * @return
      */
     public PdfPCell getHeader2(String text, int border, int align) {
-        return getHeader(text, border, align, PdfTheme.FONT_SIZE + 6);
+        return getHeader(text, border, align, PdfTheme.FONT_SIZE + FONT_MEDIUM_EXTRA_SIZE);
     }
 
     /**
@@ -215,7 +225,7 @@ public abstract class ParentList extends PdfDocument {
      * @return
      */
     public PdfPCell getHeader3(String text, int border) {
-        return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + 4);
+        return getHeader(text, border, Element.ALIGN_CENTER, PdfTheme.FONT_SIZE + FONT_SMALL_EXTRA_SIZE);
     }
 
     /**
@@ -261,7 +271,6 @@ public abstract class ParentList extends PdfDocument {
                 PdfTheme.HEADER_FONT_SIZE);
         createFooterRow(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.FOOTER_FONT_SIZE);
-        createRowSeparator(mainTable);
         createBodyRows(document, mainTable, document.getPageSize().getWidth(), document.getPageSize().getHeight(), writer, PdfTheme.getBasicFont(),
                 PdfTheme.FONT_SIZE);
         createRowSeparator(mainTable);

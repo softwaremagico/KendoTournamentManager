@@ -16,8 +16,7 @@ export class ImageService {
 
   createBlobImageFileAndSave(base64ImageUrl: string, extension: string = 'jpeg'): void {
     this.dataURItoBlob(base64ImageUrl, extension).subscribe((blob: Blob) => {
-      const imageBlob: Blob = blob;
-      const imageName: string = this.generateFileName(extension);
+      this.generateFileName(extension);
     });
   }
 

@@ -1,0 +1,91 @@
+.statistics {
+  padding-top: 20px;
+}
+
+.statistics-layout {
+  display: grid;
+}
+
+.statistics-layout .upper-menu {
+  margin-top: 10px;
+}
+
+.statistics-container {
+  height: 83vh;
+  max-height: 83vh;
+  min-height: 50vh;
+  overflow-y: auto;
+  margin-top: 20px;
+}
+
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.frame {
+  padding: 15px;
+}
+
+.box {
+  padding: 25px 20px;
+}
+
+.shadow {
+  box-shadow: 0 1px 15px 1px rgba(69, 65, 78, 0.08);
+}
+
+.box-statistics {
+  text-align: center;
+  padding: 15px;
+  margin: 15px;
+  min-width: 190px;
+}
+
+.statistics-table {
+  font-size: 12px;
+  align-content: center;
+  text-align: right;
+  width: 100%;
+  padding: 15px;
+}
+
+.statistics-table-title {
+  align-content: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: -20px;
+}
+
+.statistics-table-title > h3 {
+  padding-left: 15px;
+}
+
+.scrollable {
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.statistics-table .ranking {
+  text-align: center;
+}
+
+.statistics-table .single {
+  text-align: center;
+}
+
+.achievements-box {
+  display: inline-grid;
+  position: relative;
+  min-width: 290px;
+}
+
+app-achievement-wall {
+  margin-top: 10px;
+  width: 270px;
+  height: 245px;
+}
+
+
+

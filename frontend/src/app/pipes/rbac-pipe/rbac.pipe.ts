@@ -6,8 +6,8 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 })
 export class RbacPipe implements PipeTransform {
 
-  transform(activity: RbacActivity, allowedActivities: RbacActivity[]): boolean {
-    if (!allowedActivities) {
+  transform(activity: RbacActivity | undefined, allowedActivities: RbacActivity[]): boolean {
+    if (!activity || !allowedActivities) {
       return false;
     }
     return allowedActivities.includes(activity);

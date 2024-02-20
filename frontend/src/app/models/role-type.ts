@@ -1,3 +1,5 @@
+import {random} from "../utils/random/random";
+
 export enum RoleType {
   COMPETITOR = 'COMPETITOR',
   REFEREE = 'REFEREE',
@@ -26,7 +28,7 @@ export namespace RoleType {
 export namespace RoleType {
   export function getRandom(): RoleType {
     const values = getKeys();
-    const enumKey = values[Math.floor(Math.random() * values.length)];
+    const enumKey = values[Math.floor(random() * values.length)];
     return <RoleType>(<any>RoleType)[enumKey];
   }
 }

@@ -17,7 +17,6 @@ import {UserService} from "../../services/user.service";
 import {UserRoles} from "../../services/rbac/user-roles";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
-import {Tournament} from "../../models/tournament";
 
 @Component({
   selector: 'app-authenticated-user-list',

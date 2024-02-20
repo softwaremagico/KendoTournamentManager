@@ -16,7 +16,7 @@ import {TournamentExtraPropertyKey} from "../models/tournament-extra-property-ke
 })
 export class TournamentExtendedPropertiesService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/tournaments/properties';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/tournaments/properties';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
               public loginService: LoginService, private messageService: MessageService,
@@ -26,7 +26,7 @@ export class TournamentExtendedPropertiesService {
 
   getByTournament(tournament: Tournament): Observable<TournamentExtendedProperty[]> {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}`;
-    return this.http.get<TournamentExtendedProperty[]>(url, this.loginService.httpOptions)
+    return this.http.get<TournamentExtendedProperty[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched tournament properties from tournament ${tournament.name}`),
@@ -39,7 +39,7 @@ export class TournamentExtendedPropertiesService {
 
   getByTournamentAndKey(tournament: Tournament, propertyKey: TournamentExtraPropertyKey): Observable<TournamentExtendedProperty> {
     const url: string = `${this.baseUrl}/tournaments/${tournament.id}/key/${propertyKey}`;
-    return this.http.get<TournamentExtendedProperty>(url, this.loginService.httpOptions)
+    return this.http.get<TournamentExtendedProperty>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched tournament properties from tournament ${tournament.name} and key ${propertyKey}`),
@@ -52,27 +52,27 @@ export class TournamentExtendedPropertiesService {
 
   add(tournamentExtendedProperty: TournamentExtendedProperty): Observable<TournamentExtendedProperty> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<TournamentExtendedProperty>(url, tournamentExtendedProperty, this.loginService.httpOptions)
+    return this.http.post<TournamentExtendedProperty>(url, tournamentExtendedProperty)
       .pipe(
         tap({
-          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`adding property ${newTournamentExtendedProperty.value}`),
+          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`adding property ${newTournamentExtendedProperty.propertyValue}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty>(`adding ${tournamentExtendedProperty.value}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty>(`adding ${tournamentExtendedProperty.propertyValue}`))
       );
   }
 
   update(tournamentExtendedProperty: TournamentExtendedProperty): Observable<TournamentExtendedProperty> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<TournamentExtendedProperty>(url, tournamentExtendedProperty, this.loginService.httpOptions)
+    return this.http.put<TournamentExtendedProperty>(url, tournamentExtendedProperty)
       .pipe(
         tap({
-          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`updating property ${newTournamentExtendedProperty.value}`),
+          next: (newTournamentExtendedProperty: TournamentExtendedProperty) => this.loggerService.info(`updating property ${newTournamentExtendedProperty.propertyValue}`),
           error: () => this.systemOverloadService.isBusy.next(false),
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
-        catchError(this.messageService.handleError<TournamentExtendedProperty>(`updating ${tournamentExtendedProperty.value}`))
+        catchError(this.messageService.handleError<TournamentExtendedProperty>(`updating ${tournamentExtendedProperty.propertyValue}`))
       );
   }
 }

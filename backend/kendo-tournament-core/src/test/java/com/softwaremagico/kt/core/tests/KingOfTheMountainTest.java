@@ -4,37 +4,46 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
-import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.*;
+import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.KingOfTheMountainHandler;
 import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -58,7 +67,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
     private static final String TOURNAMENT_NAME = "scoreChampionshipTest";
-    private static Tournament tournament = null;
+    private Tournament tournament = null;
 
 
     @Autowired
@@ -98,7 +107,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     private TeamConverter teamConverter;
 
     @Autowired
-    private RankingController rankingController;
+    private RankingProvider rankingProvider;
 
     @Autowired
     private KingOfTheMountainHandler kingOfTheMountainHandler;
@@ -195,7 +204,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
         tournamentFights.forEach(fight -> fight.getDuels().forEach(duel -> duel.setFinished(true)));
         fightProvider.save(tournamentFights.get(0));
 
-        List<ScoreOfTeam> teamsScore = rankingController.getTeamsScoreRanking(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
+        List<ScoreOfTeam> teamsScore = rankingProvider.getTeamsScoreRanking(tournament);
         Assert.assertEquals(teamsScore.size(), TEAMS);
 
         Assert.assertEquals(teamsScore.get(0).getTeam().getName(), tournamentFights.get(0).getTeam1().getName());
@@ -203,7 +212,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"testSimpleWinner"})
     public void nextFight1() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 2);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -222,7 +231,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"nextFight1"})
     public void nextFight2() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 3);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -242,7 +251,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"nextFight2"})
     public void loopStartsAgain() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 4);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -261,7 +270,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"loopStartsAgain"})
     public void team1Loose() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 5);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
@@ -280,7 +289,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"team1Loose"})
     public void afterDraw() {
-        kingOfTheMountainHandler.createNextFights(tournament, null);
+        kingOfTheMountainHandler.generateNextFights(tournament, null);
         Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 6);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);

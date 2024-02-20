@@ -1,0 +1,75 @@
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="
+        http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
+        http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
+
+    <service>
+        <!--  jsr-107-compliant-atomics is for using with JCache -->
+        <jsr107:defaults enable-management="true" enable-statistics="true" default-template="default" jsr-107-compliant-atomics="true">
+        </jsr107:defaults>
+    </service>
+
+
+    <cache-template name="default">
+        <listeners>
+            <listener>
+                <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+        <resources>
+            <offheap unit="MB">2</offheap>
+        </resources>
+    </cache-template>
+
+    <cache-template name="short-time-cache-template">
+        <listeners>
+            <listener>
+                <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+
+        <resources>
+            <offheap unit="MB">2</offheap>
+        </resources>
+    </cache-template>
+
+
+    <cache alias="duels-duration-average" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="competitors-ranking" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="ranking" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Long</value-type>
+    </cache>
+
+    <cache alias="tournaments-by-id" uses-template="short-time-cache-template">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
+        <heap>10</heap>
+    </cache>
+
+</config>

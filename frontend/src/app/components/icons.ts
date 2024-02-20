@@ -25,7 +25,19 @@ export class IconModule {
       .addSvgIcon("member-order-disable", this.setPath(`${this.path}/member-order-disable.svg`))
       .addSvgIcon("competitors-classification", this.setPath(`${this.path}/competitors-classification.svg`))
       .addSvgIcon("diplomas", this.setPath(`${this.path}/diploma.svg`))
-      .addSvgIcon("match", this.setPath(`${this.path}/match.svg`));
+      .addSvgIcon("gauge", this.setPath(`${this.path}/gauge.svg`))
+      .addSvgIcon("aggressiveness", this.setPath(`${this.path}/aggressiveness.svg`))
+      .addSvgIcon("attack", this.setPath(`${this.path}/attack.svg`))
+      .addSvgIcon("defense", this.setPath(`${this.path}/defense.svg`))
+      .addSvgIcon("willpower", this.setPath(`${this.path}/willpower.svg`))
+      .addSvgIcon("match", this.setPath(`${this.path}/match.svg`))
+      .addSvgIcon("brackets", this.setPath(`${this.path}/brackets.svg`))
+      .addSvgIcon("unfinish", this.setPath(`${this.path}/unfinish.svg`))
+      .addSvgIcon("clone", this.setPath(`${this.path}/clone.svg`))
+      .addSvgIcon("one-winner", this.setPath(`${this.path}/one-winner.svg`))
+      .addSvgIcon("two-winners", this.setPath(`${this.path}/two-winners.svg`))
+      .addSvgIcon("zip-file", this.setPath(`${this.path}/zip-file.svg`))
+      .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {
