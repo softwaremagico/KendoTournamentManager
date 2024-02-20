@@ -34,6 +34,8 @@ public class ElementDTO {
 
     private String updatedBy;
 
+    private Integer version;
+
     public Integer getId() {
         return id;
     }
@@ -73,6 +75,14 @@ public class ElementDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override
