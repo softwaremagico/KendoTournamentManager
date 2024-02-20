@@ -9,6 +9,10 @@ export class Club extends Element {
   public phone?: string;
   public web?: string;
 
+  constructor() {
+    super();
+  }
+
   public static override copy(source: Club, target: Club): void {
     Element.copy(source, target);
     target.name = source.name;

@@ -25,6 +25,8 @@
 
 .red-ribbon {
   color: red;
+  //To be below the timer
+  z-index: -1;
 }
 
 .ribbon-icon {
@@ -44,14 +46,13 @@
 
 .white-ribbon {
   color: white;
+  //To be below the timer
+  z-index: -1;
 }
 
 .fight-container {
   display: flex;
   padding-bottom: 2vh
-}
-
-.selected {
 }
 
 .over {

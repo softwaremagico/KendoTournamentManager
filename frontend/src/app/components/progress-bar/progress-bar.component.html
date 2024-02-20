@@ -1,0 +1,19 @@
+<div class="custom-progress-bar">
+  <table aria-hidden="true" class="progress-bar-table">
+    <tr>
+      <td class="icon">
+        <mat-icon [svgIcon]="barIcon" class="kendo-icon"></mat-icon>
+      </td>
+      <td class="bar">
+        <mat-progress-bar (animationEnd)="progressInLoading()"
+                          [value]="drawnPercentage"
+                          matTooltip="{{text}}"
+                          mode="determinate">
+        </mat-progress-bar>
+        <span *ngIf="drawnPercentage >= percentage " class="percentage-title">{{drawnPercentage}}%</span>
+      </td>
+    </tr>
+  </table>
+</div>
+<div></div>
+

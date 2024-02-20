@@ -4,23 +4,20 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -32,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PoolLogger extends BasicLogger {
 
-    private static final Logger logger = LoggerFactory.getLogger(PoolLogger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PoolLogger.class);
 
     /**
      * Events that have business meaning (i.e. creating category, deleting form,
@@ -43,7 +40,7 @@ public class PoolLogger extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(String className, String messageTemplate, Object... arguments) {
-        info(logger, className, messageTemplate, arguments);
+        info(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void info(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -59,7 +56,7 @@ public class PoolLogger extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(String className, String messageTemplate, Object... arguments) {
-        warning(logger, className, messageTemplate, arguments);
+        warning(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void warning(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -75,7 +72,7 @@ public class PoolLogger extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void debug(String className, String messageTemplate, Object... arguments) {
-        debug(logger, className, messageTemplate, arguments);
+        debug(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void debug(Class<?> clazz, String messageTemplate, Object... arguments) {
@@ -90,11 +87,11 @@ public class PoolLogger extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void severe(String className, String messageTemplate, Object... arguments) {
-        severe(logger, className, messageTemplate, arguments);
+        severe(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void errorMessage(Class<?> clazz, Throwable throwable) {
-        errorMessageNotification(logger, clazz.getName(), throwable);
+        errorMessageNotification(LOGGER, clazz.getName(), throwable);
     }
 
     /**
@@ -106,14 +103,14 @@ public class PoolLogger extends BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void errorMessage(String className, String messageTemplate, Object... arguments) {
-        errorMessageNotification(logger, className, messageTemplate, arguments);
+        errorMessageNotification(LOGGER, className, messageTemplate, arguments);
     }
 
     public static void errorMessage(Object object, Throwable throwable) {
-        errorMessageNotification(logger, object.getClass().getName(), throwable);
+        errorMessageNotification(LOGGER, object.getClass().getName(), throwable);
     }
 
     public static boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
+        return LOGGER.isDebugEnabled();
     }
 }

@@ -4,27 +4,30 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,28 +47,6 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final Integer SHIAIJO = 0;
 
     private static final Integer LEVEL = 0;
-
-    @Autowired
-    private ClubRepository clubRepository;
-
-    @Autowired
-    private ParticipantRepository participantRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private TeamRepository teamRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
-
-    @Autowired
-    private FightRepository fightRepository;
-
     protected Club club;
     protected Tournament tournament;
     protected List<Participant> members;
@@ -73,6 +54,20 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected List<Team> teams;
     protected Group group;
     protected List<Fight> fights;
+    @Autowired
+    private ClubRepository clubRepository;
+    @Autowired
+    private ParticipantRepository participantRepository;
+    @Autowired
+    private TournamentRepository tournamentRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private TeamRepository teamRepository;
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private FightRepository fightRepository;
 
     protected Club createClub() {
         return clubRepository.save(new Club(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY));
@@ -81,7 +76,8 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected List<Participant> createParticipants(Club club) {
         List<Participant> members = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            members.add(participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
+            members.add(
+                    participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
         }
         return members;
     }

@@ -61,11 +61,12 @@
 }
 
 .over {
-  background: #e1e6ed;
+  background: var(--disabled);
 }
 
 .duel.over {
-  background: #e1e6ed;
+  background: var(--disabled);
+  color: var(--text-disabled);
 }
 
 .duel.duelSelected {

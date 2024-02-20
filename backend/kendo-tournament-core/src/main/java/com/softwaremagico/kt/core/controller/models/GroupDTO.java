@@ -4,23 +4,20 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -114,15 +111,14 @@ public class GroupDTO extends ElementDTO {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof GroupDTO)) {
+        if (!(o instanceof GroupDTO groupDTO)) {
             return false;
         }
         if (!super.equals(o)) {
             return false;
         }
-        final GroupDTO groupDTO = (GroupDTO) o;
-        return getTournament().equals(groupDTO.getTournament()) && Objects.equals(getTeams(), groupDTO.getTeams()) &&
-                getShiaijo().equals(groupDTO.getShiaijo()) && getLevel().equals(groupDTO.getLevel()) && Objects.equals(getFights(),
+        return getTournament().equals(groupDTO.getTournament()) && Objects.equals(getTeams(), groupDTO.getTeams())
+                && getShiaijo().equals(groupDTO.getShiaijo()) && getLevel().equals(groupDTO.getLevel()) && Objects.equals(getFights(),
                 groupDTO.getFights()) && getNumberOfWinners().equals(groupDTO.getNumberOfWinners()) && Objects.equals(getUnties(), groupDTO.getUnties());
     }
 

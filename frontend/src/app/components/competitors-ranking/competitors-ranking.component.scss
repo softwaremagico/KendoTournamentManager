@@ -1,0 +1,60 @@
+.table-container {
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.table-caption {
+  font-size: 200%;
+  padding-bottom: 30px;
+}
+
+.competitor-ranking-table {
+  margin: 2vw;
+}
+
+.competitor-ranking-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: white;
+  height: 60px;
+}
+
+.competitor-ranking-header {
+  max-width: 20vw;
+  min-width: 100px;
+  width: 20vw;
+  text-align: center;
+  font-size: 130%;
+  padding-bottom: 10px;
+  color: var(--secondary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.competitor-ranking-value {
+  text-align: center;
+  padding: 10px;
+  color: var(--secondary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.competitor-ranking-value.competitor-name {
+  text-align: left;
+}
+
+.competitor-ranking-value.selected {
+  font-weight: bold;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}

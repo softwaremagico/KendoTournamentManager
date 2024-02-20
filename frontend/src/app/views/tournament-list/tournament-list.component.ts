@@ -5,7 +5,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {TournamentService} from "../../services/tournament.service";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {TournamentDialogBoxComponent} from "./tournament-dialog-box/tournament-dialog-box.component";
@@ -22,6 +22,9 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {
   RoleSelectorDialogBoxComponent
 } from "../../components/role-selector-dialog-box/role-selector-dialog-box.component";
+import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {AchievementsService} from "../../services/achievements.service";
+import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-tournament-list',
@@ -38,7 +41,8 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   constructor(private router: Router, private userSessionService: UserSessionService, private tournamentService: TournamentService,
               private rankingService: RankingService, private translateService: TranslateService, public dialog: MatDialog,
-              private messageService: MessageService, rbacService: RbacService) {
+              private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+              private achievementsService: AchievementsService) {
     super(rbacService);
     this.basicTableData.columns = ['id', 'name', 'type', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
@@ -51,19 +55,21 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   showAllElements(): void {
+    this.systemOverloadService.isTransactionalBusy.next(true);
     this.tournamentService.getAll().subscribe(tournaments => {
       this.basicTableData.dataSource.data = tournaments;
       //Select session tournament.
-      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter(x => x.id == Number(this.userSessionService.getTournament()))[0];
+      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter(x => x.id == Number(this.userSessionService.getSelectedTournament()))[0];
       const selectedElements: Tournament[] = [];
       selectedElements.push(selectedTournament);
       this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
       this.basicTableData.selectedElement = selectedTournament;
+      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
   addElement(): void {
-    const tournament = new Tournament();
+    const tournament: Tournament = new Tournament();
     tournament.duelsDuration = Tournament.DEFAULT_DUELS_DURATION;
     tournament.type = Tournament.DEFAULT_TYPE;
     tournament.shiaijos = Tournament.DEFAULT_SHIAIJOS;
@@ -83,7 +89,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  openDialog(title: string, action: Action, tournament: Tournament) {
+  openDialog(title: string, action: Action, tournament: Tournament): void {
     const dialogRef = this.dialog.open(TournamentDialogBoxComponent, {
       width: '600px',
       data: {
@@ -100,12 +106,12 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
         this.updateRowData(result.data);
       } else if (result.action == Action.Delete) {
         this.deleteRowData(result.data);
-        this.userSessionService.setTournament(undefined);
+        this.userSessionService.setSelectedTournament(undefined);
       }
     });
   }
 
-  addRowData(tournament: Tournament) {
+  addRowData(tournament: Tournament): void {
     this.tournamentService.add(tournament).subscribe(_tournament => {
       this.basicTableData.dataSource.data.push(_tournament);
       this.basicTableData.dataSource._updateChangeSubscription();
@@ -114,15 +120,16 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     });
   }
 
-  updateRowData(tournament: Tournament) {
-    this.tournamentService.update(tournament).subscribe(() => {
+  updateRowData(tournament: Tournament): void {
+    this.tournamentService.update(tournament).subscribe((): void => {
         this.messageService.infoMessage('infoTournamentUpdated');
+        this.basicTableData.selectedElement = tournament;
       }
     );
   }
 
-  deleteRowData(tournament: Tournament) {
-    this.tournamentService.delete(tournament).subscribe(() => {
+  deleteRowData(tournament: Tournament): void {
+    this.tournamentService.delete(tournament).subscribe((): void => {
         this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
         this.messageService.infoMessage('infoTournamentDeleted');
         this.basicTableData.selectedElement = undefined;
@@ -152,16 +159,16 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   openFights(): void {
     if (this.basicTableData.selectedElement) {
-      this.userSessionService.setTournament(this.basicTableData.selectedElement.id + "");
+      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
       this.router.navigate(['/tournaments/fights'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
     }
   }
 
-  downloadBlogCode() {
-    if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
-      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob) => {
-        const blob = new Blob([html], {type: 'txt/plain'});
-        const downloadURL = window.URL.createObjectURL(blob);
+  downloadBlogCode(): void {
+    if (this.basicTableData.selectedElement?.id) {
+      this.rankingService.getTournamentSummaryAsHtml(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
+        const blob: Blob = new Blob([html], {type: 'txt/plain'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
         anchor.download = "Code - " + this.basicTableData.selectedElement!.name + ".txt";
@@ -171,9 +178,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  downloadAccreditations() {
+  downloadAccreditations(): void {
     if (this.basicTableData.selectedElement) {
-      const dialogRef = this.dialog.open(RoleSelectorDialogBoxComponent, {
+      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -181,13 +188,13 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
-            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
+          if (this.basicTableData.selectedElement?.id) {
+            this.tournamentService.getAccreditations(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob): void => {
               if (html !== null) {
-                const blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL = window.URL.createObjectURL(blob);
+                const blob: Blob = new Blob([html], {type: 'application/pdf'});
+                const downloadURL: string = window.URL.createObjectURL(blob);
 
-                const anchor = document.createElement("a");
+                const anchor: HTMLAnchorElement = document.createElement("a");
                 anchor.download = "Accreditations - " + this.basicTableData.selectedElement!.name + ".pdf";
                 anchor.href = downloadURL;
                 anchor.click();
@@ -201,9 +208,9 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     }
   }
 
-  downloadDiplomas() {
+  downloadDiplomas(): void {
     if (this.basicTableData.selectedElement) {
-      const dialogRef = this.dialog.open(RoleSelectorDialogBoxComponent, {
+      const dialogRef: MatDialogRef<RoleSelectorDialogBoxComponent> = this.dialog.open(RoleSelectorDialogBoxComponent, {
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -211,13 +218,13 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
       dialogRef.afterClosed().subscribe(result => {
         if (result.action !== Action.Cancel) {
-          if (this.basicTableData.selectedElement && this.basicTableData.selectedElement.id) {
+          if (this.basicTableData.selectedElement?.id) {
             this.tournamentService.getDiplomas(this.basicTableData.selectedElement.id, result.newOnes, result.data).subscribe((html: Blob) => {
               if (html !== null) {
-                const blob = new Blob([html], {type: 'application/pdf'});
-                const downloadURL = window.URL.createObjectURL(blob);
+                const blob: Blob = new Blob([html], {type: 'application/pdf'});
+                const downloadURL: string = window.URL.createObjectURL(blob);
 
-                const anchor = document.createElement("a");
+                const anchor: HTMLAnchorElement = document.createElement("a");
                 anchor.download = "Diplomas - " + this.basicTableData.selectedElement!.name + ".pdf";
                 anchor.href = downloadURL;
                 anchor.click();
@@ -234,6 +241,15 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   lockElement(locked: boolean): void {
     if (this.basicTableData.selectedElement) {
       this.basicTableData.selectedElement.locked = locked;
+      if (locked) {
+        this.achievementsService.regenerateTournamentAchievements(this.basicTableData.selectedElement?.id!).subscribe();
+        if (!this.basicTableData.selectedElement.lockedAt) {
+          this.basicTableData.selectedElement.lockedAt = new Date();
+        }
+        if (!this.basicTableData.selectedElement.finishedAt) {
+          this.basicTableData.selectedElement.finishedAt = new Date();
+        }
+      }
       this.updateRowData(this.basicTableData.selectedElement);
     }
   }
@@ -241,5 +257,51 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   disableRow(argument: any): boolean {
     return (argument as Tournament).locked;
   }
-}
 
+  openStatistics(): void {
+    if (this.basicTableData.selectedElement) {
+      this.userSessionService.setSelectedTournament(this.basicTableData.selectedElement.id + "");
+      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.basicTableData.selectedElement.id}});
+    }
+  }
+
+  openCloneTournament(): void {
+    if (this.basicTableData.selectedElement) {
+      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
+        disableClose: false
+      });
+      dialogRef.componentInstance.messageTag = "tournamentCloneWarning"
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.cloneElement();
+        }
+      });
+    }
+  }
+
+  cloneElement(): void {
+    const tournamentId: number = this.basicTableData.selectedElement?.id!;
+    this.basicTableData.selectedElement = undefined;
+    this.tournamentService.clone(tournamentId).subscribe((_tournament: Tournament): void => {
+      this.basicTableData.dataSource.data.push(_tournament);
+      this.basicTableData.selectItem(_tournament);
+      this.basicTableData.dataSource._updateChangeSubscription();
+      this.messageService.infoMessage('infoTournamentStored');
+    });
+  }
+
+  downloadZip(): void {
+    if (this.basicTableData.selectedElement?.id) {
+      this.rankingService.getAllListAsZip(this.basicTableData.selectedElement.id).subscribe((html: Blob): void => {
+        const blob: Blob = new Blob([html], {type: 'application/zip'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
+
+        const anchor = document.createElement("a");
+        anchor.download = this.basicTableData.selectedElement!.name + ".zip";
+        anchor.href = downloadURL;
+        anchor.click();
+      });
+    }
+  }
+}

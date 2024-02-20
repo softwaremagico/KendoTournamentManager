@@ -1,14 +1,15 @@
-<mat-card class="team-card" cdkDrag [cdkDragData]="team">
+<mat-card [cdkDragDisabled]="disableDrag" [cdkDragData]="team" cdkDrag class="team-card" [class.minify]="minify">
   <mat-card-header class="team-card-header">
     <mat-card-title class="team-card-title">{{team.name}}</mat-card-title>
     <mat-card-subtitle class="team-card-subtitle"></mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content class="team-card-content">
+  <mat-card-content class="team-card-content" *ngIf="!minify">
     <ul class="team-card-content-list">
-      <li class="team-member" *ngFor="let user of team.members">
-        {{user && user.lastname ? user.lastname : ""}}
+      <li *ngFor="let user of team.members" class="team-member">
+        {{user && user.lastname ? user?.lastname : ""}}
         {{user && user.name && user.lastname ? ", " : ""}}
-        {{user && user.name ? user.name : ""}}</li>
+        {{user && user.name ? user?.name : ""}}
+      </li>
     </ul>
   </mat-card-content>
 </mat-card>
