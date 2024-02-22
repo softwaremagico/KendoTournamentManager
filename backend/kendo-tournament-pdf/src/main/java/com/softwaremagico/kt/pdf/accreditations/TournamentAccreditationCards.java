@@ -46,6 +46,8 @@ import java.util.Map;
 
 public class TournamentAccreditationCards extends PdfDocument {
 
+    private static final String BACKGROUND_IMAGE = "/images/accreditation-background.png";
+
     private static final int BORDER = 1;
 
     private final MessageSource messageSource;
@@ -127,7 +129,7 @@ public class TournamentAccreditationCards extends PdfDocument {
             try {
                 competitorTable.setTableEvent(new TableBackgroundEvent(background, document));
             } catch (NullPointerException e) {
-                competitorTable.setTableEvent(new TableBackgroundEvent());
+                competitorTable.setTableEvent(new TableBackgroundEvent(BACKGROUND_IMAGE));
             }
             cell = new PdfPCell(competitorTable);
             cell.setBorderWidth(BORDER);
