@@ -4,5 +4,6 @@
 
 export const environment = {
   production: false,
-  backendUrl: "http://localhost:8080/kendo-tournament-backend"
+  backendUrl: "http://localhost:8080/kendo-tournament-backend",
+  websocketsUrl: "ws://127.0.0.1:8080/kendo-tournament-backend/websockets"
 };
