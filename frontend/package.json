@@ -26,7 +26,7 @@
     "dom-to-image": "^2.6.0",
     "jspdf": "^2.5.1",
     "ng-apexcharts": "^1.7.4",
-    "ngx-cookie-service": "^14.0.1",
+    "ngx-cookie-service": "^15.0.0",
     "ngx-webcam": "^0.4.1",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
