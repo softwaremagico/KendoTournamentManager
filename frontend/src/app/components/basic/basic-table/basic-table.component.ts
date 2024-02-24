@@ -110,7 +110,8 @@ export class BasicTableComponent implements OnInit {
       return column;
     } else if (typeof column === 'boolean') {
       return column ? this.translateService.instant('yes') : this.translateService.instant('no');
-    } else if (isNaN(column) && !isNaN(Date.parse(column))) {
+      //Is it a date?
+    } else if (isNaN(column) && !isNaN(Date.parse(column)) && (column instanceof Date)) {
       return this.pipe.transform(column, 'short');
     } else {
       if (column) {
