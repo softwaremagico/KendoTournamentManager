@@ -26,4 +26,8 @@ export class TournamentScore extends Element {
     return instance;
   }
 
+  public override toString(): string {
+    return this.scoreType.toLowerCase();
+  }
+
 }

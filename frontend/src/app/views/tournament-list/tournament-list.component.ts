@@ -44,7 +44,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
               private messageService: MessageService, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private achievementsService: AchievementsService) {
     super(rbacService);
-    this.basicTableData.columns = ['id', 'name', 'type', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
+    this.basicTableData.columns = ['id', 'name', 'type', 'tournamentScore', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.columnsTags = ['id', 'name', 'tournamentType', 'scoreRules', 'locked', 'shiaijos', 'teamSize', 'createdAt', 'createdBy', 'updatedAt', 'updatedBy'];
     this.basicTableData.visibleColumns = ['name', 'type', 'teamSize'];
     this.basicTableData.dataSource = new MatTableDataSource<Tournament>();
@@ -56,10 +56,17 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   showAllElements(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.tournamentService.getAll().subscribe(tournaments => {
+    this.tournamentService.getAll().subscribe((_tournaments: Tournament[]): void => {
+      const tournaments: Tournament[] = [];
+      for (let _tournament of _tournaments) {
+        if (_tournament) {
+          tournaments.push(Tournament.clone(_tournament));
+        }
+      }
       this.basicTableData.dataSource.data = tournaments;
       //Select session tournament.
-      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter(x => x.id == Number(this.userSessionService.getSelectedTournament()))[0];
+      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
+        tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
       const selectedElements: Tournament[] = [];
       selectedElements.push(selectedTournament);
       this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
