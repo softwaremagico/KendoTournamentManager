@@ -10,6 +10,14 @@
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
+        <button (click)="openConfirmationGenerateElementsDialog()"
+                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+                [disabled]="(tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'wizard' | translate}}">
+          <mat-icon>auto_fix_high</mat-icon>
+        </button>
         <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
                 [disabled]="tournament && tournament.locked" [matTooltipShowDelay]="500"
                 class="add-button"
@@ -23,14 +31,6 @@
                 class="delete-button" color="warn" mat-button
                 matTooltip="{{'delete' | translate}}">
           <mat-icon>clear</mat-icon>
-        </button>
-        <button (click)="openConfirmationGenerateElementsDialog()"
-                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="(tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'wizard' | translate}}">
-          <mat-icon>auto_fix_high</mat-icon>
         </button>
         <button (click)="openBracketsManager()"
                 *ngIf="isBracketsEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
