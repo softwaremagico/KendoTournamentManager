@@ -48,7 +48,7 @@ export class BasicTableComponent implements OnInit {
     this.basicTableData.dataSource.sort = this.sort;
   }
 
-  private setLocale() {
+  private setLocale(): void {
     if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
       this.pipe = new DatePipe('es');
     } else if (this.userSessionService.getLanguage() === 'it') {
@@ -112,6 +112,8 @@ export class BasicTableComponent implements OnInit {
       return column ? this.translateService.instant('yes') : this.translateService.instant('no');
     } else if (isNaN(column) && !isNaN(Date.parse(column))) {
       return this.pipe.transform(column, 'short');
+    } else if (column instanceof Object) {
+      return this.translateService.instant(column.toString());
     } else {
       if (column) {
         const text: string = (column as string);
@@ -128,6 +130,6 @@ export class BasicTableComponent implements OnInit {
   }
 
   snakeToCamel(string: string): string {
-    return string.toLowerCase().replace(/[-_][a-z]/g, (group) => group.slice(-1).toUpperCase());
+    return string.toLowerCase().replace(/[-_][a-z]/g, (group: string) => group.slice(-1).toUpperCase());
   }
 }
