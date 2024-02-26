@@ -6,7 +6,7 @@ export class BasicTableData<T> {
   columnsTags: string[];
   columnsParameters: string[];
   visibleColumns: string[];
-  selection = new SelectionModel<T>(false, []);
+  selection: SelectionModel<T> = new SelectionModel<T>(false, []);
   dataSource: MatTableDataSource<T>;
   selectedElement: T | undefined;
 
