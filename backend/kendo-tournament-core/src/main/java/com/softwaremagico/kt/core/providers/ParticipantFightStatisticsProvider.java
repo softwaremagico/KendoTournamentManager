@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ParticipantFightStatisticsProvider extends CrudProvider<ParticipantFightStatistics, Integer, ParticipantFightStatisticsRepository> {
@@ -128,6 +129,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     }
 
     private void populateScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
+        //Remove null values
+        scores = scores.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
         for (final Score score : scores) {
             switch (score) {
                 case MEN -> participantFightStatistics.setMenNumber(participantFightStatistics.getMenNumber() + 1);
