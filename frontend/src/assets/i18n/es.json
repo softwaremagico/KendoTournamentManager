@@ -833,6 +833,14 @@
       "bronze": "Logrado durante al menos dos torneos.",
       "silver": "Logrado durante al menos tres torneos.",
       "gold": "Logrado durante al menos cinco torneos."
+    },
+    "vForVendetta": {
+      "title": "V de Vendetta",
+      "description": "Gana un combate cuando tu oponente ha puntuado en primer lugar.",
+      "normal": "Conseguido para un torneo.",
+      "bronze": "Logrado durante al menos dos torneos.",
+      "silver": "Logrado durante al menos tres torneos.",
+      "gold": "Logrado durante al menos cinco torneos."
     }
   },
   "removeTeams": "Quitar equipos",

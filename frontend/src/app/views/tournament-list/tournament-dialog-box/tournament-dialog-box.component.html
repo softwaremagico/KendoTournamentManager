@@ -58,7 +58,7 @@
         <mat-form-field *ngIf="actionName != 'Delete'">
             <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
             <mat-select [(value)]="tournament.duelsDuration" formControlName="duelsDuration">
-                <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
+                <mat-option *ngFor="let number of [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
                     {{number}} {{'seconds' | translate}}
                 </mat-option>
             </mat-select>

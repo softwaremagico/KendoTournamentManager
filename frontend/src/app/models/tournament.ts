@@ -37,9 +37,7 @@ export class Tournament extends Element {
     target.teamSize = source.teamSize;
     target.type = source.type;
     target.duelsDuration = source.duelsDuration;
-    if (source.tournamentScore !== undefined) {
-      target.tournamentScore = TournamentScore.clone(source.tournamentScore);
-    }
+    target.tournamentScore = TournamentScore.clone(source.tournamentScore);
     target.locked = source.locked;
     target.lockedAt = source.lockedAt;
     target.startedAt = source.startedAt;
