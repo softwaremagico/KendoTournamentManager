@@ -843,6 +843,14 @@
       "bronze": "Achieved for at least two consecutive tournaments.",
       "silver": "Achieved for at least three consecutive tournaments.",
       "gold": "Achieved for at least five consecutive tournaments."
+    },
+    "vForVendetta": {
+      "title": "V For Vendetta",
+      "description": "Win a fight when your opponent has scored on the first place.",
+      "normal": "Achieved for one tournament.",
+      "bronze": "Achieved for at least two consecutive tournaments.",
+      "silver": "Achieved for at least three consecutive tournaments.",
+      "gold": "Achieved for at least five consecutive tournaments."
     }
   },
   "removeTeams": "Remove Teams",
