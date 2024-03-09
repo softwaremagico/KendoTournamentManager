@@ -65,12 +65,12 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
                         + (duel.getCompetitor2Fault() != null && duel.getCompetitor2Fault() ? 1 : 0));
                 for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
-                    if (scoreTime < quickestHit) {
+                    if (scoreTime != null && scoreTime < quickestHit) {
                         quickestHit = scoreTime;
                     }
                 }
                 for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
-                    if (scoreTime < quickestReceivedHit) {
+                    if (scoreTime != null && scoreTime < quickestReceivedHit) {
                         quickestReceivedHit = scoreTime;
                     }
                 }
@@ -89,12 +89,12 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 participantFightStatistics.setReceivedFaults(participantFightStatistics.getReceivedFaults()
                         + (duel.getCompetitor2Fault() != null && duel.getCompetitor1Fault() ? 1 : 0));
                 for (final Integer scoreTime : duel.getCompetitor2ScoreTime()) {
-                    if (scoreTime < quickestHit) {
+                    if (scoreTime != null && scoreTime < quickestHit) {
                         quickestHit = scoreTime;
                     }
                 }
                 for (final Integer scoreTime : duel.getCompetitor1ScoreTime()) {
-                    if (scoreTime < quickestReceivedHit) {
+                    if (scoreTime != null && scoreTime < quickestReceivedHit) {
                         quickestReceivedHit = scoreTime;
                     }
                 }
@@ -149,6 +149,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     }
 
     private void populateReceivedScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
+        //Remove null values
+        scores = scores.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
         for (final Score score : scores) {
             switch (score) {
                 case MEN ->
