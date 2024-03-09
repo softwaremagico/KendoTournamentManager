@@ -826,6 +826,14 @@
       "bronze": "Ottenuto durante almeno due tornei consecutivi.",
       "silver": "Ottenuto durante almeno tre tornei consecutivi.",
       "gold": "Ottenuto durante almeno cinque tornei consecutivi."
+    },
+    "vForVendetta": {
+      "title": "V per Vendetta",
+      "description": "Vinci un combattimento quando il tuo avversario ha segnato per primo.",
+      "normal": "Ottenuto per un torneo.",
+      "bronze": "Ottenuto durante almeno due tornei consecutivi.",
+      "silver": "Ottenuto durante almeno tre tornei consecutivi.",
+      "gold": "Ottenuto durante almeno cinque tornei consecutivi."
     }
   },
   "removeTeams": "Rimuovi squadre",
