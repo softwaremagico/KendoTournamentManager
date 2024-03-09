@@ -69,7 +69,9 @@ public enum AchievementType {
 
     DARUMA,
 
-    STORMTROOPER_SYNDROME;
+    STORMTROOPER_SYNDROME,
+
+    V_FOR_VENDETTA;
 
 
     public static AchievementType getType(String name) {
