@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Random;
 
@@ -51,7 +52,7 @@ public class JwtTokenUtil {
     private static final int RANDOM_LEFT_LIMIT = 48; // numeral '0'
     private static final int RANDOM_RIGHT_LIMIT = 122; // letter 'z'
     private static final int RANDOM_LENGTH = 32; // 32 characters by key
-    private static final Random RANDOM = new Random(); // letter 'z'
+    private static final Random RANDOM = new SecureRandom();
 
     private final NetworkController networkController;
 

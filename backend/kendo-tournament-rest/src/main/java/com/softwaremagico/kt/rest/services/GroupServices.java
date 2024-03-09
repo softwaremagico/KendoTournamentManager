@@ -83,8 +83,8 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/level/{level}/index/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                        @Parameter(description = "Level of the group", required = true) @PathVariable("tournamentId") Integer level,
-                        @Parameter(description = "Index of the groyup", required = true) @PathVariable("tournamentId") Integer index,
+                        @Parameter(description = "Level of the group", required = true) @PathVariable("level") Integer level,
+                        @Parameter(description = "Index of the group", required = true) @PathVariable("index") Integer index,
                         HttpServletRequest request) {
         if (level == null || index == null) {
             throw new BadRequestException(this.getClass(), "Level or Index not set!");
