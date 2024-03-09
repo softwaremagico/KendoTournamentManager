@@ -820,6 +820,14 @@
       "bronze": "Behaald tijdens ten minste twee opeenvolgende toernooien.",
       "silver": "Behaald tijdens ten minste drie opeenvolgende toernooien.",
       "gold": "Behaald tijdens ten minste vijf opeenvolgende toernooien."
+    },
+    "vForVendetta": {
+      "title": "V for Vendetta",
+      "description": "Win een gevecht als je tegenstander als eerste heeft gescoord.",
+      "normal": "Bereikt voor één toernooi.",
+      "bronze": "Behaald tijdens ten minste twee opeenvolgende toernooien.",
+      "silver": "Behaald tijdens ten minste drie opeenvolgende toernooien.",
+      "gold": "Behaald tijdens ten minste vijf opeenvolgende toernooien."
     }
   },
   "removeTeams": "Teams verwijderen",
