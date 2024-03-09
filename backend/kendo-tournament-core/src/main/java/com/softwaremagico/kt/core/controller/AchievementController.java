@@ -1940,13 +1940,13 @@ public class AchievementController extends BasicInsertableController<Achievement
         getFightsFromTournament().forEach(fight -> {
             fight.getDuels().forEach(duel -> {
                 if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                        && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0) &&
-                        duel.getWinner() == 2) {
+                        && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0)
+                        && duel.getWinner() == 2) {
                     participants.add(duel.getCompetitor2());
                 }
                 if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                        && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0) &&
-                        duel.getWinner() == 1) {
+                        && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0)
+                        && duel.getWinner() == 1) {
                     participants.add(duel.getCompetitor1());
                 }
             });
