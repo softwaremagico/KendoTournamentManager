@@ -405,6 +405,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateFirstBloodAchievement(tournament));
         achievementsGenerated.addAll(generateDarumaAchievement(tournament));
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievement(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
@@ -482,6 +483,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementBronze(tournament));
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementSilver(tournament));
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementGold(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -1926,6 +1930,33 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
+     * Somebody wins a fight despite the opponent has scored first.
+     *
+     * @param tournament
+     * @return
+     */
+    private List<Achievement> generateVendettaAchievement(Tournament tournament) {
+        final List<Participant> participants = new ArrayList<>();
+        getFightsFromTournament().forEach(fight -> {
+            fight.getDuels().forEach(duel -> {
+                if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
+                        && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0) &&
+                        duel.getWinner() == 2) {
+                    participants.add(duel.getCompetitor2());
+                }
+                if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
+                        && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0) &&
+                        duel.getWinner() == 1) {
+                    participants.add(duel.getCompetitor1());
+                }
+            });
+        });
+        return generateAchievement(AchievementType.V_FOR_VENDETTA, AchievementGrade.NORMAL,
+                participants, tournament);
+    }
+
+
+    /**
      * Achievement for the stormtrooper syndrome in two tournaments.
      *
      * @param tournament The tournament to check.
@@ -1954,5 +1985,35 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateStormtrooperSyndromeAchievementGold(Tournament tournament) {
         return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD,
                 AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.GOLD);
+    }
+
+    /**
+     * Achievement for v from vendetta in two tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateVendettaAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.V_FOR_VENDETTA, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * Achievement for v from vendetta in three tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateVendettaAchievementSilver(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.V_FOR_VENDETTA, AchievementGrade.SILVER);
+    }
+
+    /**
+     * Achievement for v from vendetta in five tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateVendettaAchievementGold(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.V_FOR_VENDETTA, AchievementGrade.GOLD);
     }
 }
