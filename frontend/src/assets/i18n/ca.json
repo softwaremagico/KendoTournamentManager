@@ -832,6 +832,14 @@
       "bronze": "Aconseguit en almenys dos tornejos successius.",
       "silver": "Aconseguit en almenys tres tornejos successius.",
       "gold": "Aconseguit en almenys cinc tornejos successius."
+    },
+    "vForVendetta": {
+      "title": "V de Vendetta",
+      "description": "Guanya un combant quan el teu oponent ha puntuat en primer lloc.",
+      "normal": "Aconseguit en un torneig.",
+      "bronze": "Aconseguit en almenys dos tornejos successius.",
+      "silver": "Aconseguit en almenys tres tornejos successius.",
+      "gold": "Aconseguit en almenys cinc tornejos successius."
     }
   },
   "removeTeams": "Treure Equips",
