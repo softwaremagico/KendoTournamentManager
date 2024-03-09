@@ -149,6 +149,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     }
 
     private void populateReceivedScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
+        //Remove null values
+        scores = scores.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
         for (final Score score : scores) {
             switch (score) {
                 case MEN ->
