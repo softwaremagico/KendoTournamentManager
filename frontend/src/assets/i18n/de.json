@@ -820,6 +820,14 @@
       "bronze": "Erreicht in mindestens zwei aufeinanderfolgenden Turnieren erreicht.",
       "silver": "Erreicht in mindestens drei aufeinanderfolgenden Turnieren erreicht.",
       "gold": "Während mindestens fünf aufeinanderfolgenden Turnieren erreicht."
+    },
+    "vForVendetta": {
+      "title": "V wie Vendetta",
+      "description": "Gewinnen Sie ein Spiel, wenn Ihr Gegner zuerst gepunktet hat.",
+      "normal": "Für ein Turnier erreicht.",
+      "bronze": "Erreicht in mindestens zwei aufeinanderfolgenden Turnieren erreicht.",
+      "silver": "Erreicht in mindestens drei aufeinanderfolgenden Turnieren erreicht.",
+      "gold": "Während mindestens fünf aufeinanderfolgenden Turnieren erreicht."
     }
   },
   "removeTeams": "Teams entfernenn",
