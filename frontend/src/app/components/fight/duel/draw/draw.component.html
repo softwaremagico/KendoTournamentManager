@@ -1,4 +1,5 @@
 <div class="draw-score">
-  <span *ngIf="(duel | draw : duel.finished)"
+  <!-- We set as args, the fields that when changes values, must trigger the pipe -->
+  <span *ngIf="(duel | draw : duel.finished : duel.competitor1Score.length : duel.competitor2Score.length)"
         class="draw-value">X</span>
 </div>
