@@ -638,12 +638,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         final Set<Participant> participants = new HashSet<>();
         duels.forEach(duel -> {
             duel.getCompetitor1ScoreTime().forEach(time -> {
-                if (time <= LETHAL_WEAPON_MAX_TIME) {
+                if (time != null && time <= LETHAL_WEAPON_MAX_TIME) {
                     participants.add(duel.getCompetitor1());
                 }
             });
             duel.getCompetitor2ScoreTime().forEach(time -> {
-                if (time <= LETHAL_WEAPON_MAX_TIME) {
+                if (time != null && time <= LETHAL_WEAPON_MAX_TIME) {
                     participants.add(duel.getCompetitor2());
                 }
             });
