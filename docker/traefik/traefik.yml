@@ -1,0 +1,39 @@
+api:
+  dashboard: true
+  debug: true
+
+log:
+  level: DEBUG
+
+
+
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+          permanent: true
+  https:
+    address: ":443"
+
+
+providers:
+  file:
+    directory: /config/
+    watch: true
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+
+certificatesResolvers:
+  https:
+    acme:
+      email: "softwaremagico@gmail.com"
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: http
+
