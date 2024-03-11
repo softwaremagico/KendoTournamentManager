@@ -16,37 +16,43 @@ networks:
 services:
 
   kendo-tournament-rproxy:
-    build:
-      context: ./rproxy
-      args:
-        - machine_domain
-    image: kendo-tournament-rproxy
+        image: traefik:latest
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=external"
     restart: always
+    security_opt:
+      - no-new-privileges:true
     networks:
-      - containers
       - external
+      - containers
     ports:
-      - "443:443"
       - "80:80"
+      - "443:443"
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - rproxy-settings:/etc/nginx/conf.d
-    container_name: kendo-tournament-rproxy
-    hostname: kendo-tournament-rproxy
-    depends_on:
-      kendo-tournament-frontend:
-        condition: service_healthy
-      kendo-tournament-backend:
-        condition: service_healthy
-    healthcheck:
-      test: curl -k --fail https://localhost/kendo-tournament-backend || exit 1
-      interval: 30s
-      timeout: 30s
-      retries: 3
-    logging:
-      options:
-        max-size: "2m"
-        max-file: "5"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "ssl-certificates:/letsencrypt"
+      - "logs:/var/log"
+      - "./traefik/traefik.yml:/traefik.yml:ro"
+      - "config:/config"
+    labels:
+      - "traefik.enable=true"
+      - "--global.checknewversion=false"
+      - "--global.sendanonymoususage=false"
+      - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes=10000000"
+      - "traefik.http.routers.dashboard.rule=Host(`$machine_domain`) && (PathPrefix(`/api/`) || PathPrefix(`/dashboard/`))"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=https"
+      - "traefik.http.routers.dashboard.tls.certresolver=https"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
+      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+      # currently: admin:0b186336d5
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
   #    profiles:
   #      - donotstart
 
@@ -70,6 +76,15 @@ services:
     working_dir: /www
     environment:
       - NODE_PATH=/usr/local/lib/node_modules/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=kendo-tournament-frontend"
+      - "traefik.http.routers.kendo-tournament-frontend.entrypoints=https"
+      - "traefik.http.routers.kendo-tournament-frontend.tls.certresolver=https"
+      # kendo-tournament-frontend without trailing slash
+      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`) && PathPrefix(`/`)"
+      - "traefik.docker.network=containers"
+      - "traefik.port=80"
     healthcheck:
       test: curl --fail --request GET --silent http://localhost:4200 || exit 1
       interval: 30s
@@ -110,6 +125,24 @@ services:
     working_dir: /opt/kendo-tournament-backend/
     depends_on:
       - "kendo-tournament-database"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=kendo-tournament-backend"
+      - "traefik.http.routers.kendo-tournament.entrypoints=https"
+      - "traefik.http.routers.kendo-tournament.tls.certresolver=https"
+      - "traefik.http.routers.kendo-tournament.rule=Host(`${machine_domain}`) && PathPrefix(`/kendo-tournament-backend`)"
+
+      - "traefik.http.routers.kendo-tournament-api.rule=Host(`${machine_domain}`) && (PathPrefix(`/kendo-tournament-backend/swagger{any:.*}`) || PathPrefix(`/kendo-tournament-backend/v3/api-{any:.*}`))"
+      - "traefik.http.routers.kendo-tournament-api.entrypoints=https"
+      - "traefik.http.routers.kendo-tournament-api.tls.certresolver=https"
+      # Protect swagger with basic auth
+      - "traefik.http.routers.kendo-tournament-api.middlewares=auth"
+      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
+      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+      # currently: admin:0b186336d5
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
+      - "traefik.docker.network=containers"
+      - "traefik.port=8080"
     healthcheck:
       test: curl -k --fail --request GET --silent http://localhost:8080/kendo-tournament-backend/info/health-check || exit 1
       interval: 30s
