@@ -3,7 +3,9 @@ version: '3.9'
 
 volumes:
   kendo-tournament-database:
-  rproxy-settings:
+  ssl-certificates:
+  logs:
+  config:
 
 
 networks:
@@ -16,8 +18,8 @@ networks:
 services:
 
   kendo-tournament-rproxy:
-        image: traefik:latest
-    container_name: "traefik"
+    image: traefik:latest
+    container_name: "kendo-tournament-rproxy"
     command:
       - "--log.level=DEBUG"
       - "--providers.docker=true"
@@ -53,8 +55,8 @@ services:
       # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
       # currently: admin:0b186336d5
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
-  #    profiles:
-  #      - donotstart
+      # profiles:
+      #      - donotstart
 
 
   kendo-tournament-frontend:
@@ -68,7 +70,8 @@ services:
     restart: always
     networks:
       - containers
-      - external
+    ports:
+      - "4200"
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-frontend
@@ -81,10 +84,9 @@ services:
       - "traefik.backend=kendo-tournament-frontend"
       - "traefik.http.routers.kendo-tournament-frontend.entrypoints=https"
       - "traefik.http.routers.kendo-tournament-frontend.tls.certresolver=https"
-      # kendo-tournament-frontend without trailing slash
-      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`) && PathPrefix(`/`)"
+      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`)"
       - "traefik.docker.network=containers"
-      - "traefik.port=80"
+      - "traefik.http.services.kendo-tournament-frontend.loadbalancer.server.port=4200"
     healthcheck:
       test: curl --fail --request GET --silent http://localhost:4200 || exit 1
       interval: 30s
@@ -118,6 +120,8 @@ services:
     restart: always
     networks:
       - containers
+    ports:
+      - "8080"
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend
@@ -128,21 +132,21 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.backend=kendo-tournament-backend"
-      - "traefik.http.routers.kendo-tournament.entrypoints=https"
-      - "traefik.http.routers.kendo-tournament.tls.certresolver=https"
-      - "traefik.http.routers.kendo-tournament.rule=Host(`${machine_domain}`) && PathPrefix(`/kendo-tournament-backend`)"
+      - "traefik.http.routers.kendo-tournament-backend.entrypoints=https"
+      - "traefik.http.routers.kendo-tournament-backend.tls.certresolver=https"
+      - "traefik.http.routers.kendo-tournament-backend.rule=Host(`${machine_domain}`) && PathPrefix(`/kendo-tournament-backend`)"
 
-      - "traefik.http.routers.kendo-tournament-api.rule=Host(`${machine_domain}`) && (PathPrefix(`/kendo-tournament-backend/swagger{any:.*}`) || PathPrefix(`/kendo-tournament-backend/v3/api-{any:.*}`))"
-      - "traefik.http.routers.kendo-tournament-api.entrypoints=https"
-      - "traefik.http.routers.kendo-tournament-api.tls.certresolver=https"
+      - "traefik.http.routers.kendo-tournament-backend-api.rule=Host(`${machine_domain}`) && (PathPrefix(`/kendo-tournament-backend/swagger{any:.*}`) || PathPrefix(`/kendo-tournament-backend/v3/api-{any:.*}`))"
+      - "traefik.http.routers.kendo-tournament-backend-api.entrypoints=https"
+      - "traefik.http.routers.kendo-tournament-backend-api.tls.certresolver=https"
       # Protect swagger with basic auth
-      - "traefik.http.routers.kendo-tournament-api.middlewares=auth"
+      - "traefik.http.routers.kendo-tournament-backend-api.middlewares=auth"
       # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
       # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
       # currently: admin:0b186336d5
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
       - "traefik.docker.network=containers"
-      - "traefik.port=8080"
+      - "traefik.http.services.kendo-tournament-backend.loadbalancer.server.port=8080"
     healthcheck:
       test: curl -k --fail --request GET --silent http://localhost:8080/kendo-tournament-backend/info/health-check || exit 1
       interval: 30s
