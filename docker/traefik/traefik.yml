@@ -1,6 +1,5 @@
 api:
   dashboard: true
-  #insecure: true
   debug: true
 
 log:
@@ -19,8 +18,6 @@ entryPoints:
           permanent: true
   https:
     address: ":443"
-  #dashboard:
-  #  address: ":8080"
 
 
 providers:
@@ -35,7 +32,8 @@ providers:
 certificatesResolvers:
   https:
     acme:
-      email: softwaremagico@gmail.com
+      email: "softwaremagico@gmail.com"
       storage: /letsencrypt/acme.json
       httpChallenge:
         entryPoint: http
+
