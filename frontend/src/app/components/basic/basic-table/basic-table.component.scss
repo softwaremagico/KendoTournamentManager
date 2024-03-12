@@ -3,6 +3,16 @@
   height: 30px;
 }
 
+.basic-table {
+  overflow: auto;
+  max-height: 85vh;
+}
+
+.table-header-cell {
+  background-color: var(--table-header-color);
+  color: var(--table-header-text);
+}
+
 .separator {
   display: inline-block;
 }
