@@ -259,7 +259,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupController.delete(tournamentDTO);
         fightController.delete(tournamentDTO);

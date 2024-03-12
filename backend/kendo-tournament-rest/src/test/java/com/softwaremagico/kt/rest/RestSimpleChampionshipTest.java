@@ -487,7 +487,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         resetGroup(tournamentDTO);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() throws Exception {
         this.mockMvc
                 .perform(delete("/tournaments/{tournamentId}", tournamentDTO.getId())
