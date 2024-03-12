@@ -86,7 +86,7 @@ public class ParticipantImageRepositoryTests extends AbstractTestNGSpringContext
         photoRepository.delete(participantImage);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void clearData() {
         participantRepository.delete(participant);
     }

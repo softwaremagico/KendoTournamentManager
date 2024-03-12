@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -30,6 +30,7 @@ import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
@@ -39,11 +40,14 @@ import com.softwaremagico.kt.core.controller.models.ParticipantStatisticsDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentStatisticsDTO;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,8 +80,6 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
 
     private static final String TOURNAMENT1_NAME = "Tournament 1";
 
-    private static final String TOURNAMENT2_NAME = "Tournament 2";
-
     private static final int DUEL_DURATION = 83;
 
     @Autowired
@@ -109,6 +111,9 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
 
     @Autowired
     private RankingController rankingController;
+
+    @Autowired
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
 
     private List<ParticipantDTO> participantsDTOs;
 
@@ -192,6 +197,8 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         //Create Tournament
         tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
         tournamentController.update(tournament1DTO, null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournament1DTO,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
         generateRoles(tournament1DTO);
         addTeams(tournament1DTO);
         List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
@@ -323,7 +330,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals(competitorRanking.getTotal(), MEMBERS * TEAMS);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         deleteFromTables("competitor_1_score", "competitor_2_score", "competitor_1_score_time", "competitor_2_score_time",
                 "achievements", "duels_by_fight");
