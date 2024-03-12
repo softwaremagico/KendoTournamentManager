@@ -18,7 +18,10 @@ networks:
 services:
 
   kendo-tournament-rproxy:
-    image: traefik:latest
+    build:
+      context: ./traefik
+      args:
+        - email
     container_name: "kendo-tournament-rproxy"
     command:
       - "--log.level=DEBUG"
@@ -39,8 +42,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "ssl-certificates:/letsencrypt"
       - "logs:/var/log"
-      - "./traefik/traefik.yml:/traefik.yml:ro"
-      - "config:/config"
     labels:
       - "traefik.enable=true"
       - "--global.checknewversion=false"
