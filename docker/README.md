@@ -61,10 +61,10 @@ Otherwise, change the default value to any other that only you know.
 
 # Using REVERSE PROXY and SSL certificates generation
 
-Since version 2.13.7, the reverse proxy engine has been changed from Nginx to Traefik. Traefik is more automated than Nginx,
-and it will handle all _Let's encrypt_ certificate generation automatically. 
+Since version 2.13.7, the reverse proxy engine has been changed from Nginx to Traefik. Traefik is more automated than
+Nginx, and it will handle all _Let's encrypt_ certificate generation automatically.
 
-Remember to change `email` value on the `.env` file as it is used for the certificates' registration: 
+Remember to change `email` value on the `docker/.env` file as it is used for the certificates' registration:
 
 ```
 email=myemail@domain.com
@@ -75,3 +75,29 @@ Regenerate again the proxy if needed with the next command:
 ```
 docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy
 ```
+
+## Disable the REVERSE PROXY
+
+If you have your custom reverse proxy that is shared between other applications, maybe you need to disable the provided
+one with this application, as some ports will collide. The best approach would be to force to not start the container in
+the `docker-compose.yml` file. Search for the `kendo-tournament-rproxy` section and set the `donotstart` profile. You
+can uncomment the lines that are already prepared for this purpose:
+
+```
+  kendo-tournament-rproxy:
+      [...]
+      # profiles:
+      #      - donotstart
+```
+
+Uncomment to
+
+```
+  kendo-tournament-rproxy:
+      [...]
+       profiles:
+            - donotstart
+```
+
+And the container will not be started automatically. Remember to configure your reverse proxy to include the `backend`
+and `frontend` of this application or will not work properly. 
