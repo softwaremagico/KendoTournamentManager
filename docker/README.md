@@ -76,6 +76,26 @@ Regenerate again the proxy if needed with the next command:
 docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy
 ```
 
+## Traefik Dashboard
+
+Traefik comes with a dashboard where information about the services is shown. Can be interesting for troubleshooting,
+specially if you want to customize any setting. By default, is protected by user `admin` and password `0b186336d5`. I
+recommend to change it as soon as possible. For this purpose, you can use `htpasswd` tool:
+
+```
+echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+```
+
+The `sed` command is due to the docker-compose needs to scape any `$` character to `$$`. Ensure that is the case in your
+output.
+
+Finally, update the `docker-compose.yml` file with the obtained password, replacing the next line with the content
+obtained from the value obtained on the previous step:
+
+```
+  - "traefik.http.middlewares.auth.basicauth.users=admin:<<put here your hashed password>>"
+```
+
 ## Disable the REVERSE PROXY
 
 If you have your custom reverse proxy that is shared between other applications, maybe you need to disable the provided
