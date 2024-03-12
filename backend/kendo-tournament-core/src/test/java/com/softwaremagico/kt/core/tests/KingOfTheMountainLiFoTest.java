@@ -317,7 +317,7 @@ public class KingOfTheMountainLiFoTest extends AbstractTestNGSpringContextTests 
     }
 
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupProvider.delete(tournament);
         fightProvider.delete(tournament);

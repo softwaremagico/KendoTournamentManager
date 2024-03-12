@@ -184,7 +184,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
     }
 
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupProvider.deleteAll();
         tournamentExtraPropertyProvider.deleteAll();

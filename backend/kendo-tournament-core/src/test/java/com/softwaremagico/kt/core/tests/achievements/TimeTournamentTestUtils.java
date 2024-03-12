@@ -263,7 +263,7 @@ public class TimeTournamentTestUtils extends TournamentTestUtils {
                 MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER + PRESS - 20);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }
