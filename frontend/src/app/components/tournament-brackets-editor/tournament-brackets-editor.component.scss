@@ -16,9 +16,9 @@
 }
 
 .floating-button {
-  position: absolute;
   z-index: 100;
-  right: 50px;
+  right: 100px;
+  position: fixed;
 }
 
 .button-container {
