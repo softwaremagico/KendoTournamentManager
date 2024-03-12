@@ -372,7 +372,7 @@ public class RoleAchievementsTest extends TournamentTestUtils {
         Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament1DTO.getId()));
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }

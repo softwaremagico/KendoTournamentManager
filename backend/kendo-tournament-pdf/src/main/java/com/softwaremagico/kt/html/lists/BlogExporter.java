@@ -216,8 +216,8 @@ public class BlogExporter {
         // Header
         List<String> columns = new ArrayList<>();
         columns.add("<b>" + messageSource.getMessage("classification.competitors.competitor.name", null, locale) + "</b>");
-        columns.add("<b>" + messageSource.getMessage("classification.teams.duels.won", null, locale) + "</b>");
         columns.add("<b>" + messageSource.getMessage("classification.competitors.duels.won", null, locale) + "</b>");
+        columns.add("<b>" + messageSource.getMessage("classification.competitors.hits", null, locale) + "</b>");
         rows.add(columns);
 
         for (final ScoreOfCompetitorDTO scoreOfCompetitor : scoreOfCompetitors) {
