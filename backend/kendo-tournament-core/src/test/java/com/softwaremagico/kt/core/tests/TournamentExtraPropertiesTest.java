@@ -77,7 +77,7 @@ public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSp
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament3).size(), 2);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupProvider.deleteAll();
         tournamentExtraPropertyProvider.deleteAll();

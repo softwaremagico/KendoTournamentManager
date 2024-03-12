@@ -638,12 +638,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         final Set<Participant> participants = new HashSet<>();
         duels.forEach(duel -> {
             duel.getCompetitor1ScoreTime().forEach(time -> {
-                if (time <= LETHAL_WEAPON_MAX_TIME) {
+                if (time != null && time <= LETHAL_WEAPON_MAX_TIME) {
                     participants.add(duel.getCompetitor1());
                 }
             });
             duel.getCompetitor2ScoreTime().forEach(time -> {
-                if (time <= LETHAL_WEAPON_MAX_TIME) {
+                if (time != null && time <= LETHAL_WEAPON_MAX_TIME) {
                     participants.add(duel.getCompetitor2());
                 }
             });
@@ -1940,13 +1940,15 @@ public class AchievementController extends BasicInsertableController<Achievement
         getFightsFromTournament().forEach(fight -> {
             fight.getDuels().forEach(duel -> {
                 if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                        && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0) &&
-                        duel.getWinner() == 2) {
+                        && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
+                        && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0)
+                        && duel.getWinner() == 2) {
                     participants.add(duel.getCompetitor2());
                 }
                 if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                        && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0) &&
-                        duel.getWinner() == 1) {
+                        && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
+                        && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0)
+                        && duel.getWinner() == 1) {
                     participants.add(duel.getCompetitor1());
                 }
             });

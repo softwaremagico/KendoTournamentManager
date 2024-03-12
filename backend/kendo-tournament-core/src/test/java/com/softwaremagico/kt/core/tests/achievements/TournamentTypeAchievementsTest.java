@@ -150,7 +150,7 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theKing);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }
