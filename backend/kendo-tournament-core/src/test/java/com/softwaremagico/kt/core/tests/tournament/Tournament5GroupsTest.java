@@ -403,7 +403,7 @@ public class Tournament5GroupsTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(score.get(14).getTeam().getName(), "Team15");
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupController.delete(tournamentDTO);
         fightController.delete(tournamentDTO);
