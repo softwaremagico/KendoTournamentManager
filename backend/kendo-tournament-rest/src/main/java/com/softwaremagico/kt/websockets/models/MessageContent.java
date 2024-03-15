@@ -28,7 +28,7 @@ public class MessageContent {
     private String type;
 
     //Parameters as json content.
-    private String parameters;
+    private Object parameters;
 
     public MessageContent() {
         super();
@@ -45,7 +45,7 @@ public class MessageContent {
         setType(type);
     }
 
-    public MessageContent(String topic, String payload, String type, String parameters) {
+    public MessageContent(String topic, String payload, String type, Object parameters) {
         this(topic, payload, type);
         setParameters(parameters);
     }
@@ -74,11 +74,11 @@ public class MessageContent {
         this.type = type;
     }
 
-    public String getParameters() {
+    public Object getParameters() {
         return parameters;
     }
 
-    public void setParameters(String parameters) {
+    public void setParameters(Object parameters) {
         this.parameters = parameters;
     }
 }

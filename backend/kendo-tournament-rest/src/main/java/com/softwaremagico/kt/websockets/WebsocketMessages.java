@@ -22,6 +22,8 @@ package com.softwaremagico.kt.websockets;
  */
 
 import com.softwaremagico.kt.core.controller.AchievementController;
+import com.softwaremagico.kt.websockets.models.messages.AchievementAllGeneratedNumberParameters;
+import com.softwaremagico.kt.websockets.models.messages.AchievementGeneratedNumberParameters;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,11 +34,12 @@ public class WebsocketMessages {
         //Send a message when the achievements from one tournament are finished.
         achievementController.addAchievementsGeneratedListener((achievementsGenerated, tournament) ->
                 webSocketController.sendMessage("achievementGenerated", "info",
-                        "{achievementsNumber: " + achievementsGenerated.size() + ", tournamentName: " + tournament.getName() + "}"));
+                        new AchievementGeneratedNumberParameters(tournament.getName(), achievementsGenerated.size())));
 
         //Send a message when the achievements from all tournaments are finished.
         achievementController.addAchievementsGeneratedAllTournamentsListener((achievementsGenerated, tournaments) ->
                 webSocketController.sendMessage("achievementAllGenerated", "info",
-                        "{achievementsNumber: " + achievementsGenerated.size() + ", tournamentNumber: " + tournaments.size() + "}"));
+                        new AchievementAllGeneratedNumberParameters(tournaments.size(), achievementsGenerated.size())));
     }
+
 }
