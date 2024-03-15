@@ -25,14 +25,29 @@ public class MessageContent {
 
     private String topic;
     private String payload;
+    private String type;
+
+    //Parameters as json content.
+    private String parameters;
 
     public MessageContent() {
-
+        super();
     }
 
     public MessageContent(String topic, String payload) {
+        this();
         this.topic = topic;
         this.payload = payload;
+    }
+
+    public MessageContent(String topic, String payload, String type) {
+        this(topic, payload);
+        setType(type);
+    }
+
+    public MessageContent(String topic, String payload, String type, String parameters) {
+        this(topic, payload, type);
+        setParameters(parameters);
     }
 
     public String getPayload() {
@@ -49,5 +64,21 @@ public class MessageContent {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 }

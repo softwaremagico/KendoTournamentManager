@@ -63,11 +63,9 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    private final WebSocketController webSocketController;
 
-    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil, WebSocketController webSocketController) {
+    public WebSocketConfiguration(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.webSocketController = webSocketController;
     }
 
     @Override
@@ -87,7 +85,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                message.getHeaders();
+                //message.getHeaders();
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {

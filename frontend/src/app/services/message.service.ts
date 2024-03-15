@@ -1,4 +1,4 @@
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import {Observable, of, Subscription} from "rxjs";
@@ -6,29 +6,52 @@ import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
 import {Message} from "@stomp/stompjs/esm6";
 import {RxStompService} from "../websockets/rx-stomp.service";
+import {EnvironmentService} from "../environment.service";
+import {MessageContent} from "../websockets/message-content.model";
 
 @Injectable({
   providedIn: 'root'
 })
-export class MessageService implements OnInit, OnDestroy {
+export class MessageService implements OnDestroy {
 
-  private topicSubscription: Subscription;
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+
+  private messageSubscription: Subscription;
 
   constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
-              private loggerService: LoggerService, private rxStompService: RxStompService) {
-  }
-
-  ngOnInit(): void {
-    this.topicSubscription = this.rxStompService.watch('/topic/messages').subscribe((message: Message): void => {
-      console.log(message.body);
-    });
+              private loggerService: LoggerService, private rxStompService: RxStompService,
+              private environmentService: EnvironmentService) {
+    this.registerWebsocketsMessages();
   }
 
 
   ngOnDestroy(): void {
-    this.topicSubscription.unsubscribe();
+    this.messageSubscription.unsubscribe();
   }
 
+  private registerWebsocketsMessages(): void {
+    this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/messages').subscribe((message: Message): void => {
+      try {
+        const messageContent: MessageContent = JSON.parse(message.body);
+        this.translateService.get(messageContent.payload, messageContent.parameters).subscribe((res: string): void => {
+          switch (messageContent.type) {
+            case "error":
+              this.errorMessage(res);
+              break;
+            case "warning":
+              this.warningMessage(res);
+              break;
+            case "info":
+            default:
+              this.infoMessage(res);
+          }
+        });
+
+      } catch (e) {
+        console.log("Invalid message payload", message.body);
+      }
+    });
+  }
 
   private openSnackBar(message: string, cssClass: string, duration: number, action?: string): void {
     this.snackBar.open(this.translateService.instant(message), action, {

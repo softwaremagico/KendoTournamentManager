@@ -43,7 +43,6 @@ public class WebSocketController {
     public static final String ERRORS_MAPPING = "/errors";
 
     public static final String ECHO_MAPPING = "/echo";
-    public static final String ECHO_INBOUND_MAPPING = "/welcome";
 
     private final ObjectMapper objectMapper;
 
@@ -77,12 +76,25 @@ public class WebSocketController {
      * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #MESSAGES_MAPPING}.
      *
      * @param message the message to send.
+     * @param type    info, warning, error.
      * @return
      */
     @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING)
-    public MessageContent sendMessage(String message) {
+    public MessageContent sendMessage(String message, String type) {
         try {
-            return new MessageContent(String.class.getSimpleName(), message);
+            return new MessageContent(String.class.getSimpleName(), message, type);
+        } catch (Exception e) {
+            KendoTournamentLogger.errorMessage(this.getClass(), e);
+        }
+        return null;
+    }
+
+    @SendTo(MESSAGES_MAPPING)
+    public MessageContent sendMessage(String message, String type, String parameters) {
+        ***REMOVED***not working --
+        KendoTournamentLogger.debug(this.getClass(), "Sending message '{}' of type '{}' with parameters '{}'.", message, type, parameters);
+        try {
+            return new MessageContent(String.class.getSimpleName(), message, type, parameters);
         } catch (Exception e) {
             KendoTournamentLogger.errorMessage(this.getClass(), e);
         }
