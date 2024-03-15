@@ -33,6 +33,7 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 import {TranslateService} from "@ngx-translate/core";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {Message} from "@stomp/stompjs";
+import {EnvironmentService} from "../../environment.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -40,6 +41,8 @@ import {Message} from "@stomp/stompjs";
   styleUrls: ['./fight-list.component.scss']
 })
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
+
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   filteredFights: Map<number, Fight[]>;
   filteredUnties: Map<number, Duel[]>;
@@ -75,6 +78,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
+              private environmentService: EnvironmentService,
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
@@ -154,7 +158,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
 
-    this.topicSubscription = this.rxStompService.watch('/topic/fights').subscribe((message: Message): void => {
+    // this.rxStompService.watch('/topic/echo').subscribe((message: Message): void => {
+    //   console.log('--->', message.body);
+    // });
+    //this.rxStompService.publish({ destination: '/backend/echo', body: 'Sending test....' });
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
       console.log(message.body);
     });
   }
@@ -508,8 +516,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   downloadPDF() {
     if (this.tournament && this.tournament.id) {
       this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob): void => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
         anchor.download = "Fight List - " + this.tournament.name + ".pdf";
