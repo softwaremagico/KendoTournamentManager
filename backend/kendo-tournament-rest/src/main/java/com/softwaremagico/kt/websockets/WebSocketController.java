@@ -24,15 +24,15 @@ package com.softwaremagico.kt.websockets;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.websockets.models.MessageContent;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -46,8 +46,11 @@ public class WebSocketController {
 
     private final ObjectMapper objectMapper;
 
-    public WebSocketController(ObjectMapper objectMapper) {
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public WebSocketController(ObjectMapper objectMapper, SimpMessagingTemplate messagingTemplate) {
         this.objectMapper = objectMapper;
+        this.messagingTemplate = messagingTemplate;
     }
 
     private <T> String toJson(T object) throws JsonProcessingException {
@@ -60,45 +63,36 @@ public class WebSocketController {
      * @param fight the fight to send.
      * @return
      */
-    @MessageMapping(FIGHTS_MAPPING)
-    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING)
-    @SubscribeMapping(FIGHTS_MAPPING)
-    public MessageContent sendFight(@Payload FightDTO fight) {
+    public void sendFight(@Payload FightDTO fight) {
         try {
-            return new MessageContent(Fight.class.getSimpleName(), toJson(fight));
+            WebsocketsLogger.debug(this.getClass(), "Sending fight '{}'.", fight);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING,
+                    new MessageContent(Fight.class.getSimpleName(), toJson(fight)));
         } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass(), e);
+            WebsocketsLogger.errorMessage(this.getClass(), e);
         }
-        return null;
     }
 
-    /**
-     * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #MESSAGES_MAPPING}.
-     *
-     * @param message the message to send.
-     * @param type    info, warning, error.
-     * @return
-     */
-    @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING)
-    public MessageContent sendMessage(String message, String type) {
+
+    public void sendMessage(String message, String type) {
         try {
-            return new MessageContent(String.class.getSimpleName(), message, type);
+            WebsocketsLogger.debug(this.getClass(), "Sending message '{}' of type '{}'.", message, type);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING,
+                    new MessageContent(String.class.getSimpleName(), message, type));
         } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass(), e);
+            WebsocketsLogger.errorMessage(this.getClass(), e);
         }
-        return null;
     }
 
-    @SendTo(MESSAGES_MAPPING)
-    public MessageContent sendMessage(String message, String type, String parameters) {
-        -- not working --
-        KendoTournamentLogger.debug(this.getClass(), "Sending message '{}' of type '{}' with parameters '{}'.", message, type, parameters);
+
+    public void sendMessage(String message, String type, Object parameters) {
         try {
-            return new MessageContent(String.class.getSimpleName(), message, type, parameters);
+            WebsocketsLogger.debug(this.getClass(), "Sending message '{}' of type '{}' with parameters '{}'.", message, type, parameters);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + MESSAGES_MAPPING,
+                    new MessageContent(String.class.getSimpleName(), message, type, parameters));
         } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass(), e);
+            WebsocketsLogger.errorMessage(this.getClass(), e);
         }
-        return null;
     }
 
     @MessageExceptionHandler
@@ -107,6 +101,12 @@ public class WebSocketController {
         return exception.getMessage();
     }
 
+    /**
+     * Only for testing.
+     *
+     * @param payload
+     * @return
+     */
     @MessageMapping(ECHO_MAPPING)
     @SendTo(WebSocketConfiguration.SOCKET_SEND_PREFIX + ECHO_MAPPING)
     public String echo(String payload) {
