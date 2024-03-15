@@ -631,6 +631,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:<br>",
   "achievementToolTipObtainedAt": "Obtained at",
   "achievementToolTipObtainedBy": "Obtained by",
+  "achievementGenerated": "A total of {{achievementsNumber}} achievements have been generated for tournament '{{tournamentName}}'.",
+  "achievementAllGenerated": "A total of {{achievementsNumber}} achievements have been generated for {{tournamentNumber}} tournaments.",
   "time": "Time",
   "lockedAt": "Locked at",
   "fightsStartedAt": "Matches started at",

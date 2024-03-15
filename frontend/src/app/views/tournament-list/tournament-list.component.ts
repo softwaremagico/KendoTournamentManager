@@ -54,34 +54,33 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
 
   ngOnInit(): void {
     this.showAllElements();
-    this.rxStompService.watch('/topic/echo').subscribe((message: Message): void => {
-      console.log('--->', message.body);
-    });
   }
 
   showAllElements(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.tournamentService.getAll().subscribe((_tournaments: Tournament[]): void => {
-      const tournaments: Tournament[] = [];
-      for (let _tournament of _tournaments) {
-        if (_tournament) {
-          tournaments.push(Tournament.clone(_tournament));
+      if (_tournaments) {
+        const tournaments: Tournament[] = [];
+        for (let _tournament of _tournaments) {
+          if (_tournament) {
+            tournaments.push(Tournament.clone(_tournament));
+          }
         }
+        this.basicTableData.dataSource.data = tournaments;
+        //Select session tournament.
+        const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
+          tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
+        const selectedElements: Tournament[] = [];
+        selectedElements.push(selectedTournament);
+        this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
+        this.basicTableData.selectedElement = selectedTournament;
+        this.systemOverloadService.isTransactionalBusy.next(false);
       }
-      this.basicTableData.dataSource.data = tournaments;
-      //Select session tournament.
-      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
-        tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
-      const selectedElements: Tournament[] = [];
-      selectedElements.push(selectedTournament);
-      this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
-      this.basicTableData.selectedElement = selectedTournament;
-      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 
   addElement(): void {
-    this.rxStompService.publish({ destination: '/backend/echo', body: 'Sending test....' });
+    this.rxStompService.publish({destination: '/backend/echo', body: 'Sending test....'});
     const tournament: Tournament = new Tournament();
     tournament.duelsDuration = Tournament.DEFAULT_DUELS_DURATION;
     tournament.type = Tournament.DEFAULT_TYPE;
