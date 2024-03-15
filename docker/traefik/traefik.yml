@@ -32,7 +32,7 @@ providers:
 certificatesResolvers:
   https:
     acme:
-      email: "softwaremagico@gmail.com"
+      email: "CUSTOM_EMAIL"
       storage: /letsencrypt/acme.json
       httpChallenge:
         entryPoint: http
