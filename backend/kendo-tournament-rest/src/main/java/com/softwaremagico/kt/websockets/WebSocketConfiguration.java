@@ -21,7 +21,7 @@ package com.softwaremagico.kt.websockets;
  * #L%
  */
 
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.context.annotation.Configuration;
@@ -96,13 +96,13 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                         final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
                         if (username != null && !username.isEmpty()) {
                             accessor.setUser(new UserPrincipal(username));
-                            KendoTournamentLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
+                            WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
                         } else {
                             throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
                         }
                     } catch (Exception e) {
                         //Unauthorized.
-                        KendoTournamentLogger.warning(this.getClass(), "Invalid Token for websockets!");
+                        WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
                     }
                 }
                 return message;
