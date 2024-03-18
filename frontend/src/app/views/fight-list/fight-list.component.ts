@@ -24,13 +24,16 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
-import {Subject, takeUntil} from "rxjs";
+import {Subject, Subscription, takeUntil} from "rxjs";
 import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RxStompService} from "../../websockets/rx-stomp.service";
+import {Message} from "@stomp/stompjs";
+import {EnvironmentService} from "../../environment.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -38,6 +41,8 @@ import {TranslateService} from "@ngx-translate/core";
   styleUrls: ['./fight-list.component.scss']
 })
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
+
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   filteredFights: Map<number, Fight[]>;
   filteredUnties: Map<number, Duel[]>;
@@ -69,15 +74,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectedShiaijo: number = -1;
 
+  private topicSubscription: Subscription;
+
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
+              private environmentService: EnvironmentService,
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslateService,
-              private systemOverloadService: SystemOverloadService) {
+              private systemOverloadService: SystemOverloadService,
+              private rxStompService: RxStompService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -148,6 +157,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
+
+    // this.rxStompService.watch('/topic/echo').subscribe((message: Message): void => {
+    //   console.log('***REMOVED***>', message.body);
+    // });
+    //this.rxStompService.publish({ destination: '/backend/echo', body: 'Sending test....' });
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
+      console.log(message.body);
+    });
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.topicSubscription.unsubscribe();
   }
 
   private replaceGroup(group: Group): void {
@@ -494,8 +516,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   downloadPDF() {
     if (this.tournament && this.tournament.id) {
       this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob): void => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
         anchor.download = "Fight List - " + this.tournament.name + ".pdf";

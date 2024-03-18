@@ -604,6 +604,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Erhalten bei:",
   "achievementToolTipObtainedAt": "Erhalten bei",
   "achievementToolTipObtainedBy": "Erhalten von",
+  "achievementGenerated": "Im Turnier {{tournamentName}} wurden insgesamt {{achievementsNumber}} Erfolge erzielt.",
+  "achievementAllGenerated": "Insgesamt wurden {{achievementsNumber}} Erfolge in {{tournamentNumber}} Turnieren erzielt.",
   "time": "Zeit",
   "lockedAt": "Gesperrt",
   "fightsStartedAt": "Beginn der spiele",
@@ -836,7 +838,8 @@
   "leagueFifoHint": "Beim Generieren der Spiele wird im ersten Spiel die Mannschaft ausgewählt, die ersetzt wird. Bei Aktivierung wird die erste Mannschaft durch die dritte ersetzt. Bei Deaktivierung wird die zweite durch die dritte ersetzt. Wenn diese Option ausgewählt ist, lauten die Spiele für die Mannschaften 1, 2 und 3 beispielsweise wie folgt: '1-2, 3-2, 3-1'. Aber wenn nicht, lautet es: '1-2, 1-3, 2-3.'",
   "tournamentProperties": "Turniereigenschaften",
   "tournamentCloneWarning": "Sie werden das Turnier verdoppeln. Sind Sie sicher, dass Sie fortfahren?",
-  "tournamentListAsZip": "Laden Sie alle PDF-Listen in einer ZIP-Datei herunter."
+  "tournamentListAsZip": "Laden Sie alle PDF-Listen in einer ZIP-Datei herunter.",
+  "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet."
 }
 
 
