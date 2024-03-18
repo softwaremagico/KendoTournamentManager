@@ -38,19 +38,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
               private userSessionService: UserSessionService, private environmentService: EnvironmentService,
               private rxStompService: RxStompService) {
     this.setLocale();
-
-    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/creates').subscribe((message: Message): void => {
-      const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type == "created") {
-        if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
-          const element = JSON.parse(messageContent.payload);
-          if (this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id) < 0) {
-            this.basicTableData.dataSource.data.push(element);
-            this.basicTableData.dataSource._updateChangeSubscription();
-          }
-        }
-      }
-    });
+    this.connectToWebsockets();
   }
 
   ngOnInit(): void {
@@ -68,6 +56,54 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.topicSubscription.unsubscribe();
+  }
+
+  connectToWebsockets(): void {
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/creates').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.type == "created") {
+        if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
+          const element = JSON.parse(messageContent.payload);
+          if (this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id) < 0) {
+            this.basicTableData.dataSource.data.push(element);
+            this.basicTableData.dataSource._updateChangeSubscription();
+          }
+        }
+      }
+    });
+
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/updates').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.type == "updated") {
+        if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
+          const element = JSON.parse(messageContent.payload);
+          let index: number = this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id);
+          if (index >= 0) {
+            this.basicTableData.dataSource.data[index] = element;
+            this.basicTableData.dataSource._updateChangeSubscription();
+            //If it is selected, keep it selected.
+            if (this.basicTableData.selectedElement?.id === element.id) {
+              this.basicTableData.selectedElement = element;
+              this.basicTableData.selectItem(element);
+            }
+          }
+        }
+      }
+    });
+
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/deletes').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.type == "deleted") {
+        if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
+          const element = JSON.parse(messageContent.payload);
+          this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(obj => obj.id !== element.id);
+          this.basicTableData.dataSource._updateChangeSubscription();
+          if (this.basicTableData.selectedElement?.id === element.id) {
+            this.basicTableData.selectedElement = undefined;
+          }
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
