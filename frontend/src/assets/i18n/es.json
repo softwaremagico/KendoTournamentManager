@@ -863,5 +863,6 @@
   "logIn": "Acceso",
   "tsuki": "Tsuki",
   "kote": "Kote",
-  "tournamentListAsZip": "Descargar todas las listas en PDF en un archivo zip."
+  "tournamentListAsZip": "Descargar todas las listas en PDF en un archivo zip.",
+  "shiaijoFinished": "Todos los partidos del shiaijo {{shiaijoName}} han acabado."
 }
