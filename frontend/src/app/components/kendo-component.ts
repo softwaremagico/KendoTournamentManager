@@ -5,7 +5,7 @@ import {Subject} from "rxjs";
   template: ''
 })
 export abstract class KendoComponent implements OnDestroy {
-  destroySubject = new Subject<boolean>();
+  destroySubject: Subject<boolean> = new Subject<boolean>();
 
   ngOnDestroy(): void {
     this.destroySubject.next(true);

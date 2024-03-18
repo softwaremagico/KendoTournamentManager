@@ -145,4 +145,12 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         }
     }
 
+    public Optional<Fight> findByDuels(Duel duel) {
+        return getRepository().findByDuels(duel);
+    }
+
+    public List<Fight> findByTournamentAndShiaijo(Tournament tournament, int shiaijo) {
+        return getRepository().findByTournamentAndShiaijo(tournament, shiaijo);
+    }
+
 }

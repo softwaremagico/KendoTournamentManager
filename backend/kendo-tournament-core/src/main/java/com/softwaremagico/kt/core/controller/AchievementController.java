@@ -154,6 +154,9 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Role>> rolesByParticipant = null;
 
+    private final Set<AchievementsGeneratedListener> achievementsGeneratedListeners = new HashSet<>();
+    private final Set<AchievementsGeneratedAllTournamentsListener> achievementsGeneratedAllTournamentsListeners = new HashSet<>();
+
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
                                     TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
@@ -172,6 +175,22 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.rankingProvider = rankingProvider;
+    }
+
+    public interface AchievementsGeneratedListener {
+        void generated(List<AchievementDTO> achievementsGenerated, TournamentDTO tournament);
+    }
+
+    public interface AchievementsGeneratedAllTournamentsListener {
+        void generated(List<AchievementDTO> achievementsGenerated, List<TournamentDTO> tournaments);
+    }
+
+    public void addAchievementsGeneratedListener(AchievementsGeneratedListener listener) {
+        achievementsGeneratedListeners.add(listener);
+    }
+
+    public void addAchievementsGeneratedAllTournamentsListener(AchievementsGeneratedAllTournamentsListener listener) {
+        achievementsGeneratedAllTournamentsListeners.add(listener);
     }
 
     @Override
@@ -288,7 +307,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         final Map<Participant, List<Role>> roles = new HashMap<>();
         for (Map.Entry<Participant, List<Role>> entry : getRolesByParticipant().entrySet()) {
             roles.put(entry.getKey(), entry.getValue().stream().filter(role ->
-                    role.getTournament().getCreatedAt().isBefore(tournament.getCreatedAt())).toList());
+                    role.getTournament().getCreatedAt() != null && role.getTournament().getCreatedAt().isBefore(tournament.getCreatedAt())).toList());
         }
         return roles;
     }
@@ -339,6 +358,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         for (final TournamentDTO tournament : tournaments) {
             achievementsGenerated.addAll(generateAchievements(tournament));
         }
+        for (AchievementsGeneratedAllTournamentsListener achievementsGeneratedAllTournamentsListener : achievementsGeneratedAllTournamentsListeners) {
+            achievementsGeneratedAllTournamentsListener.generated(achievementsGenerated, tournaments);
+        }
         return achievementsGenerated;
     }
 
@@ -346,7 +368,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         final TournamentDTO tournament = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
         deleteAchievements(tournament);
-        return generateAchievements(tournament);
+        final List<AchievementDTO> achievementsGenerated = generateAchievements(tournament);
+        achievementsGeneratedListeners.forEach(achievementsGeneratedListener
+                -> achievementsGeneratedListener.generated(achievementsGenerated, tournament));
+        return achievementsGenerated;
     }
 
     private void deleteAchievements(TournamentDTO tournamentDTO) {
