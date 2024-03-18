@@ -74,9 +74,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         if (tournamentDTO.isLocked() && tournamentDTO.getLockedAt() == null) {
             tournamentDTO.setLockedAt(LocalDateTime.now());
         }
-        tournamentDTO.setUpdatedBy(username);
-        //Calling super.update calls internally create, and then generate each time a new group. Save it directly.
-        return super.create(tournamentDTO, username);
+        return super.update(tournamentDTO, username);
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {

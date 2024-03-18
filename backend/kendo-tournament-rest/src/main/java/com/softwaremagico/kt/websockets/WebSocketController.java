@@ -41,6 +41,8 @@ public class WebSocketController {
 
     public static final String FIGHTS_MAPPING = "/fights";
     public static final String CREATING_MAPPING = "/creates";
+    public static final String UPDATING_MAPPING = "/updates";
+    public static final String DELETES_MAPPING = "/deletes";
     public static final String MESSAGES_MAPPING = "/messages";
     public static final String ERRORS_MAPPING = "/errors";
 
@@ -67,9 +69,41 @@ public class WebSocketController {
      */
     public void elementCreated(@Payload ElementDTO element) {
         try {
-            WebsocketsLogger.debug(this.getClass(), "Sending element '{}'.", element);
+            WebsocketsLogger.debug(this.getClass(), "Creating element '{}'.", element);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + CREATING_MAPPING,
                     new MessageContent(element.getClass().getSimpleName(), toJson(element), "created"));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    /**
+     * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
+     *
+     * @param element the element created.
+     * @return
+     */
+    public void elementUpdated(@Payload ElementDTO element) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Updating element '{}'.", element);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + UPDATING_MAPPING,
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), "updated"));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    /**
+     * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
+     *
+     * @param element the element created.
+     * @return
+     */
+    public void elementDeleted(@Payload ElementDTO element) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Deleting element '{}'.", element);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + DELETES_MAPPING,
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), "deleted"));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
