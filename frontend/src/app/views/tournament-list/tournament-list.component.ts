@@ -128,21 +128,28 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
         this.basicTableData.dataSource._updateChangeSubscription();
       }
       this.basicTableData.selectItem(_tournament);
+      this.basicTableData.selectedElement = _tournament;
       this.messageService.infoMessage('infoTournamentStored');
     });
   }
 
   updateRowData(tournament: Tournament): void {
-    this.tournamentService.update(tournament).subscribe((): void => {
+    this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
         this.messageService.infoMessage('infoTournamentUpdated');
-        this.basicTableData.selectedElement = tournament;
+        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id);
+        if (index >= 0) {
+          this.basicTableData.dataSource.data[index] = _tournament;
+          this.basicTableData.dataSource._updateChangeSubscription();
+        }
+        this.basicTableData.selectedElement = _tournament;
+        this.basicTableData.selectItem(_tournament);
       }
     );
   }
 
   deleteRowData(tournament: Tournament): void {
     this.tournamentService.delete(tournament).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_tournament: Tournament): boolean => _tournament.id !== tournament.id);
         this.messageService.infoMessage('infoTournamentDeleted');
         this.basicTableData.selectedElement = undefined;
       }

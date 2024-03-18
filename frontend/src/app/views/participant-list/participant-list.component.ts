@@ -82,7 +82,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  openDialog(title: string, action: Action, participant: Participant) {
+  openDialog(title: string, action: Action, participant: Participant): void {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
       width: '700px',
       data: {
@@ -104,7 +104,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     });
   }
 
-  addRowData(participant: Participant) {
+  addRowData(participant: Participant): void {
     this.participantService.add(participant).subscribe((_participant: Participant): void => {
       //If data is not already added though table webservice.
       if (this.basicTableData.dataSource.data.findIndex((obj: Participant): boolean => obj.id === _participant.id) < 0) {
@@ -112,20 +112,28 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
         this.basicTableData.dataSource._updateChangeSubscription();
       }
       this.basicTableData.selectItem(_participant);
+      this.basicTableData.selectedElement = _participant;
       this.messageService.infoMessage('infoParticipantStored');
     });
   }
 
-  updateRowData(participant: Participant) {
-    this.participantService.update(participant).subscribe(() => {
+  updateRowData(participant: Participant): void {
+    this.participantService.update(participant).subscribe((_participant: Participant): void => {
         this.messageService.infoMessage('infoParticipantUpdated');
+        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _participant.id);
+        if (index >= 0) {
+          this.basicTableData.dataSource.data[index] = _participant;
+          this.basicTableData.dataSource._updateChangeSubscription();
+        }
+        this.basicTableData.selectedElement = _participant;
+      this.basicTableData.selectItem(_participant);
       }
     );
   }
 
-  deleteRowData(participant: Participant) {
-    this.participantService.delete(participant).subscribe(() => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
+  deleteRowData(participant: Participant): void {
+    this.participantService.delete(participant).subscribe((): void => {
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_participant: Participant): boolean => _participant.id !== participant.id);
         this.messageService.infoMessage('infoParticipantDeleted');
         this.basicTableData.selectedElement = undefined;
       }
@@ -136,14 +144,14 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     return false;
   }
 
-  openStatistics() {
+  openStatistics(): void {
     if (this.basicTableData.selectedElement) {
       this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
       this.router.navigate(['/participants/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
     }
   }
 
-  showCompetitorsClassification() {
+  showCompetitorsClassification(): void {
     this.dialog.open(CompetitorsRankingComponent, {
       width: '85vw',
       data: {competitor: this.basicTableData.selectedElement, showIndex: true}
