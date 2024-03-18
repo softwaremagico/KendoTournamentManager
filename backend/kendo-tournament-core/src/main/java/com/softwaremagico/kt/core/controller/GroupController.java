@@ -153,8 +153,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
             }
         });
 
-        groupDTO.setUpdatedBy(username);
-        return create(groupDTO, null);
+        return super.update(groupDTO, username);
     }
 
     public GroupDTO addTeams(Integer groupId, List<TeamDTO> teams, String username) {

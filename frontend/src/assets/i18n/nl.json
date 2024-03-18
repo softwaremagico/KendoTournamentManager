@@ -604,6 +604,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Verkregen op:",
   "achievementToolTipObtainedAt": "Verkregen op",
   "achievementToolTipObtainedBy": "Verkregen door",
+  "achievementGenerated": "Er zijn in totaal {{achievementsNumber}} prestaties gegenereerd in het '{{tournamentName}}' toernooi.",
+  "achievementAllGenerated": "Er zijn in totaal {{achievementsNumber}} prestaties gegenereerd in {{tournamentNumber}} toernooien.",
   "time": "Tijd",
   "lockedAt": "Op slot",
   "fightsStartedAt": "Begin van wedstrijden",
@@ -836,7 +838,8 @@
   "leagueFifoHint": "Bij het genereren van de wedstrijden wordt in de eerste wedstrijd het team dat wordt vervangen geselecteerd. Indien geactiveerd, wordt het eerste team vervangen door het derde. Indien uitgeschakeld, wordt de tweede vervangen door de derde. Voor teams 1, 2 en 3 zijn de wedstrijden, indien geselecteerd, bijvoorbeeld: '1-2, 3-2, 3-1'. Maar zo niet, dan wordt het: '1-2, 1-3, 2-3.",
   "tournamentProperties": "Toernooi-eigenschappen",
   "tournamentCloneWarning": "Je gaat het toernooi verdubbelen. Weet je zeker dat je doorgaat?",
-  "tournamentListAsZip": "Download alle PDF-lijsten in een zip-bestand."
+  "tournamentListAsZip": "Download alle PDF-lijsten in een zip-bestand.",
+  "shiaijoFinished": "Alle wedstrijden van shiaijo {{shiaijoName}} zijn afgelopen."
 }
 
 
