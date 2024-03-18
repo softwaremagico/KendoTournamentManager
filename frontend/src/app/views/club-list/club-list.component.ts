@@ -23,7 +23,7 @@ import {CompetitorsRankingComponent} from "../../components/competitors-ranking/
 })
 export class ClubListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<Club> = new BasicTableData<Club>();
+  basicTableData: BasicTableData<Club> = new BasicTableData<Club>("Club");
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -97,8 +97,11 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
 
   addRowData(club: Club) {
     this.clubService.add(club).subscribe((_club: Club): void => {
-      this.basicTableData.dataSource.data.push(_club);
-      this.basicTableData.dataSource._updateChangeSubscription();
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _club.id) < 0) {
+        this.basicTableData.dataSource.data.push(_club);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_club);
       this.messageService.infoMessage('infoClubStored');
     });
