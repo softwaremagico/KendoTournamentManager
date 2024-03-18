@@ -25,7 +25,6 @@ import {
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {RxStompService} from "../../websockets/rx-stomp.service";
 
 @Component({
   selector: 'app-tournament-list',
@@ -34,7 +33,7 @@ import {RxStompService} from "../../websockets/rx-stomp.service";
 })
 export class TournamentListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<Tournament> = new BasicTableData<Tournament>();
+  basicTableData: BasicTableData<Tournament> = new BasicTableData<Tournament>("Tournament");
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -122,25 +121,35 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   }
 
   addRowData(tournament: Tournament): void {
-    this.tournamentService.add(tournament).subscribe(_tournament => {
-      this.basicTableData.dataSource.data.push(_tournament);
-      this.basicTableData.dataSource._updateChangeSubscription();
+    this.tournamentService.add(tournament).subscribe((_tournament: Tournament): void => {
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id) < 0) {
+        this.basicTableData.dataSource.data.push(_tournament);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_tournament);
+      this.basicTableData.selectedElement = _tournament;
       this.messageService.infoMessage('infoTournamentStored');
     });
   }
 
   updateRowData(tournament: Tournament): void {
-    this.tournamentService.update(tournament).subscribe((): void => {
+    this.tournamentService.update(tournament).subscribe((_tournament: Tournament): void => {
         this.messageService.infoMessage('infoTournamentUpdated');
-        this.basicTableData.selectedElement = tournament;
+        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Tournament): boolean => obj.id === _tournament.id);
+        if (index >= 0) {
+          this.basicTableData.dataSource.data[index] = _tournament;
+          this.basicTableData.dataSource._updateChangeSubscription();
+        }
+        this.basicTableData.selectedElement = _tournament;
+        this.basicTableData.selectItem(_tournament);
       }
     );
   }
 
   deleteRowData(tournament: Tournament): void {
     this.tournamentService.delete(tournament).subscribe((): void => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Tournament => existing_Tournament !== tournament);
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_tournament: Tournament): boolean => _tournament.id !== tournament.id);
         this.messageService.infoMessage('infoTournamentDeleted');
         this.basicTableData.selectedElement = undefined;
       }

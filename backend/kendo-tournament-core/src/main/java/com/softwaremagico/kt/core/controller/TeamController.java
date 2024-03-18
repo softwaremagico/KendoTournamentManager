@@ -134,11 +134,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     @Override
     public TeamDTO update(TeamDTO teamDTO, String username) {
-        teamDTO.setUpdatedBy(username);
-        validate(teamDTO);
-        final Team dbTeam = super.getProvider().save(reverse(teamDTO));
-        dbTeam.setTournament(tournamentConverter.reverse(teamDTO.getTournament()));
-        return convert(dbTeam);
+        final TeamDTO dbTeam = super.update(teamDTO, username);
+        dbTeam.setTournament(teamDTO.getTournament());
+        return dbTeam;
     }
 
     public long count(TournamentDTO tournament) {
