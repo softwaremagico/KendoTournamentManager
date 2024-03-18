@@ -1,4 +1,4 @@
-package com.softwaremagico.kt.websockets.models.messages;
+package com.softwaremagico.kt.websockets;
 
 /*-
  * #%L
@@ -10,39 +10,28 @@ package com.softwaremagico.kt.websockets.models.messages;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-public class ShiaijoFinishedParameters {
-    private String tournamentName;
-    private String shiaijoName;
+import com.softwaremagico.kt.core.controller.DuelController;
+import org.springframework.stereotype.Component;
 
-    public ShiaijoFinishedParameters(String tournamentName, String shiaijoName) {
-        this.tournamentName = tournamentName;
-        this.shiaijoName = shiaijoName;
+@Component
+public class WebsocketFights {
+
+    public WebsocketFights(DuelController duelController, WebSocketController webSocketController) {
+
+        //Refresh screens when a duel is updated.
+        duelController.addFightUpdatedListener(((tournament, fight, duel) -> webSocketController.sendFight(fight)));
+
     }
 
-    public String getTournamentName() {
-        return tournamentName;
-    }
-
-    public void setTournamentName(String tournamentName) {
-        this.tournamentName = tournamentName;
-    }
-
-    public String getShiaijoName() {
-        return shiaijoName;
-    }
-
-    public void setShiaijoName(String shiaijoName) {
-        this.shiaijoName = shiaijoName;
-    }
 }

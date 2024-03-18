@@ -22,10 +22,14 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
+import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
+import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
@@ -53,27 +57,39 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     private final FightProvider fightProvider;
 
+    private final FightConverter fightConverter;
+
     private final TournamentProvider tournamentProvider;
 
     private final Set<ShiaijoFinishedListener> shiaijoFinishedListeners = new HashSet<>();
+    private final Set<FightUpdatedListener> fightsUpdatedListeners = new HashSet<>();
 
     public interface ShiaijoFinishedListener {
-        void finished(Tournament tournament, Integer shiaijo);
+        void finished(TournamentDTO tournament, Integer shiaijo);
+    }
+
+    public interface FightUpdatedListener {
+        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel);
     }
 
     @Autowired
     public DuelController(DuelProvider provider,
                           DuelConverter converter,
                           TournamentConverter tournamentConverter,
-                          FightProvider fightProvider, TournamentProvider tournamentProvider) {
+                          FightProvider fightProvider, FightConverter fightConverter, TournamentProvider tournamentProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.fightProvider = fightProvider;
+        this.fightConverter = fightConverter;
         this.tournamentProvider = tournamentProvider;
     }
 
     public void addShiaijoFinishedListener(ShiaijoFinishedListener listener) {
         shiaijoFinishedListeners.add(listener);
+    }
+
+    public void addFightUpdatedListener(FightUpdatedListener listener) {
+        fightsUpdatedListeners.add(listener);
     }
 
     @Override
@@ -105,14 +121,22 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
                 final Fight fight = fightProvider.findByDuels(reverse(duel)).orElseThrow(() ->
                         new FightNotFoundException(this.getClass(), "No fight found for duel '" + duel + "'"));
 
+                final FightDTO fightDTO = fightConverter.convert(new FightConverterRequest(fight));
+
                 final Tournament tournament = tournamentProvider.get(fight.getTournament().getId()).orElseThrow(()
                         -> new TournamentNotFoundException(this.getClass(), "No tournament found for duel '" + duel + "'."));
+
+                final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
+
+                //Fight is updated, refresh screens.
+                fightsUpdatedListeners.forEach(fightUpdatedListener -> fightUpdatedListener.finished(tournamentDTO, fightDTO, duel));
+
                 if (tournament.getShiaijos() > 1) {
                     final List<Fight> fightsOfShiaijo = fightProvider.findByTournamentAndShiaijo(tournament, fight.getShiaijo());
                     final long fightsNotOver = fightsOfShiaijo.stream().filter(fightOfShiaijo -> !fightOfShiaijo.isOver()).count();
                     if (fightsNotOver == 0) {
                         shiaijoFinishedListeners.forEach(shiaijoFinishedListener
-                                -> shiaijoFinishedListener.finished(tournament, fight.getShiaijo()));
+                                -> shiaijoFinishedListener.finished(tournamentDTO, fight.getShiaijo()));
                     }
                 }
             }).start();
