@@ -33,14 +33,22 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,
         CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>>
         extends StandardController<ENTITY, DTO, REPOSITORY, PROVIDER> {
 
+    private final Set<ElementCreatedListener> elementCreatedListeners = new HashSet<>();
+
     private final CONVERTER converter;
+
+    public interface ElementCreatedListener {
+        void created(ElementDTO element);
+    }
 
     protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
         super(provider);
@@ -50,6 +58,11 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     public CONVERTER getConverter() {
         return converter;
     }
+
+    public void addElementCreatedListeners(ElementCreatedListener listener) {
+        elementCreatedListeners.add(listener);
+    }
+
 
     public DTO get(Integer id) {
         final ENTITY entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
@@ -85,7 +98,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             dto.setCreatedBy(username);
         }
         validate(dto);
-        return convert(super.getProvider().save(reverse(dto)));
+        final DTO savedDTO = convert(super.getProvider().save(reverse(dto)));
+
+        try {
+            return savedDTO;
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO))).start();
+        }
     }
 
     @Transactional

@@ -26,7 +26,7 @@ import {CompetitorsRankingComponent} from "../../components/competitors-ranking/
 })
 export class ParticipantListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>();
+  basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>("Participant");
   clubs: Club[];
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
@@ -105,9 +105,12 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   addRowData(participant: Participant) {
-    this.participantService.add(participant).subscribe(_participant => {
-      this.basicTableData.dataSource.data.push(Participant.clone(_participant));
-      this.basicTableData.dataSource._updateChangeSubscription();
+    this.participantService.add(participant).subscribe((_participant: Participant): void => {
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: Participant): boolean => obj.id === _participant.id) < 0) {
+        this.basicTableData.dataSource.data.push(_participant);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_participant);
       this.messageService.infoMessage('infoParticipantStored');
     });
