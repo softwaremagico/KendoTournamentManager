@@ -369,9 +369,8 @@ public class AchievementController extends BasicInsertableController<Achievement
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
         deleteAchievements(tournament);
         final List<AchievementDTO> achievementsGenerated = generateAchievements(tournament);
-        for (AchievementsGeneratedListener achievementsGeneratedListener : achievementsGeneratedListeners) {
-            achievementsGeneratedListener.generated(achievementsGenerated, tournament);
-        }
+        achievementsGeneratedListeners.forEach(achievementsGeneratedListener
+                -> achievementsGeneratedListener.generated(achievementsGenerated, tournament));
         return achievementsGenerated;
     }
 
