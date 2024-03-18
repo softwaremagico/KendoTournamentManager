@@ -70,8 +70,12 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // This will allow you to use ws://localhost:8080/websocket to establish websocket connection
         registry.addEndpoint(SOCKETS_STOMP_URL)
                 .setAllowedOrigins("*");
+        // This will allow you to use http://localhost:8080/websocket to establish websocket connection
+        registry.addEndpoint(SOCKETS_STOMP_URL)
+                .setAllowedOrigins("*").withSockJS();
     }
 
     @Override
@@ -85,10 +89,11 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                //message.getHeaders();
                 final StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                if (accessor != null
+                        && (StompCommand.CONNECT.equals(accessor.getCommand())
+                        || StompCommand.SEND.equals(accessor.getCommand()))) {
                     final LinkedMultiValueMap<String, String> nativeHeaders = (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
                     final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
                     try {

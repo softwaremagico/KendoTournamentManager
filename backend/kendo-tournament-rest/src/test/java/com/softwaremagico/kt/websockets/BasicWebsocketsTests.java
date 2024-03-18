@@ -10,12 +10,12 @@ package com.softwaremagico.kt.websockets;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -34,10 +34,11 @@ import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.web.socket.WebSocketHttpHeaders;
-import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -91,7 +92,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private WebSocketHttpHeaders headers;
 
-    private  AuthenticatedUser authenticatedUser;
+    private AuthenticatedUser authenticatedUser;
 
 
     private String getWsPath() {
@@ -109,10 +110,8 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     @BeforeMethod
     public void setup() {
-        WebSocketClient webSocketClient = new StandardWebSocketClient();
-
         List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(webSocketClient));
+        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
         SockJsClient sockJsClient = new SockJsClient(transports);
 
         this.webSocketStompClient = new WebSocketStompClient(sockJsClient);
@@ -124,7 +123,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
     public void echoTest() throws ExecutionException, InterruptedException, TimeoutException {
         BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
 
-        StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
+        final StompSession session = webSocketStompClient.connectAsync(getWsPath(), this.headers,
                 new StompSessionHandlerAdapter() {
                 }).get(1, TimeUnit.SECONDS);
 
@@ -146,6 +145,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         await().atMost(1, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(TESTING_MESSAGE));
     }
+
 
     @AfterClass
     public void deleteUser() {
