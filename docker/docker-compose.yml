@@ -67,6 +67,7 @@ services:
         - release
         - machine_domain
         - protocol
+        - websocket_protocol
     image: kendo-tournament-frontend
     restart: always
     networks:

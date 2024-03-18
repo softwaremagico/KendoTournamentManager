@@ -39,10 +39,10 @@
         <div class="types">
             <mat-form-field *ngIf="actionName != 'Delete'">
                 <mat-label>{{'scoreRules' | translate}}</mat-label>
-                <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="500"
+                <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                             formControlName="scoreTypes"
                             matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
-                    <mat-option (click)="selectScore(type)" *ngFor="let type of scoreTypes" [matTooltipShowDelay]="500"
+                    <mat-option (click)="selectScore(type)" *ngFor="let type of scoreTypes" [matTooltipShowDelay]="1000"
                                 [value]="type" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
                         {{type.toLowerCase() | translate}}
                     </mat-option>

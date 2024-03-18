@@ -62,7 +62,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   }
 
   private updateDuel(score: Score): boolean {
-    let updated = false;
+    let updated: boolean = false;
     if (score) {
       if (this.left) {
         if (score !== Score.EMPTY) {
@@ -132,7 +132,7 @@ export class ScoreComponent implements OnInit, OnChanges {
     return updated;
   }
 
-  updateScore(score: Score) {
+  updateScore(score: Score): void {
     if (this.updateDuel(score)) {
       this.duel.finishedAt = undefined;
       this.duelService.update(this.duel).subscribe((duel: Duel): Duel => {
