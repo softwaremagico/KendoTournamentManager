@@ -24,42 +24,56 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.DuelConverter;
-import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
+import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class DuelController extends BasicInsertableController<Duel, DuelDTO, DuelRepository,
         DuelProvider, DuelConverterRequest, DuelConverter> {
 
-    private final GroupProvider groupProvider;
+    private final TournamentConverter tournamentConverter;
 
-    private final GroupConverter groupConverter;
+    private final FightProvider fightProvider;
 
     private final TournamentProvider tournamentProvider;
 
-    private final TournamentConverter tournamentConverter;
+    private final Set<ShiaijoFinishedListener> shiaijoFinishedListeners = new HashSet<>();
+
+    public interface ShiaijoFinishedListener {
+        void finished(Tournament tournament, Integer shiaijo);
+    }
 
     @Autowired
-    public DuelController(DuelProvider provider, DuelConverter converter, GroupProvider groupProvider, GroupConverter groupConverter,
-                          TournamentProvider tournamentProvider, TournamentConverter tournamentConverter) {
+    public DuelController(DuelProvider provider,
+                          DuelConverter converter,
+                          TournamentConverter tournamentConverter,
+                          FightProvider fightProvider, TournamentProvider tournamentProvider) {
         super(provider, converter);
-        this.groupProvider = groupProvider;
-        this.groupConverter = groupConverter;
-        this.tournamentProvider = tournamentProvider;
         this.tournamentConverter = tournamentConverter;
+        this.fightProvider = fightProvider;
+        this.tournamentProvider = tournamentProvider;
+    }
+
+    public void addShiaijoFinishedListener(ShiaijoFinishedListener listener) {
+        shiaijoFinishedListeners.add(listener);
     }
 
     @Override
@@ -83,7 +97,26 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
     public DuelDTO update(DuelDTO duel, String username) {
-        return super.update(duel, username);
+        try {
+            return super.update(duel, username);
+        } finally {
+            new Thread(() -> {
+                //If a shiaijo has finished, send a message to all computers.
+                final Fight fight = fightProvider.findByDuels(reverse(duel)).orElseThrow(() ->
+                        new FightNotFoundException(this.getClass(), "No fight found for duel '" + duel + "'"));
+
+                final Tournament tournament = tournamentProvider.get(fight.getTournament().getId()).orElseThrow(()
+                        -> new TournamentNotFoundException(this.getClass(), "No tournament found for duel '" + duel + "'."));
+                if (tournament.getShiaijos() > 1) {
+                    final List<Fight> fightsOfShiaijo = fightProvider.findByTournamentAndShiaijo(tournament, fight.getShiaijo());
+                    final long fightsNotOver = fightsOfShiaijo.stream().filter(fightOfShiaijo -> !fightOfShiaijo.isOver()).count();
+                    if (fightsNotOver == 0) {
+                        shiaijoFinishedListeners.forEach(shiaijoFinishedListener
+                                -> shiaijoFinishedListener.finished(tournament, fight.getShiaijo()));
+                    }
+                }
+            }).start();
+        }
     }
 
     public List<DuelDTO> getUntiesFromGroup(Integer groupId) {
