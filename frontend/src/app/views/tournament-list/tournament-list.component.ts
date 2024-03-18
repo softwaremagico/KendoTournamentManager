@@ -25,6 +25,7 @@ import {
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
+import {RxStompService} from "../../websockets/rx-stomp.service";
 
 @Component({
   selector: 'app-tournament-list',
@@ -57,21 +58,23 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   showAllElements(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
     this.tournamentService.getAll().subscribe((_tournaments: Tournament[]): void => {
-      const tournaments: Tournament[] = [];
-      for (let _tournament of _tournaments) {
-        if (_tournament) {
-          tournaments.push(Tournament.clone(_tournament));
+      if (_tournaments) {
+        const tournaments: Tournament[] = [];
+        for (let _tournament of _tournaments) {
+          if (_tournament) {
+            tournaments.push(Tournament.clone(_tournament));
+          }
         }
+        this.basicTableData.dataSource.data = tournaments;
+        //Select session tournament.
+        const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
+          tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
+        const selectedElements: Tournament[] = [];
+        selectedElements.push(selectedTournament);
+        this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
+        this.basicTableData.selectedElement = selectedTournament;
+        this.systemOverloadService.isTransactionalBusy.next(false);
       }
-      this.basicTableData.dataSource.data = tournaments;
-      //Select session tournament.
-      const selectedTournament: Tournament = this.basicTableData.dataSource.data.filter((tournament: Tournament): boolean =>
-        tournament.id == Number(this.userSessionService.getSelectedTournament()))[0];
-      const selectedElements: Tournament[] = [];
-      selectedElements.push(selectedTournament);
-      this.basicTableData.selection = new SelectionModel<Tournament>(false, selectedElements);
-      this.basicTableData.selectedElement = selectedTournament;
-      this.systemOverloadService.isTransactionalBusy.next(false);
     });
   }
 

@@ -621,6 +621,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtenido en:",
   "achievementToolTipObtainedAt": "Obtained en",
   "achievementToolTipObtainedBy": "Obtained por",
+  "achievementGenerated": "Un total de {{achievementsNumber}} logros han sido generados en el torneo '{{tournamentName}}'.",
+  "achievementAllGenerated": "Un total de {{achievementsNumber}} logros han sido generados en {{tournamentNumber}} torneos.",
   "time": "Tiempos",
   "lockedAt": "Bloqueado",
   "fightsStartedAt": "Inicio partidos",
@@ -861,5 +863,6 @@
   "logIn": "Acceso",
   "tsuki": "Tsuki",
   "kote": "Kote",
-  "tournamentListAsZip": "Descargar todas las listas en PDF en un archivo zip."
+  "tournamentListAsZip": "Descargar todas las listas en PDF en un archivo zip.",
+  "shiaijoFinished": "Todos los partidos del shiaijo {{shiaijoName}} han acabado."
 }
