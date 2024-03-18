@@ -24,15 +24,8 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.DuelProvider;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.RoleProvider;
-import com.softwaremagico.kt.core.providers.TeamProvider;
-import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
-import com.softwaremagico.kt.core.providers.TournamentImageProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
@@ -50,36 +43,11 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     private final GroupProvider groupProvider;
 
-    private final TeamProvider teamProvider;
-
-    private final RoleProvider roleProvider;
-
-    private final FightProvider fightProvider;
-
-    private final DuelProvider duelProvider;
-
-    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
-
-    private final TournamentImageProvider tournamentImageProvider;
-
-    private final TournamentHandlerSelector tournamentHandlerSelector;
-
 
     @Autowired
-    public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, TeamProvider teamProvider,
-                                RoleProvider roleProvider, FightProvider fightProvider, DuelProvider duelProvider,
-                                TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
-                                TournamentImageProvider tournamentImageProvider,
-                                TournamentHandlerSelector tournamentHandlerSelector) {
+    public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider) {
         super(provider, converter);
         this.groupProvider = groupProvider;
-        this.teamProvider = teamProvider;
-        this.roleProvider = roleProvider;
-        this.fightProvider = fightProvider;
-        this.duelProvider = duelProvider;
-        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
-        this.tournamentImageProvider = tournamentImageProvider;
-        this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
     @Override
