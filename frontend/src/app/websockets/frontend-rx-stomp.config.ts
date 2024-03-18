@@ -18,7 +18,7 @@ export const frontendRxStompConfig: RxStompConfig = {
   // It can be quite verbose, not recommended in production
   // Skip this key to stop logging to console
   debug: (msg: string): void => {
-    console.log(new Date(), msg);
+   // console.log(new Date(), msg);
   },
 
   beforeConnect: (stompClient: any): Promise<void> => {

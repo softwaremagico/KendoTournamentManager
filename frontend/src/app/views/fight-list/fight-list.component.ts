@@ -34,6 +34,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
+import {MessageContent} from "../../websockets/message-content.model";
 
 @Component({
   selector: 'app-fight-list',
@@ -158,12 +159,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
 
-    // this.rxStompService.watch('/topic/echo').subscribe((message: Message): void => {
-    //   console.log('***REMOVED***>', message.body);
-    // });
-    //this.rxStompService.publish({ destination: '/backend/echo', body: 'Sending test....' });
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
-      console.log(message.body);
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.topic == "Fight") {
+        const fight: Fight = JSON.parse(messageContent.payload);
+        this.replaceFight(fight);
+      }
     });
   }
 
@@ -199,6 +200,29 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (this.selectedFight && selectedDuelIndex && this.selectedFight?.duels[selectedDuelIndex]) {
         this.selectDuel(this.selectedFight.duels[selectedDuelIndex]);
       }
+    }
+  }
+
+  private replaceFight(fight: Fight): void {
+    //Replace on filter
+    for (let key of this.filteredFights.keys()) {
+      let indexOfFight: number = this.filteredFights.get(key)!.findIndex((element: Fight): boolean => element.id === fight.id);
+      if (indexOfFight >= 0) {
+        this.filteredFights.get(key)![indexOfFight] = fight;
+        break;
+      }
+    }
+    //Replace on groups
+    for (let group of this.groups) {
+      let indexOfFight: number = group.fights.findIndex((element: Fight): boolean => element.id === fight.id);
+      if (indexOfFight >= 0) {
+        group.fights![indexOfFight] = fight;
+        break;
+      }
+    }
+    //Update selected fight
+    if (this.selectedFight && this.selectedFight.id === fight.id) {
+      this.selectedFight = fight;
     }
   }
 
@@ -513,7 +537,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
-  downloadPDF() {
+  downloadPDF(): void {
     if (this.tournament && this.tournament.id) {
       this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
@@ -606,7 +630,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (const group of this.groups) {
       for (const fight of group.fights) {
         for (const duel of fight.duels) {
-          if (duel.id == selectedDuel.id) {
+          if (duel.id == selectedDuel!.id) {
             return group;
           }
         }

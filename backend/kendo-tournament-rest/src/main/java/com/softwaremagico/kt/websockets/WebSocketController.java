@@ -23,6 +23,7 @@ package com.softwaremagico.kt.websockets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -39,6 +40,9 @@ import org.springframework.stereotype.Controller;
 public class WebSocketController {
 
     public static final String FIGHTS_MAPPING = "/fights";
+    public static final String CREATING_MAPPING = "/creates";
+    public static final String UPDATING_MAPPING = "/updates";
+    public static final String DELETES_MAPPING = "/deletes";
     public static final String MESSAGES_MAPPING = "/messages";
     public static final String ERRORS_MAPPING = "/errors";
 
@@ -55,6 +59,54 @@ public class WebSocketController {
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
+    }
+
+    /**
+     * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
+     *
+     * @param element the element created.
+     * @return
+     */
+    public void elementCreated(@Payload ElementDTO element) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Creating element '{}'.", element);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + CREATING_MAPPING,
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), "created"));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    /**
+     * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
+     *
+     * @param element the element created.
+     * @return
+     */
+    public void elementUpdated(@Payload ElementDTO element) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Updating element '{}'.", element);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + UPDATING_MAPPING,
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), "updated"));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    /**
+     * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
+     *
+     * @param element the element created.
+     * @return
+     */
+    public void elementDeleted(@Payload ElementDTO element) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Deleting element '{}'.", element);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + DELETES_MAPPING,
+                    new MessageContent(element.getClass().getSimpleName(), toJson(element), "deleted"));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
     }
 
     /**
