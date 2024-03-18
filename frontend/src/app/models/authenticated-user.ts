@@ -1,7 +1,7 @@
 import {UserRoles} from "../services/rbac/user-roles";
+import {DatabaseObject} from "./database-object";
 
-export class AuthenticatedUser {
-  public id?: number;
+export class AuthenticatedUser extends DatabaseObject {
   public username: string;
   public password: string;
   public name: string;
@@ -11,6 +11,7 @@ export class AuthenticatedUser {
   public roles: UserRoles[];
 
   constructor() {
+    super();
     this.roles = [];
   }
 }
