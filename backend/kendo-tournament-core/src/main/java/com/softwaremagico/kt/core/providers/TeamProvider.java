@@ -28,7 +28,6 @@ import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
-import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,17 +64,14 @@ public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
 
     public List<Team> createDefaultTeams(Tournament tournament, String createdBy) {
         final List<Team> newTeams = new ArrayList<>();
-        if ((tournament.getType() == TournamentType.LEAGUE || tournament.getType() == TournamentType.CUSTOMIZED
-                || tournament.getType() == TournamentType.KING_OF_THE_MOUNTAIN || tournament.getType() == TournamentType.LOOP)) {
-            final long competitors = roleProvider.count(tournament, RoleType.COMPETITOR);
-            if (tournament.getTeamSize() > 0) {
-                for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
-                    final Team team = new Team();
-                    team.setName(String.format("Team %d", i));
-                    team.setTournament(tournament);
-                    team.setCreatedBy(createdBy);
-                    newTeams.add(team);
-                }
+        final long competitors = roleProvider.count(tournament, RoleType.COMPETITOR);
+        if (tournament.getTeamSize() > 0) {
+            for (int i = 1; i <= (competitors + tournament.getTeamSize() - 1) / tournament.getTeamSize(); i++) {
+                final Team team = new Team();
+                team.setName(String.format("Team %d", i));
+                team.setTournament(tournament);
+                team.setCreatedBy(createdBy);
+                newTeams.add(team);
             }
         }
         return new ArrayList<>(saveAll(newTeams));
