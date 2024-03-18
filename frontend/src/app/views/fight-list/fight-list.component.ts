@@ -24,13 +24,17 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
-import {Subject, takeUntil} from "rxjs";
+import {Subject, Subscription, takeUntil} from "rxjs";
 import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RxStompService} from "../../websockets/rx-stomp.service";
+import {Message} from "@stomp/stompjs";
+import {EnvironmentService} from "../../environment.service";
+import {MessageContent} from "../../websockets/message-content.model";
 
 @Component({
   selector: 'app-fight-list',
@@ -38,6 +42,8 @@ import {TranslateService} from "@ngx-translate/core";
   styleUrls: ['./fight-list.component.scss']
 })
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
+
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   filteredFights: Map<number, Fight[]>;
   filteredUnties: Map<number, Duel[]>;
@@ -69,15 +75,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectedShiaijo: number = -1;
 
+  private topicSubscription: Subscription;
+
 
   constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
+              private environmentService: EnvironmentService,
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslateService,
-              private systemOverloadService: SystemOverloadService) {
+              private systemOverloadService: SystemOverloadService,
+              private rxStompService: RxStompService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -148,6 +158,19 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
+
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.topic == "Fight") {
+        const fight: Fight = JSON.parse(messageContent.payload);
+        this.replaceFight(fight);
+      }
+    });
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.topicSubscription.unsubscribe();
   }
 
   private replaceGroup(group: Group): void {
@@ -177,6 +200,29 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (this.selectedFight && selectedDuelIndex && this.selectedFight?.duels[selectedDuelIndex]) {
         this.selectDuel(this.selectedFight.duels[selectedDuelIndex]);
       }
+    }
+  }
+
+  private replaceFight(fight: Fight): void {
+    //Replace on filter
+    for (let key of this.filteredFights.keys()) {
+      let indexOfFight: number = this.filteredFights.get(key)!.findIndex((element: Fight): boolean => element.id === fight.id);
+      if (indexOfFight >= 0) {
+        this.filteredFights.get(key)![indexOfFight] = fight;
+        break;
+      }
+    }
+    //Replace on groups
+    for (let group of this.groups) {
+      let indexOfFight: number = group.fights.findIndex((element: Fight): boolean => element.id === fight.id);
+      if (indexOfFight >= 0) {
+        group.fights![indexOfFight] = fight;
+        break;
+      }
+    }
+    //Update selected fight
+    if (this.selectedFight && this.selectedFight.id === fight.id) {
+      this.selectedFight = fight;
     }
   }
 
@@ -491,11 +537,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
-  downloadPDF() {
+  downloadPDF(): void {
     if (this.tournament && this.tournament.id) {
       this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob): void => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
         anchor.download = "Fight List - " + this.tournament.name + ".pdf";
@@ -584,7 +630,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (const group of this.groups) {
       for (const fight of group.fights) {
         for (const duel of fight.duels) {
-          if (duel.id == selectedDuel.id) {
+          if (duel.id == selectedDuel!.id) {
             return group;
           }
         }

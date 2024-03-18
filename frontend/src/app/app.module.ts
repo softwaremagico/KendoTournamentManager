@@ -115,6 +115,8 @@ import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator
 import {
   TournamentExtraPropertiesModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-extra-properties/tournament-extra-properties.module";
+import {RxStompService} from "./websockets/rx-stomp.service";
+import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
 
 
 registerLocaleData(localeES, "es");
@@ -224,15 +226,16 @@ registerLocaleData(localeNL, "nl");
     TournamentBracketsEditorModule,
     TournamentGeneratorModule,
   ],
-  providers: [CookieService, {
-    provide: MatPaginatorIntl,
-    useFactory: (translate: TranslateService) => {
-      const service: PaginatorI18n = new PaginatorI18n();
-      service.injectTranslateService(translate);
-      return service;
+  providers: [
+    CookieService, {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const service: PaginatorI18n = new PaginatorI18n();
+        service.injectTranslateService(translate);
+        return service;
+      },
+      deps: [TranslateService]
     },
-    deps: [TranslateService]
-  },
     {
       provide: ErrorHandler,
       useClass: LocalErrorHandler
@@ -245,6 +248,9 @@ registerLocaleData(localeNL, "nl");
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true
+    }, {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
     }],
   bootstrap: [AppComponent]
 })

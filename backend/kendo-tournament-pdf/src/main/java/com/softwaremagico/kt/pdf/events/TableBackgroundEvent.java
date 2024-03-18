@@ -28,22 +28,25 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPTableEvent;
-import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.logger.PdfExporterLog;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class TableBackgroundEvent implements PdfPTableEvent {
+
+    private final String imageResource;
     private static Image defaultBackgroundImage;
     private Image backgroundImage;
     private Document document;
 
-    public TableBackgroundEvent() {
+    public TableBackgroundEvent(String imageResource) {
         super();
+        this.imageResource = imageResource;
     }
 
     public TableBackgroundEvent(Image backgroundImage, Document document) {
-        this();
+        this(null);
         this.backgroundImage = backgroundImage;
         this.document = document;
     }
@@ -51,7 +54,7 @@ public class TableBackgroundEvent implements PdfPTableEvent {
     private Image getBackgroundImage() {
         if (backgroundImage == null) {
             if (defaultBackgroundImage == null) {
-                try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream("/images/accreditation-background.png")) {
+                try (InputStream inputStream = TableBackgroundEvent.class.getResourceAsStream(imageResource)) {
                     if (inputStream != null) {
                         defaultBackgroundImage = Image.getInstance(inputStream.readAllBytes());
                         defaultBackgroundImage.setAlignment(Image.UNDERLYING);
@@ -59,7 +62,7 @@ public class TableBackgroundEvent implements PdfPTableEvent {
                         defaultBackgroundImage.setAbsolutePosition(0, 0);
                     }
                 } catch (NullPointerException | BadElementException | IOException ex) {
-                    KendoTournamentLogger.severe(TableBackgroundEvent.class.getName(), "No background image found!");
+                    PdfExporterLog.severe(TableBackgroundEvent.class.getName(), "No background image found!");
                 }
             }
             backgroundImage = defaultBackgroundImage;
@@ -78,7 +81,7 @@ public class TableBackgroundEvent implements PdfPTableEvent {
                         rect.getLeft(), rect.getTop());
             }
         } catch (Exception e) {
-            KendoTournamentLogger.errorMessage(this.getClass().getName(), e);
+            PdfExporterLog.errorMessage(this.getClass().getName(), e);
         }
     }
 }
