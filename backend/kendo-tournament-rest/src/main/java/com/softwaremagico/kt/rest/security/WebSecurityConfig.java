@@ -22,6 +22,7 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.logger.RestServerLogger;
+import com.softwaremagico.kt.websockets.WebSocketConfiguration;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +57,7 @@ public class WebSecurityConfig {
             "/info/**",
             "/auth/public/**",
             //Websockets uses custom security.
-            "/websockets/**"
+            WebSocketConfiguration.SOCKETS_STOMP_URL + "/**"
     };
 
     private final JwtTokenFilter jwtTokenFilter;
