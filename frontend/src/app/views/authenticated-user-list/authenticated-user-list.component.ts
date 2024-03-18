@@ -25,7 +25,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 })
 export class AuthenticatedUserListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<AuthenticatedUser> = new BasicTableData<AuthenticatedUser>();
+  basicTableData: BasicTableData<AuthenticatedUser> = new BasicTableData<AuthenticatedUser>("AuthenticatedUser");
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -98,10 +98,13 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
     });
   }
 
-  addRowData(authenticatedUser: AuthenticatedUser) {
-    this.userService.add(authenticatedUser).subscribe(_authenticatedUser => {
-      this.basicTableData.dataSource.data.push(_authenticatedUser);
-      this.basicTableData.dataSource._updateChangeSubscription();
+  addRowData(authenticatedUser: AuthenticatedUser): void {
+    this.userService.add(authenticatedUser).subscribe((_authenticatedUser: AuthenticatedUser): void => {
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: AuthenticatedUser): boolean => obj.id === _authenticatedUser.id) < 0) {
+        this.basicTableData.dataSource.data.push(_authenticatedUser);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_authenticatedUser);
     });
   }
