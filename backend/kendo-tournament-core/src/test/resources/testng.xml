@@ -26,6 +26,7 @@
                 <include name="groupsTest"/>
                 <include name="numberOfWinners"/>
                 <include name="tournamentExtraProperties"/>
+                <include name="qrTest"/>
             </run>
         </groups>
         <classes>
@@ -50,6 +51,7 @@
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
+            <class name="com.softwaremagico.kt.core.tests.QrTests"/>
         </classes>
     </test>
 </suite>
