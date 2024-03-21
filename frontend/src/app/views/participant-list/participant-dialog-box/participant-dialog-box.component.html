@@ -44,7 +44,7 @@
     </div>
     <div class="button-container" mat-dialog-actions>
       <button (click)="addPicture()"
-              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)"
+              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.getActivities())"
               color="picture"
               mat-flat-button
               mat-raised-button
@@ -52,7 +52,7 @@
         <mat-icon>add_a_photo</mat-icon>
         {{'photo' | translate}}
       </button>
-      <button *ngIf="(RbacActivity.EDIT_PARTICIPANT | rbac : this.rbacService.activities)"
+      <button *ngIf="(RbacActivity.EDIT_PARTICIPANT | rbac : this.rbacService.getActivities())"
               [disabled]="registerForm.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

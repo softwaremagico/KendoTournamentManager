@@ -21,17 +21,64 @@ package com.softwaremagico.kt.core.controller;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
 import com.softwaremagico.kt.core.providers.QrProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @Controller
 public class QrController {
 
+    private static final String TOURNAMENT_FIGHTS_URL = "/tournaments/fights";
+    private static final String LOGO_RESOURCE = "kote.svg";
+    private static final String QR_FORMAT = "png";
+    private static final Integer QR_SIZE = 5000;
+    private static final Color QR_COLOR = Color.BLUE;
+
     private final QrProvider qrProvider;
 
-    public QrController(QrProvider qrProvider) {
+    @Value("${server.servlet.context-path:null}")
+    private String contextPath;
+
+    @Value("${server.domain:localhost}")
+    private String machineDomain;
+
+    @Value("${server.schema:http}")
+    private String schema;
+
+
+    private final TournamentProvider tournamentProvider;
+
+    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider) {
         this.qrProvider = qrProvider;
+        this.tournamentProvider = tournamentProvider;
     }
 
+    public byte[] generateGuestQrCodeForTournamentFights(Integer tournamentId) {
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+                new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
+        try {
+            return toByteArray(qrProvider.getQr(schema + "://" + machineDomain + contextPath + TOURNAMENT_FIGHTS_URL
+                            + "?tournamentId=" + tournament.getId() + "&user=guest",
+                    QR_SIZE, QR_COLOR, LOGO_RESOURCE), QR_FORMAT);
+        } catch (IOException e) {
+            throw new UnexpectedValueException(this.getClass(), e);
+        }
+    }
 
+    // convert BufferedImage to byte[]
+    public static byte[] toByteArray(BufferedImage bufferedImage, String format) throws IOException {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, format, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
 }
