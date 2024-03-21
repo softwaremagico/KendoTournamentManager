@@ -107,23 +107,23 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing application", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        controller.deleteById(id);
+                       Authentication authentication, HttpServletRequest request) {
+        controller.deleteById(id, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody DTO dto, HttpServletRequest request) {
-        controller.delete(dto);
+    public void delete(@RequestBody DTO dto, Authentication authentication, HttpServletRequest request) {
+        controller.delete(dto, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes a collection of entities.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody Collection<DTO> dtos, HttpServletRequest request) {
-        getController().delete(dtos);
+    public void delete(@RequestBody Collection<DTO> dtos, Authentication authentication, HttpServletRequest request) {
+        getController().delete(dtos, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
