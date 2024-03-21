@@ -94,8 +94,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     @Override
-    public void deleteById(Integer id) {
-        delete(get(id));
+    public void deleteById(Integer id, String username) {
+        delete(get(id), username);
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
