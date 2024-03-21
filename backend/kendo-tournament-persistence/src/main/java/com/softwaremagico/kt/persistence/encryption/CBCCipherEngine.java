@@ -78,7 +78,7 @@ public class CBCCipherEngine implements ICipherEngine {
     }
 
     @Override
-    public String decrypt(String encrypted, String password) throws InvalidEncryptionException {
+    public synchronized String decrypt(String encrypted, String password) throws InvalidEncryptionException {
         try {
             getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
             final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
@@ -92,7 +92,7 @@ public class CBCCipherEngine implements ICipherEngine {
         }
     }
 
-    private Cipher getCipher(String password) {
+    private synchronized Cipher getCipher(String password) {
         if (cipher == null) {
             try {
                 cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
