@@ -14,7 +14,7 @@
           <h2 (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))" *ngIf="!team.editing"
               class="team-header">{{team.name}}</h2>
           <button (click)="deleteTeam(team)"
-                  *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.activities)"
+                  *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.getActivities())"
                   color="warn"
                   mat-button>
             <mat-icon>clear</mat-icon>
@@ -35,7 +35,7 @@
             <mat-card *ngIf="members!==undefined && members.get(team)!==undefined
                     && members.get(team)![i]!==undefined && members.get(team)![i]!==null"
                       [cdkDragData]="getMember(team, i)"
-                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.activities) || getMember(team, i)!.locked"
+                      [cdkDragDisabled]="!(RbacActivity.EDIT_TEAM | rbac : this.rbacService.getActivities()) || getMember(team, i)!.locked"
                       cdkDrag
                       class="user-card">
               <mat-card-header [attr.data-tournament-size]="tournament.teamSize">
@@ -51,26 +51,26 @@
           </div>
         </div>
       </div>
-      <div (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)" class="new-team">
+      <div (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())" class="new-team">
         <div class="row">{{'addTeamToTournament' | translate}}</div>
       </div>
     </div>
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="generateTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)"
+  <button (click)="generateTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())"
           mat-flat-button
           mat-raised-button>
     <mat-icon>auto_fix_high</mat-icon>
     {{'wizard' | translate}}
   </button>
-  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.activities)"
+  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())"
           mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.activities)"
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_ROLES | rbac : this.rbacService.getActivities())"
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>

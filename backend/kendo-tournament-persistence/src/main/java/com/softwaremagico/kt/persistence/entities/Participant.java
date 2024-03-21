@@ -40,6 +40,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.text.Collator;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * A registered person is any person that is in a tournament. Can be a

@@ -1,4 +1,5 @@
-<div [matMenuTriggerFor]="menu" class="score-area" *ngIf="!locked">
+<div [matMenuTriggerFor]="menu" class="score-area" *ngIf="!locked &&
+(RbacActivity.EDIT_DUEL | rbac : this.rbacService.getActivities())">
   <mat-menu #menu="matMenu">
     <button (click)="updateScore(score)" *ngFor="let score of possibleScores()"
             mat-menu-item>{{score.toLowerCase() | translate}}
@@ -19,7 +20,7 @@
   </div>
 </div>
 <!-- Score representation when menu is disabled -->
-<div class="score-area" *ngIf="locked">
+<div class="score-area" *ngIf="locked || !(RbacActivity.EDIT_DUEL | rbac : this.rbacService.getActivities())">
   <div class="point" *ngIf="scoreRepresentation!==''">
     {{scoreRepresentation}}
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"

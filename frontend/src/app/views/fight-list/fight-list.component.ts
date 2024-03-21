@@ -4,7 +4,7 @@ import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
 import {Tournament} from "../../models/tournament";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
 import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.component";
@@ -35,6 +35,7 @@ import {RxStompService} from "../../websockets/rx-stomp.service";
 import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
 import {MessageContent} from "../../websockets/message-content.model";
+import {LoginService} from "../../services/login.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -78,7 +79,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   private topicSubscription: Subscription;
 
 
-  constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
+  constructor(private router: Router, private activatedRoute: ActivatedRoute,
+              private tournamentService: TournamentService, private fightService: FightService,
               private environmentService: EnvironmentService,
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
@@ -87,7 +89,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslateService,
               private systemOverloadService: SystemOverloadService,
-              private rxStompService: RxStompService) {
+              private rxStompService: RxStompService, private loginService: LoginService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -95,13 +97,22 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.groups = [];
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
+      //Send by previous view.
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
       } else {
         this.goBackToTournament();
       }
     } else {
-      this.goBackToTournament();
+      //Gets tournament from URL parameter (for QR codes).
+      this.tournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
+      if (!this.tournamentId || isNaN(this.tournamentId)) {
+        this.goBackToTournament();
+      }
+      //No user provided, try with guest.
+      if (!this.loginService.getJwtValue()) {
+        this.loginService.setUserSession("guest", "");
+      }
     }
   }
 
@@ -170,7 +181,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();
-    this.topicSubscription.unsubscribe();
+    this.topicSubscription?.unsubscribe();
   }
 
   private replaceGroup(group: Group): void {
