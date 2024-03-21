@@ -21,7 +21,9 @@
 INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (1, 'admin@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Admin', 'User');
 INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (2, 'viewer@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Viewer', 'User');
 INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (3, 'editor@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Editor', 'User');
+INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (4, 'guest', '', 'Guest', 'User');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'admin');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'viewer');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (2, 'viewer');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (3, 'editor');
+INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (4, 'guest');

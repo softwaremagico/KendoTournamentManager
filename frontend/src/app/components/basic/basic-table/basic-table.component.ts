@@ -55,7 +55,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.topicSubscription.unsubscribe();
+    this.topicSubscription?.unsubscribe();
   }
 
   connectToWebsockets(): void {

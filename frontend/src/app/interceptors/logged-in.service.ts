@@ -8,13 +8,17 @@ import {BehaviorSubject} from "rxjs";
 })
 export class LoggedInService implements CanActivate {
 
+  //Pages that will not force a login to access.
+  whiteListedPages: string[] = ["/tournaments/fights"];
+
   public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(private router: Router, public loginService: LoginService) {
   }
 
   canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.loginService.getJwtValue()) {
+    const context: string = state.url.substring(0, state.url.indexOf('?') > 0 ? state.url.indexOf('?') : state.url.length);
+    if (this.loginService.getJwtValue() || this.whiteListedPages.includes(context)) {
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
       return true;

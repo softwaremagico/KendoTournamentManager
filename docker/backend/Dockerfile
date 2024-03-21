@@ -2,6 +2,7 @@ FROM eclipse-temurin:17-jre
 
 ARG release
 ARG machine_domain
+ARG protocol
 ARG database_user
 ARG database_password
 ARG database_name
@@ -12,6 +13,7 @@ ARG database_encryption_key
 ARG jwt_expiration
 ARG jwt_secret
 ARG jwt_ip_check
+ARG enable_guest_user
 
 ENV project_name kendo-tournament-backend
 ENV EXTERNAL_CONFIG_FILE /opt/${project_name}/application.properties
@@ -50,8 +52,10 @@ RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
     sed -i "s|spring\.kendo\.datasource\.username.*|spring.kendo.datasource.username=${database_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.kendo\.datasource\.password.*|spring.kendo.datasource.password=${database_password}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|spring\.jpa\.properties\.hibernate\.dialect.*|spring.jpa.properties.hibernate.dialect=${database_dialect}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
-    sed -i "s|.*server\.domain.*|server.domain=${machine_domain}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|server\.domain.*|server.domain=${machine_domain}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|server\.schema.*|server.schema=${protocol}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     sed -i "s|server\.servlet\.context-path.*|server.servlet.context-path=/${project_name}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
+    sed -i "s|enable\.guest\.user.*|enable.guest.user=${enable_guest_user}|g" /opt/${project_name}/${project_name}/BOOT-INF/classes/application.properties  && \
     #Add the modified files to the jar again 
     cd /opt/${project_name}/${project_name} && \
     zip /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/classes/application.properties && \
