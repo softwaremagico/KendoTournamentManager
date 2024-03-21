@@ -1,17 +1,44 @@
 package com.softwaremagico.kt.core.providers;
 
+/*-
+ * #%L
+ * Kendo Tournament Manager (Core)
+ * %%
+ * Copyright (C) 2021 - 2024 Softwaremagico
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.github.simonscholz.qrcode.QrCodeApi;
 import io.github.simonscholz.qrcode.QrCodeConfig;
 import io.github.simonscholz.qrcode.QrCodeDotStyler;
 import io.github.simonscholz.qrcode.QrCodeFactory;
 import io.github.simonscholz.qrcode.QrPositionalSquaresConfig;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.batik.util.XMLResourceDescriptor;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.svg.SVGDocument;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -20,11 +47,16 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Service
 public class QrProvider {
+
+    private static final float DEFAULT_SVG_SIZE = 200F;
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
                                                        Color center, Color innerSquare, Color outerSquare, Color outerBorder) {
@@ -103,7 +135,12 @@ public class QrProvider {
 
         if (resourceLogo != null) {
             try {
-                final BufferedImage logoImage = readResource(resourceLogo, (float) size);
+                final BufferedImage logoImage;
+                if (resourceLogo.endsWith(".svg")) {
+                    logoImage = readSvgResource(resourceLogo, size != null ? (float) size : DEFAULT_SVG_SIZE, ink);
+                } else {
+                    logoImage = readImageResource(resourceLogo);
+                }
                 builder = builder.qrLogoConfig(logoImage);
             } catch (Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
@@ -124,37 +161,60 @@ public class QrProvider {
         }
     }
 
-    private BufferedImage readResource(String resourceLogo, float size) throws IOException, TranscoderException {
-        if (resourceLogo.endsWith(".svg")) {
-            // Create a PNG transcoder.
-            final Transcoder pngTranscoder = new PNGTranscoder();
+    private BufferedImage readImageResource(String resourceLogo) throws IOException {
+        final URL urlResource = QrProvider.class.getClassLoader().getResource(resourceLogo);
+        return ImageIO.read(urlResource);
+    }
 
-            // Set the transcoding hints.
-            pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, size / 2);
-            pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, size / 2);
-            try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceLogo)) {
-                // Create the transcoder input.
-                final TranscoderInput input = new TranscoderInput(inputStream);
+    private BufferedImage readSvgResource(String resourceLogo, float size, Color ink) throws IOException, TranscoderException, URISyntaxException {
+        //Change SVG Color.
+        final String svgText = Files.readString(Paths.get(getClass().getClassLoader().getResource(resourceLogo).toURI()));
+        final SVGDocument svgDocument = updateLogoColor(svgText, ink);
 
-                // Create the transcoder output.
-                final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                final TranscoderOutput output = new TranscoderOutput(outputStream);
+        //Convert to PNG.
+        final Transcoder pngTranscoder = new PNGTranscoder();
 
-                // Save the image.
-                pngTranscoder.transcode(input, output);
+        // Set the transcoding hints.
+        pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, size / 2);
+        pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, size / 2);
+        // Create the transcoder input.
+        final TranscoderInput input = new TranscoderInput(svgDocument);
 
-                // Flush and close the stream.
-                outputStream.flush();
-                outputStream.close();
+        // Create the transcoder output.
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        final TranscoderOutput output = new TranscoderOutput(outputStream);
 
-                // Convert the byte stream into an image.
-                final byte[] imgData = outputStream.toByteArray();
-                return ImageIO.read(new ByteArrayInputStream(imgData));
+        // Save the image.
+        pngTranscoder.transcode(input, output);
+
+        // Flush and close the stream.
+        outputStream.flush();
+        outputStream.close();
+
+        // Convert the byte stream into an image.
+        final byte[] imgData = outputStream.toByteArray();
+        return ImageIO.read(new ByteArrayInputStream(imgData));
+    }
+
+    private SVGDocument updateLogoColor(String svgText, Color color) throws IOException {
+        final StringReader reader = new StringReader(svgText);
+        final String uri = "file:svgImage";
+        final String parser = XMLResourceDescriptor.getXMLParserClassName();
+        final SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
+        final SVGDocument svgDocument = f.createSVGDocument(uri, reader);
+        if (color != null) {
+            final NodeList styleList = svgDocument.getElementsByTagName("path");
+            for (int i = 0; i < styleList.getLength(); i++) {
+                // To search only "style" desired children
+                final Node defsChild = styleList.item(i);
+                if (defsChild.getNodeType() == Node.ELEMENT_NODE) {
+                    final Element element = (Element) defsChild;
+                    element.setAttributeNS(null, "fill", "#"
+                            + Integer.toHexString(color.getRGB()).substring(2));
+                }
             }
-        } else {
-            final URL urlResource = QrProvider.class.getClassLoader().getResource(resourceLogo);
-            return ImageIO.read(urlResource);
         }
+        return svgDocument;
     }
 
 
