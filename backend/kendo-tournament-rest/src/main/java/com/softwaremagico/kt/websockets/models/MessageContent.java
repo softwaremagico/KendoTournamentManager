@@ -26,6 +26,7 @@ public class MessageContent {
     private String topic;
     private String payload;
     private String type;
+    private String actor;
 
     //Parameters as json content.
     private Object parameters;
@@ -43,6 +44,12 @@ public class MessageContent {
     public MessageContent(String topic, String payload, String type) {
         this(topic, payload);
         setType(type);
+    }
+
+    public MessageContent(String topic, String payload, String type, String actor) {
+        this(topic, payload);
+        setType(type);
+        setActor(actor);
     }
 
     public MessageContent(String topic, String payload, String type, Object parameters) {
@@ -80,5 +87,13 @@ public class MessageContent {
 
     public void setParameters(Object parameters) {
         this.parameters = parameters;
+    }
+
+    public String getActor() {
+        return actor;
+    }
+
+    public void setActor(String actor) {
+        this.actor = actor;
     }
 }
