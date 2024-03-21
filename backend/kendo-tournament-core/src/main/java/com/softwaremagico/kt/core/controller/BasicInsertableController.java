@@ -49,15 +49,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     private final CONVERTER converter;
 
     public interface ElementCreatedListener {
-        void created(ElementDTO element);
+        void created(ElementDTO element, String actor);
     }
 
     public interface ElementUpdatedListener {
-        void updated(ElementDTO element);
+        void updated(ElementDTO element, String actor);
     }
 
     public interface ElementDeletedListener {
-        void deleted(ElementDTO element);
+        void deleted(ElementDTO element, String actor);
     }
 
     protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
@@ -104,7 +104,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         } finally {
             //Advise the frontend!
             new Thread(() ->
-                    elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO))).start();
+                    elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO, username))).start();
         }
     }
 
@@ -121,7 +121,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             //Advise the frontend!
             new Thread(() ->
                     refreshedData.forEach(updatedDTO ->
-                            elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO)))).start();
+                            elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO, username)))).start();
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         } finally {
             //Advise the frontend!
             new Thread(() ->
-                    elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO))).start();
+                    elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO, username))).start();
         }
     }
 
@@ -157,29 +157,29 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             //Advise the frontend!
             new Thread(() ->
                     savedDTOs.forEach(savedDTO ->
-                            elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO)))).start();
+                            elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO, username)))).start();
         }
     }
 
 
-    public void delete(DTO entity) {
+    public void delete(DTO entity, String username) {
         try {
             getProvider().delete(reverse(entity));
         } finally {
             //Advise the frontend!
             new Thread(() ->
-                    elementDeletedListeners.forEach(elementCreatedListener -> elementCreatedListener.deleted(entity))).start();
+                    elementDeletedListeners.forEach(elementDeletedListener -> elementDeletedListener.deleted(entity, username))).start();
         }
     }
 
-    public void delete(Collection<DTO> entities) {
+    public void delete(Collection<DTO> entities, String username) {
         try {
             getProvider().delete(reverseAll(entities));
         } finally {
             //Advise the frontend!
             new Thread(() ->
                     entities.forEach(deletedDTO ->
-                            elementDeletedListeners.forEach(elementCreatedListener -> elementCreatedListener.deleted(deletedDTO)))).start();
+                            elementDeletedListeners.forEach(elementDeletedListener -> elementDeletedListener.deleted(deletedDTO, username)))).start();
         }
     }
 

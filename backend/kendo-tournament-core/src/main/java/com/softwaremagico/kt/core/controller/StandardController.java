@@ -43,7 +43,7 @@ public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepo
 
     public abstract DTO get(Integer id);
 
-    public void deleteById(Integer id) {
+    public void deleteById(Integer id, String username) {
         getProvider().deleteById(id);
     }
 

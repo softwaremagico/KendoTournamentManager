@@ -69,7 +69,7 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
     }
 
     public interface FightUpdatedListener {
-        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel);
+        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel, String actor);
     }
 
     @Autowired
@@ -129,7 +129,7 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
                 final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
 
                 //Fight is updated, refresh screens.
-                fightsUpdatedListeners.forEach(fightUpdatedListener -> fightUpdatedListener.finished(tournamentDTO, fightDTO, duel));
+                fightsUpdatedListeners.forEach(fightUpdatedListener -> fightUpdatedListener.finished(tournamentDTO, fightDTO, duel, username));
 
                 if (tournament.getShiaijos() > 1) {
                     final List<Fight> fightsOfShiaijo = fightProvider.findByTournamentAndShiaijo(tournament, fight.getShiaijo());
