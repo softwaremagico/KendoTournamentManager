@@ -122,8 +122,8 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        getController().deleteById(id);
+                       Authentication authentication, HttpServletRequest request) {
+        getController().deleteById(id, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
