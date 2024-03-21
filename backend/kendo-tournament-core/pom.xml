@@ -65,6 +65,18 @@
             <artifactId>qr-code-with-logo</artifactId>
             <version>${qr-code.version}</version>
         </dependency>
+        <!-- For SVG logs on QR -->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-transcoder</artifactId>
+            <version>${apache-batik.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-codec</artifactId>
+            <version>${apache-batik.version}</version>
+        </dependency>
+
 
         <!-- Testing -->
         <dependency>
