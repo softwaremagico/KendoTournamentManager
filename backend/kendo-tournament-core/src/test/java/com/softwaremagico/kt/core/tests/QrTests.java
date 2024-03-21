@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -47,6 +47,7 @@ public class QrTests extends AbstractTestNGSpringContextTests {
     private static final String SOFTWARE_URL = "https://github.com/softwaremagico/KendoTournamentManager";
 
     protected static final String OUTPUT_FOLDER = System.getProperty("java.io.tmpdir") + File.separator + "QrTest";
+    protected static final String JWT_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eaJzdWIiOiIxLGFkbWluQHRlc3QuY29tLDEyNy4wLjAuMSwiLCJpc3MiOiJjb11cc29mdHdhcmVtYWdpY28iLCJpYXQiOjE3MTEwMjUxOTMsImV4cCI6MTcxMTAyNjM5M30.b5ts7OHymYJ9TwPB81JRxrss2y31zkJfwj5vXEOHYlRCWztbdqLSLFVW9ojb88paDwUj6wOCC1juzGZXkCzwMA";
 
     @Autowired
     private QrProvider qrProvider;
@@ -117,6 +118,12 @@ public class QrTests extends AbstractTestNGSpringContextTests {
     public void createSizedQr() {
         BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 500, null, null, null, "kote.png", null, null);
         saveImage(qrImage, "withSize");
+    }
+
+    @Test
+    public void createSJwtQr() {
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL + "?token=" + JWT_TOKEN, 500, null, null, null, "kote.png", null, null);
+        saveImage(qrImage, "withToken");
     }
 
     @AfterClass

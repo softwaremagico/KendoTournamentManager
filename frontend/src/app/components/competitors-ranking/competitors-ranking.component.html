@@ -28,7 +28,7 @@
   </table>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
+  <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
           mat-flat-button
           mat-raised-button>
     <mat-icon>file_download</mat-icon>

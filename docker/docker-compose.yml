@@ -108,6 +108,7 @@ services:
       args:
         - release
         - machine_domain
+        - protocol
         - database_password
         - database_user
         - database_name
@@ -118,6 +119,7 @@ services:
         - jwt_expiration
         - jwt_secret
         - jwt_ip_check
+        - enable_guest_user
     image: kendo-tournament-backend
     restart: always
     networks:

@@ -26,7 +26,8 @@ public enum AvailableRole {
 
     ROLE_EDITOR,
 
-    ROLE_ADMIN;
+    ROLE_ADMIN,
+    ROLE_GUEST;
 
     public static final String ROLE_PREFIX = "ROLE_";
 
