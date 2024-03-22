@@ -84,7 +84,7 @@ export class LoginService {
           (): void => {
           });
         this.activityService.setRoles(authenticatedUser.roles);
-        localStorage.setItem('username', "guest");
+        localStorage.setItem('username', 'guest');
         callback(authenticatedUser.jwt, authenticatedUser.expires);
       },
       error: (error): void => {
