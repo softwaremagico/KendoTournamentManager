@@ -38,4 +38,18 @@ export class TournamentQrCodeComponent implements OnInit {
   }
 
   protected readonly RbacActivity = RbacActivity;
+
+  downloadQrAsPdf(): void {
+    this.qrService.getGuestsQrAsPdf(this.tournament).subscribe((html: Blob): void => {
+      if (html !== null) {
+        const blob: Blob = new Blob([html], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
+
+        const anchor: HTMLAnchorElement = document.createElement("a");
+        anchor.download = "Tournament - " + this.tournament + " - QR .pdf";
+        anchor.href = downloadURL;
+        anchor.click();
+      }
+    });
+  }
 }

@@ -52,7 +52,7 @@ public class DiplomaPDF extends PdfDocument {
             this.backgroundImage = Image.getInstance(backgroundImage);
         } catch (IOException e) {
             KendoTournamentLogger.severe(this.getClass().getName(), "No background image found");
-            backgroundImage = null;
+            this.backgroundImage = null;
         }
         this.nameHeight = nameHeight;
     }
@@ -88,7 +88,6 @@ public class DiplomaPDF extends PdfDocument {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.setTotalWidth(document.getPageSize().getWidth());
 
-        document.newPage();
         addBackGroundImage(document);
 
         final Paragraph p = new Paragraph(NameUtils.getLastnameName(participant), new Font(PdfTheme.getLineFont(), PdfTheme.DIPLOMA_FONT_SIZE));
