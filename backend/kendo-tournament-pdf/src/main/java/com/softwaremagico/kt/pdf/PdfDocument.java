@@ -89,7 +89,6 @@ public abstract class PdfDocument {
             path += ".pdf";
         }
 
-        // DIN A6 105 x 148 mm
         try (Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin)) {
 
             try {

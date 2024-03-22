@@ -37,6 +37,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -76,6 +77,9 @@ public class AuthApi {
 
     private final Random random = new Random();
 
+    @Value("#{new Boolean('${enable.guest.user}')}")
+    private boolean guestEnabled;
+
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
@@ -93,8 +97,8 @@ public class AuthApi {
     public ResponseEntity<AuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         try {
-            //Check if the IP is blocked.
-            if (bruteForceService.isBlocked(ip)) {
+            //Check if the IP is blocked. Guest user attempts cannot block IP.
+            if (bruteForceService.isBlocked(ip) && !Objects.equals(request.getUsername(), AuthenticatedUser.GUEST_USER) && guestEnabled) {
                 try {
                     Thread.sleep(random.nextInt(MAX_WAITING_SECONDS) * MILLIS);
                     RestServerLogger.warning(this.getClass().getName(), "Too many attempts from IP '" + ip + "'.");
@@ -114,15 +118,19 @@ public class AuthApi {
                     }
                 }
             }
-            //We verify the provided credentials using the authentication manager
-            RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
-            final Authentication authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
+            //We verify the provided credentials using the authentication manager. Except for guest users where password is ignored.
+            if (!Objects.equals(request.getUsername(), AuthenticatedUser.GUEST_USER) || !guestEnabled) {
+                RestServerLogger.debug(this.getClass().getName(), "Trying to log in with '" + request.getUsername() + "'.");
+                authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
+            } else {
+                RestServerLogger.info(this.getClass().getName(), "User 'guest' accessing to the system.");
+            }
 
             try {
-                final AuthenticatedUser user = authenticatedUserRepository.findByUsername(authenticate.getName()).orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
+                final AuthenticatedUser user = authenticatedUserRepository.findByUsername(request.getUsername()).orElseThrow(() ->
+                        new UsernameNotFoundException(String.format("User '%s' not found!", request.getUsername())));
                 final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
