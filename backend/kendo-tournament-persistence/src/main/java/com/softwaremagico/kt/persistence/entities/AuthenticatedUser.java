@@ -78,6 +78,15 @@ public class AuthenticatedUser implements UserDetails {
     @Column(name = "roles")
     private Set<String> roles;
 
+    public AuthenticatedUser() {
+        super();
+    }
+
+    public AuthenticatedUser(String username) {
+        this();
+        setUsername(username);
+    }
+
     @JsonIgnore
     private transient Set<SimpleGrantedAuthority> authorities;
 
