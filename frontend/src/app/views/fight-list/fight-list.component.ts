@@ -173,8 +173,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
       if (messageContent.topic == "Fight") {
-        const fight: Fight = JSON.parse(messageContent.payload);
-        this.replaceFight(fight);
+        if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
+          const fight: Fight = JSON.parse(messageContent.payload);
+          this.replaceFight(fight);
+        } else if (messageContent.type.toLowerCase() == "created") {
+          this.refreshFights();
+        }
       }
     });
   }
