@@ -862,6 +862,7 @@
   "tournamentProperties": "Tournament Properties",
   "tournamentCloneWarning": "You are going to duplicate the tournament. Are you sure to continue?",
   "tournamentListAsZip": "Download all PDF lists in a zip file",
-  "shiaijoFinished": "All shiaijo {{shiaijoName}} matches have ended."
+  "shiaijoFinished": "All shiaijo {{shiaijoName}} matches have ended.",
+  "qrCodeHint": "Displays a QR code that allows guests to track tournament scores."
 }
 

@@ -57,6 +57,8 @@ import java.nio.file.Paths;
 public class QrProvider {
 
     private static final float DEFAULT_SVG_SIZE = 200F;
+    private static final double BORDER_RELATIVE_SIZE = 0.02d;
+    private static final double BORDER_RADIUS = 0.03d;
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
                                                        Color center, Color innerSquare, Color outerSquare, Color outerBorder) {
@@ -96,7 +98,7 @@ public class QrProvider {
     }
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo) {
-        return getQr(content, size, color, resourceLogo, false);
+        return getQr(content, size, color, resourceLogo, true);
     }
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo, boolean circleShaped) {
@@ -118,7 +120,7 @@ public class QrProvider {
 
 
         if (borderColor != null) {
-            builder = builder.qrBorderConfig(borderColor);
+            builder = builder.qrBorderConfig(borderColor, BORDER_RELATIVE_SIZE, BORDER_RADIUS);
         }
 
         if (ink != null) {
