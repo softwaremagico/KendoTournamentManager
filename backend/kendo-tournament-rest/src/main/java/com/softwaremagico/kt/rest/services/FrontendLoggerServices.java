@@ -42,7 +42,7 @@ public class FrontendLoggerServices {
         return parameter.toString().replaceAll("[\n\r\t]", "_");
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Register an action that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
@@ -50,7 +50,7 @@ public class FrontendLoggerServices {
         FrontendLogger.info(this.getClass(), sanitize(log.getMessage()));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Register a warning that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
@@ -58,7 +58,7 @@ public class FrontendLoggerServices {
         FrontendLogger.warning(this.getClass(), sanitize(log.getMessage()));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Register an error that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)

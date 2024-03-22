@@ -113,31 +113,37 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<Object> userBlockedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("USER BLOCKED", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LevelNotFinishedException.class)
     public ResponseEntity<Object> levelNotFinishedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("DRAW SCORE EXISTS", ex), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(InvalidMacException.class)
     public ResponseEntity<Object> invalidMacException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("MAC INVALID", ex), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidIpException.class)
     public ResponseEntity<Object> invalidIpException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INVALID IP", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidJwtException.class)
     public ResponseEntity<Object> invalidJwtException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INVALID JWT", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(GuestDisabledException.class)
+    public ResponseEntity<Object> guestDisabledException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
     }
 
     private String getStacktrace(Throwable e) {
