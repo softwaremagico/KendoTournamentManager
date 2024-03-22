@@ -41,19 +41,19 @@
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+  <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="fight-button" mat-flat-button
           mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
     {{'sorted' | translate}}
   </button>
-  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+  <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="fight-button" mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
     {{'random' | translate}}
   </button>
-  <button (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+  <button (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           [disabled]="teamsOrder.length===0 || teamListData.teams.length>0" class="fight-button" color="primary"
           mat-flat-button
           mat-raised-button>

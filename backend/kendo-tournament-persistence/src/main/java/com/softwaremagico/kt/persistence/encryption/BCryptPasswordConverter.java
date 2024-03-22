@@ -32,8 +32,8 @@ public class BCryptPasswordConverter implements AttributeConverter<String, Strin
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
-        if (attribute == null) {
-            return null;
+        if (attribute == null || attribute.isEmpty()) {
+            return attribute;
         }
         return getEncoder().encode(attribute);
     }

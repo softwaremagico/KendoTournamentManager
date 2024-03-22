@@ -5,6 +5,8 @@ import {MessageService} from "../../../../../services/message.service";
 import {Score} from "../../../../../models/score";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../../../../services/rbac/rbac.service";
+import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'fault',
@@ -37,7 +39,7 @@ export class FaultComponent implements OnInit, OnChanges {
   onRightBorder: boolean;
 
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService, public rbacService: RbacService) {
   }
 
   ngOnInit(): void {
@@ -160,4 +162,6 @@ export class FaultComponent implements OnInit, OnChanges {
       this.onRightBorder = true;
     }
   }
+
+  protected readonly RbacActivity = RbacActivity;
 }

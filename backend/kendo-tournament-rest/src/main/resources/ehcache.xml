@@ -79,4 +79,9 @@
         <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
     </cache>
 
+    <cache alias="qr-codes" uses-template="short-time-cache-template">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.softwaremagico.kt.core.controller.models.QrCodeDTO</value-type>
+    </cache>
+
 </config>

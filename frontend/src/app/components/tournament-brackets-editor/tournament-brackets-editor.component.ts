@@ -108,7 +108,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   }
 
   ngOnDestroy(): void {
-    this.topicSubscription.unsubscribe();
+    this.topicSubscription?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

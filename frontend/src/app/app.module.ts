@@ -117,6 +117,7 @@ import {
 } from "./views/tournament-list/tournament-dialog-box/tournament-extra-properties/tournament-extra-properties.module";
 import {RxStompService} from "./websockets/rx-stomp.service";
 import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
+import { TournamentQrCodeModule } from './components/tournament-qr-code/tournament-qr-code.module';
 
 
 registerLocaleData(localeES, "es");
@@ -225,6 +226,7 @@ registerLocaleData(localeNL, "nl");
     ShiaijoModule,
     TournamentBracketsEditorModule,
     TournamentGeneratorModule,
+    TournamentQrCodeModule,
   ],
   providers: [
     CookieService, {

@@ -37,7 +37,7 @@
       <span [innerHTML]="'clubDeleteQuestion' | translate : {name: club.name}"></span>
     </ng-template>
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)" [disabled]="registerForm.invalid"
+      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())" [disabled]="registerForm.invalid"
               color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
