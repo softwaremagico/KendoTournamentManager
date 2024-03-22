@@ -117,6 +117,7 @@ services:
         - database_port
         - database_encryption_key
         - jwt_expiration
+        - jwt_guest_expiration
         - jwt_secret
         - jwt_ip_check
         - enable_guest_user
