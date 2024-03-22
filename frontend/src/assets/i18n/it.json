@@ -845,7 +845,8 @@
   "tournamentProperties": "Proprietà del torneo",
   "tournamentCloneWarning": "Raddoppierai il torneo. Sei sicuro di continuare?",
   "tournamentListAsZip": "Scarica tutti gli elenchi PDF in un file zip.",
-  "shiaijoFinished": "Tutte le partite di shiaijo {{shiaijoName}} sono terminate."
+  "shiaijoFinished": "Tutte le partite di shiaijo {{shiaijoName}} sono terminate.",
+  "qrCodeHint": "Visualizza un codice QR che consente agli ospiti di tenere traccia dei punteggi del torneo.\n\n"
 }
 
 

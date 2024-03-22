@@ -55,13 +55,13 @@ export class BasicTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.topicSubscription.unsubscribe();
+    this.topicSubscription?.unsubscribe();
   }
 
   connectToWebsockets(): void {
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/creates').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type == "created") {
+      if (messageContent.type && messageContent.type.toLowerCase() == "created") {
         if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
           const element = JSON.parse(messageContent.payload);
           if (this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id) < 0) {
@@ -74,7 +74,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/updates').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type == "updated") {
+      if (messageContent.type && messageContent.type.toLowerCase() == "updated") {
         if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
           const element = JSON.parse(messageContent.payload);
           let index: number = this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id);
@@ -93,7 +93,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/deletes').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type == "deleted") {
+      if (messageContent.type && messageContent.type.toLowerCase() == "deleted") {
         if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
           const element = JSON.parse(messageContent.payload);
           this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(obj => obj.id !== element.id);

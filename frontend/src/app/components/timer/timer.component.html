@@ -22,41 +22,41 @@
       </div>
     </div>
     <div [class.non-editable]="!editable" class="timer-buttons">
-      <button (click)="addTime(-60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
+      <button (click)="addTime(-60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               class="rewind timer-button">-1'
       </button>
-      <button (click)="addTime(-10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
+      <button (click)="addTime(-10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               class="rewind timer-button">-10"
       </button>
-      <button (click)="startTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+      <button (click)="startTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               [hidden]="started"
               class="play timer-button">
         <mat-icon>play_arrow</mat-icon>
       </button>
-      <button (click)="pauseTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+      <button (click)="pauseTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               [hidden]="!started"
               class="pause timer-button">
         <mat-icon>pause</mat-icon>
       </button>
-      <button (click)="finishTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+      <button (click)="finishTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               class="stop timer-button">
         <mat-icon>check_circle</mat-icon>
       </button>
-      <button (click)="restoreTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+      <button (click)="restoreTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
               [disabled]="this.elapsedSeconds === 0 || !editable"
               class="restore timer-button">
         <mat-icon>restore</mat-icon>
       </button>
-      <button (click)="addTime(+10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
+      <button (click)="addTime(+10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               class="forward timer-button">+10"
       </button>
-      <button (click)="addTime(+60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.activities)"
+      <button (click)="addTime(+60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               class="forward timer-button">+1'
       </button>

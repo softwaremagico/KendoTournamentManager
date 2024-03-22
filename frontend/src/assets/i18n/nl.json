@@ -839,7 +839,8 @@
   "tournamentProperties": "Toernooi-eigenschappen",
   "tournamentCloneWarning": "Je gaat het toernooi verdubbelen. Weet je zeker dat je doorgaat?",
   "tournamentListAsZip": "Download alle PDF-lijsten in een zip-bestand.",
-  "shiaijoFinished": "Alle wedstrijden van shiaijo {{shiaijoName}} zijn afgelopen."
+  "shiaijoFinished": "Alle wedstrijden van shiaijo {{shiaijoName}} zijn afgelopen.",
+  "qrCodeHint": "Toont een QR-code waarmee gasten toernooiscores kunnen volgen.\n\n"
 }
 
 

@@ -52,7 +52,7 @@ public class DiplomaPDF extends PdfDocument {
             this.backgroundImage = Image.getInstance(backgroundImage);
         } catch (IOException e) {
             KendoTournamentLogger.severe(this.getClass().getName(), "No background image found");
-            backgroundImage = null;
+            this.backgroundImage = null;
         }
         this.nameHeight = nameHeight;
     }

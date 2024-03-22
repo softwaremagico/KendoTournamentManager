@@ -23,6 +23,7 @@ package com.softwaremagico.kt.pdf.controller;
 
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantImageController;
+import com.softwaremagico.kt.core.controller.QrController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
@@ -30,6 +31,7 @@ import com.softwaremagico.kt.core.controller.TournamentImageController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
+import com.softwaremagico.kt.core.controller.models.QrCodeDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
@@ -47,6 +49,7 @@ import com.softwaremagico.kt.pdf.lists.GroupList;
 import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.TeamList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
+import com.softwaremagico.kt.pdf.qr.TournamentQr;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
@@ -81,9 +84,11 @@ public class PdfController {
 
     private final TournamentExtraPropertyController tournamentExtraPropertyController;
 
+    private final QrController qrController;
+
     public PdfController(MessageSource messageSource, RoleController roleController, TeamController teamController, GroupController groupController,
                          TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
-                         TournamentExtraPropertyController tournamentExtraPropertyController) {
+                         TournamentExtraPropertyController tournamentExtraPropertyController, QrController qrController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
         this.teamController = teamController;
@@ -91,6 +96,7 @@ public class PdfController {
         this.tournamentImageController = tournamentImageController;
         this.participantImageController = participantImageController;
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
+        this.qrController = qrController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
@@ -223,5 +229,10 @@ public class PdfController {
         } catch (Exception e) {
             return DEFAULT_NAME_POSITION;
         }
+    }
+
+    public TournamentQr generateTournamentQr(Locale locale, Integer tournamentId) {
+        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournamentId);
+        return new TournamentQr(messageSource, locale, qrCodeDTO.getTournament(), qrCodeDTO.getData(), null);
     }
 }
