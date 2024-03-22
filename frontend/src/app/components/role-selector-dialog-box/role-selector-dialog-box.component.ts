@@ -24,19 +24,19 @@ export class RoleSelectorDialogBoxComponent {
     this.tournament = data.tournament;
   }
 
-  setRoles(newOnes: boolean) {
+  setRoles(newOnes: boolean): void {
     this.dialogRef.close({data: this.roles, newOnes: newOnes, action: Action.Selected});
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close({data: undefined, action: Action.Cancel});
   }
 
-  select(checked: boolean, roleType: RoleType) {
+  select(checked: boolean, roleType: RoleType): void {
     if (checked) {
       this.roles.push(roleType);
     } else {
-      this.roles = this.roles.filter(item => item !== roleType);
+      this.roles = this.roles.filter((item: RoleType): boolean => item !== roleType);
     }
   }
 }

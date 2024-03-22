@@ -1,6 +1,7 @@
 package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.QrController;
+import com.softwaremagico.kt.core.controller.models.QrCodeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -29,10 +30,10 @@ public class QrService {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/guest/tournament/{tournamentId}", produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] generateGuestQrCodeForTournamentFights(@Parameter(description = "Id of an existing tournament", required = true)
+    @GetMapping(value = "/guest/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO generateGuestQrCodeForTournamentFights(@Parameter(description = "Id of an existing tournament", required = true)
                                                          @PathVariable("tournamentId") Integer tournamentId,
-                                                         HttpServletResponse response, HttpServletRequest request) {
+                                                            HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("QR.png").build();

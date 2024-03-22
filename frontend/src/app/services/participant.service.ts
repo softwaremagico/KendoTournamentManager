@@ -47,7 +47,7 @@ export class ParticipantService {
       );
   }
 
-  deleteById(id: number) {
+  deleteById(id: number): void {
     const url: string = `${this.baseUrl}/${id}`;
     this.http.delete(url)
       .pipe(
