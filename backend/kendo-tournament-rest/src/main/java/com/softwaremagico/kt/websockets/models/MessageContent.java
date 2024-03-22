@@ -21,11 +21,13 @@ package com.softwaremagico.kt.websockets.models;
  * #L%
  */
 
+import com.softwaremagico.kt.websockets.models.messages.MessageContentType;
+
 public class MessageContent {
 
     private String topic;
     private String payload;
-    private String type;
+    private MessageContentType type;
     private String actor;
 
     //Parameters as json content.
@@ -41,18 +43,18 @@ public class MessageContent {
         this.payload = payload;
     }
 
-    public MessageContent(String topic, String payload, String type) {
+    public MessageContent(String topic, String payload, MessageContentType type) {
         this(topic, payload);
         setType(type);
     }
 
-    public MessageContent(String topic, String payload, String type, String actor) {
+    public MessageContent(String topic, String payload, MessageContentType type, String actor) {
         this(topic, payload);
         setType(type);
         setActor(actor);
     }
 
-    public MessageContent(String topic, String payload, String type, Object parameters) {
+    public MessageContent(String topic, String payload, MessageContentType type, Object parameters) {
         this(topic, payload, type);
         setParameters(parameters);
     }
@@ -73,11 +75,11 @@ public class MessageContent {
         this.topic = topic;
     }
 
-    public String getType() {
+    public MessageContentType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageContentType type) {
         this.type = type;
     }
 

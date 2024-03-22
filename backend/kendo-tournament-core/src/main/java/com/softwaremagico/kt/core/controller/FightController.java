@@ -42,7 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class FightController extends BasicInsertableController<Fight, FightDTO, FightRepository,
@@ -51,15 +53,24 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final TournamentProvider tournamentProvider;
     private final TournamentHandlerSelector tournamentHandlerSelector;
 
+    private final Set<FightsAddedListener> fightsAddedListeners = new HashSet<>();
+
+    public interface FightsAddedListener {
+        void created(List<FightDTO> fights, String actor);
+    }
+
 
     @Autowired
-
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
+    }
+
+    public void addFightsAddedListeners(FightsAddedListener listener) {
+        fightsAddedListeners.add(listener);
     }
 
     @Override
@@ -124,7 +135,14 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         if (selectedManager != null) {
             final List<Fight> createdFights = getProvider().saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
             tournamentProvider.markAsFinished(tournament, false);
-            return convertAll(createdFights);
+            final List<FightDTO> fightDTOS = convertAll(createdFights);
+            try {
+                return fightDTOS;
+            } finally {
+                new Thread(() ->
+                        fightsAddedListeners.forEach(fightsAddedListener -> fightsAddedListener.created(fightDTOS, createdBy))
+                ).start();
+            }
         }
         return new ArrayList<>();
     }
@@ -139,7 +157,14 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             if (!createdFights.isEmpty()) {
                 tournamentProvider.markAsFinished(tournament, false);
             }
-            return convertAll(createdFights);
+            final List<FightDTO> fightDTOS = convertAll(createdFights);
+            try {
+                return fightDTOS;
+            } finally {
+                new Thread(() ->
+                        fightsAddedListeners.forEach(fightsAddedListener -> fightsAddedListener.created(fightDTOS, createdBy))
+                ).start();
+            }
         }
         return new ArrayList<>();
     }
