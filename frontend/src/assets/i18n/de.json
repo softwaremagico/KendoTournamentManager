@@ -839,7 +839,8 @@
   "tournamentProperties": "Turniereigenschaften",
   "tournamentCloneWarning": "Sie werden das Turnier verdoppeln. Sind Sie sicher, dass Sie fortfahren?",
   "tournamentListAsZip": "Laden Sie alle PDF-Listen in einer ZIP-Datei herunter.",
-  "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet."
+  "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet.",
+  "qrCodeHint": "Zeigt einen QR-Code an, mit dem Gäste Turnierergebnisse verfolgen können."
 }
 
 

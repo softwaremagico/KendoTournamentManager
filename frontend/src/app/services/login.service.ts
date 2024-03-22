@@ -7,6 +7,8 @@ import {CookieService} from "ngx-cookie-service";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
+import {Router} from "@angular/router";
+import {ActivityService} from "./rbac/activity.service";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,7 @@ export class LoginService {
   private interval: NodeJS.Timeout | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private cookies: CookieService) {
+              private cookies: CookieService, private activityService: ActivityService, private router: Router) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
       this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
         (jwt: string, expires: number): void => {
@@ -39,6 +41,23 @@ export class LoginService {
           response.body.expires = response.headers.get('Expires');
           return response.body;
         }));
+  }
+
+  //Basic login for guests.
+  setUserSession(username: string, password: string): void {
+    this.login(username, password).subscribe({
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (): void => {
+          });
+        this.activityService.setRoles(authenticatedUser.roles);
+        localStorage.setItem('username', username);
+      },
+      error: (error): void => {
+        this.router.navigate(["/"]);
+      }
+    });
   }
 
   logout(): void {

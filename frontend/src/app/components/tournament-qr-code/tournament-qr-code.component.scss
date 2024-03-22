@@ -1,0 +1,33 @@
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
+
+.qr-container {
+  margin: 40px;
+}
+
+.qr-code {
+  height: 400px;
+}
+
+.mat-dialog-content {
+  overflow: clip;
+}
+
+.floating-button {
+  position: absolute;
+  margin-left: 5px;
+  margin-top: -40px;
+}
+
+.mat-picture {
+  background-color: green;
+  color: #fff;
+}
+
+

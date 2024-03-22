@@ -5,6 +5,8 @@ import {Score} from "../../../../../models/score";
 import {MessageService} from "../../../../../services/message.service";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
 import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../../../../services/rbac/rbac.service";
+import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'score',
@@ -42,7 +44,7 @@ export class ScoreComponent implements OnInit, OnChanges {
   onRightBorder: boolean;
 
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
-              private translateService: TranslateService) {
+              private translateService: TranslateService, public rbacService: RbacService) {
   }
 
   ngOnInit(): void {
@@ -254,4 +256,6 @@ export class ScoreComponent implements OnInit, OnChanges {
       this.onRightBorder = true;
     }
   }
+
+  protected readonly RbacActivity = RbacActivity;
 }

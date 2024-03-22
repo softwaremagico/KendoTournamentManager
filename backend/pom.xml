@@ -103,6 +103,8 @@
         <jaxb-core.version>2.3.0.1</jaxb-core.version>
         <jaxb-impl.version>2.3.1</jaxb-impl.version>
         <javassist.version>3.25.0-GA</javassist.version>
+        <qr-code.version>0.3.0</qr-code.version>
+        <apache-batik.version>1.17</apache-batik.version>
     </properties>
 
     <build>

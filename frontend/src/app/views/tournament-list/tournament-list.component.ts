@@ -25,6 +25,7 @@ import {
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {AchievementsService} from "../../services/achievements.service";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
+import {TournamentQrCodeComponent} from "../../components/tournament-qr-code/tournament-qr-code.component";
 
 @Component({
   selector: 'app-tournament-list',
@@ -320,6 +321,16 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
         anchor.download = this.basicTableData.selectedElement!.name + ".zip";
         anchor.href = downloadURL;
         anchor.click();
+      });
+    }
+  }
+
+  showQrCode(): void {
+    if (this.basicTableData.selectedElement) {
+      const dialogRef: MatDialogRef<TournamentQrCodeComponent> = this.dialog.open(TournamentQrCodeComponent, {
+        data: {
+          tournament: this.basicTableData.selectedElement
+        }
       });
     }
   }
