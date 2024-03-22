@@ -139,7 +139,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.tournamentId) {
       this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
         this.tournament = tournament;
-        this.refreshFights();
+        if (localStorage.getItem('username') === "guest" && this.tournament.locked) {
+          this.goBackToTournament();
+        } else {
+          this.refreshFights();
+        }
       });
     }
     this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
