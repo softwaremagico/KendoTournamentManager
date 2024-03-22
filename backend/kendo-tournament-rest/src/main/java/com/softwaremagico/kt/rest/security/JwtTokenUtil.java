@@ -62,7 +62,7 @@ public class JwtTokenUtil {
 
     @Autowired
     public JwtTokenUtil(@Value("${jwt.secret:#{null}}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
-                        @Value("${jwt.guest.expiration:120000}") String jwtGuestExpiration,
+                        @Value("${jwt.guest.expiration:null}") String jwtGuestExpiration,
                         NetworkController networkController) {
         this.networkController = networkController;
 
@@ -92,7 +92,6 @@ public class JwtTokenUtil {
             try {
                 calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
             } catch (NumberFormatException e) {
-                RestServerLogger.warning(this.getClass().getName(), "jwt.guest.expiration value '{}' is invalid", jwtExpiration);
                 calculatedGuestJwtExpiration = this.jwtExpiration;
             }
         }
