@@ -44,12 +44,13 @@ public class AuthenticatedUserProvider {
 
     private final AuthenticatedUserRepository authenticatedUserRepository;
 
-    @Value("#{new Boolean('${enable.guest.user}')}")
-    private boolean guestEnabled;
+
+    private final boolean guestEnabled;
 
     @Autowired
-    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository) {
+    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticatedUserRepository = authenticatedUserRepository;
+        guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
 
