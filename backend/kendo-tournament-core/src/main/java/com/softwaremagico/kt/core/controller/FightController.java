@@ -31,7 +31,6 @@ import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
-import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
@@ -50,18 +49,16 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         FightProvider, FightConverterRequest, FightConverter> {
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
-    private final GroupProvider groupProvider;
     private final TournamentHandlerSelector tournamentHandlerSelector;
 
 
     @Autowired
+
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
-                           TournamentProvider tournamentProvider, GroupProvider groupProvider,
-                           TournamentHandlerSelector tournamentHandlerSelector) {
+                           TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
-        this.groupProvider = groupProvider;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
