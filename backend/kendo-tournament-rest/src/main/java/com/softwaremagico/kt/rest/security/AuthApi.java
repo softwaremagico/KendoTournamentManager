@@ -83,19 +83,20 @@ public class AuthApi {
 
     private final Random random = new Random();
 
-    @Value("#{new Boolean('${enable.guest.user}')}")
-    private boolean guestEnabled;
+    private final boolean guestEnabled;
 
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
-                   AuthenticatedUserProvider authenticatedUserProvider, TournamentProvider tournamentProvider) {
+                   AuthenticatedUserProvider authenticatedUserProvider, TournamentProvider tournamentProvider,
+                   @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserController = authenticatedUserController;
         this.bruteForceService = bruteForceService;
         this.authenticatedUserProvider = authenticatedUserProvider;
         this.tournamentProvider = tournamentProvider;
+        this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
 
@@ -180,7 +181,7 @@ public class AuthApi {
             try {
                 final AuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER).orElseThrow(() ->
                         new GuestDisabledException(this.getClass(), String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
-                final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
+                final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
 

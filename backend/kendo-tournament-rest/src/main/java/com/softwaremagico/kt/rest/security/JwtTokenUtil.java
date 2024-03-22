@@ -58,9 +58,11 @@ public class JwtTokenUtil {
 
     private final String jwtSecret;
     private final long jwtExpiration;
+    private final long jwtGuestExpiration;
 
     @Autowired
     public JwtTokenUtil(@Value("${jwt.secret:#{null}}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
+                        @Value("${jwt.guest.expiration:120000}") String jwtGuestExpiration,
                         NetworkController networkController) {
         this.networkController = networkController;
 
@@ -81,6 +83,20 @@ public class JwtTokenUtil {
             this.jwtSecret = generateRandomSecret();
         }
         this.jwtExpiration = calculatedJwtExpiration;
+
+        //If not set, guest expiration is the same that the standard one.
+        long calculatedGuestJwtExpiration;
+        if (jwtGuestExpiration == null) {
+            calculatedGuestJwtExpiration = this.jwtExpiration;
+        } else {
+            try {
+                calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
+            } catch (NumberFormatException e) {
+                RestServerLogger.warning(this.getClass().getName(), "jwt.guest.expiration value '{}' is invalid", jwtExpiration);
+                calculatedGuestJwtExpiration = this.jwtExpiration;
+            }
+        }
+        this.jwtGuestExpiration = calculatedGuestJwtExpiration;
     }
 
     private String generateRandomSecret() {
@@ -108,6 +124,10 @@ public class JwtTokenUtil {
      */
     public long getJwtExpirationTime() {
         return (System.currentTimeMillis() + jwtExpiration);
+    }
+
+    public long getJwtGuestExpirationTime() {
+        return (System.currentTimeMillis() + jwtGuestExpiration);
     }
 
     public String getUserId(String token) {
