@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.utils.ShiaijoName;
 import com.softwaremagico.kt.websockets.models.messages.AchievementAllGeneratedNumberParameters;
 import com.softwaremagico.kt.websockets.models.messages.AchievementGeneratedNumberParameters;
+import com.softwaremagico.kt.websockets.models.messages.MessageContentType;
 import com.softwaremagico.kt.websockets.models.messages.ShiaijoFinishedParameters;
 import org.springframework.stereotype.Component;
 
@@ -36,17 +37,17 @@ public class WebsocketMessages {
 
         //Send a message when the achievements from one tournament are finished.
         achievementController.addAchievementsGeneratedListener((achievementsGenerated, tournament) ->
-                webSocketController.sendMessage("achievementGenerated", "info",
+                webSocketController.sendMessage("achievementGenerated", MessageContentType.INFO,
                         new AchievementGeneratedNumberParameters(tournament.getName(), achievementsGenerated.size())));
 
         //Send a message when the achievements from all tournaments are finished.
         achievementController.addAchievementsGeneratedAllTournamentsListener((achievementsGenerated, tournaments) ->
-                webSocketController.sendMessage("achievementAllGenerated", "info",
+                webSocketController.sendMessage("achievementAllGenerated", MessageContentType.INFO,
                         new AchievementAllGeneratedNumberParameters(tournaments.size(), achievementsGenerated.size())));
 
         //Send a message when the all fights from a shiaijo are over.
         duelController.addShiaijoFinishedListener(((tournament, shiaijo) -> {
-            webSocketController.sendMessage("shiaijoFinished", "info",
+            webSocketController.sendMessage("shiaijoFinished", MessageContentType.INFO,
                     new ShiaijoFinishedParameters(tournament.getName(), ShiaijoName.getShiaijoName(shiaijo)));
         }));
     }
