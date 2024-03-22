@@ -22,15 +22,17 @@ package com.softwaremagico.kt.websockets;
  */
 
 import com.softwaremagico.kt.core.controller.DuelController;
+import com.softwaremagico.kt.core.controller.FightController;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WebsocketFights {
 
-    public WebsocketFights(DuelController duelController, WebSocketController webSocketController) {
+    public WebsocketFights(DuelController duelController, FightController fightController, WebSocketController webSocketController) {
 
         //Refresh screens when a duel is updated.
-        duelController.addFightUpdatedListener(((tournament, fight, duel, actor) -> webSocketController.sendFight(fight, actor)));
+        duelController.addFightUpdatedListener(((tournament, fight, duel, actor) -> webSocketController.fightUpdated(fight, actor)));
+        fightController.addFightsAddedListeners((webSocketController::fightsCreated));
 
     }
 

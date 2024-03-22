@@ -34,7 +34,11 @@ export class MessageService implements OnDestroy {
       try {
         const messageContent: MessageContent = JSON.parse(message.body);
         this.translateService.get(messageContent.payload, messageContent.parameters).subscribe((res: string): void => {
-          switch (messageContent.type) {
+          let type: string = messageContent.type.toLowerCase();
+          if (!type) {
+            type = "info";
+          }
+          switch (type) {
             case "error":
               this.errorMessage(res);
               break;
