@@ -9,6 +9,7 @@ import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
 import {Router} from "@angular/router";
 import {ActivityService} from "./rbac/activity.service";
+import {AuthGuestRequest} from "./models/auth-guest-request";
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,21 @@ export class LoginService {
         }));
   }
 
+  loginAsGuest(tournamentId: number): Observable<AuthenticatedUser> {
+    const url: string = `${this.baseUrl}/public/login/guest`;
+    return this.http.post<AuthenticatedUser>(url, new AuthGuestRequest(tournamentId), {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+      responseType: 'json',
+      observe: 'response'
+    })
+      .pipe(
+        map((response: any) => {
+          response.body.jwt = response.headers.get('Authorization');
+          response.body.expires = response.headers.get('Expires');
+          return response.body;
+        }));
+  }
+
   //Basic login for guests.
   setUserSession(username: string, password: string): void {
     this.login(username, password).subscribe({
@@ -53,6 +69,23 @@ export class LoginService {
           });
         this.activityService.setRoles(authenticatedUser.roles);
         localStorage.setItem('username', username);
+      },
+      error: (error): void => {
+        this.router.navigate(["/"]);
+      }
+    });
+  }
+
+  setGuestUserSession(tournamentId: number,  callback: (token: string, expiration: number) => void): void {
+    this.loginAsGuest(tournamentId).subscribe({
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (): void => {
+          });
+        this.activityService.setRoles(authenticatedUser.roles);
+        localStorage.setItem('username', "guest");
+        callback(authenticatedUser.jwt, authenticatedUser.expires);
       },
       error: (error): void => {
         this.router.navigate(["/"]);
