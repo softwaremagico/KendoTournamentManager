@@ -81,7 +81,9 @@ export class ActivityService {
       RbacActivity.VIEW_TOURNAMENT_STATISTICS,
       RbacActivity.DOWNLOAD_GROUPS_PDF,
       RbacActivity.DOWNLOAD_ALL_FIGHTS,
-      RbacActivity.CHECK_TOURNAMENT_BRACKETS
+      RbacActivity.CHECK_TOURNAMENT_BRACKETS,
+      RbacActivity.SEE_QR_CODE,
+      RbacActivity.DOWNLOAD_QR_CODE,
     ];
   }
 

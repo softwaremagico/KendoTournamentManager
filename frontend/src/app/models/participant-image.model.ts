@@ -1,24 +1,18 @@
 import {Participant} from "./participant";
-import {Element} from "./element";
-import {ImageFormat} from "./image-format";
+import {ImageModel} from "./image.model";
 
-export class ParticipantImage extends Element {
+export class ParticipantImage extends ImageModel {
 
   participant: Participant;
-  data: string;
-  base64: string;
-  imageFormat: ImageFormat;
 
   public static override copy(source: ParticipantImage, target: ParticipantImage): void {
-    Element.copy(source, target);
+    ImageModel.copy(source, target);
     if (source.participant !== undefined) {
       target.participant = Participant.clone(source.participant);
     }
-    target.data = source.data;
-    target.imageFormat = source.imageFormat;
   }
 
-  public static clone(data: ParticipantImage): ParticipantImage {
+  public static override clone(data: ParticipantImage): ParticipantImage {
     const instance: ParticipantImage = new ParticipantImage();
     this.copy(data, instance);
     return instance;

@@ -100,7 +100,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     return this.pictureGenerated.asObservable();
   }
 
-  selectImage(index: number) {
+  selectImage(index: number): void {
     if (this.selectedPicture !== index) {
       this.selectedPicture = index;
     } else {
