@@ -129,7 +129,8 @@ public class WebSocketController {
     }
 
     /**
-     * Advise that the groups of a tournament has been updated {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #GROUPS_MAPPING}.
+     * Advise that the groups of a tournament has been updated {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX}
+     * + {@value #GROUPS_MAPPING}.
      *
      * @param tournamentDTO the tournament that is modified.
      * @return
