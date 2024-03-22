@@ -353,9 +353,9 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
         duelController.delete(tournamentDTO);
         teamController.delete(tournamentDTO);
         roleController.delete(tournamentDTO);
-        tournamentController.delete(tournamentDTO);
+        tournamentController.delete(tournamentDTO, null);
         participantController.deleteAll();
-        clubController.delete(clubDTO);
+        clubController.delete(clubDTO, null);
         Assert.assertEquals(fightController.count(), 0);
         Assert.assertEquals(duelController.count(), 0);
     }
