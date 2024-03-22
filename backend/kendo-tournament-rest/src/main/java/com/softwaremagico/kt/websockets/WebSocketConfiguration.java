@@ -95,19 +95,23 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                         && (StompCommand.CONNECT.equals(accessor.getCommand())
                         || StompCommand.SEND.equals(accessor.getCommand()))) {
                     final LinkedMultiValueMap<String, String> nativeHeaders = (LinkedMultiValueMap<String, String>) accessor.getHeader("nativeHeaders");
-                    final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
-                    try {
-                        jwtTokenUtil.getUsername(jwtToken.get(0));
-                        final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
-                        if (username != null && !username.isEmpty()) {
-                            accessor.setUser(new UserPrincipal(username));
-                            WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
-                        } else {
-                            throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
+                    if (nativeHeaders != null) {
+                        final List<String> jwtToken = nativeHeaders.get(JWT_CUSTOM_HEADER);
+                        try {
+                            if (jwtToken != null) {
+                                jwtTokenUtil.getUsername(jwtToken.get(0));
+                                final String username = jwtTokenUtil.getUsername(jwtToken.get(0));
+                                if (username != null && !username.isEmpty()) {
+                                    accessor.setUser(new UserPrincipal(username));
+                                    WebsocketsLogger.debug(this.getClass(), "JWT token ({}) accepted for websockets.", username);
+                                } else {
+                                    throw new InvalidJwtException(this.getClass(), "No valid user found on JWT token");
+                                }
+                            }
+                        } catch (Exception e) {
+                            //Unauthorized.
+                            WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
                         }
-                    } catch (Exception e) {
-                        //Unauthorized.
-                        WebsocketsLogger.warning(this.getClass(), "Invalid Token for websockets!");
                     }
                 }
                 return message;
