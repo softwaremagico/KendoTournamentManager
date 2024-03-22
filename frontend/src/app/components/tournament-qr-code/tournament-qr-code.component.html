@@ -4,7 +4,7 @@
   </div>
   <div *ngIf="qrCode" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <button *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
+    <button (click)="downloadQrAsPdf()" *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
             class="floating-button"
             color="picture"
             mat-flat-button
