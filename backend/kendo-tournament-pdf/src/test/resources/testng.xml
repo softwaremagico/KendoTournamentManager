@@ -10,6 +10,7 @@
                 <include name="scoreListPdf"/>
                 <include name="accreditationPdf"/>
                 <include name="diplomaPdf"/>
+                <include name="qrPdf"/>
                 <include name="blogTests"/>
             </run>
         </groups>
@@ -17,6 +18,7 @@
             <class name="com.softwaremagico.kt.pdf.ListTests"/>
             <class name="com.softwaremagico.kt.pdf.AccreditationTests"/>
             <class name="com.softwaremagico.kt.pdf.DiplomaTests"/>
+            <class name="com.softwaremagico.kt.pdf.QrTests"/>
             <class name="com.softwaremagico.kt.html.HtmlTests"/>
         </classes>
     </test>
