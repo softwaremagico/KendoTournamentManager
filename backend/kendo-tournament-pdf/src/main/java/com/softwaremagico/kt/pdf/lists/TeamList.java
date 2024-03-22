@@ -95,7 +95,6 @@ public class TeamList extends ParentList {
 
         mainTable.addCell(getEmptyRow());
 
-
         if (teams.isEmpty()) {
             throw new EmptyPdfBodyException("No existing teams");
         }
