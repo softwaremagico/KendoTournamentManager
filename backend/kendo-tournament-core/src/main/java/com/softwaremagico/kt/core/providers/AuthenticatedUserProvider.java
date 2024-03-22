@@ -25,9 +25,12 @@ import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,7 +38,14 @@ import java.util.stream.Stream;
 
 @Repository
 public class AuthenticatedUserProvider {
+
+    public static final String GUEST_USER = "guest";
+    public static final String GUEST_ROLE = "guest";
+
     private final AuthenticatedUserRepository authenticatedUserRepository;
+
+    @Value("#{new Boolean('${enable.guest.user}')}")
+    private boolean guestEnabled;
 
     @Autowired
     public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository) {
@@ -44,6 +54,12 @@ public class AuthenticatedUserProvider {
 
 
     public Optional<AuthenticatedUser> findByUsername(String username) {
+        //Create guest user on the fly
+        if (Objects.equals(username, GUEST_USER) && guestEnabled) {
+            final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER);
+            guest.setRoles(Collections.singleton(GUEST_ROLE));
+            return Optional.of(guest);
+        }
         return authenticatedUserRepository.findByUsername(username);
     }
 

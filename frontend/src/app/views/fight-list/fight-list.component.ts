@@ -109,14 +109,30 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (!this.tournamentId || isNaN(this.tournamentId)) {
         this.goBackToTournament();
       }
-      //No user provided, try with guest.
-      if (!this.loginService.getJwtValue()) {
-        this.loginService.setUserSession("guest", "");
-      }
     }
   }
 
   ngOnInit(): void {
+    //If no user, try to log in with guest.
+    if (this.loginService.getJwtValue()) {
+      this.initializeData();
+    } else {
+      if (this.tournamentId) {
+        this.loginService.setGuestUserSession(this.tournamentId, (): void => {
+          this.initializeData();
+        });
+      } else {
+        this.goBackToTournament();
+      }
+    }
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.topicSubscription?.unsubscribe();
+  }
+
+  initializeData(): void {
     this.swappedColors = this.userSessionService.getSwappedColors();
     this.swappedTeams = this.userSessionService.getSwappedTeams();
     this.systemOverloadService.isTransactionalBusy.next(true);
@@ -181,11 +197,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       }
     });
-  }
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
-    this.topicSubscription?.unsubscribe();
   }
 
   private replaceGroup(group: Group): void {
