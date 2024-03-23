@@ -85,7 +85,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   private topicSubscription: Subscription;
 
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              private rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
+              public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
               private rxStompService: RxStompService, private environmentService: EnvironmentService) {
   }
@@ -333,4 +333,6 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
   }
+
+  protected readonly RbacActivity = RbacActivity;
 }
