@@ -32,10 +32,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParticipantImageConverter extends ElementConverter<ParticipantImage, ParticipantImageDTO, ParticipantImageConverterRequest> {
     private final ParticipantConverter participantConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
 
     @Autowired
-    public ParticipantImageConverter(ParticipantConverter participantConverter) {
+    public ParticipantImageConverter(ParticipantConverter participantConverter, ParticipantReducedConverter participantReducedConverter) {
         this.participantConverter = participantConverter;
+        this.participantReducedConverter = participantReducedConverter;
     }
 
 
@@ -44,7 +46,7 @@ public class ParticipantImageConverter extends ElementConverter<ParticipantImage
         final ParticipantImageDTO participantImageDTO = new ParticipantImageDTO();
         BeanUtils.copyProperties(from.getEntity(), participantImageDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         participantImageDTO.setImageFormat(from.getEntity().getImageFormat());
-        participantImageDTO.setParticipant(participantConverter.convertElement(new ParticipantConverterRequest(from.getEntity().getParticipant())));
+        participantImageDTO.setParticipant(participantReducedConverter.convertElement(new ParticipantConverterRequest(from.getEntity().getParticipant())));
         return participantImageDTO;
     }
 
