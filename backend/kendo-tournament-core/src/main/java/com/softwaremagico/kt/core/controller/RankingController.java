@@ -35,6 +35,7 @@ import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.ParticipantReducedConverter;
 import com.softwaremagico.kt.core.converters.ScoreOfCompetitorConverter;
 import com.softwaremagico.kt.core.converters.ScoreOfTeamConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -52,7 +53,6 @@ import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -92,6 +92,8 @@ public class RankingController {
 
     private final DuelConverter duelConverter;
 
+    private final ParticipantReducedConverter participantReducedConverter;
+
     private final ParticipantConverter participantConverter;
 
     private final RankingProvider rankingProvider;
@@ -99,8 +101,6 @@ public class RankingController {
     private final ScoreOfCompetitorConverter scoreOfCompetitorConverter;
 
     private final ScoreOfTeamConverter scoreOfTeamConverter;
-
-    private final TournamentProvider tournamentProvider;
 
     private final ClubProvider clubProvider;
 
@@ -112,9 +112,11 @@ public class RankingController {
 
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
-                             TeamConverter teamConverter, DuelConverter duelConverter, ParticipantConverter participantConverter,
-                             RankingProvider rankingProvider, ScoreOfCompetitorConverter scoreOfCompetitorConverter,
-                             ScoreOfTeamConverter scoreOfTeamConverter, TournamentProvider tournamentProvider,
+                             TeamConverter teamConverter, DuelConverter duelConverter,
+                             ParticipantReducedConverter participantReducedConverter,
+                             ParticipantConverter participantConverter, RankingProvider rankingProvider,
+                             ScoreOfCompetitorConverter scoreOfCompetitorConverter,
+                             ScoreOfTeamConverter scoreOfTeamConverter,
                              ClubProvider clubProvider, ParticipantProvider participantProvider, ClubConverter clubConverter,
                              RoleProvider roleProvider) {
         this.groupProvider = groupProvider;
@@ -123,11 +125,11 @@ public class RankingController {
         this.fightConverter = fightConverter;
         this.teamConverter = teamConverter;
         this.duelConverter = duelConverter;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.rankingProvider = rankingProvider;
         this.scoreOfCompetitorConverter = scoreOfCompetitorConverter;
         this.scoreOfTeamConverter = scoreOfTeamConverter;
-        this.tournamentProvider = tournamentProvider;
         this.clubProvider = clubProvider;
         this.participantProvider = participantProvider;
         this.clubConverter = clubConverter;
@@ -297,7 +299,7 @@ public class RankingController {
     }
 
     public ParticipantDTO getCompetitor(GroupDTO groupDTO, Integer order) {
-        return participantConverter.convert(new ParticipantConverterRequest(
+        return participantReducedConverter.convert(new ParticipantConverterRequest(
                 rankingProvider.getCompetitor(groupConverter.reverse(groupDTO), order)));
     }
 
