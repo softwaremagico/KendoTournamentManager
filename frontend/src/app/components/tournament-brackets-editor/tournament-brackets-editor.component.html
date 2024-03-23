@@ -1,13 +1,15 @@
 <div class="container" cdkDropListGroup>
   <div>
-    <div *ngIf="!droppingDisabled"
+    <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
          (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
          cdkDropList cdkDropListSortingDisabled="true"
          class="teams-container">
-      <team-list [teamListData]="teamListData" [minify]="true"></team-list>
+      <team-list
+        [teamListData]="teamListData" [minify]="true"></team-list>
     </div>
     <div *ngIf="!droppingDisabled" class="button-container" mat-dialog-actions>
       <button (click)="sortedGroups()"
+              *ngIf="(RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
               [disabled]="groupsDisabled || (tournament && tournament.locked)"
               mat-flat-button
               mat-raised-button>
@@ -15,6 +17,7 @@
         {{'sorted' | translate}}
       </button>
       <button (click)="randomGroups()"
+              *ngIf="(RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
               [disabled]="groupsDisabled || (tournament && tournament.locked)"
               mat-flat-button
               mat-raised-button>
@@ -22,6 +25,7 @@
         {{'random' | translate}}
       </button>
       <button (click)="askToRemoveAllTeams()"
+              *ngIf="(RbacActivity.CLEAN_UP_GROUPS | rbac : this.rbacService.getActivities())"
               [disabled]="groupsDisabled || (tournament && tournament.locked)" [matTooltipShowDelay]="500"
               mat-flat-button
               mat-raised-button
@@ -31,7 +35,9 @@
       </button>
     </div>
   </div>
-  <button (click)="downloadAsPdf()"
+  <button
+    *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+    (click)="downloadAsPdf()"
           class="floating-button" color="picture" mat-flat-button mat-mini-fab
           type="button">
     <mat-icon color="primary">download_file</mat-icon>
