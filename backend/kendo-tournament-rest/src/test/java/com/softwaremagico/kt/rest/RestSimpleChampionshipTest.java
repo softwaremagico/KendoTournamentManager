@@ -10,12 +10,12 @@ package com.softwaremagico.kt.rest;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -34,6 +34,7 @@ import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
@@ -81,7 +82,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     private final static String USER_FIRST_NAME = "Test";
     private final static String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "asd123";
-    private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;
@@ -293,7 +294,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
             RoleDTO roleDTO = fromJson(createResult.getResponse().getContentAsString(), RoleDTO.class);
             Assert.assertEquals(roleDTO.getTournament(), tournamentDTO);
-            Assert.assertEquals(roleDTO.getParticipant(), competitor);
+            Assert.assertEquals(new ParticipantReducedDTO(roleDTO.getParticipant()), new ParticipantReducedDTO(competitor));
             Assert.assertEquals(roleDTO.getRoleType(), RoleType.COMPETITOR);
         }
 
@@ -485,6 +486,14 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         }
 
         resetGroup(tournamentDTO);
+    }
+
+    @Test(dependsOnMethods = "testSimpleWinner")
+    public void ensureParticipantsAreNotModifiedWhenUsingreduceParticipantDTO() {
+        participantController.get().forEach(participantDTO -> {
+            Assert.assertNotNull(participantDTO.getIdCard());
+            Assert.assertTrue(participantDTO.getIdCard().startsWith("0000"));
+        });
     }
 
     @AfterClass(alwaysRun = true)
