@@ -39,7 +39,10 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
@@ -84,11 +87,15 @@ public class PdfController {
 
     private final TournamentExtraPropertyController tournamentExtraPropertyController;
 
+    private final ParticipantProvider participantProvider;
+    private final ParticipantConverter participantConverter;
+
     private final QrController qrController;
 
     public PdfController(MessageSource messageSource, RoleController roleController, TeamController teamController, GroupController groupController,
                          TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
-                         TournamentExtraPropertyController tournamentExtraPropertyController, QrController qrController) {
+                         TournamentExtraPropertyController tournamentExtraPropertyController, ParticipantProvider participantProvider,
+                         ParticipantConverter participantConverter, QrController qrController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
         this.teamController = teamController;
@@ -96,6 +103,8 @@ public class PdfController {
         this.tournamentImageController = tournamentImageController;
         this.participantImageController = participantImageController;
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
+        this.participantProvider = participantProvider;
+        this.participantConverter = participantConverter;
         this.qrController = qrController;
     }
 
@@ -109,8 +118,17 @@ public class PdfController {
 
     public RoleList generateClubList(Locale locale, TournamentDTO tournamentDTO) {
         final List<RoleDTO> roles = roleController.get(tournamentDTO);
+
+        //Gets all participants with clubs.
+        final List<ParticipantDTO> participants = participantConverter.convertAll(participantProvider
+                .findByIdIn(roles.stream().map(roleDTO -> roleDTO.getParticipant().getId())
+                        .collect(Collectors.toSet())).stream().map(ParticipantConverterRequest::new).toList());
+
+        final Map<Integer, ParticipantDTO> participantsById = participants.stream()
+                .collect(Collectors.toMap(ParticipantDTO::getId, Function.identity()));
+
         final Map<ClubDTO, List<RoleDTO>> rolesByClub = roles.stream().collect(
-                Collectors.groupingBy(roleDTO -> roleDTO.getParticipant().getClub())
+                Collectors.groupingBy(roleDTO -> participantsById.get(roleDTO.getParticipant().getId()).getClub())
         );
         return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
     }
