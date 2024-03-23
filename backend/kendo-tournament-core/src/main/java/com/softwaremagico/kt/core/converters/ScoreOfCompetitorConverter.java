@@ -34,16 +34,18 @@ import java.util.ArrayList;
 public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
 
     private final ParticipantConverter participantConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
 
-    public ScoreOfCompetitorConverter(ParticipantConverter participantConverter) {
+    public ScoreOfCompetitorConverter(ParticipantConverter participantConverter, ParticipantReducedConverter participantReducedConverter) {
         this.participantConverter = participantConverter;
+        this.participantReducedConverter = participantReducedConverter;
     }
 
     @Override
     protected ScoreOfCompetitorDTO convertElement(ScoreOfCompetitorConverterRequest from) {
         final ScoreOfCompetitorDTO scoreOfCompetitorDTO = new ScoreOfCompetitorDTO();
         BeanUtils.copyProperties(from.getEntity(), scoreOfCompetitorDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        scoreOfCompetitorDTO.setCompetitor(participantConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
+        scoreOfCompetitorDTO.setCompetitor(participantReducedConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
         return scoreOfCompetitorDTO;
     }
 
