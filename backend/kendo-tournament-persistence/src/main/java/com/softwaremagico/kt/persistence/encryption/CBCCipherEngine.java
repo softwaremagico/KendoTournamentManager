@@ -59,7 +59,7 @@ public class CBCCipherEngine implements ICipherEngine {
     }
 
     @Override
-    public String encrypt(String input, String password) throws InvalidEncryptionException {
+    public synchronized String encrypt(String input, String password) throws InvalidEncryptionException {
         try {
             getCipher(password).init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
             final byte[] encryptedBytes = getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
@@ -78,14 +78,16 @@ public class CBCCipherEngine implements ICipherEngine {
     }
 
     @Override
-    public synchronized String decrypt(String encrypted, String password) throws InvalidEncryptionException {
+    public String decrypt(String encrypted, String password) throws InvalidEncryptionException {
         try {
-            getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
-            final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-            EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
-            return decrypted;
+            synchronized (this) {
+                getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+                final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
+                final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+                final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
+                EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
+                return decrypted;
+            }
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                  | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
