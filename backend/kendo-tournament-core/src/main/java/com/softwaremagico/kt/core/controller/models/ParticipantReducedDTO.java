@@ -26,69 +26,45 @@ import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.Objects;
 
-public class ParticipantDTO extends ElementDTO implements IParticipantName {
+public class ParticipantReducedDTO extends ParticipantDTO implements IParticipantName {
 
-    private String idCard;
-
-    private String name;
-
-    private String lastname;
-
-    private ClubDTO club;
-
-    private Boolean hasAvatar = false;
-
-    public ParticipantDTO() {
+    public ParticipantReducedDTO() {
     }
 
-    public ParticipantDTO(String idCard, String name, String lastname, ClubDTO club) {
+    public ParticipantReducedDTO(String idCard, String name, String lastname, ClubDTO club) {
         setName(name);
         setLastname(lastname);
         setIdCard(idCard);
         setClub(club);
     }
 
+    public ParticipantReducedDTO(ParticipantDTO participantDTO) {
+        setName(participantDTO.getName());
+        setLastname(participantDTO.getLastname());
+
+        setId(participantDTO.getId());
+        setCreatedAt(participantDTO.getCreatedAt());
+        setCreatedBy(participantDTO.getCreatedBy());
+        setUpdatedAt(participantDTO.getUpdatedAt());
+        setUpdatedBy(participantDTO.getUpdatedBy());
+    }
+
     public String getIdCard() {
-        return idCard;
+        return null;
     }
 
     public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+        //Ignore it.
     }
 
     public ClubDTO getClub() {
-        return club;
+        return null;
     }
 
     public void setClub(ClubDTO club) {
-        this.club = club;
+        //Ignore it.
     }
 
-    public Boolean getHasAvatar() {
-        return hasAvatar;
-    }
-
-    public void setHasAvatar(Boolean hasAvatar) {
-        this.hasAvatar = hasAvatar;
-    }
 
     @Override
     public String toString() {
@@ -104,11 +80,10 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ParticipantDTO that)) {
+        if (!(o instanceof ParticipantReducedDTO that)) {
             return false;
         }
-        return getId().equals(that.getId()) && getName().equals(that.getName()) && getLastname().equals(that.getLastname())
-                && getClub().equals(that.getClub());
+        return getId().equals(that.getId()) && getName().equals(that.getName()) && getLastname().equals(that.getLastname());
     }
 
     @Override
