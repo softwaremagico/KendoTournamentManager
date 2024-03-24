@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.security;
+package com.softwaremagico.kt.rest.security.dto;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Rest)
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
@@ -21,24 +21,14 @@ package com.softwaremagico.kt.security;
  * #L%
  */
 
-public enum AvailableRole {
-    ROLE_VIEWER,
+public class AuthParticipantRequest {
+    private String token;
 
-    ROLE_EDITOR,
+    public String getToken() {
+        return token;
+    }
 
-    ROLE_ADMIN,
-
-    ROLE_PARTICIPANT,
-    ROLE_GUEST;
-
-    public static final String ROLE_PREFIX = "ROLE_";
-
-    public static AvailableRole get(String roleName) {
-        for (final AvailableRole availableRole : AvailableRole.values()) {
-            if (availableRole.name().equalsIgnoreCase(ROLE_PREFIX + roleName)) {
-                return availableRole;
-            }
-        }
-        return null;
+    public void setToken(String token) {
+        this.token = token;
     }
 }

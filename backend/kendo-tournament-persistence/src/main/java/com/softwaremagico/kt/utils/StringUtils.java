@@ -21,7 +21,12 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
+import java.security.SecureRandom;
+
 public final class StringUtils {
+
+    private static final int RANDOM_MINIMUM_ASCII_CODE = 33;
+    private static final int RANDOM_MAXIMUM_ASCII_CODE = 90;
 
     private StringUtils() {
 
@@ -38,5 +43,14 @@ public final class StringUtils {
             }
         }
         return caseString.toString().trim().replace(";", ",");
+    }
+
+    public static String generateRandomToken(int targetStringLength) {
+        final SecureRandom random = new SecureRandom();
+
+        return random.ints(RANDOM_MINIMUM_ASCII_CODE, RANDOM_MAXIMUM_ASCII_CODE + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

@@ -22,7 +22,9 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import com.softwaremagico.kt.security.AvailableRole;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 import com.softwaremagico.kt.utils.StringUtils;
@@ -37,8 +39,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.Collator;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 
 /**
@@ -51,8 +59,16 @@ import java.util.Locale;
 @Table(name = "participants",
         indexes = {
                 @Index(name = "ind_club", columnList = "club"),
+                @Index(name = "ind_token", columnList = "temporal_token"),
         })
-public class Participant extends Element implements Comparable<Participant>, IParticipantName {
+public class Participant extends Element implements Comparable<Participant>, IParticipantName, UserDetails, IAuthenticatedUser {
+
+    //Token expiration in seconds.
+    private static final int TEMPORARY_TOKEN_DURATION = 5 * 60;
+
+    //Account expiration in days.
+    private static final int TEMPORARY_ACCOUNT_DURATION = 365;
+    private static final int TOKEN_LENGTH = 15;
 
     @Column(name = "id_card", unique = true)
     @Convert(converter = StringCryptoConverter.class)
@@ -73,6 +89,20 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     @Column(name = "has_avatar")
     @Convert(converter = BooleanCryptoConverter.class)
     private Boolean hasAvatar = false;
+
+    @Column(name = "temporal_token", length = TOKEN_LENGTH, unique = true)
+    private String temporalToken;
+
+    @Column(name = "temporal_token_expiration")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime temporalTokenExpiration;
+
+    @Column(name = "token", length = TOKEN_LENGTH)
+    private String token;
+
+    @Column(name = "account_expiration")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
+    private LocalDateTime accountExpiration;
 
     public Participant() {
         super();
@@ -151,8 +181,90 @@ public class Participant extends Element implements Comparable<Participant>, IPa
         return collator.compare(string1, string2);
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getTemporalToken() {
+        return temporalToken;
+    }
+
+    public void setTemporalToken(String token) {
+        this.temporalToken = token;
+    }
+
+    public LocalDateTime getTemporalTokenExpiration() {
+        return temporalTokenExpiration;
+    }
+
+    public void setTemporalTokenExpiration(LocalDateTime tokenExpiration) {
+        this.temporalTokenExpiration = tokenExpiration;
+    }
+
+    public LocalDateTime getAccountExpiration() {
+        return accountExpiration;
+    }
+
+    public void setAccountExpiration(LocalDateTime accountExpiration) {
+        this.accountExpiration = accountExpiration;
+    }
+
+    public void generateTemporalToken() {
+        setTemporalToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
+        setTemporalTokenExpiration(LocalDateTime.now().plusSeconds(TEMPORARY_TOKEN_DURATION));
+    }
+
+    public void generateToken() {
+        setToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
+        setAccountExpiration(LocalDateTime.now().plusDays(TEMPORARY_ACCOUNT_DURATION));
+    }
+
     @Override
     public String toString() {
         return NameUtils.getLastnameName(getLastname(), getName());
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(AvailableRole.ROLE_PARTICIPANT.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return getToken();
+    }
+
+    @Override
+    public String getUsername() {
+        return getName() + "_" + getLastname() + "_" + getId();
+    }
+
+    @Override
+    public void setPassword(String password) {
+        //Not needed
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
