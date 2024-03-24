@@ -22,8 +22,10 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
+import com.softwaremagico.kt.core.exceptions.UserNotFoundException;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
@@ -43,6 +45,23 @@ public class ParticipantController extends BasicInsertableController<Participant
     @Override
     protected ParticipantConverterRequest createConverterRequest(Participant participant) {
         return new ParticipantConverterRequest(participant);
+    }
+
+    public TemporalToken generateTemporalToken(ParticipantDTO participant) {
+        return getProvider().generateTemporalToken(reverse(participant));
+    }
+
+    public ParticipantDTO generateToken(String temporalToken) {
+        final Participant participant = getProvider().findByTemporalToken(temporalToken).orElseThrow(() ->
+                new UserNotFoundException(this.getClass(), "No user found for the provided token!"));
+        try {
+            return convert(getProvider().generateToken(participant));
+        } finally {
+            //Remove token to avoid reuse.
+            participant.setTemporalToken(null);
+            participant.setTemporalTokenExpiration(null);
+            getProvider().save(participant);
+        }
     }
 
 }
