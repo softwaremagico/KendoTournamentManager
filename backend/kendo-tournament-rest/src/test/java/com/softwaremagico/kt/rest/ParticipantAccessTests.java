@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +28,7 @@ import java.io.IOException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -58,10 +60,12 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     private MockMvc mockMvc;
 
     private String jwtToken;
+    private String participantJwtToken;
 
     private ClubDTO clubDTO;
 
     private ParticipantDTO participantDTO;
+    private TemporalToken temporalToken;
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -139,7 +143,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = "createParticipant")
     public void generateTemporalTokenParticipant() throws Exception {
         MvcResult createResult = this.mockMvc
-                .perform(post("/temporal-token")
+                .perform(post("/participants/temporal-token")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .content(toJson(participantDTO))
@@ -147,8 +151,25 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        this.participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+        this.temporalToken = fromJson(createResult.getResponse().getContentAsString(), TemporalToken.class);
 
-        Assert.assertEquals(this.participantDTO.getName(), PARTICIPANT_NAME);
+        Assert.assertNotNull(temporalToken);
+    }
+
+    @Test(dependsOnMethods = "createParticipant")
+    public void generateToken() throws Exception {
+        MvcResult createResult = this.mockMvc
+                .perform(get("/participants/public/token/" + this.temporalToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+
+        this.participantJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+
+        Assert.assertEquals(participantDTO.getName(), PARTICIPANT_NAME);
     }
 }
