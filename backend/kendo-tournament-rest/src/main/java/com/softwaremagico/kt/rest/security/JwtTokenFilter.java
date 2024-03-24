@@ -23,8 +23,8 @@ package com.softwaremagico.kt.rest.security;
 
 
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
-import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -66,18 +67,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             "REMOTE_ADDR"};
 
     private final boolean checkClientIp;
+    private final boolean participantAccess;
 
     private final JwtTokenUtil jwtTokenUtil;
-    private final AuthenticatedUserProvider userRepo;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
+
+    private final ParticipantProvider participantProvider;
 
     private final NetworkController networkController;
 
     @Autowired
-    public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider userRepo,
+    public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, @Value("${enable.participant.access}:false") String participantAccess,
+                          JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
+                          ParticipantProvider participantProvider,
                           NetworkController networkController) {
         this.jwtTokenUtil = jwtTokenUtil;
-        this.userRepo = userRepo;
+        this.authenticatedUserProvider = authenticatedUserProvider;
+        this.participantProvider = participantProvider;
         checkClientIp = Boolean.parseBoolean(ipCheck);
+        this.participantAccess = Boolean.parseBoolean(participantAccess);
         this.networkController = networkController;
     }
 
@@ -117,7 +125,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         // Get user identity and set it on the spring security context
-        final AuthenticatedUser userDetails = userRepo.findByUsername(jwtTokenUtil.getUsername(token)).orElse(null);
+        UserDetails userDetails;
+        userDetails = authenticatedUserProvider.findByUsername(jwtTokenUtil.getUsername(token)).orElse(null);
+
+        //Check if is a participant access.
+        boolean participantUser = false;
+        if (userDetails == null && participantAccess) {
+            userDetails = participantProvider.findByToken(jwtTokenUtil.getUsername(token)).orElse(null);
+            participantUser = true;
+        }
 
         final UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
@@ -126,12 +142,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         );
 
         final String userTokenIp = jwtTokenUtil.getUserIp(token);
-        if (checkClientIp && (userTokenIp == null || userTokenIp.isEmpty() || !getClientIpAddress(request).contains(userTokenIp))) {
+        if (checkClientIp && !participantUser && (userTokenIp == null || userTokenIp.isEmpty() || !getClientIpAddress(request).contains(userTokenIp))) {
             throw new InvalidIpException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
 
         final String hostMac = networkController.getHostMac();
-        if (checkClientIp && hostMac != null && !hostMac.isEmpty() && !Objects.equals(jwtTokenUtil.getHostMac(token), hostMac)) {
+        if (checkClientIp && !participantUser && hostMac != null && !hostMac.isEmpty() && !Objects.equals(jwtTokenUtil.getHostMac(token), hostMac)) {
             throw new InvalidMacException(this.getClass(), "User token issued for ip '" + userTokenIp + "'.");
         }
 
