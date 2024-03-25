@@ -10,12 +10,12 @@ package com.softwaremagico.kt.websockets;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import com.softwaremagico.kt.websockets.models.MessageContent;
@@ -119,7 +120,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
         authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         headers = new WebSocketHttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken(authenticatedUser, "127.0.0.1"));
+        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken((IAuthenticatedUser) authenticatedUser, "127.0.0.1"));
     }
 
 
