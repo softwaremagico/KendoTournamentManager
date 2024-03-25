@@ -76,7 +76,7 @@ export class LoginService {
     });
   }
 
-  setGuestUserSession(tournamentId: number,  callback: (token: string, expiration: number) => void): void {
+  setGuestUserSession(tournamentId: number, callback: (token: string, expiration: number) => void): void {
     this.loginAsGuest(tournamentId).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
@@ -152,6 +152,16 @@ export class LoginService {
         }
       )
     }, timeout);
+  }
+
+  getUserRoles(): Observable<String[]> {
+    const url: string = `${this.baseUrl}/roles`;
+    return this.http.get<String[]>(url)
+      .pipe(
+        tap({
+          next: (_roles: String[]) => console.info(`Obtained '${_roles}' roles!`)
+        })
+      );
   }
 
   private renew(): Observable<any> {

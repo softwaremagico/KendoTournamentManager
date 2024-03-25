@@ -21,12 +21,13 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 
 import java.util.Objects;
 
-public class ParticipantDTO extends ElementDTO implements IParticipantName {
+public class ParticipantDTO extends ElementDTO implements IParticipantName, IAuthenticatedUser {
 
     private String idCard;
 
@@ -114,5 +115,10 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getName(), getLastname(), getClub());
+    }
+
+    @Override
+    public String getUsername() {
+        return getId() + "_" + name + "_" + lastname;
     }
 }
