@@ -18,6 +18,8 @@ import {RankingService} from "../../services/ranking.service";
 import {CompetitorRanking} from "../../models/competitor-ranking";
 import {AchievementsService} from "../../services/achievements.service";
 import {Achievement} from "../../models/achievement.model";
+import {ParticipantService} from "../../services/participant.service";
+import {Participant} from "../../models/participant";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -28,7 +30,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   pipe: DatePipe;
 
-  private readonly participantId: number | undefined;
+  private participantId: number | undefined;
   public participantStatistics: ParticipantStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
@@ -42,7 +44,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
               private translateService: TranslateService, private rankingService: RankingService,
-              private achievementService: AchievementsService) {
+              private achievementService: AchievementsService, private participantService: ParticipantService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -51,8 +53,6 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       } else {
         this.goBackToUsers();
       }
-    } else {
-      this.goBackToUsers();
     }
     this.setLocale();
   }
@@ -72,7 +72,21 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
   ngOnInit(): void {
-    this.generateStatistics();
+    if (this.participantId) {
+      this.generateStatistics();
+    } else {
+      //If a participant is logged in directly to this page. Get his id.
+      this.participantService.getByUsername().subscribe({
+        next: (_participant: Participant): void => {
+          this.participantId = _participant.id;
+          this.generateStatistics();
+        },
+        error: (): void => {
+          console.error("User logged in is not a participant");
+          this.goBackToUsers()
+        }
+      });
+    }
   }
 
   generateStatistics(): void {

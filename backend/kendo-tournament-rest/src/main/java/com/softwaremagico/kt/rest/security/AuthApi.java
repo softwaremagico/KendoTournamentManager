@@ -147,7 +147,7 @@ public class AuthApi {
             RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             try {
-                final IAuthenticatedUser user = (IAuthenticatedUser) authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
+                final AuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
                         new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
                 final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
@@ -168,7 +168,7 @@ public class AuthApi {
             //Create a default user if no user exists. Needed when database is encrypted.
             if (authenticatedUserController.countUsers() == 0) {
                 RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
-                final IAuthenticatedUser user = (IAuthenticatedUser) authenticatedUserController.createUser(
+                final AuthenticatedUser user = authenticatedUserController.createUser(
                         null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
                 final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
@@ -193,7 +193,7 @@ public class AuthApi {
         }
         try {
             try {
-                final IAuthenticatedUser user = (IAuthenticatedUser) authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
+                final AuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                         .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                                 String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
                 final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
@@ -226,14 +226,17 @@ public class AuthApi {
     @Operation(summary = "Creates a jwt token for a participant.")
     @PostMapping(value = "/public/participant/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ParticipantDTO> getToken(@RequestBody TemporalToken temporalToken,
-                                                   HttpServletRequest request) {
+                                                   HttpServletRequest httpRequest) {
+        final String ip = getClientIP(httpRequest);
         final Token token = participantController.generateToken(temporalToken.getTemporalToken());
 
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();
 
+        final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip);
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, token.getToken())
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .header(HttpHeaders.EXPIRES, String.valueOf(milliseconds))
                 .body(token.getParticipant());
     }
@@ -322,7 +325,7 @@ public class AuthApi {
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
-        final IAuthenticatedUser user = (IAuthenticatedUser) authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
