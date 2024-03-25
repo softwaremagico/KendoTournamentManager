@@ -28,6 +28,8 @@ public final class StringUtils {
     private static final int RANDOM_MINIMUM_ASCII_CODE = 33;
     private static final int RANDOM_MAXIMUM_ASCII_CODE = 90;
 
+    private static final SecureRandom RANDOM = new SecureRandom();
+
     private StringUtils() {
 
     }
@@ -46,9 +48,8 @@ public final class StringUtils {
     }
 
     public static String generateRandomToken(int targetStringLength) {
-        final SecureRandom random = new SecureRandom();
 
-        return random.ints(RANDOM_MINIMUM_ASCII_CODE, RANDOM_MAXIMUM_ASCII_CODE + 1)
+        return RANDOM.ints(RANDOM_MINIMUM_ASCII_CODE, RANDOM_MAXIMUM_ASCII_CODE + 1)
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();

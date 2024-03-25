@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
+import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -56,6 +59,12 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private AuthenticatedUserController authenticatedUserController;
+
+    @Autowired
+    private ClubProvider clubProvider;
+
+    @Autowired
+    private ParticipantProvider participantProvider;
 
     private MockMvc mockMvc;
 
@@ -156,11 +165,12 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(temporalToken);
     }
 
-    @Test(dependsOnMethods = "createParticipant")
+    @Test(dependsOnMethods = "generateTemporalTokenParticipant")
     public void generateToken() throws Exception {
         MvcResult createResult = this.mockMvc
-                .perform(get("/participants/public/token/" + this.temporalToken)
+                .perform(post("/auth/public/participant/token")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(this.temporalToken))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
@@ -171,5 +181,17 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
         this.participantJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
 
         Assert.assertEquals(participantDTO.getName(), PARTICIPANT_NAME);
+    }
+
+    @Test(dependsOnMethods = "generateToken")
+    public void canAccessToItsOwnStatistics() throws Exception {
+
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void cleanUp() {
+        participantProvider.deleteAll();
+        clubProvider.deleteAll();
+        authenticatedUserController.deleteAll();
     }
 }
