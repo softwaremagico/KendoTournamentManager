@@ -131,6 +131,10 @@ public class AuthenticatedUserController {
         authenticatedUserProvider.delete(authenticatedUser);
     }
 
+    public void deleteAll() {
+        authenticatedUserProvider.deleteAll();
+    }
+
     public long countUsers() {
         return authenticatedUserProvider.count();
     }
