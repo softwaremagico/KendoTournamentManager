@@ -101,4 +101,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {
         return convertAll(getProvider().getPreviousTo(reverse(tournamentDTO), elementsToRetrieve));
     }
+
+    public TournamentDTO getLatestUnlocked() {
+        return convert(getProvider().findLastByUnlocked());
+    }
 }

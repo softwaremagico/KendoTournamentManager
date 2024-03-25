@@ -244,11 +244,6 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     }
 
     @Override
-    public void setPassword(String password) {
-        //Not needed
-    }
-
-    @Override
     public boolean isAccountNonExpired() {
         return accountExpiration != null && LocalDateTime.now().isBefore(accountExpiration);
     }
