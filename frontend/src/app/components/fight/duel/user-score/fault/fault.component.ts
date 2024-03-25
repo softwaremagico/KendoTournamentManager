@@ -46,7 +46,7 @@ export class FaultComponent implements OnInit, OnChanges {
     // This is intentional
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['duel'] || changes['left'] || changes['swapTeams']) {
       this.setTime();
     }
@@ -100,9 +100,9 @@ export class FaultComponent implements OnInit, OnChanges {
     return true;
   }
 
-  updateFault(fault: boolean) {
+  updateFault(fault: boolean): void {
     const faultAdded: boolean = this.setFault(fault);
-    this.duelService.update(this.duel).subscribe(duel => {
+    this.duelService.update(this.duel).subscribe((duel: Duel): Duel => {
       if (faultAdded) {
         this.messageService.infoMessage('infoFaultUpdated');
       }
@@ -110,7 +110,7 @@ export class FaultComponent implements OnInit, OnChanges {
     });
   }
 
-  setTime() {
+  setTime(): void {
     let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
       this.duel.competitor1FaultTime : this.duel.competitor2FaultTime;
     if (seconds) {
@@ -138,19 +138,19 @@ export class FaultComponent implements OnInit, OnChanges {
     return tooltipText;
   }
 
-  updateCoordinates($event: MouseEvent) {
+  updateCoordinates($event: MouseEvent): void {
     this.mouseX = $event.clientX;
     this.mouseY = $event.clientY;
     this.calculateTooltipMargin();
   }
 
-  clearCoordinates($event: MouseEvent) {
+  clearCoordinates($event: MouseEvent): void {
     this.mouseX = undefined;
     this.mouseY = undefined;
   }
 
 
-  calculateTooltipMargin() {
+  calculateTooltipMargin(): void {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
     this.onLeftBorder = false;
