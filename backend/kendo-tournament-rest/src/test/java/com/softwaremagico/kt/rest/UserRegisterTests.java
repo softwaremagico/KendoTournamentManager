@@ -42,6 +42,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -138,5 +139,11 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
         Club club = clubRepository.findByNameAndCity(CLUB_NAME, CLUB_CITY);
         Assert.assertNotNull(club);
         Assert.assertEquals(club.getCreatedBy(), USER_NAME);
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void cleanUp() {
+        clubRepository.deleteAll();
+        authenticatedUserController.deleteAll();
     }
 }
