@@ -23,14 +23,13 @@ package com.softwaremagico.kt.core.controller.models;
 
 public class QrCodeDTO extends ImageDTO {
 
-    private TournamentDTO tournament;
+    private String link;
 
-
-    public TournamentDTO getTournament() {
-        return tournament;
+    public String getLink() {
+        return link;
     }
 
-    public void setTournament(TournamentDTO tournament) {
-        this.tournament = tournament;
+    public void setLink(String link) {
+        this.link = link;
     }
 }

@@ -22,7 +22,6 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.core.controller.ParticipantController;
-import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.controller.models.Token;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
@@ -225,8 +224,8 @@ public class AuthApi {
 
     @Operation(summary = "Creates a jwt token for a participant.")
     @PostMapping(value = "/public/participant/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ParticipantDTO> getToken(@RequestBody TemporalToken temporalToken,
-                                                   HttpServletRequest httpRequest) {
+    public ResponseEntity<IAuthenticatedUser> getToken(@RequestBody TemporalToken temporalToken,
+                                                       HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         final Token token = participantController.generateToken(temporalToken.getTemporalToken());
 

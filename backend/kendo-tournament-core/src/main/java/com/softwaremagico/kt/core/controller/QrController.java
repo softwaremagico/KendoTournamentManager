@@ -22,13 +22,15 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.QrCodeDTO;
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
-import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
-import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -38,11 +40,14 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 public class QrController {
 
     private static final String TOURNAMENT_FIGHTS_URL = "/tournaments/fights";
+    private static final String PARTICIPANT_STATISTICS_URL = "/participants/statistics";
     private static final String LOGO_RESOURCE = "kote.svg";
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
@@ -61,26 +66,58 @@ public class QrController {
 
     private final TournamentProvider tournamentProvider;
 
+    private final ParticipantProvider participantProvider;
+
     private final TournamentConverter tournamentConverter;
 
-    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, TournamentConverter tournamentConverter) {
+    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
+                        TournamentConverter tournamentConverter) {
         this.qrProvider = qrProvider;
         this.tournamentProvider = tournamentProvider;
+        this.participantProvider = participantProvider;
         this.tournamentConverter = tournamentConverter;
     }
 
     @Cacheable(value = "qr-codes")
     public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+        //Check that exists.
+        tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
-            final BufferedImage qrCode = qrProvider.getQr(schema + "://" + machineDomain + contextPath + TOURNAMENT_FIGHTS_URL
-                            + "?tournamentId=" + tournament.getId() + "&user=guest",
+            final String link = schema + "://" + machineDomain + contextPath + TOURNAMENT_FIGHTS_URL
+                    + "?tournamentId=" + tournamentId + "&user=guest";
+            final BufferedImage qrCode = qrProvider.getQr(link,
                     QR_SIZE, QR_COLOR, LOGO_RESOURCE);
-
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
-            qrCodeDTO.setTournament(tournamentConverter.convert(new TournamentConverterRequest(tournament)));
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
+            qrCodeDTO.setLink(link);
+            return qrCodeDTO;
+        } catch (IOException e) {
+            throw new UnexpectedValueException(this.getClass(), e);
+        }
+    }
+
+    /**
+     * '/participant/statistics?participantId=1'
+     *
+     * @param participantId
+     * @return
+     */
+    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId) {
+        final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
+                new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
+
+        final TemporalToken temporalToken = participantProvider.generateTemporalToken(participant);
+
+        try {
+            final String link = schema + "://" + machineDomain + contextPath + PARTICIPANT_STATISTICS_URL
+                    + "?participantId=" + participantId + "&temporalToken="
+                    + URLEncoder.encode(temporalToken.getTemporalToken(), StandardCharsets.UTF_8);
+            final BufferedImage qrCode = qrProvider.getQr(link,
+                    QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+            qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
+            qrCodeDTO.setLink(link);
             return qrCodeDTO;
         } catch (IOException e) {
             throw new UnexpectedValueException(this.getClass(), e);
