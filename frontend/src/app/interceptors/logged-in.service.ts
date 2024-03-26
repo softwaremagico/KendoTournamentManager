@@ -23,7 +23,8 @@ export class LoggedInService implements CanActivate {
     if (this.loginService.getJwtValue() || this.whiteListedPages.includes(context)) {
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
-      return this.userLoginPageDependingOnRoles();
+      //return this.userLoginPageDependingOnRoles(context);
+      return true;
     }
 
     // Not logged in so redirect to login page with the return url
@@ -32,7 +33,7 @@ export class LoggedInService implements CanActivate {
     return false;
   }
 
-  userLoginPageDependingOnRoles(): boolean {
+  userLoginPageDependingOnRoles(context: string): boolean {
     if (this.loginService.getJwtValue()) {
       this.loginService.getUserRoles().subscribe((_roles: String[]): void => {
         if (_roles.includes("viewer") || _roles.includes("editor") || _roles.includes("admin")) {

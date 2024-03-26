@@ -10,6 +10,8 @@ import {EnvironmentService} from "../environment.service";
 import {Router} from "@angular/router";
 import {ActivityService} from "./rbac/activity.service";
 import {AuthGuestRequest} from "./models/auth-guest-request";
+import {TemporalToken} from "./models/temporal-token";
+import {Participant} from "../models/participant";
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +61,21 @@ export class LoginService {
         }));
   }
 
+  loginAsParticipant(temporalToken: string): Observable<AuthenticatedUser> {
+    const url: string = `${this.baseUrl}/public/participant/token`;
+    return this.http.post<AuthenticatedUser>(url, new TemporalToken(temporalToken), {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+      responseType: 'json',
+      observe: 'response'
+    })
+      .pipe(
+        map((response: any) => {
+          response.body.jwt = response.headers.get('Authorization');
+          response.body.expires = response.headers.get('Expires');
+          return response.body;
+        }));
+  }
+
   //Basic login for guests.
   setUserSession(username: string, password: string): void {
     this.login(username, password).subscribe({
@@ -87,7 +104,24 @@ export class LoginService {
         localStorage.setItem('username', 'guest');
         callback(authenticatedUser.jwt, authenticatedUser.expires);
       },
-      error: (error): void => {
+      error: (): void => {
+        this.router.navigate(["/"]);
+      }
+    });
+  }
+
+  setParticipantUserSession(temporalToken: string, callback: (token: string, expiration: number) => void): void {
+    this.loginAsParticipant(temporalToken).subscribe({
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (): void => {
+          });
+        this.activityService.setRoles(authenticatedUser.roles);
+        localStorage.setItem('username', authenticatedUser.username);
+        callback(authenticatedUser.jwt, authenticatedUser.expires);
+      },
+      error: (): void => {
         this.router.navigate(["/"]);
       }
     });

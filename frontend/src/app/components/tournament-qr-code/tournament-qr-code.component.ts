@@ -16,6 +16,9 @@ export class TournamentQrCodeComponent implements OnInit {
 
   tournament: Tournament;
   qrCode: string | undefined;
+  link: string | undefined;
+
+  protected readonly RbacActivity = RbacActivity;
 
   constructor(public dialogRef: MatDialogRef<TournamentQrCodeComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
@@ -27,6 +30,7 @@ export class TournamentQrCodeComponent implements OnInit {
     this.qrService.getGuestsQr(this.tournament).subscribe((_qrCode: QrCode): void => {
       if (_qrCode) {
         this.qrCode = _qrCode.base64;
+        this.link = _qrCode.link;
       } else {
         this.qrCode = undefined;
       }
@@ -37,7 +41,6 @@ export class TournamentQrCodeComponent implements OnInit {
     this.dialogRef.close({data: undefined, action: Action.Cancel});
   }
 
-  protected readonly RbacActivity = RbacActivity;
 
   downloadQrAsPdf(): void {
     this.qrService.getGuestsQrAsPdf(this.tournament).subscribe((html: Blob): void => {
