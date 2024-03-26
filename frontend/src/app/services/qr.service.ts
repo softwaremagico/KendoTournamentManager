@@ -51,4 +51,17 @@ export class QrService {
       catchError(this.messageService.handleError<Blob>(`getting qr code as pdf from tournament ${tournament.id}`))
     );
   }
+
+  getParticipantQr(participantId: number): Observable<QrCode> {
+    const url: string = `${this.baseUrl}/participant/${participantId}/statistics`;
+    return this.http.get<QrCode>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting qr code from participant ${participantId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<QrCode>(`getting qr code from participant ${participantId}`))
+      );
+  }
 }

@@ -21,9 +21,17 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import java.util.Set;
+
 public interface IAuthenticatedUser {
 
     Integer getId();
 
     String getUsername();
+
+    String getName();
+
+    String getLastname();
+
+    Set<String> getRoles();
 }

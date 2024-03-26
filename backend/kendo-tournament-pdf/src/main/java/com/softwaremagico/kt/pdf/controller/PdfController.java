@@ -53,6 +53,7 @@ import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.TeamList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import com.softwaremagico.kt.pdf.qr.TournamentQr;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
@@ -249,8 +250,8 @@ public class PdfController {
         }
     }
 
-    public TournamentQr generateTournamentQr(Locale locale, Integer tournamentId) {
-        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournamentId);
-        return new TournamentQr(messageSource, locale, qrCodeDTO.getTournament(), qrCodeDTO.getData(), null);
+    public TournamentQr generateTournamentQr(Locale locale, TournamentDTO tournament) {
+        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId());
+        return new TournamentQr(messageSource, locale, tournament, qrCodeDTO.getData(), null);
     }
 }

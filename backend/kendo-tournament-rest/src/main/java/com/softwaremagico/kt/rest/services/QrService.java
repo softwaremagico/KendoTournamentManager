@@ -72,7 +72,7 @@ public class QrService {
                                                             HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename("QR.png").build();
+                .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
         return qrController.generateGuestQrCodeForTournamentFights(tournamentId);
@@ -91,10 +91,25 @@ public class QrService {
                 .filename(tournament.getName() + " - qr.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentQr(locale, tournamentId).generate();
+            return pdfController.generateTournamentQr(locale, tournament).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/participant/{participantId}/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO generateParticipantQrCodeForStatistics(@Parameter(description = "Id of an existing participant", required = true)
+                                                            @PathVariable("participantId") Integer participantId,
+                                                            HttpServletResponse response, HttpServletRequest request) {
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename("Statistics - QR.png").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+
+        return qrController.generateParticipantQrCodeForStatistics(participantId);
     }
 }
