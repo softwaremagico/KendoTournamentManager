@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
@@ -20,6 +20,10 @@ import {AchievementsService} from "../../services/achievements.service";
 import {Achievement} from "../../models/achievement.model";
 import {ParticipantService} from "../../services/participant.service";
 import {Participant} from "../../models/participant";
+import {LoginService} from "../../services/login.service";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {TournamentQrCodeComponent} from "../../components/tournament-qr-code/tournament-qr-code.component";
+import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -31,6 +35,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   pipe: DatePipe;
 
   private participantId: number | undefined;
+  private temporalToken: string | null;
   public participantStatistics: ParticipantStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
@@ -41,16 +46,25 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public performance: [string, number][];
   public achievements: Achievement[];
 
-  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+  constructor(private router: Router, private activatedRoute: ActivatedRoute,
+              rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
               private translateService: TranslateService, private rankingService: RankingService,
-              private achievementService: AchievementsService, private participantService: ParticipantService) {
+              private achievementService: AchievementsService, private participantService: ParticipantService,
+              private loginService: LoginService, public dialog: MatDialog) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
       if (state['participantId'] && !isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);
       } else {
+        this.goBackToUsers();
+      }
+    } else {
+      //Gets participant from URL parameter (from QR codes).
+      this.participantId = Number(this.activatedRoute.snapshot.queryParamMap.get('participantId'));
+      this.temporalToken = this.activatedRoute.snapshot.queryParamMap.get('temporalToken');
+      if (!this.participantId || isNaN(this.participantId)) {
         this.goBackToUsers();
       }
     }
@@ -72,6 +86,21 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
   ngOnInit(): void {
+    if (this.loginService.getJwtValue()) {
+      //Already logged in.
+      this.initializeData();
+    } else {
+      if (this.temporalToken) {
+        this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
+          this.initializeData();
+        });
+      } else {
+        this.goBackToUsers();
+      }
+    }
+  }
+
+  initializeData(): void {
     if (this.participantId) {
       this.generateStatistics();
     } else {
@@ -164,5 +193,13 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
+  }
+
+  showQrCode(): void {
+    const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
+      data: {
+        participantId: this.participantId
+      }
+    });
   }
 }

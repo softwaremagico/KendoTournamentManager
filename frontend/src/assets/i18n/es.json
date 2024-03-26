@@ -865,5 +865,6 @@
   "kote": "Kote",
   "tournamentListAsZip": "Descargar todas las listas en PDF en un archivo zip.",
   "shiaijoFinished": "Todos los partidos del shiaijo {{shiaijoName}} han acabado.",
-  "qrCodeHint": "Muestra un código QR que permite a los invitados seguir las puntuaciones del torneo."
+  "qrCodeHint": "Muestra un código QR que permite a los invitados seguir las puntuaciones del torneo.",
+  "orClickHere": "O haz click aquí..."
 }

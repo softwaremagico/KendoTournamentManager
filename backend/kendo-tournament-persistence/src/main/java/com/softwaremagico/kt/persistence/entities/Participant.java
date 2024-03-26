@@ -47,7 +47,10 @@ import java.text.Collator;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A registered person is any person that is in a tournament. Can be a
@@ -63,11 +66,13 @@ import java.util.Locale;
         })
 public class Participant extends Element implements Comparable<Participant>, IParticipantName, UserDetails, IAuthenticatedUser {
 
+    public static final String PARTICIPANT_ROLE = "participant";
+
     //Token expiration in seconds.
     private static final int TEMPORARY_TOKEN_DURATION = 5 * 60;
 
     //Account expiration in days.
-    private static final int TEMPORARY_ACCOUNT_DURATION = 365;
+    private static final int TEMPORARY_PARTICIPANT_ACCOUNT_DURATION = 365;
     private static final int TOKEN_LENGTH = 15;
 
     @Column(name = "id_card", unique = true)
@@ -220,7 +225,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     public void generateToken() {
         setToken(StringUtils.generateRandomToken(TOKEN_LENGTH));
-        setAccountExpiration(LocalDateTime.now().plusDays(TEMPORARY_ACCOUNT_DURATION));
+        setAccountExpiration(LocalDateTime.now().plusDays(TEMPORARY_PARTICIPANT_ACCOUNT_DURATION));
     }
 
     @Override
@@ -261,5 +266,10 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Set<String> getRoles() {
+        return new HashSet<>(List.of(PARTICIPANT_ROLE));
     }
 }
