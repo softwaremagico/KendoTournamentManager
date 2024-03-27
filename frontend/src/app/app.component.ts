@@ -32,7 +32,7 @@ export class AppComponent extends RbacBasedComponent {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');
-    this.loggedInService.isUserLoggedIn.subscribe(value => this.loggedIn = value);
+    this.loggedInService.isUserLoggedIn.subscribe((value: boolean) => this.loggedIn = value);
     if (userSessionService.getLanguage()) {
       this.translate.use(userSessionService.getLanguage());
       this.selectedLanguage = userSessionService.getLanguage();

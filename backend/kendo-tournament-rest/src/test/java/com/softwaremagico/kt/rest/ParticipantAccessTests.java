@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,8 +24,10 @@ package com.softwaremagico.kt.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
-import com.softwaremagico.kt.persistence.entities.Club;
-import com.softwaremagico.kt.persistence.repositories.ClubRepository;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
+import com.softwaremagico.kt.core.providers.ClubProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,39 +52,50 @@ import java.io.IOException;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-@Test(groups = "userRegister")
-public class UserRegisterTests extends AbstractTestNGSpringContextTests {
+@Test(groups = "participantAccess")
+public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     private final static String USER_FIRST_NAME = "Test";
     private final static String USER_LAST_NAME = "User";
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
-    private static final String CLUB_NAME = "The Club";
+    private final static String CLUB_NAME = "Club";
 
-    private static final String CLUB_CITY = "Valencia";
-
-    private MockMvc mockMvc;
-
-    @Autowired
-    private WebApplicationContext context;
+    private final static String PARTICIPANT_NAME = "Participant Name";
+    private final static String PARTICIPANT_LASTNAME = "Participant Last Name";
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
     private AuthenticatedUserController authenticatedUserController;
 
     @Autowired
-    private ClubRepository clubRepository;
+    private ClubProvider clubProvider;
+
+    @Autowired
+    private ParticipantProvider participantProvider;
+
+    private MockMvc mockMvc;
 
     private String jwtToken;
+    private String participantJwtToken;
+
+    private ClubDTO clubDTO;
+
+    private ParticipantDTO participantDTO;
+    private TemporalToken temporalToken;
 
     private <T> String toJson(T object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -118,32 +131,88 @@ public class UserRegisterTests extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void whenCreatedClubThenCreatedByIsPopulated() throws Exception {
-        Assert.assertNotNull(jwtToken);
+    public void createClub() throws Exception {
+        ClubDTO clubDTO = new ClubDTO();
+        clubDTO.setName(CLUB_NAME);
 
         MvcResult createResult = this.mockMvc
                 .perform(post("/clubs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
-                        .content(toJson(new ClubDTO(CLUB_NAME, CLUB_CITY)))
+                        .content(toJson(clubDTO))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        ClubDTO clubDTO = fromJson(createResult.getResponse().getContentAsString(), ClubDTO.class);
-        Assert.assertEquals(clubDTO.getCreatedBy(), USER_NAME);
+        this.clubDTO = fromJson(createResult.getResponse().getContentAsString(), ClubDTO.class);
+
+        Assert.assertEquals(this.clubDTO.getName(), CLUB_NAME);
     }
 
-    @Test(dependsOnMethods = "whenCreatedClubThenCreatedByIsPopulated")
-    public void createdByIsStoredOnDatabase() throws Exception {
-        Club club = clubRepository.findByNameAndCity(CLUB_NAME, CLUB_CITY);
-        Assert.assertNotNull(club);
-        Assert.assertEquals(club.getCreatedBy(), USER_NAME);
+    @Test(dependsOnMethods = "createClub")
+    public void createParticipant() throws Exception {
+        ParticipantDTO participantDTO = new ParticipantDTO();
+        participantDTO.setClub(this.clubDTO);
+        participantDTO.setName(PARTICIPANT_NAME);
+        participantDTO.setLastname(PARTICIPANT_LASTNAME);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/participants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(participantDTO))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        this.participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+
+        Assert.assertEquals(this.participantDTO.getName(), PARTICIPANT_NAME);
+    }
+
+    @Test(dependsOnMethods = "createParticipant")
+    public void generateTemporalTokenParticipant() throws Exception {
+        MvcResult createResult = this.mockMvc
+                .perform(post("/participants/temporal-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .content(toJson(participantDTO))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+
+        this.temporalToken = fromJson(createResult.getResponse().getContentAsString(), TemporalToken.class);
+
+        Assert.assertNotNull(temporalToken);
+    }
+
+    @Test(dependsOnMethods = "generateTemporalTokenParticipant")
+    public void generateToken() throws Exception {
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/public/participant/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(this.temporalToken))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        ParticipantDTO participantDTO = fromJson(createResult.getResponse().getContentAsString(), ParticipantDTO.class);
+
+        this.participantJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+
+        Assert.assertEquals(participantDTO.getName(), PARTICIPANT_NAME);
+    }
+
+    @Test(dependsOnMethods = "generateToken")
+    public void canAccessToItsOwnStatistics() throws Exception {
+
     }
 
     @AfterClass(alwaysRun = true)
     public void cleanUp() {
-        clubRepository.deleteAll();
+        participantProvider.deleteAll();
+        clubProvider.deleteAll();
         authenticatedUserController.deleteAll();
     }
 }

@@ -37,4 +37,6 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt, Pageable pageable);
 
     List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt);
+
+    List<Tournament> findByLocked(boolean locked);
 }
