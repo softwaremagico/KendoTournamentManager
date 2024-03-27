@@ -124,7 +124,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             } catch (NumberFormatException ignore) {
             }
         }
-        KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername);
+        KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
         return Optional.empty();
     }
 }

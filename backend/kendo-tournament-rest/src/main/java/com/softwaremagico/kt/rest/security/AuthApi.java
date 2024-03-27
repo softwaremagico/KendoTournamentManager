@@ -85,8 +85,6 @@ public class AuthApi {
     private final AuthenticatedUserController authenticatedUserController;
     private final BruteForceService bruteForceService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
-
-    private final ParticipantProvider participantProvider;
     private final ParticipantController participantController;
 
     private final TournamentProvider tournamentProvider;
@@ -98,7 +96,7 @@ public class AuthApi {
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
-                   AuthenticatedUserProvider authenticatedUserProvider, ParticipantProvider participantProvider,
+                   AuthenticatedUserProvider authenticatedUserProvider,
                    ParticipantController participantController, TournamentProvider tournamentProvider,
                    @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticationManager = authenticationManager;
@@ -106,7 +104,6 @@ public class AuthApi {
         this.authenticatedUserController = authenticatedUserController;
         this.bruteForceService = bruteForceService;
         this.authenticatedUserProvider = authenticatedUserProvider;
-        this.participantProvider = participantProvider;
         this.participantController = participantController;
         this.tournamentProvider = tournamentProvider;
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
@@ -225,7 +222,7 @@ public class AuthApi {
     public ResponseEntity<IAuthenticatedUser> getToken(@RequestBody TemporalToken temporalToken,
                                                        HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
-        final Token token = participantController.generateToken(temporalToken.getTemporalToken());
+        final Token token = participantController.generateToken(temporalToken.getContent());
 
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();

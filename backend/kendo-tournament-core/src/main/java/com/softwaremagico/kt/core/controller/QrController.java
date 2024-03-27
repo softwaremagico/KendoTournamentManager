@@ -23,7 +23,6 @@ package com.softwaremagico.kt.core.controller;
 
 import com.softwaremagico.kt.core.controller.models.QrCodeDTO;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
-import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.UnexpectedValueException;
@@ -31,6 +30,7 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
@@ -65,24 +65,20 @@ public class QrController {
 
     private final ParticipantProvider participantProvider;
 
-    private final TournamentConverter tournamentConverter;
-
-    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider,
-                        TournamentConverter tournamentConverter) {
+    public QrController(QrProvider qrProvider, TournamentProvider tournamentProvider, ParticipantProvider participantProvider) {
         this.qrProvider = qrProvider;
         this.tournamentProvider = tournamentProvider;
         this.participantProvider = participantProvider;
-        this.tournamentConverter = tournamentConverter;
     }
 
     @Cacheable(value = "qr-codes", key = "#tournamentId")
     public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port) {
         //Check that exists.
-        tournamentProvider.get(tournamentId).orElseThrow(() ->
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
-                    + "?tournamentId=" + tournamentId + "&user=guest";
+                    + "?tournamentId=" + tournament.getId() + "&user=guest";
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
@@ -109,7 +105,7 @@ public class QrController {
         try {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
-                    + URLEncoder.encode(temporalToken.getTemporalToken(), StandardCharsets.UTF_8);
+                    + URLEncoder.encode(temporalToken.getContent(), StandardCharsets.UTF_8);
             final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));

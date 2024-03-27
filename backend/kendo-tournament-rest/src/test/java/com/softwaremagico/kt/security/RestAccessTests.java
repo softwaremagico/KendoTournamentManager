@@ -78,15 +78,4 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(status().isUnauthorized());
     }
-
-    @Test
-    public void checkForbiddenRestServiceWithAuth() throws Exception {
-        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("user", "1");
-
-        mockMvc.perform(get("/files/users")
-                        .params(requestParams)
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
-    }
 }

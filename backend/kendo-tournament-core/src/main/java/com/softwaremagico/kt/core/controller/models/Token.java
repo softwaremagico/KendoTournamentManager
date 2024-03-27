@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 
 public class Token {
 
-    private String token;
+    private String content;
     private LocalDateTime expiration;
 
     private ParticipantDTO participant;
@@ -39,17 +39,17 @@ public class Token {
 
     public Token(Participant participant) {
         this();
-        setToken(participant.getToken());
+        setContent(participant.getToken());
         setExpiration(participant.getAccountExpiration());
     }
 
 
-    public String getToken() {
-        return token;
+    public String getContent() {
+        return content;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public LocalDateTime getExpiration() {
