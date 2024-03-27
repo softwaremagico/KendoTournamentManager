@@ -74,7 +74,6 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         this.pdfController = pdfController;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentDTO> getAll(HttpServletRequest request) {

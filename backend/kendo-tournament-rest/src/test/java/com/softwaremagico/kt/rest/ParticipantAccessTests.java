@@ -217,6 +217,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOtherServices() throws Exception {
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(get("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -224,6 +225,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @AfterClass(alwaysRun = true)
