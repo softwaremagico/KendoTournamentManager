@@ -22,6 +22,7 @@ services:
       context: ./traefik
       args:
         - email
+    image: "kendo-tournament-rproxy"
     container_name: "kendo-tournament-rproxy"
     command:
       - "--log.level=DEBUG"
