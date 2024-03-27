@@ -53,7 +53,6 @@ import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.TeamList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
 import com.softwaremagico.kt.pdf.qr.TournamentQr;
-import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
