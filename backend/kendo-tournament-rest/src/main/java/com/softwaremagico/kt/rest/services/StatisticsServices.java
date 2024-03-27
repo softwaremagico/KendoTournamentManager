@@ -133,7 +133,7 @@ public class StatisticsServices {
                                                                  Authentication authentication,
                                                                  HttpServletRequest request) {
         final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(participantController.get(participantId));
-        participantStatisticsDTO.setCreatedBy(authentication.getName());
+        participantStatisticsDTO.setCreatedBy(authentication != null ? authentication.getName() : null);
         participantStatisticsDTO.setCreatedAt(LocalDateTime.now());
         return participantStatisticsDTO;
     }
