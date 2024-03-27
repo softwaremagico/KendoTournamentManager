@@ -39,6 +39,14 @@
               matTooltip="{{'competitorsRanking' | translate}}">
         <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
       </button>
+      <button (click)="showQrCode()"
+              *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
+              [disabled]="!basicTableData.selectedElement"
+              [matTooltipShowDelay]="500"
+              color="primary" mat-button
+              matTooltip="{{'qrCodeHint' | translate}}">
+        <mat-icon>qr_code_2</mat-icon>
+      </button>
     </div>
   </div>
 </div>

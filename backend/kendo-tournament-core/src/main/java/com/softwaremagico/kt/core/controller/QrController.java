@@ -46,17 +46,14 @@ import java.nio.charset.StandardCharsets;
 @Controller
 public class QrController {
 
-    private static final String TOURNAMENT_FIGHTS_URL = "/tournaments/fights";
-    private static final String PARTICIPANT_STATISTICS_URL = "/participants/statistics";
+    private static final String TOURNAMENT_FIGHTS_URL = "/#/tournaments/fights";
+    private static final String PARTICIPANT_STATISTICS_URL = "/#/participants/statistics";
     private static final String LOGO_RESOURCE = "kote.svg";
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
     private static final Color QR_COLOR = Color.decode("#001239");
 
     private final QrProvider qrProvider;
-
-    @Value("${server.servlet.context-path:null}")
-    private String contextPath;
 
     @Value("${server.domain:localhost}")
     private String machineDomain;
@@ -78,13 +75,13 @@ public class QrController {
         this.tournamentConverter = tournamentConverter;
     }
 
-    @Cacheable(value = "qr-codes")
-    public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId) {
+    @Cacheable(value = "qr-codes", key = "#tournamentId")
+    public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port) {
         //Check that exists.
         tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
-            final String link = schema + "://" + machineDomain + contextPath + TOURNAMENT_FIGHTS_URL
+            final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
                     + "?tournamentId=" + tournamentId + "&user=guest";
             final BufferedImage qrCode = qrProvider.getQr(link,
                     QR_SIZE, QR_COLOR, LOGO_RESOURCE);
@@ -101,16 +98,17 @@ public class QrController {
      * '/participant/statistics?participantId=1'
      *
      * @param participantId
+     * @param port          if the frontend is running on a different port.
      * @return
      */
-    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId) {
+    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId, Integer port) {
         final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
                 new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
 
         final TemporalToken temporalToken = participantProvider.generateTemporalToken(participant);
 
         try {
-            final String link = schema + "://" + machineDomain + contextPath + PARTICIPANT_STATISTICS_URL
+            final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getTemporalToken(), StandardCharsets.UTF_8);
             final BufferedImage qrCode = qrProvider.getQr(link,
