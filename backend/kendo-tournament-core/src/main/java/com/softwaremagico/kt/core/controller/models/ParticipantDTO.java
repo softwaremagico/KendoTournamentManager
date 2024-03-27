@@ -21,12 +21,17 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public class ParticipantDTO extends ElementDTO implements IParticipantName {
+public class ParticipantDTO extends ElementDTO implements IParticipantName, IAuthenticatedUser {
 
     private String idCard;
 
@@ -68,6 +73,11 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
     @Override
     public String getLastname() {
         return lastname;
+    }
+
+    @Override
+    public Set<String> getRoles() {
+        return new HashSet<>(List.of(Participant.PARTICIPANT_ROLE));
     }
 
     public void setLastname(String lastname) {
@@ -114,5 +124,10 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getName(), getLastname(), getClub());
+    }
+
+    @Override
+    public String getUsername() {
+        return getId() + "_" + name + "_" + lastname;
     }
 }

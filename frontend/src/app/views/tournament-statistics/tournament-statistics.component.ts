@@ -27,6 +27,8 @@ import {truncate} from "../../utils/maths/truncate";
 import {convertDate, convertSeconds} from "../../utils/dates/date-conversor";
 import {Achievement} from "../../models/achievement.model";
 import {AchievementsService} from "../../services/achievements.service";
+import {Tournament} from "../../models/tournament";
+import {TournamentService} from "../../services/tournament.service";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -68,11 +70,14 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   @ViewChild('timeSizeByTournamentChart')
   timeSizeByTournamentChart: LineChartComponent;
 
+  public tournament: Tournament;
+
 
   constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private statisticsService: StatisticsService, private userSessionService: UserSessionService,
               private rankingService: RankingService, private nameUtilsService: NameUtilsService,
-              private translateService: TranslateService, private achievementService: AchievementsService) {
+              private translateService: TranslateService, private achievementService: AchievementsService,
+              private tournamentService: TournamentService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -107,6 +112,11 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   }
 
   ngAfterViewInit(): void {
+    if (this.tournamentId) {
+      this.tournamentService.get(this.tournamentId).subscribe((_tournament: Tournament): void => {
+        this.tournament = _tournament;
+      })
+    }
     this.generateStatistics();
     this.generateCompetitorsRanking();
   }
@@ -130,10 +140,10 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     });
   }
 
-  generatePreviousTournamentsStatistics(tournamentId: number) {
+  generatePreviousTournamentsStatistics(tournamentId: number): void {
     if (tournamentId) {
       this.statisticsService.getPreviousTournamentStatistics(tournamentId, 5)
-        .subscribe((tournamentStatistics: TournamentStatistics[]) => {
+        .subscribe((tournamentStatistics: TournamentStatistics[]): void => {
           if (tournamentStatistics) {
             for (let tournamentStatistic of tournamentStatistics) {
               if (tournamentStatistic && tournamentStatistic.tournamentId != tournamentId) {
@@ -145,19 +155,19 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     }
   }
 
-  generateStackedStatistics(tournamentStatistics: TournamentStatistics) {
+  generateStackedStatistics(tournamentStatistics: TournamentStatistics): void {
     this.generateParticipantsByTournamentStatistics(tournamentStatistics);
     this.generateTeamSizeByTournamentStatistics(tournamentStatistics);
     this.generateHitsByTournamentStatistics(tournamentStatistics);
     this.generateTimeByTournamentStatistics(tournamentStatistics);
   }
 
-  generateParticipantsByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+  generateParticipantsByTournamentStatistics(tournamentStatistics: TournamentStatistics): void {
     this.participantsByTournament.elements.unshift(new StackedBarChartDataElement(this.obtainParticipants(tournamentStatistics), this.getLabel(tournamentStatistics.tournamentName)));
     this.participantsByTournamentChart.update(this.participantsByTournament);
   }
 
-  generateTeamSizeByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+  generateTeamSizeByTournamentStatistics(tournamentStatistics: TournamentStatistics): void {
     //Team Size
     if (!this.teamSizeByTournament.elements[0]) {
       this.teamSizeByTournament.elements[0] = new LineChartDataElement();
@@ -175,13 +185,13 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     this.timeSizeByTournamentChart.update(this.teamSizeByTournament);
   }
 
-  generateHitsByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+  generateHitsByTournamentStatistics(tournamentStatistics: TournamentStatistics): void {
     this.hitsByTournament.elements.unshift(new StackedBarChartDataElement(this.obtainPoints(tournamentStatistics), this.getLabel(tournamentStatistics.tournamentName)));
     this.hitsByTournamentPercentageChart.update(this.hitsByTournament);
     this.hitsByTournamentChart.update(this.hitsByTournament);
   }
 
-  generateTimeByTournamentStatistics(tournamentStatistics: TournamentStatistics) {
+  generateTimeByTournamentStatistics(tournamentStatistics: TournamentStatistics): void {
     //Fight time
     if (!this.timeByTournament.elements[0]) {
       this.timeByTournament.elements[0] = new LineChartDataElement();
@@ -202,7 +212,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generateCompetitorsRanking(): void {
     if (this.tournamentId) {
-      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournamentId).subscribe(competitorsScore => {
+      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournamentId).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
       });
     }
@@ -217,7 +227,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generateTeamsRanking(): void {
     if (this.tournamentId) {
-      this.rankingService.getTeamsScoreRankingByTournament(this.tournamentId).subscribe(scoresOfTeams => {
+      this.rankingService.getTeamsScoreRankingByTournament(this.tournamentId).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
         this.teamScores = scoresOfTeams;
       });
     }

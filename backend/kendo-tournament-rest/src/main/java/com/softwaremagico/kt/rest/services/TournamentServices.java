@@ -208,4 +208,12 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                 Authentication authentication, HttpServletRequest request) {
         getController().setNumberOfWinners(tournamentId, numberOfWinners, authentication.getName());
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @Operation(summary = "Return the last unlocked tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/unlocked/lasts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public TournamentDTO getLastUnlockedTournament() {
+        return getController().getLatestUnlocked();
+    }
 }

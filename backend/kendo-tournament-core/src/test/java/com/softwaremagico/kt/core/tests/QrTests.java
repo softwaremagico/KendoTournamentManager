@@ -121,7 +121,7 @@ public class QrTests extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void createSJwtQr() {
+    public void createJwtQr() {
         BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL + "?token=" + JWT_TOKEN, 500, null, null, null, "kote.png", null, null);
         saveImage(qrImage, "withToken");
     }
