@@ -28,6 +28,7 @@ import io.github.simonscholz.qrcode.QrCodeDotStyler;
 import io.github.simonscholz.qrcode.QrCodeFactory;
 import io.github.simonscholz.qrcode.QrPositionalSquaresConfig;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -177,8 +178,8 @@ public class QrProvider {
         final Transcoder pngTranscoder = new PNGTranscoder();
 
         // Set the transcoding hints.
-        pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, size / 2);
-        pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, size / 2);
+        pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 2);
+        pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / 2);
         // Create the transcoder input.
         final TranscoderInput input = new TranscoderInput(svgDocument);
 

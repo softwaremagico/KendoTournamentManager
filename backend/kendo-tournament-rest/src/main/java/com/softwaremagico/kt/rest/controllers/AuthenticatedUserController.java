@@ -123,11 +123,9 @@ public class AuthenticatedUserController {
             throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
         }
         //Ensure that at least, one user remain.
-        if (authenticatedUserProvider.count() > 1) {
-            if (user instanceof AuthenticatedUser) {
-                authenticatedUserProvider.delete((AuthenticatedUser) user);
-                KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
-            }
+        if (authenticatedUserProvider.count() > 1 && user instanceof AuthenticatedUser authenticatedUser) {
+            authenticatedUserProvider.delete(authenticatedUser);
+            KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
         }
     }
 
