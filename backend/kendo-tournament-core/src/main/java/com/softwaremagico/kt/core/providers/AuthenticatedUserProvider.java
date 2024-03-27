@@ -106,4 +106,8 @@ public class AuthenticatedUserProvider {
         authenticatedUserRepository.delete(authenticatedUser);
     }
 
+    public void deleteAll() {
+        authenticatedUserRepository.deleteAll();
+    }
+
 }

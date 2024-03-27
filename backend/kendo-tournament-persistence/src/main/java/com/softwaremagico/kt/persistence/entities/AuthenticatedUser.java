@@ -50,8 +50,7 @@ import java.util.Set;
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
-public class AuthenticatedUser implements UserDetails {
-    public static final String GUEST_USER = "guest";
+public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,8 +5,8 @@ import {ParticipantStatisticsComponent} from "../participant-statistics/particip
 import {LoggedInService} from "../../interceptors/logged-in.service";
 
 const routes: Routes = [
-  {path: '', component: ParticipantListComponent},
-  {path: 'statistics', component: ParticipantStatisticsComponent, canActivate: [LoggedInService]},
+  {path: '', component: ParticipantListComponent, canActivate: [LoggedInService]},
+  {path: 'statistics', component: ParticipantStatisticsComponent},
 ]
 
 @NgModule({

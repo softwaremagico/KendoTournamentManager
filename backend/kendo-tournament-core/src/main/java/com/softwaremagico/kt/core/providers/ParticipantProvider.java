@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -93,5 +95,25 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
     public List<Participant> get(Club club) {
         return getRepository().findByClub(club);
+    }
+
+    public TemporalToken generateTemporalToken(Participant participant) {
+        do {
+            participant.generateTemporalToken();
+        } while (getRepository().countByTemporalToken(participant.getTemporalToken()) > 0);
+        return new TemporalToken(save(participant));
+    }
+
+    public Participant generateToken(Participant participant) {
+        participant.generateToken();
+        return save(participant);
+    }
+
+    public Optional<Participant> findByTemporalToken(String token) {
+        return getRepository().findByTemporalToken(token);
+    }
+
+    public Optional<Participant> findByToken(String token) {
+        return getRepository().findByToken(token);
     }
 }
