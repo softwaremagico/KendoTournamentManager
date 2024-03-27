@@ -11,7 +11,7 @@ import {Tournament} from "../models/tournament";
 export class LoggedInService implements CanActivate {
 
   //Pages that will not force a login to access.
-  whiteListedPages: string[] = ["/tournaments/fights"];
+  whiteListedPages: string[] = ["/tournaments/fights", "/participants/statistics"];
 
   public isUserLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 

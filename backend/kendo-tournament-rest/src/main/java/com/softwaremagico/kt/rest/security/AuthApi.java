@@ -146,11 +146,10 @@ public class AuthApi {
             RestServerLogger.debug(this.getClass().getName(), "User '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "' authenticated.");
 
             try {
-                final AuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
+                final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authenticate.getName()).orElseThrow(() ->
                         new UsernameNotFoundException(String.format("User '%s' not found!", authenticate.getName())));
                 final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
-                user.setPassword(jwtToken);
                 bruteForceService.loginSucceeded(ip);
 
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
@@ -192,12 +191,11 @@ public class AuthApi {
         }
         try {
             try {
-                final AuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
+                final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
                         .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                                 String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
                 final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
-                user.setPassword(jwtToken);
 
                 //Guest user can only access to non-locked tournaments.
                 final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->

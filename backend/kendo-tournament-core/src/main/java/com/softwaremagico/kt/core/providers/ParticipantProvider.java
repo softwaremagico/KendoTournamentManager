@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core.providers;
  */
 
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -42,6 +43,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ParticipantProvider extends CrudProvider<Participant, Integer, ParticipantRepository> {
+
+    public static final String TOKEN_NAME_SEPARATOR = "_";
 
     @Autowired
     public ParticipantProvider(ParticipantRepository repository) {
@@ -113,7 +116,15 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return getRepository().findByTemporalToken(token);
     }
 
-    public Optional<Participant> findByToken(String token) {
-        return getRepository().findByToken(token);
+    public Optional<Participant> findByTokenUsername(String tokenUsername) {
+        if (tokenUsername.contains(ParticipantProvider.TOKEN_NAME_SEPARATOR)) {
+            final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
+            try {
+                return getRepository().findById(Integer.parseInt(fields[0]));
+            } catch (NumberFormatException ignore) {
+            }
+        }
+        KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername);
+        return Optional.empty();
     }
 }

@@ -25,6 +25,7 @@ package com.softwaremagico.kt.rest.security;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.rest.exceptions.InvalidIpException;
 import com.softwaremagico.kt.rest.exceptions.InvalidJwtException;
 import com.softwaremagico.kt.rest.exceptions.InvalidMacException;
@@ -77,7 +78,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final NetworkController networkController;
 
     @Autowired
-    public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, @Value("${enable.participant.access}:false") String participantAccess,
+    public JwtTokenFilter(@Value("${jwt.ip.check:false}") String ipCheck, @Value("${enable.participant.access:false}") String participantAccess,
                           JwtTokenUtil jwtTokenUtil, AuthenticatedUserProvider authenticatedUserProvider,
                           ParticipantProvider participantProvider,
                           NetworkController networkController) {
@@ -125,14 +126,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         // Get user identity and set it on the spring security context
-        UserDetails userDetails;
-        userDetails = authenticatedUserProvider.findByUsername(jwtTokenUtil.getUsername(token)).orElse(null);
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(jwtTokenUtil.getUsername(token)).orElse(null);
 
         //Check if is a participant access.
         boolean participantUser = false;
-        if (userDetails == null && participantAccess) {
-            userDetails = participantProvider.findByToken(jwtTokenUtil.getUsername(token)).orElse(null);
+        final UserDetails userDetails;
+        if (user == null && participantAccess) {
+            userDetails = participantProvider.findByTokenUsername(jwtTokenUtil.getUsername(token)).orElse(null);
             participantUser = true;
+        } else {
+            //It is a standard user
+            userDetails = (UserDetails) user;
         }
 
         final UsernamePasswordAuthenticationToken
