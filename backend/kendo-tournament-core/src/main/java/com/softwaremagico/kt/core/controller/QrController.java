@@ -83,8 +83,7 @@ public class QrController {
         try {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
                     + "?tournamentId=" + tournamentId + "&user=guest";
-            final BufferedImage qrCode = qrProvider.getQr(link,
-                    QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setLink(link);
@@ -111,8 +110,7 @@ public class QrController {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getTemporalToken(), StandardCharsets.UTF_8);
-            final BufferedImage qrCode = qrProvider.getQr(link,
-                    QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setLink(link);
