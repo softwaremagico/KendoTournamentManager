@@ -10,15 +10,9 @@
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button (click)="showQrCode()"
-                *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
-                [matTooltipShowDelay]="500"
-                color="primary" mat-button
-                matTooltip="{{'qrCodeHint' | translate}}">
-          <mat-icon>qr_code_2</mat-icon>
-        </button>
       </div>
     </div>
+    <h1 class="name" *ngIf="participant">{{participant.name}} {{participant.lastname}}</h1>
     <div class="statistics-container">
       <div class="dashboard">
 

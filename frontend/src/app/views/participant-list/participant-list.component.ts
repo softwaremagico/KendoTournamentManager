@@ -4,7 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {Participant} from "../../models/participant";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {ParticipantService} from "../../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -18,6 +18,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
+import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
 
 @Component({
   selector: 'app-participant-list',
@@ -126,7 +127,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
           this.basicTableData.dataSource._updateChangeSubscription();
         }
         this.basicTableData.selectedElement = _participant;
-      this.basicTableData.selectItem(_participant);
+        this.basicTableData.selectItem(_participant);
       }
     );
   }
@@ -158,4 +159,14 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     });
   }
 
+  showQrCode(): void {
+    if (this.basicTableData.selectedElement) {
+      const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
+        data: {
+          participantId: this.basicTableData.selectedElement?.id,
+          port: window.location.port
+        }
+      });
+    }
+  }
 }
