@@ -51,7 +51,7 @@ public class QrTests extends BasicDataTest {
     @Test
     public void generateQrCode() {
 
-        Assert.assertEquals(pdfController.generateTournamentQr(Locale.getDefault(), tournament)
+        Assert.assertEquals(pdfController.generateTournamentQr(Locale.getDefault(), tournament, null)
                 // No clue why are 2 pages and not 1.
                 .createFile(PDF_PATH_OUTPUT + "Tournament - QR.pdf") - 1, 1);
     }
