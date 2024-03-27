@@ -23,6 +23,8 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,31 +46,43 @@ public class AuthenticatedUserProvider {
 
     private final AuthenticatedUserRepository authenticatedUserRepository;
 
+    private final ParticipantProvider participantProvider;
+
 
     private final boolean guestEnabled;
 
     @Autowired
-    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, @Value("${enable.guest.user:false}") String guestUsersEnabled) {
+    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticatedUserRepository = authenticatedUserRepository;
+        this.participantProvider = participantProvider;
         guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
 
-    public Optional<AuthenticatedUser> findByUsername(String username) {
+    public Optional<IAuthenticatedUser> findByUsername(String username) {
         //Create guest user on the fly
         if (Objects.equals(username, GUEST_USER) && guestEnabled) {
             final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER);
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        return authenticatedUserRepository.findByUsername(username);
+        final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsername(username);
+        if (authenticatedUser.isPresent()) {
+            return Optional.of(authenticatedUser.get());
+        }
+        final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
+        if (participant.isPresent()) {
+            return Optional.of(participant.get());
+        }
+        return Optional.empty();
     }
 
     public long count() {
         return authenticatedUserRepository.count();
     }
 
-    public Optional<AuthenticatedUser> findByUniqueId(String uniqueId) {
+    public Optional<IAuthenticatedUser> findByUniqueId(String uniqueId) {
         return findByUsername(uniqueId);
     }
 

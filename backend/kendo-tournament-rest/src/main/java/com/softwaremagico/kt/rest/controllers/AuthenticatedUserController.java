@@ -25,6 +25,8 @@ import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.exceptions.InvalidPasswordException;
 import com.softwaremagico.kt.rest.exceptions.UserNotFoundException;
@@ -75,22 +77,28 @@ public class AuthenticatedUserController {
     }
 
     public void updatePassword(String username, String oldPassword, String newPassword) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
 
+        if (user instanceof Participant) {
+            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+        }
+
+        final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
+
         //Check old password.
-        if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
+        if (!BCrypt.checkpw(oldPassword, authenticatedUser.getPassword())) {
             throw new InvalidPasswordException(this.getClass(), "Provided password is incorrect!");
         }
 
         //Update new password.
-        user.setPassword(newPassword);
-        authenticatedUserProvider.save(user);
+        authenticatedUser.setPassword(newPassword);
+        authenticatedUserProvider.save(authenticatedUser);
         KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", username);
     }
 
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
+        final AuthenticatedUser user = (AuthenticatedUser) authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
         user.setName(createUserRequest.getName() != null ? createUserRequest.getName().replaceAll("[\n\r\t]", "_") : "");
         user.setLastname(createUserRequest.getLastname() != null ? createUserRequest.getLastname().replaceAll("[\n\r\t]", "_") : "");
@@ -108,17 +116,23 @@ public class AuthenticatedUserController {
     }
 
     public void deleteUser(String actioner, String username) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        //Can only be AuthenticatedUsers and not Participants
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+        if (user instanceof Participant) {
+            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+        }
         //Ensure that at least, one user remain.
         if (authenticatedUserProvider.count() > 1) {
-            authenticatedUserProvider.delete(user);
-            KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
+            if (user instanceof AuthenticatedUser) {
+                authenticatedUserProvider.delete((AuthenticatedUser) user);
+                KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
+            }
         }
     }
 
     public Set<String> getRoles(String username) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
         return user.getRoles();
     }
