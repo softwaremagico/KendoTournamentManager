@@ -87,7 +87,7 @@ services:
       - "traefik.backend=kendo-tournament-frontend"
       - "traefik.http.routers.kendo-tournament-frontend.entrypoints=https"
       - "traefik.http.routers.kendo-tournament-frontend.tls.certresolver=https"
-      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`)"
+      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`) && PathPrefix(`/`)"
       - "traefik.docker.network=containers"
       - "traefik.http.services.kendo-tournament-frontend.loadbalancer.server.port=4200"
     healthcheck:
