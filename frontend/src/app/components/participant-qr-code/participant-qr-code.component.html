@@ -2,17 +2,9 @@
   <div *ngIf="!qrCode" class="qr-container">
     <app-mat-spinner-overlay></app-mat-spinner-overlay>
   </div>
-  <div *ngIf="qrCode" class="qr-container">
+  <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
     <a class="link" *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
-    <button (click)="downloadQrAsPdf()" *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
-            class="floating-button"
-            color="picture"
-            mat-flat-button
-            mat-mini-fab
-            type="button">
-      <mat-icon>file_download</mat-icon>
-    </button>
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>

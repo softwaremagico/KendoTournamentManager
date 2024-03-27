@@ -39,7 +39,7 @@ export class LoginComponent {
           (jwt: string, expires: number): void => {
           });
         this.rbacService.setRoles(authenticatedUser.roles);
-        let returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
+        const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"];
         this.router.navigate([returnUrl]);
         this.messageService.infoMessage("userloggedInMessage");
         localStorage.setItem('username', (this.loginForm.controls['username'].value));
