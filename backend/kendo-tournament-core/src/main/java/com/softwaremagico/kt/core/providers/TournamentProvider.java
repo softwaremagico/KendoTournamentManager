@@ -281,4 +281,13 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         groupRepository.save(group);
         return tournament;
     }
+
+    public Tournament findLastByUnlocked() {
+        final List<Tournament> tournaments = getRepository().findByLocked(false);
+        if (!tournaments.isEmpty()) {
+            tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
+            return tournaments.get(0);
+        }
+        return null;
+    }
 }

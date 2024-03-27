@@ -23,11 +23,21 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +46,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class ParticipantServices extends BasicServices<Participant, ParticipantDTO, ParticipantRepository,
         ParticipantProvider, ParticipantConverterRequest, ParticipantConverter, ParticipantController> {
 
+
     public ParticipantServices(ParticipantController participantController) {
         super(participantController);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST', 'ROLE_PARTICIPANT')")
+    @Operation(summary = "Gets the participant data from the jwt token username.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/jwt", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantDTO getByUsername(Authentication authentication,
+                              HttpServletRequest request) {
+        return getController().getByUserName(authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Creates a temporal token for a participant.")
+    @PostMapping(value = "/temporal-token", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TemporalToken getTemporalToken(@RequestBody ParticipantDTO participantDTO,
+                                          HttpServletRequest request) {
+        return getController().generateTemporalToken(participantDTO);
     }
 }
