@@ -21,12 +21,17 @@ package com.softwaremagico.kt.rest.security;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.ParticipantController;
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
+import com.softwaremagico.kt.core.controller.models.Token;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.exceptions.GuestDisabledException;
@@ -62,6 +67,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -79,6 +86,9 @@ public class AuthApi {
     private final BruteForceService bruteForceService;
     private final AuthenticatedUserProvider authenticatedUserProvider;
 
+    private final ParticipantProvider participantProvider;
+    private final ParticipantController participantController;
+
     private final TournamentProvider tournamentProvider;
 
     private final Random random = new Random();
@@ -88,13 +98,16 @@ public class AuthApi {
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
-                   AuthenticatedUserProvider authenticatedUserProvider, TournamentProvider tournamentProvider,
+                   AuthenticatedUserProvider authenticatedUserProvider, ParticipantProvider participantProvider,
+                   ParticipantController participantController, TournamentProvider tournamentProvider,
                    @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.authenticatedUserController = authenticatedUserController;
         this.bruteForceService = bruteForceService;
         this.authenticatedUserProvider = authenticatedUserProvider;
+        this.participantProvider = participantProvider;
+        this.participantController = participantController;
         this.tournamentProvider = tournamentProvider;
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
@@ -102,7 +115,7 @@ public class AuthApi {
 
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<IAuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         try {
             //Check if the IP is blocked.
@@ -172,15 +185,16 @@ public class AuthApi {
 
     @Operation(summary = "Gets a JWT Token for guest users.")
     @PostMapping(path = "/public/login/guest", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticatedUser> loginAsGuest(@RequestBody AuthGuestRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<IAuthenticatedUser> loginAsGuest(@RequestBody AuthGuestRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         if (!guestEnabled) {
             throw new GuestDisabledException(this.getClass(), "Guest user is disabled.");
         }
         try {
             try {
-                final AuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER).orElseThrow(() ->
-                        new GuestDisabledException(this.getClass(), String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
+                final AuthenticatedUser user = authenticatedUserProvider.findByUsername(AuthenticatedUserProvider.GUEST_USER)
+                        .orElseThrow(() -> new GuestDisabledException(this.getClass(),
+                                String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
                 final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
@@ -206,6 +220,24 @@ public class AuthApi {
             RestServerLogger.warning(this.getClass().getName(), "Invalid credentials set from IP '" + ip + "'!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @Operation(summary = "Creates a jwt token for a participant.")
+    @PostMapping(value = "/public/participant/token", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<IAuthenticatedUser> getToken(@RequestBody TemporalToken temporalToken,
+                                                       HttpServletRequest httpRequest) {
+        final String ip = getClientIP(httpRequest);
+        final Token token = participantController.generateToken(temporalToken.getTemporalToken());
+
+        final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
+        final long milliseconds = zdt.toInstant().toEpochMilli();
+
+        final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .header(HttpHeaders.EXPIRES, String.valueOf(milliseconds))
+                .body(token.getParticipant());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -292,7 +324,7 @@ public class AuthApi {
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();

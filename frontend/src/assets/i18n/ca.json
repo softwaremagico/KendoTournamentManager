@@ -852,7 +852,8 @@
   "tournamentCloneWarning": "Duplicaràs el torneig. Estàs segur de continuar?",
   "tournamentListAsZip": "Baixar totes les llistes PDF en un fitxer zip.",
   "shiaijoFinished": "Tots els partits del shiaijo {{shiaijoName}} han acabat.",
-  "qrCodeHint": "Mostra un codi QR que permet als convidats seguir les puntuacions del torneig."
+  "qrCodeHint": "Mostra un codi QR que permet als convidats seguir les puntuacions del torneig.",
+  "orClickHere": "O fes clic aquí..."
 }
 
 
