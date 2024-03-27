@@ -329,7 +329,8 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     if (this.basicTableData.selectedElement) {
       const dialogRef: MatDialogRef<TournamentQrCodeComponent> = this.dialog.open(TournamentQrCodeComponent, {
         data: {
-          tournament: this.basicTableData.selectedElement
+          tournament: this.basicTableData.selectedElement,
+          port: window.location.port
         }
       });
     }

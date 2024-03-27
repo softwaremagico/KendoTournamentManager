@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.core.controller.models;
+package com.softwaremagico.kt.persistence.entities;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Core)
+ * Kendo Tournament Manager (Persistence)
  * %%
  * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
@@ -21,15 +21,17 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
-public class QrCodeDTO extends ImageDTO {
+import java.util.Set;
 
-    private String link;
+public interface IAuthenticatedUser {
 
-    public String getLink() {
-        return link;
-    }
+    Integer getId();
 
-    public void setLink(String link) {
-        this.link = link;
-    }
+    String getUsername();
+
+    String getName();
+
+    String getLastname();
+
+    Set<String> getRoles();
 }
