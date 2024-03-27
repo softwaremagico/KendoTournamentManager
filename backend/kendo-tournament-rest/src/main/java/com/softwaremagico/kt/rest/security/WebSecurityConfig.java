@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -48,6 +49,10 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger
@@ -55,7 +60,7 @@ public class WebSecurityConfig {
             // Own
             "/",
             "/info/**",
-            "/auth/public/**",
+            "/*/public/**",
             //Websockets uses custom security.
             WebSocketConfiguration.SOCKETS_STOMP_URL + "/**"
     };

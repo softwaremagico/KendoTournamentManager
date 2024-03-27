@@ -102,7 +102,7 @@ public class StatisticsServices {
         return tournamentStatisticsDTO;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets previous tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/previous/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentStatisticsDTO> getStatisticsFromPreviousTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -125,7 +125,7 @@ public class StatisticsServices {
         return statisticsDTOS;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets participant statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantStatisticsDTO getStatisticsFromParticipant(@Parameter(description = "Id of an existing participant", required = true)

@@ -51,7 +51,7 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         super(achievementController);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets participant's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> getParticipantAchievements(@Parameter(description = "Id of an existing participant", required = true)

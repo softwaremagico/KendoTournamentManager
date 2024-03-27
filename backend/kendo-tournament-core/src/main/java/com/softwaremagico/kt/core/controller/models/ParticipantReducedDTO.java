@@ -49,18 +49,22 @@ public class ParticipantReducedDTO extends ParticipantDTO implements IParticipan
         setUpdatedBy(participantDTO.getUpdatedBy());
     }
 
+    @Override
     public String getIdCard() {
         return null;
     }
 
+    @Override
     public void setIdCard(String idCard) {
         //Ignore it.
     }
 
+    @Override
     public ClubDTO getClub() {
         return null;
     }
 
+    @Override
     public void setClub(ClubDTO club) {
         //Ignore it.
     }

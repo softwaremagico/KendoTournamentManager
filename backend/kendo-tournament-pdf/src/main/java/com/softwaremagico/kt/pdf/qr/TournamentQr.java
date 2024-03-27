@@ -64,7 +64,8 @@ public class TournamentQr extends PdfDocument {
         try {
             this.qrCode = Image.getInstance(qrCode);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            KendoTournamentLogger.severe(this.getClass().getName(), "No qrCode image found");
+            this.qrCode = null;
         }
         if (backgroundImage != null) {
             try {
@@ -78,12 +79,12 @@ public class TournamentQr extends PdfDocument {
 
     @Override
     protected void createContent(Document document, PdfWriter writer) {
-        qrContent(document, writer);
+        qrContent(document);
     }
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        //No Event on Qr.
     }
 
     @Override
@@ -93,14 +94,14 @@ public class TournamentQr extends PdfDocument {
 
     @Override
     protected void addEvent(PdfWriter writer) {
-        //No Footer on Diplomas.
+        //No Footer on Qr.
     }
 
-    public void qrContent(Document document, PdfWriter writer) {
-        qrTable(document, writer, tournamentDTO);
+    public void qrContent(Document document) {
+        qrTable(document, tournamentDTO);
     }
 
-    private void qrTable(Document document, PdfWriter writer, TournamentDTO tournamentDTO) {
+    private void qrTable(Document document, TournamentDTO tournamentDTO) {
         final PdfPTable mainTable = new PdfPTable(1);
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.setTotalWidth(document.getPageSize().getWidth());
@@ -129,10 +130,12 @@ public class TournamentQr extends PdfDocument {
         mainTable.setWidthPercentage(TOTAL_WIDTH);
         document.add(mainTable);
 
-        qrCode.scaleToFit(QR_CELL_SIZE, QR_CELL_SIZE);
-        qrCode.setAbsolutePosition((PageSize.A4.getWidth() - qrCode.getScaledWidth()) / 2,
-                (PageSize.A4.getHeight() - qrCode.getScaledHeight()) / 2);
-        document.add(qrCode);
+        if (qrCode != null) {
+            qrCode.scaleToFit(QR_CELL_SIZE, QR_CELL_SIZE);
+            qrCode.setAbsolutePosition((PageSize.A4.getWidth() - qrCode.getScaledWidth()) / 2,
+                    (PageSize.A4.getHeight() - qrCode.getScaledHeight()) / 2);
+            document.add(qrCode);
+        }
     }
 
     void addBackGroundImage(Document document) {
