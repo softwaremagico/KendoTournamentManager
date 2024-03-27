@@ -34,7 +34,7 @@ COPY config/servers.conf  /etc/nginx/conf.d/default.conf
 #Update Root Folder
 RUN sed -i "s|ROOT_FOLDER|${HTML_ROOT_FOLDER}|g" /etc/nginx/conf.d/default.conf && \
     sed -i "s|MACHINE_DOMAIN|${machine_domain}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
-    sed -i "s|PROTOCOL|${protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
+    sed -i "s|BACKEND_PROTOCOL|${protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
     sed -i "s|WEBSOCKET_PROTOCOL|${websocket_protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js
 
 #Working in the app directory
