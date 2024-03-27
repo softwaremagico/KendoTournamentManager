@@ -75,7 +75,24 @@ public class QrService {
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId);
+        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, null);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/guest/tournament/{tournamentId}/port/{port}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO generateGuestQrCodeForTournamentFights(@Parameter(description = "Id of an existing tournament", required = true)
+                                                            @PathVariable("tournamentId") Integer tournamentId,
+                                                            @Parameter(description = "Frontend port")
+                                                            @PathVariable("port") Integer port,
+                                                            HttpServletResponse response, HttpServletRequest request) {
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename("Tournament - QR.png").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+
+        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, port);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -91,7 +108,29 @@ public class QrService {
                 .filename(tournament.getName() + " - qr.pdf").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentQr(locale, tournament).generate();
+            return pdfController.generateTournamentQr(locale, tournament, null).generate();
+        } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
+            RestServerLogger.errorMessage(this.getClass(), e);
+            throw new BadRequestException(this.getClass(), e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/guest/tournament/{tournamentId}/pdf/port/{port}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public byte[] getParticipantDiplomaFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
+                                                           @PathVariable("tournamentId") Integer tournamentId,
+                                                           @Parameter(description = "Frontend port")
+                                                           @PathVariable("port") Integer port,
+                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
+        final TournamentDTO tournament = tournamentController.get(tournamentId);
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename(tournament.getName() + " - qr.pdf").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+        try {
+            return pdfController.generateTournamentQr(locale, tournament, null).generate();
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -110,6 +149,23 @@ public class QrService {
                 .filename("Statistics - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateParticipantQrCodeForStatistics(participantId);
+        return qrController.generateParticipantQrCodeForStatistics(participantId, null);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/participant/{participantId}/statistics/port/{port}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QrCodeDTO generateParticipantQrCodeForStatisticsWithPort(@Parameter(description = "Id of an existing participant", required = true)
+                                                                    @PathVariable("participantId") Integer participantId,
+                                                                    @Parameter(description = "Frontend port")
+                                                                    @PathVariable("port") Integer port,
+                                                                    HttpServletResponse response, HttpServletRequest request) {
+
+        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                .filename("Statistics - QR.png").build();
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+
+        return qrController.generateParticipantQrCodeForStatistics(participantId, port);
     }
 }

@@ -15,19 +15,21 @@ import {RbacService} from "../../services/rbac/rbac.service";
 export class TournamentQrCodeComponent implements OnInit {
 
   tournament: Tournament;
+  port: number;
   qrCode: string | undefined;
   link: string | undefined;
 
   protected readonly RbacActivity = RbacActivity;
 
   constructor(public dialogRef: MatDialogRef<TournamentQrCodeComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament },
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, port: number },
               private qrService: QrService, public rbacService: RbacService) {
     this.tournament = data.tournament;
+    this.port = data.port;
   }
 
   ngOnInit(): void {
-    this.qrService.getGuestsQr(this.tournament).subscribe((_qrCode: QrCode): void => {
+    this.qrService.getGuestsQr(this.tournament, this.port).subscribe((_qrCode: QrCode): void => {
       if (_qrCode) {
         this.qrCode = _qrCode.base64;
         this.link = _qrCode.link;

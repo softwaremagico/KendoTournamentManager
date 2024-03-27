@@ -4,6 +4,7 @@ import {Action} from "../../action";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {QrService} from "../../services/qr.service";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {RbacActivity} from "../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-participant-qr-code',
@@ -13,17 +14,19 @@ import {RbacService} from "../../services/rbac/rbac.service";
 export class ParticipantQrCodeComponent implements OnInit {
 
   participantId: number;
+  port: number;
   qrCode: string | undefined;
   link: string | undefined;
 
   constructor(public dialogRef: MatDialogRef<ParticipantQrCodeComponent>,
-              @Optional() @Inject(MAT_DIALOG_DATA) public data: { participantId: number },
+              @Optional() @Inject(MAT_DIALOG_DATA) public data: { participantId: number, port: number },
               private qrService: QrService, public rbacService: RbacService) {
     this.participantId = data.participantId;
+    this.port = data.port;
   }
 
   ngOnInit(): void {
-    this.qrService.getParticipantQr(this.participantId).subscribe((_qrCode: QrCode): void => {
+    this.qrService.getParticipantQr(this.participantId, this.port).subscribe((_qrCode: QrCode): void => {
       if (_qrCode) {
         this.qrCode = _qrCode.base64;
         this.link = _qrCode.link;
@@ -37,4 +40,5 @@ export class ParticipantQrCodeComponent implements OnInit {
     this.dialogRef.close({data: undefined, action: Action.Cancel});
   }
 
+  protected readonly RbacActivity = RbacActivity;
 }

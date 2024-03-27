@@ -21,9 +21,7 @@ import {Achievement} from "../../models/achievement.model";
 import {ParticipantService} from "../../services/participant.service";
 import {Participant} from "../../models/participant";
 import {LoginService} from "../../services/login.service";
-import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {TournamentQrCodeComponent} from "../../components/tournament-qr-code/tournament-qr-code.component";
-import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -45,6 +43,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public performanceRadialData: GaugeChartData;
   public performance: [string, number][];
   public achievements: Achievement[];
+
+  public participant: Participant;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               rbacService: RbacService, private systemOverloadService: SystemOverloadService,
@@ -102,12 +102,17 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   initializeData(): void {
     if (this.participantId) {
+      this.participantService.get(this.participantId).subscribe((_participant: Participant): void => {
+        this.participant = _participant;
+      })
       this.generateStatistics();
     } else {
       //If a participant is logged in directly to this page. Get his id.
       this.participantService.getByUsername().subscribe({
         next: (_participant: Participant): void => {
           this.participantId = _participant.id;
+          debugger
+          this.participant = _participant;
           this.generateStatistics();
         },
         error: (): void => {
@@ -195,11 +200,5 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     return convertDate(this.pipe, date);
   }
 
-  showQrCode(): void {
-    const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
-      data: {
-        participantId: this.participantId
-      }
-    });
-  }
+
 }

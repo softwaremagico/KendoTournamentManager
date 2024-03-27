@@ -250,8 +250,8 @@ public class PdfController {
         }
     }
 
-    public TournamentQr generateTournamentQr(Locale locale, TournamentDTO tournament) {
-        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId());
+    public TournamentQr generateTournamentQr(Locale locale, TournamentDTO tournament, Integer port) {
+        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId(), port);
         return new TournamentQr(messageSource, locale, tournament, qrCodeDTO.getData(), null);
     }
 }

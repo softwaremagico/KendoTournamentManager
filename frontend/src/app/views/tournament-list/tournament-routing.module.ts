@@ -7,10 +7,10 @@ import {TournamentStatisticsComponent} from "../tournament-statistics/tournament
 import {TournamentGeneratorComponent} from "../fight-list/tournament-generator/tournament-generator.component";
 
 const routes: Routes = [
-  {path: '', component: TournamentListComponent},
-  {path: 'fights', component: FightListComponent, canActivate: [LoggedInService]},
+  {path: '', component: TournamentListComponent, canActivate: [LoggedInService]},
+  {path: 'fights', component: FightListComponent},
   {path: 'statistics', component: TournamentStatisticsComponent, canActivate: [LoggedInService]},
-  {path: 'fights/championship', component: TournamentGeneratorComponent, canActivate: [LoggedInService]},
+  {path: 'fights/championship', component: TournamentGeneratorComponent},
 ]
 
 @NgModule({
