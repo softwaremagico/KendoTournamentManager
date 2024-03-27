@@ -25,7 +25,6 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.core.controller.models.Token;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
-import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
