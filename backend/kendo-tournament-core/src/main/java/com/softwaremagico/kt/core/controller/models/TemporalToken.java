@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 
 public class TemporalToken {
 
-    private String temporalToken;
+    private String content;
 
     private LocalDateTime temporalTokenExpirationTime;
 
@@ -37,22 +37,22 @@ public class TemporalToken {
 
     public TemporalToken(Participant participant) {
         this();
-        setTemporalToken(participant.getTemporalToken());
+        setContent(participant.getTemporalToken());
         setTemporalTokenExpirationTime(participant.getTemporalTokenExpiration());
     }
 
-    public TemporalToken(String temporalToken) {
+    public TemporalToken(String content) {
         this();
-        setTemporalToken(temporalToken);
+        setContent(content);
     }
 
 
-    public String getTemporalToken() {
-        return temporalToken;
+    public String getContent() {
+        return content;
     }
 
-    public void setTemporalToken(String temporalToken) {
-        this.temporalToken = temporalToken;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public LocalDateTime getTemporalTokenExpirationTime() {
@@ -65,6 +65,6 @@ public class TemporalToken {
 
     @Override
     public String toString() {
-        return temporalToken;
+        return content;
     }
 }
