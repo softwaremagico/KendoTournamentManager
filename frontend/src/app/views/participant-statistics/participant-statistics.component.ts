@@ -111,7 +111,6 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.participantService.getByUsername().subscribe({
         next: (_participant: Participant): void => {
           this.participantId = _participant.id;
-          debugger
           this.participant = _participant;
           this.generateStatistics();
         },
