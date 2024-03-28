@@ -4,7 +4,7 @@
   </div>
   <div *ngIf="qrCode && (RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
+    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>

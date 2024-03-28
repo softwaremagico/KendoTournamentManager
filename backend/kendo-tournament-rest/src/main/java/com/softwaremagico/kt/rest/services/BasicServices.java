@@ -61,6 +61,15 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
         return controller;
     }
 
+    /**
+     * This method is done due to @PreAuthorize cannot be overriden. TournamentService need to set a GUEST permission to it.
+     *
+     * @return an array of roles.
+     */
+    public String[] requiredRoleForEntityById() {
+        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN"};
+    }
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,10 +84,10 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
         return controller.count();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole(#root.this.requiredRoleForEntityById())")
     @Operation(summary = "Gets an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DTO get(@Parameter(description = "Id of an existing application", required = true) @PathVariable("id") Integer id,
+    public DTO get(@Parameter(description = "Id of an existing entity", required = true) @PathVariable("id") Integer id,
                    HttpServletRequest request) {
         return controller.get(id);
     }
