@@ -31,12 +31,13 @@
   </table>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" mat-flat-button mat-raised-button>
+  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
+          (click)="downloadPDF()" mat-flat-button mat-raised-button>
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>
   <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
-  (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
+  (RbacActivity.CREATE_UNDRAW_FIGHTS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
     {{'undraw' | translate}}
   </button>
