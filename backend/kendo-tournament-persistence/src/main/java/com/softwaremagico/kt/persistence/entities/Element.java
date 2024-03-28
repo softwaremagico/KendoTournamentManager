@@ -35,12 +35,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Version;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Element {
+public abstract class Element implements Serializable {
     protected static final int MAX_UNIQUE_COLUMN_LENGTH = 190;
 
     @Id
