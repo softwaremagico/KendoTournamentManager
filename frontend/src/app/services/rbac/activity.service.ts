@@ -85,6 +85,7 @@ export class ActivityService {
       RbacActivity.CHECK_TOURNAMENT_BRACKETS,
       RbacActivity.SEE_QR_CODE,
       RbacActivity.DOWNLOAD_QR_CODE,
+      RbacActivity.DOWNLOAD_PDF,
     ];
   }
 
@@ -96,7 +97,9 @@ export class ActivityService {
       RbacActivity.READ_ALL_DUELS,
       RbacActivity.READ_ONE_DUEL,
       RbacActivity.CHANGE_LANGUAGE,
-      RbacActivity.CHECK_TOURNAMENT_BRACKETS
+      RbacActivity.CHECK_TOURNAMENT_BRACKETS,
+      RbacActivity.READ_TEAMS_RANKINGS,
+      RbacActivity.READ_COMPETITORS_RANKINGS
     ];
   }
 
