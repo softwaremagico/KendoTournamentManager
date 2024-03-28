@@ -48,7 +48,7 @@ public class QrController {
 
     private static final String TOURNAMENT_FIGHTS_URL = "/#/tournaments/fights";
     private static final String PARTICIPANT_STATISTICS_URL = "/#/participants/statistics";
-    private static final String LOGO_RESOURCE = "kote.svg";
+    private static final String LOGO_RESOURCE = "/kote.svg";
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
     private static final Color QR_COLOR = Color.decode("#001239");
@@ -71,7 +71,7 @@ public class QrController {
         this.participantProvider = participantProvider;
     }
 
-    @Cacheable(value = "qr-codes", key = "#tournamentId")
+    @Cacheable(cacheNames = "qr-codes", key = "#tournamentId")
     public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port) {
         //Check that exists.
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
