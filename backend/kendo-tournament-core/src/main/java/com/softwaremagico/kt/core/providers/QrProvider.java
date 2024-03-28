@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.TournamentImageController;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import io.github.simonscholz.qrcode.QrCodeApi;
 import io.github.simonscholz.qrcode.QrCodeConfig;
@@ -48,11 +49,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 @Service
 public class QrProvider {
@@ -60,33 +60,34 @@ public class QrProvider {
     private static final float DEFAULT_SVG_SIZE = 200F;
     private static final double BORDER_RELATIVE_SIZE = 0.02d;
     private static final double BORDER_RADIUS = 0.03d;
+    private static BufferedImage qrLogo;
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
                                                        Color center, Color innerSquare, Color outerSquare, Color outerBorder) {
-        QrPositionalSquaresConfig.Builder builder = new QrPositionalSquaresConfig.Builder();
+        final QrPositionalSquaresConfig.Builder builder = new QrPositionalSquaresConfig.Builder();
 
         if (circleShaped != null) {
-            builder = builder.circleShaped(circleShaped);
+            builder.circleShaped(circleShaped);
         }
 
         if (relativeSquareBorderRound != null) {
-            builder = builder.relativeSquareBorderRound(relativeSquareBorderRound);
+            builder.relativeSquareBorderRound(relativeSquareBorderRound);
         }
 
         if (center != null) {
-            builder = builder.centerColor(center);
+            builder.centerColor(center);
         }
 
         if (innerSquare != null) {
-            builder = builder.innerSquareColor(innerSquare);
+            builder.innerSquareColor(innerSquare);
         }
 
         if (outerSquare != null) {
-            builder = builder.outerSquareColor(outerSquare);
+            builder.outerSquareColor(outerSquare);
         }
 
         if (outerBorder != null) {
-            builder = builder.outerBorderColor(outerBorder);
+            builder.outerBorderColor(outerBorder);
         }
 
         return builder.build();
@@ -116,24 +117,24 @@ public class QrProvider {
         QrCodeConfig.Builder builder = new QrCodeConfig.Builder(content);
 
         if (size != null) {
-            builder = builder.qrCodeSize(size);
+            builder.qrCodeSize(size);
         }
 
 
         if (borderColor != null) {
-            builder = builder.qrBorderConfig(borderColor, BORDER_RELATIVE_SIZE, BORDER_RADIUS);
+            builder.qrBorderConfig(borderColor, BORDER_RELATIVE_SIZE, BORDER_RADIUS);
         }
 
         if (ink != null) {
-            builder = builder.qrCodeColorConfig(background != null ? background : new Color(0, 0, 0, 0), ink);
+            builder.qrCodeColorConfig(background != null ? background : new Color(0, 0, 0, 0), ink);
         }
 
         if (qrPositionalSquaresConfig != null) {
-            builder = builder.qrPositionalSquaresConfig(qrPositionalSquaresConfig);
+            builder.qrPositionalSquaresConfig(qrPositionalSquaresConfig);
         }
 
         if (qrCodeDotStyler != null) {
-            builder = builder.qrCodeDotStyler(qrCodeDotStyler);
+            builder.qrCodeDotStyler(qrCodeDotStyler);
         }
 
         if (resourceLogo != null) {
@@ -144,7 +145,9 @@ public class QrProvider {
                 } else {
                     logoImage = readImageResource(resourceLogo);
                 }
-                builder = builder.qrLogoConfig(logoImage);
+                if (logoImage != null) {
+                    builder = builder.qrLogoConfig(logoImage);
+                }
             } catch (Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
@@ -153,50 +156,62 @@ public class QrProvider {
     }
 
     public void drawDotImage(final int x, final int y, final int dotSize, final Graphics2D graphics, final String resourceImage) {
-        final URL resource = QrProvider.class.getClassLoader().getResource(resourceImage);
-        if (resource != null) {
-            try {
-                final BufferedImage imageDot = ImageIO.read(resource);
+        try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(resourceImage)) {
+            if (inputStream != null) {
+                final BufferedImage imageDot = ImageIO.read(inputStream);
                 graphics.drawImage(imageDot, x, y, dotSize, dotSize, null);
-            } catch (final IOException e) {
-                KendoTournamentLogger.errorMessage(this.getClass(), e);
             }
+        } catch (NullPointerException | IOException ex) {
+            KendoTournamentLogger.errorMessage(this.getClass(), ex);
         }
     }
 
-    private BufferedImage readImageResource(String resourceLogo) throws IOException {
-        final URL urlResource = QrProvider.class.getClassLoader().getResource(resourceLogo);
-        return ImageIO.read(urlResource);
+    private BufferedImage readImageResource(String resourceLogo) {
+        try (InputStream inputStream = TournamentImageController.class.getResourceAsStream(resourceLogo)) {
+            if (inputStream != null) {
+                return ImageIO.read(inputStream);
+            }
+        } catch (NullPointerException | IOException ex) {
+            KendoTournamentLogger.severe(TournamentImageController.class.getName(), "No image '" + resourceLogo + "' found!");
+        }
+        return null;
     }
 
-    private BufferedImage readSvgResource(String resourceLogo, float size, Color ink) throws IOException, TranscoderException, URISyntaxException {
-        //Change SVG Color.
-        final String svgText = Files.readString(Paths.get(getClass().getClassLoader().getResource(resourceLogo).toURI()));
-        final SVGDocument svgDocument = updateLogoColor(svgText, ink);
+    private BufferedImage readSvgResource(String resourceLogo, float size, Color ink) throws IOException, TranscoderException {
+        if (qrLogo == null) {
+            //Get SVG File.
+            final InputStream inputStream = QrProvider.class.getResourceAsStream(resourceLogo);
+            if (inputStream == null) {
+                return null;
+            }
+            final String svgText = new Scanner(inputStream, StandardCharsets.UTF_8).useDelimiter("\\A").next();
+            final SVGDocument svgDocument = updateLogoColor(svgText, ink);
 
-        //Convert to PNG.
-        final Transcoder pngTranscoder = new PNGTranscoder();
+            //Convert to PNG.
+            final Transcoder pngTranscoder = new PNGTranscoder();
 
-        // Set the transcoding hints.
-        pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 2);
-        pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / 2);
-        // Create the transcoder input.
-        final TranscoderInput input = new TranscoderInput(svgDocument);
+            // Set the transcoding hints.
+            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 2);
+            pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, size / 2);
+            // Create the transcoder input.
+            final TranscoderInput input = new TranscoderInput(svgDocument);
 
-        // Create the transcoder output.
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        final TranscoderOutput output = new TranscoderOutput(outputStream);
+            // Create the transcoder output.
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            final TranscoderOutput output = new TranscoderOutput(outputStream);
 
-        // Save the image.
-        pngTranscoder.transcode(input, output);
+            // Save the image.
+            pngTranscoder.transcode(input, output);
 
-        // Flush and close the stream.
-        outputStream.flush();
-        outputStream.close();
+            // Flush and close the stream.
+            outputStream.flush();
+            outputStream.close();
 
-        // Convert the byte stream into an image.
-        final byte[] imgData = outputStream.toByteArray();
-        return ImageIO.read(new ByteArrayInputStream(imgData));
+            // Convert the byte stream into an image.
+            final byte[] imgData = outputStream.toByteArray();
+            qrLogo = ImageIO.read(new ByteArrayInputStream(imgData));
+        }
+        return qrLogo;
     }
 
     private SVGDocument updateLogoColor(String svgText, Color color) throws IOException {

@@ -42,7 +42,7 @@ export class LoggedInService implements CanActivate {
         } else if (_roles.includes("guest")) {
           //Gets last tournament and redirects to fight list.
           this.tournamentService.getLastUnlockedTournament().subscribe((_tournament: Tournament): void => {
-            //Path '/fights' and '/fights/championship' does not call  LoggedInService to avoid redirect loops.
+            //Path '/tournaments/fights' and '/fights/championship' does not call  LoggedInService to avoid redirect loops.
             if (_tournament) {
               this.router.navigate(['/tournaments/fights'], {state: {tournamentId: _tournament.id}});
             } else {
