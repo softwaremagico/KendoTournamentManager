@@ -255,7 +255,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.selectedFight = fight;
       for (let duel of fight.duels) {
         if (this.selectedDuel?.id === duel.id) {
-          this.selectDuel(duel);
+          this.selectedDuel = duel;
+          this.duelChangedService.isDuelUpdated.next(duel);
           break;
         }
       }
