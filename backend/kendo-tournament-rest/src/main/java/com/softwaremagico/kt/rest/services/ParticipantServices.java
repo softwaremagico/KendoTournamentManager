@@ -51,6 +51,16 @@ public class ParticipantServices extends BasicServices<Participant, ParticipantD
         super(participantController);
     }
 
+    /**
+     * This method is done due to @PreAuthorize cannot be overriden. TournamentService need to set a GUEST permission to it.
+     *
+     * @return an array of roles.
+     */
+    @Override
+    public String[] requiredRoleForEntityById() {
+        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN", "ROLE_PARTICIPANT"};
+    }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets the participant data from the jwt token username.", security = @SecurityRequirement(name = "bearerAuth"))
