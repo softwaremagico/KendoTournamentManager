@@ -216,6 +216,28 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     }
 
     @Test(dependsOnMethods = "generateToken")
+    public void cannotAccessToOthersStatistics() throws Exception {
+        this.mockMvc
+                .perform(get("/statistics/participants/" + 25)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + participantJwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "generateToken")
+    public void standardUserCanAccessToOthersStatistics() throws Exception {
+        this.mockMvc
+                .perform(get("/statistics/participants/" +  participantDTO.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+    }
+
+    @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOtherServices() throws Exception {
         System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc

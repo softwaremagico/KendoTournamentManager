@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.IParticipantName;
@@ -128,6 +129,6 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName, IAut
 
     @Override
     public String getUsername() {
-        return getId() + "_" + name + "_" + lastname;
+        return getId() + ParticipantProvider.TOKEN_NAME_SEPARATOR + name + ParticipantProvider.TOKEN_NAME_SEPARATOR + lastname;
     }
 }
