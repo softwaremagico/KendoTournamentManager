@@ -7,6 +7,7 @@ import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirma
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CdkDragEnd, Point} from "@angular/cdk/drag-drop";
+import {RbacActivity} from "../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-timer',
@@ -80,6 +81,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     });
 
     this.resetTimerPosition.subscribe(() => this.timerPosition = {x: 0, y: 0});
+
+    this.editable = this.editable && this.rbacService.isAllowed(RbacActivity.EDIT_FIGHT_TIME);
   }
 
   override ngOnDestroy(): void {
@@ -249,19 +252,23 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   setMinutesEditable(editable: boolean): void {
-    if (editable) {
-      this.pauseTimer();
+    if (this.rbacService.isAllowed(RbacActivity.EDIT_FIGHT_TIME)) {
+      if (editable) {
+        this.pauseTimer();
+      }
+      this.minutesEditable = editable && this.editable;
+      this.secondsEditable = false;
     }
-    this.minutesEditable = editable && this.editable;
-    this.secondsEditable = false;
   }
 
   setSecondsEditable(editable: boolean): void {
-    if (editable) {
-      this.pauseTimer();
+    if (this.rbacService.isAllowed(RbacActivity.EDIT_FIGHT_TIME)) {
+      if (editable) {
+        this.pauseTimer();
+      }
+      this.secondsEditable = editable && this.editable;
+      this.minutesEditable = false;
     }
-    this.secondsEditable = editable && this.editable;
-    this.minutesEditable = false;
   }
 
   @HostListener('document:click', ['$event.target'])

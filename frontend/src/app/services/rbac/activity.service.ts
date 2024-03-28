@@ -86,6 +86,8 @@ export class ActivityService {
       RbacActivity.SEE_QR_CODE,
       RbacActivity.DOWNLOAD_QR_CODE,
       RbacActivity.DOWNLOAD_PDF,
+      RbacActivity.SHOW_TIMER,
+      RbacActivity.EDIT_FIGHT_TIME,
     ];
   }
 

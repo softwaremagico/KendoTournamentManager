@@ -58,7 +58,7 @@
           <mat-icon class="kendo-icon" svgIcon="unfinish"></mat-icon>
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
-                *ngIf="!timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
+                *ngIf="!timer && (RbacActivity.SHOW_TIMER | rbac : this.rbacService.getActivities())"
                 [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [matTooltipShowDelay]="500"
                 class="timer-button"
