@@ -1,8 +1,8 @@
 export class TemporalToken {
-  public temporalToken: string;
+  public content: string;
   public temporalTokenExpirationTime?: Date;
 
-  constructor(temporalToken: string) {
-    this.temporalToken = temporalToken;
+  constructor(content: string) {
+    this.content = content;
   }
 }
