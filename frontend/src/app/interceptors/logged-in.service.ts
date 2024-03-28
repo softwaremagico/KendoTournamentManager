@@ -35,7 +35,6 @@ export class LoggedInService implements CanActivate {
 
   userLoginPageDependingOnRoles(context: string): boolean {
     if (this.loginService.getJwtValue()) {
-      debugger
       this.loginService.getUserRoles().subscribe((_roles: String[]): void => {
         if (_roles.includes("viewer") || _roles.includes("editor") || _roles.includes("admin")) {
           // Do nothing and navigate as usual.

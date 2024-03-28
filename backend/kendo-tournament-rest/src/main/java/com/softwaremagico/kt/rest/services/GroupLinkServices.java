@@ -51,7 +51,7 @@ public class GroupLinkServices extends BasicServices<GroupLink, GroupLinkDTO, Gr
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets all groups links.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupLinkDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true)
