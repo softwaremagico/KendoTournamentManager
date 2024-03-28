@@ -113,10 +113,16 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
     }
 
     public Optional<Participant> findByTemporalToken(String token) {
-        return getRepository().findByTemporalToken(token);
+        if (token != null) {
+            return getRepository().findByTemporalToken(token);
+        }
+        return Optional.empty();
     }
 
     public Optional<Participant> findByTokenUsername(String tokenUsername) {
+        if (tokenUsername == null) {
+            return Optional.empty();
+        }
         if (tokenUsername.contains(ParticipantProvider.TOKEN_NAME_SEPARATOR)) {
             final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
             try {
