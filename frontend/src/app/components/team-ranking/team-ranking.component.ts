@@ -16,6 +16,7 @@ import {TournamentExtendedPropertiesService} from "../../services/tournament-ext
 import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
 import {MessageService} from "../../services/message.service";
+import {RbacActivity} from "../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-team-ranking',
@@ -32,9 +33,6 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   existsDraws: boolean = false;
   numberOfWinners: number;
 
-  private destroy$: Subject<void> = new Subject<void>();
-  _loading = false;
-
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: {
                 tournament: Tournament, group: Group, finished: boolean,
@@ -42,7 +40,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
               },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
-              rbacService: RbacService) {
+              public override rbacService: RbacService) {
     super(rbacService);
     this.tournament = data.tournament;
     this.group = data.group;
