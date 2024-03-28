@@ -4,8 +4,9 @@
   </div>
   <div *ngIf="qrCode" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <a class="link" *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
-    <button (click)="downloadQrAsPdf()" *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
+    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
+    <button (click)="downloadQrAsPdf()"
+            *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
             class="floating-button"
             color="picture"
             mat-flat-button
