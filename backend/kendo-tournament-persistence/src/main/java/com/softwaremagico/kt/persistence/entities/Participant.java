@@ -245,7 +245,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public String getUsername() {
-        return getName() + "_" + getLastname() + "_" + getId();
+        return getId() + "_" + getName() + "_" + getLastname();
     }
 
     @Override
