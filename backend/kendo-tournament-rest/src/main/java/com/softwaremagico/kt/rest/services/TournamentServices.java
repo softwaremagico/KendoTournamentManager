@@ -74,6 +74,23 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         this.pdfController = pdfController;
     }
 
+    /**
+     * This method is done due to @PreAuthorize cannot be overriden. TournamentService need to set a GUEST permission to it.
+     *
+     * @return an array of roles.
+     */
+    @Override
+    public String[] requiredRoleForEntityById() {
+        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN", "ROLE_GUEST"};
+    }
+
+    @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TournamentDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+                             HttpServletRequest request) {
+        return super.get(id, request);
+    }
+
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentDTO> getAll(HttpServletRequest request) {
