@@ -101,7 +101,7 @@ public class RankingServices {
         return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -198,7 +198,7 @@ public class RankingServices {
         return rankingController.getTeamsScoreRankingFromGroup(groupId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
