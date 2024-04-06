@@ -24,21 +24,21 @@ package com.softwaremagico.kt.core.tests.tournament;
 import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
-import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
@@ -47,12 +47,15 @@ import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -61,14 +64,14 @@ import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest
-@Test(groups = {"tournamentTest"})
-public class TournamentTest extends AbstractTestNGSpringContextTests {
+@Test(groups = {"leagueTest"})
+public class LeagueWithFinalFightTest extends AbstractTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_CITY = "ClubCity";
     private static final int MEMBERS = 3;
-    private static final int TEAMS = 16;
-    private static final int GROUPS = 4;
+    private static final int TEAMS = 4;
+    private static final int GROUPS = 1;
     private static final String TOURNAMENT_NAME = "TournamentTest";
     private static TournamentDTO tournamentDTO = null;
 
@@ -89,6 +92,9 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private TreeTournamentHandler treeTournamentHandler;
+
+    @Autowired
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
 
     @Autowired
     private ClubController clubController;
@@ -129,6 +135,12 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
         TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
         tournamentDTO = tournamentController.create(newTournament, null);
         Assert.assertEquals(tournamentController.count(), 1);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.LIFO.name()), null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"), null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "true"), null);
     }
 
     @Test(dependsOnMethods = {"addTournament"})
@@ -139,21 +151,7 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(roleController.count(tournamentDTO), participantController.count());
     }
 
-    @Test(dependsOnMethods = "addTournament")
-    public void add4Groups() {
-        //First group is already inserted.
-        for (int i = 1; i < GROUPS; i++) {
-            final GroupDTO groupDTO = new GroupDTO();
-            groupDTO.setTournament(tournamentDTO);
-            groupDTO.setIndex(i);
-            groupDTO.setLevel(0);
-            groupDTO.setShiaijo(0);
-            groupController.create(groupDTO, null);
-        }
-        Assert.assertEquals(groupController.count(), 7);
-    }
-
-    @Test(dependsOnMethods = {"add4Groups"})
+    @Test(dependsOnMethods = {"addRoles"})
     public void addTeams() {
         int teamIndex = 0;
         TeamDTO team = null;
@@ -197,10 +195,10 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"addTeams"})
     public void createFights() {
         List<Fight> tournamentFights = treeTournamentHandler.createFights(tournamentConverter.reverse(tournamentDTO), TeamsOrder.NONE, 0, null);
-        Assert.assertEquals(tournamentFights.size(), 4 * GROUPS);
+        Assert.assertEquals(tournamentFights.size(), 6);
         final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
         for (final Group group : groups) {
-            Assert.assertEquals(group.getFights().size(), 4);
+            Assert.assertEquals(group.getFights().size(), 6);
         }
     }
 
@@ -208,42 +206,18 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
     public void solveFights() {
         final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
 
-        // First group has team1 as winner.
+        // First group has team1 as winner. 4th as second one
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
+
+        groups.get(0).getFights().get(5).getDuels().get(0).addCompetitor1Score(Score.MEN);
+        groups.get(0).getFights().get(5).getDuels().get(0).addCompetitor1Score(Score.MEN);
+
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
             fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
-
-
-        // Second group has team6 winner.
-        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
-        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
-        groups.get(1).getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
-        });
-        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team06");
-
-        // Third group has team11 winner.
-        groups.get(2).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
-        groups.get(2).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
-        groups.get(2).getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
-        });
-        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(2)).get(0).getName(), "Team11");
-
-        // Forth group has team16 winner.
-        groups.get(3).getFights().get(2).getDuels().get(1).addCompetitor2Score(Score.MEN);
-        groups.get(3).getFights().get(2).getDuels().get(1).addCompetitor2Score(Score.MEN);
-        groups.get(3).getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
-        });
-        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(3)).get(0).getName(), "Team16");
 
     }
 
@@ -253,56 +227,16 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
 
         //Check level1 groups' teams.
         final List<Group> groups = groupController.getGroups(tournamentDTO, 1);
-        Assert.assertEquals(groups.size(), 2);
+        Assert.assertEquals(groups.size(), 1);
 
-        //Group 1 -> Team01 vs Team06
+        //Group 1 -> Team01 vs Team04
         Assert.assertEquals(groups.get(0).getTeams().get(0).getName(), "Team01");
-        Assert.assertEquals(groups.get(0).getTeams().get(1).getName(), "Team06");
-
-        //Group 2 -> Team011 vs Team16
-        Assert.assertEquals(groups.get(1).getTeams().get(0).getName(), "Team11");
-        Assert.assertEquals(groups.get(1).getTeams().get(1).getName(), "Team16");
+        Assert.assertEquals(groups.get(0).getTeams().get(1).getName(), "Team04");
     }
 
     @Test(dependsOnMethods = {"populateLevel1"})
     public void solveLevel1() {
         final List<Group> groups = groupController.getGroups(tournamentDTO, 1);
-
-        // First group has team1 as winner.
-        groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
-        groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
-        groups.get(0).getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
-        });
-        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
-
-        // Second group has team16 as winner.
-        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
-        groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
-        groups.get(1).getFights().forEach(fight -> {
-            fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
-        });
-        Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team16");
-    }
-
-    @Test(dependsOnMethods = {"solveLevel1"})
-    public void populateLevel2() {
-        treeTournamentHandler.generateNextFights(tournamentConverter.reverse(tournamentDTO), null);
-
-        //Check level2 groups' teams.
-        final List<Group> groups = groupController.getGroups(tournamentDTO, 2);
-        Assert.assertEquals(groups.size(), 1);
-
-        //Group 1 -> Team01 vs Team16
-        Assert.assertEquals(groups.get(0).getTeams().get(0).getName(), "Team01");
-        Assert.assertEquals(groups.get(0).getTeams().get(1).getName(), "Team16");
-    }
-
-    @Test(dependsOnMethods = {"populateLevel2"})
-    public void solveLevel2() {
-        final List<Group> groups = groupController.getGroups(tournamentDTO, 2);
 
         // First group has team1 as winner.
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
@@ -318,23 +252,7 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
     public void checkFinalRanking() {
         List<ScoreOfTeam> score = rankingProvider.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
         Assert.assertEquals(score.get(0).getTeam().getName(), "Team01");
-        Assert.assertEquals(score.get(1).getTeam().getName(), "Team16");
-        //Same score but ordered by name.
-        Assert.assertEquals(score.get(2).getTeam().getName(), "Team06");
-        Assert.assertEquals(score.get(3).getTeam().getName(), "Team11");
-        //Same score but ordered by name.
-        Assert.assertEquals(score.get(4).getTeam().getName(), "Team02");
-        Assert.assertEquals(score.get(5).getTeam().getName(), "Team03");
-        Assert.assertEquals(score.get(6).getTeam().getName(), "Team04");
-        Assert.assertEquals(score.get(7).getTeam().getName(), "Team05");
-        Assert.assertEquals(score.get(8).getTeam().getName(), "Team07");
-        Assert.assertEquals(score.get(9).getTeam().getName(), "Team08");
-        Assert.assertEquals(score.get(10).getTeam().getName(), "Team09");
-        Assert.assertEquals(score.get(11).getTeam().getName(), "Team10");
-        Assert.assertEquals(score.get(12).getTeam().getName(), "Team12");
-        Assert.assertEquals(score.get(13).getTeam().getName(), "Team13");
-        Assert.assertEquals(score.get(14).getTeam().getName(), "Team14");
-        Assert.assertEquals(score.get(15).getTeam().getName(), "Team15");
+        Assert.assertEquals(score.get(1).getTeam().getName(), "Team04");
     }
 
     @AfterClass(alwaysRun = true)
