@@ -145,7 +145,11 @@ public class Group extends Element {
     }
 
     public void setFights(List<Fight> fights) {
-        this.fights = fights;
+        if (this.fights == null) {
+            this.fights = new ArrayList<>();
+        }
+        this.fights.clear();
+        this.fights.addAll(fights);
     }
 
     public void removeTeams() {
@@ -203,7 +207,11 @@ public class Group extends Element {
     }
 
     public void setUnties(List<Duel> unties) {
-        this.unties = unties;
+        if (this.unties == null) {
+            this.unties = new ArrayList<>();
+        }
+        this.unties.clear();
+        this.unties.addAll(unties);
     }
 
     @Override

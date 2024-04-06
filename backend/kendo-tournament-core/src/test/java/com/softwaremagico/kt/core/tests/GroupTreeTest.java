@@ -951,5 +951,27 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupLinks.size(), 2);
     }
 
+    /**
+     * ┌──────┐
+     * │Group1│
+     * └┬───┬─┘
+     * ┌▽───▽─┐
+     * │Group2│
+     * └──────┘
+     */
+
+    @Test
+    public void leagueWithFinalFight() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 2);
+
+        final List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 2);
+
+        checkLink(groupLinks.get(0), 0, 0);
+        checkLink(groupLinks.get(1), 0, 0);
+    }
+
 
 }

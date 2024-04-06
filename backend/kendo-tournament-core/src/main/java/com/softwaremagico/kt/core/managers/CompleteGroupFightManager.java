@@ -58,7 +58,7 @@ public class CompleteGroupFightManager {
         final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
 
         Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
-        Fight fight = null;
+        Fight fight;
         Fight lastFight = null;
         while (teamSelector.remainFights()) {
             final Team team2 = teamSelector.getNextAdversary(team1, teamsOrder);

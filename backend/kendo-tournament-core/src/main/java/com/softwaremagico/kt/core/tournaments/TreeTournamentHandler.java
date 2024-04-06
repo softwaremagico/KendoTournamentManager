@@ -100,7 +100,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
         if (maximizeFightsProperty != null) {
             try {
-                return Boolean.getBoolean(maximizeFightsProperty.getPropertyValue());
+                return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
             } catch (Exception ignore) {
 
             }
