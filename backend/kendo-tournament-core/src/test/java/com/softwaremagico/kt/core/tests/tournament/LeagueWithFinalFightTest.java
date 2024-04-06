@@ -31,14 +31,12 @@ import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
-import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
-import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
@@ -55,7 +53,6 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -138,9 +135,8 @@ public class LeagueWithFinalFightTest extends AbstractTestNGSpringContextTests {
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
                 TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.LIFO.name()), null);
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
-                TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"), null);
-        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
                 TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "true"), null);
+        tournamentController.setNumberOfWinners(tournamentDTO.getId(), 2, null);
     }
 
     @Test(dependsOnMethods = {"addTournament"})
@@ -211,7 +207,6 @@ public class LeagueWithFinalFightTest extends AbstractTestNGSpringContextTests {
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
 
         groups.get(0).getFights().get(5).getDuels().get(0).addCompetitor1Score(Score.MEN);
-        groups.get(0).getFights().get(5).getDuels().get(0).addCompetitor1Score(Score.MEN);
 
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
@@ -248,7 +243,7 @@ public class LeagueWithFinalFightTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
     }
 
-    @Test(dependsOnMethods = {"solveLevel2"})
+    @Test(dependsOnMethods = {"solveLevel1"})
     public void checkFinalRanking() {
         List<ScoreOfTeam> score = rankingProvider.getTeamsScoreRanking(tournamentConverter.reverse(tournamentDTO));
         Assert.assertEquals(score.get(0).getTeam().getName(), "Team01");
