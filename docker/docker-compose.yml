@@ -122,6 +122,7 @@ services:
         - jwt_secret
         - jwt_ip_check
         - enable_guest_user
+        - database_populate_default_data
     image: kendo-tournament-backend
     restart: always
     networks:

@@ -610,8 +610,6 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Ottenuto a:",
   "achievementToolTipObtainedAt": "Ottenuto a",
   "achievementToolTipObtainedBy": "Ottenuto da",
-  "achievementGenerated": "Sono stati generati un totale di {{achievementsNumber}} obiettivi nel torneo '{{tournamentName}}'.",
-  "achievementAllGenerated": "Un totale di {{achievementsNumber}} obiettivi sono stati generati in {{tournamentNumber}} tornei.",
   "time": "Tempi",
   "lockedAt": "Bloccato",
   "fightsStartedAt": "Inizio delle partite",
@@ -845,9 +843,14 @@
   "tournamentProperties": "Proprietà del torneo",
   "tournamentCloneWarning": "Raddoppierai il torneo. Sei sicuro di continuare?",
   "tournamentListAsZip": "Scarica tutti gli elenchi PDF in un file zip.",
-  "shiaijoFinished": "Tutte le partite di shiaijo {{shiaijoName}} sono terminate.",
   "qrCodeHint": "Visualizza un codice QR che consente agli ospiti di tenere traccia dei punteggi del torneo.",
-  "orClickHere": "Oppure clicca qui..."
+  "orClickHere": "Oppure clicca qui...",
+  "backendMessage": {
+    "achievementGenerated": "Sono stati generati un totale di {{achievementsNumber}} obiettivi nel torneo '{{tournamentName}}'.",
+    "achievementAllGenerated": "Un totale di {{achievementsNumber}} obiettivi sono stati generati in {{tournamentNumber}} tornei.",
+    "shiaijoFinished": "Tutte le partite di shiaijo {{shiaijoName}} sono terminate.",
+    "userAdminGenerated": "L'utente {{userName}} è stato creato!"
+  }
 }
 
 
