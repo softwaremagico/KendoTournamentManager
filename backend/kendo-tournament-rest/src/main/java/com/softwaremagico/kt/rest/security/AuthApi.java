@@ -70,6 +70,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -92,6 +93,12 @@ public class AuthApi {
 
     private final boolean guestEnabled;
 
+    private final Set<UserAdminGeneratedListener> userAdminGeneratedListeners = new HashSet<>();
+
+    public interface UserAdminGeneratedListener {
+        void generated(String username);
+    }
+
     @Autowired
     public AuthApi(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
                    AuthenticatedUserController authenticatedUserController, BruteForceService bruteForceService,
@@ -106,6 +113,10 @@ public class AuthApi {
         this.participantController = participantController;
         this.tournamentProvider = tournamentProvider;
         this.guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
+    }
+
+    public void addUserAdminGeneratedListeners(UserAdminGeneratedListener listener) {
+        userAdminGeneratedListeners.add(listener);
     }
 
 
@@ -171,6 +182,8 @@ public class AuthApi {
                 final HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
                 headers.add(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration));
+                userAdminGeneratedListeners.forEach(userAdminGeneratedListener
+                        -> userAdminGeneratedListener.generated(user.getUsername()));
                 return new ResponseEntity<>(user, headers, HttpStatus.CREATED);
             }
             bruteForceService.loginFailed(ip);
