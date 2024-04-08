@@ -616,8 +616,6 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtingut a:",
   "achievementToolTipObtainedAt": "Obtingut a",
   "achievementToolTipObtainedBy": "Obtingut per",
-  "achievementGenerated": "Un total de {{achievementsNumber}} èxits han estat generats en el torneig '{{tournamentName}}'.",
-  "achievementAllGenerated": "Un total de {{achievementsNumber}} èxits han estat generats en {{tournamentNumber}} tornejos.",
   "time": "Temps",
   "lockedAt": "Bloquejat",
   "fightsStartedAt": "Inici partits",
@@ -851,9 +849,14 @@
   "tournamentProperties": "Propietats del torneig",
   "tournamentCloneWarning": "Duplicaràs el torneig. Estàs segur de continuar?",
   "tournamentListAsZip": "Baixar totes les llistes PDF en un fitxer zip.",
-  "shiaijoFinished": "Tots els partits del shiaijo {{shiaijoName}} han acabat.",
   "qrCodeHint": "Mostra un codi QR que permet als convidats seguir les puntuacions del torneig.",
-  "orClickHere": "O fes clic aquí..."
+  "orClickHere": "O fes clic aquí...",
+  "backendMessage": {
+    "achievementGenerated": "Un total de {{achievementsNumber}} èxits han estat generats en el torneig '{{tournamentName}}'.",
+    "achievementAllGenerated": "Un total de {{achievementsNumber}} èxits han estat generats en {{tournamentNumber}} tornejos.",
+    "shiaijoFinished": "Tots els partits del shiaijo {{shiaijoName}} han acabat.",
+    "userAdminGenerated": "Usuari {{userName}} ha estar creat!"
+  }
 }
 
 

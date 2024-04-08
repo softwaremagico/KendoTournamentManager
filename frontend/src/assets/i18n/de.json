@@ -604,8 +604,6 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Erhalten bei:",
   "achievementToolTipObtainedAt": "Erhalten bei",
   "achievementToolTipObtainedBy": "Erhalten von",
-  "achievementGenerated": "Im Turnier {{tournamentName}} wurden insgesamt {{achievementsNumber}} Erfolge erzielt.",
-  "achievementAllGenerated": "Insgesamt wurden {{achievementsNumber}} Erfolge in {{tournamentNumber}} Turnieren erzielt.",
   "time": "Zeit",
   "lockedAt": "Gesperrt",
   "fightsStartedAt": "Beginn der spiele",
@@ -839,9 +837,14 @@
   "tournamentProperties": "Turniereigenschaften",
   "tournamentCloneWarning": "Sie werden das Turnier verdoppeln. Sind Sie sicher, dass Sie fortfahren?",
   "tournamentListAsZip": "Laden Sie alle PDF-Listen in einer ZIP-Datei herunter.",
-  "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet.",
   "qrCodeHint": "Zeigt einen QR-Code an, mit dem Gäste Turnierergebnisse verfolgen können.",
-  "orClickHere": "Oder klicken Sie hier..."
+  "orClickHere": "Oder klicken Sie hier...",
+  "backendMessage": {
+    "achievementGenerated": "Im Turnier {{tournamentName}} wurden insgesamt {{achievementsNumber}} Erfolge erzielt.",
+    "achievementAllGenerated": "Insgesamt wurden {{achievementsNumber}} Erfolge in {{tournamentNumber}} Turnieren erzielt.",
+    "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet.",
+    "userAdminGenerated": "Benutzer {{userName}} wurde erstellt!"
+  }
 }
 
 

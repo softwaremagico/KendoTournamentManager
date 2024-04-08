@@ -631,8 +631,6 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:<br>",
   "achievementToolTipObtainedAt": "Obtained at",
   "achievementToolTipObtainedBy": "Obtained by",
-  "achievementGenerated": "A total of {{achievementsNumber}} achievements have been generated for tournament '{{tournamentName}}'.",
-  "achievementAllGenerated": "A total of {{achievementsNumber}} achievements have been generated for {{tournamentNumber}} tournaments.",
   "time": "Time",
   "lockedAt": "Locked at",
   "fightsStartedAt": "Matches started at",
@@ -862,8 +860,13 @@
   "tournamentProperties": "Tournament Properties",
   "tournamentCloneWarning": "You are going to duplicate the tournament. Are you sure to continue?",
   "tournamentListAsZip": "Download all PDF lists in a zip file",
-  "shiaijoFinished": "All shiaijo {{shiaijoName}} matches have ended.",
   "qrCodeHint": "Displays a QR code that allows guests to track tournament scores.",
-  "orClickHere": "Or Click here..."
+  "orClickHere": "Or Click here...",
+  "backendMessage": {
+    "achievementGenerated": "A total of {{achievementsNumber}} achievements have been generated for tournament '{{tournamentName}}'.",
+    "achievementAllGenerated": "A total of {{achievementsNumber}} achievements have been generated for {{tournamentNumber}} tournaments.",
+    "shiaijoFinished": "All shiaijo {{shiaijoName}} matches have ended.",
+    "userAdminGenerated": "User {{userName}} has been created!"
+  }
 }
 
