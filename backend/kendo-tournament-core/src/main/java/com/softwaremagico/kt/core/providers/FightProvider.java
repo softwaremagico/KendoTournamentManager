@@ -87,7 +87,7 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return fight;
     }
 
-    public List<Fight> get(Collection<Participant> participants) {
+    public List<Fight> getBy(Collection<Participant> participants) {
         return getRepository().findByParticipantIn(participants);
     }
 

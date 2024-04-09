@@ -35,7 +35,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebsocketMessages {
 
-    public WebsocketMessages(AchievementController achievementController, DuelController duelController, WebSocketController webSocketController, AuthApi authApi) {
+    public WebsocketMessages(AchievementController achievementController, DuelController duelController,
+                             WebSocketController webSocketController, AuthApi authApi) {
 
         //Send a message when the achievements from one tournament are finished.
         achievementController.addAchievementsGeneratedListener((achievementsGenerated, tournament) ->

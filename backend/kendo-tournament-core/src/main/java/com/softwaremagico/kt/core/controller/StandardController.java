@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.providers.CrudProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>> implements Validates<DTO> {
@@ -50,4 +51,6 @@ public abstract class StandardController<ENTITY, DTO, REPOSITORY extends JpaRepo
     public long count() {
         return getProvider().count();
     }
+
+    public abstract List<DTO> get(Collection<Integer> ids);
 }
