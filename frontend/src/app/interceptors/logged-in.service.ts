@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {inject, Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router, RouterStateSnapshot} from '@angular/router';
 import {LoginService} from "../services/login.service";
 import {BehaviorSubject} from "rxjs";
 import {TournamentService} from "../services/tournament.service";
@@ -8,7 +8,7 @@ import {Tournament} from "../models/tournament";
 @Injectable({
   providedIn: 'root'
 })
-export class LoggedInService implements CanActivate {
+export class LoggedInService {
 
   //Pages that will not force a login to access.
   whiteListedPages: string[] = ["/tournaments/fights", "/participants/statistics"];
@@ -18,7 +18,7 @@ export class LoggedInService implements CanActivate {
   constructor(private router: Router, public loginService: LoginService, private tournamentService: TournamentService) {
   }
 
-  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const context: string = state.url.substring(0, state.url.indexOf('?') > 0 ? state.url.indexOf('?') : state.url.length);
     if (this.loginService.getJwtValue() || this.whiteListedPages.includes(context)) {
       // JWT Token exists, is a registered participant.
@@ -56,4 +56,8 @@ export class LoggedInService implements CanActivate {
     }
     return false;
   }
+}
+
+export const LoggedIn: CanActivateFn = (next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
+  return inject(LoggedInService).canActivate(next, state);
 }
