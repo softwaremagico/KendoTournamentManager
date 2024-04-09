@@ -211,7 +211,7 @@ public class RankingProvider {
             competitors = participantProvider.getAll();
         }
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
-        final List<Fight> fights = fightProvider.get(competitors);
+        final List<Fight> fights = fightProvider.getBy(competitors);
         final List<Duel> unties = duelProvider.getUnties(competitors);
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));

@@ -297,7 +297,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Role>> getRolesByParticipant() {
         if (rolesByParticipant == null) {
-            final List<Role> roles = roleProvider.get(getParticipantsFromTournament());
+            final List<Role> roles = roleProvider.getBy(getParticipantsFromTournament());
             rolesByParticipant = roles.stream().collect(Collectors.groupingBy(Role::getParticipant));
         }
         return rolesByParticipant;
