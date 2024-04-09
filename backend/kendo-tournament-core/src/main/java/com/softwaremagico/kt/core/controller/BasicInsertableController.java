@@ -93,6 +93,11 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         return convertAll(getProvider().getAll());
     }
 
+    @Override
+    public List<DTO> get(Collection<Integer> ids) {
+        return convertAll(getProvider().get(ids));
+    }
+
     @Transactional
     public DTO update(DTO dto, String username) {
         dto.setUpdatedBy(username);

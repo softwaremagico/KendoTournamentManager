@@ -41,8 +41,6 @@ import java.util.Optional;
 @Transactional
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
-    List<Participant> findByIdIn(List<Integer> ids);
-
     List<Participant> findByOrderByLastnameAsc();
 
     @Query("SELECT r.participant FROM Role r WHERE r.tournament = :tournament")
