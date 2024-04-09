@@ -67,7 +67,7 @@ public class ParticipantImageController extends BasicInsertableController<Partic
     }
 
     public List<ParticipantImageDTO> get(List<ParticipantDTO> participantDTOS) {
-        return convertAll(getProvider().get(participantConverter.reverseAll(participantDTOS)));
+        return convertAll(getProvider().getBy(participantConverter.reverseAll(participantDTOS)));
     }
 
     public ParticipantImageDTO getByParticipantId(Integer participantId) {
