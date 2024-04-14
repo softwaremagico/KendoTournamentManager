@@ -103,7 +103,7 @@
   "DatabaseDisconnectMenuItem": "Desconnectar",
   "DatabaseUpdateMenuItem": "Actualitzar",
   "InstallDatabaseMenuItem": "Instal·lar",
-  "DataMenu": "Estadístiques",
+  "statistics": "Estadístiques",
   "ListMenu": "Llistes",
   "fightList": "Llista de partits",
   "RefereeListMenuItem": "Llista d'àrbitres",
