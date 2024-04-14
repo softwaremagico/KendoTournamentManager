@@ -1,7 +1,7 @@
 <div (cdkDragEnded)="dragEnd($event)" [cdkDragFreeDragPosition]="timerPosition" cdkDrag class="app-timer">
   <div class="container">
     <mat-icon cdkDragHandle class="drag-icon">drag_handle</mat-icon>
-    <div [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished(), 'pause': isPaused()}"
+    <div [ngClass]="{'warning': isWarningTime(), 'almost-finished': isAlmostFinished(), 'paused': isPaused()}"
          class="timer">
       <div class="time">
         <span (dblclick)="setMinutesEditable(true)" *ngIf="!minutesEditable">{{toDoubleDigit(minutes)}}</span>
@@ -22,14 +22,6 @@
       </div>
     </div>
     <div [class.non-editable]="!editable" class="timer-buttons">
-      <button (click)="addTime(-60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
-              [disabled]="!editable"
-              class="rewind timer-button">-1'
-      </button>
-      <button (click)="addTime(-10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
-              [disabled]="!editable"
-              class="rewind timer-button">-10"
-      </button>
       <button (click)="startTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
               [disabled]="!editable"
               [hidden]="started"
@@ -46,6 +38,15 @@
               [disabled]="!editable"
               class="stop timer-button">
         <mat-icon>check_circle</mat-icon>
+      </button>
+      <div class="separator"></div>
+      <button (click)="addTime(-60)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
+              [disabled]="!editable"
+              class="rewind timer-button">-1'
+      </button>
+      <button (click)="addTime(-10)" *ngIf="(RbacActivity.EDIT_FIGHT_TIME | rbac : this.rbacService.getActivities())"
+              [disabled]="!editable"
+              class="rewind timer-button">-10"
       </button>
       <button (click)="restoreTimer()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
               [disabled]="this.elapsedSeconds === 0 || !editable"
