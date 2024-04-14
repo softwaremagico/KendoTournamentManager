@@ -17,6 +17,7 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
 import {MessageService} from "../../services/message.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-team-ranking',
@@ -40,7 +41,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
               },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
-              public override rbacService: RbacService) {
+              public override rbacService: RbacService, private router: Router) {
     super(rbacService);
     this.tournament = data.tournament;
     this.group = data.group;
@@ -147,5 +148,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
         this.dialogRef.close({action: Action.Update, draws: result.draws});
       }
     });
+  }
+
+  openStatistics(): void {
+    if (this.tournament) {
+      this.closeDialog();
+      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.tournament.id}});
+    }
   }
 }

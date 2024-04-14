@@ -101,7 +101,7 @@
   "DatabaseDisconnectMenuItem": "Verbindung schließen",
   "DatabaseUpdateMenuItem": "Update",
   "InstallDatabaseMenuItem": "Installieren",
-  "DataMenu": "Statistiken",
+  "statistics": "Statistiken",
   "ListMenu": "Listen",
   "fightList": "Liste der Kämpfe",
   "RefereeListMenuItem": "Liste der Kampfrichter",
