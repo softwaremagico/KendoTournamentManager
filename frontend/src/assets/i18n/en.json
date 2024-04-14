@@ -94,7 +94,7 @@
   "DatabaseDisconnectMenuItem": "Disconnect",
   "DatabaseUpdateMenuItem": "Update",
   "InstallDatabaseMenuItem": "Install",
-  "DataMenu": "Statistics",
+  "statistics": "Statistics",
   "ListMenu": "Lists",
   "fightList": "List of matches",
   "RefereeListMenuItem": "List of referees",
