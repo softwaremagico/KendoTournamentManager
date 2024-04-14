@@ -36,6 +36,11 @@
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>
+  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
+          (click)="openStatistics()" mat-flat-button mat-raised-button>
+    <mat-icon>bar_chart</mat-icon>
+    {{'statistics' | translate}}
+  </button>
   <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
   (RbacActivity.CREATE_UNDRAW_FIGHTS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
