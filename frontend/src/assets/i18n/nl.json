@@ -101,7 +101,7 @@
   "DatabaseDisconnectMenuItem": "Verbinding verbreken",
   "DatabaseUpdateMenuItem": "Update",
   "InstallDatabaseMenuItem": "Installeren",
-  "DataMenu": "Statistieken",
+  "statistics": "Statistieken",
   "ListMenu": "Overzicht",
   "fightList": "Overzicht wedstrijden",
   "RefereeListMenuItem": "Lijst van scheidsrechters",
