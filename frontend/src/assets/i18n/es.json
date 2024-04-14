@@ -97,7 +97,7 @@
   "DatabaseDisconnectMenuItem": "Desconectar",
   "DatabaseUpdateMenuItem": "Actualizar",
   "InstallDatabaseMenuItem": "Instalar",
-  "DataMenu": "Estadísticas",
+  "statistics": "Estadísticas",
   "ListMenu": "Listas",
   "fightList": "Lista de partidos",
   "RefereeListMenuItem": "Lista de árbitros",
