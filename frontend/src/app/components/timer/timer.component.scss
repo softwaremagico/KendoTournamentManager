@@ -6,7 +6,7 @@
 .container {
   border: 1px solid #333;
   border-radius: 10px;
-  width: 350px;
+  width: 390px;
   margin: 20px auto;
   padding: 5px 20px 5px 20px;
   text-align: center;
@@ -23,7 +23,7 @@
   margin: auto;
   border: 8px solid #8097b3;
   border-radius: 5%;
-  width: 330px;
+  width: 350px;
   height: 70px;
   overflow: hidden;
   display: flex;
@@ -42,7 +42,7 @@
   animation: blinker 1s linear infinite;
 }
 
-.timer.pause {
+.timer.paused {
   animation: blinker 1s step-start infinite;
 }
 
@@ -76,14 +76,18 @@
 
 .play {
   color: #8097b3;
+  margin-right: 5px;
 }
 
 .pause {
   color: #8097b3;
+  margin-right: 5px;
 }
 
 .stop {
   color: #ff0000;
+  margin-right: 10px;
+  margin-left: 5px;
 }
 
 .rewind {
@@ -100,6 +104,14 @@
 
 .drag-icon {
   color: #8097b3;
+}
+
+.separator {
+  border-left: 3px solid #444444;
+  height: 20px;
+  margin-bottom: -15px;
+  display: inline-block;
+  border-radius: 10px;
 }
 
 .timer-edition {
