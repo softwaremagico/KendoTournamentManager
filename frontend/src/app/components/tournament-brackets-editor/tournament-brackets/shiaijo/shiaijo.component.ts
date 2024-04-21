@@ -82,16 +82,16 @@ export class ShiaijoComponent {
   }
 
   getLastGroupIndex(shiaijo: number): number {
-    const maxGroup: Group | undefined = this.getLastGroup();
+    const maxGroup: Group | undefined | null = this.getLastGroup();
     if (maxGroup) {
       return maxGroup.index;
     }
     return 0;
   }
 
-  getLastGroup(): Group | undefined {
+  getLastGroup(): Group | undefined | null {
     if (this.groups && this.groups.length > 0) {
-      return this.groups.reduce((group1: Group, group2: Group): Group => group1.index > group2.index ? group1 : group2);
+      return this.groups.reduce((group1: Group, group2: Group): Group | null => group1.index > group2.index ? group1 : group2, null);
     }
     return undefined;
   }
