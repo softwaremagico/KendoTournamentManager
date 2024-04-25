@@ -91,7 +91,8 @@ export class ShiaijoComponent {
 
   getLastGroup(): Group | undefined {
     if (this.groups && this.groups.length > 0) {
-      return this.groups.reduce((group1: Group, group2: Group): Group => group1.index > group2.index ? group1 : group2);
+      return this.groups.reduce((group1: Group, group2: Group): Group => group1.index > group2.index ? group1 : group2,
+        this.groups[this.groups.length - 1]);
     }
     return undefined;
   }
