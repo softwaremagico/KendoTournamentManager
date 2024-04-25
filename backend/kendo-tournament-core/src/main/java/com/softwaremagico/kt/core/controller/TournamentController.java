@@ -24,8 +24,10 @@ package com.softwaremagico.kt.core.controller;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
@@ -36,18 +38,22 @@ import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Controller
 public class TournamentController extends BasicInsertableController<Tournament, TournamentDTO, TournamentRepository,
         TournamentProvider, TournamentConverterRequest, TournamentConverter> {
 
     private final GroupProvider groupProvider;
+    private final DuelProvider duelProvider;
 
 
     @Autowired
-    public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider) {
+    public TournamentController(TournamentProvider provider, TournamentConverter converter, GroupProvider groupProvider, DuelProvider duelProvider) {
         super(provider, converter);
         this.groupProvider = groupProvider;
+        this.duelProvider = duelProvider;
     }
 
     @Override
@@ -74,7 +80,26 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         if (tournamentDTO.isLocked() && tournamentDTO.getLockedAt() == null) {
             tournamentDTO.setLockedAt(LocalDateTime.now());
         }
-        return super.update(tournamentDTO, username);
+        final Optional<Tournament> previousData = getProvider().get(tournamentDTO.getId());
+        try {
+            return super.update(tournamentDTO, username);
+        } finally {
+            // We need to update all duels durations if already are defined, and duration is changed.
+            if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null) {
+                if (!Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
+                    //Update all duels
+                    final List<Duel> duels = duelProvider.get(previousData.get());
+                    duels.forEach(duel -> {
+                        if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
+                            duel.setTotalDuration(tournamentDTO.getDuelsDuration());
+                        }
+                    });
+                    if (!duels.isEmpty()) {
+                        duelProvider.saveAll(duels);
+                    }
+                }
+            }
+        }
     }
 
     public TournamentDTO create(String name, Integer shiaijos, Integer teamSize, TournamentType type, String username) {
