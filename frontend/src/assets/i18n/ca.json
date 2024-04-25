@@ -840,6 +840,14 @@
       "bronze": "Aconseguit en almenys dos tornejos successius.",
       "silver": "Aconseguit en almenys tres tornejos successius.",
       "gold": "Aconseguit en almenys cinc tornejos successius."
+    },
+    "sithApprenticesAlwaysKillTheirMaster": {
+      "title": "Els aprenents Sith sempre maten el seu mestre",
+      "description": "Guanya un combant quan sempre hagis perdut anteriorment contra el teu oponent.",
+      "normal": "Guanya quan ja hagis perdut dues vegades contra el teu oponent.",
+      "bronze": "Guanya quan ja hagis perdut tres vegades contra el teu oponent.",
+      "silver": "Guanya quan ja hagis perdut quatre vegades contra el teu oponent.",
+      "gold": "Guanya quan ja hagis perdut cinc vegades contra el teu oponent."
     }
   },
   "removeTeams": "Treure Equips",

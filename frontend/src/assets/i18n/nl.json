@@ -828,6 +828,14 @@
       "bronze": "Behaald tijdens ten minste twee opeenvolgende toernooien.",
       "silver": "Behaald tijdens ten minste drie opeenvolgende toernooien.",
       "gold": "Behaald tijdens ten minste vijf opeenvolgende toernooien."
+    },
+    "sithApprenticesAlwaysKillTheirMaster": {
+      "title": "Sith-leerlingen vermoorden altijd hun meester",
+      "description": "Win een gevecht als je eerder altijd hebt verloren van je tegenstander.",
+      "normal": "Win als je al twee keer hebt verloren van je tegenstander.",
+      "bronze": "Win als je al drie keer hebt verloren van je tegenstander.",
+      "silver": "Win als je al vier keer hebt verloren van je tegenstander.",
+      "gold": "Win als je al vijf keer hebt verloren van je tegenstander.\n\n"
     }
   },
   "removeTeams": "Teams verwijderen",
