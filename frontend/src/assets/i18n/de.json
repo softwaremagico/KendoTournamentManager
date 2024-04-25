@@ -828,6 +828,14 @@
       "bronze": "Erreicht in mindestens zwei aufeinanderfolgenden Turnieren erreicht.",
       "silver": "Erreicht in mindestens drei aufeinanderfolgenden Turnieren erreicht.",
       "gold": "Während mindestens fünf aufeinanderfolgenden Turnieren erreicht."
+    },
+    "sithApprenticesAlwaysKillTheirMaster": {
+      "title": "Sith-Lehrlinge töten immer ihren Meister",
+      "description": "Gewinnen Sie einen Kampf, wenn Sie zuvor immer gegen Ihren Gegner verloren haben.",
+      "normal": "Gewinnen Sie, wenn Sie bereits zweimal gegen Ihren Gegner verloren haben.",
+      "bronze": "Gewinnen Sie, wenn Sie bereits dreimal gegen Ihren Gegner verloren haben.",
+      "silver": "Gewinnen Sie, wenn Sie bereits viermal gegen Ihren Gegner verloren haben.",
+      "gold": "Gewinnen Sie, wenn Sie bereits fünf Mal gegen Ihren Gegner verloren haben."
     }
   },
   "removeTeams": "Teams entfernenn",
