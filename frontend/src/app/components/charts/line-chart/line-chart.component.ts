@@ -62,7 +62,7 @@ export class LineChartComponent extends CustomChartComponent {
   @Input()
   public width: number = 500;
   @Input()
-  public showToolbar: boolean = true;
+  public showToolbar: boolean = false;
   @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()
