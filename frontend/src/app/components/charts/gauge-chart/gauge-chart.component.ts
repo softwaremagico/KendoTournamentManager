@@ -36,7 +36,7 @@ export class GaugeChartComponent extends CustomChartComponent {
   @Input()
   public width: number = 500;
   @Input()
-  public height: number = 200;
+  public height: number | undefined = undefined;
   @Input()
   public showToolbar: boolean = true;
   @Input()
@@ -65,7 +65,7 @@ export class GaugeChartComponent extends CustomChartComponent {
   protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
-      chart: this.getChart('radialBar', this.width, this.shadow, this.showToolbar),
+      chart: this.getChart('radialBar', this.width, this.height, this.shadow, this.showToolbar),
       series: this.data?.getValues(),
       labels: this.data?.getLabels(),
       fill: this.getFill(this.fill, this.opacity),

@@ -2,7 +2,7 @@ import {Component, Input, ViewChild} from '@angular/core';
 
 import {
   ApexChart,
-  ApexFill,
+  ApexFill, ApexGrid,
   ApexLegend,
   ApexNonAxisChartSeries,
   ApexResponsive,
@@ -48,6 +48,8 @@ export class PieChartComponent extends CustomChartComponent {
   @Input()
   public width: number = 500;
   @Input()
+  public height: number | undefined = undefined;
+  @Input()
   public showToolbar: boolean = true;
   @Input()
   public colors: string[] = Colors.defaultPalette;
@@ -71,7 +73,7 @@ export class PieChartComponent extends CustomChartComponent {
   protected setProperties(): void {
     this.chartOptions = {
       colors: this.colors,
-      chart: this.getChart(this.isDonut ? "donut" : "pie", this.width, this.shadow, this.showToolbar),
+      chart: this.getChart(this.isDonut ? "donut" : "pie", this.width, this.height, this.shadow, this.showToolbar),
       series: this.data.getValues(),
       labels: this.data.getLabels(),
       fill: this.getFill(this.fill),
