@@ -57,7 +57,7 @@ export class StackedBarsChartComponent extends CustomChartComponent {
   @Input()
   public height: number | undefined = undefined;
   @Input()
-  public showToolbar: boolean = true;
+  public showToolbar: boolean = false;
   @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()

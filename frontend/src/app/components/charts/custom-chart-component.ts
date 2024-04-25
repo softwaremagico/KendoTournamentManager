@@ -80,7 +80,7 @@ export abstract class CustomChartComponent implements OnInit {
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.darkModeService.darkModeSwitched.subscribe((switched: boolean): void => {
       this.darkMode = switched;
       this.setFontColors(switched);
