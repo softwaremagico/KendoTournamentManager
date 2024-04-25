@@ -57,7 +57,7 @@ export class RadarChartComponent extends CustomChartComponent {
   @Input()
   public radarSize: number = 140;
   @Input()
-  public showToolbar: boolean = true;
+  public showToolbar: boolean = false;
   @Input()
   public colors: string[] = Colors.defaultPalette;
   @Input()
