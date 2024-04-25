@@ -841,6 +841,14 @@
       "bronze": "Logrado durante al menos dos torneos.",
       "silver": "Logrado durante al menos tres torneos.",
       "gold": "Logrado durante al menos cinco torneos."
+    },
+    "sithApprenticesAlwaysKillTheirMaster": {
+      "title": "Los aprendices Sith siempre matan a su maestro",
+      "description": "Gana un combate cuando siempre hayas perdido previamente contra tu oponente.",
+      "normal": "Gana cuando ya hayas perdido dos veces contra tu oponente.",
+      "bronze": "Gana cuando ya hayas perdido tres veces contra tu oponente.",
+      "silver": "Gana cuando ya hayas perdido cuatro veces contra tu oponente.",
+      "gold": "Gana cuando ya hayas perdido cinco veces contra tu oponente."
     }
   },
   "removeTeams": "Quitar equipos",

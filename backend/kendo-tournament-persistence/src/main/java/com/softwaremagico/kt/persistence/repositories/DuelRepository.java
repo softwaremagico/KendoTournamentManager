@@ -117,4 +117,8 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     @Query("SELECT d FROM Duel d WHERE d.competitor1=:participant OR d.competitor2=:participant")
     List<Duel> findByParticipant(@Param("participant") Participant participant);
+
+    @Query("SELECT d FROM Duel d WHERE (d.competitor1=:participant1 AND d.competitor2=:participant2) "
+            + "OR (d.competitor2=:participant1 AND d.competitor1=:participant2)")
+    List<Duel> findByParticipants(@Param("participant1") Participant participant1, @Param("participant2") Participant participant2);
 }
