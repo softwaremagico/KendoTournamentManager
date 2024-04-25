@@ -89,9 +89,9 @@ export class ShiaijoComponent {
     return 0;
   }
 
-  getLastGroup(): Group | undefined | null {
+  getLastGroup(): Group | undefined {
     if (this.groups && this.groups.length > 0) {
-      return this.groups.reduce((group1: Group, group2: Group): Group | null => group1.index > group2.index ? group1 : group2, null);
+      return this.groups.reduce((group1: Group, group2: Group): Group => group1.index > group2.index ? group1 : group2);
     }
     return undefined;
   }
