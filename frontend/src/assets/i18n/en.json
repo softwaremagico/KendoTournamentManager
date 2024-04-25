@@ -851,6 +851,14 @@
       "bronze": "Achieved for at least two consecutive tournaments.",
       "silver": "Achieved for at least three consecutive tournaments.",
       "gold": "Achieved for at least five consecutive tournaments."
+    },
+    "sithApprenticesAlwaysKillTheirMaster": {
+      "title": "Sith apprentices always kill their master",
+      "description": "Win a fight when you have always lost previously against your opponent.",
+      "normal": "Win when you have already lost two times against your opponent.",
+      "bronze": "Win when you have already lost three times against your opponent.",
+      "silver": "Win when you have already lost four times against your opponent.",
+      "gold": "Win when you have already lost five times against your opponent."
     }
   },
   "removeTeams": "Remove Teams",
