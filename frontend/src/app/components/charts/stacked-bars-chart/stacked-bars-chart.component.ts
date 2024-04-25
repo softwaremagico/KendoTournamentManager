@@ -55,6 +55,8 @@ export class StackedBarsChartComponent extends CustomChartComponent {
   @Input()
   public width: number = 500;
   @Input()
+  public height: number | undefined = undefined;
+  @Input()
   public showToolbar: boolean = true;
   @Input()
   public colors: string[] = Colors.defaultPalette;
@@ -97,7 +99,7 @@ export class StackedBarsChartComponent extends CustomChartComponent {
 
   protected setProperties(): void {
     this.chartOptions = {
-      chart: this.getChart('bar', this.width, this.shadow, this.showToolbar),
+      chart: this.getChart('bar', this.width, this.height, this.shadow, this.showToolbar),
       series: this.setColors(this.data.getData()),
       labels: this.getLabels(this.showValuesLabels),
       fill: this.getFill(this.fill),

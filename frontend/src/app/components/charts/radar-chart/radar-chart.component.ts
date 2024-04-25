@@ -53,6 +53,8 @@ export class RadarChartComponent extends CustomChartComponent {
   @Input()
   public width: number = 600;
   @Input()
+  public height: number | undefined = undefined;
+  @Input()
   public radarSize: number = 140;
   @Input()
   public showToolbar: boolean = true;
@@ -85,7 +87,7 @@ export class RadarChartComponent extends CustomChartComponent {
 
   protected setProperties(): void {
     this.chartOptions = {
-      chart: this.getChart('radar', this.width, this.shadow, this.showToolbar),
+      chart: this.getChart('radar', this.width, this.height, this.shadow, this.showToolbar),
       series: this.setColors(this.data.getData()),
       labels: this.getLabels(this.showValuesLabels),
       fill: this.getFill(this.fill, this.opacity),
