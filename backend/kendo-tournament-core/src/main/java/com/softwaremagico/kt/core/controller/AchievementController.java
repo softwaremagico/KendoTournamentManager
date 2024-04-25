@@ -431,6 +431,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateDarumaAchievement(tournament));
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievement(tournament));
         achievementsGenerated.addAll(generateVendettaAchievement(tournament));
+        achievementsGenerated.addAll(generateSithApprenticesAlwaysKillTheirMasterAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
@@ -1962,24 +1963,32 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateVendettaAchievement(Tournament tournament) {
         final List<Participant> participants = new ArrayList<>();
-        getFightsFromTournament().forEach(fight -> {
-            fight.getDuels().forEach(duel -> {
-                if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                        && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
-                        && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0)
-                        && duel.getWinner() == 2) {
-                    participants.add(duel.getCompetitor2());
-                }
-                if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
-                        && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
-                        && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0)
-                        && duel.getWinner() == 1) {
-                    participants.add(duel.getCompetitor1());
-                }
-            });
-        });
+        getFightsFromTournament().forEach(fight -> fight.getDuels().forEach(duel -> {
+            if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
+                    && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
+                    && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0)
+                    && duel.getWinner() == 2) {
+                participants.add(duel.getCompetitor2());
+            }
+            if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
+                    && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
+                    && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0)
+                    && duel.getWinner() == 1) {
+                participants.add(duel.getCompetitor1());
+            }
+        }));
         return generateAchievement(AchievementType.V_FOR_VENDETTA, AchievementGrade.NORMAL,
                 participants, tournament);
+    }
+
+    private List<Achievement> generateSithApprenticesAlwaysKillTheirMasterAchievement(Tournament tournament) {
+        getFightsFromTournament().forEach(fight -> fight.getDuels().forEach(duel -> {
+            if (duel.getWinner() < 0) {
+
+            } else if (duel.getWinner() > 0) {
+
+            }
+        }
     }
 
 
