@@ -18,6 +18,7 @@
                 <include name="scoreAchievementTests"/>
                 <include name="darumaAchievementTests"/>
                 <include name="statisticsTests"/>
+                <include name="sithKillsMasterAchievementsTest"/>
                 <include name="tournamentTest"/>
                 <include name="tournamentTwoWinnersTest"/>
                 <include name="tournament5GroupsTest"/>
@@ -48,6 +49,7 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>

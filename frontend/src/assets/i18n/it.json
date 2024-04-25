@@ -834,6 +834,14 @@
       "bronze": "Ottenuto durante almeno due tornei consecutivi.",
       "silver": "Ottenuto durante almeno tre tornei consecutivi.",
       "gold": "Ottenuto durante almeno cinque tornei consecutivi."
+    },
+    "sithApprenticesAlwaysKillTheirMaster": {
+      "title": "Gli apprendisti Sith uccidono sempre il loro maestro",
+      "description": "Vinci un combattimento quando hai sempre perso in precedenza contro il tuo avversario.",
+      "normal": "Vinci quando hai già perso due volte contro il tuo avversario.",
+      "bronze": "Vinci quando hai già perso tre volte contro il tuo avversario.",
+      "silver": "Vinci quando hai già perso quattro volte contro il tuo avversario.",
+      "gold": "Vinci quando hai già perso cinque volte contro il tuo avversario."
     }
   },
   "removeTeams": "Rimuovi squadre",
