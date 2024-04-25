@@ -85,12 +85,12 @@ public class TournamentController extends BasicInsertableController<Tournament, 
             return super.update(tournamentDTO, username);
         } finally {
             // We need to update all duels durations if already are defined, and duration is changed.
-            if (previousData.isPresent()) {
+            if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null) {
                 if (!Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
                     //Update all duels
                     final List<Duel> duels = duelProvider.get(previousData.get());
                     duels.forEach(duel -> {
-                        if (!duel.isOver()) {
+                        if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
                             duel.setTotalDuration(tournamentDTO.getDuelsDuration());
                         }
                     });
