@@ -71,7 +71,9 @@ public enum AchievementType {
 
     STORMTROOPER_SYNDROME,
 
-    V_FOR_VENDETTA;
+    V_FOR_VENDETTA,
+
+    SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER;
 
 
     public static AchievementType getType(String name) {
