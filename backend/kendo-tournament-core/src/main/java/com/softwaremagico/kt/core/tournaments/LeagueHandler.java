@@ -94,7 +94,7 @@ public abstract class LeagueHandler implements ITournamentManager {
                 TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION);
         if (extraProperty == null) {
             extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.LIFO.name()));
+                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()));
         }
         return extraProperty;
     }

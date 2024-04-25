@@ -154,4 +154,12 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
       }
     });
   }
+
+  getMinutes(time: number): number {
+    return ~~(time / 60);
+  }
+
+  getSeconds(time: number): number {
+    return time % 60;
+  }
 }

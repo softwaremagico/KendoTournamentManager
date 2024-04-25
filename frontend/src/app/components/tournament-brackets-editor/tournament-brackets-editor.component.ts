@@ -203,10 +203,10 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   }
 
   deleteLast(): void {
-    const lastGroup: Group | null = this.groups.filter((g: Group): boolean => {
+    const lastGroup: Group = this.groups.filter((g: Group): boolean => {
       return g.level === 0;
-    }).reduce((prev: Group, current: Group): Group | null => (prev.index > current.index) ?
-      prev : current, null);
+    }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+      prev : current);
     this.deleteGroup(lastGroup);
   }
 
