@@ -232,19 +232,19 @@ export class ScoreComponent implements OnInit, OnChanges {
     return tooltipText;
   }
 
-  updateCoordinates($event: MouseEvent) {
+  updateCoordinates($event: MouseEvent): void {
     this.mouseX = $event.clientX;
     this.mouseY = $event.clientY;
     this.calculateTooltipMargin();
   }
 
-  clearCoordinates($event: MouseEvent) {
+  clearCoordinates($event: MouseEvent): void {
     this.mouseX = undefined;
     this.mouseY = undefined;
   }
 
 
-  calculateTooltipMargin() {
+  calculateTooltipMargin(): void {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
     this.onLeftBorder = false;
