@@ -238,7 +238,7 @@ export class ScoreComponent implements OnInit, OnChanges {
     this.calculateTooltipMargin();
   }
 
-  clearCoordinates($event: MouseEvent): void {
+  clearCoordinates(): void {
     this.mouseX = undefined;
     this.mouseY = undefined;
   }
