@@ -48,7 +48,6 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     public ParticipantFightStatistics get(Participant participant) {
         final ParticipantFightStatistics participantFightStatistics = new ParticipantFightStatistics();
         final List<Duel> duels = duelProvider.get(participant);
-        final long durationAverage = duelProvider.getDurationAverage();
         long totalDuelsDuration = 0;
         final long participantDurationAverage = duelProvider.getDurationAverage(participant);
         long totalDuelWonsWithDuration = 0L;
@@ -119,12 +118,16 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
             }
 
             if (Objects.equals(duel.getCompetitorWinner(), participant)) {
-                totalDuelWonsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
-                wonDuelsWithDuration++;
+                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                    totalDuelWonsWithDuration += duel.getDuration();
+                    wonDuelsWithDuration++;
+                }
             }
             if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)) {
-                totalDuelLostsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
-                lostDuelsWithDuration++;
+                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                    totalDuelLostsWithDuration += duel.getDuration();
+                    lostDuelsWithDuration++;
+                }
             }
         }
         if (participantDurationAverage > 0) {
