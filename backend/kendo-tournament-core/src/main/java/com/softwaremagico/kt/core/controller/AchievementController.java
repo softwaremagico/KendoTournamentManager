@@ -101,10 +101,11 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int MINIMUM_ROLES_BAMBOO_SILVER = 4;
     private static final int MINIMUM_ROLES_BAMBOO_GOLD = 5;
 
-    private static final int MINIMUM_LOST_SITH_NORMAL = 2;
+    private static final int MINIMUM_LOST_SITH_NORMAL = 3;
 
-    private static final int MINIMUM_LOST_SITH_BRONZE = 3;
-    private static final int MINIMUM_LOST_SITH_SILVER = 4;
+    private static final int MINIMUM_LOST_SITH_BRONZE = 5;
+    private static final int MINIMUM_LOST_SITH_SILVER = 7;
+    private static final int MINIMUM_LOST_SITH_GOLD = 10;
 
     private static final int PARTICIPANT_YEARS = 5;
     private static final int PARTICIPANT_YEARS_BRONZE = 10;
@@ -2015,28 +2016,19 @@ public class AchievementController extends BasicInsertableController<Achievement
                 }
                 if (isApprentice) {
                     //Generate achievement depending on the number of fights.
-                    switch (numberOfPreviousDuels) {
-                        case 0:
-                        case 1:
-                            //At least, the other participant must have won you two times.
-                            break;
-                        case MINIMUM_LOST_SITH_NORMAL:
-                            achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                    AchievementGrade.NORMAL));
-                            break;
-                        case MINIMUM_LOST_SITH_BRONZE:
-                            achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                    AchievementGrade.BRONZE));
-                            break;
-                        case MINIMUM_LOST_SITH_SILVER:
-                            achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                    AchievementGrade.SILVER));
-                            break;
-                        default:
-                            achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
-                                    AchievementGrade.GOLD));
+                    if (numberOfPreviousDuels == MINIMUM_LOST_SITH_NORMAL) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.NORMAL));
+                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_BRONZE) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.BRONZE));
+                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_SILVER) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.SILVER));
+                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_GOLD) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.GOLD));
                     }
-
                 }
             }
         });
