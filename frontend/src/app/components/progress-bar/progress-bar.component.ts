@@ -16,22 +16,27 @@ export class ProgressBarComponent implements OnInit {
   text: string | undefined = undefined;
 
   @Input()
+  hint: string | undefined = undefined;
+
+  @Input()
   percentage: number = 50;
 
   @Input()
   barIcon: string = "attack";
 
-  progressInLoading() {
+  progressInLoading(): void {
     if (this.drawnPercentage === 100) {
       clearInterval(this.intervalId);
     }
   }
 
   ngOnInit(): void {
-    this.intervalId = setInterval(() => {
+    this.intervalId = setInterval((): void => {
       if (this.drawnPercentage < this.percentage) {
         this.drawnPercentage += 1;
       }
     }, 50);
   }
+
+  protected readonly undefined = undefined;
 }

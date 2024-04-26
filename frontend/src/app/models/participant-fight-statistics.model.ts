@@ -17,6 +17,8 @@ export class ParticipantFightStatistics extends Element {
   duelsNumber: number;
   //In seconds.
   averageTime: number;
+  averageWinTime: number;
+  averageLostTime: number;
   totalDuelsTime: number;
   faults: number;
   receivedFaults: number;
@@ -42,6 +44,8 @@ export class ParticipantFightStatistics extends Element {
     target.receivedIpponNumber = source.receivedIpponNumber;
     target.duelsNumber = source.duelsNumber;
     target.averageTime = source.averageTime;
+    target.averageWinTime = source.averageWinTime;
+    target.averageLostTime = source.averageLostTime;
     target.totalDuelsTime = source.totalDuelsTime;
     target.faults = source.faults;
     target.receivedFaults = source.receivedFaults;
