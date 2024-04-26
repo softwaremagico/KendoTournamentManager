@@ -54,6 +54,9 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
 
+    @Query("SELECT AVG(d.duration) FROM Duel d WHERE (d.competitor1=:participant OR d.competitor2=:participant) AND  d.duration > " + Duel.DEFAULT_DURATION)
+    Long getDurationAverage(@Param("participant") Participant participant);
+
     @Query("""
             SELECT d FROM Duel d WHERE d.tournament=:tournament AND (
             ((size(d.competitor1Score)=2 AND NOT EXISTS (SELECT s1 FROM d.competitor1Score s1 WHERE s1 IN :forbiddenScores)) OR

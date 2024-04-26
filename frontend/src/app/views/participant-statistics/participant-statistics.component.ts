@@ -151,8 +151,10 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     performance.push(['willpower', participantStatistics.totalTournaments > 0 ?
       (participantStatistics.tournaments / participantStatistics.totalTournaments) * 100 : 0]);
     const aggressivenessMargin: number = 20;
-    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageTime > 0 ?
-      Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageTime - aggressivenessMargin) / 180)) * 100, 2)) : 0]);
+    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageWinTime > 0 ?
+      Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageWinTime - aggressivenessMargin) / 90)) * 100, 2)) : 0]);
+    performance.push(['affection', participantStatistics.participantFightStatistics.averageLostTime > 0 ?
+      Math.min(100, truncate(((participantStatistics.participantFightStatistics.averageLostTime - aggressivenessMargin) / 90) * 100, 2)) : 0]);
     return performance;
   }
 
