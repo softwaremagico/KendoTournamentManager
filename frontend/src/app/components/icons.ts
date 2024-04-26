@@ -27,6 +27,7 @@ export class IconModule {
       .addSvgIcon("diplomas", this.setPath(`${this.path}/diploma.svg`))
       .addSvgIcon("gauge", this.setPath(`${this.path}/gauge.svg`))
       .addSvgIcon("aggressiveness", this.setPath(`${this.path}/aggressiveness.svg`))
+      .addSvgIcon("affection", this.setPath(`${this.path}/affection.svg`))
       .addSvgIcon("attack", this.setPath(`${this.path}/attack.svg`))
       .addSvgIcon("defense", this.setPath(`${this.path}/defense.svg`))
       .addSvgIcon("willpower", this.setPath(`${this.path}/willpower.svg`))

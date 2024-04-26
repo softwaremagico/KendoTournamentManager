@@ -52,6 +52,8 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
     private Long duelsNumber;
     //In seconds.
     private Long averageTime;
+    private Long averageWinTime;
+    private Long averageLostTime;
 
     private Long totalDuelsTime;
 
@@ -81,13 +83,28 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
         }
     }
 
-
     public Long getAverageTime() {
         return averageTime;
     }
 
     public void setAverageTime(Long averageTime) {
         this.averageTime = averageTime;
+    }
+
+    public Long getAverageWinTime() {
+        return averageWinTime;
+    }
+
+    public void setAverageWinTime(Long averageWinTime) {
+        this.averageWinTime = averageWinTime;
+    }
+
+    public Long getAverageLostTime() {
+        return averageLostTime;
+    }
+
+    public void setAverageLostTime(Long averageLostTime) {
+        this.averageLostTime = averageLostTime;
     }
 
     public Long getMenNumber() {
