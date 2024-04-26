@@ -93,6 +93,11 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return duration != null ? duration : -1;
     }
 
+    public Long getDurationAverage(Participant participant) {
+        final Long duration = getRepository().getDurationAverage(participant);
+        return duration != null ? duration : -1;
+    }
+
     public Long getDurationAverage(Tournament tournament) {
         return getRepository().getDurationAverage(tournament);
     }
