@@ -209,7 +209,10 @@
           </div>
           <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
                             [ngClass]="'bar-'+i"
-                            [percentage]="value[1]" [text]="value[0] | translate"></app-progress-bar>
+                            [percentage]="value[1]?value[1]:0"
+                            [text]="value[0] | translate"
+                            [hint]="value[0] + 'Hint' | translate"
+          ></app-progress-bar>
         </div>
 
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
