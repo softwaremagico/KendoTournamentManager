@@ -5,8 +5,9 @@
             mat-menu-item>{{score.toLowerCase() | translate}}
     </button>
   </mat-menu>
-  <div (mouseout)="clearCoordinates($event)" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
-       onFocus="updateCoordinates($event);"
+  <div (mouseout)="clearCoordinates()" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
+       (focus)="clearCoordinates();"
+       (blur)="clearCoordinates();"
        class="point">
     {{scoreRepresentation}}
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
