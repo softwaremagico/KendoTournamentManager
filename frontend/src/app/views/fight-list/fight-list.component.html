@@ -146,7 +146,7 @@
       <div class="shiaijo-label">
         {{'shiaijo'| translate}}
       </div>
-      <div class="shiaijo-name" (click)="changeShiaijo()">
+      <div class="shiaijo-name" (click)="changeShiaijo()" (keydown)="changeShiaijo()" >
         {{getShiaijoTag()}}
       </div>
     </div>
@@ -169,14 +169,16 @@
             class="group-name">{{'group' | translate}} {{group.index + 1}}</h3>
         <div *ngIf="filteredFights.get(group.id!)?.length! > 0"
              [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
-          <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
+          <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
                  [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
                  [swapTeams]="swappedTeams"></fight>
 
           <div class="unties-list">
-            <untie-fight (click)="selectDuel(duel)" *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+            <untie-fight *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+                         (click)="selectDuel(duel)"
+                         (keydown)="selectDuel(duel)"
                          [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
                          [selected]="duel === selectedDuel" [swapColors]="swappedColors"
                          [swapTeams]="swappedTeams"></untie-fight>

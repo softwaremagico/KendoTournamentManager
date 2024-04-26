@@ -5,7 +5,7 @@
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentType' | translate}}</mat-label>
       <mat-select [(value)]="tournament.type" formControlName="tournamentType">
-        <mat-option (click)="select(type)" *ngFor="let type of tournamentType" [value]="type">
+        <mat-option (click)="select(type)" (keydown)="select(type)" *ngFor="let type of tournamentType" [value]="type">
           {{getTournamentTypeTranslationTag(type) | translate}}
         </mat-option>
       </mat-select>
@@ -42,7 +42,8 @@
         <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                     formControlName="scoreTypes"
                     matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
-          <mat-option (click)="selectScore(type)" *ngFor="let type of scoreTypes" [matTooltipShowDelay]="1000"
+          <mat-option *ngFor="let type of scoreTypes" [matTooltipShowDelay]="1000"
+                      (click)="selectScore(type)" (keydown)="selectScore(type)"
                       [value]="type" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
             {{type.toLowerCase() | translate}}
           </mat-option>
@@ -60,7 +61,8 @@
       <mat-select [(value)]="tournament.duelsDuration" formControlName="duelsDuration">
         <mat-option *ngFor="let number of [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600]"
                     [value]="number">
-          {{number}} {{'seconds' | translate}} ({{getMinutes(number)}} {{'minutes' | translate}} {{getSeconds(number)}} {{'seconds' | translate}})
+          {{number}} {{'seconds' | translate}}
+          ({{getMinutes(number)}} {{'minutes' | translate}} {{getSeconds(number)}} {{'seconds' | translate}})
         </mat-option>
       </mat-select>
     </mat-form-field>

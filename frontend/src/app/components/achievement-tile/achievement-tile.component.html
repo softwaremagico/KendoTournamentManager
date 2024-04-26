@@ -1,4 +1,5 @@
-<div (mouseout)="clearCoordinates($event)" (mouseover)="updateCoordinates($event)" onFocus="updateCoordinates($event);"
+<div (mouseout)="clearCoordinates();" (mouseover)="updateCoordinates($event)" (focus)="clearCoordinates();"
+     (blur)="clearCoordinates();"
      [class.disabled]="achievements?.length == 0"
      class="achievement">
   <img [alt]="getAchievementAlt()" [src]="getAchievementImage()" class="achievement-image">
