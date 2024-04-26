@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
@@ -35,7 +35,7 @@ import {TournamentService} from "../../services/tournament.service";
   templateUrl: './tournament-statistics.component.html',
   styleUrls: ['./tournament-statistics.component.scss']
 })
-export class TournamentStatisticsComponent extends RbacBasedComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TournamentStatisticsComponent extends RbacBasedComponent implements OnDestroy, AfterViewInit {
 
   pipe: DatePipe;
 
@@ -45,6 +45,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public teamSizeByTournament: LineChartData = new LineChartData();
   public participantsByTournament: StackedBarChartData = new StackedBarChartData();
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
+  public hitsByTournamentPercentage: StackedBarChartData = new StackedBarChartData();
   public fightsOverData: GaugeChartData;
 
   private readonly tournamentId: number | undefined;
@@ -60,9 +61,6 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   @ViewChild('participantsByTournamentChart')
   participantsByTournamentChart: StackedBarsChartComponent;
-
-  @ViewChild('hitsByTournamentPercentageChart')
-  hitsByTournamentPercentageChart: StackedBarsChartComponent;
 
   @ViewChild('hitsByTournamentChart')
   hitsByTournamentChart: StackedBarsChartComponent;
@@ -92,7 +90,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     this.setLocale();
   }
 
-  private setLocale() {
+  private setLocale(): void {
     if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
       this.pipe = new DatePipe('es');
     } else if (this.userSessionService.getLanguage() === 'it') {
@@ -104,11 +102,6 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     } else {
       this.pipe = new DatePipe('en-US');
     }
-  }
-
-
-  ngOnInit(): void {
-
   }
 
   ngAfterViewInit(): void {
@@ -187,7 +180,6 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   generateHitsByTournamentStatistics(tournamentStatistics: TournamentStatistics): void {
     this.hitsByTournament.elements.unshift(new StackedBarChartDataElement(this.obtainPoints(tournamentStatistics), this.getLabel(tournamentStatistics.tournamentName)));
-    this.hitsByTournamentPercentageChart.update(this.hitsByTournament);
     this.hitsByTournamentChart.update(this.hitsByTournament);
   }
 
@@ -274,10 +266,11 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
 
   obtainTimes(tournamentStatistics: TournamentStatistics): [string, number] {
     let times: [string, number];
-    if (tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics?.fightsStartedAt) {
+    if (tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics?.fightsStartedAt &&
+      tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics?.fightsStartedAt) {
       //Time in minutes.
-      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt).getTime() -
-        new Date(tournamentStatistics.tournamentFightStatistics?.fightsStartedAt).getTime()) / (1000 * 60), 2)];
+      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFightStatistics.fightsFinishedAt).getTime() -
+        new Date(tournamentStatistics.tournamentFightStatistics.fightsStartedAt).getTime()) / (1000 * 60), 2)];
     } else {
       times = [this.getLabel(tournamentStatistics.tournamentName), 0];
     }
