@@ -56,7 +56,9 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         long quickestHit = Integer.MAX_VALUE;
         long quickestReceivedHit = Integer.MAX_VALUE;
         long wonDuels = 0L;
+        long wonDuelsWithDuration = 0L;
         long lostDuels = 0L;
+        long lostDuelsWithDuration = 0L;
         long drawDuels = 0L;
         for (final Duel duel : duels) {
             final int winner = duel.getWinner();
@@ -118,9 +120,11 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
 
             if (Objects.equals(duel.getCompetitorWinner(), participant)) {
                 totalDuelWonsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
+                wonDuelsWithDuration++;
             }
             if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)) {
                 totalDuelLostsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
+                lostDuelsWithDuration++;
             }
         }
         if (participantDurationAverage > 0) {
@@ -129,12 +133,12 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
             participantFightStatistics.setAverageTime(0L);
         }
         if (totalDuelWonsWithDuration > 0) {
-            participantFightStatistics.setAverageWinTime(Math.max(1, totalDuelWonsWithDuration / wonDuels));
+            participantFightStatistics.setAverageWinTime(totalDuelWonsWithDuration / wonDuelsWithDuration);
         } else {
             participantFightStatistics.setAverageWinTime(0L);
         }
         if (totalDuelLostsWithDuration > 0) {
-            participantFightStatistics.setAverageLostTime(Math.max(1, totalDuelLostsWithDuration / lostDuels));
+            participantFightStatistics.setAverageLostTime(totalDuelLostsWithDuration / lostDuelsWithDuration);
         } else {
             participantFightStatistics.setAverageLostTime(0L);
         }
