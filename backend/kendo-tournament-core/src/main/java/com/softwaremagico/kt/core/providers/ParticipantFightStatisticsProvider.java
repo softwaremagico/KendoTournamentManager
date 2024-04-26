@@ -48,8 +48,10 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     public ParticipantFightStatistics get(Participant participant) {
         final ParticipantFightStatistics participantFightStatistics = new ParticipantFightStatistics();
         final List<Duel> duels = duelProvider.get(participant);
-        long totalDuration = 0L;
-        long totalDuelsWithDuration = 0L;
+        final long totalDuration = duelProvider.getDurationAverage();
+        final long totalDuelDuration = duelProvider.getDurationAverage(participant);
+        long totalDuelWonsWithDuration = 0L;
+        long totalDuelLostsWithDuration = 0L;
         long quickestHit = Integer.MAX_VALUE;
         long quickestReceivedHit = Integer.MAX_VALUE;
         long wonDuels = 0L;
@@ -106,13 +108,28 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                     lostDuels++;
                 }
             }
-            totalDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? duel.getDuration() : 0;
-            totalDuelsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
+
+            if (Objects.equals(duel.getCompetitorWinner(), participant)) {
+                totalDuelWonsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
+            }
+            if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)) {
+                totalDuelLostsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
+            }
         }
-        if (totalDuelsWithDuration > 0) {
-            participantFightStatistics.setAverageTime(totalDuration / totalDuelsWithDuration);
+        if (totalDuelDuration > 0) {
+            participantFightStatistics.setAverageTime(totalDuelDuration / duels.size());
         } else {
             participantFightStatistics.setAverageTime(0L);
+        }
+        if (totalDuelWonsWithDuration > 0) {
+            participantFightStatistics.setAverageWinTime(Math.max(1, totalDuration / totalDuelWonsWithDuration));
+        } else {
+            participantFightStatistics.setAverageWinTime(0L);
+        }
+        if (totalDuelLostsWithDuration > 0) {
+            participantFightStatistics.setAverageLostTime(Math.max(1, totalDuration / totalDuelLostsWithDuration));
+        } else {
+            participantFightStatistics.setAverageLostTime(0L);
         }
         if (quickestHit < Integer.MAX_VALUE) {
             participantFightStatistics.setQuickestHit(quickestHit);
