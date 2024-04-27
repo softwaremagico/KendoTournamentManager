@@ -28,6 +28,8 @@ kendo club. Including experience from several fighting structures that we had ex
 of the previous version of this software. The goal is to have enough flexibility to be at the service of your club, and
 not the other way around.
 
+<img align="middle" src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="300" alt="Scores example"> 
+
 This tool is a complete rebuild from the old
 tool Kendo Tournament Generator [[1]](https://sourceforge.net/projects/kendotournament/files/) [[2]](https://github.com/softwaremagico/KendoTournament) with the
 effort of adapting it to more modern technologies. The new architecture allows the deployment of this tool as a web
