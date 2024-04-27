@@ -22,8 +22,7 @@
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubEmail" matInput
-             placeholder="{{'clubEmail' | translate}}"
-             required>
+             placeholder="{{'clubEmail' | translate}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubPhone" matInput
