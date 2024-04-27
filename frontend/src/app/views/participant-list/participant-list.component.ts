@@ -53,13 +53,13 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   showAllElements(): void {
-    this.participantService.getAll().subscribe(participants => {
-      this.basicTableData.dataSource.data = participants.map(participant => Participant.clone(participant));
+    this.participantService.getAll().subscribe((participants: Participant[]): void => {
+      this.basicTableData.dataSource.data = participants.map((participant: Participant) => Participant.clone(participant));
     });
   }
 
   addElement(): void {
-    const participant = new Participant();
+    const participant: Participant = new Participant();
     this.openDialog(this.translateService.instant('participantAdd'), Action.Add, participant);
   }
 
@@ -113,7 +113,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
         this.basicTableData.dataSource._updateChangeSubscription();
       }
       this.basicTableData.selectItem(_participant);
-      this.basicTableData.selectedElement = _participant;
+      this.setSelectedItem(_participant);
       this.messageService.infoMessage('infoParticipantStored');
     });
   }
