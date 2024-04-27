@@ -59,7 +59,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       idCard: new UntypedFormControl({
         value: this.participant.idCard,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
-      }, [Validators.required, Validators.maxLength(20)]),
+      }, [Validators.maxLength(20)]),
       club: new UntypedFormControl({
         value: this.participant.club,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
