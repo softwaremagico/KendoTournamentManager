@@ -61,7 +61,6 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
     private String password;
 
     @Column(name = "username")
-    @Convert(converter = StringCryptoConverter.class)
     private String username;
 
     @Column(name = "name", nullable = false)

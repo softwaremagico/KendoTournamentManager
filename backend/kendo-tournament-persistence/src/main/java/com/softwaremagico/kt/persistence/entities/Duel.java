@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
@@ -104,11 +103,9 @@ public class Duel extends Element {
     private Integer competitor2FaultTime;
 
     @Column(name = "competitor_1_fault")
-    @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor1Fault = false;
 
     @Column(name = "competitor_2_fault")
-    @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor2Fault = false;
 
     @Column(name = "type")
@@ -120,7 +117,6 @@ public class Duel extends Element {
     private Integer duration;
 
     @Column(name = "finished")
-    @Convert(converter = BooleanCryptoConverter.class)
     private boolean finished = false;
 
     @Column(name = "total_duration")
