@@ -67,11 +67,9 @@ public class Group extends Element {
     private Integer shiaijo = 0;
 
     @Column(name = "group_level", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     @Column(name = "group_index", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer index = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
