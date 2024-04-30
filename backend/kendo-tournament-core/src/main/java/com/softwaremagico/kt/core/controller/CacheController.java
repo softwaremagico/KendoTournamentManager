@@ -30,8 +30,11 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class CacheController {
 
-    @Autowired(required = false)
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
+
+    public CacheController(@Autowired(required = false) CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
 
     public void deleteAllCache() {
