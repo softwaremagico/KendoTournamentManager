@@ -50,6 +50,7 @@ public abstract class Element implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_at")
+    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime createdAt;
 
     @Column(name = "created_by")
