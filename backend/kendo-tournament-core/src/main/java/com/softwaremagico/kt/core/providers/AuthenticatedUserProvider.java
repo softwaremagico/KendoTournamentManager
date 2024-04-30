@@ -67,8 +67,10 @@ public class AuthenticatedUserProvider {
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsername(username);
+        final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository
+                .findByUsernameHashed(username);
         if (authenticatedUser.isPresent()) {
+            authenticatedUser.get().setUsernameHashed(authenticatedUser.get().getUsername());
             return Optional.of(authenticatedUser.get());
         }
         final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
