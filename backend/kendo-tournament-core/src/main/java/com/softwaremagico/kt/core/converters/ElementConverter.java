@@ -44,7 +44,7 @@ public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> impl
         if (from == null) {
             return new ArrayList<>();
         }
-        return from.stream().map(this::convert).collect(Collectors.toList());
+        return from.stream().map(this::convert).toList();
     }
 
     @Override
@@ -52,6 +52,6 @@ public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> impl
         if (to == null) {
             return new ArrayList<>();
         }
-        return to.stream().map(this::reverse).collect(Collectors.toList());
+        return to.stream().map(this::reverse).toList();
     }
 }
