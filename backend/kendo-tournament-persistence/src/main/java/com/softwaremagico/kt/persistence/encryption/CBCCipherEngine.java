@@ -63,8 +63,8 @@ public class CBCCipherEngine implements ICipherEngine {
     @Override
     public synchronized String encrypt(String input, String password) throws InvalidEncryptionException {
         try {
-            final Cipher cipher = getCipher(password);
-            final byte[] iv = new byte[cipher.getBlockSize()];
+            final Cipher encryptCipher = getCipher(password);
+            final byte[] iv = new byte[encryptCipher.getBlockSize()];
             SECURE_RANDOM.nextBytes(iv);
 
             getCipher(password).init(Cipher.ENCRYPT_MODE, keySpec, generateIvSpec(iv));
@@ -88,11 +88,11 @@ public class CBCCipherEngine implements ICipherEngine {
     public String decrypt(String encrypted, String password) throws InvalidEncryptionException {
         try {
             synchronized (this) {
-                final Cipher cipher = getCipher(password);
+                final Cipher deecryptCipher = getCipher(password);
                 final byte[] iv = Base64.getDecoder().decode(encrypted.substring(0, STORED_KEY_SIZE));
                 getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, generateIvSpec(iv));
                 final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.substring(STORED_KEY_SIZE).getBytes(StandardCharsets.UTF_8));
-                final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+                final byte[] decryptedBytes = deecryptCipher.doFinal(encryptedBytes);
                 final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
                 EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
                 return decrypted;
