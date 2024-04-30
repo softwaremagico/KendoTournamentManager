@@ -66,7 +66,7 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
 
     @Column(name = "username_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
     @Convert(converter = SHA512HashGenerator.class)
-    private String usernameHashed;
+    private String usernameHash;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
@@ -115,15 +115,15 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
 
     public void setUsername(String username) {
         this.username = username;
-        this.usernameHashed = username;
+        this.usernameHash = username;
     }
 
-    public String getUsernameHashed() {
-        return usernameHashed;
+    public String getUsernameHash() {
+        return usernameHash;
     }
 
-    public void setUsernameHashed(String usernameHash) {
-        this.usernameHashed = usernameHash;
+    public void setUsernameHash(String usernameHash) {
+        this.usernameHash = usernameHash;
     }
 
     public String getName() {
