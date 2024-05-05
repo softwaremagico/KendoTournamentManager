@@ -3,20 +3,23 @@
   <div class="kendo-table">
     <div class="upper-menu">
       <div class="cell">
-        <button mat-button color="primary" (click)="addElement()" [matTooltipShowDelay]="500"
-                matTooltip="{{'authenticatedUserAdd' | translate}}"
-                *ngIf="(RbacActivity.CREATE_USER | rbac : this.rbacService.activities)">
+        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_USER | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500" color="primary"
+                mat-button
+                matTooltip="{{'authenticatedUserAdd' | translate}}">
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-button [disabled]="!basicTableData.selectedElement" (click)="editElement()"
+        <button (click)="editElement()" *ngIf="(RbacActivity.READ_ONE_USER | rbac : this.rbacService.getActivities())"
+                [disabled]="!basicTableData.selectedElement"
                 [matTooltipShowDelay]="500"
-                matTooltip="{{'authenticatedUserEdit' | translate}}"
-                *ngIf="(RbacActivity.READ_ONE_USER | rbac : this.rbacService.activities)">
+                mat-button
+                matTooltip="{{'authenticatedUserEdit' | translate}}">
           <mat-icon>create</mat-icon>
         </button>
-        <button mat-button color="warn" [disabled]="!basicTableData.selectedElement" (click)="deleteElement()"
-                [matTooltipShowDelay]="500" matTooltip="{{'authenticatedUserDelete' | translate}}"
-                *ngIf="(RbacActivity.DELETE_USER | rbac : this.rbacService.activities)">
+        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_USER | rbac : this.rbacService.getActivities())"
+                [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
+                color="warn" mat-button
+                matTooltip="{{'authenticatedUserDelete' | translate}}">
           <mat-icon>clear</mat-icon>
         </button>
       </div>

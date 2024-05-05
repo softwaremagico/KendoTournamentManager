@@ -2,8 +2,44 @@
   padding: 10px 10px 10px 0;
 }
 
-.green-progress .mat-progress-bar-fill::after {
-  background-color: green !important;
+.bar-0 .mat-progress-bar-fill::after {
+  background-color: #062158 !important;
+}
+
+.bar-1 .mat-progress-bar-fill::after {
+  background-color: #274e7e !important;
+}
+
+.bar-2 .mat-progress-bar-fill::after {
+  background-color: #012f67 !important;
+}
+
+.bar-3 .mat-progress-bar-fill::after {
+  background-color: #012354 !important;
+}
+
+.bar-4 .mat-progress-bar-fill::after {
+  background-color: #083670 !important;
+}
+
+.bar-0 .mat-icon {
+  color: #062158 !important;
+}
+
+.bar-1 .mat-icon {
+  color: #274e7e !important;
+}
+
+.bar-2 .mat-icon {
+  color: #012354 !important;
+}
+
+.bar-3 .mat-icon {
+  color: #012f67 !important;
+}
+
+.bar-4 .mat-icon {
+  color: #083670 !important;
 }
 
 .custom-progress-bar {

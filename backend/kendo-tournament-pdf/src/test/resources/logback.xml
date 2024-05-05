@@ -20,6 +20,12 @@
     <logger name="com.softwaremagico.kt.logger.BasicLogging" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <logger name="com.softwaremagico.kt.logger.PdfExporterLog" additivity="false" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.softwaremagico.kt.logger.CacheEventLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
     <!***REMOVED***Default ones -->
     <logger name="org.springframework" additivity="false" level="INFO">
@@ -42,9 +48,6 @@
     </logger>
     <logger name="springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator" additivity="false"
             level="ERROR">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-    <logger name="net.sf.ehcache" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping" additivity="false"

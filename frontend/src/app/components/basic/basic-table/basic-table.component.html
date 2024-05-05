@@ -1,36 +1,47 @@
 <app-filter (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
-<button class="tune-button" mat-button [matMenuTriggerFor]="mainMenuButton" [matTooltipShowDelay]="500"
+<button [matMenuTriggerFor]="mainMenuButton" [matTooltipShowDelay]="500" class="tune-button" mat-button
         matTooltip="{{'fields' | translate}}">
   <mat-icon>tune</mat-icon>
 </button>
 <mat-menu #mainMenuButton="matMenu" class="table-settings">
-        <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns">
-          <mat-checkbox class="menu-setting-option" (change)="toggleColumnVisibility(column)"
-                        [checked]="isColumnVisible(column)"></mat-checkbox>
-          <span class="menu-setting-option-text">{{column | translate}}</span>
+        <span (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+              *ngFor="let column of basicTableData.columns; let i = index">
+          <mat-checkbox (change)="toggleColumnVisibility(column)" [checked]="isColumnVisible(column)"
+                        class="menu-setting-option"></mat-checkbox>
+          <span class="menu-setting-option-text">{{basicTableData.columnsTags[i] | translate}}</span>
           <br>
         </span>
 </mat-menu>
 <div class="mat-elevation-z8">
   <div class="basic-table">
-    <table mat-table [dataSource]="basicTableData.dataSource" class="mat-elevation-z8" matSort matSortActive="createdAt"
-           matSortDirection="desc" aria-describedby="List of items on a table view">
+    <table [dataSource]="basicTableData.dataSource" aria-describedby="List of items on a table view"
+           class="mat-elevation-z8" mat-table matSort
+           matSortActive="createdAt" matSortDirection="desc">
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
         <ng-container [matColumnDef]=column>
-          <th mat-header-cell *matHeaderCellDef
-              mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}</th>
-          <td mat-cell *matCellDef="let data"> {{getColumnData(data[column])}} </td>
+          <th *matHeaderCellDef mat-header-cell class="table-header-cell"
+              mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}
+          </th>
+          <td *matCellDef="let data" mat-cell> {{getColumnData(data[column])}}</td>
         </ng-container>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="basicTableData.visibleColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: basicTableData.visibleColumns;"
-          (click)="basicTableData.selection.toggle(row); setSelectedItem(row)" (mouseover)="row.hovered=true"
-          [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
-          [class.disabled]="disableRow(row)"
-          (mouseout)="row.hovered=false"></tr>
+      <div class="table-header">
+        <tr *matHeaderRowDef="basicTableData.visibleColumns" mat-header-row></tr>
+      </div>
+      <div class="table-content">
+        <tr (click)="basicTableData.selection.toggle(row); setSelectedItem(row)"
+            (keydown)="basicTableData.selection.toggle(row); setSelectedItem(row)"
+            (mouseout)="row.hovered=false"
+            (mouseover)="row.hovered=true" *matRowDef="let row; columns: basicTableData.visibleColumns;"
+            (focus)="row.hovered=true"
+            (blur)="row.hovered=false"
+            [class.disabled]="disableRow(row)"
+            [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
+            mat-row></tr>
+      </div>
     </table>
-    <mat-paginator [pageSize]="getDefaultPageSize()" [pageSizeOptions]="[10, 20, 50]" (page)="onPaginateChange($event)"
+    <mat-paginator (page)="onPaginateChange($event)" [pageSizeOptions]="[10, 20, 50]" [pageSize]="getDefaultPageSize()"
                    showFirstLastButtons></mat-paginator>
   </div>
 </div>

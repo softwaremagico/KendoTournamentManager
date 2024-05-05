@@ -6,26 +6,24 @@ package com.softwaremagico.kt.core.images;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,8 +34,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 
-public class ImageUtils {
+public final class ImageUtils {
     private static final double DNI_PROPORTIONS = 26d / 32d;
+    private static final int DEFAULT_WIDTH = 680;
+    private static final int DEFAULT_HEIGHT = 480;
 
     private ImageUtils() {
 
@@ -55,13 +55,13 @@ public class ImageUtils {
     }
 
     public static BufferedImage getImage(byte[] data) throws IOException {
-        try (final InputStream inputStream = new ByteArrayInputStream(data)) {
+        try (InputStream inputStream = new ByteArrayInputStream(data)) {
             return ImageIO.read(inputStream);
         }
     }
 
     public static byte[] getBytes(BufferedImage bufferedImage) throws IOException {
-        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
             return byteArrayOutputStream.toByteArray();
         }
@@ -72,7 +72,7 @@ public class ImageUtils {
     }
 
     public static BufferedImage resizeImage(BufferedImage bufferedImage) {
-        return resizeImage(bufferedImage, 680, 480);
+        return resizeImage(bufferedImage, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
     public static byte[] cropImage(byte[] data) throws IOException {

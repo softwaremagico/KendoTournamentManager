@@ -6,25 +6,26 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.TournamentFightStatisticsConverter;
@@ -38,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 public class FightStatisticsController extends BasicInsertableController<TournamentFightStatistics, TournamentFightStatisticsDTO,
@@ -67,15 +67,15 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
      * @return some estimations.
      */
     public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO) {
-        return convert(provider.estimate(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().estimate(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentFightStatisticsDTO estimateByTeams(TournamentDTO tournamentDTO) {
-        return convert(provider.estimateByTeams(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().estimateByTeams(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentFightStatisticsDTO estimateByMembers(TournamentDTO tournamentDTO) {
-        return convert(provider.estimateByMembers(tournamentConverter.reverse(tournamentDTO)));
+        return convert(getProvider().estimateByMembers(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, Collection<TeamDTO> teams) {
@@ -83,7 +83,7 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
     }
 
     public TournamentFightStatisticsDTO estimateByRoles(TournamentDTO tournamentDTO, Collection<RoleDTO> roles) {
-        return estimate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).collect(Collectors.toList())));
+        return estimate(tournamentDTO, emulateTeams(tournamentDTO, roles.stream().map(RoleDTO::getParticipant).toList()));
     }
 
     public TournamentFightStatisticsDTO estimate(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
@@ -103,11 +103,11 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
     }
 
     private TournamentFightStatisticsDTO estimateLeagueStatistics(int teamSize, Collection<TeamDTO> teams) {
-        return convert(provider.estimateLeagueStatistics(teamSize, teamConverter.reverseAll(teams)));
+        return convert(getProvider().estimateLeagueStatistics(teamSize, teamConverter.reverseAll(teams)));
     }
 
     private TournamentFightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
-        return convert(provider.estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO), teamSize, teamConverter.reverseAll(teams)));
+        return convert(getProvider().estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO), teamSize, teamConverter.reverseAll(teams)));
     }
 
     private int getDuels(int fightByTeam, int teamSize, Collection<TeamDTO> teams) {

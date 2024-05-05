@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -62,20 +59,22 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
-        provider.deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getProperty());
-        dto.setUpdatedBy(username);
-        return create(dto, null);
+        getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
+        return super.update(dto, username);
     }
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {
-        return convertAll(provider.getAll(tournamentProvider.get(tournamentId)
+        return convertAll(getProvider().getAll(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
     }
 
     public TournamentExtraPropertyDTO getByTournamentAndProperty(Integer tournamentId, TournamentExtraPropertyKey key) {
-        return convert(provider.getByTournamentAndProperty(tournamentProvider.get(tournamentId)
+        return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key));
     }
 
+    public List<TournamentExtraPropertyDTO> getLatest(String username) {
+        return convertAll(getProvider().getLatestPropertiesByCreatedBy(username));
+    }
 
 }

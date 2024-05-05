@@ -1,13 +1,15 @@
 <div class="untie-container">
-  <div class="left-team ribbon-icon" [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors">
-    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
+  <div [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors" class="left-team ribbon-icon">
+    <mat-icon class="kendo-icon" svgIcon="ribbon"></mat-icon>
   </div>
   <div class="untie">
-    <duel class="duel" [duel]="duel" (click)="selectDuel(duel)"
+    <duel [duel]="duel" [ngClass]="{duelSelected: selected, over: isOver(duel)}"
+          (click)="selectDuel(duel)"
+          (keydown)="selectDuel(duel)"
           [selected]="selected" [swapTeams]="swapTeams"
-          [ngClass]="{duelSelected: selected, over: isOver(duel)}"></duel>
+          class="duel"></duel>
   </div>
-  <div class="right-team ribbon-icon" [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors">
-    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
+  <div [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors" class="right-team ribbon-icon">
+    <mat-icon class="kendo-icon" svgIcon="ribbon"></mat-icon>
   </div>
 </div>

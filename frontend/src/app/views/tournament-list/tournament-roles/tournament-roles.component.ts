@@ -16,6 +16,7 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {StatisticsChangedService} from "../../../services/notifications/statistics-changed.service";
 import {TeamService} from "../../../services/team.service";
+import {Team} from "../../../models/team";
 
 @Component({
   selector: 'app-tournament-roles',
@@ -27,7 +28,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   userListData: UserListData = new UserListData();
   tournament: Tournament;
   roleTypes: RoleType[] = RoleType.toArray();
-  participants = new Map<RoleType, Participant[]>();
+  participants: Map<RoleType, Participant[]> = new Map<RoleType, Participant[]>();
   showAvatars: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TournamentRolesComponent>,
@@ -52,19 +53,19 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     let participantsRequest = this.participantService.getAll();
     let roleRequests = this.roleService.getFromTournamentAndTypes(this.tournament.id!, RoleType.toArray());
 
-    forkJoin([participantsRequest, roleRequests]).subscribe(([participants, roles]) => {
+    forkJoin([participantsRequest, roleRequests]).subscribe(([participants, roles]): void => {
       //Get roles
       for (let roleType of this.roleTypes) {
         const rolesFromType: Role[] = roles.filter(role => role.roleType === roleType);
-        this.participants.set(roleType, rolesFromType.map(role => role.participant).sort(function (a, b) {
+        this.participants.set(roleType, rolesFromType.map(role => role.participant).sort(function (a: Participant, b: Participant) {
           return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
         }));
         //Get participants and subtract the ones already with roles.
         const participantsIds: (number | undefined)[] = this.participants.get(roleType)!.map(participant => participant.id);
-        participants = participants.filter((participantWithoutRole) => !participantsIds
+        participants = participants.filter((participantWithoutRole: Participant) => !participantsIds
           .includes(participantWithoutRole.id));
       }
-      participants.sort(function (a, b) {
+      participants.sort(function (a: Participant, b: Participant) {
         return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
       });
       //Block participants and avatars.
@@ -72,14 +73,14 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
         if (this.tournament.locked) {
           participant.locked = participant.locked || this.tournament.locked;
         }
-        if (participant.hasAvatar) {
+        if (participant?.hasAvatar) {
           this.showAvatars = true;
         }
       }
       this.userListData.participants = participants;
       this.userListData.filteredParticipants = participants;
       //Prevent removing participants that are on teams already
-      this.teamService.getFromTournament(this.tournament).subscribe(_teams => {
+      this.teamService.getFromTournament(this.tournament).subscribe((_teams: Team[]): void => {
         let teamMembers: Participant[] = [];
         for (let team of _teams) {
           for (let member of team.members) {
@@ -95,7 +96,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     });
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
@@ -112,7 +113,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     return undefined;
   }
 
-  removeRole(event: CdkDragDrop<Participant[], any>) {
+  removeRole(event: CdkDragDrop<Participant[], any>): void {
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
@@ -120,15 +121,21 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
       event.currentIndex,
     );
     const participant: Participant = event.container.data[event.currentIndex]
-    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe(() => {
+    this.roleService.deleteByParticipantAndTournament(participant, this.tournament).subscribe((): void => {
       this.messageService.infoMessage("infoRoleDeleted");
       this.statisticsChangedService.areStatisticsChanged.next(true);
     });
-    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    if (!this.userListData.filteredParticipants.includes(participant)) {
+      this.userListData.filteredParticipants.push(participant);
+    }
+    if (!this.userListData.participants.includes(participant)) {
+      this.userListData.participants.push(participant);
+    }
+    this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
   }
 
-  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType) {
+  dropParticipant(event: CdkDragDrop<Participant[], any>, roleName: RoleType): void {
     const participant: Participant | undefined = this.transferCard(event);
     if (!participant) {
       return;
@@ -137,7 +144,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
     role.tournament = this.tournament;
     role.participant = participant;
     role.roleType = roleName;
-    this.roleService.add(role).subscribe(_role => {
+    this.roleService.add(role).subscribe((_role: Role): void => {
       this.messageService.infoMessage("infoRoleStored");
       this.filterResetService.resetFilter.next(true);
       this.statisticsChangedService.areStatisticsChanged.next(true);
@@ -152,18 +159,18 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   private shortRoles(): void {
-    this.participants.forEach(function (value, key) {
-      value.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.participants.forEach(function (value: Participant[], key: RoleType): void {
+      value.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
     });
   }
 
-  downloadPDF() {
-    if (this.tournament && this.tournament.id) {
-      this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob) => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+  downloadPDF(): void {
+    if (this.tournament?.id) {
+      this.roleService.getRolesByTournament(this.tournament.id).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
-        const anchor = document.createElement("a");
+        const anchor: HTMLAnchorElement = document.createElement("a");
         anchor.download = "Role List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
@@ -172,7 +179,7 @@ export class TournamentRolesComponent extends RbacBasedComponent implements OnIn
   }
 
   countRole(roleType: RoleType): number {
-    if (!this.participants || !this.participants.get(roleType)) {
+    if (!this.participants!.get(roleType)) {
       return 0;
     }
     return this.participants.get(roleType)!.length;

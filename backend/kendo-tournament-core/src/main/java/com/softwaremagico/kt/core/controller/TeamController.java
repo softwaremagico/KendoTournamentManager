@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.controller;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -35,12 +32,15 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,15 +50,17 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
+    private final GroupRepository groupRepository;
 
 
     @Autowired
     public TeamController(TeamProvider provider, TeamConverter converter, TournamentProvider tournamentProvider,
-                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter) {
+                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter, GroupRepository groupRepository) {
         super(provider, converter);
         this.tournamentProvider = tournamentProvider;
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -67,9 +69,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public List<TeamDTO> getAllByTournament(TournamentDTO tournamentDTO, String createdBy) {
-        final List<TeamDTO> teams = convertAll(provider.getAll(tournamentConverter.reverse(tournamentDTO)));
+        final List<TeamDTO> teams = convertAll(getProvider().getAll(tournamentConverter.reverse(tournamentDTO)));
         if (teams.isEmpty()) {
-            return convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
+            return convertAll(getProvider().createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
         }
         return teams;
     }
@@ -77,42 +79,44 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     public List<TeamDTO> getAllByTournament(Integer tournamentId, String createdBy) {
         final Tournament tournament = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        final List<TeamDTO> teams = convertAll(provider.getAll(tournament));
+        final List<TeamDTO> teams = convertAll(getProvider().getAll(tournament));
         if (teams.isEmpty()) {
-            return convertAll(provider.createDefaultTeams(tournament, createdBy));
+            return convertAll(getProvider().createDefaultTeams(tournament, createdBy));
         }
         return teams;
     }
 
     public long countByTournament(Integer tournamentId) {
-        return provider.count(tournamentProvider.get(tournamentId)
+        return getProvider().count(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")));
     }
 
     @Override
     public TeamDTO create(TeamDTO teamDTO, String username) {
         if (teamDTO.getName() == null) {
-            teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
+            teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
-        return super.create(teamDTO, username);
+        final TeamDTO storedTeamDTO = super.create(teamDTO, username);
+        storedTeamDTO.setTournament(teamDTO.getTournament());
+        return storedTeamDTO;
     }
 
     public List<TeamDTO> create(TournamentDTO tournamentDTO, String createdBy) {
-        return convertAll(provider.createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
+        return convertAll(getProvider().createDefaultTeams(tournamentConverter.reverse(tournamentDTO), createdBy));
     }
 
     @Override
     public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username) {
         teamsDTOs.forEach(teamDTO -> {
             if (teamDTO.getName() == null) {
-                teamDTO.setName(provider.getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
+                teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
             }
         });
         return super.create(teamsDTOs, username);
     }
 
     public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
-        final Team team = provider.delete(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(member)).orElse(null);
+        final Team team = getProvider().delete(tournamentConverter.reverse(tournamentDTO), participantConverter.reverse(member)).orElse(null);
         if (team != null) {
             return convert(team);
         }
@@ -120,20 +124,23 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     public void delete(TournamentDTO tournamentDTO) {
-        provider.delete(tournamentConverter.reverse(tournamentDTO));
+        final Tournament tournament = tournamentConverter.reverse(tournamentDTO);
+        //Remove teams from groups or will be a ConstraintViolationException SQL error.
+        final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournament);
+        groups.forEach(group -> group.setTeams(new ArrayList<>()));
+        groupRepository.saveAll(groups);
+        getProvider().delete(tournament);
     }
 
     @Override
     public TeamDTO update(TeamDTO teamDTO, String username) {
-        teamDTO.setUpdatedBy(username);
-        validate(teamDTO);
-        final Team dbTeam = super.provider.save(reverse(teamDTO));
-        dbTeam.setTournament(tournamentConverter.reverse(teamDTO.getTournament()));
-        return convert(dbTeam);
+        final TeamDTO dbTeam = super.update(teamDTO, username);
+        dbTeam.setTournament(teamDTO.getTournament());
+        return dbTeam;
     }
 
     public long count(TournamentDTO tournament) {
-        return provider.count(tournamentConverter.reverse(tournament));
+        return getProvider().count(tournamentConverter.reverse(tournament));
     }
 
     @Override

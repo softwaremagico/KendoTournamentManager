@@ -6,31 +6,33 @@ package com.softwaremagico.kt.pdf.lists;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
-import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
@@ -43,15 +45,16 @@ import java.util.Locale;
  * Creates a sheet with the teams ranking depending on the performance on the tournament.
  */
 public class TeamsScoreList extends ParentList {
+    private static final float[] TABLE_WIDTH = {0.40f, 0.20f, 0.20f, 0.20f, 0.20f};
 
     private final TournamentDTO tournament;
-    private final List<ScoreOfTeam> teamTopTen;
+    private final List<ScoreOfTeamDTO> teamTopTen;
 
     private final MessageSource messageSource;
 
     private final Locale locale;
 
-    public TeamsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfTeam> teamTopTen) {
+    public TeamsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfTeamDTO> teamTopTen) {
         this.tournament = tournament;
         this.teamTopTen = teamTopTen;
         this.messageSource = messageSource;
@@ -72,21 +75,21 @@ public class TeamsScoreList extends ParentList {
         mainTable.addCell(getCell(messageSource.getMessage("classification.teams.fights", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
 
-        for (final ScoreOfTeam scoreOfTeam : teamTopTen) {
+        for (final ScoreOfTeamDTO scoreOfTeam : teamTopTen) {
             mainTable.addCell(getCell(scoreOfTeam.getTeam().getName(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfTeam.getWonFights() + "/" + scoreOfTeam.getDrawFights(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfTeam.getWonDuels() + "/" + scoreOfTeam.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1,
                     Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getHits() + (scoreOfTeam.getUntieDuels() > 0 ? "*" : ""),
+            mainTable.addCell(getCell(scoreOfTeam.getHits() + (scoreOfTeam.getUntieDuels() > 0 ? "*" : ""),
                     PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
-            mainTable.addCell(getCell("" + scoreOfTeam.getFightsDone(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            mainTable.addCell(getCell(String.valueOf(scoreOfTeam.getFightsDone()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
         }
     }
 
     @Override
     public float[] getTableWidths() {
-        return new float[]{0.40f, 0.20f, 0.20f, 0.20f, 0.20f};
+        return TABLE_WIDTH;
     }
 
     @Override
@@ -94,7 +97,7 @@ public class TeamsScoreList extends ParentList {
         mainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.getDefaultCell().setBorder(TABLE_BORDER);
         mainTable.getDefaultCell().setBorderColor(BaseColor.BLACK);
-        mainTable.setWidthPercentage(100);
+        mainTable.setWidthPercentage(TOTAL_WIDTH);
     }
 
     @Override
@@ -104,6 +107,7 @@ public class TeamsScoreList extends ParentList {
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setMinimumHeight(MIN_HEADER_HIGH);
         mainTable.addCell(cell);
     }
 

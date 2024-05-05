@@ -6,27 +6,29 @@ package com.softwaremagico.kt.core.providers;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.core.statistics.TournamentFightStatistics;
 import com.softwaremagico.kt.core.statistics.TournamentFightStatisticsRepository;
-import com.softwaremagico.kt.persistence.entities.*;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -37,7 +39,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Service
 public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFightStatistics, Integer, TournamentFightStatisticsRepository> {
@@ -86,7 +87,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     public TournamentFightStatistics estimateByMembers(Tournament tournament) {
         final List<Role> roles = roleProvider.getAll(tournament);
         return estimateByRoles(tournament, roles.stream().filter(role ->
-                Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).collect(Collectors.toList()));
+                Objects.equals(role.getRoleType(), RoleType.COMPETITOR)).toList());
     }
 
     public TournamentFightStatistics estimate(Tournament tournament, Collection<Team> teams) {
@@ -94,7 +95,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     }
 
     public TournamentFightStatistics estimateByRoles(Tournament tournament, Collection<Role> roles) {
-        return estimate(tournament, emulateTeams(tournament, roles.stream().map(Role::getParticipant).collect(Collectors.toList())));
+        return estimate(tournament, emulateTeams(tournament, roles.stream().map(Role::getParticipant).toList()));
     }
 
     public TournamentFightStatistics estimate(Tournament tournament, int teamSize, Collection<Team> teams) {
@@ -119,10 +120,10 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1));
         tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
         final Long durationAverage = duelProvider.getDurationAverage();
-        if (durationAverage != null && tournamentFightStatistics.getDuelsNumber() != null) {
+        if (durationAverage != null && durationAverage > 0 && tournamentFightStatistics.getDuelsNumber() != null) {
             tournamentFightStatistics.setAverageTime(durationAverage);
-            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS) +
-                    (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
+            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS)
+                    + (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
         }
         return tournamentFightStatistics;
     }
@@ -130,8 +131,8 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
     public TournamentFightStatistics estimateLoopStatistics(Tournament tournament, int teamSize, Collection<Team> teams) {
         final TournamentFightStatistics tournamentFightStatistics = new TournamentFightStatistics();
         final TournamentExtraProperty property = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS);
-        final boolean maximizeFights = property != null && Boolean.parseBoolean(property.getValue());
+                TournamentExtraPropertyKey.AVOID_DUPLICATES);
+        final boolean maximizeFights = property != null && !Boolean.parseBoolean(property.getPropertyValue());
         if (maximizeFights) {
             tournamentFightStatistics.setFightsNumber(((long) teams.size() * (teams.size() - 1)));
             tournamentFightStatistics.setFightsByTeam(((long) teams.size() - 1) * 2);
@@ -141,7 +142,12 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         }
         tournamentFightStatistics.setDuelsNumber(getDuels(tournamentFightStatistics.getFightsByTeam(), teamSize, teams));
         if (duelProvider.getDurationAverage() != null) {
-            tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * duelProvider.getDurationAverage());
+            final Long average = duelProvider.getDurationAverage();
+            if (tournamentFightStatistics.getDuelsNumber() != null) {
+                tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (average > 0 ? average : 0));
+            } else {
+                tournamentFightStatistics.setEstimatedTime(0L);
+            }
         }
         return tournamentFightStatistics;
     }

@@ -1,10 +1,11 @@
 <div class="content">
   <div class="picture-container">
-    <img class="picture" alt="Participant's Picture" src="{{ participantPicture }}"/>
+    <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
   </div>
-  <div mat-dialog-actions class="button-container">
-    <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">
+  <div class="button-container" mat-dialog-actions>
+    <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button type="button">
       <mat-icon>cancel</mat-icon>
-      {{'close' | translate}}</button>
+      {{'close' | translate}}
+    </button>
   </div>
 </div>

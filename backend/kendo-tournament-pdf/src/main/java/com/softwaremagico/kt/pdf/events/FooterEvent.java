@@ -6,21 +6,18 @@ package com.softwaremagico.kt.pdf.events;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -36,6 +33,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.pdf.PdfTheme;
 
 public class FooterEvent extends PdfPageEventHelper {
+    private static final int BOTTOM_MARGIN = 0;
 
     /**
      * Adds a footer to every page
@@ -47,7 +45,7 @@ public class FooterEvent extends PdfPageEventHelper {
         final Phrase footer = new Phrase("Created using 'Kendo Tournament Manager v2'",
                 new Font(PdfTheme.getFooterFont(), PdfTheme.FOOTER_FONT_SIZE));
         ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer, (document.right() - document.left()) / 2 + document.leftMargin(),
-                document.bottom() + 20, 0);
+                document.bottom() + BOTTOM_MARGIN, 0);
         //}
     }
 }

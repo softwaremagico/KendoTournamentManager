@@ -6,41 +6,38 @@ package com.softwaremagico.kt.core.score;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.softwaremagico.kt.core.controller.models.DuelDTO;
-import com.softwaremagico.kt.core.controller.models.FightDTO;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 
 import java.util.List;
 import java.util.Objects;
 
 public class ScoreOfTeam {
 
-    private TeamDTO team;
+    private Team team;
     @JsonIgnore
-    private List<FightDTO> fights;
+    private List<Fight> fights;
     @JsonIgnore
-    private List<DuelDTO> unties;
+    private List<Duel> unties;
     private Integer wonFights = null;
     private Integer drawFights = null;
     private Integer fightsDone = null;
@@ -55,18 +52,22 @@ public class ScoreOfTeam {
 
     }
 
-    public ScoreOfTeam(TeamDTO team, List<FightDTO> fights, List<DuelDTO> unties) {
+    public ScoreOfTeam(Team team, List<Fight> fights, List<Duel> unties) {
         this.team = team;
         this.fights = fights;
         this.unties = unties;
         update();
     }
 
-    public TeamDTO getTeam() {
+    public Team getTeam() {
         return team;
     }
 
-    public TournamentDTO getTournament() {
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public Tournament getTournament() {
         if (team != null) {
             return team.getTournament();
         }
@@ -94,13 +95,13 @@ public class ScoreOfTeam {
 
     public void setLevel() {
         level = fights.stream().filter(fightDTO -> fightDTO.getTeam1().equals(team) || fightDTO.getTeam2().equals(team))
-                .map(FightDTO::getLevel).max(Integer::compareTo).orElse(0);
+                .map(Fight::getLevel).max(Integer::compareTo).orElse(0);
     }
 
     public void setWonFights() {
         wonFights = 0;
-        for (final FightDTO fight : fights) {
-            final TeamDTO winner = fight.getWinner();
+        for (final Fight fight : fights) {
+            final Team winner = fight.getWinner();
             if (winner != null && winner.equals(team)) {
                 wonFights++;
             }
@@ -139,44 +140,84 @@ public class ScoreOfTeam {
         });
     }
 
-    public List<FightDTO> getFights() {
+    public List<Fight> getFights() {
         return fights;
     }
 
-    public List<DuelDTO> getUnties() {
+    public void setFights(List<Fight> fights) {
+        this.fights = fights;
+    }
+
+    public List<Duel> getUnties() {
         return unties;
+    }
+
+    public void setUnties(List<Duel> unties) {
+        this.unties = unties;
     }
 
     public Integer getWonFights() {
         return wonFights;
     }
 
+    public void setWonFights(Integer wonFights) {
+        this.wonFights = wonFights;
+    }
+
     public Integer getDrawFights() {
         return drawFights;
+    }
+
+    public void setDrawFights(Integer drawFights) {
+        this.drawFights = drawFights;
     }
 
     public Integer getFightsDone() {
         return fightsDone;
     }
 
+    public void setFightsDone(Integer fightsDone) {
+        this.fightsDone = fightsDone;
+    }
+
     public Integer getWonDuels() {
         return wonDuels;
+    }
+
+    public void setWonDuels(Integer wonDuels) {
+        this.wonDuels = wonDuels;
     }
 
     public Integer getDrawDuels() {
         return drawDuels;
     }
 
+    public void setDrawDuels(Integer drawDuels) {
+        this.drawDuels = drawDuels;
+    }
+
     public Integer getUntieDuels() {
         return untieDuels;
+    }
+
+    public void setUntieDuels(Integer untieDuels) {
+        this.untieDuels = untieDuels;
     }
 
     public Integer getHits() {
         return hits;
     }
 
+    public void setHits(Integer hits) {
+        this.hits = hits;
+    }
+
     public Integer getLevel() {
         return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
     }
 
     public Integer getSortingIndex() {

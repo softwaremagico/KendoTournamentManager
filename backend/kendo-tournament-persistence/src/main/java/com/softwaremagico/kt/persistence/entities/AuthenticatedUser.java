@@ -6,21 +6,18 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -28,12 +25,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +50,7 @@ import java.util.Set;
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "authenticated_users")
-public class AuthenticatedUser implements UserDetails {
+public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +77,15 @@ public class AuthenticatedUser implements UserDetails {
     @Column(name = "roles")
     private Set<String> roles;
 
+    public AuthenticatedUser() {
+        super();
+    }
+
+    public AuthenticatedUser(String username) {
+        this();
+        setUsername(username);
+    }
+
     @JsonIgnore
     private transient Set<SimpleGrantedAuthority> authorities;
 
@@ -76,11 +93,13 @@ public class AuthenticatedUser implements UserDetails {
         return id;
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
     }
 
+    @JsonIgnore
     public void setPassword(String password) {
         this.password = password;
     }
@@ -135,12 +154,12 @@ public class AuthenticatedUser implements UserDetails {
         return true;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
     public Set<String> getRoles() {
         return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -162,12 +181,12 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public String toString() {
-        return "AuthenticatedUser{" +
-                "username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", roles=" + roles +
-                ", authorities=" + authorities +
-                '}';
+        return "AuthenticatedUser{"
+                + "username='" + username + '\''
+                + ", name='" + name + '\''
+                + ", lastname='" + lastname + '\''
+                + ", roles=" + roles
+                + ", authorities=" + authorities
+                + '}';
     }
 }

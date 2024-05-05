@@ -6,30 +6,32 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.StringUtils;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 import java.text.Collator;
 import java.util.Locale;
 
@@ -86,20 +88,12 @@ public class Club extends Element implements Comparable<Club> {
         setCity(city);
     }
 
-    public void setRepresentativeId(String representativeId) {
-        this.representativeId = representativeId;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setWeb(String web) {
-        this.web = web;
     }
 
     /**
@@ -116,57 +110,12 @@ public class Club extends Element implements Comparable<Club> {
         this.phone = phone;
     }
 
-    public void setName(String value) {
-        this.name = StringUtils.setCase(value);
-    }
-
     public String getName() {
         return name;
     }
 
-    /**
-     * City of the club. Only is an information value.
-     *
-     * @param value
-     */
-    public void setCountry(String value) {
-        country = StringUtils.setCase(value);
-    }
-
-    /**
-     * City of the club. Only is an information value.
-     *
-     * @param value
-     */
-    public void setCity(String value) {
-        city = StringUtils.setCase(value);
-    }
-
-    /**
-     * Address of the club. Only is an information value.
-     *
-     * @param value
-     */
-    public void setAddress(String value) {
-        address = StringUtils.setCase(value);
-    }
-
-    /**
-     * Sets the email of the representative. For future contacts reference.
-     *
-     * @param email
-     */
-    public void setMail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * Sets the phone of the representative. For future contacts reference.
-     *
-     * @param phone
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setName(String value) {
+        this.name = StringUtils.setCase(value);
     }
 
     public void setRepresentative(String representative) {
@@ -181,48 +130,81 @@ public class Club extends Element implements Comparable<Club> {
         return country;
     }
 
+    /**
+     * City of the club. Only is an information value.
+     *
+     * @param value
+     */
+    public void setCountry(String value) {
+        country = StringUtils.setCase(value);
+    }
+
     public String getCity() {
         return city;
+    }
+
+    /**
+     * City of the club. Only is an information value.
+     *
+     * @param value
+     */
+    public void setCity(String value) {
+        city = StringUtils.setCase(value);
     }
 
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Address of the club. Only is an information value.
+     *
+     * @param value
+     */
+    public void setAddress(String value) {
+        address = StringUtils.setCase(value);
+    }
+
     public String getWeb() {
         return web;
+    }
+
+    public void setWeb(String web) {
+        this.web = web;
     }
 
     public String getMail() {
         return email;
     }
 
+    /**
+     * Sets the email of the representative. For future contacts reference.
+     *
+     * @param email
+     */
+    public void setMail(String email) {
+        this.email = email;
+    }
+
     public String getPhone() {
         return phone;
+    }
+
+    /**
+     * Sets the phone of the representative. For future contacts reference.
+     *
+     * @param phone
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getRepresentativeId() {
         return representativeId;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof Club)) {
-            return false;
-        }
-        final Club otherClub = (Club) object;
-        return this.name.equals(otherClub.name) && this.city.equals(otherClub.city);
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 67 * hash + (this.city != null ? this.city.hashCode() : 0);
-        return hash;
+    public void setRepresentativeId(String representativeId) {
+        this.representativeId = representativeId;
     }
 
     @Override
