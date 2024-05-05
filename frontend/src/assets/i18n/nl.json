@@ -858,7 +858,8 @@
     "achievementAllGenerated": "Er zijn in totaal {{achievementsNumber}} prestaties gegenereerd in {{tournamentNumber}} toernooien.",
     "shiaijoFinished": "Alle wedstrijden van shiaijo {{shiaijoName}} zijn afgelopen.",
     "userAdminGenerated": "Gebruiker {{userName}} is aangemaakt!"
-  }
+  },
+  "daysFrom": "Bewerben Sie sich nur noch an diesen Tagen"
 }
 
 

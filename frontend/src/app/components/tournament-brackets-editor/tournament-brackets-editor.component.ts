@@ -113,7 +113,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
 
   ngOnChanges(changes: SimpleChanges): void {
     this.systemOverloadService.isBusy.next(true);
-    if (changes['tournament'] && this.tournament != undefined) {
+    if (changes['tournament']) {
       this.updateData(true);
     }
   }

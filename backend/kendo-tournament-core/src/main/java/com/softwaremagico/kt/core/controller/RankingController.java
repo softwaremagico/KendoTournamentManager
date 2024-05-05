@@ -262,20 +262,20 @@ public class RankingController {
         final List<Role> competitorRoles = roleProvider.get(participants, RoleType.COMPETITOR);
         participants.retainAll(competitorRoles.stream().map(Role::getParticipant).collect(Collectors.toSet()));
         return getCompetitorsGlobalScoreRanking(participantConverter.convertAll(participants.stream()
-                .map(participant -> new ParticipantConverterRequest(participant, clubConverter.convert(new ClubConverterRequest(club)))).toList()));
+                .map(participant -> new ParticipantConverterRequest(participant, clubConverter.convert(new ClubConverterRequest(club)))).toList()), null);
     }
 
-    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors) {
-        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT);
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, Integer fromNumberOfDays) {
+        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT, fromNumberOfDays);
     }
 
 
-    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType, Integer fromNumberOfDays) {
         final Map<Integer, ClubDTO> clubsById = competitors.stream()
                 .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity(), (r1, r2) -> r1));
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
                         participantConverter.reverseAll(competitors),
-                        scoreType
+                        scoreType, fromNumberOfDays
                 )
                 .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor,
                         clubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
