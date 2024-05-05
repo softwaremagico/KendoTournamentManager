@@ -65,4 +65,10 @@
   top: 0;
   right: 16px;
   width: 200px;
+  display: flex;
+}
+
+.day-input {
+  padding: 0 10px 0 0;
+  min-width: 0;
 }
