@@ -883,5 +883,6 @@
     "achievementAllGenerated": "Un total de {{achievementsNumber}} logros han sido generados en {{tournamentNumber}} torneos.",
     "shiaijoFinished": "Todos los partidos del shiaijo {{shiaijoName}} han acabado.",
     "userAdminGenerated": "Usuario {{userName}} ha sido creado!"
-  }
+  },
+  "daysFrom": "Aplica solo estos días"
 }
