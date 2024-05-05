@@ -93,6 +93,7 @@ export class RankingService {
     const url: string = `${this.baseUrl}` + '/competitors/pdf';
 
     const httpOptions = {
+      responseType: 'blob' as 'json',
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       }),
