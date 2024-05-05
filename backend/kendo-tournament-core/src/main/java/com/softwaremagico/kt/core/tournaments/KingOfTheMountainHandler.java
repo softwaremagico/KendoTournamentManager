@@ -33,6 +33,7 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
@@ -52,11 +53,12 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     private final TeamProvider teamProvider;
     private final RankingProvider rankingProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+    private final TournamentRepository tournamentRepository;
 
     public KingOfTheMountainHandler(KingOfTheMountainFightManager kingOfTheMountainFightManager, FightProvider fightProvider,
                                     GroupProvider groupProvider, TeamProvider teamProvider,
                                     RankingProvider rankingProvider,
-                                    TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+                                    TournamentExtraPropertyProvider tournamentExtraPropertyProvider, TournamentRepository tournamentRepository) {
         super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.kingOfTheMountainFightManager = kingOfTheMountainFightManager;
         this.fightProvider = fightProvider;
@@ -64,6 +66,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         this.teamProvider = teamProvider;
         this.rankingProvider = rankingProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+        this.tournamentRepository = tournamentRepository;
     }
 
     @Override
@@ -200,6 +203,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         if (extraProperty == null) {
             extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
                     TournamentExtraPropertyKey.KING_INDEX, "1"));
+        } else {
+            //It is lazy the tournament.
+            extraProperty.setTournament(tournamentRepository.findById(extraProperty.getTournament().getId()).orElse(null));
         }
         try {
             kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));

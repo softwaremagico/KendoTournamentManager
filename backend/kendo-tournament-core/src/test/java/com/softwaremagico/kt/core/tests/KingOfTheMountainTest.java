@@ -74,9 +74,6 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     private TournamentProvider tournamentProvider;
 
     @Autowired
-    private TournamentConverter tournamentConverter;
-
-    @Autowired
     private ParticipantProvider participantProvider;
 
     @Autowired
@@ -84,9 +81,6 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private TeamProvider teamProvider;
-
-    @Autowired
-    private SimpleLeagueHandler simpleLeagueHandler;
 
     @Autowired
     private FightProvider fightProvider;
@@ -99,12 +93,6 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private DuelProvider duelProvider;
-
-    @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
 
     @Autowired
     private RankingProvider rankingProvider;
