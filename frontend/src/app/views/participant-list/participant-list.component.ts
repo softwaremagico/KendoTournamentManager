@@ -46,7 +46,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   ngOnInit(): void {
-    this.clubService.getAll().subscribe(clubs => {
+    this.clubService.getAll().subscribe((clubs: Club[]): void => {
       this.clubs = clubs
     });
     this.showAllElements();

@@ -858,7 +858,8 @@
     "achievementAllGenerated": "Insgesamt wurden {{achievementsNumber}} Erfolge in {{tournamentNumber}} Turnieren erzielt.",
     "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet.",
     "userAdminGenerated": "Benutzer {{userName}} wurde erstellt!"
-  }
+  },
+  "daysFrom": ""
 }
 
 
