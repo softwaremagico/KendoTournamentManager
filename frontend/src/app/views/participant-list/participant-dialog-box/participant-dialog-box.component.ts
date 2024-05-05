@@ -2,9 +2,7 @@ import {Component, Inject, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Participant} from "../../../models/participant";
 import {Club} from "../../../models/club";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {Observable, startWith} from "rxjs";
-import {map} from "rxjs/operators";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
@@ -12,6 +10,8 @@ import {ParticipantPictureDialogBoxComponent} from "./participant-picture/partic
 import {PictureUpdatedService} from "../../../services/notifications/picture-updated.service";
 import {FileService} from "../../../services/file.service";
 import {MessageService} from "../../../services/message.service";
+import {ParticipantImage} from "../../../models/participant-image.model";
+import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -20,23 +20,24 @@ import {MessageService} from "../../../services/message.service";
 })
 export class ParticipantDialogBoxComponent extends RbacBasedComponent implements OnInit {
 
-  formControl = new FormControl();
-  filteredOptions: Observable<Club[]>;
-
-
   participant: Participant;
   title: string;
   action: Action;
   actionName: string;
   clubs: Club[];
 
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
 
   participantPicture: string | undefined;
 
   constructor(
     public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Participant, clubs: Club[] }, public dialog: MatDialog,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+      title: string,
+      action: Action,
+      entity: Participant,
+      clubs: Club[]
+    }, public dialog: MatDialog,
     private pictureUpdatedService: PictureUpdatedService, private fileService: FileService, private messageService: MessageService) {
     super(rbacService);
     this.participant = data.entity;
@@ -46,26 +47,33 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.clubs = data.clubs;
     this.participantPicture = undefined;
 
-    this.registerForm = new FormGroup({
-      name: new FormControl(this.participant.name, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
-      lastname: new FormControl(this.participant.lastname, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
-      idCard: new FormControl(this.participant.idCard, [Validators.required, Validators.maxLength(20)]),
-      club: new FormControl(this.participant.club, [Validators.required])
+    this.registerForm = new UntypedFormGroup({
+      name: new UntypedFormControl({
+        value: this.participant.name,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
+      }, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
+      lastname: new UntypedFormControl({
+        value: this.participant.lastname,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
+      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      idCard: new UntypedFormControl({
+        value: this.participant.idCard,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
+      }, [Validators.maxLength(20)]),
+      club: new UntypedFormControl({
+        value: this.participant.club,
+        disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
+      }, [Validators.required])
     },);
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.participantPicture = undefined;
-    this.filteredOptions = this.formControl.valueChanges.pipe(
-      startWith(''),
-      map(value => (typeof value === 'string' ? value : value.name)),
-      map(name => (name ? this._filter(name) : this.clubs.slice())),
-    );
-    this.pictureUpdatedService.isPictureUpdated.subscribe(_picture => {
+    this.pictureUpdatedService.isPictureUpdated.subscribe((_picture: string): void => {
       this.participantPicture = _picture;
     });
-    if (this.participant && this.participant.id) {
-      this.fileService.getParticipantPicture(this.participant).subscribe(_picture => {
+    if (this.participant?.id) {
+      this.fileService.getParticipantPicture(this.participant).subscribe((_picture: ParticipantImage): void => {
         if (_picture) {
           this.participantPicture = _picture.base64;
         } else {
@@ -75,8 +83,12 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     }
   }
 
+  compareClubs(club1: any, club2: any): boolean {
+    return club1.name === club2.name && club1.id === club2.id;
+  }
+
   displayClub(club: Club): string {
-    return club && club.name ? club.name : '';
+    return club?.name ? club.name : '';
   }
 
   private _filter(name: string): Club[] {
@@ -84,7 +96,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
   }
 
-  doAction() {
+  doAction(): void {
     this.participant.name = this.registerForm.get('name')!.value;
     this.participant.lastname = this.registerForm.get('lastname')!.value;
     this.participant.idCard = this.registerForm.get('idCard')!.value;
@@ -92,37 +104,25 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
     this.dialogRef.close({data: this.participant, action: this.action});
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close({action: Action.Cancel});
   }
 
-  addPicture() {
+  addPicture(): void {
     this.openDialog("", Action.Add, this.participant);
   }
 
-  openDialog(title: string, action: Action, participant: Participant) {
+  openDialog(title: string, action: Action, participant: Participant): void {
     const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
       width: '700px',
       data: {
         title: title, action: action, participant: participant
       }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
-        //Do nothing
-      } else if (result.action == Action.Add) {
-        // this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
-        // this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
-        // this.deleteRowData(result.data);
-      }
-    });
   }
 
-  deletePicture() {
-    this.fileService.deleteParticipantPicture(this.participant).subscribe(() => {
+  deletePicture(): void {
+    this.fileService.deleteParticipantPicture(this.participant).subscribe((): void => {
       this.messageService.infoMessage("pictureDeleted");
       this.participantPicture = undefined;
     });

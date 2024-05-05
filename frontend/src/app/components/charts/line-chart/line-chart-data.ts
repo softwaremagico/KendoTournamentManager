@@ -12,8 +12,8 @@ export class LineChartData {
   public static fromMultipleArray(elements: [string, number][][]): LineChartData {
     const lineChartData: LineChartData = new LineChartData();
     lineChartData.elements = [];
-    for (let i = 0; i < elements.length; i++) {
-      lineChartData.elements.push(new LineChartDataElement(elements[i]));
+    for (let element of elements) {
+      lineChartData.elements.push(new LineChartDataElement(element));
     }
     return lineChartData;
   }
@@ -60,7 +60,7 @@ export class LineChartData {
         }
 
       }
-      data.push({name: element.name!, data: points});
+      data.push({name: element.name, data: points});
     }
     return data;
   }

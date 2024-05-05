@@ -1,45 +1,51 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
-  <form [formGroup]="registerForm" (ngSubmit)="doAction()">
+  <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-      <input formControlName="clubName" placeholder="{{'clubName' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubName" matInput
+             placeholder="{{'clubName' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="clubCountry" placeholder="{{'clubCountry' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubCountry" matInput
+             placeholder="{{'clubCountry' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="clubCity" placeholder="{{'clubCity' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubCity" matInput
+             placeholder="{{'clubCity' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="clubAddress" placeholder="{{'clubAddress' | translate}}" matInput
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubAddress" matInput
+             placeholder="{{'clubAddress' | translate}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="clubEmail" placeholder="{{'clubEmail' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubEmail" matInput
+             placeholder="{{'clubEmail' | translate}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="clubPhone" placeholder="{{'clubPhone' | translate}}" matInput
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubPhone" matInput
+             placeholder="{{'clubPhone' | translate}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="clubWeb" placeholder="{{'clubWeb' | translate}}" matInput
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubWeb" matInput
+             placeholder="{{'clubWeb' | translate}}">
     </mat-form-field>
     <ng-template #elseTemplate>
       <span [innerHTML]="'clubDeleteQuestion' | translate : {name: club.name}"></span>
     </ng-template>
-    <div mat-dialog-actions class="button-container">
-      <button mat-raised-button type="submit" value="Submit"
-              [disabled]="registerForm.invalid" mat-flat-button
-              color="primary" *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)">
+    <div class="button-container" mat-dialog-actions>
+      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())" [disabled]="registerForm.invalid"
+              color="primary"
+              mat-flat-button mat-raised-button
+              type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{actionName.toLowerCase() | translate}}</button>
-      <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
-              color="warn">{{'cancel' | translate}}</button>
+        {{actionName.toLowerCase() | translate}}
+      </button>
+      <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
+              type="button">{{'cancel' | translate}}
+      </button>
     </div>
   </form>
 </div>

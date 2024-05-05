@@ -1,12 +1,21 @@
-<div class="user-score" [class.left]="left" [class.right]="!left">
-  <score *ngIf="!left" [index]="0" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></score>
-  <score *ngIf="!left" [index]="1" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [hidden]="isUntie()"></score>
-  <fault *ngIf="!left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></fault>
-  <app-participant-picture class="participant-picture" *ngIf="showAvatar && !left" [participant]="getParticipant()"></app-participant-picture>
-  <user-name class="user-name" [participant]="getParticipant()" [duel]="duel" [memberIndex]="duelIndex" [swapTeams]="swapTeams"
-             [left]="left"></user-name>
-  <app-participant-picture class="participant-picture" *ngIf="showAvatar && left" [participant]="getParticipant()"></app-participant-picture>
-  <fault *ngIf="left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></fault>
-  <score *ngIf="left" [index]="1" [duel]="duel" [left]="left" [swapTeams]="swapTeams" [hidden]="isUntie()"></score>
-  <score *ngIf="left" [index]="0" [duel]="duel" [left]="left" [swapTeams]="swapTeams"></score>
+<div [class.left]="left" [class.right]="!left" class="user-score">
+  <score *ngIf="!left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
+  <score *ngIf="!left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
+  <fault *ngIf="!left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></fault>
+  <app-participant-picture *ngIf="showAvatar && !left" [participant]="getParticipant()"
+                           class="participant-picture"></app-participant-picture>
+  <user-name [duel]="duel" [left]="left" [memberIndex]="duelIndex" [participant]="getParticipant()"
+             [swapTeams]="swapTeams"
+             class="user-name"></user-name>
+  <app-participant-picture *ngIf="showAvatar && left" [participant]="getParticipant()"
+                           class="participant-picture"></app-participant-picture>
+  <fault *ngIf="left" [duel]="duel" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></fault>
+  <score *ngIf="left" [duel]="duel" [hidden]="isUntie()" [index]="1" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
+  <score *ngIf="left" [duel]="duel" [index]="0" [left]="left" [swapTeams]="swapTeams"
+         [locked]="duel.tournament.locked"></score>
 </div>

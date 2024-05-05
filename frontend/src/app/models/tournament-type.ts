@@ -1,5 +1,5 @@
 export enum TournamentType {
-  //CHAMPIONSHIP = 'CHAMPIONSHIP',
+  CHAMPIONSHIP = 'CHAMPIONSHIP',
   LEAGUE = 'LEAGUE',
   LOOP = 'LOOP',
   // CUSTOM_CHAMPIONSHIP = 'CUSTOM_CHAMPIONSHIP',
@@ -16,23 +16,17 @@ export namespace TournamentType {
     }
     return undefined;
   }
-}
 
-export namespace TournamentType {
   export function getKeys(): string[] {
     return Object.keys(TournamentType).filter(enumValue => (typeof (TournamentType[enumValue as TournamentType]) !== 'function'))
   }
-}
 
-export namespace TournamentType {
   export function toArray(): TournamentType[] {
     return TournamentType.getKeys().map(key => {
       return <TournamentType>(<any>TournamentType)[key];
     });
   }
-}
 
-export namespace TournamentType {
   export function toCamel(tournamentType: TournamentType) {
     return tournamentType.toLowerCase()
       .replace(/_(.)/g, function ($1) {
@@ -40,16 +34,29 @@ export namespace TournamentType {
       })
       .replace(/_/g, '');
   }
-}
 
-export namespace TournamentType {
-  export function canHaveDuplicates(type: TournamentType | undefined): boolean {
+  export function canMaximizeFights(type: TournamentType | undefined): boolean {
+    return type === TournamentType.CHAMPIONSHIP;
+  }
+
+  export function avoidsDuplicatedFights(type: TournamentType | undefined): boolean {
     return type === TournamentType.LOOP;
   }
-}
 
-export namespace TournamentType {
   export function needsDrawResolution(type: TournamentType | undefined): boolean {
     return type === TournamentType.KING_OF_THE_MOUNTAIN;
   }
+
+  export function needsFifoWinner(type: TournamentType | undefined): boolean {
+    return type === TournamentType.CHAMPIONSHIP || type === TournamentType.LEAGUE;
+  }
+
+  /**
+   * Has a default group that is automatically handled by the system.
+   */
+  export function usesDefaultGroup(type: TournamentType | undefined): boolean {
+    return type !== TournamentType.CHAMPIONSHIP;
+  }
 }
+
+

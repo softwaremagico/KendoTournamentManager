@@ -3,12 +3,12 @@
     <div class="screen-content">
       <mat-card>
         <mat-card-content>
-          <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+          <form (ngSubmit)="login()" [formGroup]="loginForm" class="login-form">
             <h2 class="login-title">{{'logIn' | translate}}</h2>
             <div class="login-field">
               <mat-icon class="input-icon" color="primary">mail</mat-icon>
               <mat-form-field class="form-input">
-                <input class="login-input" matInput placeholder="{{'email' | translate}}" formControlName="username"
+                <input class="login-input" formControlName="username" matInput placeholder="{{'email' | translate}}"
                        required>
                 <mat-error>
                   {{'invalidEmail' | translate}}
@@ -18,16 +18,16 @@
             <div class="login-field">
               <mat-icon class="input-icon" color="primary">lock</mat-icon>
               <mat-form-field class="form-input">
-                <input class="login-input" matInput type="password" placeholder="{{'password' | translate}}"
-                       formControlName="password"
-                       required>
+                <input class="login-input" formControlName="password" matInput placeholder="{{'password' | translate}}"
+                       required
+                       type="password">
                 <mat-error>
                   {{'invalidPassword' | translate}}
                 </mat-error>
               </mat-form-field>
             </div>
             <div>
-              <button mat-raised-button color="primary">
+              <button color="primary" mat-raised-button>
                 <mat-icon>keyboard_double_arrow_right</mat-icon>
                 {{'login' | translate}}
               </button>
@@ -38,7 +38,6 @@
     </div>
   </div>
 </div>
-<!--<app-achievement-wall [achievements]="achievements"></app-achievement-wall>-->
 <div class="app-version">
   v{{appVersion}}
 </div>

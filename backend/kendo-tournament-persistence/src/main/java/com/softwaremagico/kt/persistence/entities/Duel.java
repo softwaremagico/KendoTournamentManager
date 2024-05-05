@@ -6,21 +6,18 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -29,12 +26,25 @@ import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,10 +168,6 @@ public class Duel extends Element {
         this.competitor2 = competitor2;
     }
 
-    public void setCompetitor1Score(List<Score> competitor1Score) {
-        this.competitor1Score = competitor1Score;
-    }
-
     public void addCompetitor1Score(Score score) {
         if (this.competitor1Score == null) {
             this.competitor1Score = new ArrayList<>();
@@ -171,6 +177,10 @@ public class Duel extends Element {
 
     public List<Score> getCompetitor1Score() {
         return competitor1Score;
+    }
+
+    public void setCompetitor1Score(List<Score> competitor1Score) {
+        this.competitor1Score = competitor1Score;
     }
 
     public List<Score> getCompetitor2Score() {
@@ -221,6 +231,15 @@ public class Duel extends Element {
      */
     public int getWinner() {
         return Integer.compare(getCompetitor2ScoreValue(), getCompetitor1ScoreValue());
+    }
+
+    public Participant getCompetitorWinner() {
+        if (getWinner() < 0) {
+            return getCompetitor1();
+        } else if (getWinner() > 0) {
+            return getCompetitor2();
+        }
+        return null;
     }
 
     public Integer getCompetitor1ScoreValue() {

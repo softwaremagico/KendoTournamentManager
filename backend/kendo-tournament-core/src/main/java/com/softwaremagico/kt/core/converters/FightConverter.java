@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.converters;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -29,11 +26,11 @@ import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,15 +40,15 @@ import java.util.ArrayList;
 public class FightConverter extends ElementConverter<Fight, FightDTO, FightConverterRequest> {
     private final TeamConverter teamConverter;
     private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
     private final DuelConverter duelConverter;
 
     @Autowired
-    public FightConverter(TeamConverter teamConverter, TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
+    public FightConverter(TeamConverter teamConverter, TournamentConverter tournamentConverter, TournamentRepository tournamentRepository,
                           DuelConverter duelConverter) {
         this.teamConverter = teamConverter;
         this.tournamentConverter = tournamentConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
         this.duelConverter = duelConverter;
     }
 
@@ -60,19 +57,33 @@ public class FightConverter extends ElementConverter<Fight, FightDTO, FightConve
     protected FightDTO convertElement(FightConverterRequest from) {
         final FightDTO fightDTO = new FightDTO();
         BeanUtils.copyProperties(from.getEntity(), fightDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        fightDTO.setTeam1(teamConverter.convert(
-                new TeamConverterRequest(from.getEntity().getTeam1())));
-        fightDTO.setTeam2(teamConverter.convert(
-                new TeamConverterRequest(from.getEntity().getTeam2())));
+
         try {
+            if (from.getTournamentDTO() != null) {
+                fightDTO.setTournament(from.getTournamentDTO());
+            } else if (from.getTournament() != null) {
+                //Converter can have the tournament defined already.
+                fightDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getTournament())));
+            } else {
+                fightDTO.setTournament(tournamentConverter.convert(
+                        new TournamentConverterRequest(from.getEntity().getTournament())));
+            }
+        } catch (LazyInitializationException | FatalBeanException e) {
             fightDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
-            fightDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
+
+        //Getting the tournament to send to duels and avoid hundreds of calls.
+
+        fightDTO.setTeam1(teamConverter.convert(
+                new TeamConverterRequest(from.getEntity().getTeam1(), fightDTO.getTournament())));
+        fightDTO.setTeam2(teamConverter.convert(
+                new TeamConverterRequest(from.getEntity().getTeam2(), fightDTO.getTournament())));
+
         fightDTO.setDuels(new ArrayList<>());
-        from.getEntity().getDuels().forEach(duel -> fightDTO.getDuels().add(duelConverter.convert(new DuelConverterRequest(duel))));
+        from.getEntity().getDuels().forEach(duel -> fightDTO.getDuels().add(duelConverter.convert(
+                new DuelConverterRequest(duel, fightDTO.getTournament()))));
         return fightDTO;
     }
 

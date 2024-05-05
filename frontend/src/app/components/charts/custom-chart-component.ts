@@ -39,17 +39,17 @@ interface ApexToolBar {
   };
   export?: {
     csv?: {
-      filename?: undefined | string;
+      filename?: string;
       columnDelimiter?: string;
       headerCategory?: string;
       headerValue?: string;
       dateFormatter?(timestamp?: number): any;
     };
     svg?: {
-      filename?: undefined | string;
+      filename?: string;
     };
     png?: {
-      filename?: undefined | string;
+      filename?: string;
     };
   };
   autoSelected?: "zoom" | "selection" | "pan";
@@ -75,12 +75,12 @@ export abstract class CustomChartComponent implements OnInit {
   protected toolTextTipColor: string = "#000000"
   protected darkMode: boolean;
 
-  constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
+  protected constructor(protected darkModeService: DarkModeService, protected userSessionService: UserSessionService) {
     this.darkMode = userSessionService.getNightMode();
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.darkModeService.darkModeSwitched.subscribe((switched: boolean): void => {
       this.darkMode = switched;
       this.setFontColors(switched);
@@ -99,9 +99,10 @@ export abstract class CustomChartComponent implements OnInit {
 
   protected abstract setProperties(): void;
 
-  protected getChart(type: ChartType, width: number, shadow: boolean, showToolbar: boolean): ApexChart {
+  protected getChart(type: ChartType, width: number, height: number | undefined, shadow: boolean, showToolbar: boolean): ApexChart {
     return {
       width: width,
+      //height: height,
       type: type,
       dropShadow: this.getShadow(shadow),
       toolbar: this.getToolbar(showToolbar),
@@ -245,7 +246,6 @@ export abstract class CustomChartComponent implements OnInit {
   }
 
   protected getTheme(): ApexTheme {
-    console.log('darkmode', this.darkMode)
     return {
       mode: this.darkMode ? 'dark' : 'light',
     }

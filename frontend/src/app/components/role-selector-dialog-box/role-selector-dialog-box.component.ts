@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {Component, Inject, Input, Optional, Output} from '@angular/core';
 import {Tournament} from "../../models/tournament";
 import {RoleType} from "../../models/role-type";
 import {Action} from "../../action";
@@ -9,7 +9,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
   templateUrl: './role-selector-dialog-box.component.html',
   styleUrls: ['./role-selector-dialog-box.component.scss']
 })
-export class RoleSelectorDialogBoxComponent implements OnInit {
+export class RoleSelectorDialogBoxComponent {
 
   @Input()
   tournament: Tournament;
@@ -24,23 +24,19 @@ export class RoleSelectorDialogBoxComponent implements OnInit {
     this.tournament = data.tournament;
   }
 
-  ngOnInit(): void {
-
-  }
-
-  setRoles(newOnes: boolean) {
+  setRoles(newOnes: boolean): void {
     this.dialogRef.close({data: this.roles, newOnes: newOnes, action: Action.Selected});
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close({data: undefined, action: Action.Cancel});
   }
 
-  select(checked: boolean, roleType: RoleType) {
+  select(checked: boolean, roleType: RoleType): void {
     if (checked) {
       this.roles.push(roleType);
     } else {
-      this.roles = this.roles.filter(item => item !== roleType);
+      this.roles = this.roles.filter((item: RoleType): boolean => item !== roleType);
     }
   }
 }

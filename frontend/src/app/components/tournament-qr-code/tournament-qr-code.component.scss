@@ -1,0 +1,37 @@
+.mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
+
+.qr-container {
+  margin: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.qr-code {
+  height: 400px;
+}
+
+.mat-dialog-content {
+  overflow: clip;
+}
+
+.floating-button {
+  position: absolute;
+  margin-left: 400px;
+  margin-top: -40px;
+}
+
+.link {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 30px;
+}
+
+

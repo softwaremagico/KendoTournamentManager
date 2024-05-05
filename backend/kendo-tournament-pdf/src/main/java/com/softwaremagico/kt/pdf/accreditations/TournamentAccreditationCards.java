@@ -6,26 +6,27 @@ package com.softwaremagico.kt.pdf.accreditations;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -45,6 +46,8 @@ import java.util.Map;
 
 public class TournamentAccreditationCards extends PdfDocument {
 
+    private static final String BACKGROUND_IMAGE = "/images/accreditation-background.png";
+
     private static final int BORDER = 1;
 
     private final MessageSource messageSource;
@@ -52,10 +55,10 @@ public class TournamentAccreditationCards extends PdfDocument {
 
     private final TournamentDTO tournament;
     private final Map<ParticipantDTO, RoleDTO> competitorsRoles;
+    private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
     private Image banner;
     private Image background;
     private Image defaultPhoto;
-    private final Map<ParticipantDTO, ParticipantImageDTO> participantImages;
 
 
     public TournamentAccreditationCards(MessageSource messageSource, Locale locale, TournamentDTO tournament, Map<ParticipantDTO, RoleDTO> competitorsRoles,
@@ -88,7 +91,7 @@ public class TournamentAccreditationCards extends PdfDocument {
     @Override
     protected void createContent(Document document, PdfWriter writer) {
         final PdfPTable table = pageTable(document);
-        table.setWidthPercentage(100);
+        table.setWidthPercentage(TOTAL_WIDTH);
         document.add(table);
     }
 
@@ -126,7 +129,7 @@ public class TournamentAccreditationCards extends PdfDocument {
             try {
                 competitorTable.setTableEvent(new TableBackgroundEvent(background, document));
             } catch (NullPointerException e) {
-                competitorTable.setTableEvent(new TableBackgroundEvent());
+                competitorTable.setTableEvent(new TableBackgroundEvent(BACKGROUND_IMAGE));
             }
             cell = new PdfPCell(competitorTable);
             cell.setBorderWidth(BORDER);

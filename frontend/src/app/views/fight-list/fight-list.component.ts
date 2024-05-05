@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
 import {Fight} from "../../models/fight";
 import {Tournament} from "../../models/tournament";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {TournamentService} from "../../services/tournament.service";
 import {Action} from "../../action";
 import {FightDialogBoxComponent} from "./fight-dialog-box/fight-dialog-box.component";
@@ -13,9 +13,8 @@ import {LeagueGeneratorComponent} from "./league-generator/league-generator.comp
 import {GroupService} from "../../services/group.service";
 import {Team} from "../../models/team";
 import {ConfirmationDialogComponent} from "../../components/basic/confirmation-dialog/confirmation-dialog.component";
-import {TeamRankingComponent} from "./team-ranking/team-ranking.component";
-import {CompetitorsRankingComponent} from "./competitors-ranking/competitors-ranking.component";
-import {TranslateService} from "@ngx-translate/core";
+import {TeamRankingComponent} from "../../components/team-ranking/team-ranking.component";
+import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 import {Duel} from "../../models/duel";
 import {DuelService} from "../../services/duel.service";
 import {TimeChangedService} from "../../services/notifications/time-changed.service";
@@ -25,12 +24,18 @@ import {Group} from "../../models/group";
 import {DuelType} from "../../models/duel-type";
 import {UserSessionService} from "../../services/user-session.service";
 import {MembersOrderChangedService} from "../../services/notifications/members-order-changed.service";
-import {Subject, takeUntil} from "rxjs";
+import {Subject, Subscription, takeUntil} from "rxjs";
 import {Score} from "../../models/score";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {GroupUpdatedService} from "../../services/notifications/group-updated.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
+import {TranslateService} from "@ngx-translate/core";
+import {RxStompService} from "../../websockets/rx-stomp.service";
+import {Message} from "@stomp/stompjs";
+import {EnvironmentService} from "../../environment.service";
+import {MessageContent} from "../../websockets/message-content.model";
+import {LoginService} from "../../services/login.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -39,8 +44,12 @@ import {SystemOverloadService} from "../../services/notifications/system-overloa
 })
 export class FightListComponent extends RbacBasedComponent implements OnInit, OnDestroy {
 
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+
   filteredFights: Map<number, Fight[]>;
   filteredUnties: Map<number, Duel[]>;
+  //Check if a level label must be shown or not.
+  filteredLevels: number[];
 
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
@@ -54,6 +63,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   swappedTeams: boolean = false;
   membersOrder: boolean = false;
   isWizardEnabled: boolean;
+  isBracketsEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
   showAvatars: boolean = false;
 
@@ -61,43 +71,89 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   resetTimerPosition: Subject<boolean> = new Subject();
 
-  constructor(private router: Router, private tournamentService: TournamentService, private fightService: FightService,
+  showLevelTags: boolean = false;
+  showLevelOfGroup: Map<Group, boolean> = new Map<Group, boolean>;
+
+  selectedShiaijo: number = -1;
+
+  private topicSubscription: Subscription;
+
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute,
+              private tournamentService: TournamentService, private fightService: FightService,
+              private environmentService: EnvironmentService,
               private groupService: GroupService, private duelService: DuelService,
               private timeChangedService: TimeChangedService, private duelChangedService: DuelChangedService,
               private untieAddedService: UntieAddedService, private groupUpdatedService: GroupUpdatedService,
               private dialog: MatDialog, private userSessionService: UserSessionService,
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
-              private translateService: TranslateService, rbacService: RbacService,
-              private systemOverloadService: SystemOverloadService) {
+              rbacService: RbacService, private translateService: TranslateService,
+              private systemOverloadService: SystemOverloadService,
+              private rxStompService: RxStompService, private loginService: LoginService) {
     super(rbacService);
-    this.swappedColors = this.userSessionService.getSwappedColors();
-    this.swappedTeams = this.userSessionService.getSwappedTeams();
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
+    this.filteredLevels = [];
     this.groups = [];
-    let state = this.router.getCurrentNavigation()?.extras.state;
+    const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
+      //Send by previous view.
       if (state['tournamentId'] && !isNaN(Number(state['tournamentId']))) {
         this.tournamentId = Number(state['tournamentId']);
       } else {
         this.goBackToTournament();
       }
     } else {
-      this.goBackToTournament();
+      //Gets tournament from URL parameter (from QR codes).
+      this.tournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
+      if (!this.tournamentId || isNaN(this.tournamentId)) {
+        this.goBackToTournament();
+      }
     }
   }
 
   ngOnInit(): void {
+    //If no user, try to log in with guest.
+    if (this.loginService.getJwtValue()) {
+      this.initializeData();
+    } else {
+      if (this.tournamentId) {
+        this.loginService.setGuestUserSession(this.tournamentId, (): void => {
+          this.initializeData();
+        });
+      } else {
+        this.goBackToTournament();
+      }
+    }
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.topicSubscription?.unsubscribe();
+  }
+
+  initializeData(): void {
+    this.swappedColors = this.userSessionService.getSwappedColors();
+    this.swappedTeams = this.userSessionService.getSwappedTeams();
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.refreshFights();
-    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe(() => {
+    if (this.tournamentId) {
+      this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
+        this.tournament = tournament;
+        if (localStorage.getItem('username') === "guest" && this.tournament.locked) {
+          this.goBackToTournament();
+        } else {
+          this.refreshFights();
+        }
+      });
+    }
+    this.untieAddedService.isDuelsAdded.pipe(takeUntil(this.destroySubject)).subscribe((): void => {
       this.refreshFights();
     });
-    this.groupUpdatedService.isGroupUpdated.pipe(takeUntil(this.destroySubject)).subscribe(_group => {
+    this.groupUpdatedService.isGroupUpdated.pipe(takeUntil(this.destroySubject)).subscribe((_group: Group): void => {
       this.replaceGroup(_group);
     })
 
-    this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe(_fight => {
+    this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe((_fight: Fight): void => {
       let onlyNewFights: boolean = false;
       let updatedFights: boolean = false;
       if (_fight && this.groups) {
@@ -133,9 +189,21 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
+
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/fights').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.topic == "Fight") {
+        const fight: Fight = JSON.parse(messageContent.payload);
+        if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
+          this.replaceFight(fight);
+        } else if (messageContent.type.toLowerCase() == "created") {
+          this.refreshFights();
+        }
+      }
+    });
   }
 
-  private replaceGroup(group: Group) {
+  private replaceGroup(group: Group): void {
     if (group && this.groups) {
       let selectedFightIndex: number | undefined;
       let selectedDuelIndex: number | undefined
@@ -150,10 +218,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         selectedDuelIndex = this.selectedFight?.duels.indexOf(this.selectedDuel!);
       }
 
-      const groupIndex: number = this.groups.map(group => group.id).indexOf(group.id);
+      const groupIndex: number = this.groups.map((group: Group) => group.id).indexOf(group.id);
       this.groups.splice(groupIndex, 1, group);
       this.selectedGroup = this.groups[groupIndex];
-      //this.fights = this.groups.flatMap((group) => group.fights);
       this.resetFilter();
       if (this.selectedGroup && this.selectedFight && selectedFightIndex) {
         this.selectFight(this.filteredFights.get(this.selectedGroup.id!)![selectedFightIndex]);
@@ -166,48 +233,80 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  private getFights(): Fight[] {
-    return this.groups.flatMap((group) => group.fights);
-  }
-
-  private getUnties(): Duel[] {
-    return this.groups.flatMap((group) => group.unties)
-  }
-
-  private refreshFights() {
-    if (this.tournamentId) {
-      this.tournamentService.get(this.tournamentId).subscribe(tournament => {
-        this.tournament = tournament;
-        this.isWizardEnabled = tournament.type != TournamentType.CUSTOMIZED;
-        if (this.tournamentId) {
-          this.groupService.getAllByTournament(this.tournamentId).subscribe(_groups => {
-            if (!_groups) {
-              this.messageService.errorMessage('No groups on tournament!');
-            } else {
-              this.setGroups(_groups);
-            }
-          });
+  private replaceFight(fight: Fight): void {
+    //Replace on filter
+    for (let key of this.filteredFights.keys()) {
+      let indexOfFight: number = this.filteredFights.get(key)!.findIndex((element: Fight): boolean => element.id === fight.id);
+      if (indexOfFight >= 0) {
+        this.filteredFights.get(key)![indexOfFight] = fight;
+        break;
+      }
+    }
+    //Replace on groups
+    for (let group of this.groups) {
+      let indexOfFight: number = group.fights.findIndex((element: Fight): boolean => element.id === fight.id);
+      if (indexOfFight >= 0) {
+        group.fights![indexOfFight] = fight;
+        break;
+      }
+    }
+    //Update selected fight
+    if (this.selectedFight && this.selectedFight.id === fight.id) {
+      this.selectedFight = fight;
+      for (let duel of fight.duels) {
+        if (this.selectedDuel?.id === duel.id) {
+          this.selectedDuel = duel;
+          this.duelChangedService.isDuelUpdated.next(duel);
+          break;
         }
-      });
+      }
     }
   }
 
-  private setGroups(groups: Group[]) {
-    groups.sort((a, b) => {
+  private getFights(): Fight[] {
+    return this.groups.flatMap((group: Group) => group.fights);
+  }
+
+  private getUnties(): Duel[] {
+    return this.groups.flatMap((group: Group) => group.unties)
+  }
+
+  private refreshFights(): void {
+    if (this.tournament) {
+      this.isWizardEnabled = this.tournament.type !== TournamentType.CUSTOMIZED && this.tournament.type !== TournamentType.CHAMPIONSHIP;
+      this.isBracketsEnabled = this.tournament.type === TournamentType.CHAMPIONSHIP;
+      if (this.tournamentId) {
+        this.groupService.getFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
+          if (!_groups) {
+            this.messageService.errorMessage('No groups on tournament!');
+          } else {
+            this.setGroups(_groups);
+          }
+        });
+      }
+    }
+  }
+
+  private setGroups(groups: Group[]): void {
+    groups.sort((a: Group, b: Group): number => {
       if (a.level === b.level) {
         return a.index - b.index;
       }
       return a.level - b.level;
     });
-    const fights = groups.flatMap((group) => group.fights);
+    const fights: Fight[] = groups.flatMap((group: Group) => group.fights);
     for (let fight of fights) {
       for (let duel of fight.duels) {
-        if (duel.competitor1!.hasAvatar || duel.competitor2!.hasAvatar) {
+        if (duel.competitor1?.hasAvatar || duel.competitor2?.hasAvatar) {
           this.showAvatars = true;
         }
       }
     }
     this.groups = groups;
+
+    //Set level tags
+    this.setLevelTagVisibility(groups);
+
     if (groups.length > 0) {
       this.selectedGroup = groups[0];
     }
@@ -221,9 +320,28 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }, 1000);
   }
 
-  openConfirmationGenerateElementsDialog() {
-    if (this.groups.length > 0) {
-      let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+  private setLevelTagVisibility(sortedGroups: Group[]): void {
+    const showedLevel: boolean [] = []
+    this.showLevelOfGroup = new Map<Group, boolean>();
+    for (let group of sortedGroups) {
+      if (group.level >= showedLevel.length) {
+        showedLevel.push(true);
+        //Hide level label if it hasn't fights on any of its groups.
+        const groupsOfLevelWithFights: Group[] = sortedGroups.filter(group => group.level == showedLevel.length - 1 && group.fights.length > 0);
+        if (groupsOfLevelWithFights.length == 0) {
+          showedLevel[showedLevel.length - 1] = false;
+        }
+      }
+      this.showLevelOfGroup.set(group, showedLevel[group.level]);
+      showedLevel[group.level] = false;
+    }
+
+    this.showLevelTags = showedLevel.length > 1;
+  }
+
+  openConfirmationGenerateElementsDialog(): void {
+    if (this.getFights().length > 0) {
+      let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
         disableClose: false
       });
       dialogRef.componentInstance.messageTag = "deleteFightsWarning"
@@ -238,7 +356,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  generateElements() {
+  openBracketsManager(): void {
+    if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
+      this.router.navigate(['tournaments/fights/championship'], {
+        state: {
+          tournamentId: this.tournament.id,
+          editionDisabled: this.getFights().length > 0
+        }
+      });
+    }
+  }
+
+  generateElements(): void {
     let dialogRef;
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
       this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
@@ -246,6 +375,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         width: '85vw',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
       });
+    } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
+      this.openBracketsManager();
     }
 
     if (dialogRef) {
@@ -263,21 +394,21 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  getDuelDefaultSecondsDuration() {
+  getDuelDefaultSecondsDuration(): number {
     if (this.tournament) {
       return this.tournament.duelsDuration % 60;
     }
     return 0;
   }
 
-  getDuelDefaultMinutesDuration() {
+  getDuelDefaultMinutesDuration(): number {
     if (this.tournament) {
       return Math.floor(this.tournament.duelsDuration / 60);
     }
     return 0;
   }
 
-  addElement() {
+  addElement(): void {
     //Ensure that is selected on the typical case.
     if (this.groups.length == 1) {
       this.selectedGroup = this.groups[0];
@@ -288,7 +419,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       fight.shiaijo = 0;
       fight.level = this.selectedGroup.level;
       fight.duels = [];
-      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup!, this.selectedFight);
+      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight);
     } else {
       this.messageService.warningMessage('errorFightNotSelected');
     }
@@ -333,7 +464,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined) {
+  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined): void {
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '90vw',
       height: '95vh',
@@ -362,32 +493,34 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     });
   }
 
-  createGroupFight(teams: Team[]) {
+  createGroupFight(teams: Team[]): void {
     if (this.tournamentId) {
-      this.groupService.setTeams(teams).subscribe(_group => {
+      this.groupService.setTeams(teams).subscribe((_group: Group): void => {
         this.selectedGroup = _group;
         if (this.tournamentId) {
-          this.fightService.create(this.tournamentId, 0).subscribe(fights => {
+          this.fightService.create(this.tournamentId, 0).subscribe((fights: Fight[]): void => {
             this.resetFilter();
             this.selectedGroup!.fights = fights;
             this.messageService.infoMessage("infoFightCreated");
+            this.refreshFights();
           });
         }
       });
     }
   }
 
-  updateRowData(fight: Fight) {
-    this.fightService.update(fight).subscribe(() => {
+  updateRowData(fight: Fight): void {
+    this.fightService.update(fight).subscribe((): void => {
         this.messageService.infoMessage("infoFightUpdated");
       }
     );
   }
 
-  deleteRowData(fight: Fight) {
+  deleteRowData(fight: Fight): void {
     this.fightService.delete(fight).subscribe(() => {
-        this.selectedGroup!.fights = this.selectedGroup!.fights.filter(existing_fight => existing_fight !== fight);
-        this.filteredFights.set(this.selectedGroup!.id!, this.filteredFights.get(this.selectedGroup!.id!)!.filter(existing_fight => existing_fight !== fight));
+        this.selectedGroup!.fights = this.selectedGroup!.fights.filter((existing_fight: Fight): boolean => existing_fight !== fight);
+        this.filteredFights.set(this.selectedGroup!.id!, this.filteredFights.get(this.selectedGroup!.id!)!.filter(
+          (existing_fight: Fight): boolean => existing_fight !== fight));
         this.messageService.infoMessage("fightDeleted");
       }
     );
@@ -397,10 +530,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.router.navigate(['/tournaments'], {});
   }
 
-  selectFight(fight: Fight | undefined) {
+  selectFight(fight: Fight | undefined): void {
     this.selectedFight = fight;
     if (fight) {
-      this.selectedGroup = this.groups.find(group => group.fights.indexOf(fight) >= 0)!;
+      this.selectedGroup = this.groups.find((group: Group): boolean => group.fights.indexOf(fight) >= 0)!;
     } else {
       this.selectedGroup = undefined;
     }
@@ -421,42 +554,46 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return false;
   }
 
-  showTeamsClassification(fightsFinished: boolean) {
+  showTeamsClassification(fightsFinished: boolean): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
-      this.dialog.open(TeamRankingComponent, {
+      const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
         width: '85vw',
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result.action === Action.Cancel) {
+        }
       });
     }
   }
 
-  showCompetitorsClassification() {
+  showCompetitorsClassification(): void {
     this.dialog.open(CompetitorsRankingComponent, {
       width: '85vw',
       data: {tournament: this.tournament}
     });
   }
 
-  downloadPDF() {
+  downloadPDF(): void {
     if (this.tournament && this.tournament.id) {
-      this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob) => {
-        const blob = new Blob([pdf], {type: 'application/pdf'});
-        const downloadURL = window.URL.createObjectURL(blob);
+      this.fightService.getFightSummaryPDf(this.tournament.id).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
 
         const anchor = document.createElement("a");
-        anchor.download = "Fight List - " + this.tournament!.name + ".pdf";
+        anchor.download = "Fight List - " + this.tournament.name + ".pdf";
         anchor.href = downloadURL;
         anchor.click();
       });
     }
   }
 
-  showTimer(show: boolean) {
+  showTimer(show: boolean): void {
     this.timer = show;
     this.resetTimerPosition.next(show);
   }
 
-  setIpponScores(duel: Duel) {
+  setIpponScores(duel: Duel): void {
     //Put default points.
     if (duel.competitor1 !== null && duel.competitor2 == null) {
       duel.competitor1Score = [];
@@ -469,44 +606,108 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  canStartFight(duel: Duel | undefined): boolean {
-    return duel !== undefined && duel.competitor1 !== null && duel.competitor2 !== null;
+  removeIpponScores(duel: Duel): void {
+    for (let i: number = 0; i < duel.competitor1Score.length; i++) {
+      if (duel.competitor1Score[i] == Score.IPPON) {
+        duel.competitor1Score = [];
+      }
+    }
+    for (let i: number = 0; i < duel.competitor2Score.length; i++) {
+      if (duel.competitor2Score[i] == Score.IPPON) {
+        duel.competitor2Score = [];
+      }
+    }
   }
 
-  finishDuel(finished: boolean) {
+  canStartFight(duel: Duel | undefined): boolean {
+    return duel?.competitor1 !== null && duel?.competitor2 !== null;
+  }
+
+  finishDuel(): void {
     if (this.selectedDuel) {
       this.setIpponScores(this.selectedDuel);
-      this.selectedDuel.finished = finished;
+      this.selectedDuel.finished = true;
       if (!this.selectedDuel.finishedAt) {
         this.selectedDuel.finishedAt = new Date();
       }
-      this.duelService.update(this.selectedDuel).subscribe(duel => {
+      this.duelService.update(this.selectedDuel).subscribe((): void => {
         this.messageService.infoMessage("infoDuelFinished");
-        if (!this.selectFirstUnfinishedDuel()) {
-          this.generateNextFights();
+        const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
+        let showClassification: boolean = true;
+        if (selectedGroup != null) {
+          // Tournament, each group must have a winner. Show for each group the winners.
+          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
+            //Shows group classification. And if there is a tie score can be solved.
+            this.showClassification();
+            showClassification = false;
+          }
         }
-        return duel;
+        // King of the mountain. Generate infinite fights.
+        if (!this.selectFirstUnfinishedDuel()) {
+          this.generateNextFights(showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN);
+        }
       });
     }
   }
 
-  generateNextFights(): void {
-    this.fightService.createNext(this.tournamentId!).subscribe(_fights => {
-      if (_fights.length > 0) {
+  unfinishDuel(): void {
+    if (this.selectedDuel) {
+      this.removeIpponScores(this.selectedDuel);
+      this.selectedDuel.finished = false;
+      this.selectedDuel.finishedAt = undefined;
+      this.duelService.update(this.selectedDuel).subscribe((): void => {
+      });
+    }
+  }
+
+  getGroup(selectedDuel: Duel | undefined): Group | null {
+    if (!selectedDuel) {
+      return null;
+    }
+    for (const group of this.groups) {
+      for (const fight of group.fights) {
+        for (const duel of fight.duels) {
+          if (duel.id == selectedDuel!.id) {
+            return group;
+          }
+        }
+        for (const duel of group.unties) {
+          if (duel.id == selectedDuel.id) {
+            return group;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  generateNextFights(showClassification: boolean): void {
+    const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
+    this.fightService.createNext(this.tournamentId!).subscribe((_fights: Fight[]): void => {
+      //Null value means that fights are not created due to an existing draw score.
+      if (_fights === null) {
+        //Do nothing. A Draw fight that must be solved.
+      } else if (_fights.length > 0) {
         this.refreshFights();
       } else {
-        if ((this.tournament && this.tournament.teamSize && this.tournament.teamSize > 1) ||
-          (this.tournament && this.tournament.type === this.kingOfTheMountainType)) {
-          this.showTeamsClassification(true);
-        } else {
-          this.showCompetitorsClassification();
+        if (showClassification) {
+          this.showClassification();
         }
         this.finishTournament(new Date());
       }
     });
   }
 
-  finishTournament(date: Date | undefined) {
+  showClassification(): void {
+    if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
+      (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
+      this.showTeamsClassification(true);
+    } else {
+      this.showCompetitorsClassification();
+    }
+  }
+
+  finishTournament(date: Date | undefined): void {
     if (!this.tournament.finishedAt && date) {
       this.tournament.finishedAt = date;
       this.tournamentService.update(this.tournament).subscribe();
@@ -516,7 +717,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  selectDuel(duel: Duel) {
+  selectDuel(duel: Duel): void {
     this.selectedDuel = duel;
     this.duelChangedService.isDuelUpdated.next(duel);
     if (duel) {
@@ -584,14 +785,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return false;
   }
 
-  updateDuelDuration(duelDuration: number) {
+  updateDuelDuration(duelDuration: number): void {
     if (this.selectedDuel) {
       this.selectedDuel.totalDuration = duelDuration;
       this.duelService.update(this.selectedDuel).subscribe();
     }
   }
 
-  updateDuelElapsedTime(elapsedTime: number, updateBackend: boolean) {
+  updateDuelElapsedTime(elapsedTime: number, updateBackend: boolean): void {
     if (this.selectedDuel) {
       this.selectedDuel.duration = elapsedTime;
       if (updateBackend) {
@@ -600,7 +801,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  duelStarted(elapsedTime: number) {
+  duelStarted(elapsedTime: number): void {
     if (this.selectedDuel && !this.selectedDuel.duration && !this.selectedDuel.startedAt) {
       this.selectedDuel.duration = elapsedTime;
       this.selectedDuel.startedAt = new Date();
@@ -612,58 +813,87 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return !(this.selectedFight !== undefined || (this.selectedDuel !== undefined && this.selectedDuel.type === DuelType.UNDRAW));
   }
 
-  swapColors() {
+  swapColors(): void {
     this.swappedColors = !this.swappedColors;
     this.userSessionService.setSwappedColors(this.swappedColors);
   }
 
-  swapTeams() {
+  swapTeams(): void {
     this.swappedTeams = !this.swappedTeams;
     this.userSessionService.setSwappedTeams(this.swappedTeams);
   }
 
-  enableMemberOrder(enabled: boolean) {
+  enableMemberOrder(enabled: boolean): void {
     this.membersOrder = enabled;
     this.membersOrderChangedService.membersOrderAllowed.next(enabled);
   }
 
-  filter(filter: string) {
+  filter(filter: string): void {
     filter = filter.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
+    this.filteredLevels = [];
 
     for (const group of this.groups) {
       if (group.fights) {
-        this.filteredFights.set(group.id!, group.fights.filter(fight =>
-          fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-          fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-          fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) ||
-          fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
-            (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "")))));
+        this.filteredFights.set(group.id!, group.fights.filter((fight: Fight) =>
+          (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
+            (fight.team1 ? fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
+            (fight.team2 ? fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
+            (fight.team1 && fight.team1.members ? fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) : "") ||
+            (fight.team2 && fight.team2.members ? fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+              (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) : "")))
+        );
       } else {
         this.filteredFights.set(group.id!, []);
       }
 
       if (group.unties) {
-        this.filteredUnties.set(group.id!, group.unties.filter(duel =>
-          duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
-          duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
-          (duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+        this.filteredUnties.set(group.id!, group.unties.filter((duel: Duel) =>
+          (this.selectedShiaijo < 0 || group.shiaijo == this.selectedShiaijo) && (
+            (duel.competitor1 ? duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (duel.competitor1 ? duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (duel.competitor1 && duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
 
-          duel.competitor2!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
-          duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) ||
-          (duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "")));
+            (duel.competitor2 ? duel.competitor2!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (duel.competitor2 ? duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (duel.competitor2 && duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""))));
       } else {
         this.filteredUnties.set(group.id!, []);
+      }
+
+      //Check if a level label must be shown or not.
+      for (let fights of this.filteredFights.values()) {
+        for (let fight of fights) {
+          if (!this.filteredLevels.includes(fight.level)) {
+            this.filteredLevels.push(fight.level);
+          }
+        }
       }
     }
   }
 
-  resetFilter() {
+  resetFilter(): void {
     this.filter('');
     this.resetFilterValue.next(true);
+  }
+
+  getShiaijoTag(): string {
+    if (this.selectedShiaijo < 0) {
+      return this.translateService.instant('-');
+    }
+    return Tournament.SHIAIJO_NAMES[this.selectedShiaijo];
+  }
+
+
+  changeShiaijo(): void {
+    this.selectedShiaijo++;
+    if (this.tournament.shiaijos && this.selectedShiaijo >= this.tournament.shiaijos) {
+      this.selectedShiaijo = -1;
+    }
+    this.resetFilter();
   }
 }
