@@ -870,7 +870,8 @@
     "achievementAllGenerated": "Un total de {{achievementsNumber}} èxits han estat generats en {{tournamentNumber}} tornejos.",
     "shiaijoFinished": "Tots els partits del shiaijo {{shiaijoName}} han acabat.",
     "userAdminGenerated": "Usuari {{userName}} ha estar creat!"
-  }
+  },
+  "daysFrom": "Aplica només aquests dies"
 }
 
 

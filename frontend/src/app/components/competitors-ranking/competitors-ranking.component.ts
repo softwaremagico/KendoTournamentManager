@@ -22,6 +22,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   club: Club | undefined;
   competitor: Participant | undefined;
   showIndex: boolean | undefined;
+  numberOfDays: number | undefined;
 
   constructor(public dialogRef: MatDialogRef<CompetitorsRankingComponent>,
               @Inject(DOCUMENT) document: Document,
@@ -40,6 +41,10 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   }
 
   ngOnInit(): void {
+    this.getRanking();
+  }
+
+  getRanking(): void {
     if (this.club?.id) {
       this.rankingService.getCompetitorsScoreRankingByClub(this.club.id).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
@@ -101,5 +106,9 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
     if (row) {
       row.scrollIntoView({behavior: 'smooth'});
     }
+  }
+
+  daysChanged(): void {
+
   }
 }
