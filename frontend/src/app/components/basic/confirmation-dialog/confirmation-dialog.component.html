@@ -1,10 +1,12 @@
 <h1 mat-dialog-title>{{'confirm' | translate}}</h1>
 <div mat-dialog-content>{{message}}</div>
-<div mat-dialog-actions class="button-container">
-  <button mat-raised-button (click)="acceptAction()" mat-flat-button color="primary">
+<div class="button-container" mat-dialog-actions>
+  <button (click)="acceptAction()" color="primary" mat-flat-button mat-raised-button>
     <mat-icon>done</mat-icon>
-    {{'accept' | translate}}</button>
-  <button mat-raised-button (click)="cancelDialog()" mat-flat-button color="accent">
+    {{'accept' | translate}}
+  </button>
+  <button (click)="cancelDialog()" color="accent" mat-flat-button mat-raised-button>
     <mat-icon>cancel</mat-icon>
-    {{'cancel' | translate}}</button>
+    {{'cancel' | translate}}
+  </button>
 </div>

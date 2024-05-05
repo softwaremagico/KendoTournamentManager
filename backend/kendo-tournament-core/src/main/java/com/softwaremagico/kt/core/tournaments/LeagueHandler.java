@@ -6,36 +6,34 @@ package com.softwaremagico.kt.core.tournaments;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.controller.models.TeamDTO;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentFinishedException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,16 +45,18 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     private final GroupProvider groupProvider;
     private final TeamProvider teamProvider;
-    private final GroupConverter groupConverter;
-    private final RankingController rankingController;
+    private final RankingProvider rankingProvider;
+
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 
     @Autowired
-    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController) {
+    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
+                         TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
-        this.groupConverter = groupConverter;
-        this.rankingController = rankingController;
+        this.rankingProvider = rankingProvider;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
     protected Group getGroup(Tournament tournament) {
@@ -89,9 +89,14 @@ public abstract class LeagueHandler implements ITournamentManager {
         return addGroup(tournament, group);
     }
 
-    @Override
-    public Integer getNumberOfLevels() {
-        return 1;
+    protected TournamentExtraProperty getLeagueFightsOrder(Tournament tournament) {
+        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION);
+        if (extraProperty == null) {
+            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()));
+        }
+        return extraProperty;
     }
 
     @Override
@@ -126,21 +131,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public void removeGroup(Group group) {
-        groupProvider.delete(group);
-    }
-
-    @Override
-    public void removeGroups(Tournament tournament, Integer level) {
-        groupProvider.delete(tournament, level);
-    }
-
-    @Override
-    public Level getLevel(Integer level) {
-        return null;
-    }
-
-    @Override
     public boolean exist(Tournament tournament, Team team) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (!groups.isEmpty()) {
@@ -171,11 +161,6 @@ public abstract class LeagueHandler implements ITournamentManager {
             return getGroup(tournament);
         }
         return null;
-    }
-
-    @Override
-    public Integer getLastLevelUsed() {
-        return 0;
     }
 
     @Override
@@ -214,29 +199,8 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public Level getCurrentLevel() {
-        return null;
-    }
-
-    @Override
     public List<Group> getGroupsByShiaijo(Tournament tournament, Integer shiaijo) {
         return groupProvider.getGroupsByShiaijo(tournament, shiaijo);
-    }
-
-    @Override
-    public List<Level> getLevels() {
-        return new ArrayList<>();
-    }
-
-    @Override
-    public Level getLastLevel() {
-        return getLevel(0);
-    }
-
-    @Override
-    public boolean isNewLevelNeeded() {
-        // Only one level is needed.
-        return false;
     }
 
     @Override
@@ -246,8 +210,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public boolean hasDrawScore(Group group) {
-        final List<TeamDTO> teamsInDraw = rankingController.getFirstTeamsWithDrawScore(
-                groupConverter.convert(new GroupConverterRequest(group)), group.getNumberOfWinners());
+        final List<Team> teamsInDraw = rankingProvider.getFirstTeamsWithDrawScore(group, group.getNumberOfWinners());
         return (teamsInDraw != null);
     }
 
@@ -257,7 +220,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public List<Fight> createNextFights(Tournament tournament, String createdBy) {
+    public List<Fight> generateNextFights(Tournament tournament, String createdBy) {
         return new ArrayList<>();
     }
 }

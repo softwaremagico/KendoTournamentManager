@@ -1,24 +1,33 @@
 <div class="fight-container">
-  <div class="left-team" [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors"
-       *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true">
+  <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true" [class.red-ribbon]="!swapColors"
+       [class.white-ribbon]="swapColors"
+       class="left-team">
     {{!swapTeams ? fight.team1.name : fight.team2.name}}
   </div>
-  <div class="left-team ribbon-icon" [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors"
-       *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false">
-    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
+  <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false"
+       [class.red-ribbon]="!swapColors" [class.white-ribbon]="swapColors"
+       class="left-team ribbon-icon">
+    <mat-icon class="kendo-icon" svgIcon="ribbon"></mat-icon>
   </div>
-  <div class="fight" *ngIf="fight" [ngClass]="{selected: selected}" cdkDropListGroup>
-    <duel class="duel" *ngFor="let duel of fight.duels; let i = index" [duel]="duel" [duelIndex]="i" [fight]="fight"
-          (click)="selectDuel(duel)" [showAvatars]="showAvatars"
-          [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.activities)" [swapTeams]="swapTeams"
-          [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.activities), over: isOver(duel)}"></duel>
+  <div *ngIf="fight" [ngClass]="{selected: selected}" cdkDropListGroup class="fight">
+    <duel *ngFor="let duel of fight.duels; let i = index" [duelIndex]="i" [duel]="duel"
+          (click)="selectDuel(duel)"
+          (keydown)="selectDuel(duel)"
+          [fight]="fight"
+          [ngClass]="{duelSelected: duel === selectedDuel && selected && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.getActivities()), over: isOver(duel)}"
+          [selected]="duel === selectedDuel && (RbacActivity.SELECT_DUEL | rbac : this.rbacService.getActivities())"
+          [showAvatars]="showAvatars"
+          [swapTeams]="swapTeams"
+          class="duel"></duel>
   </div>
-  <div class="right-team" [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors"
-       *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true">
+  <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize > 1:true" [class.red-ribbon]="swapColors"
+       [class.white-ribbon]="!swapColors"
+       class="right-team">
     {{!swapTeams ? fight.team2.name : fight.team1.name}}
   </div>
-  <div class="right-team ribbon-icon" [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors"
-       *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false">
-    <mat-icon svgIcon="ribbon" class="kendo-icon"></mat-icon>
+  <div *ngIf="this.fight?.tournament?.teamSize?this.fight.tournament.teamSize <= 1:false"
+       [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors"
+       class="right-team ribbon-icon">
+    <mat-icon class="kendo-icon" svgIcon="ribbon"></mat-icon>
   </div>
 </div>

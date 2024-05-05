@@ -1,0 +1,76 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<div class="championship-view">
+  <div class="page-container">
+    <div class="upper-menu">
+      <div class="cell">
+        <button (click)="goBackToFights()"
+                *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500" color="secondary"
+                color="primary" mat-button
+                matTooltip="{{'back' | translate}}">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button (click)="addGroup()" *ngIf="(RbacActivity.CREATE_GROUP | rbac : this.rbacService.getActivities())"
+                [disabled]="!(groupsLevelZero.length < totalTeams / 2) || groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                class="add-button"
+                color="primary" mat-button
+                matTooltip="{{'addFight' | translate}}">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button (click)="changeNumberOfWinners(2)"
+                *ngIf="(numberOfWinners == 1) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'winnerNumber' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="one-winner"></mat-icon>
+        </button>
+        <button (click)="changeNumberOfWinners(1)"
+                *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'winnerNumber' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
+        </button>
+        <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.getActivities())"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                class="delete-button" color="warn" mat-button
+                matTooltip="{{'delete' | translate}}">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"
+                     *ngIf="(numberOfWinners == 2) && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+        ></mat-divider>
+        <button (click)="openConfirmationGenerateElementsDialog()"
+                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'wizard' | translate}}">
+          <mat-icon>auto_fix_high</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"
+                     *ngIf="(numberOfWinners == 2) && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+        ></mat-divider>
+        <button (click)="downloadPDF()"
+                *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'download' | translate}}">
+          <mat-icon>file_download</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="page-content">
+      <app-tournament-brackets-editor [tournament]="tournament"
+                                      [droppingDisabled]="groupsDisabled"
+                                      [groupsDisabled]="groupsDisabled"
+                                      (onGroupsUpdated)="groupsUpdated($event)"
+                                      (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
+      </app-tournament-brackets-editor>
+    </div>
+  </div>
+</div>

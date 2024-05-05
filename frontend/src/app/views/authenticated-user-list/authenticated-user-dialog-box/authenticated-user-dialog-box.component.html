@@ -1,52 +1,62 @@
 <h1 mat-dialog-title>{{title}}</h1>
-<div mat-dialog-content class="form-layout">
-  <form [formGroup]="registerForm" (ngSubmit)="doAction()">
+<div class="form-layout" mat-dialog-content>
+  <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-      <input formControlName="username" placeholder="{{'username' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="username" matInput
+             placeholder="{{'username' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="name" placeholder="{{'name' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="name" matInput
+             placeholder="{{'name' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <input formControlName="lastname" placeholder="{{'lastname' | translate}}" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" formControlName="lastname" matInput
+             placeholder="{{'lastname' | translate}}"
+             required>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-select formControlName="roles" [value]="authenticatedUser.roles" placeholder="{{'roles' | translate}}"
-                  multiple>
+      <mat-select [value]="authenticatedUser.roles" formControlName="roles" multiple
+                  placeholder="{{'roles' | translate}}">
         <mat-option *ngFor="let role of UserRoles.toArray()" [value]="UserRoles[role]">
           {{role.toLowerCase() | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
-      <input formControlName="password" placeholder="{{'password' | translate}}"
-             [type]="hidePassword ? 'password' : 'text'" matInput required
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" [type]="hidePassword ? 'password' : 'text'"
+             formControlName="password" matInput placeholder="{{'password' | translate}}"
+             required>
       <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | translate}}</mat-error>
-      <mat-icon matSuffix
-                (click)="setHidePassword(!hidePassword)">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      <mat-icon (click)="setHidePassword(!hidePassword)"
+                (keydown)="setHidePassword(!hidePassword)"
+                matSuffix>{{hidePassword ? 'visibility_off' : 'visibility'}}
+      </mat-icon>
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete' && actionName != 'Update'">
-      <input formControlName="repeatPassword" name="repeatPassword" placeholder="{{'repeatPassword' | translate}}"
-             [type]="'password'" required pattern="{{registerForm.value.password}}" matInput
-             [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)">
+      <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_USER)" [type]="'password'"
+             formControlName="repeatPassword"
+             matInput name="repeatPassword" pattern="{{registerForm.value.password}}"
+             placeholder="{{'repeatPassword' | translate}}"
+             required>
       <mat-error *ngIf="registerForm.value.repeatPassword">{{'passwordDoesNotMatch' | translate}}</mat-error>
     </mat-form-field>
     <ng-template #elseTemplate>
       <span [innerHTML]="'authenticatedUserDeleteQuestion' | translate : {username: authenticatedUser.username}"></span>
     </ng-template>
 
-    <div mat-dialog-actions class="button-container">
-      <button mat-raised-button type="submit" value="Submit"
-              [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" mat-flat-button
-              color="primary" *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)">
+    <div class="button-container" mat-dialog-actions>
+      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())"
+              [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" color="primary"
+              mat-flat-button mat-raised-button
+              type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{actionName.toLowerCase() | translate}}</button>
-      <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button
-              color="warn">{{'cancel' | translate}}</button>
+        {{actionName.toLowerCase() | translate}}
+      </button>
+      <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button
+              type="button">{{'cancel' | translate}}
+      </button>
     </div>
   </form>
 </div>

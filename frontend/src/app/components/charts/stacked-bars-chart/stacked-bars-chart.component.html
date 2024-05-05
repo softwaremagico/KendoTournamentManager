@@ -1,17 +1,17 @@
-<div class="frame" *ngIf="chartOptions">
-  <div class="box shadow">
-    <apx-chart #chart id="chart"
-               [series]="chartOptions.series"
-               [chart]="chartOptions.chart"
+<div *ngIf="chartOptions" class="frame">
+  <div class="box">
+    <apx-chart #chart [chart]="chartOptions.chart"
                [dataLabels]="chartOptions.labels"
+               [fill]="chartOptions.fill"
+               [legend]="chartOptions.legend"
                [plotOptions]="chartOptions.plotOptions"
+               [series]="chartOptions.series"
+               [theme]="chartOptions.theme"
+               [title]="chartOptions.title"
                [tooltip]="chartOptions.tooltip"
                [xaxis]="chartOptions.xaxis"
                [yaxis]="chartOptions.yaxis"
-               [title]="chartOptions.title"
-               [fill]="chartOptions.fill"
-               [legend]="chartOptions.legend"
-               [theme]="chartOptions.theme"
+               id="chart"
     ></apx-chart>
   </div>
 </div>

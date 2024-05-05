@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.controller.models;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -35,6 +32,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class DuelDTO extends ElementDTO {
+    private static final int CHARACTERS_TO_SHOW = 10;
+
     private ParticipantDTO competitor1;
     private ParticipantDTO competitor2;
 
@@ -128,7 +127,7 @@ public class DuelDTO extends ElementDTO {
     public String toString() {
         final StringBuilder text = new StringBuilder();
         if (competitor1 != null) {
-            text.append(NameUtils.getShortLastnameName(competitor1, 10)).append(" ");
+            text.append(NameUtils.getShortLastnameName(competitor1, CHARACTERS_TO_SHOW)).append(" ");
             if (competitor1Fault != null && competitor1Fault) {
                 text.append("^");
             }
@@ -154,7 +153,7 @@ public class DuelDTO extends ElementDTO {
                 text.append("^");
             }
             text.append(" ");
-            text.append(NameUtils.getShortLastnameName(competitor2, 10));
+            text.append(NameUtils.getShortLastnameName(competitor2, CHARACTERS_TO_SHOW));
         } else {
             text.append("[]  <<Empty>>  ");
         }
@@ -197,8 +196,7 @@ public class DuelDTO extends ElementDTO {
     }
 
     public boolean isOver() {
-        return getCompetitor1ScoreValue() >= Duel.POINTS_TO_WIN || getCompetitor2ScoreValue() >= Duel.POINTS_TO_WIN ||
-                finished;
+        return getCompetitor1ScoreValue() >= Duel.POINTS_TO_WIN || getCompetitor2ScoreValue() >= Duel.POINTS_TO_WIN || finished;
     }
 
     public TournamentDTO getTournament() {
@@ -214,14 +212,13 @@ public class DuelDTO extends ElementDTO {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DuelDTO)) {
+        if (!(o instanceof DuelDTO duelDTO)) {
             return false;
         }
-        final DuelDTO duelDTO = (DuelDTO) o;
         return Objects.equals(getCompetitor1(), duelDTO.getCompetitor1()) && Objects.equals(getCompetitor2(), duelDTO.getCompetitor2())
                 && Objects.equals(getCompetitor1Score(), duelDTO.getCompetitor1Score()) && Objects.equals(getCompetitor2Score(),
-                duelDTO.getCompetitor2Score()) && Objects.equals(getCompetitor1Fault(), duelDTO.getCompetitor1Fault()) &&
-                Objects.equals(getCompetitor2Fault(), duelDTO.getCompetitor2Fault()) && getType() == duelDTO.getType();
+                duelDTO.getCompetitor2Score()) && Objects.equals(getCompetitor1Fault(), duelDTO.getCompetitor1Fault())
+                && Objects.equals(getCompetitor2Fault(), duelDTO.getCompetitor2Fault()) && getType() == duelDTO.getType();
     }
 
     @Override

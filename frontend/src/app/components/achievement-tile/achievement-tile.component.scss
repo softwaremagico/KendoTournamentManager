@@ -1,42 +1,147 @@
 .achievement {
   width: 70px;
   height: 70px;
-  margin: 5px;
 
-  border-radius: 15px;
-  border: solid 5px;
-
-  background: rgb(1, 16, 64);
-  background: linear-gradient(135deg, rgba(1, 16, 64, 1) 0%, rgba(64, 77, 141, 1) 50%, rgba(36, 18, 28, 1) 88%, rgba(255, 42, 42, 1) 100%);
+  background: #ffffff;
 
   position: relative;
   display: inline-block;
+  margin: 5px;
+}
+
+.dark-mode .achievement {
+  background: #303030;
+}
+
+.disabled img {
+  filter: invert(98%) sepia(1%) saturate(4016%) hue-rotate(181deg) brightness(91%) contrast(105%);
+}
+
+.dark-mode img {
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(223deg) brightness(111%) contrast(101%);
+}
+
+.dark-mode .disabled img {
+  filter: invert(51%) sepia(1%) saturate(1039%) hue-rotate(26deg) brightness(99%) contrast(86%);
 }
 
 .achievement-border {
   width: 70px;
   height: 70px;
-  border-radius: 15px;
-  border: solid 5px;
+  border: solid 2px;
   position: absolute;
-  margin-top: -75px;
-  margin-left: -5px;
+  margin-top: -70px;
+  margin-left: 0;
+}
+
+.achievement-border.disabled {
+  box-shadow: none !important;
+  border-color: #aaaaaa !important;
 }
 
 .achievement-border.normal {
   border-color: black;
+  animation-name: animate-normal;
+  animation-duration: 0.6s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 .achievement-border.bronze {
-  border-color: hsl(28, 31%, 52%);
+  border: 4px hsl(28, 31%, 52%);
+  animation-name: animate-bronze;
+  animation-duration: 0.6s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 .achievement-border.silver {
-  border-color: hsl(210, 3%, 61%);
+  border: 4px hsl(210, 3%, 61%);
+  animation-name: animate-silver;
+  animation-duration: 0.6s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 .achievement-border.gold {
-  border-color: hsl(45, 100%, 47%);
+  border: 4px hsl(45, 100%, 47%);
+  animation-name: animate-gold;
+  animation-duration: 0.6s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.achivement-content {
+  text-align: left;
+}
+
+.achievement-grade {
+  margin-right: 10px;
+}
+
+.text-normal {
+  color: black;
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
+.text-bronze {
+  color: hsl(28, 31%, 52%);
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
+.text-silver {
+  color: hsl(210, 3%, 61%);
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
+.text-gold {
+  color: hsl(45, 100%, 47%);
+  font-style: oblique;
+  text-transform: uppercase;
+}
+
+@keyframes animate-normal {
+  0% {
+    box-shadow: 0 0 1px black;
+  }
+
+  100% {
+    box-shadow: 0 0 4px black;
+  }
+}
+
+@keyframes animate-bronze {
+  0% {
+    box-shadow: 0 0 1px hsl(28, 31%, 52%);
+  }
+
+  100% {
+    box-shadow: 0 0 4px hsl(28, 31%, 52%);
+  }
+}
+
+@keyframes animate-silver {
+  0% {
+    box-shadow: 0 0 1px hsl(210, 3%, 61%);
+  }
+
+  100% {
+    box-shadow: 0 0 4px hsl(210, 3%, 61%);
+  }
+}
+
+
+@keyframes animate-gold {
+  0% {
+    box-shadow: 0px 0px 1px hsl(45, 100%, 47%);
+  }
+
+  100% {
+    box-shadow: 0px 0px 4px hsl(45, 100%, 47%);
+  }
 }
 
 .achievement-info {
@@ -50,13 +155,13 @@
   width: 20px;
   height: 20px;
   position: absolute;
-  margin-top: -12px;
+  margin-top: -14px;
 }
 
 .new-achievement {
   position: absolute;
-  margin-top: -11px;
-  margin-left: 18px;
+  margin-top: -14px;
+  margin-left: 10px;
   color: #ffffff;
   font-weight: bold;
   font-size: 12px;
@@ -67,71 +172,28 @@
   margin-left: 40px;
 }
 
-img {
-  width: 100%; /* or any custom size */
-  height: 100%;
+.achievement-image {
+  width: 95%;
+  height: 95%;
   object-fit: contain;
-
-  animation-name: animate;
-  animation-duration: 0.8s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-
-@keyframes animate {
-  0% {
-    filter: invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%) drop-shadow(0px 0px 1px #fff) drop-shadow(0px 0px 2px #add8e6) drop-shadow(0px 0px 3px #8097b3) drop-shadow(0px 0px 10px #274e7e) drop-shadow(0px 0px 15px #012f67)
-  }
-
-  100% {
-    filter: invert(11%) sepia(29%) saturate(2737%) hue-rotate(194deg) brightness(97%) contrast(114%) drop-shadow(0px 0px 1px #fff) drop-shadow(0px 0px 4px #add8e6) drop-shadow(0px 0px 6px #8097b3) drop-shadow(0px 0px 20px #274e7e) drop-shadow(0px 0px 30px #012f67)
-  }
-}
-
-.start-12 {
-  background: #e00000;
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  text-align: center;
-  margin-top: -10px;
-  margin-left: 12px;
-}
-
-.start-12:before,
-.start-12:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 16px;
-  width: 16px;
-  background: #e00000;
-}
-
-.start-12:before {
-  transform: rotate(30deg);
-}
-
-.start-12:after {
-  transform: rotate(60deg);
+  padding-bottom: 3px;
 }
 
 /* Tooltip text */
-.achievement .tooltiptext {
+.tooltiptext {
   visibility: hidden;
   width: 300px;
   background-color: #555555;
   color: #ffffff;
   text-align: center;
-  padding: 5px 0;
+  padding: 10px 25px 15px 25px;
   border-radius: 6px;
   font-size: 12px;
 
   /* Position the tooltip text */
   position: absolute;
-  z-index: 1;
-  bottom: 125%;
+  z-index: 1000000;
+  bottom: 95%;
   left: 50%;
   margin-left: -150px;
 
@@ -140,20 +202,20 @@ img {
   transition: opacity 0.3s;
 }
 
-.achievement .tooltiptext.left-border {
+.tooltiptext.left-border {
   margin-left: -40px;
 }
 
-.achievement .tooltiptext.right-border {
+.tooltiptext.right-border {
   margin-left: -260px;
 }
 
-.achievement .tooltiptext.center {
+.tooltiptext.center {
   margin-left: -150px;
 }
 
 /* Tooltip arrow */
-.achievement .tooltiptext::after {
+.tooltiptext::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -164,24 +226,30 @@ img {
   border-color: #555555 transparent transparent transparent;
 }
 
-.achievement .tooltiptext.left-border::after{
+.tooltiptext.left-border::after {
   margin-left: -115px;
 }
 
-.achievement .tooltiptext.right-border::after{
+.tooltiptext.right-border::after {
   margin-left: 105px;
 }
 
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.achievement:hover .tooltiptext {
+.achievement:hover + .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.tournament-list {
+  text-align: left;
+  margin-left: 10%;
 }
 
 .tournament-item {
   display: flex;
   vertical-align: center;
+  margin-left: -10%;
 }
 
 .circle {

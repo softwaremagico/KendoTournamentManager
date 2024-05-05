@@ -6,31 +6,33 @@ package com.softwaremagico.kt.core.providers;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,23 +40,49 @@ import java.util.stream.Stream;
 
 @Repository
 public class AuthenticatedUserProvider {
+
+    public static final String GUEST_USER = "guest";
+    public static final String GUEST_ROLE = "guest";
+
     private final AuthenticatedUserRepository authenticatedUserRepository;
 
+    private final ParticipantProvider participantProvider;
+
+
+    private final boolean guestEnabled;
+
     @Autowired
-    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository) {
+    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticatedUserRepository = authenticatedUserRepository;
+        this.participantProvider = participantProvider;
+        guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
 
-    public Optional<AuthenticatedUser> findByUsername(String username) {
-        return authenticatedUserRepository.findByUsername(username);
+    public Optional<IAuthenticatedUser> findByUsername(String username) {
+        //Create guest user on the fly
+        if (Objects.equals(username, GUEST_USER) && guestEnabled) {
+            final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER);
+            guest.setRoles(Collections.singleton(GUEST_ROLE));
+            return Optional.of(guest);
+        }
+        final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsername(username);
+        if (authenticatedUser.isPresent()) {
+            return Optional.of(authenticatedUser.get());
+        }
+        final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
+        if (participant.isPresent()) {
+            return Optional.of(participant.get());
+        }
+        return Optional.empty();
     }
 
     public long count() {
         return authenticatedUserRepository.count();
     }
 
-    public Optional<AuthenticatedUser> findByUniqueId(String uniqueId) {
+    public Optional<IAuthenticatedUser> findByUniqueId(String uniqueId) {
         return findByUsername(uniqueId);
     }
 
@@ -90,6 +118,10 @@ public class AuthenticatedUserProvider {
 
     public void delete(AuthenticatedUser authenticatedUser) {
         authenticatedUserRepository.delete(authenticatedUser);
+    }
+
+    public void deleteAll() {
+        authenticatedUserRepository.deleteAll();
     }
 
 }

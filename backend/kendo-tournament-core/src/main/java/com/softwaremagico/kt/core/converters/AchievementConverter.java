@@ -6,21 +6,18 @@ package com.softwaremagico.kt.core.converters;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *  
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *  
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *  
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -29,24 +26,27 @@ import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AchievementConverter extends ElementConverter<Achievement, AchievementDTO, AchievementConverterRequest> {
     private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
+    private final ParticipantReducedConverter participantReducedConverter;
     private final ParticipantConverter participantConverter;
     private final ParticipantProvider participantProvider;
 
-    public AchievementConverter(TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                                ParticipantConverter participantConverter, ParticipantProvider participantProvider) {
+    public AchievementConverter(TournamentConverter tournamentConverter, TournamentRepository tournamentRepository,
+                                ParticipantReducedConverter participantReducedConverter, ParticipantConverter participantConverter,
+                                ParticipantProvider participantProvider) {
         this.tournamentConverter = tournamentConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.participantProvider = participantProvider;
     }
@@ -59,15 +59,15 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
         try {
             achievementDTO.setTournament(tournamentConverter.convert(
                     new TournamentConverterRequest(from.getEntity().getTournament())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
+        } catch (LazyInitializationException | FatalBeanException e) {
             achievementDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
-            achievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
-        } catch (LazyInitializationException | InvalidPropertyException e) {
-            achievementDTO.setParticipant(participantConverter.convert(
+        } catch (LazyInitializationException | FatalBeanException e) {
+            achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }
         return achievementDTO;

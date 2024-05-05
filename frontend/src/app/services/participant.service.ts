@@ -14,7 +14,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 })
 export class ParticipantService {
 
-  private baseUrl = this.environmentService.getBackendUrl() + '/participants';
+  private baseUrl: string = this.environmentService.getBackendUrl() + '/participants';
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService, private messageService: MessageService,
               private loggerService: LoggerService, public loginService: LoginService,
@@ -23,7 +23,7 @@ export class ParticipantService {
 
   getAll(): Observable<Participant[]> {
     const url: string = `${this.baseUrl}`;
-    return this.http.get<Participant[]>(url, this.loginService.httpOptions)
+    return this.http.get<Participant[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched all Participants`),
@@ -36,7 +36,7 @@ export class ParticipantService {
 
   get(id: number): Observable<Participant> {
     const url: string = `${this.baseUrl}/${id}`;
-    return this.http.get<Participant>(url, this.loginService.httpOptions)
+    return this.http.get<Participant>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched participant id=${id}`),
@@ -47,9 +47,22 @@ export class ParticipantService {
       );
   }
 
-  deleteById(id: number) {
+  getByUsername(): Observable<Participant> {
+    const url: string = `${this.baseUrl}/jwt`;
+    return this.http.get<Participant>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched participant from jwt`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Participant>(`invalid participant from jwt`))
+      );
+  }
+
+  deleteById(id: number): void {
     const url: string = `${this.baseUrl}/${id}`;
-    this.http.delete(url, this.loginService.httpOptions)
+    this.http.delete(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting participant id=${id}`),
@@ -62,7 +75,7 @@ export class ParticipantService {
 
   delete(participant: Participant): Observable<Participant> {
     const url: string = `${this.baseUrl}/delete`;
-    return this.http.post<Participant>(url, participant, this.loginService.httpOptions)
+    return this.http.post<Participant>(url, participant)
       .pipe(
         tap({
           next: () => this.loggerService.info(`deleting participant ${participant}`),
@@ -75,7 +88,7 @@ export class ParticipantService {
 
   add(participant: Participant): Observable<Participant> {
     const url: string = `${this.baseUrl}`;
-    return this.http.post<Participant>(url, participant, this.loginService.httpOptions)
+    return this.http.post<Participant>(url, participant)
       .pipe(
         tap({
           next: (newParticipant: Participant) => this.loggerService.info(`adding participant ${newParticipant}`),
@@ -89,7 +102,7 @@ export class ParticipantService {
 
   update(participant: Participant): Observable<Participant> {
     const url: string = `${this.baseUrl}`;
-    return this.http.put<Participant>(url, participant, this.loginService.httpOptions)
+    return this.http.put<Participant>(url, participant)
       .pipe(
         tap({
           next: (updatedParticipant: Participant) => this.loggerService.info(`updating participant ${updatedParticipant}`),

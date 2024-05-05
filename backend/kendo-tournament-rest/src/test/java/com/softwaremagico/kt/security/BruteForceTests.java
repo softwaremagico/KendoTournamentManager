@@ -6,21 +6,18 @@ package com.softwaremagico.kt.security;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -99,7 +96,8 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginBlocked() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
+        AuthenticatedUser authenticatedUser =
+                authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());
@@ -138,7 +136,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.status().isLocked())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
         System.out.println("------------------------- End Expected Logged Exception -------------------------");
@@ -146,7 +144,8 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void testLoginCountReset() throws Exception {
-        AuthenticatedUser authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
+        AuthenticatedUser authenticatedUser =
+                authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, (String[]) null);
 
         AuthRequest request = new AuthRequest();
         request.setUsername(authenticatedUser.getUsername());

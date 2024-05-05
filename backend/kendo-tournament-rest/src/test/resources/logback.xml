@@ -11,7 +11,7 @@
     </appender>
 
     <!-- Custom ones -->
-    <logger name="com.softwaremagico.kt.logger.EncryptorLogger" additivity="false" level="ERROR">
+    <logger name="com.softwaremagico.kt.logger.EncryptorLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.softwaremagico.kt.logger.KendoTournamentLogger" additivity="false" level="DEBUG">
@@ -51,9 +51,6 @@
             level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="net.sf.ehcache" level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
     <logger name="springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping" additivity="false"
             level="ERROR">
         <appender-ref ref="CONSOLE"/>
@@ -63,6 +60,14 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="org.springframework.boot.web.embedded.tomcat.TomcatWebServer" additivity="false" level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.ehcache.core.EhcacheManager" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <!-- For showing hibernate statistics -->
+    <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false"
+            level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

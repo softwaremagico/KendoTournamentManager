@@ -28,7 +28,8 @@ database.encryption.key=mypassword
 #### JWT secret key
 
 This setting configures the encryption token used for the communication between the frontend and the backend. Any value
-is fine here meanwhile is kept secret.
+is fine here meanwhile is kept secret. If `jwt_secret` is left empty, the system will generate a random one on start.
+Random is more secure, but any user will be forced to log in into the system again if the server is restarted.
 
 ```
 jwt.secret=anotherpassword
@@ -81,7 +82,7 @@ on `auth/public/login` path, and the admin user credentials described previously
 
 In the case you want to run the tests, run `mvn test` on the `backend` folder to execute all tests.
 
-
 # 3rd party components
 
-Font used on pdf is: ArchitectsDaughter by [Kimberly Geswein](https://fonts.google.com/specimen/Architects+Daughter/about). 
+Font used on pdf is: ArchitectsDaughter
+by [Kimberly Geswein](https://fonts.google.com/specimen/Architects+Daughter/about). 

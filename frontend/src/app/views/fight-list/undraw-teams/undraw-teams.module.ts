@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {UndrawTeamsComponent} from "./undraw-teams.component";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
 import {MatTabsModule} from "@angular/material/tabs";
@@ -8,7 +8,6 @@ import {TranslateModule} from "@ngx-translate/core";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
-
 
 
 @NgModule({

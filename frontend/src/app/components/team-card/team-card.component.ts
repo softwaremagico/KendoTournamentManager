@@ -11,4 +11,10 @@ export class TeamCardComponent {
   @Input()
   team: Team;
 
+  @Input()
+  minify: boolean = false;
+
+  @Input()
+  disableDrag: boolean = false;
+
 }

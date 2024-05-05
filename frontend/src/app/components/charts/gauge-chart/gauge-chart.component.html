@@ -1,15 +1,15 @@
-<div class="frame"  *ngIf="chartOptions">
-  <div class="box shadow" [ngStyle]="{'height': [height]+'px'}">
-    <apx-chart #chart id="chart"
-               [series]="chartOptions.series"
+<div *ngIf="chartOptions" class="frame">
+  <div [ngStyle]="{'height': [height]+'px'}" class="box">
+    <apx-chart #chart [chart]="chartOptions.chart"
                [colors]="chartOptions.colors"
                [fill]="chartOptions.fill"
-               [chart]="chartOptions.chart"
-               [plotOptions]="chartOptions.plotOptions"
-               [tooltip]="chartOptions.tooltip"
-               [title]="chartOptions.title"
                [labels]="chartOptions.labels"
+               [plotOptions]="chartOptions.plotOptions"
+               [series]="chartOptions.series"
                [theme]="chartOptions.theme"
+               [title]="chartOptions.title"
+               [tooltip]="chartOptions.tooltip"
+               id="chart"
     ></apx-chart>
   </div>
 </div>

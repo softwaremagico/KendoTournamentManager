@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
@@ -16,6 +16,12 @@ import {truncate} from "../../utils/maths/truncate";
 import {GaugeChartData} from "../../components/charts/gauge-chart/gauge-chart-data";
 import {RankingService} from "../../services/ranking.service";
 import {CompetitorRanking} from "../../models/competitor-ranking";
+import {AchievementsService} from "../../services/achievements.service";
+import {Achievement} from "../../models/achievement.model";
+import {ParticipantService} from "../../services/participant.service";
+import {Participant} from "../../models/participant";
+import {LoginService} from "../../services/login.service";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -26,7 +32,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   pipe: DatePipe;
 
-  private readonly participantId: number | undefined;
+  private participantId: number | undefined;
+  private temporalToken: string | null;
   public participantStatistics: ParticipantStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
@@ -35,10 +42,16 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public receivedHitsTypeChartData: PieChartData;
   public performanceRadialData: GaugeChartData;
   public performance: [string, number][];
+  public achievements: Achievement[];
 
-  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+  public participant: Participant;
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute,
+              rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
-              private translateService: TranslateService, private rankingService: RankingService) {
+              private translateService: TranslateService, private rankingService: RankingService,
+              private achievementService: AchievementsService, private participantService: ParticipantService,
+              private loginService: LoginService, public dialog: MatDialog) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -48,12 +61,17 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
         this.goBackToUsers();
       }
     } else {
-      this.goBackToUsers();
+      //Gets participant from URL parameter (from QR codes).
+      this.participantId = Number(this.activatedRoute.snapshot.queryParamMap.get('participantId'));
+      this.temporalToken = this.activatedRoute.snapshot.queryParamMap.get('temporalToken');
+      if (!this.participantId || isNaN(this.participantId)) {
+        this.goBackToUsers();
+      }
     }
     this.setLocale();
   }
 
-  private setLocale() {
+  private setLocale(): void {
     if (this.userSessionService.getLanguage() === 'es' || this.userSessionService.getLanguage() === 'ca') {
       this.pipe = new DatePipe('es');
     } else if (this.userSessionService.getLanguage() === 'it') {
@@ -68,18 +86,54 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
   ngOnInit(): void {
-    this.generateStatistics();
+    if (this.loginService.getJwtValue()) {
+      //Already logged in.
+      this.initializeData();
+    } else {
+      if (this.temporalToken) {
+        this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
+          this.initializeData();
+        });
+      } else {
+        this.goBackToUsers();
+      }
+    }
+  }
+
+  initializeData(): void {
+    if (this.participantId) {
+      this.participantService.get(this.participantId).subscribe((_participant: Participant): void => {
+        this.participant = _participant;
+      })
+      this.generateStatistics();
+    } else {
+      //If a participant is logged in directly to this page. Get his id.
+      this.participantService.getByUsername().subscribe({
+        next: (_participant: Participant): void => {
+          this.participantId = _participant.id;
+          this.participant = _participant;
+          this.generateStatistics();
+        },
+        error: (): void => {
+          console.error("User logged in is not a participant");
+          this.goBackToUsers()
+        }
+      });
+    }
   }
 
   generateStatistics(): void {
     this.systemOverloadService.isTransactionalBusy.next(true);
-    this.rankingService.getCompetitorsRanking(this.participantId!).subscribe((_competitorRanking: CompetitorRanking) => {
+    this.rankingService.getCompetitorsRanking(this.participantId!).subscribe((_competitorRanking: CompetitorRanking): void => {
       this.competitorRanking = _competitorRanking;
     })
-    this.statisticsService.getParticipantStatistics(this.participantId!).subscribe((_participantStatistics: ParticipantStatistics) => {
+    this.statisticsService.getParticipantStatistics(this.participantId!).subscribe((_participantStatistics: ParticipantStatistics): void => {
       this.participantStatistics = ParticipantStatistics.clone(_participantStatistics);
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
+    });
+    this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {
+      this.achievements = _achievements;
     });
   }
 
@@ -97,14 +151,16 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     performance.push(['willpower', participantStatistics.totalTournaments > 0 ?
       (participantStatistics.tournaments / participantStatistics.totalTournaments) * 100 : 0]);
     const aggressivenessMargin: number = 20;
-    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageTime > 0 ?
-      Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageTime - aggressivenessMargin) / 180)) * 100, 2)) : 0]);
+    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageWinTime > 0 ?
+      Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageWinTime - aggressivenessMargin) / 180)) * 100, 2)) : 0]);
+    performance.push(['affection', participantStatistics.participantFightStatistics.averageLostTime > 0 ?
+      Math.min(100, truncate(((participantStatistics.participantFightStatistics.averageLostTime + aggressivenessMargin) / 180) * 100, 2)) : 0]);
     return performance;
   }
 
   obtainPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
-    if (participantStatistics && participantStatistics.participantFightStatistics) {
+    if (participantStatistics?.participantFightStatistics) {
       scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.menNumber ? participantStatistics.participantFightStatistics.menNumber : 0]);
       scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.koteNumber ? participantStatistics.participantFightStatistics.koteNumber : 0]);
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
@@ -116,7 +172,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   obtainReceivedPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
-    if (participantStatistics && participantStatistics.participantFightStatistics) {
+    if (participantStatistics?.participantFightStatistics) {
       scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.receivedMenNumber ? participantStatistics.participantFightStatistics.receivedMenNumber : 0]);
       scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
@@ -126,7 +182,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     return scores;
   }
 
-  goBackToUsers() {
+  goBackToUsers(): void {
     this.router.navigate(['/participants'], {});
   }
 
@@ -144,4 +200,6 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
   }
+
+
 }

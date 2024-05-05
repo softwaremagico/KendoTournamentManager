@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSliderModule} from '@angular/material/slider';
@@ -8,7 +8,6 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import {FlexLayoutModule} from '@angular/flex-layout';
 import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
@@ -31,14 +30,12 @@ import {MatCardModule} from "@angular/material/card";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {BasicTableModule} from "./components/basic/basic-table/basic-table.module";
-import {ParticipantListComponent} from './views/participant-list/participant-list.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {TournamentListComponent} from './views/tournament-list/tournament-list.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {IconModule} from "./components/icons";
 import {registerLocaleData} from "@angular/common";
 import localeES from "@angular/common/locales/es";
-import localeCAT from "@angular/common/locales/ca-ES-VALENCIA";
+import localeCAT from "@angular/common/locales/ca-ES-valencia";
 import localeIT from "@angular/common/locales/it";
 import localeDE from "@angular/common/locales/de";
 import localeNL from "@angular/common/locales/nds-NL";
@@ -61,10 +58,10 @@ import {
   AuthenticatedUserDialogBoxModule
 } from "./views/authenticated-user-list/authenticated-user-dialog-box/authenticated-user-dialog-box.module";
 import {ClubDialogBoxModule} from "./views/club-list/club-dialog-box/club-dialog-box.module";
-import {CompetitorsRankingModule} from "./views/fight-list/competitors-ranking/competitors-ranking.module";
+import {CompetitorsRankingModule} from "./components/competitors-ranking/competitors-ranking.module";
 import {FightDialogBoxModule} from "./views/fight-list/fight-dialog-box/fight-dialog-box.module";
 import {LeagueGeneratorModule} from "./views/fight-list/league-generator/league-generator.module";
-import {TeamRankingModule} from "./views/fight-list/team-ranking/team-ranking.module";
+import {TeamRankingModule} from "./components/team-ranking/team-ranking.module";
 import {UndrawTeamsModule} from "./views/fight-list/undraw-teams/undraw-teams.module";
 import {
   ParticipantDialogBoxModule
@@ -88,21 +85,40 @@ import {
   TournamentScoreEditorModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-score-editor/tournament-score-editor.module";
 import {RoleSelectorDialogBoxModule} from "./components/role-selector-dialog-box/role-selector-dialog-box.module";
-import {InvalidJwtInterceptor} from "./interceptors/InvalidJwtInterceptor";
 import {AchievementTileModule} from "./components/achievement-tile/achievement-tile.module";
 import {AchievementWallModule} from "./components/achievement-wall/achievement-wall.module";
 import {BarChartModule} from "./components/charts/bar-chart/bar-chart.module";
 import {TournamentStatisticsComponent} from './views/tournament-statistics/tournament-statistics.component';
 import {PieChartModule} from "./components/charts/pie-chart/pie-chart.module";
 import {StackedBarsChartModule} from "./components/charts/stacked-bars-chart/stacked-bars-chart.module";
-import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
 import {LineChartModule} from "./components/charts/line-chart/line-chart.module";
 import {NgApexchartsModule} from "ng-apexcharts";
 import {RadarChartModule} from "./components/charts/radar-chart/radar-chart.module";
 import {RadialChartModule} from "./components/charts/radial-chart/radial-chart.module";
 import {GaugeChartModule} from "./components/charts/gauge-chart/gauge-chart.module";
-import { ParticipantStatisticsComponent } from './views/participant-statistics/participant-statistics.component';
+import {ParticipantStatisticsComponent} from './views/participant-statistics/participant-statistics.component';
 import {ProgressBarModule} from "./components/progress-bar/progress-bar.module";
+import {HeaderInterceptor} from "./interceptors/header-interceptor";
+import {HttpErrorInterceptor} from "./interceptors/http-error-interceptor";
+import {TournamentListModule} from "./views/tournament-list/tournament-list.module";
+import {ParticipantListModule} from "./views/participant-list/participant-list.module";
+import {
+  TournamentBracketsModule
+} from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
+import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
+import {ShiaijoModule} from "./components/tournament-brackets-editor/tournament-brackets/shiaijo/shiaijo.module";
+import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
+import {
+  TournamentBracketsEditorModule
+} from "./components/tournament-brackets-editor/tournament-brackets-editor.module";
+import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator/tournament-generator.module";
+import {
+  TournamentExtraPropertiesModule
+} from "./views/tournament-list/tournament-dialog-box/tournament-extra-properties/tournament-extra-properties.module";
+import {RxStompService} from "./websockets/rx-stomp.service";
+import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
+import {TournamentQrCodeModule} from './components/tournament-qr-code/tournament-qr-code.module';
+import {ParticipantQrCodeModule} from './components/participant-qr-code/participant-qr-code.module';
 
 
 registerLocaleData(localeES, "es");
@@ -116,115 +132,135 @@ registerLocaleData(localeNL, "nl");
     AppComponent,
     ClubListComponent,
     LoginComponent,
-    ParticipantListComponent,
-    TournamentListComponent,
     AuthenticatedUserListComponent,
     PasswordsComponent,
     TournamentStatisticsComponent,
     ParticipantStatisticsComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FlexLayoutModule,
-        HttpClientModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSliderModule,
-        AppRoutingModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatMenuModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatDialogModule,
-        MatSortModule,
-        MatInputModule,
-        TranslateModule.forRoot({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: httpTranslateLoader,
-                deps: [HttpClient]
-            }
-        }),
-        MatSelectModule,
-        MatSnackBarModule,
-        MatCardModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatExpansionModule,
-        MatCheckboxModule,
-        BasicTableModule,
-        MatAutocompleteModule,
-        DragDropModule,
-        IconModule,
-        MatTabsModule,
-        MatProgressSpinnerModule,
-        MatTooltipModule,
-        RbacModule,
-        DrawModule,
-        UserScoreModule,
-        DuelModule,
-        MatSpinnerOverlayModule,
-        FightModule,
-        UntieFightModule,
-        TimerModule,
-        ConfirmationDialogModule,
-        AuthenticatedUserDialogBoxModule,
-        ClubDialogBoxModule,
-        CompetitorsRankingModule,
-        FightDialogBoxModule,
-        LeagueGeneratorModule,
-        TeamRankingModule,
-        ParticipantDialogBoxModule,
-        ParticipantPictureDialogModule,
-        TournamentTeamsModule,
-        TournamentRolesModule,
-        TournamentDialogBoxModule,
-        UndrawTeamsModule,
-        FightListModule,
-        FightStatisticsPanelModule,
-        MatSlideToggleModule,
-        WebcamModule,
-        ParticipantPictureModule,
-        PictureDialogBoxModule,
-        TournamentImageSelectorModule,
-        TournamentScoreEditorModule,
-        RoleSelectorDialogBoxModule,
-        AchievementTileModule,
-        AchievementWallModule,
-        BarChartModule,
-        PieChartModule,
-        StackedBarsChartModule,
-        LineChartModule,
-        RadarChartModule,
-        NgApexchartsModule,
-        RadialChartModule,
-        GaugeChartModule,
-        ProgressBarModule
-    ],
-  providers: [CookieService, {
-    provide: MatPaginatorIntl,
-    useFactory: (translate: TranslateService) => {
-      const service = new PaginatorI18n();
-      service.injectTranslateService(translate);
-      return service;
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSliderModule,
+    AppRoutingModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatMenuModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatSortModule,
+    MatInputModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient]
+      }
+    }),
+    MatSelectModule,
+    MatSnackBarModule,
+    MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    BasicTableModule,
+    MatAutocompleteModule,
+    DragDropModule,
+    IconModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    RbacModule,
+    DrawModule,
+    UserScoreModule,
+    DuelModule,
+    MatSpinnerOverlayModule,
+    FightModule,
+    UntieFightModule,
+    TimerModule,
+    ConfirmationDialogModule,
+    AuthenticatedUserDialogBoxModule,
+    ClubDialogBoxModule,
+    CompetitorsRankingModule,
+    FightDialogBoxModule,
+    LeagueGeneratorModule,
+    TeamRankingModule,
+    ParticipantDialogBoxModule,
+    ParticipantPictureDialogModule,
+    TournamentTeamsModule,
+    TournamentRolesModule,
+    TournamentDialogBoxModule,
+    UndrawTeamsModule,
+    FightListModule,
+    FightStatisticsPanelModule,
+    MatSlideToggleModule,
+    WebcamModule,
+    ParticipantPictureModule,
+    PictureDialogBoxModule,
+    TournamentImageSelectorModule,
+    TournamentScoreEditorModule,
+    TournamentExtraPropertiesModule,
+    RoleSelectorDialogBoxModule,
+    AchievementTileModule,
+    AchievementWallModule,
+    BarChartModule,
+    PieChartModule,
+    StackedBarsChartModule,
+    LineChartModule,
+    RadarChartModule,
+    NgApexchartsModule,
+    RadialChartModule,
+    GaugeChartModule,
+    ProgressBarModule,
+    TournamentListModule,
+    ParticipantListModule,
+    ProgressBarModule,
+    TournamentBracketsModule,
+    ArrowModule,
+    ShiaijoModule,
+    TournamentBracketsEditorModule,
+    TournamentGeneratorModule,
+    TournamentQrCodeModule,
+    ParticipantQrCodeModule,
+  ],
+  providers: [
+    CookieService, {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const service: PaginatorI18n = new PaginatorI18n();
+        service.injectTranslateService(translate);
+        return service;
+      },
+      deps: [TranslateService]
     },
-    deps: [TranslateService]
-  },
+    {
+      provide: ErrorHandler,
+      useClass: LocalErrorHandler
+    },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: InvalidJwtInterceptor,
+      useClass: HeaderInterceptor,
       multi: true
-    },],
+    }, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    }, {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
 
-export function httpTranslateLoader(http: HttpClient) {
+export function httpTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
 }

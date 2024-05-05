@@ -6,30 +6,41 @@ package com.softwaremagico.kt.rest;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.softwaremagico.kt.core.controller.*;
-import com.softwaremagico.kt.core.controller.models.*;
+import com.softwaremagico.kt.core.controller.ClubController;
+import com.softwaremagico.kt.core.controller.DuelController;
+import com.softwaremagico.kt.core.controller.FightController;
+import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.ParticipantController;
+import com.softwaremagico.kt.core.controller.RoleController;
+import com.softwaremagico.kt.core.controller.TeamController;
+import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
+import com.softwaremagico.kt.core.controller.models.ClubDTO;
+import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
+import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -54,11 +65,16 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 
 @SpringBootTest
@@ -108,6 +124,15 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     @Autowired
     private ParticipantController participantController;
+
+    @Autowired
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
+
+    @Autowired
+    private TournamentController tournamentController;
+
+    @Autowired
+    private ClubController clubController;
 
 
     private MockMvc mockMvc;
@@ -281,7 +306,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
             RoleDTO roleDTO = fromJson(createResult.getResponse().getContentAsString(), RoleDTO.class);
             Assert.assertEquals(roleDTO.getTournament(), tournamentDTO);
-            Assert.assertEquals(roleDTO.getParticipant(), competitor);
+            Assert.assertEquals(new ParticipantReducedDTO(roleDTO.getParticipant()), new ParticipantReducedDTO(competitor));
             Assert.assertEquals(roleDTO.getRoleType(), RoleType.COMPETITOR);
         }
 
@@ -303,16 +328,14 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         int teamMember = 0;
 
         MvcResult createResult = this.mockMvc
-                .perform(get("/groups/tournament/" + tournamentDTO.getId())
+                .perform(get("/groups/tournaments/" + tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> groupsDTO = objectMapper.readValue(createResult.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        List<GroupDTO> groupsDTO = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), GroupDTO[].class));
 
         createResult = this.mockMvc
                 .perform(get("/participants")
@@ -322,9 +345,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<ParticipantDTO> participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(),
-                new TypeReference<>() {
-                });
+        ParticipantDTO[] participantDTOs = objectMapper.readValue(createResult.getResponse().getContentAsString(), ParticipantDTO[].class);
 
         for (ParticipantDTO competitor : participantDTOs) {
             // Create a new team.
@@ -393,19 +414,17 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<FightDTO> tournamentFights = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<FightDTO> tournamentFights = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), FightDTO[].class));
 
         createResult = this.mockMvc
-                .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
+                .perform(get("/groups/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<GroupDTO> tournamentGroups = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), GroupDTO[].class));
 
         //Check group has been created.
         Assert.assertEquals(tournamentGroups.size(), 1);
@@ -450,28 +469,26 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         }
 
         MvcResult createResult = this.mockMvc
-                .perform(get("/groups/tournament/{tournamentId}", tournamentDTO.getId())
+                .perform(get("/groups/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<GroupDTO> tournamentGroups = objectMapper.readValue(createResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<GroupDTO> tournamentGroups = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), GroupDTO[].class));
 
         Assert.assertEquals(tournamentGroups.size(), 1);
 
         MvcResult rankingResult = this.mockMvc
-                .perform(get("/rankings/teams/tournament/{tournamentId}", tournamentDTO.getId())
+                .perform(get("/rankings/teams/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
 
-        List<ScoreOfTeam> scores = objectMapper.readValue(rankingResult.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        List<ScoreOfTeam> scores = Arrays.asList(objectMapper.readValue(createResult.getResponse().getContentAsString(), ScoreOfTeam[].class));
 
 
         for (int i = 0; i < scores.size() - 1; i++) {
@@ -483,7 +500,15 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         resetGroup(tournamentDTO);
     }
 
-    @AfterClass
+    @Test(dependsOnMethods = "testSimpleWinner")
+    public void ensureParticipantsAreNotModifiedWhenUsingreduceParticipantDTO() {
+        participantController.get().forEach(participantDTO -> {
+            Assert.assertNotNull(participantDTO.getIdCard());
+            Assert.assertTrue(participantDTO.getIdCard().startsWith("0000"));
+        });
+    }
+
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() throws Exception {
         this.mockMvc
                 .perform(delete("/tournaments/{tournamentId}", tournamentDTO.getId())
@@ -499,6 +524,21 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         Assert.assertEquals(roleController.count(tournamentDTO), 0);
         Assert.assertEquals(teamController.count(tournamentDTO), 0);
 
+    }
+
+    @AfterClass(alwaysRun = true, dependsOnMethods = "deleteTournament")
+    public void cleanUp() {
+        groupController.deleteAll();
+        fightController.deleteAll();
+        duelController.deleteAll();
+        teamController.deleteAll();
+        roleController.deleteAll();
+        tournamentExtraPropertyController.deleteAll();
+        tournamentController.deleteAll();
+
+        participantController.deleteAll();
+        clubController.deleteAll();
+        authenticatedUserController.deleteAll();
     }
 
 }
