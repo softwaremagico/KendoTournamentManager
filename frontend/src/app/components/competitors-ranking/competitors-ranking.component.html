@@ -1,5 +1,8 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="table-container">
+  <input *ngIf="!this.club && !this.tournament" class="daySelector" type="number" matInput min="0" class="days-selector" [(ngModel)]="numberOfDays"
+         placeholder="{{'daysFrom' | translate}}" [matTooltipShowDelay]="1000"  matTooltip="{{'daysFrom' | translate}}"
+         required (change)="daysChanged()" (keyup)="daysChanged()">
   <table class="competitor-ranking-table">
     <caption class="table-caption">{{'competitorsRanking' | translate}}</caption>
     <thead>

@@ -25,3 +25,4 @@ default_data.sql
 .env_bak
 target/*
 *.properties_bak
+*.properties.mysql

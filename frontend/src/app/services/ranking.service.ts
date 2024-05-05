@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -68,10 +68,16 @@ export class RankingService {
     );
   }
 
-  getCompetitorsGlobalScoreRanking(participants: Participant[] | undefined): Observable<ScoreOfCompetitor[]> {
+  getCompetitorsGlobalScoreRanking(participants: Participant[] | undefined, fromDays: number | undefined): Observable<ScoreOfCompetitor[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors';
-    return this.http.post<ScoreOfCompetitor[]>(url, participants)
+    return this.http.post<ScoreOfCompetitor[]>(url, participants, {
+      params: new HttpParams({
+        fromObject: {
+          'from': fromDays ? fromDays : 0,
+        }
+      })
+    })
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
