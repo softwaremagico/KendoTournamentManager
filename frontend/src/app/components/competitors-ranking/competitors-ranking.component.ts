@@ -54,7 +54,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
         this.competitorsScore = competitorsScore;
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRanking(undefined).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
+      this.rankingService.getCompetitorsGlobalScoreRanking(undefined, this.numberOfDays).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
         //Timeout to scroll after the component is drawn.
         setTimeout((): void => {
@@ -90,7 +90,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
         anchor.click();
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined).subscribe((pdf: Blob): void => {
+      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined, this.numberOfDays).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
@@ -109,6 +109,6 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   }
 
   daysChanged(): void {
-
+    this.getRanking();
   }
 }

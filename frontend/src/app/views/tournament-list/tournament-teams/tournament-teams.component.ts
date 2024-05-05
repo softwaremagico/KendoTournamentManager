@@ -381,7 +381,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
 
-    this.rankingService.getCompetitorsGlobalScoreRanking(participants).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
+    this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
       for (let team of this.teams) {
         team.members = [];
         for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
