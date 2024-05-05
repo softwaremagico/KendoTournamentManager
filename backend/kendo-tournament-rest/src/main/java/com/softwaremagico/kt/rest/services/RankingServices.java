@@ -94,6 +94,7 @@ public class RankingServices {
         this.zipController = zipController;
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -103,6 +104,7 @@ public class RankingServices {
         return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,6 +113,7 @@ public class RankingServices {
                                                                            HttpServletRequest request) {
         return rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -159,6 +162,7 @@ public class RankingServices {
         return rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/clubs/{clubId}/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -176,6 +180,7 @@ public class RankingServices {
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -196,6 +201,7 @@ public class RankingServices {
         }
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -205,6 +211,7 @@ public class RankingServices {
         return rankingController.getTeamsScoreRankingFromGroup(groupId);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -213,6 +220,7 @@ public class RankingServices {
                                                                    HttpServletRequest request) {
         return rankingController.getTeamsScoreRankingFromTournament(tournamentId);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -232,6 +240,7 @@ public class RankingServices {
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -253,6 +262,7 @@ public class RankingServices {
         }
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets complete tournament summary as html", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/summary/{tournamentId}/html", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -266,6 +276,7 @@ public class RankingServices {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Download all files as a zip", security = @SecurityRequirement(name = "bearerAuth"))

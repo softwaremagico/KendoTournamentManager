@@ -26,3 +26,4 @@ default_data.sql
 target/*
 *.properties_bak
 *.properties.mysql
+*.properties.postgres
