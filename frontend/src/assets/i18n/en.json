@@ -881,6 +881,7 @@
     "achievementAllGenerated": "A total of {{achievementsNumber}} achievements have been generated for {{tournamentNumber}} tournaments.",
     "shiaijoFinished": "All shiaijo {{shiaijoName}} matches have ended.",
     "userAdminGenerated": "User {{userName}} has been created!"
-  }
+  },
+  "daysFrom": "Apply only these days"
 }
 
