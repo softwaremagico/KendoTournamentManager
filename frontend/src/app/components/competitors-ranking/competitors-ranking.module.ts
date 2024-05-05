@@ -7,6 +7,10 @@ import {MatIconModule} from "@angular/material/icon";
 import {RbacModule} from "../../pipes/rbac-pipe/rbac.module";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatButtonModule} from "@angular/material/button";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatInputModule} from "@angular/material/input";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 
 @NgModule({
@@ -18,7 +22,13 @@ import {MatButtonModule} from "@angular/material/button";
     MatIconModule,
     RbacModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    FormsModule,
+    MatInputModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    MatSlideToggleModule
   ]
 })
-export class CompetitorsRankingModule { }
+export class CompetitorsRankingModule {
+}

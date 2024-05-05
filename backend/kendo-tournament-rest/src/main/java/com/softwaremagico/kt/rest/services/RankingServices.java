@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -60,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -113,10 +115,12 @@ public class RankingServices {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestBody(required = false) Set<ParticipantDTO> participants,
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestParam(name = "from") Optional<Integer> from,
+                                                                       @RequestBody(required = false) Set<ParticipantDTO> participants,
                                                                        HttpServletRequest request) {
-        return rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>());
+        return rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>(), from.orElse(null));
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets participant global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -125,12 +129,15 @@ public class RankingServices {
         return rankingController.getCompetitorRanking(participantController.get(competitorId));
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
-    public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestBody(required = false) Set<ParticipantDTO> participants,
+    public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestParam(name = "from") Optional<Integer> from,
+                                                        @RequestBody(required = false) Set<ParticipantDTO> participants,
                                                         Locale locale, HttpServletResponse response, HttpServletRequest request) {
-        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>());
+        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>(),
+                from.orElse(null));
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename("competitors score.pdf").build();
