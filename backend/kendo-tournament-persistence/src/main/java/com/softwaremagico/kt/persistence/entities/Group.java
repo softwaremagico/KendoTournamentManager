@@ -6,31 +6,41 @@ package com.softwaremagico.kt.persistence.entities;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +74,7 @@ public class Group extends Element {
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer index = 0;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinTable(name = "fights_by_group", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "fight_id"))
     @OrderColumn(name = "group_index")
     private List<Fight> fights;
@@ -79,6 +89,31 @@ public class Group extends Element {
 
     public Group() {
         super();
+    }
+
+    public Group(Tournament tournament, int level, int index) {
+        super();
+        setTournament(tournament);
+        setLevel(level);
+        setIndex(index);
+    }
+
+    /**
+     * If the fightManager are over or fightManager are not needed.
+     *
+     * @param fights the fights.
+     * @return
+     */
+    public static boolean areFightsOverOrNull(List<Fight> fights) {
+        if (fights.size() > 0) {
+            for (final Fight fight : fights) {
+                if (!fight.isOver()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return true;
     }
 
     public Tournament getTournament() {
@@ -110,7 +145,11 @@ public class Group extends Element {
     }
 
     public void setFights(List<Fight> fights) {
-        this.fights = fights;
+        if (this.fights == null) {
+            this.fights = new ArrayList<>();
+        }
+        this.fights.clear();
+        this.fights.addAll(fights);
     }
 
     public void removeTeams() {
@@ -130,24 +169,6 @@ public class Group extends Element {
             return true;
         }
         return areFightsOverOrNull(getFights());
-    }
-
-    /**
-     * If the fightManager are over or fightManager are not needed.
-     *
-     * @param fights the fights.
-     * @return
-     */
-    public static boolean areFightsOverOrNull(List<Fight> fights) {
-        if (fights.size() > 0) {
-            for (final Fight fight : fights) {
-                if (!fight.isOver()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return true;
     }
 
     public int getNumberOfWinners() {
@@ -186,17 +207,21 @@ public class Group extends Element {
     }
 
     public void setUnties(List<Duel> unties) {
-        this.unties = unties;
+        if (this.unties == null) {
+            this.unties = new ArrayList<>();
+        }
+        this.unties.clear();
+        this.unties.addAll(unties);
     }
 
     @Override
     public String toString() {
-        return "Group{" +
-                "tournament=" + tournament +
-                ", shiaijo=" + shiaijo +
-                ", level=" + level +
-                ", index=" + index +
-                '}';
+        return "Group{"
+                + "tournament=" + tournament
+                + ", shiaijo=" + shiaijo
+                + ", level=" + level
+                + ", index=" + index
+                + '}';
     }
 }
 

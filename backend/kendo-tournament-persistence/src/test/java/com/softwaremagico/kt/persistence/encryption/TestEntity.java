@@ -6,25 +6,28 @@ package com.softwaremagico.kt.persistence.encryption;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *  
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *  
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *  
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import javax.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -38,6 +41,7 @@ public class TestEntity {
     private static final String STRING_CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int STRING_LENGTH = 1000;
     private static final int BYTES_LENGTH = 1000;
+    private static final int COLUMN_LENGTH = 1000;
     private static final SecureRandom random = new SecureRandom();
 
     @Id
@@ -45,34 +49,34 @@ public class TestEntity {
     private Long id;
 
     @Convert(converter = StringCryptoConverter.class)
-    @Column(length = 4 * STRING_LENGTH, nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     private String stringColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = IntegerCryptoConverter.class)
     private Integer intColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = LongCryptoConverter.class)
     private Long longColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = DoubleCryptoConverter.class)
     private Double doubleColumn;
 
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = ByteArrayCryptoConverter.class)
-    @Column(length = 4 * STRING_LENGTH, nullable = false)
     private byte[] bytesColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = LocalDateCryptoConverter.class)
     private LocalDate localDateColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime localDateTimeColumn;
 
-    @Column(nullable = false)
+    @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = TimestampCryptoConverter.class)
     private Timestamp timestampColumn;
 

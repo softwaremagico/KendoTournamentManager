@@ -1,62 +1,67 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
-  <form [formGroup]="registerForm" (ngSubmit)="doAction()">
+  <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <div class="content">
       <div class="data">
         <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-          <input formControlName="name" placeholder="{{ 'participantName' | translate}}"
-                 matInput required
-                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+          <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)" formControlName="name"
+                 matInput placeholder="{{ 'participantName' | translate}}"
+                 required>
         </mat-form-field>
         <mat-form-field *ngIf="actionName != 'Delete'">
-          <input formControlName="lastname" placeholder="{{ 'lastname' | translate}}"
-                 matInput required
-                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+          <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)" formControlName="lastname"
+                 matInput placeholder="{{ 'lastname' | translate}}"
+                 required>
         </mat-form-field>
         <mat-form-field *ngIf="actionName != 'Delete'">
-          <input formControlName="idCard" placeholder="{{ 'idCard' | translate}}" matInput
-                 required
-                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
+          <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)" formControlName="idCard" matInput
+                 placeholder="{{ 'idCard' | translate}}">
         </mat-form-field>
         <mat-form-field *ngIf="actionName != 'Delete'">
           <mat-label>{{ 'club' | translate}}</mat-label>
-          <input formControlName="club" type="text" placeholder="{{ 'filter' | translate}}"
-                 attr.aria-label="{{ 'club' | translate}}" matInput required
-                 [formControl]="formControl"
-                 [matAutocomplete]="auto"
-                 [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayClub">
-            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-              {{option.name}}
+          <mat-select [compareWith]="compareClubs"
+                      [(value)]="participant.club"
+                      [disabled]="rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)"
+                      formControlName="club">
+            <mat-option *ngFor="let club of clubs" [value]="club">
+              {{club.name}}
             </mat-option>
-          </mat-autocomplete>
+          </mat-select>
         </mat-form-field>
         <ng-template #elseTemplate>
-    <span
-      [innerHTML]="'participantDeleteQuestion' | translate : {name: participant.name, lastname: participant.lastname}"></span>
+          <span
+            [innerHTML]="'participantDeleteQuestion' | translate : {name: participant.name, lastname: participant.lastname}"></span>
         </ng-template>
       </div>
-      <div class="picture-container" *ngIf="participantPicture">
-        <img class="picture" alt="Participant's Picture" src="{{ participantPicture }}"/>
-        <button class="floating-button" mat-mini-fab type="button" (click)="deletePicture()" mat-flat-button color="warn">
-          <mat-icon>cancel</mat-icon></button>
+      <div *ngIf="participantPicture" class="picture-container">
+        <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
+        <button (click)="deletePicture()" class="floating-button" color="warn" mat-flat-button mat-mini-fab
+                type="button">
+          <mat-icon>cancel</mat-icon>
+        </button>
       </div>
     </div>
-    <div mat-dialog-actions class="button-container">
-      <button mat-raised-button type="button" (click)="addPicture()"
-              mat-flat-button
+    <div class="button-container" mat-dialog-actions>
+      <button (click)="addPicture()"
+              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.getActivities())"
               color="picture"
-              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)">
+              mat-flat-button
+              mat-raised-button
+              type="button">
         <mat-icon>add_a_photo</mat-icon>
-        {{'photo' | translate}}</button>
-      <button mat-raised-button type="submit" value="Submit"
-              [disabled]="registerForm.invalid" mat-flat-button
-              color="primary" *ngIf="(RbacActivity.EDIT_PARTICIPANT | rbac : this.rbacService.activities)">
+        {{'photo' | translate}}
+      </button>
+      <button *ngIf="(RbacActivity.EDIT_PARTICIPANT | rbac : this.rbacService.getActivities())"
+              [disabled]="registerForm.invalid" color="primary"
+              mat-flat-button mat-raised-button
+              type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{actionName.toLowerCase() | translate}}</button>
-      <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">
+        {{actionName.toLowerCase() | translate}}
+      </button>
+      <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button type="button">
         <mat-icon>cancel</mat-icon>
-        {{'cancel' | translate}}</button>
+        {{'cancel' | translate}}
+      </button>
     </div>
   </form>
 </div>

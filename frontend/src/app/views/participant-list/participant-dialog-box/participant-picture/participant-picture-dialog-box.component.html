@@ -2,44 +2,56 @@
   <div class="picture-engine">
     <div class="canvas">
       <div class="camera-frame">
-        <webcam [height]="512" [width]="390" [trigger]="clickOnCamera" (imageCapture)="pictureHandler($event)"
-                (initError)="errorHandler($event)" [imageType]="imageType" [videoOptions]="videoOptions"></webcam>
+        <webcam (imageCapture)="pictureHandler($event)" (initError)="errorHandler($event)" [height]="512"
+                [imageType]="imageType"
+                [trigger]="clickOnCamera" [videoOptions]="videoOptions" [width]="390"></webcam>
       </div>
       <div class="rectangle"></div>
       <div class="circle"></div>
     </div>
 
     <div class="gallery">
-      <div class="image-container" *ngFor="let image of pictures; let i = index">
-        <img [class.selected-image]="i === selectedPicture" src="{{ image }}" alt="Participant's Picture" (click)="selectImage(i)"/>
+      <div *ngFor="let image of pictures; let i = index" class="image-container">
+        <img (click)="selectImage(i)" (keydown)="selectImage(i)" [class.selected-image]="i === selectedPicture" alt="Participant's Picture"
+             src="{{ image }}"/>
       </div>
     </div>
   </div>
 
-  <div mat-dialog-actions class="button-container">
-    <button mat-raised-button type="button" (click)="takePicture()"
+  <div class="button-container" mat-dialog-actions>
+    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
+            color="picture"
             mat-flat-button
-            color="picture" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
+            mat-raised-button type="button">
       <mat-icon>add_a_photo</mat-icon>
-      {{'photo' | translate}}</button>
-    <button mat-raised-button type="button" (click)="switchCamera()"
+      {{'photo' | translate}}
+    </button>
+    <button (click)="switchCamera()"
+            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
             mat-flat-button
-            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
+            mat-raised-button
+            type="button">
       <mat-icon>switch_camera</mat-icon>
-      {{'switch' | translate}}</button>
-    <button mat-raised-button type="button" (click)="fileInput.click()" mat-flat-button
-            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.activities)">
+      {{'switch' | translate}}
+    </button>
+    <button (click)="fileInput.click()"
+            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.getActivities())"
+            mat-flat-button mat-raised-button
+            type="button">
       <mat-icon>upload_file</mat-icon>
       {{'upload' | translate}}
-      <input #fileInput type="file" accept=".jpg,.jpeg,.png" (change)="handleFileInput($event)" style="display:none;"/>
+      <input #fileInput (change)="handleFileInput($event)" accept=".jpg,.jpeg,.png" style="display:none;" type="file"/>
     </button>
-    <button mat-raised-button type="button" (click)="saveImage()" [disabled]="selectedPicture == undefined"
+    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
+            [disabled]="selectedPicture == undefined" color="primary"
             mat-flat-button
-            color="primary" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)">
+            mat-raised-button type="button">
       <mat-icon>photo_album</mat-icon>
-      {{'selectButton' | translate}}</button>
-    <button mat-raised-button type="button" (click)="closeDialog()" mat-flat-button color="warn">
+      {{'selectButton' | translate}}
+    </button>
+    <button (click)="closeDialog()" color="warn" mat-flat-button mat-raised-button type="button">
       <mat-icon>cancel</mat-icon>
-      {{'close' | translate}}</button>
+      {{'close' | translate}}
+    </button>
   </div>
 </div>

@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {LeagueGeneratorComponent} from "./league-generator.component";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TeamListModule} from "../../../components/basic/team-list/team-list.module";
@@ -15,7 +15,6 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatTooltipModule} from "@angular/material/tooltip";
-
 
 
 @NgModule({

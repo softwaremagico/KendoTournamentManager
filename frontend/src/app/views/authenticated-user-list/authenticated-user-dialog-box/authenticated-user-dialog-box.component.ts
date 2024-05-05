@@ -2,7 +2,7 @@ import {Component, Inject, Optional} from '@angular/core';
 import {Action} from "../../../action";
 import {AuthenticatedUser} from "../../../models/authenticated-user";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {UserRoles} from "../../../services/rbac/user-roles";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
@@ -21,7 +21,7 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent {
   actionName: string;
   hidePassword: boolean = true;
 
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<AuthenticatedUserDialogBoxComponent>, rbacService: RbacService,
@@ -33,21 +33,21 @@ export class AuthenticatedUserDialogBoxComponent extends RbacBasedComponent {
     this.action = data.action;
     this.actionName = Action[data.action];
 
-    this.registerForm = new FormGroup({
-      username: new FormControl({
+    this.registerForm = new UntypedFormGroup({
+      username: new UntypedFormControl({
         value: this.authenticatedUser.username,
         disabled: this.action !== Action.Add
       }, Validators.required),
-      name: new FormControl(this.authenticatedUser.name, [Validators.required, Validators.maxLength(20)]),
-      lastname: new FormControl(this.authenticatedUser.lastname, [Validators.required, Validators.maxLength(40)]),
-      roles: new FormControl({
+      name: new UntypedFormControl(this.authenticatedUser.name, [Validators.required, Validators.maxLength(20)]),
+      lastname: new UntypedFormControl(this.authenticatedUser.lastname, [Validators.required, Validators.maxLength(40)]),
+      roles: new UntypedFormControl({
         value: this.authenticatedUser.roles,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_USER) &&
           this.action === Action.Update && this.authenticatedUser.username === localStorage.getItem('username')!
       }, Validators.required),
-      password: new FormControl('', [Validators.required, Validators.maxLength(40),
+      password: new UntypedFormControl('', [Validators.required, Validators.maxLength(40),
         Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{7,}$')]),
-      repeatPassword: new FormControl('', Validators.required)
+      repeatPassword: new UntypedFormControl('', Validators.required)
     },);
   }
 

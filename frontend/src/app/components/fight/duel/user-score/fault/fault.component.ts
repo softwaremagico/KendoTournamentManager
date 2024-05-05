@@ -1,14 +1,19 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} from '@angular/core';
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {MessageService} from "../../../../../services/message.service";
 import {Score} from "../../../../../models/score";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
+import {TranslateService} from "@ngx-translate/core";
+import {RbacService} from "../../../../../services/rbac/rbac.service";
+import {RbacActivity} from "../../../../../services/rbac/rbac.activity";
 
 @Component({
   selector: 'fault',
   templateUrl: './fault.component.html',
-  styleUrls: ['./fault.component.scss']
+  styleUrls: ['./fault.component.scss'],
+  // tooltip style not applied without this:
+  encapsulation: ViewEncapsulation.None,
 })
 export class FaultComponent implements OnInit, OnChanges {
 
@@ -21,16 +26,27 @@ export class FaultComponent implements OnInit, OnChanges {
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  locked: boolean = true;
+
   timeRepresentation: string | undefined;
 
-  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService) {
+  mouseX: number | undefined;
+  mouseY: number | undefined;
+  screenHeight: number | undefined;
+  screenWidth: number | undefined;
+  onLeftBorder: boolean;
+  onRightBorder: boolean;
+
+  constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
+              private translateService: TranslateService, public rbacService: RbacService) {
   }
 
   ngOnInit(): void {
     // This is intentional
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['duel'] || changes['left'] || changes['swapTeams']) {
       this.setTime();
     }
@@ -84,9 +100,9 @@ export class FaultComponent implements OnInit, OnChanges {
     return true;
   }
 
-  updateFault(fault: boolean) {
+  updateFault(fault: boolean): void {
     const faultAdded: boolean = this.setFault(fault);
-    this.duelService.update(this.duel).subscribe(duel => {
+    this.duelService.update(this.duel).subscribe((duel: Duel): Duel => {
       if (faultAdded) {
         this.messageService.infoMessage('infoFaultUpdated');
       }
@@ -94,7 +110,7 @@ export class FaultComponent implements OnInit, OnChanges {
     });
   }
 
-  setTime() {
+  setTime(): void {
     let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
       this.duel.competitor1FaultTime : this.duel.competitor2FaultTime;
     if (seconds) {
@@ -102,14 +118,50 @@ export class FaultComponent implements OnInit, OnChanges {
       seconds = seconds % 60;
       let text: string = "";
       if (minutes) {
-        text += minutes + "' ";
+        text += minutes + " " + this.translateService.instant('minutesAbbreviation') + " ";
       }
       if (seconds) {
-        text += seconds + '"';
+        text += seconds + " " + this.translateService.instant('secondsAbbreviation') + " ";
       }
       this.timeRepresentation = text;
     } else {
       this.timeRepresentation = undefined;
     }
   }
+
+  tooltipText(): string {
+    if (!this.timeRepresentation || this.timeRepresentation.length == 0) {
+      return "";
+    }
+    let tooltipText: string = '<b>' + this.translateService.instant('fault') + '</b><br>' +
+      '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip">' + this.timeRepresentation + '</span></div>';
+    return tooltipText;
+  }
+
+  updateCoordinates($event: MouseEvent): void {
+    this.mouseX = $event.clientX;
+    this.mouseY = $event.clientY;
+    this.calculateTooltipMargin();
+  }
+
+  clearCoordinates($event: MouseEvent): void {
+    this.mouseX = undefined;
+    this.mouseY = undefined;
+  }
+
+
+  calculateTooltipMargin(): void {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
+    this.onLeftBorder = false;
+    this.onRightBorder = false;
+    if (this.mouseX! - 150 < 0) {
+      this.onLeftBorder = true;
+    }
+    if (this.mouseX! + 150 > this.screenWidth) {
+      this.onRightBorder = true;
+    }
+  }
+
+  protected readonly RbacActivity = RbacActivity;
 }

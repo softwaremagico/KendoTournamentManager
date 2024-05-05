@@ -6,57 +6,53 @@ package com.softwaremagico.kt.persistence.encryption;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
- *  
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *  
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *  
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.logger.EncryptorLogger;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-
-@Converter(autoApply = true)
+@Converter
 public class DoubleCryptoConverter extends AbstractCryptoConverter<Double> implements AttributeConverter<Double, String> {
 
-	public DoubleCryptoConverter() {
-		this(new CipherInitializer());
-	}
+    public DoubleCryptoConverter() {
+        this(AbstractCryptoConverter.generateEngine());
+    }
 
-	public DoubleCryptoConverter(CipherInitializer cipherInitializer) {
-		super(cipherInitializer);
-	}
+    public DoubleCryptoConverter(ICipherEngine cipherEngine) {
+        super(cipherEngine);
+    }
 
-	@Override
-	protected boolean isNotNullOrEmpty(Double attribute) {
-		return attribute != null;
-	}
+    @Override
+    protected boolean isNotNullOrEmpty(Double attribute) {
+        return attribute != null;
+    }
 
-	@Override
-	protected Double stringToEntityAttribute(String dbData) {
-		try {
-			return (dbData == null || dbData.isEmpty()) ? null : Double.parseDouble(dbData);
-		} catch (NumberFormatException nfe) {
-			EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid double value '{}' in database.", dbData);
-			return null;
-		}
-	}
+    @Override
+    protected Double stringToEntityAttribute(String dbData) {
+        try {
+            return (dbData == null || dbData.isEmpty()) ? null : Double.parseDouble(dbData);
+        } catch (NumberFormatException nfe) {
+            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid double value '{}' in database.", dbData);
+            return null;
+        }
+    }
 
-	@Override
-	protected String entityAttributeToString(Double attribute) {
-		return attribute == null ? null : attribute.toString();
-	}
+    @Override
+    protected String entityAttributeToString(Double attribute) {
+        return attribute == null ? null : attribute.toString();
+    }
 }

@@ -4,7 +4,7 @@ import {Club} from "../../../models/club";
 import {Action} from "../../../action";
 import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 
 @Component({
@@ -19,7 +19,7 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
   action: Action;
   actionName: string;
 
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<ClubDialogBoxComponent>, rbacService: RbacService,
@@ -31,35 +31,35 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
     this.action = data.action;
     this.actionName = Action[data.action];
 
-    this.registerForm = new FormGroup({
-      clubName: new FormControl({
+    this.registerForm = new UntypedFormGroup({
+      clubName: new UntypedFormControl({
         value: this.club.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
-      clubCountry: new FormControl({
+      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
+      clubCountry: new UntypedFormControl({
         value: this.club.country,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
-      clubCity: new FormControl({
+      clubCity: new UntypedFormControl({
         value: this.club.city,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
       }, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
-      clubAddress: new FormControl({
+      clubAddress: new UntypedFormControl({
         value: this.club.address,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
-      clubEmail: new FormControl({
+      }, [Validators.minLength(4), Validators.maxLength(40)]),
+      clubEmail: new UntypedFormControl({
         value: this.club.email,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.email]),
-      clubPhone: new FormControl({
+      }, [Validators.email]),
+      clubPhone: new UntypedFormControl({
         value: this.club.phone,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.pattern("[- +()0-9]+"), Validators.minLength(4), Validators.maxLength(20)]),
-      clubWeb: new FormControl({
+      }, [Validators.pattern("[- +()0-9]+"), Validators.minLength(4), Validators.maxLength(20)]),
+      clubWeb: new UntypedFormControl({
         value: this.club.web,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'), Validators.minLength(4), Validators.maxLength(75)]),
+      }, [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'), Validators.minLength(4), Validators.maxLength(75)]),
     });
   }
 

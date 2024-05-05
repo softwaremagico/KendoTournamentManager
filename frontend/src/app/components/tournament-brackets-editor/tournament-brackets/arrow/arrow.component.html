@@ -1,0 +1,11 @@
+<svg [attr.height]="height" [attr.width]="width">
+  <defs>
+    <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="2" refY="6"
+            orient="auto">
+      <path d="M2,2 L2,11 L10,6 L2,2" [attr.fill]="color"/>
+    </marker>
+  </defs>
+
+  <line [attr.x1]="x1" [attr.y1]="y1" [attr.x2]="x2-(arrow_size/2)" [attr.y2]="y2" class="arrow" [style.stroke]="color"
+        [style.stroke-dasharray]="(winner==0) ? '1 0' : '10 5'"/>
+</svg>

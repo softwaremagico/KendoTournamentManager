@@ -14,7 +14,6 @@ Or for a standard server
 
 And in folder `frontend/dist` zip the content of the folder `frontend` as `kendo-tournament-frontend.zip`.
 
-
 # Create the backend file.
 
 Access the backend folder and compile the backend project with the command:

@@ -1,4 +1,4 @@
 <app-filter (filterChanged)="filter($event)" (reset)="filter('')"></app-filter>
-<div class="team-list" *ngIf="teamListData.filteredTeams">
-  <app-team-card *ngFor="let team of teamListData.filteredTeams" [team]="team"></app-team-card>
+<div *ngIf="teamListData.filteredTeams" class="team-list">
+  <app-team-card *ngFor="let team of teamListData.filteredTeams" [team]="team" [minify]="minify"></app-team-card>
 </div>

@@ -4,7 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {Participant} from "../../models/participant";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {ParticipantService} from "../../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -17,6 +17,8 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
+import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
+import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
 
 @Component({
   selector: 'app-participant-list',
@@ -25,7 +27,7 @@ import {UserSessionService} from "../../services/user-session.service";
 })
 export class ParticipantListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>();
+  basicTableData: BasicTableData<Participant> = new BasicTableData<Participant>("Participant");
   clubs: Club[];
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
@@ -51,13 +53,13 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   showAllElements(): void {
-    this.participantService.getAll().subscribe(participants => {
-      this.basicTableData.dataSource.data = participants.map(participant => Participant.clone(participant));
+    this.participantService.getAll().subscribe((participants: Participant[]): void => {
+      this.basicTableData.dataSource.data = participants.map((participant: Participant) => Participant.clone(participant));
     });
   }
 
   addElement(): void {
-    const participant = new Participant();
+    const participant: Participant = new Participant();
     this.openDialog(this.translateService.instant('participantAdd'), Action.Add, participant);
   }
 
@@ -81,7 +83,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  openDialog(title: string, action: Action, participant: Participant) {
+  openDialog(title: string, action: Action, participant: Participant): void {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
       width: '700px',
       data: {
@@ -103,25 +105,36 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     });
   }
 
-  addRowData(participant: Participant) {
-    this.participantService.add(participant).subscribe(_participant => {
-      this.basicTableData.dataSource.data.push(Participant.clone(_participant));
-      this.basicTableData.dataSource._updateChangeSubscription();
+  addRowData(participant: Participant): void {
+    this.participantService.add(participant).subscribe((_participant: Participant): void => {
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: Participant): boolean => obj.id === _participant.id) < 0) {
+        this.basicTableData.dataSource.data.push(_participant);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_participant);
+      this.setSelectedItem(_participant);
       this.messageService.infoMessage('infoParticipantStored');
     });
   }
 
-  updateRowData(participant: Participant) {
-    this.participantService.update(participant).subscribe(() => {
+  updateRowData(participant: Participant): void {
+    this.participantService.update(participant).subscribe((_participant: Participant): void => {
         this.messageService.infoMessage('infoParticipantUpdated');
+        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _participant.id);
+        if (index >= 0) {
+          this.basicTableData.dataSource.data[index] = _participant;
+          this.basicTableData.dataSource._updateChangeSubscription();
+        }
+        this.basicTableData.selectedElement = _participant;
+        this.basicTableData.selectItem(_participant);
       }
     );
   }
 
-  deleteRowData(participant: Participant) {
-    this.participantService.delete(participant).subscribe(() => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_Participant => existing_Participant !== participant);
+  deleteRowData(participant: Participant): void {
+    this.participantService.delete(participant).subscribe((): void => {
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_participant: Participant): boolean => _participant.id !== participant.id);
         this.messageService.infoMessage('infoParticipantDeleted');
         this.basicTableData.selectedElement = undefined;
       }
@@ -132,11 +145,28 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     return false;
   }
 
-  openStatistics() {
+  openStatistics(): void {
     if (this.basicTableData.selectedElement) {
       this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/participant/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
+      this.router.navigate(['/participants/statistics'], {state: {participantId: this.basicTableData.selectedElement.id}});
     }
   }
 
+  showCompetitorsClassification(): void {
+    this.dialog.open(CompetitorsRankingComponent, {
+      width: '85vw',
+      data: {competitor: this.basicTableData.selectedElement, showIndex: true}
+    });
+  }
+
+  showQrCode(): void {
+    if (this.basicTableData.selectedElement) {
+      const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
+        data: {
+          participantId: this.basicTableData.selectedElement?.id,
+          port: window.location.port
+        }
+      });
+    }
+  }
 }

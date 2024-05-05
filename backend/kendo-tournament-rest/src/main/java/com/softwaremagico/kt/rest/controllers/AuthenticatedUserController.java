@@ -6,21 +6,18 @@ package com.softwaremagico.kt.rest.controllers;
  * %%
  * Copyright (C) 2021 - 2023 Softwaremagico
  * %%
- * This software is designed by Jorge Hortelano Otero. Jorge Hortelano Otero
- * <softwaremagico@gmail.com> Valencia (Spain).
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
@@ -28,6 +25,8 @@ import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.exceptions.InvalidPasswordException;
 import com.softwaremagico.kt.rest.exceptions.UserNotFoundException;
@@ -53,8 +52,8 @@ public class AuthenticatedUserController {
 
     public AuthenticatedUser createUser(String creator, CreateUserRequest createUserRequest) {
         return createUser(creator, createUserRequest.getUsername(), createUserRequest.getName(), createUserRequest.getLastname(),
-                createUserRequest.getPassword(), createUserRequest.getRoles() != null ?
-                        createUserRequest.getRoles().toArray(new String[0]) : null);
+                createUserRequest.getPassword(), createUserRequest.getRoles() != null
+                        ? createUserRequest.getRoles().toArray(new String[0]) : null);
     }
 
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, String... roles) {
@@ -78,22 +77,28 @@ public class AuthenticatedUserController {
     }
 
     public void updatePassword(String username, String oldPassword, String newPassword) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
 
+        if (user instanceof Participant) {
+            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+        }
+
+        final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
+
         //Check old password.
-        if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
+        if (!BCrypt.checkpw(oldPassword, authenticatedUser.getPassword())) {
             throw new InvalidPasswordException(this.getClass(), "Provided password is incorrect!");
         }
 
         //Update new password.
-        user.setPassword(newPassword);
-        authenticatedUserProvider.save(user);
+        authenticatedUser.setPassword(newPassword);
+        authenticatedUserProvider.save(authenticatedUser);
         KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", username);
     }
 
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
+        final AuthenticatedUser user = (AuthenticatedUser) authenticatedUserProvider.findByUsername(createUserRequest.getUsername()).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + createUserRequest.getUsername() + "' does not exists"));
         user.setName(createUserRequest.getName() != null ? createUserRequest.getName().replaceAll("[\n\r\t]", "_") : "");
         user.setLastname(createUserRequest.getLastname() != null ? createUserRequest.getLastname().replaceAll("[\n\r\t]", "_") : "");
@@ -111,17 +116,21 @@ public class AuthenticatedUserController {
     }
 
     public void deleteUser(String actioner, String username) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        //Can only be AuthenticatedUsers and not Participants
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
+        if (user instanceof Participant) {
+            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+        }
         //Ensure that at least, one user remain.
-        if (authenticatedUserProvider.count() > 1) {
-            authenticatedUserProvider.delete(user);
+        if (authenticatedUserProvider.count() > 1 && user instanceof AuthenticatedUser authenticatedUser) {
+            authenticatedUserProvider.delete(authenticatedUser);
             KendoTournamentLogger.info(this.getClass(), "User '{}' deleted by '{}'.", username, actioner);
         }
     }
 
     public Set<String> getRoles(String username) {
-        final AuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "User with username '" + username + "' does not exists"));
         return user.getRoles();
     }
@@ -132,6 +141,10 @@ public class AuthenticatedUserController {
 
     public void delete(AuthenticatedUser authenticatedUser) {
         authenticatedUserProvider.delete(authenticatedUser);
+    }
+
+    public void deleteAll() {
+        authenticatedUserProvider.deleteAll();
     }
 
     public long countUsers() {
