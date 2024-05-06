@@ -102,6 +102,12 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         return fights;
     }
 
+    @Override
+    public void removeGroup(Tournament tournament, Integer level, Integer groupIndex) {
+        //King of the mountain generate a group by fight. Can be deleted.
+        groupProvider.delete(groupProvider.getGroupByLevelAndIndex(tournament, level, groupIndex));
+    }
+
     private List<Team> getGroupTeams(Tournament tournament, int level) {
         final List<Team> existingTeams = teamProvider.getAll(tournament);
         final List<Team> teams = new ArrayList<>();
