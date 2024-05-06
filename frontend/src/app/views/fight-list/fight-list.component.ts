@@ -454,10 +454,17 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             }
           }
           if (this.selectedGroup) {
-            this.groupService.update(this.selectedGroup).subscribe(() => {
-              this.messageService.infoMessage("fightDeleted");
-              this.refreshFights();
-            });
+            if (this.tournament.type == TournamentType.KING_OF_THE_MOUNTAIN) {
+              this.groupService.deleteGroup(this.selectedGroup).subscribe((): void => {
+                this.messageService.infoMessage("fightDeleted");
+                this.refreshFights();
+              });
+            } else {
+              this.groupService.update(this.selectedGroup).subscribe((): void => {
+                this.messageService.infoMessage("fightDeleted");
+                this.refreshFights();
+              });
+            }
           }
         }
       });
