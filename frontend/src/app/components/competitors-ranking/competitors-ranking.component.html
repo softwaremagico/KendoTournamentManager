@@ -1,7 +1,7 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="table-container">
   <div class="days-selector">
-  <input *ngIf="!this.club && !this.tournament" class="day-input" type="number" matInput min="0" max="10000" [(ngModel)]="numberOfDays"
+  <input *ngIf="!this.club && !this.tournament" class="day-input" type="number" matInput min="0" max="10000" step="30" [(ngModel)]="numberOfDays"
          placeholder="{{'daysFrom' | translate}}" [matTooltipShowDelay]="1000"  matTooltip="{{'daysFrom' | translate}}"
          required (keyup.enter)="daysChanged()">
     <button (click)="daysChanged()" color="secondary" class="day-input"
