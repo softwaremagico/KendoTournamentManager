@@ -241,7 +241,7 @@ export abstract class CustomChartComponent implements OnInit {
       //fillSeriesColor: true,
       style: {
         fontFamily: 'Roboto',
-      },
+      }
     }
   }
 
