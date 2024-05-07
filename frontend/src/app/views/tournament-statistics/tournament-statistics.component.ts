@@ -45,7 +45,6 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public teamSizeByTournament: LineChartData = new LineChartData();
   public participantsByTournament: StackedBarChartData = new StackedBarChartData();
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
-  public hitsByTournamentPercentage: StackedBarChartData = new StackedBarChartData();
   public fightsOverData: GaugeChartData;
 
   private readonly tournamentId: number | undefined;
