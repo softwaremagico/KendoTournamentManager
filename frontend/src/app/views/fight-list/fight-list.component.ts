@@ -314,7 +314,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.resetFilter();
     //Use a timeout or refresh before the components are drawn.
     setTimeout(() => {
-      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0) {
+      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0 && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
         this.showTeamsClassification(true);
       }
     }, 1000);
@@ -454,17 +454,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             }
           }
           if (this.selectedGroup) {
-            if (this.tournament.type == TournamentType.KING_OF_THE_MOUNTAIN) {
-              this.groupService.deleteGroup(this.selectedGroup).subscribe((): void => {
-                this.messageService.infoMessage("fightDeleted");
-                this.refreshFights();
-              });
-            } else {
-              this.groupService.update(this.selectedGroup).subscribe((): void => {
-                this.messageService.infoMessage("fightDeleted");
-                this.refreshFights();
-              });
-            }
+            this.groupService.update(this.selectedGroup).subscribe((): void => {
+              this.messageService.infoMessage("fightDeleted");
+              this.refreshFights();
+            });
           }
         }
       });
@@ -643,6 +636,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         let showClassification: boolean = true;
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
+          console.log(this.tournament.type)
           if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
             //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();
@@ -689,12 +683,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   generateNextFights(showClassification: boolean): void {
-    const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
     this.fightService.createNext(this.tournamentId!).subscribe((_fights: Fight[]): void => {
       //Null value means that fights are not created due to an existing draw score.
-      if (_fights === null) {
-        //Do nothing. A Draw fight that must be solved.
-      } else if (_fights.length > 0) {
+      if (_fights.length > 0) {
         this.refreshFights();
       } else {
         if (showClassification) {
@@ -706,6 +697,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   showClassification(): void {
+    debugger
     if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
       (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
       this.showTeamsClassification(true);
