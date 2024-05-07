@@ -2,7 +2,7 @@ import {Component, Input, ViewChild} from '@angular/core';
 
 import {
   ApexChart,
-  ApexFill, ApexGrid,
+  ApexFill,
   ApexLegend,
   ApexNonAxisChartSeries,
   ApexResponsive,
@@ -89,8 +89,18 @@ export class PieChartComponent extends CustomChartComponent {
     return undefined;
   }
 
-  update(data: PieChartData) {
+  update(data: PieChartData): void {
     this.chart.updateSeries(data.getData());
+  }
+
+  protected override getTooltip(): ApexTooltip {
+    return {
+      theme: 'dark',
+        //fillSeriesColor: true,
+        style: {
+        fontFamily: 'Roboto',
+      }
+    }
   }
 
 }
