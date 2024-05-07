@@ -7,7 +7,7 @@ import {DarkModeService} from "../../../services/notifications/dark-mode.service
 import {UserSessionService} from "../../../services/user-session.service";
 import {ApexTheme} from "ng-apexcharts/lib/model/apex-types";
 
-type GaugeChartOptions = {
+export type GaugeChartOptions = {
   series: number[];
   colors: string [];
   labels: string[];
@@ -66,13 +66,13 @@ export class GaugeChartComponent extends CustomChartComponent {
     this.chartOptions = {
       colors: this.colors,
       chart: this.getChart('radialBar', this.width, this.height, this.shadow, this.showToolbar),
-      series: this.data?.getValues(),
-      labels: this.data?.getLabels(),
+      series: this.data!.getValues(),
+      labels: this.data!.getLabels(),
       fill: this.getFill(this.fill, this.opacity),
       plotOptions: this.getPlotOptions(),
       tooltip: this.getTooltip(),
       title: this.getTitle(this.title, this.titleAlignment),
-      theme:this.getTheme()
+      theme: this.getTheme()
     };
   }
 
@@ -102,7 +102,10 @@ export class GaugeChartComponent extends CustomChartComponent {
           value: {
             show: true,
             offsetY: -15,
-            fontSize: "12px"
+            fontSize: "12px",
+            formatter: function (value: number): string {
+              return value.toFixed(2) + "%"
+            }
           }
         },
         hollow: {
@@ -112,7 +115,7 @@ export class GaugeChartComponent extends CustomChartComponent {
     }
   }
 
-  update(data: GaugeChartData) {
+  update(data: GaugeChartData): void {
     this.chart.updateSeries(data.getData());
   }
 }

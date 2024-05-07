@@ -269,8 +269,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     if (tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics?.fightsStartedAt &&
       tournamentStatistics.tournamentFightStatistics?.fightsFinishedAt && tournamentStatistics.tournamentFightStatistics?.fightsStartedAt) {
       //Time in minutes.
-      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFightStatistics.fightsFinishedAt).getTime() -
-        new Date(tournamentStatistics.tournamentFightStatistics.fightsStartedAt).getTime()) / (1000 * 60), 2)];
+      times = [this.getLabel(tournamentStatistics.tournamentName), Math.max(0, truncate((new Date(tournamentStatistics.tournamentFightStatistics.fightsFinishedAt).getTime() -
+        new Date(tournamentStatistics.tournamentFightStatistics.fightsStartedAt).getTime()) / (1000 * 60), 2))];
     } else {
       times = [this.getLabel(tournamentStatistics.tournamentName), 0];
     }
@@ -303,8 +303,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
     let times: [string, number];
     if (tournamentStatistics.tournamentFinishedAt && tournamentStatistics.tournamentCreatedAt) {
       //Time in minutes.
-      times = [this.getLabel(tournamentStatistics.tournamentName), truncate((new Date(tournamentStatistics.tournamentFinishedAt).getTime() -
-        new Date(tournamentStatistics.tournamentCreatedAt).getTime()) / (1000 * 60), 2)];
+      times = [this.getLabel(tournamentStatistics.tournamentName), Math.max(0, truncate((new Date(tournamentStatistics.tournamentFinishedAt).getTime() -
+        new Date(tournamentStatistics.tournamentCreatedAt).getTime()) / (1000 * 60), 2))];
     } else {
       times = [this.getLabel(tournamentStatistics.tournamentName), 0];
     }
