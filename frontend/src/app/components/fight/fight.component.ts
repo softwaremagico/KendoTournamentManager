@@ -6,6 +6,7 @@ import {takeUntil} from "rxjs";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {TournamentType} from "../../models/tournament-type";
 
 @Component({
   selector: 'fight',
@@ -75,4 +76,5 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
     return duel.finished;
   }
 
+  protected readonly TournamentType = TournamentType;
 }
