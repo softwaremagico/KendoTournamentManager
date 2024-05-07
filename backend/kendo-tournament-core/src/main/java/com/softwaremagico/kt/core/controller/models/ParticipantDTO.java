@@ -34,6 +34,8 @@ import java.util.Set;
 
 public class ParticipantDTO extends ElementDTO implements IParticipantName, IAuthenticatedUser {
 
+    private static final int HASH_VALUE = 31;
+
     private String idCard;
 
     private String name;
@@ -115,16 +117,31 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName, IAut
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ParticipantDTO that)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return getId().equals(that.getId()) && getName().equals(that.getName()) && getLastname().equals(that.getLastname())
-                && getClub().equals(that.getClub());
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        final ParticipantDTO that = (ParticipantDTO) o;
+
+        if (!name.equals(that.name)) {
+            return false;
+        }
+        if (!lastname.equals(that.lastname)) {
+            return false;
+        }
+        return Objects.equals(club, that.club);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getLastname(), getClub());
+        int result = super.hashCode();
+        result = HASH_VALUE * result + name.hashCode();
+        result = HASH_VALUE * result + lastname.hashCode();
+        result = HASH_VALUE * result + (club != null ? club.hashCode() : 0);
+        return result;
     }
 
     @Override
