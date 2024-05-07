@@ -170,6 +170,17 @@ public class Fight extends Element {
         return null;
     }
 
+    public Team getLooser() {
+        final Team winner = getWinner();
+        if (winner == null) {
+            return null;
+        }
+        if (Objects.equals(winner, team1)) {
+            return team2;
+        }
+        return team1;
+    }
+
     public boolean isOver() {
         return duels.stream().allMatch(Duel::isOver);
     }
