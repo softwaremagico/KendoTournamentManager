@@ -46,7 +46,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     private final GroupProvider groupProvider;
     private final TeamProvider teamProvider;
     private final RankingProvider rankingProvider;
-
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 
