@@ -135,6 +135,7 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             }
         }
         newFight.generateDuels(createdBy);
+        //Fight is saved in group by cascade.
         group.getFights().add(newFight);
         groupProvider.save(group);
         return Collections.singletonList(newFight);

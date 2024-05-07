@@ -204,7 +204,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = getProvider().saveAll(selectedManager.generateNextFights(tournament, createdBy));
+            final List<Fight> createdFights = selectedManager.generateNextFights(tournament, createdBy);
             if (!createdFights.isEmpty()) {
                 tournamentProvider.markAsFinished(tournament, false);
             }
