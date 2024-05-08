@@ -30,5 +30,4 @@ import org.springframework.stereotype.Repository;
 @Transactional
 public interface ClubRepository extends JpaRepository<Club, Integer> {
 
-    Club findByNameAndCity(String name, String city);
 }

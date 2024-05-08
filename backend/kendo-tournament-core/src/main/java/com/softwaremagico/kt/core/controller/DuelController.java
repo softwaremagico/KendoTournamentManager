@@ -111,6 +111,7 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         }
     }
 
+    @Override
     @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
     public DuelDTO update(DuelDTO duel, String username) {
         try {

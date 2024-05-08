@@ -21,11 +21,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.utils.IName;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -55,7 +53,6 @@ import java.util.Locale;
 public class Team extends Element implements Comparable<Team>, IName {
 
     @Column(name = "name", nullable = false)
-    @Convert(converter = StringCryptoConverter.class)
     private String name;
 
     @ManyToMany
