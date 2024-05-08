@@ -39,7 +39,7 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
       clubCountry: new UntypedFormControl({
         value: this.club.country,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
+      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
       clubCity: new UntypedFormControl({
         value: this.club.city,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
