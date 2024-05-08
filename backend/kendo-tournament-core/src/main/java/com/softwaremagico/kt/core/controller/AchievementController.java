@@ -1969,7 +1969,6 @@ public class AchievementController extends BasicInsertableController<Achievement
      * Somebody wins a fight despite the opponent has scored first.
      *
      * @param tournament
-     * @return
      */
     private List<Achievement> generateVendettaAchievement(Tournament tournament) {
         final List<Participant> participants = new ArrayList<>();
@@ -1995,7 +1994,6 @@ public class AchievementController extends BasicInsertableController<Achievement
      * Somebody wins a fight against other participant that is always winning him.
      *
      * @param tournament
-     * @return
      */
     private List<Achievement> generateSithApprenticesAlwaysKillTheirMasterAchievement(Tournament tournament) {
         final List<Achievement> achievements = new ArrayList<>();

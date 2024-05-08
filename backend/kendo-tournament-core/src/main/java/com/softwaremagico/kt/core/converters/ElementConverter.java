@@ -26,7 +26,6 @@ import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> implements IElementConverter<F, T, R> {
 
@@ -44,7 +43,7 @@ public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> impl
         if (from == null) {
             return new ArrayList<>();
         }
-        return from.stream().map(this::convert).collect(Collectors.toList());
+        return from.stream().map(this::convert).toList();
     }
 
     @Override
@@ -52,6 +51,6 @@ public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> impl
         if (to == null) {
             return new ArrayList<>();
         }
-        return to.stream().map(this::reverse).collect(Collectors.toList());
+        return to.stream().map(this::reverse).toList();
     }
 }

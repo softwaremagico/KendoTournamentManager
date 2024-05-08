@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
@@ -78,7 +77,6 @@ public class Tournament extends Element implements IName {
     private Integer duelsDuration = DEFAULT_DURATION;
 
     @Column(name = "locked", nullable = false)
-    @Convert(converter = BooleanCryptoConverter.class)
     private boolean locked = false;
 
     @Column(name = "locked_at")

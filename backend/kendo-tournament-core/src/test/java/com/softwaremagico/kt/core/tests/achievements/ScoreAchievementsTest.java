@@ -42,6 +42,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -111,7 +112,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Woodcutter
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
@@ -178,7 +179,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Juggernaut
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
@@ -210,7 +211,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament3() {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        List<FightDTO> fightDTOs = fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //The Castle
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
@@ -259,7 +260,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament4() {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        List<FightDTO> fightDTOs = fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Team1 and Team2 no scores. Team1 has no scores neither against itself.
 
