@@ -11,6 +11,7 @@ import {TournamentExtendedProperty} from "../../../../models/tournament-extended
 import {TournamentExtraPropertyKey} from "../../../../models/tournament-extra-property-key";
 import {TournamentExtendedPropertiesService} from "../../../../services/tournament-extended-properties.service";
 import {MatSlideToggleChange} from "@angular/material/slide-toggle";
+import {LeagueFightsOrder} from "../../../../models/league-fights-order";
 
 @Component({
   selector: 'app-tournament-extra-properties',
@@ -64,7 +65,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
             this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
           }
           if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-            this.firstInFirstOut = (_tournamentProperty.propertyValue.toLowerCase() == "true");
+            this.firstInFirstOut = (_tournamentProperty.propertyValue.toUpperCase() == LeagueFightsOrder.FIFO);
           }
           if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.AVOID_DUPLICATES) {
             this.avoidDuplicatedFights = (_tournamentProperty.propertyValue.toLowerCase() == "true");
@@ -114,7 +115,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   fifoToggle($event: MatSlideToggleChange): void {
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
-    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyValue = $event.checked ? LeagueFightsOrder.FIFO : LeagueFightsOrder.LIFO;
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
       this.messageService.infoMessage('infoTournamentUpdated');
