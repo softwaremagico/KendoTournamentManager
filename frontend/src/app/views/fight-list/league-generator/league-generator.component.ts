@@ -83,7 +83,7 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
               this.areFightsMaximized = (_tournamentProperty.propertyValue.toLowerCase() == "true");
             }
             if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION) {
-              this.firstInFirstOut = (_tournamentProperty.propertyValue.toLowerCase() == "true");
+              this.firstInFirstOut = (_tournamentProperty.propertyValue.toUpperCase() == LeagueFightsOrder.FIFO);
             }
           }
         }
