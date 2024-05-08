@@ -92,8 +92,8 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   private _filter(name: string): Club[] {
-    const filterValue = name.toLowerCase();
-    return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
+    const filterValue: string = name.toLowerCase();
+    return this.clubs.filter((club: Club) => club.name.toLowerCase().includes(filterValue));
   }
 
   doAction(): void {
