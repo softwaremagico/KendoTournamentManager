@@ -210,7 +210,8 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     }
 
     protected List<DTO> convertAll(Collection<ENTITY> entities) {
-        return converter.convertAll(entities.stream().map(this::createConverterRequest).collect(Collectors.toList()));
+        return new ArrayList<>(converter.convertAll(entities.stream().map(this::createConverterRequest)
+                .collect(Collectors.toCollection(ArrayList::new))));
     }
 
     protected List<ENTITY> reverseAll(Collection<DTO> dtos) {
