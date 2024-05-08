@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -67,7 +66,6 @@ public class Fight extends Element {
     private Tournament tournament;
 
     @Column(name = "shiaijo", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -80,7 +78,6 @@ public class Fight extends Element {
     private LocalDateTime finishedAt;
 
     @Column(name = "fight_level", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     public Fight() {

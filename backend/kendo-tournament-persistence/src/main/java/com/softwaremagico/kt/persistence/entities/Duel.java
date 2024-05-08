@@ -21,10 +21,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
@@ -104,23 +101,19 @@ public class Duel extends Element {
     private Integer competitor2FaultTime;
 
     @Column(name = "competitor_1_fault")
-    @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor1Fault = false;
 
     @Column(name = "competitor_2_fault")
-    @Convert(converter = BooleanCryptoConverter.class)
     private Boolean competitor2Fault = false;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    @Convert(converter = StringCryptoConverter.class)
     private DuelType type;
 
     @Column(name = "duration")
     private Integer duration;
 
     @Column(name = "finished")
-    @Convert(converter = BooleanCryptoConverter.class)
     private boolean finished = false;
 
     @Column(name = "total_duration")
@@ -132,11 +125,9 @@ public class Duel extends Element {
     private Tournament tournament;
 
     @Column(name = "started_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime startedAt;
 
     @Column(name = "finished_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime finishedAt;
 
     public Duel() {
