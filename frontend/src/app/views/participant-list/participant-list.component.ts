@@ -46,8 +46,13 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   ngOnInit(): void {
-    this.clubService.getAll().subscribe((clubs: Club[]): void => {
-      this.clubs = clubs
+    this.clubService.getAll().subscribe((_clubs: Club[]): void => {
+      if (_clubs) {
+        _clubs.sort(function (a: Club, b: Club) {
+          return a.name.localeCompare(b.name);
+        });
+        this.clubs = _clubs
+      }
     });
     this.showAllElements();
   }
