@@ -62,7 +62,7 @@ public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSp
         //Another tournament
         Tournament tournament2 = new Tournament("Tournament2", 1, 3, TournamentType.LEAGUE, USER);
         tournament2 = tournamentProvider.save(tournament2);
-        //Has a default one.
+        //Has a default one, copied from previous one.
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).size(), 1);
         Assert.assertEquals(tournamentExtraPropertyProvider.getAll(tournament2).get(0).getPropertyValue(), "2");
 
