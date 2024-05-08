@@ -23,6 +23,7 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
+import com.softwaremagico.kt.persistence.encryption.SHA512HashGenerator;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
 import jakarta.persistence.Cacheable;
@@ -63,6 +64,10 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
     @Column(name = "username")
     @Convert(converter = StringCryptoConverter.class)
     private String username;
+
+    @Column(name = "username_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String usernameHash;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
@@ -111,6 +116,15 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
 
     public void setUsername(String username) {
         this.username = username;
+        this.usernameHash = username;
+    }
+
+    public String getUsernameHash() {
+        return usernameHash;
+    }
+
+    public void setUsernameHash(String usernameHash) {
+        this.usernameHash = usernameHash;
     }
 
     public String getName() {
