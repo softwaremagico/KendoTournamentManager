@@ -22,7 +22,6 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.TournamentExtraPropertyKeyTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -55,7 +54,6 @@ public class TournamentExtraProperty extends Element {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "property_key", nullable = false)
-    @Convert(converter = TournamentExtraPropertyKeyTypeCryptoConverter.class)
     private TournamentExtraPropertyKey propertyKey;
 
     @Column(name = "property_value", nullable = false)
