@@ -49,6 +49,8 @@ import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -206,13 +208,21 @@ public class RankingProvider {
         return scores;
     }
 
-    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors, ScoreType scoreType) {
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors, ScoreType scoreType, Integer fromNumberOfDays) {
         if (competitors == null || competitors.isEmpty()) {
             competitors = participantProvider.getAll();
         }
+        //Get number since when is read the data.
+        final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0 ? LocalDate.now().minusDays(fromNumberOfDays).atStartOfDay() : null;
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
-        final List<Fight> fights = fightProvider.getBy(competitors);
-        final List<Duel> unties = duelProvider.getUnties(competitors);
+        final List<Fight> fights = fightProvider.getBy(competitors).stream().filter(fight ->
+                from == null || fight.getCreatedAt().isAfter(from)).toList();
+        final List<Duel> unties = duelProvider.getUnties(competitors).stream().filter(duel ->
+                from == null || duel.getCreatedAt().isAfter(from)).toList();
+
+        final Set<Participant> participantsInFights = fights.stream().flatMap(fight -> fight.getTeam1().getMembers().stream()).collect(Collectors.toSet());
+        participantsInFights.addAll(fights.stream().flatMap(fight -> fight.getTeam2().getMembers().stream()).collect(Collectors.toSet()));
+        competitors.retainAll(participantsInFights);
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }

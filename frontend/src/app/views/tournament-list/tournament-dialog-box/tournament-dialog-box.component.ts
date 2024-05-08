@@ -109,6 +109,13 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     return TournamentType.toCamel(tournamentType);
   }
 
+  getTournamentTypeHintTag(tournamentType: TournamentType): string {
+    if (!tournamentType) {
+      return "";
+    }
+    return TournamentType.toCamel(tournamentType) + 'Hint';
+  }
+
   addPicture(): void {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
       data: {
