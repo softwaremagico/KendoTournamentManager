@@ -134,7 +134,7 @@ public class PdfController {
     }
 
     public TeamList generateTeamList(TournamentDTO tournamentDTO) {
-        final List<TeamDTO> teams = teamController.getAllByTournament(tournamentDTO, null);
+        final List<TeamDTO> teams = new ArrayList<>(teamController.getAllByTournament(tournamentDTO, null));
         teams.sort(Comparator.comparing(TeamDTO::getName));
         return new TeamList(tournamentDTO, teams);
     }

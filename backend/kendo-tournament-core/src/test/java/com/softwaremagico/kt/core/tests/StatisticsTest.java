@@ -201,7 +201,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
                 TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
         generateRoles(tournament1DTO);
         addTeams(tournament1DTO);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
 
 
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
