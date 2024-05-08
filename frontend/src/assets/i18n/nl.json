@@ -299,14 +299,21 @@
   "confirm": "Bevestigen",
   "ClearCacheLabel": "Clear Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Poule",
+  "championship": "Kampioenschap",
+  "championshipHint": "Poule",
   "league": "League",
-  "tree": "Poule",
+  "leagueHint": "Alles tegen allen",
+  "tree": "Kampioenschap",
+  "treeHint": "Poule",
   "customized": "Custom",
+  "customizedHint": "Custom",
   "customChampionship": "Custom",
+  "customChampionshipHint": "Custom",
   "loop": "Loop",
+  "loopHint": "Loop",
+  "kingOfTheMountain": "Kachinuki",
+  "kingOfTheMountainHint": "King of the Mountain",
   "maxFightsCheckBox": "Create all possible fights.",
-  "kingOfTheMountain": "King of the Mountain",
   "redTeamButton": "Red Team",
   "whiteTeamButton": "Witte Team",
   "kingEliminateOldest": "Eliminate oldest",
@@ -858,7 +865,8 @@
     "achievementAllGenerated": "Er zijn in totaal {{achievementsNumber}} prestaties gegenereerd in {{tournamentNumber}} toernooien.",
     "shiaijoFinished": "Alle wedstrijden van shiaijo {{shiaijoName}} zijn afgelopen.",
     "userAdminGenerated": "Gebruiker {{userName}} is aangemaakt!"
-  }
+  },
+  "daysFrom": "Bewerben Sie sich nur noch an diesen Tagen"
 }
 
 

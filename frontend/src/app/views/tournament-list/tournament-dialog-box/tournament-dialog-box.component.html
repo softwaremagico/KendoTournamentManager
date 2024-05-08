@@ -5,7 +5,8 @@
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentType' | translate}}</mat-label>
       <mat-select [(value)]="tournament.type" formControlName="tournamentType">
-        <mat-option (click)="select(type)" (keydown)="select(type)" *ngFor="let type of tournamentType" [value]="type">
+        <mat-option (click)="select(type)" (keydown)="select(type)" *ngFor="let type of tournamentType" [value]="type"
+                    [matTooltipShowDelay]="500" matTooltip="{{getTournamentTypeHintTag(type) | translate}}">
           {{getTournamentTypeTranslationTag(type) | translate}}
         </mat-option>
       </mat-select>

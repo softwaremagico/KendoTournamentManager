@@ -32,6 +32,7 @@ import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
+import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
@@ -68,14 +69,15 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     private final TeamRepository teamRepository;
     private final RoleRepository roleRepository;
     private final TournamentHandlerSelector tournamentHandlerSelector;
-
     private final TournamentImageRepository tournamentImageRepository;
+
+    private final AchievementRepository achievementRepository;
 
     @Autowired
     public TournamentProvider(TournamentRepository tournamentRepository, TournamentExtraPropertyRepository tournamentExtraPropertyRepository,
                               GroupRepository groupRepository, FightRepository fightRepository, DuelRepository duelRepository,
                               TeamRepository teamRepository, RoleRepository roleRepository, TournamentHandlerSelector tournamentHandlerSelector,
-                              TournamentImageRepository tournamentImageRepository) {
+                              TournamentImageRepository tournamentImageRepository, AchievementRepository achievementRepository) {
         super(tournamentRepository);
         this.tournamentExtraPropertyRepository = tournamentExtraPropertyRepository;
         this.groupRepository = groupRepository;
@@ -85,6 +87,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         this.roleRepository = roleRepository;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
         this.tournamentImageRepository = tournamentImageRepository;
+        this.achievementRepository = achievementRepository;
     }
 
     @Transactional
@@ -132,6 +135,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             duelRepository.deleteByTournament(tournament);
             teamRepository.deleteByTournament(tournament);
             roleRepository.deleteByTournament(tournament);
+            achievementRepository.deleteByTournament(tournament);
             getRepository().delete(tournament);
         }
     }
