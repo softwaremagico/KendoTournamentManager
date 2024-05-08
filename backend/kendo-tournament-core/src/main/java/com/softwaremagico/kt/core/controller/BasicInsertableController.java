@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,
@@ -209,7 +210,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     }
 
     protected List<DTO> convertAll(Collection<ENTITY> entities) {
-        return converter.convertAll(entities.stream().map(this::createConverterRequest).toList());
+        return converter.convertAll(entities.stream().map(this::createConverterRequest).collect(Collectors.toList()));
     }
 
     protected List<ENTITY> reverseAll(Collection<DTO> dtos) {
