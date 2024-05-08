@@ -32,5 +32,5 @@ import java.util.Optional;
 @Transactional
 public interface AuthenticatedUserRepository extends JpaRepository<AuthenticatedUser, Integer> {
 
-    Optional<AuthenticatedUser> findByUsername(String username);
+    Optional<AuthenticatedUser> findByUsernameHash(String username);
 }
