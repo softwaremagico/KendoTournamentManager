@@ -26,7 +26,6 @@ import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> implements IElementConverter<F, T, R> {
 

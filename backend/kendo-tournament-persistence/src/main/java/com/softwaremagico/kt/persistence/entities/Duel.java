@@ -22,8 +22,6 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.persistence.values.Score;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
@@ -110,7 +108,6 @@ public class Duel extends Element {
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    @Convert(converter = StringCryptoConverter.class)
     private DuelType type;
 
     @Column(name = "duration")
@@ -128,11 +125,9 @@ public class Duel extends Element {
     private Tournament tournament;
 
     @Column(name = "started_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime startedAt;
 
     @Column(name = "finished_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime finishedAt;
 
     public Duel() {
