@@ -25,23 +25,32 @@ import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
+import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,8 +61,11 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final TournamentConverter tournamentConverter;
     private final TournamentProvider tournamentProvider;
     private final TournamentHandlerSelector tournamentHandlerSelector;
-
     private final Set<FightsAddedListener> fightsAddedListeners = new HashSet<>();
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
+    private final GroupProvider groupProvider;
+    private final TeamConverter teamConverter;
 
     public interface FightsAddedListener {
         void created(List<FightDTO> fights, String actor);
@@ -62,11 +74,16 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
-                           TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector) {
+                           TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector,
+                           TournamentExtraPropertyProvider tournamentExtraPropertyProvider, GroupProvider groupProvider,
+                           TeamConverter teamConverter) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+        this.groupProvider = groupProvider;
+        this.teamConverter = teamConverter;
     }
 
     public void addFightsAddedListeners(FightsAddedListener listener) {
@@ -82,6 +99,40 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         return get(tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)))));
+    }
+
+    @Override
+    public FightDTO update(FightDTO dto, String username) {
+        try {
+            return super.update(dto, username);
+        } finally {
+            if (dto.getTournament().getType() == TournamentType.KING_OF_THE_MOUNTAIN) {
+                //When adding a fight, the index must be corrected.
+                final TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(
+                        tournamentConverter.reverse(dto.getTournament()), TournamentExtraPropertyKey.KING_INDEX);
+                if (extraProperty != null) {
+                    final Tournament tournament = tournamentConverter.reverse(dto.getTournament());
+                    final List<Group> groupsFromTournament = groupProvider.getGroups(tournament);
+                    if (groupsFromTournament.size() == 1) {
+                        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
+                                TournamentExtraPropertyKey.KING_INDEX,
+                                getMaxIndex(groupsFromTournament.get(0).getTeams(),
+                                        Collections.singletonList(teamConverter.reverse(dto.getTeam2()))) + ""));
+                    }
+                }
+            }
+        }
+    }
+
+    private int getMaxIndex(List<Team> listWithIndex, List<Team> elements) {
+        int index = 0;
+        for (Team element : elements) {
+            final int indexOf = listWithIndex.indexOf(element);
+            if (indexOf > index) {
+                index = indexOf;
+            }
+        }
+        return index;
     }
 
     public List<FightDTO> get(TournamentDTO tournamentDTO) {
@@ -153,7 +204,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = getProvider().saveAll(selectedManager.generateNextFights(tournament, createdBy));
+            final List<Fight> createdFights = selectedManager.generateNextFights(tournament, createdBy);
             if (!createdFights.isEmpty()) {
                 tournamentProvider.markAsFinished(tournament, false);
             }

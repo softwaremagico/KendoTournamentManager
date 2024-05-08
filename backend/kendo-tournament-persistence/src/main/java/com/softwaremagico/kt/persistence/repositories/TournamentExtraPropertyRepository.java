@@ -44,7 +44,7 @@ public interface TournamentExtraPropertyRepository extends JpaRepository<Tournam
 
     int deleteByTournament(Tournament tournament);
 
-    int deleteByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
+    void deleteByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
 
     @Query("""
                 Select p from TournamentExtraProperty p WHERE

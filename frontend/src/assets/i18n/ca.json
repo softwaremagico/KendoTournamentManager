@@ -303,14 +303,21 @@
   "confirm": "Confirmar",
   "ClearCacheLabel": "Pulix la Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Torneig en Arbre",
+  "championship": "Campionat",
+  "championshipHint": "Torneig en Arbre",
   "league": "Lliga",
-  "tree": "Torneig en Arbre",
+  "leagueHint": "Tots contra tots",
+  "tree": "Campionat",
+  "treeHint": "Torneig en Arbre",
   "customized": "Personalizat",
+  "customizedHint": "Personalizat",
   "customChampionship": "Personalizat",
+  "customChampionshipHint": "Personalizat",
   "loop": "Roda",
+  "loopHint": "Roda",
+  "kingOfTheMountain": "Kachinuki",
+  "kingOfTheMountainHint": "El rei de la muntanya",
   "maxFightsCheckBox": "Crea tots els combats possibles",
-  "kingOfTheMountain": "Crea tots els combats possibles",
   "redTeamButton": "Equip Roig",
   "whiteTeamButton": "Equipo Blanc",
   "kingEliminateOldest": "Elimina el més antic",
@@ -870,7 +877,8 @@
     "achievementAllGenerated": "Un total de {{achievementsNumber}} èxits han estat generats en {{tournamentNumber}} tornejos.",
     "shiaijoFinished": "Tots els partits del shiaijo {{shiaijoName}} han acabat.",
     "userAdminGenerated": "Usuari {{userName}} ha estar creat!"
-  }
+  },
+  "daysFrom": "Aplica només aquests dies"
 }
 
 
