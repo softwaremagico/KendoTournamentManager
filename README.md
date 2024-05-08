@@ -30,7 +30,7 @@ not the other way around.
 
 <p align="center">
     <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
-</p>p>
+</p>
 
 This tool is a complete rebuild from the old
 tool Kendo Tournament Generator [[1]](https://sourceforge.net/projects/kendotournament/files/) [[2]](https://github.com/softwaremagico/KendoTournament) with the
