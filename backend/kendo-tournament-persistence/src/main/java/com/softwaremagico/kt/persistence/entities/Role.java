@@ -22,12 +22,9 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 
-import com.softwaremagico.kt.persistence.encryption.BooleanCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.RoleTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -63,15 +60,12 @@ public class Role extends Element {
 
     @Column(name = "role_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = RoleTypeCryptoConverter.class)
     private RoleType roleType;
 
     @Column(name = "diploma_printed", nullable = false)
-    @Convert(converter = BooleanCryptoConverter.class)
     private boolean diplomaPrinted = false;
 
     @Column(name = "accreditation_printed", nullable = false)
-    @Convert(converter = BooleanCryptoConverter.class)
     private boolean accreditationPrinted = false;
 
     public Role() {

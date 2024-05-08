@@ -21,12 +21,10 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.AchievementTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -58,12 +56,10 @@ public class Achievement extends Element {
 
     @Column(name = "achievement_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = AchievementTypeCryptoConverter.class)
     private AchievementType achievementType;
 
     @Column(name = "achievement_grade", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = AchievementTypeCryptoConverter.class)
     private AchievementGrade achievementGrade;
 
     public Achievement() {
