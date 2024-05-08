@@ -301,14 +301,21 @@
   "confirm": "Confermare",
   "ClearCacheLabel": "Pulire la Cache",
   "bloggerStatistics": "Blogger code",
-  "championship": "Torneo in Albero",
+  "championship": "Campionato",
+  "championshipHint": "Torneo in Albero",
   "league": "Liga",
-  "tree": "Torneo in Albero",
+  "leagueHint": "Tutti contro tutti",
+  "tree": "Campionato",
+  "treeHint": "Torneo in Albero",
   "customized": "Personalizzato",
+  "customizedHint": "Personalizzato",
   "customChampionship": "Personalizzato",
+  "customChampionshipHint": "Personalizzato",
   "loop": "Loop",
+  "loopHint": "Loop",
   "maxFightsCheckBox": "Creare tutte le possibili corrispondenze",
-  "kingOfTheMountain": "Il Re della Montagna",
+  "kingOfTheMountain": "Kachinuki",
+  "kingOfTheMountainHint": "Il Re della Montagna",
   "redTeamButton": "Squadra Rosso",
   "whiteTeamButton": "Squadra Bianca",
   "kingEliminateOldest": "Elimina il più antica",
@@ -864,7 +871,8 @@
     "achievementAllGenerated": "Un totale di {{achievementsNumber}} obiettivi sono stati generati in {{tournamentNumber}} tornei.",
     "shiaijoFinished": "Tutte le partite di shiaijo {{shiaijoName}} sono terminate.",
     "userAdminGenerated": "L'utente {{userName}} è stato creato!"
-  }
+  },
+  "daysFrom": "22 / 5.000\nResultados de traducción\nResultado de traducción\nApplicare solo in questi giorni"
 }
 
 

@@ -169,11 +169,13 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
         //Ensure that the group contains the teams of the fight.
         groupDTO.getFights().forEach(fightDTO -> {
-            if (!groupDTO.getTeams().contains(fightDTO.getTeam1())) {
-                groupDTO.getTeams().add(fightDTO.getTeam1());
-            }
-            if (!groupDTO.getTeams().contains(fightDTO.getTeam2())) {
-                groupDTO.getTeams().add(fightDTO.getTeam2());
+            if (fightDTO != null) {
+                if (!groupDTO.getTeams().contains(fightDTO.getTeam1())) {
+                    groupDTO.getTeams().add(fightDTO.getTeam1());
+                }
+                if (!groupDTO.getTeams().contains(fightDTO.getTeam2())) {
+                    groupDTO.getTeams().add(fightDTO.getTeam2());
+                }
             }
         });
 
