@@ -62,6 +62,7 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
     private String password;
 
     @Column(name = "username")
+    @Convert(converter = StringCryptoConverter.class)
     private String username;
 
     @Column(name = "username_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)

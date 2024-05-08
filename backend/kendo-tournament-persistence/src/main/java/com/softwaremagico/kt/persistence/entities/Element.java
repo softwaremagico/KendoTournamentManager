@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -50,7 +49,6 @@ public abstract class Element implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime createdAt;
 
     @Column(name = "created_by")
@@ -58,7 +56,6 @@ public abstract class Element implements Serializable {
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime updatedAt;
 
     @Column(name = "updated_by")

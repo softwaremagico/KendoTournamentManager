@@ -21,11 +21,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -63,7 +61,6 @@ public class Group extends Element {
     private List<Team> teams;
 
     @Column(name = "shiaijo", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
     @Column(name = "group_level", nullable = false)
@@ -78,7 +75,6 @@ public class Group extends Element {
     private List<Fight> fights;
 
     @Column(name = "number_of_winners", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private int numberOfWinners = 1;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
