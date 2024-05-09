@@ -38,8 +38,9 @@ import java.util.Base64;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
- * AES/CBC/PKCS5Padding implementation for encrypt and decrypt.
- * Is the only one fast enough for database access. Better than nothing.
+ * AES/CBC/PKCS5Padding implementation for encrypting and decrypt.
+ * Is the only one fast enough for database access?
+ * Better than nothing.
  */
 @SuppressWarnings("squid:S5542")
 public class CBCCipherEngine implements ICipherEngine {
@@ -71,7 +72,7 @@ public class CBCCipherEngine implements ICipherEngine {
             final byte[] encryptedBytes = getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
             EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
-            //Add the iv on th message.
+            //Add the iv on the message.
             return Base64.getEncoder().encodeToString(iv) + encodedValue;
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                  | InvalidKeyException e) {
