@@ -73,6 +73,7 @@ public class AuthenticatedUserProvider {
             //Username is encrypted, use hash
             final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
             if (authenticatedUser.isPresent()) {
+                authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
                 return Optional.of(authenticatedUser.get());
             }
         } else {
