@@ -97,7 +97,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   }
 
 
-  selectDrawResolution(drawResolution: DrawResolution) {
+  selectDrawResolution(drawResolution: DrawResolution): void {
     this.selectedDrawResolution = drawResolution;
     const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
     tournamentProperty.tournament = this.tournament;
@@ -108,7 +108,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     });
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
