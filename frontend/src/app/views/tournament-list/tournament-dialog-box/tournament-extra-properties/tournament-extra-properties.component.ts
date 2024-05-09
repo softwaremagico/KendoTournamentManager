@@ -103,7 +103,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = drawResolution;
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(() => {
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(():void => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }
