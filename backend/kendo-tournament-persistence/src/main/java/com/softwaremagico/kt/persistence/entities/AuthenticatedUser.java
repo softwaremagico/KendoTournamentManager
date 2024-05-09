@@ -26,6 +26,8 @@ import com.softwaremagico.kt.persistence.encryption.BCryptPasswordConverter;
 import com.softwaremagico.kt.persistence.encryption.SHA512HashGenerator;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
 import com.softwaremagico.kt.security.AvailableRole;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -61,6 +63,7 @@ public class AuthenticatedUser implements UserDetails, IAuthenticatedUser {
     @Convert(converter = BCryptPasswordConverter.class)
     private String password;
 
+    @Access(AccessType.PROPERTY)
     @Column(name = "username")
     @Convert(converter = StringCryptoConverter.class)
     private String username;

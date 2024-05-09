@@ -21,7 +21,10 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.SHA512HashGenerator;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.GeneratedValue;
@@ -51,16 +54,27 @@ public abstract class Element implements Serializable {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Access(AccessType.PROPERTY)
     @Column(name = "created_by")
+    @Convert(converter = StringCryptoConverter.class)
     private String createdBy;
+
+    @Column(name = "created_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String createdByHash;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Access(AccessType.PROPERTY)
     @Column(name = "updated_by")
     @Convert(converter = StringCryptoConverter.class)
     private String updatedBy;
+
+    @Column(name = "updated_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String updatedByHash;
 
     @Version
     private Integer version;
@@ -95,6 +109,15 @@ public abstract class Element implements Serializable {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+        this.createdByHash = createdBy;
+    }
+
+    public String getCreatedByHash() {
+        return createdByHash;
+    }
+
+    public void setCreatedByHash(String createdByHash) {
+        this.createdByHash = createdByHash;
     }
 
     public String getUpdatedBy() {
@@ -103,6 +126,15 @@ public abstract class Element implements Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+        this.updatedByHash = updatedBy;
+    }
+
+    public String getUpdatedByHash() {
+        return updatedByHash;
+    }
+
+    public void setUpdatedByHash(String updatedByHash) {
+        this.updatedByHash = updatedByHash;
     }
 
     @Override
