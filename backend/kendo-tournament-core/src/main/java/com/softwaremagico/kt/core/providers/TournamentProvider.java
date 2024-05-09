@@ -112,7 +112,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
     private void setDefaultProperties(Tournament tournament, String username) {
-        final List<TournamentExtraProperty> properties = tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(username);
+        final List<TournamentExtraProperty> properties = tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(username);
         properties.removeIf(tournamentExtraProperty -> Objects.equals(tournamentExtraProperty.getTournament().getId(), tournament.getId()));
         final List<TournamentExtraProperty> newProperties = new ArrayList<>();
         properties.forEach(tournamentExtraProperty -> {
