@@ -22,8 +22,8 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
-Kendo Tournament Manager v2 is the final tool for handling all your kendo tournament information in one single place.
-Designed for small to big size tournaments, it allows you to handle any kind of event that you can imagine for your
+Kendo Tournament Manager v2 is [the final tool](https://github.com/softwaremagico/KendoTournamentManager/wiki) for handling all your kendo tournament information in one single place.
+Designed for [small to big size tournaments](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition#types-of-tournament), it allows you to handle any kind of event that you can imagine for your
 kendo club.
 Including experience from several fighting structures that we had experienced in the last 15 years of use.
 The goal is to have enough flexibility to be at the service of your club, and not the other way around.
@@ -49,7 +49,7 @@ But if you want some professional tool that is accessible online, this is the pr
 ## Installation
 
 For an extended explanation about the installation, please check
-the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation)
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation). But you can have some ideas here:
 
 ### From a release version
 
@@ -131,7 +131,7 @@ application and probably the easiest way if you feel comfortable using docker.
 ### Hosting
 
 The application has been tested in a Raspberry Pi 3 model B with 1GB of RAM, with a great response for a small to
-medium size event. For a bigger events, please consider to hire some more specific hardware hosted on the cloud.
+medium size event. For a bigger events, please consider to adquire some more specific hardware hosted on the cloud.
 
 ### Client Side
 
