@@ -454,6 +454,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             }
           }
           if (this.selectedGroup) {
+            this.selectedFight = undefined;
             this.groupService.update(this.selectedGroup).subscribe((): void => {
               this.messageService.infoMessage("fightDeleted");
               this.refreshFights();
@@ -517,7 +518,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   deleteRowData(fight: Fight): void {
-    this.fightService.delete(fight).subscribe(() => {
+    this.fightService.delete(fight).subscribe((): void => {
         this.selectedGroup!.fights = this.selectedGroup!.fights.filter((existing_fight: Fight): boolean => existing_fight !== fight);
         this.filteredFights.set(this.selectedGroup!.id!, this.filteredFights.get(this.selectedGroup!.id!)!.filter(
           (existing_fight: Fight): boolean => existing_fight !== fight));
