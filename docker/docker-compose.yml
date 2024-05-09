@@ -22,6 +22,7 @@ services:
       context: ./traefik
       args:
         - email
+        - timezone
     image: "kendo-tournament-rproxy"
     container_name: "kendo-tournament-rproxy"
     command:
@@ -68,6 +69,7 @@ services:
         - release
         - machine_domain
         - protocol
+        - timezone
         - websocket_protocol
     image: kendo-tournament-frontend
     restart: always
@@ -121,6 +123,7 @@ services:
         - jwt_guest_expiration
         - jwt_secret
         - jwt_ip_check
+        - timezone
         - enable_guest_user
         - database_populate_default_data
     image: kendo-tournament-backend
