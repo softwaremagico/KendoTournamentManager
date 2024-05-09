@@ -3,12 +3,13 @@ FROM nginx:alpine
 ARG release
 ARG machine_domain
 ARG protocol
+ARG timezone
 ARG websocket_protocol
 
 ENV HTML_ROOT_FOLDER /www
 
 #Set timezone.
-ENV TZ=Europe/Madrid
+ENV TZ=${timezone}
 RUN apk add --no-cache curl tzdata && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
