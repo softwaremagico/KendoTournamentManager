@@ -49,8 +49,8 @@ public interface TournamentExtraPropertyRepository extends JpaRepository<Tournam
     @Query("""
                 Select p from TournamentExtraProperty p WHERE
                 p.id IN (SELECT max(p2.id) FROM TournamentExtraProperty p2 WHERE
-                (:createdBy IS NULL OR p2.createdBy=:createdBy) GROUP BY p2.propertyKey)
+                (:createdBy IS NULL OR p2.createdByHash=:createdBy) GROUP BY p2.propertyKey)
             """)
-    List<TournamentExtraProperty> findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(@Param("createdBy") String createdBy);
+    List<TournamentExtraProperty> findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(@Param("createdBy") String createdBy);
 
 }
