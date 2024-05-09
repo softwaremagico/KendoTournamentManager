@@ -32,6 +32,13 @@ import java.util.Optional;
 @Transactional
 public interface AuthenticatedUserRepository extends JpaRepository<AuthenticatedUser, Integer> {
 
+    /**
+     * Note that this method will not work with encrypted databases. Use the username search based on Hash.
+     *
+     * @param username
+     * @return
+     */
     Optional<AuthenticatedUser> findByUsername(String username);
+
     Optional<AuthenticatedUser> findByUsernameHash(String username);
 }
