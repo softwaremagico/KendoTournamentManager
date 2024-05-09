@@ -30,10 +30,8 @@ import java.security.NoSuchAlgorithmException;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
- * AES/CBC/PKCS5Padding implementation for encrypt and decrypt.
- * Is the only one fast enough for database access. Better than nothing.
+ * SHA-512 implementation for encrypting and decrypt.
  */
-@SuppressWarnings("squid:S5542")
 public class SHA512HashGenerator implements AttributeConverter<String, String> {
 
     private static final String ALGORITHM = "SHA-512";
@@ -59,7 +57,9 @@ public class SHA512HashGenerator implements AttributeConverter<String, String> {
         }
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
-            messageDigest.update(getDatabaseEncryptionKey().getBytes(StandardCharsets.UTF_8));
+            if (getDatabaseEncryptionKey() != null) {
+                messageDigest.update(getDatabaseEncryptionKey().getBytes(StandardCharsets.UTF_8));
+            }
             final byte[] bytes = messageDigest.digest(attribute.getBytes(StandardCharsets.UTF_8));
             final StringBuilder sb = new StringBuilder();
             for (byte aByte : bytes) {
