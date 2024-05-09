@@ -38,6 +38,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
+
 @Repository
 public class AuthenticatedUserProvider {
 
@@ -67,11 +69,21 @@ public class AuthenticatedUserProvider {
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository
-                .findByUsernameHash(username);
-        if (authenticatedUser.isPresent()) {
-            authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
-            return Optional.of(authenticatedUser.get());
+        if (getDatabaseEncryptionKey() != null) {
+            //Username is encrypted, use hash
+            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository
+                    .findByUsernameHash(username);
+            if (authenticatedUser.isPresent()) {
+                authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
+                return Optional.of(authenticatedUser.get());
+            }
+        } else {
+            //Username is not encrypted, use username for compatibility with old databases.
+            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository
+                    .findByUsername(username);
+            if (authenticatedUser.isPresent()) {
+                return Optional.of(authenticatedUser.get());
+            }
         }
         final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
         if (participant.isPresent()) {
