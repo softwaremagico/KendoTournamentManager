@@ -14,6 +14,7 @@ ARG jwt_expiration
 ARG jwt_guest_expiration
 ARG jwt_secret
 ARG jwt_ip_check
+ARG timezone
 ARG enable_guest_user
 ARG database_populate_default_data
 
@@ -23,7 +24,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-16-openjdk
 ENV PATH "$PATH:${JAVA_HOME}/bin"
 
 #Set timezone.
-ENV TZ=Europe/Madrid
+ENV TZ=${timezone}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #Copy libraries
