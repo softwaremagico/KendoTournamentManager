@@ -30,6 +30,7 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
@@ -88,6 +89,14 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
 
     public void addFightsAddedListeners(FightsAddedListener listener) {
         fightsAddedListeners.add(listener);
+    }
+
+    @Override
+    public void validate(FightDTO dto) throws ValidateBadRequestException {
+        if (dto.getTeam1() == null || dto.getTeam2() == null || dto.getTeam1().getMembers() == null || dto.getTeam2().getMembers() == null
+                || dto.getTeam1().getMembers().isEmpty() || dto.getTeam2().getMembers().isEmpty() || dto.getShiaijo() == null || dto.getLevel() == null) {
+            throw new ValidateBadRequestException(this.getClass(), "Fight '" + dto + "' is malformed.");
+        }
     }
 
     @Override
