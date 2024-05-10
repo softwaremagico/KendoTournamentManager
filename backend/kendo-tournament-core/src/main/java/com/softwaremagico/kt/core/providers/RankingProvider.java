@@ -220,9 +220,10 @@ public class RankingProvider {
         final List<Duel> unties = duelProvider.getUnties(competitors).stream().filter(duel ->
                 from == null || duel.getCreatedAt().isAfter(from)).toList();
 
-        final Set<Participant> participantsInFights = fights.stream().flatMap(fight -> fight.getTeam1().getMembers().stream()).collect(Collectors.toSet());
+        final Set<Participant> participantsInFights = fights.stream().flatMap(fight ->
+                fight.getTeam1().getMembers().stream()).collect(Collectors.toSet());
         participantsInFights.addAll(fights.stream().flatMap(fight -> fight.getTeam2().getMembers().stream()).collect(Collectors.toSet()));
-        competitors.retainAll(participantsInFights);
+        competitors.retainAll(new HashSet<>(participantsInFights));
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }
