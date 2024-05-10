@@ -54,6 +54,7 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
+import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -271,14 +272,25 @@ public class RankingController {
 
 
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType, Integer fromNumberOfDays) {
-        final Map<Integer, ClubDTO> clubsById = competitors.stream()
-                .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity(), (r1, r2) -> r1));
-        return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
-                        participantConverter.reverseAll(competitors),
-                        scoreType, fromNumberOfDays
-                )
-                .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor,
-                        clubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
+        Map<Integer, ClubDTO> clubsById = null;
+        try {
+            clubsById = competitors.stream()
+                    .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity(), (r1, r2) -> r1));
+        } catch (NullPointerException ignore) {
+
+        }
+
+        final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsGlobalScoreRanking(
+                participantConverter.reverseAll(competitors), scoreType, fromNumberOfDays);
+
+        if (clubsById != null) {
+            final Map<Integer, ClubDTO> finalClubsById = clubsById;
+            return scoreOfCompetitorConverter.convertAll(scoreOfCompetitors
+                    .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor,
+                            finalClubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
+        }
+        return scoreOfCompetitorConverter.convertAll(scoreOfCompetitors
+                .stream().map(ScoreOfCompetitorConverterRequest::new).toList());
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorGlobalRanking(ScoreType scoreType) {
