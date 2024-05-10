@@ -101,6 +101,8 @@ public class CBCCipherEngine implements ICipherEngine {
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                  | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
+        } catch (StringIndexOutOfBoundsException e) {
+            return null;
         }
     }
 
