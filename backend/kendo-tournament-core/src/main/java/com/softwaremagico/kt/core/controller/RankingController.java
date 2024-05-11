@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -267,7 +268,8 @@ public class RankingController {
     }
 
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, Integer fromNumberOfDays) {
-        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT, fromNumberOfDays);
+        return getCompetitorsGlobalScoreRanking(competitors.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new)),
+                ScoreType.DEFAULT, fromNumberOfDays);
     }
 
 
