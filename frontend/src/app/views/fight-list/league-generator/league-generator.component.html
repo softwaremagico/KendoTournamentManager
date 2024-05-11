@@ -11,13 +11,15 @@
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
     </div>
 
-    <div *ngIf="canMaximizeFights || needsDrawResolution || needsFifoWinner || canAvoidDuplicatedFights" class="extra-properties">
+    <div *ngIf="canMaximizeFights || needsDrawResolution || needsFifoWinner || canAvoidDuplicatedFights"
+         class="extra-properties">
       <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
                         [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
         {{'maximizeFights' | translate }}
       </mat-slide-toggle>
 
-      <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights" (change)="avoidDuplicatesToggle($event)">
+      <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights"
+                        (change)="avoidDuplicatesToggle($event)">
         {{'avoidDuplicateFights' | translate }}
       </mat-slide-toggle>
 
@@ -41,6 +43,15 @@
   </div>
 </div>
 <div class="button-container" mat-dialog-actions>
+  <button
+    (click)="balancedTeams()"
+    *ngIf="(tournament.type ==TournamentType.KING_OF_THE_MOUNTAIN || tournament.type ==TournamentType.LOOP)
+          && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+    mat-flat-button
+    mat-raised-button>
+    <mat-icon>auto_fix_high</mat-icon>
+    {{'wizard' | translate}}
+  </button>
   <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="fight-button" mat-flat-button
           mat-raised-button>

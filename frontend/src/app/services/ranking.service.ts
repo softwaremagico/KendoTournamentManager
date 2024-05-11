@@ -68,7 +68,7 @@ export class RankingService {
     );
   }
 
-  getCompetitorsGlobalScoreRanking(participants: Participant[] | undefined, fromDays: number | undefined): Observable<ScoreOfCompetitor[]> {
+  getCompetitorsGlobalScoreRanking(participants: (Participant | undefined)[] | undefined, fromDays: number | undefined): Observable<ScoreOfCompetitor[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors';
     return this.http.post<ScoreOfCompetitor[]>(url, participants, {
