@@ -437,9 +437,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         disableClose: false
       });
       dialogRef.componentInstance.messageTag = "deleteFightWarning"
-      dialogRef.componentInstance.parameters = {
-        team1: !this.swappedTeams ? (this.selectedFight?.team1.name) : (this.selectedFight?.team2.name),
-        team2: !this.swappedTeams ? (this.selectedFight?.team2.name) : (this.selectedFight?.team1.name),
+      if (this.selectedFight) {
+        dialogRef.componentInstance.parameters = {
+          team1: !this.swappedTeams ? (this.selectedFight?.team1.name) : (this.selectedFight?.team2.name),
+          team2: !this.swappedTeams ? (this.selectedFight?.team2.name) : (this.selectedFight?.team1.name),
+        }
+      } else if (this.selectedDuel) {
+        dialogRef.componentInstance.parameters = {
+          team1: !this.swappedTeams ? (this.selectedDuel?.competitor1?.lastname) : (this.selectedDuel?.competitor2?.lastname),
+          team2: !this.swappedTeams ? (this.selectedDuel?.competitor2?.lastname) : (this.selectedDuel?.competitor1?.lastname)
+        }
       }
 
       dialogRef.afterClosed().subscribe(result => {
@@ -698,7 +705,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   showClassification(): void {
-    debugger
     if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
       (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
       this.showTeamsClassification(true);
