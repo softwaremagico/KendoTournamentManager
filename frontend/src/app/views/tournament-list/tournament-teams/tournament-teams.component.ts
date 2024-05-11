@@ -28,6 +28,7 @@ import {Fight} from "../../../models/fight";
 import {Role} from "../../../models/role";
 import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {TournamentType} from "../../../models/tournament-type";
+import {getBalancedMember} from "../../../utils/teams/members";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -382,10 +383,11 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
 
     this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
+      const sortedParticipants: Participant[] = _scoreRanking.map((scoreOfCompetitor: ScoreOfCompetitor) => scoreOfCompetitor.competitor);
       for (let team of this.teams) {
         team.members = [];
         for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
-          const participant: Participant = this.getBalancedMember(participants, team.members.length,
+          const participant: Participant = getBalancedMember(sortedParticipants, team.members.length,
             (this.tournament.teamSize ? this.tournament.teamSize : 1));
           if (participant) {
             team.members[i] = participant;
@@ -400,7 +402,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
       }
       //Remaining one on left column.
-      this.userListData.participants = participants;
+      this.userListData.participants = sortedParticipants;
       this.userListData.filteredParticipants = this.userListData.participants;
     });
   }
@@ -433,24 +435,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     const selected: number = Math.floor(random() * participants.length);
     const participant: Participant = participants[selected];
     participants.splice(selected, 1);
-    return participant;
-  }
-
-  getBalancedMember(participants: Participant[], selectFromSector: number, availableSectors: number): Participant {
-    let selected: number = Math.floor(random() * (participants.length / availableSectors));
-    let participant: Participant;
-    if (selectFromSector == 0) {
-      participant = participants[selected];
-      participants.splice(selected, 1);
-    } else if (selectFromSector == availableSectors - 1) {
-      selected = participants.length - selected - 1;
-      participant = participants[selected];
-      participants.splice(selected, 1);
-    } else {
-      selected = Math.floor((participants.length / availableSectors)) * selectFromSector + selected;
-      participant = participants[selected];
-      participants.splice(selected, 1);
-    }
     return participant;
   }
 
