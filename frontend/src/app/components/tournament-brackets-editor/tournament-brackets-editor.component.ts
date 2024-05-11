@@ -36,13 +36,14 @@ import {Message} from "@stomp/stompjs/esm6";
 import {MessageContent} from "../../websockets/message-content.model";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
+import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
-export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnDestroy {
+export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
@@ -87,7 +88,8 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
               public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
-              private rxStompService: RxStompService, private environmentService: EnvironmentService) {
+              private rxStompService: RxStompService, private environmentService: EnvironmentService,
+              private tournamentChangedService: TournamentChangedService) {
   }
 
   ngOnInit(): void {
@@ -105,22 +107,21 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
         this.updateData(false);
       }
     });
+    this.tournamentChangedService.isTournamentChanged.subscribe((_tournament: Tournament): void => {
+      this.tournament = _tournament;
+      if (_tournament) {
+        this.updateData(true);
+      }
+    })
   }
 
   ngOnDestroy(): void {
     this.topicSubscription?.unsubscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.systemOverloadService.isBusy.next(true);
-    if (changes['tournament']) {
-      this.updateData(true);
-    }
-  }
-
   updateData(showBusy: boolean): void {
     this.systemOverloadService.isBusy.next(showBusy);
-    if (this.tournament) {
+    if (this.tournament && this.tournament.id) {
       const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
       const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
       const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
