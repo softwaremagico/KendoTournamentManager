@@ -3,7 +3,7 @@ import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
-import {forkJoin, Observable, Subject} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {UndrawTeamsComponent} from "../../views/fight-list/undraw-teams/undraw-teams.component";
 import {Team} from "../../models/team";
@@ -16,7 +16,6 @@ import {TournamentExtendedPropertiesService} from "../../services/tournament-ext
 import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
 import {MessageService} from "../../services/message.service";
-import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {Router} from "@angular/router";
 
 @Component({
@@ -67,6 +66,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       } else {
         if (this.tournament?.id) {
           this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
+            this.numberOfWinners = 1;
             this.teamScores = scoresOfTeams;
           });
         }
@@ -76,6 +76,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
   importantDrawWinner(): boolean {
     for (let i = 0; i < this.numberOfWinners; i++) {
+      console.log(this.numberOfWinners, this.isDrawWinner(i))
       if (this.isDrawWinner(i)) {
         console.log("Found draws on index ", i);
         return true;
