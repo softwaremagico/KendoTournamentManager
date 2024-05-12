@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, Optional} from '@angular/core';
+import {Component, Inject, Optional} from '@angular/core';
 import {RbacBasedComponent} from "../../../../components/RbacBasedComponent";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../../../models/tournament";

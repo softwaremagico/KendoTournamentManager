@@ -11,7 +11,6 @@ import {Router} from "@angular/router";
 import {ActivityService} from "./rbac/activity.service";
 import {AuthGuestRequest} from "./models/auth-guest-request";
 import {TemporalToken} from "./models/temporal-token";
-import {Participant} from "../models/participant";
 
 @Injectable({
   providedIn: 'root'

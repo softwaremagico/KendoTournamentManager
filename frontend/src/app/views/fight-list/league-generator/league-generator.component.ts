@@ -210,7 +210,8 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
 
       //Sort map and assign:
       this.teamsOrder = [];
-      const sortedTeams: Map<number, Team> = new Map([...teamsScore.entries()].sort());
+      const sortedTeams: Map<number, Team> = new Map([...teamsScore.entries()].sort(
+        (a: [number, Team], b: [number, Team]) => a[0] - b[0]));
       this.teamsOrder.push(...sortedTeams.values());
       this.teamListData.teams = [];
       this.teamListData.filteredTeams = [];
