@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {ClubListComponent} from "./views/club-list/club-list.component";
-import {LoggedIn, LoggedInService} from './interceptors/logged-in.service';
+import {LoggedIn} from './interceptors/logged-in.service';
 import {LoginComponent} from './views/login/login.component';
 import {AuthenticatedUserListComponent} from "./views/authenticated-user-list/authenticated-user-list.component";
 import {PasswordsComponent} from "./views/passwords/passwords.component";

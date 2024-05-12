@@ -45,7 +45,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
 
   ngOnInit(): void {
     this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
-      if (selectedDuel && this.fight && this.fight.duels) {
+      if (selectedDuel && this.fight?.duels) {
         this.selected = false;
         this.selectedDuel = undefined;
         for (let duel of this.fight.duels) {
