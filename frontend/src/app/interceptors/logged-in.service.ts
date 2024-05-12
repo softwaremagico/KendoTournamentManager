@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from '@angular/router';
 import {LoginService} from "../services/login.service";
 import {BehaviorSubject} from "rxjs";
 import {TournamentService} from "../services/tournament.service";
