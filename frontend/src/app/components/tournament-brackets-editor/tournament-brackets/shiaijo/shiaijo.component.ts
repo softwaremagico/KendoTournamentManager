@@ -7,8 +7,7 @@ import {Tournament} from "../../../../models/tournament";
 
 @Component({
   selector: 'app-shiaijo',
-  templateUrl: './shiaijo.component.html',
-  styleUrls: ['./shiaijo.component.scss']
+  templateUrl: './shiaijo.component.html'
 })
 export class ShiaijoComponent {
 

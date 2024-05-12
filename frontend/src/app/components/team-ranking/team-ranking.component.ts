@@ -51,7 +51,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
         if (this.group) {
-          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group!.id!);
+          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group.id!);
           const winnersRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
 
           forkJoin([rankingRequest, winnersRequest]).subscribe(([_scoresOfTeams, _numberOfWinners]): void => {
@@ -107,7 +107,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   downloadPDF(): void {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.CHAMPIONSHIP && this.group) {
-        this.rankingService.getTeamsScoreRankingByGroupAsPdf(this.group!.id!).subscribe((pdf: Blob): void => {
+        this.rankingService.getTeamsScoreRankingByGroupAsPdf(this.group.id!).subscribe((pdf: Blob): void => {
           const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
           const downloadURL: string = window.URL.createObjectURL(blob);
           const anchor: HTMLAnchorElement = document.createElement("a");

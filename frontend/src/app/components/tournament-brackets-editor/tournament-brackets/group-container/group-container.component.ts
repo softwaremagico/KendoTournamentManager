@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../../../models/team";
 import {Group} from "../../../../models/group";
-import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {GroupService} from "../../../../services/group.service";
 import {GroupsUpdatedService} from "../groups-updated.service";
 import {Tournament} from "../../../../models/tournament";
@@ -57,11 +56,11 @@ export class GroupContainerComponent implements OnInit {
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): void {
-    const team: Team = this.transferCard(event);
+    this.transferCard(event);
     this.groupHigh = this.getGroupHigh(this.level, this.index);
-    this.groupService.setTeamsToGroup(this.groupsByLevel!.get(this.level)![this.index]!.id!, this.groupsByLevel.get(this.level)![this.index].teams)
+    this.groupService.setTeamsToGroup(this.groupsByLevel.get(this.level)![this.index]!.id!, this.groupsByLevel.get(this.level)![this.index].teams)
       .subscribe((_group: Group): void => {
-        this.groupsByLevel!.get(this.level)![this.index] = _group;
+        this.groupsByLevel.get(this.level)![this.index] = _group;
       })
   }
 

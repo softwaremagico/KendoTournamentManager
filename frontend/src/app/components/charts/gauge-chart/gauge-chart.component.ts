@@ -66,8 +66,8 @@ export class GaugeChartComponent extends CustomChartComponent {
     this.chartOptions = {
       colors: this.colors,
       chart: this.getChart('radialBar', this.width, this.height, this.shadow, this.showToolbar),
-      series: this.data!.getValues(),
-      labels: this.data!.getLabels(),
+      series: this.data.getValues(),
+      labels: this.data.getLabels(),
       fill: this.getFill(this.fill, this.opacity),
       plotOptions: this.getPlotOptions(),
       tooltip: this.getTooltip(),
