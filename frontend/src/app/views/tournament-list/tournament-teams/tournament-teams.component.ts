@@ -391,6 +391,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
             (this.tournament.teamSize ? this.tournament.teamSize : 1));
           if (participant) {
             team.members[i] = participant;
+            sortedParticipants.splice(sortedParticipants.indexOf(participant), 1);
           }
         }
         this.members.set(team, team.members);
