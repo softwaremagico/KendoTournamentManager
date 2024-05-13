@@ -221,6 +221,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         tournamentFightStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
         tournamentFightStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
         tournamentFightStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
+        tournamentFightStatistics.setFusenGachiNumber(duelProvider.countScore(tournament, Score.FUSEN_GACHI));
         final Duel firstDuel = duelProvider.getFirstDuel(tournament);
         final Duel lastDuel = duelProvider.getLastDuel(tournament);
         if (firstDuel != null) {

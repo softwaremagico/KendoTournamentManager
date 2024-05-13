@@ -156,6 +156,13 @@
   "NumberLabel": "Aantal deelnemers",
   "banner": "Afbeelding",
   "photo": "Foto",
+  "men": "Men",
+  "kote": "Kote",
+  "do": "Do",
+  "tsuki": "Tsuki",
+  "ippon": "Ippon",
+  "fusenGachi": "Fusen-Gachi",
+  "hansoku": "Hansoku",
   "clear": "Herstel",
   "empty": "Herstel",
   "draw": "Trekken",
@@ -729,7 +736,7 @@
       "normal": "Score een Men, Kote en Do tijdens een toernooi.",
       "bronze": "Score een Men, Kote, Do en Tsuki tijdens een toernooi.",
       "silver": "Score een Men, Kote, Do, Tsuki en Hansoku tijdens een toernooi.",
-      "gold": "Score een Men, Kote, Do, Tsuki, Hansoku en Ippon tijdens een toernooi."
+      "gold": "Score een Men, Kote, Do, Tsuki, Hansoku en Ippon/Fusen-gachi tijdens een toernooi."
     },
     "boneBreaker": {
       "title": "Benenbreker",
