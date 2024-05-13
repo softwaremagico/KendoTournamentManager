@@ -1,5 +1,3 @@
-import {AchievementType} from "./achievement-type.model";
-
 export enum Score {
   MEN = 'MEN',
   KOTE = 'KOTE',
@@ -90,7 +88,7 @@ export namespace Score {
   }
 
 
-  export function toCamel(score: Score) {
+  export function toCamel(score: Score): string {
     return score.toLowerCase()
       .replace(/_(.)/g, function ($1: string) {
         return $1.toUpperCase();
