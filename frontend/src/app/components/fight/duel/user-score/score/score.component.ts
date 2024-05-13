@@ -43,6 +43,9 @@ export class ScoreComponent implements OnInit, OnChanges {
   onLeftBorder: boolean;
   onRightBorder: boolean;
 
+  protected readonly RbacActivity = RbacActivity;
+  protected readonly Score = Score;
+
   constructor(private duelService: DuelService, private scoreUpdatedService: ScoreUpdatedService, private messageService: MessageService,
               private translateService: TranslateService, public rbacService: RbacService) {
   }
@@ -56,7 +59,7 @@ export class ScoreComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['duel'] || changes['left'] || changes['swapTeams']) {
       this.scoreRepresentation = this.getScoreRepresentation();
       this.setTime();
@@ -204,7 +207,7 @@ export class ScoreComponent implements OnInit, OnChanges {
     return Score.toArray();
   }
 
-  setTime() {
+  setTime(): void {
     let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
       this.duel.competitor1ScoreTime[this.index] : this.duel.competitor2ScoreTime[this.index];
     if (seconds) {
@@ -256,6 +259,4 @@ export class ScoreComponent implements OnInit, OnChanges {
       this.onRightBorder = true;
     }
   }
-
-  protected readonly RbacActivity = RbacActivity;
 }
