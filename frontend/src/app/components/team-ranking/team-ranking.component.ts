@@ -145,7 +145,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
     });
     this.dialogRef.afterClosed().subscribe(result => {
-      if (result.action === Action.Update) {
+      if (result?.action === Action.Update) {
         this.dialogRef.close({action: Action.Update, draws: result.draws});
       }
     });

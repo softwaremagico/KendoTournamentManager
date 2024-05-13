@@ -254,11 +254,13 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   obtainPoints(tournamentStatistics: TournamentStatistics): [string, number][] {
     const scores: [string, number][] = [];
     if (tournamentStatistics?.tournamentFightStatistics) {
-      scores.push([Score.label(Score.MEN), tournamentStatistics.tournamentFightStatistics.menNumber ? tournamentStatistics.tournamentFightStatistics.menNumber : 0]);
-      scores.push([Score.label(Score.KOTE), tournamentStatistics.tournamentFightStatistics.koteNumber ? tournamentStatistics.tournamentFightStatistics.koteNumber : 0]);
-      scores.push([Score.label(Score.DO), tournamentStatistics.tournamentFightStatistics.doNumber ? tournamentStatistics.tournamentFightStatistics.doNumber : 0]);
-      scores.push([Score.label(Score.TSUKI), tournamentStatistics.tournamentFightStatistics.tsukiNumber ? tournamentStatistics.tournamentFightStatistics.tsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), tournamentStatistics.tournamentFightStatistics.ipponNumber ? tournamentStatistics.tournamentFightStatistics.ipponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.MEN)), tournamentStatistics.tournamentFightStatistics.menNumber ? tournamentStatistics.tournamentFightStatistics.menNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.KOTE)), tournamentStatistics.tournamentFightStatistics.koteNumber ? tournamentStatistics.tournamentFightStatistics.koteNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.DO)), tournamentStatistics.tournamentFightStatistics.doNumber ? tournamentStatistics.tournamentFightStatistics.doNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.TSUKI)), tournamentStatistics.tournamentFightStatistics.tsukiNumber ? tournamentStatistics.tournamentFightStatistics.tsukiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.IPPON)), tournamentStatistics.tournamentFightStatistics.ipponNumber ? tournamentStatistics.tournamentFightStatistics.ipponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.FUSEN_GACHI)), tournamentStatistics.tournamentFightStatistics.fusenGachiNumber ? tournamentStatistics.tournamentFightStatistics.fusenGachiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.HANSOKU)), tournamentStatistics.tournamentFightStatistics.hansokuNumber ? tournamentStatistics.tournamentFightStatistics.hansokuNumber : 0]);
     }
     return scores;
   }
