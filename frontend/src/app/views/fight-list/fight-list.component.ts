@@ -383,11 +383,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       dialogRef.afterClosed().subscribe(result => {
         if (result == undefined) {
           //Do nothing
-        } else if (result.action === Action.Add) {
+        } else if (result?.action === Action.Add) {
           this.createGroupFight(result.data);
-        } else if (result.action === Action.Update) {
+        } else if (result?.action === Action.Update) {
           this.updateRowData(result.data);
-        } else if (result.action === Action.Delete) {
+        } else if (result?.action === Action.Delete) {
           this.deleteRowData(result.data);
         }
       });
@@ -491,11 +491,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
-      } else if (result.action === Action.Add) {
+      } else if (result?.action === Action.Add) {
         this.selectFirstUnfinishedDuel();
-      } else if (result.action === Action.Update) {
+      } else if (result?.action === Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action === Action.Delete) {
+      } else if (result?.action === Action.Delete) {
         this.deleteRowData(result.data);
       }
     });
@@ -569,7 +569,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result.action === Action.Cancel) {
+        if (result?.action === Action.Cancel) {
         }
       });
     }
