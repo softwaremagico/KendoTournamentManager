@@ -166,6 +166,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
       scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.tsukiNumber ? participantStatistics.participantFightStatistics.tsukiNumber : 0]);
       scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.ipponNumber ? participantStatistics.participantFightStatistics.ipponNumber : 0]);
+      scores.push([Score.label(Score.FUSEN_GACHI), participantStatistics.participantFightStatistics.fusenGachiNumber ? participantStatistics.participantFightStatistics.fusenGachiNumber : 0]);
     }
     return scores;
   }
@@ -178,6 +179,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
       scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.receivedTsukiNumber ? participantStatistics.participantFightStatistics.receivedTsukiNumber : 0]);
       scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.receivedIpponNumber ? participantStatistics.participantFightStatistics.receivedIpponNumber : 0]);
+      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.receivedFusenGachiNumber ? participantStatistics.participantFightStatistics.receivedFusenGachiNumber : 0]);
     }
     return scores;
   }
@@ -202,4 +204,5 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
 
+    protected readonly undefined = undefined;
 }

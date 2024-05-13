@@ -36,6 +36,7 @@ public class ParticipantFightStatistics {
     private Long hansokuNumber;
 
     private Long ipponNumber;
+    private Long fusenGachiNumber;
 
     private Long receivedMenNumber;
 
@@ -48,6 +49,8 @@ public class ParticipantFightStatistics {
     private Long receivedHansokuNumber;
 
     private Long receivedIpponNumber;
+
+    private Long receivedFusenGachiNumber;
 
     private Long duelsNumber;
     //In seconds.
@@ -158,6 +161,14 @@ public class ParticipantFightStatistics {
         this.ipponNumber = ipponNumber;
     }
 
+    public Long getFusenGachiNumber() {
+        return Objects.requireNonNullElse(fusenGachiNumber, 0L);
+    }
+
+    public void setFusenGachiNumber(Long fusenGachiNumber) {
+        this.fusenGachiNumber = fusenGachiNumber;
+    }
+
     public Long getFaults() {
         return Objects.requireNonNullElse(faults, 0L);
     }
@@ -212,6 +223,14 @@ public class ParticipantFightStatistics {
 
     public void setReceivedIpponNumber(Long receivedIpponNumber) {
         this.receivedIpponNumber = receivedIpponNumber;
+    }
+
+    public Long getReceivedFusenGachiNumber() {
+        return Objects.requireNonNullElse(receivedFusenGachiNumber, 0L);
+    }
+
+    public void setReceivedFusenGachiNumber(Long receivedFusenGachiNumber) {
+        this.receivedFusenGachiNumber = receivedFusenGachiNumber;
     }
 
     public Long getReceivedFaults() {

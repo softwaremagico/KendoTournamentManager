@@ -295,6 +295,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getHansokuNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getTsukiNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getIpponNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getFusenGachiNumber(), 0);
 
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedMenNumber(), 1);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedKoteNumber(), 0);
@@ -302,6 +303,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedHansokuNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedTsukiNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedIpponNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedFusenGachiNumber(), 0);
 
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getFaults(), 1);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedFaults(), 0);
