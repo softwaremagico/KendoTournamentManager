@@ -458,6 +458,7 @@
   "do": "Do",
   "tsuki": "Tsuki",
   "ippon": "Ippon",
+  "fusenGachi": "Fusen-Gachi",
   "hansoku": "Hansoku",
   "clear": "Clear",
   "empty": "Clear",
@@ -756,7 +757,7 @@
       "normal": "Score a Men, Kote and Do in one tournament.",
       "bronze": "Score a Men, Kote, Do and Tsuki in one tournament.",
       "silver": "Score a Men, Kote, Do, Tsuki and Hansoku in one tournament.",
-      "gold": "Score a Men, Kote, Do, Tsuki, Hansoku and Ippon in one tournament."
+      "gold": "Score a Men, Kote, Do, Tsuki, Hansoku and Ippon/Fusen-gachi in one tournament."
     },
     "boneBreaker": {
       "title": "Bone breaker",
