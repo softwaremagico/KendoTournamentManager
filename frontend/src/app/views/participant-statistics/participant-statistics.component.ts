@@ -204,7 +204,4 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
   }
-
-
-    protected readonly undefined = undefined;
 }
