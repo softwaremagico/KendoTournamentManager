@@ -156,6 +156,13 @@
   "NumberLabel": "Num competitori",
   "banner": "Sponsor",
   "photo": "Foto",
+  "men": "Men",
+  "kote": "Kote",
+  "do": "Do",
+  "tsuki": "Tsuki",
+  "ippon": "Ippon",
+  "fusenGachi": "Fusen-Gachi",
+  "hansoku": "Hansoku",
   "clear": "Eliminare",
   "empty": "Eliminare",
   "draw": "Pareggio",
@@ -735,7 +742,7 @@
       "normal": "Segna un Men, Kote e Do durante un torneo.",
       "bronze": "Segna un Men, Kote, Do e Tsuki durante un torneo.",
       "silver": "Segna un Men, Kote, Do, Tsuki e Hansoku durante un torneo.",
-      "gold": "Segna un Men, Kote, Do, Tsuki, Hansoku e Ippon durante un torneo."
+      "gold": "Segna un Men, Kote, Do, Tsuki, Hansoku e Ippon/Fusen-gachi durante un torneo."
     },
     "boneBreaker": {
       "title": "Spaccaossa",

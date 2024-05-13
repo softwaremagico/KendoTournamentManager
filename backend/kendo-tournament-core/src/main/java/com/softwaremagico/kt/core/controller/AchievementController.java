@@ -1338,7 +1338,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When all points are scored: Men, Kote, Do, Tsuki, Hansoku and Ippon.
+     * When all points are scored: Men, Kote, Do, Tsuki, Hansoku and Ippon/Fusen-gachi.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -1351,7 +1351,8 @@ public class AchievementController extends BasicInsertableController<Achievement
                     && getScoresByParticipant().get(participant).contains(Score.DO)
                     && getScoresByParticipant().get(participant).contains(Score.TSUKI)
                     && getScoresByParticipant().get(participant).contains(Score.HANSOKU)
-                    && getScoresByParticipant().get(participant).contains(Score.IPPON)) {
+                    && (getScoresByParticipant().get(participant).contains(Score.IPPON)
+                    || getScoresByParticipant().get(participant).contains(Score.FUSEN_GACHI))) {
                 participants.add(participant);
             }
         });
