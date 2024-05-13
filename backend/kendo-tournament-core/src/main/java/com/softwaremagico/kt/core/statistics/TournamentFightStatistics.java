@@ -37,6 +37,8 @@ public class TournamentFightStatistics {
 
     private Long ipponNumber;
 
+    private Long fusenGachiNumber;
+
     private Long fightsNumber;
     private Long fightsByTeam;
     private Long duelsNumber;
@@ -162,6 +164,14 @@ public class TournamentFightStatistics {
 
     public void setIpponNumber(Long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public Long getFusenGachiNumber() {
+        return fusenGachiNumber;
+    }
+
+    public void setFusenGachiNumber(Long fusenGachiNumber) {
+        this.fusenGachiNumber = fusenGachiNumber;
     }
 
     /**
