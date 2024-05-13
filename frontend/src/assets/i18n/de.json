@@ -156,6 +156,13 @@
   "NumberLabel": "Anzahl Teilnehmer",
   "banner": "Banner",
   "photo": "Foto",
+  "men": "Men",
+  "kote": "Kote",
+  "do": "Do",
+  "tsuki": "Tsuki",
+  "ippon": "Ippon",
+  "fusenGachi": "Fusen-Gachi",
+  "hansoku": "Hansoku",
   "clear": "Löschen",
   "empty": "Löschen",
   "draw": "Unentschieden",
@@ -729,7 +736,7 @@
       "normal": "Während eines Turniers ein Herren-, Kote- und Do-Ergebnis erzielen.",
       "bronze": "Erziele während eines Turniers ein Herren-, Kote-, Do- und Tsuki-Ergebnis.",
       "silver": "Erziele während eines Turniers ein Men, Kote, Do, Tsuki und Hansoku.",
-      "gold": "Erziele während eines Turniers ein Men, Kote, Do, Tsuki, Hansoku und Ippon."
+      "gold": "Erziele während eines Turniers ein Men, Kote, Do, Tsuki, Hansoku und Ippon/Fusen-gachi."
     },
     "boneBreaker": {
       "title": "Knochenbrecher",

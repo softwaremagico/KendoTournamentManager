@@ -172,6 +172,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                         participantFightStatistics.setHansokuNumber(participantFightStatistics.getHansokuNumber() + 1);
                 case IPPON ->
                         participantFightStatistics.setIpponNumber(participantFightStatistics.getIpponNumber() + 1);
+                case FUSEN_GACHI ->
+                        participantFightStatistics.setFusenGachiNumber(participantFightStatistics.getFusenGachiNumber() + 1);
                 default -> {
                 }
             }
@@ -195,6 +197,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                         participantFightStatistics.setReceivedHansokuNumber(participantFightStatistics.getReceivedHansokuNumber() + 1);
                 case IPPON ->
                         participantFightStatistics.setReceivedIpponNumber(participantFightStatistics.getReceivedIpponNumber() + 1);
+                case FUSEN_GACHI ->
+                        participantFightStatistics.setReceivedFusenGachiNumber(participantFightStatistics.getReceivedFusenGachiNumber() + 1);
                 default -> {
                 }
             }

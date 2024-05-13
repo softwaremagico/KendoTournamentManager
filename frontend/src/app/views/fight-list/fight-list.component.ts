@@ -383,11 +383,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       dialogRef.afterClosed().subscribe(result => {
         if (result == undefined) {
           //Do nothing
-        } else if (result.action === Action.Add) {
+        } else if (result?.action === Action.Add) {
           this.createGroupFight(result.data);
-        } else if (result.action === Action.Update) {
+        } else if (result?.action === Action.Update) {
           this.updateRowData(result.data);
-        } else if (result.action === Action.Delete) {
+        } else if (result?.action === Action.Delete) {
           this.deleteRowData(result.data);
         }
       });
@@ -491,11 +491,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
-      } else if (result.action === Action.Add) {
+      } else if (result?.action === Action.Add) {
         this.selectFirstUnfinishedDuel();
-      } else if (result.action === Action.Update) {
+      } else if (result?.action === Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action === Action.Delete) {
+      } else if (result?.action === Action.Delete) {
         this.deleteRowData(result.data);
       }
     });
@@ -569,7 +569,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (result.action === Action.Cancel) {
+        if (result?.action === Action.Cancel) {
         }
       });
     }
@@ -605,23 +605,23 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     //Put default points.
     if (duel.competitor1 !== null && duel.competitor2 == null) {
       duel.competitor1Score = [];
-      duel.competitor1Score.push(Score.IPPON);
-      duel.competitor1Score.push(Score.IPPON);
+      duel.competitor1Score.push(Score.FUSEN_GACHI);
+      duel.competitor1Score.push(Score.FUSEN_GACHI);
     } else if (duel.competitor2 !== null && duel.competitor1 == null) {
       duel.competitor2Score = [];
-      duel.competitor2Score.push(Score.IPPON);
-      duel.competitor2Score.push(Score.IPPON);
+      duel.competitor2Score.push(Score.FUSEN_GACHI);
+      duel.competitor2Score.push(Score.FUSEN_GACHI);
     }
   }
 
   removeIpponScores(duel: Duel): void {
     for (let i: number = 0; i < duel.competitor1Score.length; i++) {
-      if (duel.competitor1Score[i] == Score.IPPON) {
+      if (duel.competitor1Score[i] == Score.FUSEN_GACHI) {
         duel.competitor1Score = [];
       }
     }
     for (let i: number = 0; i < duel.competitor2Score.length; i++) {
-      if (duel.competitor2Score[i] == Score.IPPON) {
+      if (duel.competitor2Score[i] == Score.FUSEN_GACHI) {
         duel.competitor2Score = [];
       }
     }

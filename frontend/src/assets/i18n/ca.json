@@ -158,6 +158,13 @@
   "NumberLabel": "Competidors",
   "banner": "Patrocinador",
   "photo": "Foto",
+  "men": "Men",
+  "kote": "Kote",
+  "do": "Do",
+  "tsuki": "Tsuki",
+  "ippon": "Ippon",
+  "fusenGachi": "Fusen-Gachi",
+  "hansoku": "Hansoku",
   "clear": "Eliminar",
   "empty": "Eliminar",
   "draw": "Empat",
@@ -741,7 +748,7 @@
       "normal": "Marca un Men, Kote i Do durant un torneig.",
       "bronze": "Marca un Men, Kote, Do i Tsuki durant un torneig.",
       "silver": "Marca un Men, Kote, Do, Tsuki i Hansoku durant un torneig.",
-      "gold": "Marca un Men, Kote, Do, Tsuki, Hansoku i Ippon durant un torneig."
+      "gold": "Marca un Men, Kote, Do, Tsuki, Hansoku i Ippon/Fusen-gachi durant un torneig."
     },
     "boneBreaker": {
       "title": "Trenca Ossos",

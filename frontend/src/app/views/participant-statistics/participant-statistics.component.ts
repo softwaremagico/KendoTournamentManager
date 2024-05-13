@@ -161,11 +161,13 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   obtainPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
     if (participantStatistics?.participantFightStatistics) {
-      scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.menNumber ? participantStatistics.participantFightStatistics.menNumber : 0]);
-      scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.koteNumber ? participantStatistics.participantFightStatistics.koteNumber : 0]);
-      scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
-      scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.tsukiNumber ? participantStatistics.participantFightStatistics.tsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.ipponNumber ? participantStatistics.participantFightStatistics.ipponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.MEN)), participantStatistics.participantFightStatistics.menNumber ? participantStatistics.participantFightStatistics.menNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.KOTE)), participantStatistics.participantFightStatistics.koteNumber ? participantStatistics.participantFightStatistics.koteNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.DO)), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.TSUKI)), participantStatistics.participantFightStatistics.tsukiNumber ? participantStatistics.participantFightStatistics.tsukiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.IPPON)), participantStatistics.participantFightStatistics.ipponNumber ? participantStatistics.participantFightStatistics.ipponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.FUSEN_GACHI)), participantStatistics.participantFightStatistics.fusenGachiNumber ? participantStatistics.participantFightStatistics.fusenGachiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.HANSOKU)), participantStatistics.participantFightStatistics.hansokuNumber ? participantStatistics.participantFightStatistics.hansokuNumber : 0]);
     }
     return scores;
   }
@@ -173,11 +175,13 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   obtainReceivedPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
     if (participantStatistics?.participantFightStatistics) {
-      scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.receivedMenNumber ? participantStatistics.participantFightStatistics.receivedMenNumber : 0]);
-      scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
-      scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
-      scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.receivedTsukiNumber ? participantStatistics.participantFightStatistics.receivedTsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.receivedIpponNumber ? participantStatistics.participantFightStatistics.receivedIpponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.MEN)), participantStatistics.participantFightStatistics.receivedMenNumber ? participantStatistics.participantFightStatistics.receivedMenNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.KOTE)), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.DO)), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.TSUKI)), participantStatistics.participantFightStatistics.receivedTsukiNumber ? participantStatistics.participantFightStatistics.receivedTsukiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.IPPON)), participantStatistics.participantFightStatistics.receivedIpponNumber ? participantStatistics.participantFightStatistics.receivedIpponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.FUSEN_GACHI)), participantStatistics.participantFightStatistics.receivedFusenGachiNumber ? participantStatistics.participantFightStatistics.receivedFusenGachiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.HANSOKU)), participantStatistics.participantFightStatistics.receivedHansokuNumber ? participantStatistics.participantFightStatistics.receivedHansokuNumber : 0]);
     }
     return scores;
   }
@@ -200,6 +204,4 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
   }
-
-
 }

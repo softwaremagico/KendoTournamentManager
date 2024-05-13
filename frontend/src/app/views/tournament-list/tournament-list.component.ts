@@ -110,11 +110,11 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
-      } else if (result.action == Action.Add) {
+      } else if (result?.action == Action.Add) {
         this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
+      } else if (result?.action == Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
+      } else if (result?.action == Action.Delete) {
         this.deleteRowData(result.data);
         this.userSessionService.setSelectedTournament(undefined);
       }

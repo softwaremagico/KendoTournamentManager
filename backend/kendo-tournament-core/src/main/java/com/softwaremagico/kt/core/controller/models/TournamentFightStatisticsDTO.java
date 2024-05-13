@@ -37,6 +37,8 @@ public class TournamentFightStatisticsDTO extends ElementDTO {
 
     private Long ipponNumber;
 
+    private Long fusenGachiNumber;
+
     private Long fightsNumber;
     private Integer fightsByTeam;
     private Long duelsNumber;
@@ -162,6 +164,14 @@ public class TournamentFightStatisticsDTO extends ElementDTO {
 
     public void setIpponNumber(Long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public Long getFusenGachiNumber() {
+        return fusenGachiNumber;
+    }
+
+    public void setFusenGachiNumber(Long fusenGachiNumber) {
+        this.fusenGachiNumber = fusenGachiNumber;
     }
 
     public Long getFightsFinished() {
