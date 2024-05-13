@@ -8,12 +8,14 @@ export class ParticipantFightStatistics extends Element {
   tsukiNumber: number;
   hansokuNumber: number;
   ipponNumber: number;
+  fusenGachiNumber: number;
   receivedMenNumber: number;
   receivedKoteNumber: number;
   receivedDoNumber: number;
   receivedTsukiNumber: number;
   receivedHansokuNumber: number;
   receivedIpponNumber: number;
+  receivedFusenGachiNumber: number;
   duelsNumber: number;
   //In seconds.
   averageTime: number;
@@ -36,12 +38,14 @@ export class ParticipantFightStatistics extends Element {
     target.tsukiNumber = source.tsukiNumber;
     target.hansokuNumber = source.hansokuNumber;
     target.ipponNumber = source.ipponNumber;
+    target.fusenGachiNumber = source.fusenGachiNumber;
     target.receivedMenNumber = source.receivedMenNumber;
     target.receivedKoteNumber = source.receivedKoteNumber;
     target.receivedDoNumber = source.receivedDoNumber;
     target.receivedTsukiNumber = source.receivedTsukiNumber;
     target.receivedHansokuNumber = source.receivedHansokuNumber;
     target.receivedIpponNumber = source.receivedIpponNumber;
+    target.receivedFusenGachiNumber = source.receivedFusenGachiNumber;
     target.duelsNumber = source.duelsNumber;
     target.averageTime = source.averageTime;
     target.averageWinTime = source.averageWinTime;
@@ -71,10 +75,12 @@ export class ParticipantFightStatistics extends Element {
 
 
   public getTotalHits(): number {
-    return this.menNumber + this.koteNumber + this.doNumber + this.tsukiNumber + this.ipponNumber + this.hansokuNumber;
+    return this.menNumber + this.koteNumber + this.doNumber + this.tsukiNumber + this.ipponNumber + this.hansokuNumber
+      + this.fusenGachiNumber;
   }
 
   public getTotalReceivedHits(): number {
-    return this.receivedMenNumber + this.receivedKoteNumber + this.receivedDoNumber + this.receivedTsukiNumber + this.receivedIpponNumber + this.receivedHansokuNumber;
+    return this.receivedMenNumber + this.receivedKoteNumber + this.receivedDoNumber + this.receivedTsukiNumber
+      + this.receivedIpponNumber + this.receivedHansokuNumber + this.receivedFusenGachiNumber;
   }
 }

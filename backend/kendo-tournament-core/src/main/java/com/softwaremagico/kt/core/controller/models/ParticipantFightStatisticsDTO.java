@@ -37,6 +37,8 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     private Long ipponNumber;
 
+    private Long fusenGachiNumber;
+
     private Long receivedMenNumber;
 
     private Long receivedKoteNumber;
@@ -48,6 +50,7 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
     private Long receivedHansokuNumber;
 
     private Long receivedIpponNumber;
+    private Long receivedFusenGachiNumber;
 
     private Long duelsNumber;
     //In seconds.
@@ -155,6 +158,14 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
         this.ipponNumber = ipponNumber;
     }
 
+    public Long getFusenGachiNumber() {
+        return fusenGachiNumber;
+    }
+
+    public void setFusenGachiNumber(Long fusenGachiNumber) {
+        this.fusenGachiNumber = fusenGachiNumber;
+    }
+
     public Long getFaults() {
         return Objects.requireNonNullElse(faults, 0L);
     }
@@ -209,6 +220,14 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     public void setReceivedIpponNumber(Long receivedIpponNumber) {
         this.receivedIpponNumber = receivedIpponNumber;
+    }
+
+    public Long getReceivedFusenGachiNumber() {
+        return receivedFusenGachiNumber;
+    }
+
+    public void setReceivedFusenGachiNumber(Long receivedFusenGachiNumber) {
+        this.receivedFusenGachiNumber = receivedFusenGachiNumber;
     }
 
     public Long getReceivedFaults() {
