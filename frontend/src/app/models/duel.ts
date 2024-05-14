@@ -42,10 +42,10 @@ export class Duel extends Element {
     }
     target.competitor1Score = [];
     target.competitor2Score = [];
-    source.competitor1Score.forEach(score => target.competitor1Score.push(score));
-    source.competitor2Score.forEach(score => target.competitor2Score.push(score));
-    source.competitor1ScoreTime.forEach(time => target.competitor1ScoreTime.push(time));
-    source.competitor2ScoreTime.forEach(time => target.competitor2ScoreTime.push(time));
+    source.competitor1Score.forEach((score: Score) => target.competitor1Score.push(score));
+    source.competitor2Score.forEach((score: Score) => target.competitor2Score.push(score));
+    source.competitor1ScoreTime.forEach((time: number) => target.competitor1ScoreTime.push(time));
+    source.competitor2ScoreTime.forEach((time: number) => target.competitor2ScoreTime.push(time));
 
     target.competitor1FaultTime = source.competitor1FaultTime;
     target.competitor2FaultTime = source.competitor2FaultTime;
