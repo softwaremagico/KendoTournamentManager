@@ -24,9 +24,7 @@ export namespace Score {
   export function getKeys(): string[] {
     return Object.keys(Score).filter((enumValue: string): boolean => (typeof (Score[enumValue as Score]) !== 'function'))
   }
-}
 
-export namespace Score {
   export function toArray(): Score[] {
     return Score.getKeys().map((key: string) => {
       return <Score>(<any>Score)[key];
@@ -41,26 +39,20 @@ export namespace Score {
     scores.push(Score.FUSEN_GACHI);
     return scores;
   }
-}
 
-export namespace Score {
   export function clear(): Score[] {
     const scores: Score[] = [];
     scores.push(Score.EMPTY);
     return scores;
   }
-}
 
-export namespace Score {
   export function getEnumKeyByEnumValue<T extends {
     [index: string]: string
   }>(myEnum: T, enumValue: string): keyof T | null {
     let keys: string[] = Object.keys(myEnum).filter((x: string): boolean => myEnum[x] == enumValue);
     return keys.length > 0 ? keys[0] : null;
   }
-}
 
-export namespace Score {
   export function tag(score: Score): string {
     if (score) {
       switch (score) {
