@@ -14,7 +14,7 @@ export class DrawPipe implements PipeTransform {
   countPoints(scores: Score[]): number {
     let sum: number = 0;
     scores.forEach((score: Score): void => {
-      if (score != Score.EMPTY) {
+      if (score != undefined && score != Score.EMPTY) {
         sum++;
       }
     });
