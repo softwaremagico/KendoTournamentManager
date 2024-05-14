@@ -62,4 +62,28 @@ export class Duel extends Element {
     this.copy(data, instance);
     return instance;
   }
+
+  public static addHansoku(duel: Duel, competitor1: boolean): boolean {
+    if (competitor1) {
+      if (duel.competitor1Score[0] == undefined) {
+        duel.competitor1Score[0] = Score.HANSOKU;
+        duel.competitor1ScoreTime[0] = duel.duration!;
+      } else if (duel.competitor1Score[1] == undefined) {
+        duel.competitor1Score[1] = Score.HANSOKU;
+        duel.competitor1ScoreTime[1] = duel.duration!;
+        return false;
+      }
+    } else {
+      if (duel.competitor2Score[0] == undefined) {
+        duel.competitor2Score[0] = Score.HANSOKU;
+        duel.competitor2ScoreTime[0] = duel.duration!;
+      } else if (duel.competitor2Score[1] == undefined) {
+        duel.competitor2Score[1] = Score.HANSOKU;
+        duel.competitor2ScoreTime[1] = duel.duration!;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
 }
