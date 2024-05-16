@@ -8,6 +8,7 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CdkDragEnd, Point} from "@angular/cdk/drag-drop";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {FilterFocusService} from "../../services/notifications/filter-focus.service";
 
 @Component({
   selector: 'app-timer',
@@ -25,6 +26,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   editable: boolean = true;
+
+  private keysControls: boolean;
 
   @Input()
   set startingSeconds(value: number) {
@@ -59,7 +62,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
-              rbacService: RbacService) {
+              rbacService: RbacService, private filterFocusService: FilterFocusService) {
     super(rbacService);
     this.started = false;
   }
@@ -68,14 +71,19 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
 
+    //Enable/Disable key controls if the filter is in use.
+    this.filterFocusService.isFilterActive.subscribe((_value: boolean): void => {
+      this.keysControls = !_value;
+    })
+
     const self: TimerComponent = this;
     this.clockHandler = setInterval(function (): void {
       self.secondElapsed.apply(self);
     }, 1000);
-    this.timeChangedService.isElapsedTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(elapsedTime => {
+    this.timeChangedService.isElapsedTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe((elapsedTime: number): void => {
       this.elapsedSeconds = elapsedTime;
     });
-    this.timeChangedService.isTotalTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe(totalTime => {
+    this.timeChangedService.isTotalTimeChanged.pipe(takeUntil(this.destroySubject)).subscribe((totalTime: number): void => {
       this.resetVariablesAsSeconds(totalTime, false);
       this.totalTime = totalTime;
     });
@@ -93,15 +101,16 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize() {
+  onWindowResize(): void {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
     this.correctTimerPosition();
   }
 
+
   @HostListener('document:keypress', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (!this.secondsEditable && !this.minutesEditable && this.editable) {
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (!this.secondsEditable && !this.minutesEditable && this.editable && this.keysControls) {
       if (event.key === ' ') {
         if (this.started) {
           this.pauseTimer();
@@ -114,10 +123,11 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
+
   @HostListener('document:keydown', ['$event'])
-  handleKeyboardNonPrintableEvent(event: KeyboardEvent) {
-    if (!this.secondsEditable && !this.minutesEditable && this.editable) {
-      if (event.key === 'Backspace') {
+  handleKeyboardNonPrintableEvent(event: KeyboardEvent): void {
+    if (!this.secondsEditable && !this.minutesEditable && this.editable && this.keysControls) {
+      if (event.key === 'Home' || event.key === 'Backspace') {
         this.restoreTimer();
       } else if (event.key === 'Escape') {
         this.timerClosed.emit(true);
@@ -125,7 +135,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
-  resetVariablesAsSeconds(rawSeconds: number, started: boolean) {
+
+  resetVariablesAsSeconds(rawSeconds: number, started: boolean): void {
     rawSeconds = rawSeconds - this.elapsedSeconds;
     if (rawSeconds < 0) {
       rawSeconds = 0;
@@ -135,16 +146,16 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.started = started;
   }
 
-  resetVariables(minutes: number, seconds: number, started: boolean) {
+  resetVariables(minutes: number, seconds: number, started: boolean): void {
     this.resetVariablesAsSeconds(minutes * 60 + seconds, started);
   }
 
-  startTimer() {
+  startTimer(): void {
     this.started = true;
     this.onPlayPressed.emit([this.elapsedSeconds]);
   };
 
-  pauseTimer() {
+  pauseTimer(): void {
     this.started = false;
     this.onTimerChanged.emit([this.elapsedSeconds]);
   };
@@ -163,7 +174,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
   };
 
-  restoreTimer() {
+  restoreTimer(): void {
     if (this.elapsedSeconds === 0) {
       return;
     }
@@ -182,12 +193,12 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     });
   }
 
-  timerComplete() {
+  timerComplete(): void {
     this.onTimerFinished.emit([true]);
     this.started = false;
   }
 
-  secondElapsed() {
+  secondElapsed(): void {
     if (!this.started) {
       return;
     }
@@ -323,12 +334,12 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     this.onTimerChanged.emit([this.elapsedSeconds]);
   }
 
-  dragEnd($event: CdkDragEnd) {
+  dragEnd($event: CdkDragEnd): void {
     this.timerPosition = $event.source.getFreeDragPosition();
     this.correctTimerPosition();
   }
 
-  correctTimerPosition() {
+  correctTimerPosition(): void {
     if (this.timerPosition.x < -this.screenWidth / 2) {
       this.timerPosition.x = -this.screenWidth / 2;
     }
