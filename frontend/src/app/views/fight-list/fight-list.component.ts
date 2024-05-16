@@ -644,7 +644,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         let showClassification: boolean = true;
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
-          console.log(this.tournament.type)
           if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
             //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();

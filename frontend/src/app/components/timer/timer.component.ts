@@ -8,6 +8,7 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {CdkDragEnd, Point} from "@angular/cdk/drag-drop";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {FilterFocusService} from "../../services/notifications/filter-focus.service";
 
 @Component({
   selector: 'app-timer',
@@ -25,6 +26,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   editable: boolean = true;
+
+  private keysControls: boolean;
 
   @Input()
   set startingSeconds(value: number) {
@@ -59,7 +62,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
 
   constructor(public audioService: AudioService, private timeChangedService: TimeChangedService, private dialog: MatDialog,
-              rbacService: RbacService) {
+              rbacService: RbacService, private filterFocusService: FilterFocusService) {
     super(rbacService);
     this.started = false;
   }
@@ -67,6 +70,11 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   ngOnInit(): void {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
+
+    //Enable/Disable key controls if the filter is in use.
+    this.filterFocusService.isFilterActive.subscribe((_value: boolean): void => {
+      this.keysControls = !_value;
+    })
 
     const self: TimerComponent = this;
     this.clockHandler = setInterval(function (): void {
@@ -93,15 +101,16 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize() {
+  onWindowResize(): void {
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
     this.correctTimerPosition();
   }
 
+
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
-    if (!this.secondsEditable && !this.minutesEditable && this.editable) {
+    if (!this.secondsEditable && !this.minutesEditable && this.editable && this.keysControls) {
       if (event.key === ' ') {
         if (this.started) {
           this.pauseTimer();
@@ -114,16 +123,18 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
+
   @HostListener('document:keydown', ['$event'])
   handleKeyboardNonPrintableEvent(event: KeyboardEvent): void {
-    if (!this.secondsEditable && !this.minutesEditable && this.editable) {
-      if (event.key === 'Home') {
+    if (!this.secondsEditable && !this.minutesEditable && this.editable && this.keysControls) {
+      if (event.key === 'Home' || event.key === 'Backspace') {
         this.restoreTimer();
       } else if (event.key === 'Escape') {
         this.timerClosed.emit(true);
       }
     }
   }
+
 
   resetVariablesAsSeconds(rawSeconds: number, started: boolean): void {
     rawSeconds = rawSeconds - this.elapsedSeconds;
