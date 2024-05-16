@@ -76,7 +76,6 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
 
   importantDrawWinner(): boolean {
     for (let i = 0; i < this.numberOfWinners; i++) {
-      console.log(this.numberOfWinners, this.isDrawWinner(i))
       if (this.isDrawWinner(i)) {
         console.log("Found draws on index ", i);
         return true;
