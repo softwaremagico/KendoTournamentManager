@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
+import {FilterFocusService} from "../../../services/notifications/filter-focus.service";
 
 @Component({
   selector: 'app-filter',
@@ -17,25 +18,33 @@ export class FilterComponent implements OnInit {
 
   @Input() resetValue: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private filterResetService: FilterResetService) {
+  constructor(private filterResetService: FilterResetService, private filterFocusService: FilterFocusService) {
   }
 
-  ngOnInit() {
-    this.resetValue.subscribe(() => {
+  ngOnInit(): void {
+    this.resetValue.subscribe((): void => {
       this.reset();
     });
-    this.filterResetService.resetFilter.subscribe(() => {
+    this.filterResetService.resetFilter.subscribe((): void => {
       this.reset();
     })
   }
 
-  filter(event: Event) {
+  filter(event: Event): void {
     const filter: string = (event.target as HTMLInputElement).value.toLowerCase();
     this.filterChanged.emit(filter);
   }
 
-  reset() {
+  reset(): void {
     this.filterString = '';
     this.filterChanged.emit(this.filterString);
+  }
+
+  focus(): void {
+    this.filterFocusService.isFilterActive.next(true);
+  }
+
+  focusout(): void {
+    this.filterFocusService.isFilterActive.next(false);
   }
 }
