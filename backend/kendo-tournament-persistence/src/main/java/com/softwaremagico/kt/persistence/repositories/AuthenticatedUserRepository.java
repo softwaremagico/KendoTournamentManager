@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,5 +32,13 @@ import java.util.Optional;
 @Transactional
 public interface AuthenticatedUserRepository extends JpaRepository<AuthenticatedUser, Integer> {
 
+    /**
+     * Note that this method will not work with encrypted databases. Use the username search based on Hash.
+     *
+     * @param username
+     * @return
+     */
     Optional<AuthenticatedUser> findByUsername(String username);
+
+    Optional<AuthenticatedUser> findByUsernameHash(String username);
 }

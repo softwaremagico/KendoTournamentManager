@@ -32,6 +32,10 @@
     </cache-template>
 
     <cache-template name="short-time-cache-template">
+        <expiry>
+            <tti unit="seconds">200</tti>
+        </expiry>
+
         <listeners>
             <listener>
                 <class>com.softwaremagico.kt.logger.CacheEventLogger</class>
@@ -70,6 +74,11 @@
         <key-type>java.lang.Integer</key-type>
         <value-type>com.softwaremagico.kt.persistence.entities.Tournament</value-type>
         <heap>10</heap>
+    </cache>
+
+    <cache alias="qr-codes" uses-template="short-time-cache-template">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>com.softwaremagico.kt.core.controller.models.QrCodeDTO</value-type>
     </cache>
 
 </config>

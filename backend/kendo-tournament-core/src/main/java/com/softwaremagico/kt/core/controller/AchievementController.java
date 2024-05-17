@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,16 +33,20 @@ import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.AchievementProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;
+import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
+import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
@@ -97,6 +101,12 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int MINIMUM_ROLES_BAMBOO_SILVER = 4;
     private static final int MINIMUM_ROLES_BAMBOO_GOLD = 5;
 
+    private static final int MINIMUM_LOST_SITH_NORMAL = 3;
+
+    private static final int MINIMUM_LOST_SITH_BRONZE = 5;
+    private static final int MINIMUM_LOST_SITH_SILVER = 7;
+    private static final int MINIMUM_LOST_SITH_GOLD = 10;
+
     private static final int PARTICIPANT_YEARS = 5;
     private static final int PARTICIPANT_YEARS_BRONZE = 10;
     private static final int PARTICIPANT_YEARS_SILVER = 15;
@@ -108,6 +118,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
     private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
+    private static final int MIN_TOURNAMENT_FIGHTS = 5;
 
 
     private final TournamentConverter tournamentConverter;
@@ -120,7 +131,11 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final RoleProvider roleProvider;
 
+    private final TeamProvider teamProvider;
+
     private final AchievementProvider achievementProvider;
+
+    private final FightProvider fightProvider;
 
     private final DuelProvider duelProvider;
 
@@ -134,6 +149,10 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private List<Duel> duelsFromTournament;
 
+    private List<Team> teamsFromTournament;
+
+    private List<Fight> fightsFromTournament;
+
     private Map<Participant, List<Score>> scoresByParticipant = null;
     private Map<Participant, List<Score>> scoresReceivedByParticipant = null;
     private Map<Participant, Long> totalScoreFromParticipant = null;
@@ -141,11 +160,15 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Role>> rolesByParticipant = null;
 
+    private final Set<AchievementsGeneratedListener> achievementsGeneratedListeners = new HashSet<>();
+    private final Set<AchievementsGeneratedAllTournamentsListener> achievementsGeneratedAllTournamentsListeners = new HashSet<>();
+
 
     protected AchievementController(AchievementProvider provider, AchievementConverter converter,
                                     TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
                                     ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                                    RoleProvider roleProvider, AchievementProvider achievementProvider, DuelProvider duelProvider,
+                                    RoleProvider roleProvider, TeamProvider teamProvider, AchievementProvider achievementProvider,
+                                    FightProvider fightProvider, DuelProvider duelProvider,
                                     RankingProvider rankingProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
@@ -153,9 +176,27 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.participantProvider = participantProvider;
         this.participantConverter = participantConverter;
         this.roleProvider = roleProvider;
+        this.teamProvider = teamProvider;
         this.achievementProvider = achievementProvider;
+        this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.rankingProvider = rankingProvider;
+    }
+
+    public interface AchievementsGeneratedListener {
+        void generated(List<AchievementDTO> achievementsGenerated, TournamentDTO tournament);
+    }
+
+    public interface AchievementsGeneratedAllTournamentsListener {
+        void generated(List<AchievementDTO> achievementsGenerated, List<TournamentDTO> tournaments);
+    }
+
+    public void addAchievementsGeneratedListener(AchievementsGeneratedListener listener) {
+        achievementsGeneratedListeners.add(listener);
+    }
+
+    public void addAchievementsGeneratedAllTournamentsListener(AchievementsGeneratedAllTournamentsListener listener) {
+        achievementsGeneratedAllTournamentsListeners.add(listener);
     }
 
     @Override
@@ -182,6 +223,20 @@ public class AchievementController extends BasicInsertableController<Achievement
             duelsFromTournament = duelProvider.get(tournament);
         }
         return duelsFromTournament;
+    }
+
+    private List<Team> getTeamsFromTournament() {
+        if (teamsFromTournament == null) {
+            teamsFromTournament = teamProvider.getAll(tournament);
+        }
+        return teamsFromTournament;
+    }
+
+    private List<Fight> getFightsFromTournament() {
+        if (fightsFromTournament == null) {
+            fightsFromTournament = fightProvider.getFights(tournament);
+        }
+        return fightsFromTournament;
     }
 
     private Map<Participant, List<Score>> getScoresByParticipant() {
@@ -248,10 +303,19 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private Map<Participant, List<Role>> getRolesByParticipant() {
         if (rolesByParticipant == null) {
-            final List<Role> roles = roleProvider.get(getParticipantsFromTournament());
+            final List<Role> roles = roleProvider.getBy(getParticipantsFromTournament());
             rolesByParticipant = roles.stream().collect(Collectors.groupingBy(Role::getParticipant));
         }
         return rolesByParticipant;
+    }
+
+    private Map<Participant, List<Role>> getRolesByParticipantUntil(Tournament tournament) {
+        final Map<Participant, List<Role>> roles = new HashMap<>();
+        for (Map.Entry<Participant, List<Role>> entry : getRolesByParticipant().entrySet()) {
+            roles.put(entry.getKey(), entry.getValue().stream().filter(role ->
+                    role.getTournament().getCreatedAt() != null && role.getTournament().getCreatedAt().isBefore(tournament.getCreatedAt())).toList());
+        }
+        return roles;
     }
 
 
@@ -271,6 +335,10 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     public List<AchievementDTO> getAchievements(TournamentDTO tournamentDTO, AchievementType achievementType) {
         return convertAll(getProvider().get(tournamentConverter.reverse(tournamentDTO), achievementType));
+    }
+
+    public List<AchievementDTO> getAchievements(TournamentDTO tournamentDTO) {
+        return convertAll(getProvider().get(tournamentConverter.reverse(tournamentDTO)));
     }
 
     public List<AchievementDTO> getAchievements(TournamentDTO tournamentDTO, AchievementType achievementType, AchievementGrade achievementGrade) {
@@ -296,9 +364,12 @@ public class AchievementController extends BasicInsertableController<Achievement
                 .map(TournamentConverterRequest::new).collect(Collectors.toList()));
         tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt));
         final List<AchievementDTO> achievementsGenerated = new ArrayList<>();
+        achievementProvider.deleteAll();
         for (final TournamentDTO tournament : tournaments) {
-            deleteAchievements(tournament);
             achievementsGenerated.addAll(generateAchievements(tournament));
+        }
+        for (AchievementsGeneratedAllTournamentsListener achievementsGeneratedAllTournamentsListener : achievementsGeneratedAllTournamentsListeners) {
+            achievementsGeneratedAllTournamentsListener.generated(achievementsGenerated, tournaments);
         }
         return achievementsGenerated;
     }
@@ -307,7 +378,10 @@ public class AchievementController extends BasicInsertableController<Achievement
         final TournamentDTO tournament = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
         deleteAchievements(tournament);
-        return generateAchievements(tournament);
+        final List<AchievementDTO> achievementsGenerated = generateAchievements(tournament);
+        achievementsGeneratedListeners.forEach(achievementsGeneratedListener
+                -> achievementsGeneratedListener.generated(achievementsGenerated, tournament));
+        return achievementsGenerated;
     }
 
     private void deleteAchievements(TournamentDTO tournamentDTO) {
@@ -324,6 +398,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.totalScoreFromParticipant = null;
         this.totalScoreAgainstParticipant = null;
         this.rolesByParticipant = null;
+        this.fightsFromTournament = null;
+        this.teamsFromTournament = null;
 
         //Remove any achievement already calculated.
         getProvider().delete(tournament);
@@ -363,6 +439,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateTisButAScratchAchievement(tournament));
         achievementsGenerated.addAll(generateFirstBloodAchievement(tournament));
         achievementsGenerated.addAll(generateDarumaAchievement(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievement(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievement(tournament));
+        achievementsGenerated.addAll(generateSithApprenticesAlwaysKillTheirMasterAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
@@ -437,6 +516,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateDarumaAchievementBronze(tournament));
         achievementsGenerated.addAll(generateDarumaAchievementSilver(tournament));
         achievementsGenerated.addAll(generateDarumaAchievementGold(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateStormtrooperSyndromeAchievementGold(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievementBronze(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievementSilver(tournament));
+        achievementsGenerated.addAll(generateVendettaAchievementGold(tournament));
         return convertAll(achievementsGenerated);
     }
 
@@ -504,7 +589,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateGradeAchievementsByDays(Tournament tournament, AchievementType achievementType, AchievementGrade achievementGrade,
                                                               Integer amount) {
-        if (achievementGrade == null || achievementGrade.equals(AchievementGrade.NORMAL)) {
+        if (achievementGrade == null || achievementGrade.equals(AchievementGrade.NORMAL) || tournament.getCreatedAt() == null) {
             return new ArrayList<>();
         }
         final List<Achievement> winnersAchievements = achievementProvider.getAfter(tournament, achievementType,
@@ -540,10 +625,16 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateBillyTheKidAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         int minTime = tournament.getDuelsDuration();
         Participant participant = null;
         for (final Duel duel : getDuelsFromTournament()) {
             for (final Integer time : duel.getCompetitor1ScoreTime()) {
+                if (time == null) {
+                    continue;
+                }
                 //Billy cannot be a draw time.
                 if (time == minTime && !Objects.equals(participant, duel.getCompetitor1())) {
                     participant = null;
@@ -553,6 +644,9 @@ public class AchievementController extends BasicInsertableController<Achievement
                 }
             }
             for (final Integer time : duel.getCompetitor2ScoreTime()) {
+                if (time == null) {
+                    continue;
+                }
                 //Billy cannot be a draw time.
                 if (time == minTime && !Objects.equals(participant, duel.getCompetitor2())) {
                     participant = null;
@@ -580,12 +674,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         final Set<Participant> participants = new HashSet<>();
         duels.forEach(duel -> {
             duel.getCompetitor1ScoreTime().forEach(time -> {
-                if (time <= LETHAL_WEAPON_MAX_TIME) {
+                if (time != null && time <= LETHAL_WEAPON_MAX_TIME) {
                     participants.add(duel.getCompetitor1());
                 }
             });
             duel.getCompetitor2ScoreTime().forEach(time -> {
-                if (time <= LETHAL_WEAPON_MAX_TIME) {
+                if (time != null && time <= LETHAL_WEAPON_MAX_TIME) {
                     participants.add(duel.getCompetitor2());
                 }
             });
@@ -662,6 +756,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTerminatorAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
@@ -712,13 +809,16 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateJuggernautAchievement(Tournament tournament) {
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         getDuelsFromTournament().forEach(duel -> {
             //Max score competitor 1.
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor1());
             }
             //No hits against him
-            if (duel.getCompetitor2Score().size() > 0) {
+            if (!duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
             }
             //Max score competitor 2.
@@ -726,7 +826,7 @@ public class AchievementController extends BasicInsertableController<Achievement
                 competitors.remove(duel.getCompetitor2());
             }
             //No hits against him
-            if (duel.getCompetitor1Score().size() > 0) {
+            if (!duel.getCompetitor1Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor2());
             }
         });
@@ -872,7 +972,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     private List<Achievement> generateTheNeverEndingStoryAchievement(Tournament tournament) {
         //Get older of 10 years
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
-                participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS))).collect(Collectors.toList());
+                        tournament.getCreatedAt() != null && participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS)))
+                .collect(Collectors.toList());
         //Remove the ones already have this achievement.
         final List<Participant> participantsWithThisAchievement = achievementProvider.get(AchievementType.THE_NEVER_ENDING_STORY, AchievementGrade.NORMAL)
                 .stream().map(Achievement::getParticipant).toList();
@@ -888,6 +989,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementBronze(Tournament tournament) {
         //Get older of 10 years
+        if (tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
                 participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_BRONZE))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
@@ -905,6 +1009,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementSilver(Tournament tournament) {
         //Get older of 10 years
+        if (tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
                 participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_SILVER))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
@@ -922,6 +1029,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateTheNeverEndingStoryAchievementGold(Tournament tournament) {
         //Get older of 10 years
+        if (tournament.getCreatedAt() == null) {
+            return new ArrayList<>();
+        }
         final List<Participant> participants = getParticipantsFromTournament().stream().filter(participant ->
                 participant.getCreatedAt().isBefore(tournament.getCreatedAt().minusYears(PARTICIPANT_YEARS_GOLD))).collect(Collectors.toList());
         //Remove the ones already have this achievement.
@@ -1069,12 +1179,15 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateTheCastleAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
-            if (duel.getCompetitor2Score().size() > 0) {
+            if (!duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
             }
-            if (duel.getCompetitor1Score().size() > 0) {
+            if (!duel.getCompetitor1Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor2());
             }
         });
@@ -1120,9 +1233,12 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateEntrenchedAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         getDuelsFromTournament().forEach(duel -> {
-            if (duel.getCompetitor1Score().size() > 0 || duel.getCompetitor2Score().size() > 0) {
+            if (!duel.getCompetitor1Score().isEmpty() || !duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
                 competitors.remove(duel.getCompetitor2());
             }
@@ -1222,7 +1338,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When all points are scored: Men, Kote, Do, Tsuki, Hansoku and Ippon.
+     * When all points are scored: Men, Kote, Do, Tsuki, Hansoku and Ippon/Fusen-gachi.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -1235,7 +1351,8 @@ public class AchievementController extends BasicInsertableController<Achievement
                     && getScoresByParticipant().get(participant).contains(Score.DO)
                     && getScoresByParticipant().get(participant).contains(Score.TSUKI)
                     && getScoresByParticipant().get(participant).contains(Score.HANSOKU)
-                    && getScoresByParticipant().get(participant).contains(Score.IPPON)) {
+                    && (getScoresByParticipant().get(participant).contains(Score.IPPON)
+                    || getScoresByParticipant().get(participant).contains(Score.FUSEN_GACHI))) {
                 participants.add(participant);
             }
         });
@@ -1272,6 +1389,9 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateWoodcutterAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
         final List<Duel> duels = new ArrayList<>(getDuelsFromTournament());
         final List<Participant> woodcutters = new ArrayList<>(getParticipantsFromTournament());
         //Only applied to competitors.
@@ -1404,8 +1524,10 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievement(Tournament tournament) {
-        final List<Participant> participants = participantProvider.findParticipantsWithRoleNotInTournaments(tournament, RoleType.COMPETITOR,
-                tournamentProvider.getPreviousTo(tournament));
+        final List<Participant> participants = participantProvider.get(tournament, RoleType.COMPETITOR);
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.NORMAL, participants, tournament);
     }
 
@@ -1416,18 +1538,18 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementBronze(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
-        //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE,
-                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
         //Remove the ones that has no the required number of tournaments.
-        final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
+        final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE) {
                 participants.remove(participant);
             }
         });
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.BRONZE, participants, tournament);
     }
 
@@ -1438,18 +1560,18 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementSilver(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
-        //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER,
-                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
+        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
         //Remove the ones that has no the required number of tournaments.
-        final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
+        final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER) {
                 participants.remove(participant);
             }
         });
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.SILVER, participants, tournament);
     }
 
@@ -1461,9 +1583,6 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateSweatyTenuguiAchievementGold(Tournament tournament) {
         final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
-        //Remove the ones already have the achievement.
-        participantProvider.getParticipantsWithAchievementFromList(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD,
-                getParticipantsFromTournament()).forEach(rolesByParticipant::remove);
         //Remove the ones that has no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
         rolesByParticipant.forEach((participant, roles) -> {
@@ -1472,6 +1591,9 @@ public class AchievementController extends BasicInsertableController<Achievement
                 participants.remove(participant);
             }
         });
+        //Remove the ones already have the achievement.
+        participantProvider.getParticipantsWithAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD)
+                .forEach(participants::remove);
         return generateAchievement(AchievementType.SWEATY_TENUGUI, AchievementGrade.GOLD, participants, tournament);
     }
 
@@ -1809,5 +1931,168 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         return generateAchievement(AchievementType.DARUMA, AchievementGrade.GOLD, participantsDaruma, tournament);
+    }
+
+    /***
+     * Be in a team, and all members of the teams does no score in the entire tournament.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievement(Tournament tournament) {
+        if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
+            return new ArrayList<>();
+        }
+        if (tournament.getTeamSize() < TournamentProvider.DEFAULT_TEAM_SIZE) {
+            return new ArrayList<>();
+        }
+        final List<Team> teams = new ArrayList<>(getTeamsFromTournament());
+        //Ensure that team is in fights.
+        final Set<Team> teamsWithFights = new HashSet<>();
+        getFightsFromTournament().forEach(fight -> {
+            //Remove a tournament if it has some score.
+            fight.getDuels().forEach(duel -> {
+                if (!duel.getCompetitor1Score().isEmpty()) {
+                    teams.remove(fight.getTeam1());
+                }
+                if (!duel.getCompetitor2Score().isEmpty()) {
+                    teams.remove(fight.getTeam2());
+                }
+            });
+            teamsWithFights.add(fight.getTeam1());
+            teamsWithFights.add(fight.getTeam2());
+        });
+        teams.retainAll(teamsWithFights);
+        return generateAchievement(AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.NORMAL,
+                teams.stream().flatMap(team -> team.getMembers().stream()).toList(), tournament);
+    }
+
+    /**
+     * Somebody wins a fight despite the opponent has scored first.
+     *
+     * @param tournament
+     */
+    private List<Achievement> generateVendettaAchievement(Tournament tournament) {
+        final List<Participant> participants = new ArrayList<>();
+        getFightsFromTournament().forEach(fight -> fight.getDuels().forEach(duel -> {
+            if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
+                    && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
+                    && duel.getCompetitor1ScoreTime().get(0) < duel.getCompetitor2ScoreTime().get(0)
+                    && duel.getWinner() == 2) {
+                participants.add(duel.getCompetitor2());
+            }
+            if (!duel.getCompetitor1ScoreTime().isEmpty() && !duel.getCompetitor2ScoreTime().isEmpty()
+                    && duel.getCompetitor1ScoreTime().get(0) != null && duel.getCompetitor2ScoreTime().get(0) != null
+                    && duel.getCompetitor2ScoreTime().get(0) < duel.getCompetitor1ScoreTime().get(0)
+                    && duel.getWinner() == 1) {
+                participants.add(duel.getCompetitor1());
+            }
+        }));
+        return generateAchievement(AchievementType.V_FOR_VENDETTA, AchievementGrade.NORMAL,
+                participants, tournament);
+    }
+
+    /**
+     * Somebody wins a fight against other participant that is always winning him.
+     *
+     * @param tournament
+     */
+    private List<Achievement> generateSithApprenticesAlwaysKillTheirMasterAchievement(Tournament tournament) {
+        final List<Achievement> achievements = new ArrayList<>();
+        getFightsFromTournament().forEach(fight -> {
+            for (Duel duel : fight.getDuels()) {
+                final List<Duel> previousDuels = duelProvider.getWhenBothAreInvolved(duel.getCompetitor1(), duel.getCompetitor2());
+                boolean isApprentice = true;
+                int numberOfPreviousDuels = 0;
+                for (Duel previousDuel : previousDuels) {
+                    if (previousDuel.getCreatedAt().isBefore(tournament.getCreatedAt())) {
+                        numberOfPreviousDuels++;
+                        //Check if he has already won vs the master
+                        if (Objects.equals(duel.getCompetitorWinner(), previousDuel.getCompetitorWinner()) || previousDuel.getWinner() == 0) {
+                            isApprentice = false;
+                            break;
+                        }
+                    }
+                }
+                if (isApprentice) {
+                    //Generate achievement depending on the number of fights.
+                    if (numberOfPreviousDuels == MINIMUM_LOST_SITH_NORMAL) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.NORMAL));
+                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_BRONZE) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.BRONZE));
+                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_SILVER) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.SILVER));
+                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_GOLD) {
+                        achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+                                AchievementGrade.GOLD));
+                    }
+                }
+            }
+        });
+        return achievementProvider.saveAll(achievements);
+    }
+
+
+    /**
+     * Achievement for the stormtrooper syndrome in two tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE,
+                AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.BRONZE);
+    }
+
+    /***
+     * Achievement for the stormtrooper syndrome in three tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievementSilver(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER,
+                AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.SILVER);
+    }
+
+    /***
+     * Achievement for the stormtrooper syndrome in five tournaments.
+     * @param tournament The tournament to check.
+     * @return the generated achievements.
+     */
+    private List<Achievement> generateStormtrooperSyndromeAchievementGold(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD,
+                AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.GOLD);
+    }
+
+    /**
+     * Achievement for v from vendetta in two tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateVendettaAchievementBronze(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_BRONZE, AchievementType.V_FOR_VENDETTA, AchievementGrade.BRONZE);
+    }
+
+    /**
+     * Achievement for v from vendetta in three tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateVendettaAchievementSilver(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_SILVER, AchievementType.V_FOR_VENDETTA, AchievementGrade.SILVER);
+    }
+
+    /**
+     * Achievement for v from vendetta in five tournaments.
+     *
+     * @param tournament The tournament to check.
+     * @return a list of new achievements.
+     */
+    private List<Achievement> generateVendettaAchievementGold(Tournament tournament) {
+        return generateConsecutiveGradeAchievements(tournament, DEFAULT_TOURNAMENT_NUMBER_GOLD, AchievementType.V_FOR_VENDETTA, AchievementGrade.GOLD);
     }
 }

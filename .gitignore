@@ -24,3 +24,6 @@ default_data.sql
 .attach_*
 .env_bak
 target/*
+*.properties_bak
+*.properties.mysql
+*.properties.postgres

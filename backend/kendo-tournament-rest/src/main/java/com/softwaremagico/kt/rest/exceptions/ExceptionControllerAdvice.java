@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.exceptions;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
+import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.http.HttpHeaders;
@@ -113,31 +114,49 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<Object> userBlockedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("USER BLOCKED", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LevelNotFinishedException.class)
     public ResponseEntity<Object> levelNotFinishedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("DRAW SCORE EXISTS", ex), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(InvalidMacException.class)
     public ResponseEntity<Object> invalidMacException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("MAC INVALID", ex), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidIpException.class)
     public ResponseEntity<Object> invalidIpException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INVALID IP", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidJwtException.class)
     public ResponseEntity<Object> invalidJwtException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INVALID JWT", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(GuestDisabledException.class)
+    public ResponseEntity<Object> guestDisabledException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<Object> tokenExpiredException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<Object> invalidRequestException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
     }
 
     private String getStacktrace(Throwable e) {

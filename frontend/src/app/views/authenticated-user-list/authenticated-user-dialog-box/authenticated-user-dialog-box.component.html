@@ -30,6 +30,7 @@
              required>
       <mat-error *ngIf="registerForm.value.password">{{'invalidPasswordError' | translate}}</mat-error>
       <mat-icon (click)="setHidePassword(!hidePassword)"
+                (keydown)="setHidePassword(!hidePassword)"
                 matSuffix>{{hidePassword ? 'visibility_off' : 'visibility'}}
       </mat-icon>
     </mat-form-field>
@@ -46,7 +47,7 @@
     </ng-template>
 
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)"
+      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())"
               [disabled]="(!passwordMatch() || registerForm.invalid) && isOnCreation()" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

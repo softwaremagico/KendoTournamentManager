@@ -22,7 +22,7 @@ export class ImageService {
 
   /* Method to convert Base64Data Url as Image Blob */
   dataURItoBlob(dataURI: string, extension: string): Observable<Blob> {
-    return new Observable((observer: Observer<Blob>) => {
+    return new Observable((observer: Observer<Blob>): void => {
       const byteString: string = window.atob(dataURI);
       const arrayBuffer: ArrayBuffer = new ArrayBuffer(byteString.length);
       const int8Array: Uint8Array = new Uint8Array(arrayBuffer);

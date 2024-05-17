@@ -4,18 +4,18 @@ package com.softwaremagico.kt.rest;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -24,18 +24,22 @@ package com.softwaremagico.kt.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
+import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.persistence.values.RoleType;
@@ -81,7 +85,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     private final static String USER_FIRST_NAME = "Test";
     private final static String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "asd123";
-    private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
     private static final Integer MEMBERS = 3;
     private static final Integer TEAMS = 6;
@@ -120,6 +124,15 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
     @Autowired
     private ParticipantController participantController;
+
+    @Autowired
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
+
+    @Autowired
+    private TournamentController tournamentController;
+
+    @Autowired
+    private ClubController clubController;
 
 
     private MockMvc mockMvc;
@@ -293,7 +306,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
             RoleDTO roleDTO = fromJson(createResult.getResponse().getContentAsString(), RoleDTO.class);
             Assert.assertEquals(roleDTO.getTournament(), tournamentDTO);
-            Assert.assertEquals(roleDTO.getParticipant(), competitor);
+            Assert.assertEquals(new ParticipantReducedDTO(roleDTO.getParticipant()), new ParticipantReducedDTO(competitor));
             Assert.assertEquals(roleDTO.getRoleType(), RoleType.COMPETITOR);
         }
 
@@ -311,7 +324,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     @Test(dependsOnMethods = {"addRoles"})
     public void addTeams() throws Exception {
         int teamIndex = 0;
-        DTO team = null;
+        TeamDTO team = null;
         int teamMember = 0;
 
         MvcResult createResult = this.mockMvc
@@ -338,7 +351,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             // Create a new team.
             if (team == null) {
                 teamIndex++;
-                team = new DTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
                 teamMember = 0;
             }
 
@@ -354,7 +367,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
                     .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                     .andReturn();
 
-            team = fromJson(createResult.getResponse().getContentAsString(), DTO.class);
+            team = fromJson(createResult.getResponse().getContentAsString(), TeamDTO.class);
             Assert.assertEquals(team.getTournament(), tournamentDTO);
             Assert.assertEquals(team.getName(), team.getName());
 
@@ -487,7 +500,15 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         resetGroup(tournamentDTO);
     }
 
-    @AfterClass
+    @Test(dependsOnMethods = "testSimpleWinner")
+    public void ensureParticipantsAreNotModifiedWhenUsingreduceParticipantDTO() {
+        participantController.get().forEach(participantDTO -> {
+            Assert.assertNotNull(participantDTO.getIdCard());
+            Assert.assertTrue(participantDTO.getIdCard().startsWith("0000"));
+        });
+    }
+
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() throws Exception {
         this.mockMvc
                 .perform(delete("/tournaments/{tournamentId}", tournamentDTO.getId())
@@ -503,6 +524,21 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
         Assert.assertEquals(roleController.count(tournamentDTO), 0);
         Assert.assertEquals(teamController.count(tournamentDTO), 0);
 
+    }
+
+    @AfterClass(alwaysRun = true, dependsOnMethods = "deleteTournament")
+    public void cleanUp() {
+        groupController.deleteAll();
+        fightController.deleteAll();
+        duelController.deleteAll();
+        teamController.deleteAll();
+        roleController.deleteAll();
+        tournamentExtraPropertyController.deleteAll();
+        tournamentController.deleteAll();
+
+        participantController.deleteAll();
+        clubController.deleteAll();
+        authenticatedUserController.deleteAll();
     }
 
 }

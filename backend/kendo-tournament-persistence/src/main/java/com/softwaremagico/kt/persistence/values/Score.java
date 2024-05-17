@@ -36,6 +36,8 @@ public enum Score {
 
     IPPON("Ippon", 'I', 'I'),
 
+    FUSEN_GACHI("Ippon", 'F', 'F'),
+
     HANSOKU("Hansoku", 'H', 'H'),
 
     EMPTY("ClearMenuItem", ' ', ' '),
@@ -83,6 +85,7 @@ public enum Score {
         points.add(DO);
         points.add(TSUKI);
         points.add(IPPON);
+        points.add(FUSEN_GACHI);
         points.add(HANSOKU);
         return points;
     }

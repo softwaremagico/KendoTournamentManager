@@ -5,6 +5,7 @@ import {MatMenuModule} from "@angular/material/menu";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatIconModule} from "@angular/material/icon";
+import {RbacModule} from "../../../../../pipes/rbac-pipe/rbac.module";
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import {MatIconModule} from "@angular/material/icon";
         MatMenuModule,
         TranslateModule,
         MatTooltipModule,
-        MatIconModule
+        MatIconModule,
+        RbacModule
     ]
 })
 export class ScoreModule {

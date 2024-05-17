@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,6 +31,7 @@ import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -41,6 +42,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -63,6 +65,8 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
 
     private static final String TOURNAMENT3_NAME = "Tournament 3";
 
+    private static final String TOURNAMENT4_NAME = "Tournament 4";
+
     @Autowired
     private TournamentController tournamentController;
 
@@ -78,6 +82,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     private TournamentDTO tournament1DTO;
     private TournamentDTO tournament2DTO;
     private TournamentDTO tournament3DTO;
+    private TournamentDTO tournament4DTO;
 
     private ParticipantDTO woodCutter;
 
@@ -107,7 +112,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Woodcutter
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.DO);
@@ -174,7 +179,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Juggernaut
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
@@ -206,7 +211,7 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
     public void prepareTournament3() {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        List<FightDTO> fightDTOs = fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament3DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //The Castle
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
@@ -249,6 +254,56 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         fightDTOs.set(5, fightController.update(fightDTOs.get(5), null));
 
         achievementController.generateAchievements(tournament3DTO);
+    }
+
+    @BeforeClass(dependsOnMethods = "prepareTournament3")
+    public void prepareTournament4() {
+        tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
+        //Create Tournament
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament4DTO.getId(), TeamsOrder.SORTED, 0, null));
+
+        //Team1 and Team2 no scores. Team1 has no scores neither against itself.
+
+        //Team1 vs Team2
+        fightDTOs.get(0).getDuels().get(0).setFinished(true);
+        fightDTOs.get(0).getDuels().get(1).setFinished(true);
+        fightDTOs.get(0).getDuels().get(2).setFinished(true);
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+
+        //Team3 vs Team2
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(68);
+        fightDTOs.get(1).getDuels().get(0).setFinished(true);
+        fightDTOs.get(1).getDuels().get(1).setFinished(true);
+        fightDTOs.get(1).getDuels().get(2).setFinished(true);
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+
+        //Team3 vs Team4
+        fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.DO);
+        fightDTOs.get(2).getDuels().get(0).addCompetitor1ScoreTime(68);
+        fightDTOs.get(2).getDuels().get(0).setFinished(true);
+        fightDTOs.get(2).getDuels().get(1).addCompetitor2Score(Score.MEN);
+        fightDTOs.get(2).getDuels().get(1).addCompetitor2ScoreTime(68);
+        fightDTOs.get(2).getDuels().get(1).setFinished(true);
+        fightDTOs.get(2).getDuels().get(2).setFinished(true);
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+
+        fightDTOs.get(3).getDuels().get(0).setFinished(true);
+        fightDTOs.get(3).getDuels().get(1).setFinished(true);
+        fightDTOs.get(3).getDuels().get(2).setFinished(true);
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+
+        fightDTOs.get(4).getDuels().get(0).setFinished(true);
+        fightDTOs.get(4).getDuels().get(1).setFinished(true);
+        fightDTOs.get(4).getDuels().get(2).setFinished(true);
+        fightDTOs.set(4, fightController.update(fightDTOs.get(4), null));
+
+        fightDTOs.get(5).getDuels().get(0).setFinished(true);
+        fightDTOs.get(5).getDuels().get(1).setFinished(true);
+        fightDTOs.get(5).getDuels().get(2).setFinished(true);
+        fightDTOs.set(5, fightController.update(fightDTOs.get(5), null));
+
+        achievementController.generateAchievements(tournament4DTO);
     }
 
     @Test
@@ -381,7 +436,14 @@ public class ScoreAchievementsTest extends TournamentTestUtils {
         Assert.assertEquals(achievementsDTOs.size(), 6);
     }
 
-    @AfterClass
+    @Test
+    public void stormtrooperAchievement() {
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournament4DTO, AchievementType.STORMTROOPER_SYNDROME, AchievementGrade.NORMAL);
+        //Only Participant0, Participant1, Participant2, Participant3, Participant4, Participant5
+        Assert.assertEquals(achievementsDTOs.size(), 6);
+    }
+
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }

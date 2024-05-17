@@ -106,6 +106,7 @@ import {
   TournamentBracketsModule
 } from "./components/tournament-brackets-editor/tournament-brackets/tournament-brackets.module";
 import {ArrowModule} from "./components/tournament-brackets-editor/tournament-brackets/arrow/arrow.module";
+import {ShiaijoModule} from "./components/tournament-brackets-editor/tournament-brackets/shiaijo/shiaijo.module";
 import {LocalErrorHandler} from "./interceptors/local-error-handler.service";
 import {
   TournamentBracketsEditorModule
@@ -114,6 +115,10 @@ import {TournamentGeneratorModule} from "./views/fight-list/tournament-generator
 import {
   TournamentExtraPropertiesModule
 } from "./views/tournament-list/tournament-dialog-box/tournament-extra-properties/tournament-extra-properties.module";
+import {RxStompService} from "./websockets/rx-stomp.service";
+import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
+import {TournamentQrCodeModule} from './components/tournament-qr-code/tournament-qr-code.module';
+import {ParticipantQrCodeModule} from './components/participant-qr-code/participant-qr-code.module';
 
 
 registerLocaleData(localeES, "es");
@@ -219,18 +224,22 @@ registerLocaleData(localeNL, "nl");
     ProgressBarModule,
     TournamentBracketsModule,
     ArrowModule,
+    ShiaijoModule,
     TournamentBracketsEditorModule,
     TournamentGeneratorModule,
+    TournamentQrCodeModule,
+    ParticipantQrCodeModule,
   ],
-  providers: [CookieService, {
-    provide: MatPaginatorIntl,
-    useFactory: (translate: TranslateService) => {
-      const service: PaginatorI18n = new PaginatorI18n();
-      service.injectTranslateService(translate);
-      return service;
+  providers: [
+    CookieService, {
+      provide: MatPaginatorIntl,
+      useFactory: (translate: TranslateService) => {
+        const service: PaginatorI18n = new PaginatorI18n();
+        service.injectTranslateService(translate);
+        return service;
+      },
+      deps: [TranslateService]
     },
-    deps: [TranslateService]
-  },
     {
       provide: ErrorHandler,
       useClass: LocalErrorHandler
@@ -243,6 +252,9 @@ registerLocaleData(localeNL, "nl");
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true
+    }, {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
     }],
   bootstrap: [AppComponent]
 })

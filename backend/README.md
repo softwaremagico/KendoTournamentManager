@@ -18,7 +18,7 @@ On the security level, you must perform the next actions to ensure that your dep
 
 #### Update the database encryption key
 
-The property `database.encryption.key` is used for database encryption purpose. Obviously this value must be keep in
+The property `database.encryption.key` is used for personal data encryption purpose. Obviously this value must be keep in
 secret. If the property is left empty, no encryption is applied on the database. Some examples of use:
 
 ```

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.html.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,6 +34,7 @@ import com.softwaremagico.kt.utils.ShiaijoName;
 import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -68,7 +69,8 @@ public class BlogExporter {
         this.roles = roles;
         this.groups = groups;
         this.fights = groups.stream().flatMap(groupDTO -> groupDTO.getFights().stream()).toList();
-        this.competitors = competitors;
+        this.competitors = new ArrayList<>(competitors);
+        this.competitors.sort(Comparator.comparing(NameUtils::getLastnameName));
         this.scoreOfTeams = scoreOfTeams;
         this.scoreOfCompetitors = scoreOfCompetitors;
     }
@@ -214,8 +216,8 @@ public class BlogExporter {
         // Header
         List<String> columns = new ArrayList<>();
         columns.add("<b>" + messageSource.getMessage("classification.competitors.competitor.name", null, locale) + "</b>");
-        columns.add("<b>" + messageSource.getMessage("classification.teams.duels.won", null, locale) + "</b>");
         columns.add("<b>" + messageSource.getMessage("classification.competitors.duels.won", null, locale) + "</b>");
+        columns.add("<b>" + messageSource.getMessage("classification.competitors.hits", null, locale) + "</b>");
         rows.add(columns);
 
         for (final ScoreOfCompetitorDTO scoreOfCompetitor : scoreOfCompetitors) {
@@ -285,7 +287,7 @@ public class BlogExporter {
             } else {
                 return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             return "";
         }
     }

@@ -13,6 +13,7 @@ import {Action} from "../../action";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
 
 
 @Component({
@@ -22,7 +23,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 })
 export class ClubListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<Club> = new BasicTableData<Club>();
+  basicTableData: BasicTableData<Club> = new BasicTableData<Club>("Club");
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -45,7 +46,8 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
   }
 
   showAllElements(): void {
-    this.clubService.getAll().subscribe(clubs => {
+    this.clubService.getAll().subscribe((clubs: Club[]): void => {
+      clubs.sort((a: Club, b: Club) => a.name.localeCompare(b.name));
       this.basicTableData.dataSource.data = clubs;
     });
   }
@@ -74,7 +76,7 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
     }
   }
 
-  openDialog(title: string, action: Action, club: Club) {
+  openDialog(title: string, action: Action, club: Club): void {
     const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
       width: '400px',
       data: {title: title, action: action, entity: club}
@@ -83,35 +85,46 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
-      } else if (result.action == Action.Add) {
+      } else if (result?.action == Action.Add) {
         this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
+      } else if (result?.action == Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
+      } else if (result?.action == Action.Delete) {
         this.deleteRowData(result.data);
       }
     });
   }
 
-  addRowData(club: Club) {
-    this.clubService.add(club).subscribe(_club => {
-      this.basicTableData.dataSource.data.push(_club);
-      this.basicTableData.dataSource._updateChangeSubscription();
+  addRowData(club: Club): void {
+    this.clubService.add(club).subscribe((_club: Club): void => {
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _club.id) < 0) {
+        this.basicTableData.dataSource.data.push(_club);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_club);
+      this.basicTableData.selectedElement = _club;
       this.messageService.infoMessage('infoClubStored');
     });
   }
 
-  updateRowData(club: Club) {
-    this.clubService.update(club).subscribe(() => {
+  updateRowData(club: Club): void {
+    this.clubService.update(club).subscribe((_club: Club): void => {
         this.messageService.infoMessage('infoClubUpdated');
+        let index: number = this.basicTableData.dataSource.data.findIndex((obj: Club): boolean => obj.id === _club.id);
+        if (index >= 0) {
+          this.basicTableData.dataSource.data[index] = _club;
+          this.basicTableData.dataSource._updateChangeSubscription();
+        }
+        this.basicTableData.selectedElement = _club;
+      this.basicTableData.selectItem(_club);
       }
     );
   }
 
-  deleteRowData(club: Club) {
-    this.clubService.delete(club).subscribe(() => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_club => existing_club !== club);
+  deleteRowData(club: Club): void {
+    this.clubService.delete(club).subscribe((): void => {
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_club: Club): boolean => _club.id !== club.id);
         this.messageService.infoMessage('infoClubDeleted');
         this.basicTableData.selectedElement = undefined;
       }
@@ -122,4 +135,12 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
     return false;
   }
 
+  showCompetitorsClassification(): void {
+    if (this.basicTableData.selectedElement) {
+      this.dialog.open(CompetitorsRankingComponent, {
+        width: '85vw',
+        data: {club: this.basicTableData.selectedElement, showIndex: true}
+      });
+    }
+  }
 }

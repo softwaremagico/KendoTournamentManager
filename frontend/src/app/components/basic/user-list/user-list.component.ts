@@ -19,14 +19,14 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.filterResetService.resetFilter.pipe().subscribe(value => {
+    this.filterResetService.resetFilter.pipe().subscribe((value: boolean): void => {
       if (value) {
         this.filter('');
       }
     });
   }
 
-  filter(filterString: string) {
+  filter(filterString: string): void {
     this.userListData.filter(filterString);
   }
 }

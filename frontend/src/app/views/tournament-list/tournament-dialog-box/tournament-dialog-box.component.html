@@ -1,23 +1,26 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<link href="tournament-dialog-box.component.scss" rel="stylesheet"><h1 mat-dialog-title>{{title}}</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div class="form-layout" mat-dialog-content>
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentType' | translate}}</mat-label>
       <mat-select [(value)]="tournament.type" formControlName="tournamentType">
-        <mat-option (click)="select(type)" *ngFor="let type of tournamentType" [value]="type">
+        <mat-option (click)="select(type)" (keydown)="select(type)" *ngFor="let type of tournamentType" [value]="type"
+                    [matTooltipShowDelay]="500" matTooltip="{{getTournamentTypeHintTag(type) | translate}}">
           {{getTournamentTypeTranslationTag(type) | translate}}
         </mat-option>
       </mat-select>
     </mat-form-field>
     <div class="types">
       <mat-form-field *ngIf="actionName != 'Delete'; else elseTemplate">
-        <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="tournamentName"
+        <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)"
+               formControlName="tournamentName"
                matInput
                placeholder="{{'competitionName' | translate}}"
                required>
       </mat-form-field>
-      <button (click)="openCustomProperties()" class="edit-score-button" [disabled]="tournament.id==undefined || tournament.type == typeCustom"
+      <button *ngIf="actionName != 'Delete'" (click)="openCustomProperties()" class="edit-score-button"
+              [disabled]="tournament.id==undefined || tournament.type == typeCustom"
               color="primary" mat-flat-button
               mat-raised-button
               type="button">
@@ -37,10 +40,11 @@
     <div class="types">
       <mat-form-field *ngIf="actionName != 'Delete'">
         <mat-label>{{'scoreRules' | translate}}</mat-label>
-        <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="500"
+        <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                     formControlName="scoreTypes"
                     matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
-          <mat-option (click)="selectScore(type)" *ngFor="let type of scoreTypes" [matTooltipShowDelay]="500"
+          <mat-option *ngFor="let type of scoreTypes" [matTooltipShowDelay]="1000"
+                      (click)="selectScore(type)" (keydown)="selectScore(type)"
                       [value]="type" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
             {{type.toLowerCase() | translate}}
           </mat-option>
@@ -56,8 +60,10 @@
     <mat-form-field *ngIf="actionName != 'Delete'">
       <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
       <mat-select [(value)]="tournament.duelsDuration" formControlName="duelsDuration">
-        <mat-option *ngFor="let number of [60, 120, 180, 240, 300, 360, 420, 480, 540, 600]" [value]="number">
+        <mat-option *ngFor="let number of [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600]"
+                    [value]="number">
           {{number}} {{'seconds' | translate}}
+          ({{getMinutes(number)}} {{'minutes' | translate}} {{getSeconds(number)}} {{'seconds' | translate}})
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -67,7 +73,7 @@
 
     <div class="button-container" mat-dialog-actions>
       <button (click)="addPicture()"
-              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.activities)"
+              *ngIf="actionName == 'Update' && (RbacActivity.SEE_PICTURE | rbac : this.rbacService.getActivities())"
               color="picture"
               mat-flat-button
               mat-raised-button
@@ -75,7 +81,7 @@
         <mat-icon>image</mat-icon>
         {{'images' | translate}}
       </button>
-      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.activities)"
+      <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
               [disabled]="registerForm.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

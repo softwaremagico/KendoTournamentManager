@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,6 +55,10 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         return repository.findById(id);
     }
 
+    public List<ENTITY> get(Collection<KEY> ids) {
+        return repository.findAllById(ids);
+    }
+
     public List<ENTITY> getAll() {
         return repository.findAll();
     }
@@ -79,7 +83,15 @@ public abstract class CrudProvider<ENTITY, KEY, REPOSITORY extends JpaRepository
         repository.deleteAll();
     }
 
+    public void deleteAll(Collection<ENTITY> entities) {
+        repository.deleteAll(entities);
+    }
+
     public long count() {
         return repository.count();
+    }
+
+    public List<ENTITY> findByIdIn(Collection<KEY> ids) {
+        return getRepository().findAllById(ids);
     }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,12 +52,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -69,6 +72,31 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
     public TournamentServices(TournamentController tournamentController, PdfController pdfController) {
         super(tournamentController);
         this.pdfController = pdfController;
+    }
+
+    /**
+     * This method is done due to @PreAuthorize cannot be overriden. TournamentService need to set a GUEST permission to it.
+     *
+     * @return an array of roles.
+     */
+    @Override
+    public String[] requiredRoleForEntityById() {
+        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN", "ROLE_GUEST"};
+    }
+
+    @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public TournamentDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
+                             HttpServletRequest request) {
+        return super.get(id, request);
+    }
+
+    @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TournamentDTO> getAll(HttpServletRequest request) {
+        final List<TournamentDTO> tournaments = super.getAll(request);
+        tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())).reversed());
+        return tournaments;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -183,5 +211,25 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                @PathVariable("tournamentId") Integer tournamentId,
                                Authentication authentication, HttpServletRequest request) {
         return getController().clone(tournamentId, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Set the number of winners that pass from level one to level two.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PutMapping(value = "{tournamentId}/winners/{numberOfWinners}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public void numberOfWinners(@Parameter(description = "Id of an existing tournament", required = true)
+                                @PathVariable("tournamentId") Integer tournamentId,
+                                @Parameter(description = "Number of winners", required = true)
+                                @PathVariable("numberOfWinners") Integer numberOfWinners,
+                                Authentication authentication, HttpServletRequest request) {
+        getController().setNumberOfWinners(tournamentId, numberOfWinners, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @Operation(summary = "Return the last unlocked tournament.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/unlocked/lasts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    public TournamentDTO getLastUnlockedTournament() {
+        return getController().getLatestUnlocked();
     }
 }
