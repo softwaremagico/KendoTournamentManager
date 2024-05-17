@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -62,4 +63,8 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
             (SELECT f1 FROM Fight f1 INNER JOIN f1.duels fd ON fd.finished=:finished WHERE f1.id=f.id)
             """)
     long countByTournamentAndFinishedNot(@Param("tournament") Tournament tournament, @Param("finished") Boolean finished);
+
+    Optional<Fight> findByDuels(Duel duel);
+
+    List<Fight> findByTournamentAndShiaijo(Tournament tournament, int shiaijo);
 }

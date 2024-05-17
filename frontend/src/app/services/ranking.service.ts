@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {EnvironmentService} from "../environment.service";
 import {MessageService} from "./message.service";
 import {LoggerService} from "./logger.service";
@@ -38,6 +38,7 @@ export class RankingService {
   }
 
   getCompetitorsScoreRankingByTournament(tournamentId: number): Observable<ScoreOfCompetitor[]> {
+    this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors/tournaments/' + tournamentId;
     return this.http.get<ScoreOfCompetitor[]>(url)
       .pipe(
@@ -50,10 +51,33 @@ export class RankingService {
       );
   }
 
-  getCompetitorsGlobalScoreRanking(participants: Participant[] | undefined): Observable<ScoreOfCompetitor[]> {
+  getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/competitors/tournaments/' + tournamentId + '/pdf';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting tournament's competitors ranking  as pdf`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting tournament's competitors ranking as pdf`))
+    );
+  }
+
+  getCompetitorsGlobalScoreRanking(participants: (Participant | undefined)[] | undefined, fromDays: number | undefined): Observable<ScoreOfCompetitor[]> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors';
-    return this.http.post<ScoreOfCompetitor[]>(url, participants)
+    return this.http.post<ScoreOfCompetitor[]>(url, participants, {
+      params: new HttpParams({
+        fromObject: {
+          'from': fromDays ? fromDays : 0,
+        }
+      })
+    })
       .pipe(
         tap({
           next: () => this.loggerService.info(`getting competitors ranking`),
@@ -64,20 +88,61 @@ export class RankingService {
       );
   }
 
-  getCompetitorsGlobalScoreRankingAsPdf(participants: Participant[] | undefined): Observable<Blob> {
+  getCompetitorsGlobalScoreRankingAsPdf(participants: Participant[] | undefined, fromDays: number | undefined): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}` + '/competitors/pdf';
-    return this.http.post<Blob>(url, participants, {
+
+    const httpOptions = {
+      responseType: 'blob' as 'json',
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      params: new HttpParams({
+        fromObject: {
+          'from': fromDays ? fromDays : 0,
+        }
+      })
+    };
+
+    return this.http.post<Blob>(url, participants, httpOptions)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting competitors ranking as pdf`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Blob>(`getting competitors ranking as pdf`))
+      );
+  }
+
+  getCompetitorsScoreRankingByClub(clubId: number): Observable<ScoreOfCompetitor[]> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/competitors/clubs/${clubId}`;
+    return this.http.get<ScoreOfCompetitor[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting club's competitors ranking`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<ScoreOfCompetitor[]>(`getting club's competitors ranking`))
+      );
+  }
+
+  getCompetitorsScoreRankingByClubAsPdf(clubId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}/competitors/clubs/${clubId}/pdf`;
+    return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     }).pipe(
       tap({
-        next: () => this.loggerService.info(`getting competitors ranking`),
+        next: () => this.loggerService.info(`getting club's competitors ranking as pdf`),
         error: () => this.systemOverloadService.isBusy.next(false),
         complete: () => this.systemOverloadService.isBusy.next(false),
       }),
-      catchError(this.messageService.handleError<Blob>(`getting competitors ranking`))
+      catchError(this.messageService.handleError<Blob>(`getting club's competitors ranking as pdf`))
     );
   }
 
@@ -93,23 +158,6 @@ export class RankingService {
         }),
         catchError(this.messageService.handleError<CompetitorRanking>(`getting competitor ${participantId} ranking`))
       );
-  }
-
-  getCompetitorsScoreRankingByTournamentAsPdf(tournamentId: number): Observable<Blob> {
-    this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}` + '/competitors/tournaments/' + tournamentId + '/pdf';
-    return this.http.get<Blob>(url, {
-      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    }).pipe(
-      tap({
-        next: () => this.loggerService.info(`getting competitors ranking`),
-        error: () => this.systemOverloadService.isBusy.next(false),
-        complete: () => this.systemOverloadService.isBusy.next(false),
-      }),
-      catchError(this.messageService.handleError<Blob>(`getting competitors ranking`))
-    );
   }
 
   getTeamsScoreRankingByGroup(groupId: number): Observable<ScoreOfTeam[]> {
@@ -186,6 +234,23 @@ export class RankingService {
         complete: () => this.systemOverloadService.isBusy.next(false),
       }),
       catchError(this.messageService.handleError<Blob>(`getting tournament summary code`))
+    );
+  }
+
+  getAllListAsZip(tournamentId: number): Observable<Blob> {
+    this.systemOverloadService.isBusy.next(true);
+    const url: string = `${this.baseUrl}` + '/tournament/' + tournamentId + '/zip';
+    return this.http.get<Blob>(url, {
+      responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      tap({
+        next: () => this.loggerService.info(`getting tournament lists as zip`),
+        error: () => this.systemOverloadService.isBusy.next(false),
+        complete: () => this.systemOverloadService.isBusy.next(false),
+      }),
+      catchError(this.messageService.handleError<Blob>(`getting tournament lists as zip`))
     );
   }
 

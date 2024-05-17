@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
@@ -77,7 +77,7 @@ public class GroupList extends ParentList {
 
         teamTable.addCell(getHeader4(messageSource.getMessage("tournament.group", null, locale) + " " + (groupDTO.getIndex() + 1), 0));
 
-        for (final DTO teamDTO : groupDTO.getTeams()) {
+        for (final TeamDTO teamDTO : groupDTO.getTeams()) {
             teamTable.addCell(getCell(teamDTO.getName()));
         }
 
@@ -154,6 +154,7 @@ public class GroupList extends ParentList {
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(MIN_HEADER_HIGH);
         mainTable.addCell(cell);
     }
 

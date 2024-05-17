@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,8 +32,8 @@ public class BCryptPasswordConverter implements AttributeConverter<String, Strin
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
-        if (attribute == null) {
-            return null;
+        if (attribute == null || attribute.isEmpty()) {
+            return attribute;
         }
         return getEncoder().encode(attribute);
     }

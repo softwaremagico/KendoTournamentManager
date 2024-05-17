@@ -118,6 +118,20 @@ export class TournamentService {
       );
   }
 
+  setNumberOfWinners(tournament: Tournament, numberOfWinners: number): Observable<Tournament> {
+    const url: string = `${this.baseUrl}/${tournament.id}/winners/${numberOfWinners}`;
+    this.systemOverloadService.isBusy.next(true);
+    return this.http.put<Tournament>(url, null)
+      .pipe(
+        tap({
+          next: () => (updatedTournament: Tournament) => this.loggerService.info(`updating tournament ${updatedTournament}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Tournament>(`updating ${tournament}`))
+      );
+  }
+
   getAccreditations(tournamentId: number, newOnes: boolean | undefined, roles: RoleType[]): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
     const url: string = `${this.baseUrl}/` + tournamentId + '/accreditations';
@@ -199,6 +213,19 @@ export class TournamentService {
       }),
       catchError(this.messageService.handleError<Blob>(`getting participant diplomas`))
     );
+  }
+
+  getLastUnlockedTournament(): Observable<Tournament> {
+    const url: string = `${this.baseUrl}/unlocked/lasts`;
+    return this.http.get<Tournament>(url)
+      .pipe(
+        tap({
+          next: () => (newTournament: Tournament) => this.loggerService.info(`Last unlocked tournament is ${newTournament}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Tournament>(`Cannot retrieve last unlocked tournament`))
+      );
   }
 
 }

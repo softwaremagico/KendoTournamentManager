@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.events;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.softwaremagico.kt.pdf.PdfTheme;
 
 public class FooterEvent extends PdfPageEventHelper {
-    private static final int BOTTOM_MARGIN = 20;
+    private static final int BOTTOM_MARGIN = 0;
 
     /**
      * Adds a footer to every page

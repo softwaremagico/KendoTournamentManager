@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -104,8 +104,12 @@ public class RoleProvider extends CrudProvider<Role, Integer, RoleRepository> {
         return getRepository().findByTournamentAndParticipantIn(tournament, participants);
     }
 
-    public List<Role> get(List<Participant> participants) {
+    public List<Role> getBy(List<Participant> participants) {
         return getRepository().findByParticipantIn(participants);
+    }
+
+    public List<Role> get(List<Participant> participants, RoleType roleType) {
+        return getRepository().findByParticipantInAndRoleType(participants, roleType);
     }
 
     public Role get(Tournament tournament, Participant participant) {

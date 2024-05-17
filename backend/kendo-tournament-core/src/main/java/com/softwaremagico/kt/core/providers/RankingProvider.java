@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,11 +43,14 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -57,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -67,7 +71,7 @@ public class RankingProvider {
 
     private final ParticipantProvider participantProvider;
 
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
 
     private final GroupProvider groupProvider;
 
@@ -76,11 +80,11 @@ public class RankingProvider {
     private final TeamProvider teamProvider;
 
     public RankingProvider(FightProvider fightProvider, DuelProvider duelProvider, ParticipantProvider participantProvider,
-                           TournamentProvider tournamentProvider, GroupProvider groupProvider, RoleProvider roleProvider, TeamProvider teamProvider) {
+                           TournamentRepository tournamentRepository, GroupProvider groupProvider, RoleProvider roleProvider, TeamProvider teamProvider) {
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.participantProvider = participantProvider;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
         this.groupProvider = groupProvider;
         this.roleProvider = roleProvider;
         this.teamProvider = teamProvider;
@@ -141,7 +145,7 @@ public class RankingProvider {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsScoreRankingFromTournament(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+        final Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
         return getCompetitorsScoreRanking(tournament);
     }
@@ -176,7 +180,7 @@ public class RankingProvider {
     }
 
     public List<ScoreOfTeam> getTeamsScoreRankingFromTournament(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
+        final Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!"));
         return getTeamsScoreRanking(tournament);
     }
@@ -195,8 +199,8 @@ public class RankingProvider {
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
         final List<Fight> fights = fightProvider.getAll();
         final List<Duel> unties = duelProvider.getUnties();
-        final List<Participant> competitors = roleProvider.getAll().stream()
-                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant).toList();
+        final Set<Participant> competitors = roleProvider.getAll().stream()
+                .filter(role -> role.getRoleType() == RoleType.COMPETITOR).map(Role::getParticipant).collect(Collectors.toSet());
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }
@@ -204,13 +208,23 @@ public class RankingProvider {
         return scores;
     }
 
-    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors, ScoreType scoreType) {
+    public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors, ScoreType scoreType, Integer fromNumberOfDays) {
         if (competitors == null || competitors.isEmpty()) {
             competitors = participantProvider.getAll();
         }
+        //Get number since when is read the data.
+        final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0 ? LocalDate.now().minusDays(fromNumberOfDays).atStartOfDay() : null;
         final List<ScoreOfCompetitor> scores = new ArrayList<>();
-        final List<Fight> fights = fightProvider.get(competitors);
-        final List<Duel> unties = duelProvider.getUnties(competitors);
+        final List<Fight> fights = fightProvider.getBy(competitors).stream().filter(fight ->
+                from == null || fight.getCreatedAt().isAfter(from)).toList();
+        final List<Duel> unties = duelProvider.getUnties(competitors).stream().filter(duel ->
+                from == null || duel.getCreatedAt().isAfter(from)).toList();
+
+        final Set<Participant> participantsInFights = fights.stream().flatMap(fight ->
+                fight.getTeam1().getMembers().stream()).collect(Collectors.toCollection(HashSet::new));
+        participantsInFights.addAll(fights.stream().flatMap(fight -> fight.getTeam2().getMembers().stream())
+                .collect(Collectors.toCollection(HashSet::new)));
+        competitors.retainAll(participantsInFights);
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }
@@ -218,10 +232,10 @@ public class RankingProvider {
         return scores;
     }
 
-    public CompetitorRanking getCompetitorRanking(Participant participantDTO) {
+    public CompetitorRanking getCompetitorRanking(Participant participant) {
         final List<ScoreOfCompetitor> ranking = getCompetitorGlobalRanking(ScoreType.DEFAULT);
         return new CompetitorRanking(IntStream.range(0, ranking.size())
-                .filter(i -> Objects.equals(participantDTO, ranking.get(i).getCompetitor()))
+                .filter(i -> Objects.equals(participant, ranking.get(i).getCompetitor()))
                 .findFirst().orElse(ranking.size() - 1), ranking.size());
     }
 

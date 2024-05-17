@@ -8,6 +8,7 @@ import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";
 import {DOCUMENT} from "@angular/common";
+import {Club} from "../../models/club";
 
 @Component({
   selector: 'app-competitors-ranking',
@@ -18,12 +19,15 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
 
   competitorsScore: ScoreOfCompetitor[];
   tournament: Tournament | undefined;
+  club: Club | undefined;
   competitor: Participant | undefined;
   showIndex: boolean | undefined;
+  numberOfDays: number | undefined;
 
   constructor(public dialogRef: MatDialogRef<CompetitorsRankingComponent>,
               @Inject(DOCUMENT) document: Document,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: {
+                club: Club | undefined,
                 tournament: Tournament | undefined,
                 competitor: Participant | undefined,
                 showIndex: boolean | undefined,
@@ -31,17 +35,26 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
               private rankingService: RankingService, public translateService: TranslateService, rbacService: RbacService) {
     super(rbacService);
     this.tournament = data.tournament;
+    this.club = data.club;
     this.competitor = data.competitor;
     this.showIndex = data.showIndex;
   }
 
   ngOnInit(): void {
-    if (this.tournament?.id) {
-      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournament.id).subscribe((competitorsScore: ScoreOfCompetitor[]) => {
+    this.getRanking();
+  }
+
+  getRanking(): void {
+    if (this.club?.id) {
+      this.rankingService.getCompetitorsScoreRankingByClub(this.club.id).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
+        this.competitorsScore = competitorsScore;
+      });
+    } else if (this.tournament?.id) {
+      this.rankingService.getCompetitorsScoreRankingByTournament(this.tournament.id).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRanking(undefined).subscribe((competitorsScore: ScoreOfCompetitor[]) => {
+      this.rankingService.getCompetitorsGlobalScoreRanking(undefined, this.numberOfDays).subscribe((competitorsScore: ScoreOfCompetitor[]): void => {
         this.competitorsScore = competitorsScore;
         //Timeout to scroll after the component is drawn.
         setTimeout((): void => {
@@ -51,12 +64,22 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
     }
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
-  downloadPDF() {
-    if (this.tournament?.id) {
+  downloadPDF(): void {
+    if (this.club?.id) {
+      this.rankingService.getCompetitorsScoreRankingByClubAsPdf(this.club.id).subscribe((pdf: Blob): void => {
+        const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
+        const downloadURL: string = window.URL.createObjectURL(blob);
+
+        const anchor: HTMLAnchorElement = document.createElement("a");
+        anchor.download = "Competitors Ranking - " + this.club!.name + ".pdf";
+        anchor.href = downloadURL;
+        anchor.click();
+      });
+    } else if (this.tournament?.id) {
       this.rankingService.getCompetitorsScoreRankingByTournamentAsPdf(this.tournament.id).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
@@ -67,7 +90,7 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
         anchor.click();
       });
     } else {
-      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined).subscribe((pdf: Blob): void => {
+      this.rankingService.getCompetitorsGlobalScoreRankingAsPdf(undefined, this.numberOfDays).subscribe((pdf: Blob): void => {
         const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
         const downloadURL: string = window.URL.createObjectURL(blob);
 
@@ -83,5 +106,9 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
     if (row) {
       row.scrollIntoView({behavior: 'smooth'});
     }
+  }
+
+  daysChanged(): void {
+    this.getRanking();
   }
 }

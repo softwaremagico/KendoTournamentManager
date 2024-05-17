@@ -58,7 +58,7 @@ export class TournamentImageSelectorComponent extends RbacBasedComponent impleme
       const file: File | null = fileList.item(0);
       if (!file || file.size < 4096 || file.size > 2097152) {
         const parameters: object = {minSize: '4096', maxSize: '' + (2097152 / (1024 * 1024))};
-        this.translateService.get('invalidFileSize', parameters).subscribe((res: string) => {
+        this.translateService.get('invalidFileSize', parameters).subscribe((res: string): void => {
           this.messageService.errorMessage(res);
         });
       } else {

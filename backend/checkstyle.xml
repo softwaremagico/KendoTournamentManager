@@ -66,7 +66,10 @@
 
     <!-- Checks for Size Violations.                    -->
     <!-- See https://checkstyle.org/config_sizes.html -->
-    <module name="FileLength"/>
+    <module name="FileLength">
+        <property name="id" value="checkstyle:filelength"/>
+        <property name="max" value="2500"/>
+    </module>
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
         <property name="max" value="160"/>

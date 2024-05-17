@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@ import java.util.Locale;
 @Converter
 public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalDateTime> implements AttributeConverter<LocalDateTime, String> {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private final DateTimeFormatter formatterWithMilliseconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault());
     private final DateTimeFormatter formatterOffset = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSx", Locale.getDefault());
 
     public LocalDateTimeCryptoConverter() {
@@ -60,15 +61,20 @@ public class LocalDateTimeCryptoConverter extends AbstractCryptoConverter<LocalD
                 return LocalDateTime.parse(dbData);
             } catch (DateTimeParseException dtpe) {
                 try {
-                    // From SQL Script.
-                    return LocalDateTime.parse(dbData, formatter);
+                    // From SQL Script with milliseconds
+                    return LocalDateTime.parse(dbData, formatterWithMilliseconds);
                 } catch (DateTimeParseException dte) {
                     try {
-                        //Try with offset.
-                        return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
-                    } catch (DateTimeParseException e) {
-                        EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
-                        return null;
+                        // try without milliseconds
+                        return LocalDateTime.parse(dbData, formatter);
+                    } catch (DateTimeParseException dteo) {
+                        try {
+                            //Try with offset.
+                            return OffsetDateTime.parse(dbData, formatterOffset).toLocalDateTime();
+                        } catch (DateTimeParseException e) {
+                            EncryptorLogger.errorMessage(this.getClass().getName(), "Invalid datetime value '{}' in database.", dbData);
+                            return null;
+                        }
                     }
                 }
             }

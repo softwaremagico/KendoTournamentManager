@@ -37,9 +37,9 @@
 
 .box-statistics {
   text-align: center;
-  padding: 15px;
   margin: 15px;
   min-width: 190px;
+  padding: 15px 15px 50px;
 }
 
 .statistics-table {
@@ -55,7 +55,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: -20px;
+  margin-bottom: -10px;
 }
 
 .statistics-table-title > h3 {
@@ -87,5 +87,8 @@ app-achievement-wall {
   height: 245px;
 }
 
+.name {
+  text-align: center;
+}
 
 

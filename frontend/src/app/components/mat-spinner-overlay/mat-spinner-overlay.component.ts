@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ProgressSpinnerMode} from "@angular/material/progress-spinner";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {KendoComponent} from "../kendo-component";
@@ -12,10 +12,6 @@ import {ThemePalette} from "@angular/material/core";
 })
 export class MatSpinnerOverlayComponent extends KendoComponent implements OnInit {
 
-  constructor(private systemOverloadService: SystemOverloadService) {
-    super();
-  }
-
   @Input() value: number = 100;
   @Input() diameter: number = 100;
   @Input() mode: ProgressSpinnerMode = 'indeterminate';
@@ -26,12 +22,18 @@ export class MatSpinnerOverlayComponent extends KendoComponent implements OnInit
   showSpinner: boolean = false;
   waitBigOperation: boolean = false;
 
+  constructor(private systemOverloadService: SystemOverloadService, private changeDetectorRef: ChangeDetectorRef) {
+    super();
+  }
+
   ngOnInit(): void {
     this.systemOverloadService.isBusy.pipe(takeUntil(this.destroySubject)).subscribe((busy: boolean): void => {
       this.showSpinner = busy;
+      this.changeDetectorRef.detectChanges();
     });
     this.systemOverloadService.isTransactionalBusy.pipe(takeUntil(this.destroySubject)).subscribe((busy: boolean): void => {
       this.waitBigOperation = busy;
+      this.changeDetectorRef.detectChanges();
     });
   }
 }

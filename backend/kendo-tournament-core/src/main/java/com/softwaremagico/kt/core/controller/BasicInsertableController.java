@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,14 +33,33 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, REPOSITORY extends JpaRepository<ENTITY, Integer>,
         PROVIDER extends CrudProvider<ENTITY, Integer, REPOSITORY>, CONVERTER_REQUEST extends ConverterRequest<ENTITY>,
         CONVERTER extends ElementConverter<ENTITY, DTO, CONVERTER_REQUEST>>
         extends StandardController<ENTITY, DTO, REPOSITORY, PROVIDER> {
 
+    private final Set<ElementCreatedListener> elementCreatedListeners = new HashSet<>();
+    private final Set<ElementUpdatedListener> elementUpdatedListeners = new HashSet<>();
+    private final Set<ElementDeletedListener> elementDeletedListeners = new HashSet<>();
+
     private final CONVERTER converter;
+
+    public interface ElementCreatedListener {
+        void created(ElementDTO element, String actor);
+    }
+
+    public interface ElementUpdatedListener {
+        void updated(ElementDTO element, String actor);
+    }
+
+    public interface ElementDeletedListener {
+        void deleted(ElementDTO element, String actor);
+    }
 
     protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
         super(provider);
@@ -50,6 +69,19 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     public CONVERTER getConverter() {
         return converter;
     }
+
+    public void addElementCreatedListeners(ElementCreatedListener listener) {
+        elementCreatedListeners.add(listener);
+    }
+
+    public void addElementUpdatedListeners(ElementUpdatedListener listener) {
+        elementUpdatedListeners.add(listener);
+    }
+
+    public void addElementDeletedListeners(ElementDeletedListener listener) {
+        elementDeletedListeners.add(listener);
+    }
+
 
     public DTO get(Integer id) {
         final ENTITY entity = getProvider().get(id).orElseThrow(() -> new NotFoundException(getClass(), "Entity with id '" + id + "' not found.",
@@ -62,11 +94,24 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         return convertAll(getProvider().getAll());
     }
 
+    @Override
+    public List<DTO> get(Collection<Integer> ids) {
+        return convertAll(getProvider().get(ids));
+    }
+
     @Transactional
     public DTO update(DTO dto, String username) {
         dto.setUpdatedBy(username);
         validate(dto);
-        return create(dto, null);
+        final DTO updatedDTO = convert(super.getProvider().save(reverse(dto)));
+
+        try {
+            return updatedDTO;
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO, username))).start();
+        }
     }
 
     @Transactional
@@ -74,9 +119,16 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         final List<DTO> refreshedData = new ArrayList<>();
         dtos.forEach(dto -> {
             dto.setUpdatedBy(username);
-            refreshedData.add(create(dto, null));
+            refreshedData.add(convert(super.getProvider().save(reverse(dto))));
         });
-        return refreshedData;
+        try {
+            return refreshedData;
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    refreshedData.forEach(updatedDTO ->
+                            elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO, username)))).start();
+        }
     }
 
     @Transactional
@@ -85,7 +137,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             dto.setCreatedBy(username);
         }
         validate(dto);
-        return convert(super.getProvider().save(reverse(dto)));
+        final DTO savedDTO = convert(super.getProvider().save(reverse(dto)));
+
+        try {
+            return savedDTO;
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO, username))).start();
+        }
     }
 
     @Transactional
@@ -96,16 +156,37 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             }
         });
         validate(dtos);
-        return convertAll(super.getProvider().save(reverseAll(dtos)));
+        final List<DTO> savedDTOs = convertAll(super.getProvider().save(reverseAll(dtos)));
+        try {
+            return savedDTOs;
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    savedDTOs.forEach(savedDTO ->
+                            elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO, username)))).start();
+        }
     }
 
 
-    public void delete(DTO entity) {
-        getProvider().delete(reverse(entity));
+    public void delete(DTO entity, String username) {
+        try {
+            getProvider().delete(reverse(entity));
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    elementDeletedListeners.forEach(elementDeletedListener -> elementDeletedListener.deleted(entity, username))).start();
+        }
     }
 
-    public void delete(Collection<DTO> entities) {
-        getProvider().delete(reverseAll(entities));
+    public void delete(Collection<DTO> entities, String username) {
+        try {
+            getProvider().delete(reverseAll(entities));
+        } finally {
+            //Advise the frontend!
+            new Thread(() ->
+                    entities.forEach(deletedDTO ->
+                            elementDeletedListeners.forEach(elementDeletedListener -> elementDeletedListener.deleted(deletedDTO, username)))).start();
+        }
     }
 
     public void deleteAll() {
@@ -129,7 +210,8 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     }
 
     protected List<DTO> convertAll(Collection<ENTITY> entities) {
-        return converter.convertAll(entities.stream().map(this::createConverterRequest).toList());
+        return new ArrayList<>(converter.convertAll(entities.stream().map(this::createConverterRequest)
+                .collect(Collectors.toCollection(ArrayList::new))));
     }
 
     protected List<ENTITY> reverseAll(Collection<DTO> dtos) {

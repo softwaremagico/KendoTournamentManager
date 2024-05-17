@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,17 +21,18 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.managers.LoopGroupFightManager;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,16 +42,16 @@ public class LoopLeagueHandler extends LeagueHandler {
 
     private final LoopGroupFightManager loopGroupFightManager;
     private final FightProvider fightProvider;
-    private final GroupProvider groupProvider;
+    private final GroupRepository groupRepository;
 
 
     public LoopLeagueHandler(GroupProvider groupProvider, LoopGroupFightManager loopGroupFightManager, FightProvider fightProvider,
-                             TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
-                             TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
-        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
+                             TeamProvider teamProvider, GroupConverter groupConverter, RankingProvider rankingProvider,
+                             TournamentExtraPropertyProvider tournamentExtraPropertyProvider, GroupRepository groupRepository) {
+        super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.loopGroupFightManager = loopGroupFightManager;
         this.fightProvider = fightProvider;
-        this.groupProvider = groupProvider;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class LoopLeagueHandler extends LeagueHandler {
                 TeamsOrder.NONE, level, createdBy));
         final Group group = getGroup(tournament);
         group.setFights(fights);
-        groupProvider.save(group);
+        groupRepository.save(group);
         return fights;
     }
 
