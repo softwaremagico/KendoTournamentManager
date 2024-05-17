@@ -884,5 +884,13 @@
         "shiaijoFinished": "Tots els partits del shiaijo {{shiaijoName}} han acabat.",
         "userAdminGenerated": "Usuari {{userName}} ha estar creat!"
     },
-    "daysFrom": "Aplica només aquests dies"
+    "daysFrom": "Aplica només aquests dies",
+    "createdAt": "Creat a",
+    "duelsLost": "Lluites perdudes",
+    "createdBy": "Creat per",
+    "DisabledRadioButton": "Inhabilitat",
+    "logIn": "Iniciar Sessió",
+    "fightsLost": "Partits perduts",
+    "NameTeamError": "S'ha produït un error desconegut en accedir a la base de dades.",
+    "login": "Iniciar Sessió"
 }
