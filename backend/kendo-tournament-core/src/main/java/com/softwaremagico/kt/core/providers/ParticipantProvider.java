@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,9 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.TemporalToken;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
@@ -34,19 +37,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class ParticipantProvider extends CrudProvider<Participant, Integer, ParticipantRepository> {
 
+    public static final String TOKEN_NAME_SEPARATOR = "_";
+
     @Autowired
     public ParticipantProvider(ParticipantRepository repository) {
         super(repository);
-    }
-
-    public List<Participant> get(List<Integer> ids) {
-        return getRepository().findByIdIn(ids);
     }
 
     public List<Participant> get(Tournament tournament) {
@@ -70,13 +72,17 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return getRepository().findParticipantsWithAchievementAndGradeFromList(achievementType, achievementGrade, participants);
     }
 
+    public List<Participant> getParticipantsWithAchievement(AchievementType achievementType, AchievementGrade achievementGrade) {
+        return getRepository().findParticipantsWithAchievementAndGrade(achievementType, achievementGrade);
+    }
+
     public List<Participant> findParticipantsWithRoleNotInTournaments(Tournament tournament, RoleType roleType, Collection<Tournament> olderTournaments) {
         return getRepository().findParticipantsWithRoleNotInTournaments(tournament, roleType, olderTournaments);
     }
 
 
     public List<Participant> getOriginalOrder(List<Integer> ids) {
-        final List<Participant> databaseParticipants = getRepository().findByIdIn(ids);
+        final List<Participant> databaseParticipants = getRepository().findAllById(ids);
         //JPA 'in' does not maintain the order. We need to sort them by the source list.
         final Map<Integer, Participant> participantsById = databaseParticipants.stream().collect(Collectors.toMap(Participant::getId, Function.identity()));
         final List<Participant> sortedParticipants = new ArrayList<>();
@@ -84,5 +90,43 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             sortedParticipants.add(participantsById.get(id));
         }
         return sortedParticipants;
+    }
+
+    public List<Participant> get(Club club) {
+        return getRepository().findByClub(club);
+    }
+
+    public TemporalToken generateTemporalToken(Participant participant) {
+        do {
+            participant.generateTemporalToken();
+        } while (getRepository().countByTemporalToken(participant.getTemporalToken()) > 0);
+        return new TemporalToken(save(participant));
+    }
+
+    public Participant generateToken(Participant participant) {
+        participant.generateToken();
+        return save(participant);
+    }
+
+    public Optional<Participant> findByTemporalToken(String token) {
+        if (token != null) {
+            return getRepository().findByTemporalToken(token);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Participant> findByTokenUsername(String tokenUsername) {
+        if (tokenUsername == null) {
+            return Optional.empty();
+        }
+        if (tokenUsername.contains(ParticipantProvider.TOKEN_NAME_SEPARATOR)) {
+            final String[] fields = tokenUsername.split(ParticipantProvider.TOKEN_NAME_SEPARATOR);
+            try {
+                return getRepository().findById(Integer.parseInt(fields[0]));
+            } catch (NumberFormatException ignore) {
+            }
+        }
+        KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
+        return Optional.empty();
     }
 }

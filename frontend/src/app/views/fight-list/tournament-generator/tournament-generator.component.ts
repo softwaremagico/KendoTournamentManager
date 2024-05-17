@@ -14,10 +14,14 @@ import {FightService} from "../../../services/fight.service";
 import {MessageService} from "../../../services/message.service";
 import {GroupService} from "../../../services/group.service";
 import {Group} from "../../../models/group";
+import {TournamentExtendedProperty} from "../../../models/tournament-extended-property.model";
+import {TournamentExtraPropertyKey} from "../../../models/tournament-extra-property-key";
+import {TournamentExtendedPropertiesService} from "../../../services/tournament-extended-properties.service";
+import {TournamentType} from "../../../models/tournament-type";
+import {NumberOfWinnersUpdatedService} from "../../../services/notifications/number-of-winners-updated.service";
 import {
-  GroupsUpdatedService
-} from "../../../components/tournament-brackets-editor/tournament-brackets/groups-updated.service";
-import {TeamService} from "../../../services/team.service";
+  TournamentChangedService
+} from "../../../components/tournament-brackets-editor/tournament-brackets/tournament-changed.service";
 
 @Component({
   selector: 'app-tournament-generator',
@@ -38,9 +42,13 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   groupsLevelZero: Group[] = [];
   totalTeams: number;
 
+  numberOfWinners: number = 1;
+
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
               private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
-              private groupService: GroupService, private groupsUpdatedService: GroupsUpdatedService) {
+              private groupService: GroupService, private tournamentChangedService: TournamentChangedService,
+              private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService,
+              private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
     super(rbacService);
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -58,6 +66,8 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   ngOnInit(): void {
     this.tournamentService.get(this.tournamentId).subscribe((tournament: Tournament): void => {
       this.tournament = tournament;
+      this.tournamentChangedService.isTournamentChanged.next(tournament);
+      this.refreshWinner();
     });
   }
 
@@ -72,7 +82,6 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   deleteGroup(): void {
-    //this.tournamentBracketsEditorComponent.deleteGroup(this.tournamentBracketsEditorComponent.selectedGroup);
     this.tournamentBracketsEditorComponent.deleteLast();
   }
 
@@ -94,25 +103,6 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
       this.messageService.infoMessage("infoFightCreated");
       this.goBackToFights();
     });
-  }
-
-  askToRemoveAllTeams(): void {
-    let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-      disableClose: false
-    });
-    dialogRef.componentInstance.messageTag = "questionDeleteTeams"
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.removeAllTeams();
-      }
-    });
-  }
-
-  removeAllTeams(): void {
-    this.groupService.deleteAllTeamsFromTournament(this.tournamentId).subscribe((_groups: Group[]): void => {
-      this.groupsUpdatedService.areTeamListUpdated.next([]);
-    })
   }
 
   groupsUpdated(groups: Group[]): void {
@@ -138,5 +128,35 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
         anchor.click();
       });
     }
+  }
+
+  private refreshWinner(): void {
+    if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
+      this.tournamentExtendedPropertiesService.getByTournament(this.tournament).subscribe((_tournamentSelection: TournamentExtendedProperty[]): void => {
+        if (_tournamentSelection) {
+          for (const _tournamentProperty of _tournamentSelection) {
+            if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
+              this.numberOfWinners = Number(_tournamentProperty.propertyValue.toLowerCase());
+            }
+          }
+        }
+        if (this.numberOfWinners == undefined) {
+          this.numberOfWinners = 1;
+        }
+      });
+    }
+  }
+
+  changeNumberOfWinners(numberOfWinners: number): void {
+    this.numberOfWinners = numberOfWinners;
+
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = numberOfWinners + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.NUMBER_OF_WINNERS;
+    this.tournamentService.setNumberOfWinners(this.tournament, numberOfWinners).subscribe((): void => {
+      this.numberOfWinnersUpdatedService.numberOfWinners.next(numberOfWinners);
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
   }
 }

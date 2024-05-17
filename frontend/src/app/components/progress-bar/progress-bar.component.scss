@@ -3,7 +3,7 @@
 }
 
 .bar-0 .mat-progress-bar-fill::after {
-  background-color: #001239 !important;
+  background-color: #062158 !important;
 }
 
 .bar-1 .mat-progress-bar-fill::after {
@@ -18,8 +18,12 @@
   background-color: #012354 !important;
 }
 
+.bar-4 .mat-progress-bar-fill::after {
+  background-color: #083670 !important;
+}
+
 .bar-0 .mat-icon {
-  color: #001239 !important;
+  color: #062158 !important;
 }
 
 .bar-1 .mat-icon {
@@ -32,6 +36,10 @@
 
 .bar-3 .mat-icon {
   color: #012f67 !important;
+}
+
+.bar-4 .mat-icon {
+  color: #083670 !important;
 }
 
 .custom-progress-bar {

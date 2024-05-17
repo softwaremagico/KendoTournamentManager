@@ -43,8 +43,14 @@ export class FightDialogBoxComponent implements OnInit {
     private messageService: MessageService,
     private groupUpdatedService: GroupUpdatedService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-      title: string, action: Action, entity: Fight, group: Group, previousFight: Fight | undefined, tournament: Tournament,
-      swappedColors: boolean, swappedTeams: boolean
+      title: string,
+      action: Action,
+      entity: Fight,
+      group: Group,
+      previousFight: Fight | undefined,
+      tournament: Tournament,
+      swappedColors: boolean,
+      swappedTeams: boolean
     }
   ) {
     this.group = data.group;
@@ -59,8 +65,8 @@ export class FightDialogBoxComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.teamService.getFromTournament(this.tournament).subscribe(teams => {
-      teams.sort(function (a, b) {
+    this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
+      teams.sort(function (a: Team, b: Team) {
         return a.name.localeCompare(b.name);
       });
       this.teamListData.teams = teams;
@@ -81,8 +87,8 @@ export class FightDialogBoxComponent implements OnInit {
         event.currentIndex,
       );
     }
-    this.teamListData.filteredTeams.sort((a, b) => a.name.localeCompare(b.name));
-    this.teamListData.teams.sort((a, b) => a.name.localeCompare(b.name));
+    this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
+    this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
     return event.container.data[event.currentIndex];
   }
 
@@ -94,15 +100,15 @@ export class FightDialogBoxComponent implements OnInit {
     this.fight.team1 = this.selectedTeam1[0];
     this.fight.team2 = this.selectedTeam2[0];
 
-    this.fightService.generateDuels(this.fight).subscribe(_fight => {
+    this.fightService.generateDuels(this.fight).subscribe((_fight: Fight): void => {
       if (this.previousFight !== undefined) {
-        this.group.fights.splice(this.group.fights.findIndex(fight => this.previousFight?.id === fight.id
+        this.group.fights.splice(this.group.fights.findIndex((fight: Fight): boolean => this.previousFight?.id === fight.id
         ) + 1, 0, _fight);
       } else if (!this.group.fights.includes(_fight)) {
         this.group.fights.push(_fight);
       }
 
-      this.groupServices.update(this.group).subscribe(_group => {
+      this.groupServices.update(this.group).subscribe((_group: Group): void => {
         this.messageService.infoMessage("addFightMessage");
         this.groupUpdatedService.isGroupUpdated.next(_group);
         this.dialogRef.close(this.fight);

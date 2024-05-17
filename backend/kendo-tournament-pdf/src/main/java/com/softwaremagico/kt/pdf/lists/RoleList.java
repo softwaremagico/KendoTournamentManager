@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import com.softwaremagico.kt.pdf.PdfTheme;
 import com.softwaremagico.kt.utils.NameUtils;
 import org.springframework.context.MessageSource;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -89,7 +90,9 @@ public class RoleList extends ParentList {
                 mainTable.addCell(getHeader2(text, 0));
             }
 
-            for (final RoleDTO role : participantsByClub.getValue()) {
+            final List<RoleDTO> roles = participantsByClub.getValue();
+            roles.sort(Comparator.comparing(o -> NameUtils.getLastnameName(o.getParticipant())));
+            for (final RoleDTO role : roles) {
                 mainTable.addCell(getCell(NameUtils.getLastnameName(role.getParticipant()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
                 mainTable.addCell(getCell(messageSource.getMessage("role.type."
                                 + role.getRoleType().toString().toLowerCase(locale), null, locale),
@@ -110,6 +113,7 @@ public class RoleList extends ParentList {
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setMinimumHeight(MIN_HEADER_HIGH);
         mainTable.addCell(cell);
     }
 

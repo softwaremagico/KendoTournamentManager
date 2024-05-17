@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,13 +21,20 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
+import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.logger.ExceptionType;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.DuelRepository;
+import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
+import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +42,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
 public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository> {
 
+    private final FightRepository fightRepository;
+    private final DuelRepository duelRepository;
+
     @Autowired
-    public GroupProvider(GroupRepository repository) {
+    public GroupProvider(GroupRepository repository, FightRepository fightRepository, DuelRepository duelRepository) {
         super(repository);
+        this.fightRepository = fightRepository;
+        this.duelRepository = duelRepository;
     }
 
     private List<Group> sort(List<Group> groups) {
@@ -115,7 +128,46 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public long delete(Tournament tournament, Integer level) {
-        return getRepository().deleteByTournamentAndLevel(tournament, level);
+        final List<Group> groups = getGroups(tournament);
+        final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(groups);
+        long deleted = 0;
+        if (!groups.isEmpty()) {
+            if (!groupsByLevel.get(0).isEmpty()) {
+                for (int i = level; i <= groups.get(groups.size() - 1).getLevel(); i++) {
+
+                    //deleted += getRepository().deleteByTournamentAndLevel(tournament, i);
+                    if (i > 1 || groupsByLevel.get(0).get(0).getNumberOfWinners() == 1) {
+                        if (!groupsByLevel.get(i).isEmpty()) {
+                            while ((groupsByLevel.get(i - 1).size() + 1) / 2 < groupsByLevel.get(i).size()) {
+                                //Delete last group.
+                                getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
+                                deleted++;
+                                groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
+                            }
+                            //Remove last single groups if previous level has only one group.
+                            if (groupsByLevel.get(i - 1).size() == 1) {
+                                getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
+                                deleted++;
+                                groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
+                            }
+                        }
+                    } else if (i == 1 && groupsByLevel.get(0).get(0).getNumberOfWinners() == 2) {
+                        if (!groupsByLevel.get(i).isEmpty()) {
+                            while ((groupsByLevel.get(0).size() + 1) < groupsByLevel.get(i).size()) {
+                                //Delete last group.
+                                getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
+                                deleted++;
+                                groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
+                            }
+                        }
+                    }
+                }
+            } else {
+                deleted += getRepository().deleteByTournamentAndLevel(tournament, 0);
+            }
+        }
+        KendoTournamentLogger.warning(this.getClass(), "Deleted '{}' groups.", deleted);
+        return deleted;
     }
 
     public Group addTeams(Integer groupId, List<Team> teams, String username) {
@@ -161,5 +213,29 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
 
     public long count(Tournament tournament) {
         return getRepository().countByTournament(tournament);
+    }
+
+    public Group setTeams(Integer groupId, List<Team> teams, String username) {
+        if (teams.isEmpty()) {
+            throw new TeamNotFoundException(this.getClass(), "No teams found!");
+        }
+
+        Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Group with id '" + groupId + "' not found.",
+                ExceptionType.INFO));
+
+        final List<Fight> fights = new ArrayList<>(group.getFights());
+        group.getFights().clear();
+
+        final List<Duel> unties = new ArrayList<>(group.getUnties());
+        group.getUnties().clear();
+
+        group.getTeams().clear();
+        group = save(group);
+        //Unties are unlinked from groups. Can be removed.
+        duelRepository.deleteAll(unties);
+        fightRepository.deleteAll(fights);
+        group.setTeams(teams);
+        group.setUpdatedBy(username);
+        return save(group);
     }
 }

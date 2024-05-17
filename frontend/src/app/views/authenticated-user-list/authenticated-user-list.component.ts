@@ -25,7 +25,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 })
 export class AuthenticatedUserListComponent extends RbacBasedComponent implements OnInit {
 
-  basicTableData: BasicTableData<AuthenticatedUser> = new BasicTableData<AuthenticatedUser>();
+  basicTableData: BasicTableData<AuthenticatedUser> = new BasicTableData<AuthenticatedUser>("AuthenticatedUser");
 
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -77,7 +77,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
     }
   }
 
-  openDialog(title: string, action: Action, authenticatedUser: AuthenticatedUser) {
+  openDialog(title: string, action: Action, authenticatedUser: AuthenticatedUser): void {
     const dialogRef = this.dialog.open(AuthenticatedUserDialogBoxComponent, {
       width: '400px',
       data: {title: title, action: action, entity: authenticatedUser}
@@ -88,34 +88,46 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
         //Do nothing
       } else if (result == Action.Cancel) {
         //Do nothing
-      } else if (result.action == Action.Add) {
+      } else if (result?.action == Action.Add) {
         this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
+      } else if (result?.action == Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
+      } else if (result?.action == Action.Delete) {
         this.deleteRowData(result.data);
       }
     });
   }
 
-  addRowData(authenticatedUser: AuthenticatedUser) {
-    this.userService.add(authenticatedUser).subscribe(_authenticatedUser => {
-      this.basicTableData.dataSource.data.push(_authenticatedUser);
-      this.basicTableData.dataSource._updateChangeSubscription();
+  addRowData(authenticatedUser: AuthenticatedUser): void {
+    this.userService.add(authenticatedUser).subscribe((_authenticatedUser: AuthenticatedUser): void => {
+      //If data is not already added though table webservice.
+      if (this.basicTableData.dataSource.data.findIndex((obj: AuthenticatedUser): boolean => obj.id === _authenticatedUser.id) < 0) {
+        this.basicTableData.dataSource.data.push(_authenticatedUser);
+        this.basicTableData.dataSource._updateChangeSubscription();
+      }
       this.basicTableData.selectItem(_authenticatedUser);
+      this.basicTableData.selectedElement = _authenticatedUser;
+      this.messageService.infoMessage('infoAuthenticatedUserStored');
     });
   }
 
-  updateRowData(authenticatedUser: AuthenticatedUser) {
-    this.userService.update(authenticatedUser).subscribe(() => {
+  updateRowData(authenticatedUser: AuthenticatedUser): void {
+    this.userService.update(authenticatedUser).subscribe((_authenticatedUser: AuthenticatedUser): void => {
         this.messageService.infoMessage('infoAuthenticatedUserUpdated');
+        let index: number = this.basicTableData.dataSource.data.findIndex((obj: AuthenticatedUser): boolean => obj.id === _authenticatedUser.id);
+        if (index >= 0) {
+          this.basicTableData.dataSource.data[index] = _authenticatedUser;
+          this.basicTableData.dataSource._updateChangeSubscription();
+        }
+        this.basicTableData.selectedElement = _authenticatedUser;
+      this.basicTableData.selectItem(_authenticatedUser);
       }
     );
   }
 
-  deleteRowData(authenticatedUser: AuthenticatedUser) {
-    this.userService.delete(authenticatedUser).subscribe(() => {
-        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(existing_authenticatedUser => existing_authenticatedUser !== authenticatedUser);
+  deleteRowData(authenticatedUser: AuthenticatedUser): void {
+    this.userService.delete(authenticatedUser).subscribe((): void => {
+        this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter((_authenticatedUser: AuthenticatedUser): boolean => _authenticatedUser.id !== authenticatedUser.id);
         this.messageService.infoMessage('infoAuthenticatedUserDeleted');
         this.basicTableData.selectedElement = undefined;
       }

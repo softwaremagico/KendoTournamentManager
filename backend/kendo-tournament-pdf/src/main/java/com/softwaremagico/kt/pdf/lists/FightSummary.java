@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -101,7 +101,7 @@ public class FightSummary extends ParentList {
             } else {
                 return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             return "";
         }
     }
@@ -232,6 +232,7 @@ public class FightSummary extends ParentList {
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setMinimumHeight(MIN_HEADER_HIGH);
         mainTable.addCell(cell);
     }
 

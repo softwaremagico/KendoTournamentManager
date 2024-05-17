@@ -4,10 +4,11 @@
   <mat-icon>tune</mat-icon>
 </button>
 <mat-menu #mainMenuButton="matMenu" class="table-settings">
-        <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns">
+        <span (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+              *ngFor="let column of basicTableData.columns; let i = index">
           <mat-checkbox (change)="toggleColumnVisibility(column)" [checked]="isColumnVisible(column)"
                         class="menu-setting-option"></mat-checkbox>
-          <span class="menu-setting-option-text">{{column | translate}}</span>
+          <span class="menu-setting-option-text">{{basicTableData.columnsTags[i] | translate}}</span>
           <br>
         </span>
 </mat-menu>
@@ -18,19 +19,27 @@
            matSortActive="createdAt" matSortDirection="desc">
       <ng-container *ngFor="let column of basicTableData.columns; let i = index">
         <ng-container [matColumnDef]=column>
-          <th *matHeaderCellDef mat-header-cell
+          <th *matHeaderCellDef mat-header-cell class="table-header-cell"
               mat-sort-header={{column}}>{{basicTableData.columnsTags[i] | translate}}
           </th>
           <td *matCellDef="let data" mat-cell> {{getColumnData(data[column])}}</td>
         </ng-container>
       </ng-container>
 
-      <tr *matHeaderRowDef="basicTableData.visibleColumns" mat-header-row></tr>
-      <tr (click)="basicTableData.selection.toggle(row); setSelectedItem(row)" (mouseout)="row.hovered=false"
-          (mouseover)="row.hovered=true" *matRowDef="let row; columns: basicTableData.visibleColumns;"
-          [class.disabled]="disableRow(row)"
-          [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
-          mat-row></tr>
+      <div class="table-header">
+        <tr *matHeaderRowDef="basicTableData.visibleColumns" mat-header-row></tr>
+      </div>
+      <div class="table-content">
+        <tr (click)="basicTableData.selection.toggle(row); setSelectedItem(row)"
+            (keydown)="basicTableData.selection.toggle(row); setSelectedItem(row)"
+            (mouseout)="row.hovered=false"
+            (mouseover)="row.hovered=true" *matRowDef="let row; columns: basicTableData.visibleColumns;"
+            (focus)="row.hovered=true"
+            (blur)="row.hovered=false"
+            [class.disabled]="disableRow(row)"
+            [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
+            mat-row></tr>
+      </div>
     </table>
     <mat-paginator (page)="onPaginateChange($event)" [pageSizeOptions]="[10, 20, 50]" [pageSize]="getDefaultPageSize()"
                    showFirstLastButtons></mat-paginator>

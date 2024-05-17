@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
@@ -71,7 +71,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         this.tournamentController = tournamentController;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
@@ -83,8 +83,8 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/level/{level}/index/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
-                        @Parameter(description = "Level of the group", required = true) @PathVariable("tournamentId") Integer level,
-                        @Parameter(description = "Index of the groyup", required = true) @PathVariable("tournamentId") Integer index,
+                        @Parameter(description = "Level of the group", required = true) @PathVariable("level") Integer level,
+                        @Parameter(description = "Index of the group", required = true) @PathVariable("index") Integer index,
                         HttpServletRequest request) {
         if (level == null || index == null) {
             throw new BadRequestException(this.getClass(), "Level or Index not set!");
@@ -96,7 +96,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                               @RequestBody List<DTO> teamsDto,
+                               @RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
                                HttpServletRequest request) {
         return getController().setTeams(groupId, teamsDto, authentication.getName());
@@ -106,7 +106,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/add", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                            @RequestBody List<DTO> teamsDto,
+                            @RequestBody List<TeamDTO> teamsDto,
                             Authentication authentication,
                             HttpServletRequest request) {
         return getController().addTeams(groupId, teamsDto, authentication.getName());
@@ -116,7 +116,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO deleteTeamFromGroup(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
-                                        @RequestBody List<DTO> teamsDto,
+                                        @RequestBody List<TeamDTO> teamsDto,
                                         Authentication authentication,
                                         HttpServletRequest request) {
         return getController().deleteTeams(groupId, teamsDto, authentication.getName());
@@ -127,7 +127,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PatchMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> deleteTeam(@Parameter(description = "Id of an existing tournament", required = true)
                                      @PathVariable("tournamentId") Integer tournamentId,
-                                     @RequestBody List<DTO> teamsDto,
+                                     @RequestBody List<TeamDTO> teamsDto,
                                      Authentication authentication,
                                      HttpServletRequest request) {
         return getController().deleteTeamsFromTournament(tournamentId, teamsDto, authentication.getName());
@@ -146,7 +146,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Set teams on the first group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
-    public GroupDTO updateTeam(@RequestBody List<DTO> teamsDto,
+    public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
                                Authentication authentication,
                                HttpServletRequest request) {
         return getController().setTeams(teamsDto, authentication.getName());

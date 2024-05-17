@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,6 +57,8 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     List<Role> findByParticipantIn(Collection<Participant> participants);
 
     Role findByTournamentAndParticipant(Tournament tournament, Participant participant);
+
+    List<Role> findByParticipantInAndRoleType(Collection<Participant> participant, RoleType roleType);
 
     long countByTournament(Tournament tournament);
 

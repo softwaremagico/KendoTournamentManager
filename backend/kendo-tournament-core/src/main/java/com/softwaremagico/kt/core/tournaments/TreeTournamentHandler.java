@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,11 +21,6 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.RankingController;
-import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
-import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.managers.CompleteGroupFightManager;
@@ -34,8 +29,10 @@ import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupLinkProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
+import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -62,25 +59,20 @@ public class TreeTournamentHandler extends LeagueHandler {
     private final MinimumGroupFightManager minimumGroupFightManager;
     private final FightProvider fightProvider;
     private final GroupLinkProvider groupLinkProvider;
-    private final RankingController rankingController;
-    private final GroupConverter groupConverter;
-    private final TeamConverter teamConverter;
+    private final RankingProvider rankingProvider;
 
 
-    public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, GroupConverter groupConverter, RankingController rankingController,
+    public TreeTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
                                  TournamentExtraPropertyProvider tournamentExtraPropertyProvider, CompleteGroupFightManager completeGroupFightManager,
-                                 MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider, GroupLinkProvider groupLinkProvider,
-                                 TeamConverter teamConverter) {
-        super(groupProvider, teamProvider, groupConverter, rankingController, tournamentExtraPropertyProvider);
-        this.rankingController = rankingController;
+                                 MinimumGroupFightManager minimumGroupFightManager, FightProvider fightProvider, GroupLinkProvider groupLinkProvider) {
+        super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
+        this.rankingProvider = rankingProvider;
         this.groupProvider = groupProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
         this.completeGroupFightManager = completeGroupFightManager;
         this.minimumGroupFightManager = minimumGroupFightManager;
         this.fightProvider = fightProvider;
         this.groupLinkProvider = groupLinkProvider;
-        this.groupConverter = groupConverter;
-        this.teamConverter = teamConverter;
     }
 
     @Override
@@ -108,7 +100,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
         if (maximizeFightsProperty != null) {
             try {
-                return Boolean.getBoolean(maximizeFightsProperty.getPropertyValue());
+                return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
             } catch (Exception ignore) {
 
             }
@@ -123,7 +115,19 @@ public class TreeTournamentHandler extends LeagueHandler {
         }
         final Group savedGroup = groupProvider.addGroup(tournament, group);
         adjustGroupsSize(tournament, getNumberOfWinners(tournament));
+        adjustGroupsShiaijos(tournament);
         return savedGroup;
+    }
+
+    /**
+     * Clean up all inner levels and recalculate them.
+     *
+     * @param tournament      The tournament to be updated.
+     * @param numberOfWinners Number of winners that pass from level one to level two.
+     */
+    public void recreateGroupSize(Tournament tournament, int numberOfWinners) {
+        groupProvider.delete(tournament, 1);
+        adjustGroupsSize(tournament, numberOfWinners);
     }
 
     public void adjustGroupsSize(Tournament tournament, int numberOfWinners) {
@@ -132,7 +136,12 @@ public class TreeTournamentHandler extends LeagueHandler {
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            if (groupsByLevel.get(level).size() < ((((previousLevelSize + 1) * (level == 1 ? numberOfWinners : 1))) / 2)) {
+            while (groupsByLevel.get(level).size()
+                    < ((((previousLevelSize
+                    // add +1 unless number of winners 2. This +1 will be rounded later but is needed if even teams pass from previous level.
+                    + (level == 1 && numberOfWinners == 2 ? 0 : 1))
+                    //Check on level 1 the number of winners.
+                    * (level == 1 ? numberOfWinners : 1))) / 2)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
                 groupsByLevel.get(level).add(levelGroup);
@@ -147,6 +156,32 @@ public class TreeTournamentHandler extends LeagueHandler {
             groupsByLevel.put(newLevel, new ArrayList<>());
             groupsByLevel.get(newLevel).add(levelGroup);
             groupProvider.addGroup(tournament, levelGroup);
+        }
+    }
+
+    public void adjustGroupsShiaijos(Tournament tournament) {
+        if (tournament.getShiaijos() > 1) {
+            final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
+            final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
+            for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
+                final int groupsByShiaijo = groupsByLevel.get(level).size() / tournament.getShiaijos();
+                int currentShiaijo = 0;
+                int groupsInCurrentShiaijo = 0;
+                for (Group group : groupsByLevel.get(level)) {
+                    if (groupsInCurrentShiaijo >= (currentShiaijo < groupsByLevel.get(level).size() % tournament.getShiaijos()
+                            ? groupsByShiaijo + 1 : groupsByShiaijo)) {
+                        currentShiaijo++;
+                        groupsInCurrentShiaijo = 0;
+                    }
+                    //Correct shiaijo if needed.
+                    if (group.getShiaijo() != currentShiaijo) {
+                        KendoTournamentLogger.info(this.getClass(), "Adjusting shiaijo for group '{}' to '{}'", group, currentShiaijo);
+                        group.setShiaijo(currentShiaijo);
+                        groupProvider.save(group);
+                    }
+                    groupsInCurrentShiaijo++;
+                }
+            }
         }
     }
 
@@ -177,6 +212,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             }
             previousLevelSize = groupsByLevel.get(level).size();
         }
+        adjustGroupsShiaijos(tournament);
     }
 
     @Override
@@ -188,11 +224,11 @@ public class TreeTournamentHandler extends LeagueHandler {
                 final List<Fight> fights;
                 if (getMaxGroupFights(tournament)) {
                     final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);
-                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
+                    fights = fightProvider.saveAll(completeGroupFightManager.createFights(tournament, group.getTeams(), TeamsOrder.NONE,
+                            level, group.getShiaijo(), LeagueFightsOrder.get(extraProperty.getPropertyValue()) == LeagueFightsOrder.FIFO, createdBy));
                 } else {
                     fights = fightProvider.saveAll(minimumGroupFightManager.createFights(tournament, group.getTeams(),
-                            TeamsOrder.NONE, level, createdBy));
+                            TeamsOrder.NONE, level, group.getShiaijo(), createdBy));
                 }
                 group.setFights(fights);
                 groupProvider.save(group);
@@ -219,11 +255,10 @@ public class TreeTournamentHandler extends LeagueHandler {
         final List<GroupLink> levelLinks = links.stream().filter(link -> link.getDestination().getLevel() == level).toList();
         final Set<Group> groupsOfLevel = new HashSet<>();
         for (GroupLink link : levelLinks) {
-            final List<ScoreOfTeamDTO> teamsRanking = rankingController.getTeamsScoreRanking(
-                    groupConverter.convert(new GroupConverterRequest(link.getSource())));
+            final List<ScoreOfTeam> teamsRanking = rankingProvider.getTeamsScoreRanking(link.getSource());
             checkDrawScore(link.getSource(), teamsRanking, link.getWinner());
             if (link.getWinner() != null && teamsRanking.get(link.getWinner()) != null && teamsRanking.get(link.getWinner()).getTeam() != null) {
-                link.getDestination().getTeams().add(teamConverter.reverse(teamsRanking.get(link.getWinner()).getTeam()));
+                link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
             } else {
                 KendoTournamentLogger.warning(this.getClass(), "Missing data for level '' population with winner '' using ranking:\n\t",
                         level, link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
@@ -233,12 +268,12 @@ public class TreeTournamentHandler extends LeagueHandler {
         groupProvider.saveAll(groupsOfLevel);
     }
 
-    private void checkDrawScore(Group group, List<ScoreOfTeamDTO> scoresOfTeamsDTO, int numberOfWinners) {
+    private void checkDrawScore(Group group, List<ScoreOfTeam> scoresOfTeamsDTO, int numberOfWinners) {
         for (int i = 0; i <= numberOfWinners; i++) {
             final int winner = i;
-            final List<ScoreOfTeamDTO> sameLevelScore = scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == winner).toList();
+            final List<ScoreOfTeam> sameLevelScore = scoresOfTeamsDTO.stream().filter(scoreOfTeamDTO -> scoreOfTeamDTO.getSortingIndex() == winner).toList();
             if (sameLevelScore.size() > 1) {
-                KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.", sameLevelScore.stream().map(ScoreOfTeamDTO::getTeam).toList());
+                KendoTournamentLogger.debug(this.getClass(), "Teams with same score are '{}'.", sameLevelScore.stream().map(ScoreOfTeam::getTeam).toList());
                 throw new LevelNotFinishedException(this.getClass(), "There is a draw value on winner '" + winner + "' on group '" + group + "'");
             }
         }

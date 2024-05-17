@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,17 +47,23 @@ import java.util.Locale;
  * Creates a sheet with the competitors ranking depending on the performance on the tournament.
  */
 public class CompetitorsScoreList extends ParentList {
+
     private static final float[] TABLE_WIDTH = {0.50f, 0.20f, 0.20f, 0.20f};
+    private static final float[] TABLE_WIDTH_WITH_CLASSIFICATION = {0.10f, 0.50f, 0.20f, 0.20f, 0.20f};
     private final List<ScoreOfCompetitorDTO> competitorTopTen;
     private final TournamentDTO tournament;
     private final MessageSource messageSource;
     private final Locale locale;
 
-    public CompetitorsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
+    private final boolean showClassificationOrder;
+
+    public CompetitorsScoreList(MessageSource messageSource, Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen,
+                                boolean showClassificationOrder) {
         this.tournament = tournament;
         this.competitorTopTen = competitorTopTen;
         this.messageSource = messageSource;
         this.locale = locale;
+        this.showClassificationOrder = showClassificationOrder;
     }
 
     @Override
@@ -78,6 +84,7 @@ public class CompetitorsScoreList extends ParentList {
         cell.setColspan(getTableWidths().length);
         cell.setBorderWidth(HEADER_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setMinimumHeight(MIN_HEADER_HIGH);
         mainTable.addCell(cell);
     }
 
@@ -85,6 +92,9 @@ public class CompetitorsScoreList extends ParentList {
     public void createBodyRows(Document document, PdfPTable mainTable, float width, float height, PdfWriter writer,
                                BaseFont font, int fontSize) {
 
+        if (showClassificationOrder) {
+            mainTable.addCell(getCell("", PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
+        }
         mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.competitor.name", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
         mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.duels.won", null, locale),
@@ -94,7 +104,12 @@ public class CompetitorsScoreList extends ParentList {
         mainTable.addCell(getCell(messageSource.getMessage("classification.competitors.fights", null, locale),
                 PdfTheme.getBasicFont(), 0, Element.ALIGN_CENTER, Font.BOLD));
 
+        int counter = 1;
         for (final ScoreOfCompetitorDTO scoreOfCompetitor : competitorTopTen) {
+            if (showClassificationOrder) {
+                mainTable.addCell(getCell(String.valueOf(counter), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_LEFT));
+                counter++;
+            }
             mainTable.addCell(getCell(NameUtils.getLastnameName(scoreOfCompetitor.getCompetitor()), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
             mainTable.addCell(getCell(scoreOfCompetitor.getWonDuels() + (scoreOfCompetitor.getUntieDuels() > 0 ? "*" : "") + "/"
                     + scoreOfCompetitor.getDrawDuels(), PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
@@ -112,6 +127,9 @@ public class CompetitorsScoreList extends ParentList {
 
     @Override
     public float[] getTableWidths() {
+        if (showClassificationOrder) {
+            return TABLE_WIDTH_WITH_CLASSIFICATION;
+        }
         return TABLE_WIDTH;
     }
 

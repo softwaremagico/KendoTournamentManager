@@ -4,18 +4,18 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -23,11 +23,11 @@ package com.softwaremagico.kt.core.tests.achievements;
 
 import com.softwaremagico.kt.core.TournamentTestUtils;
 import com.softwaremagico.kt.core.controller.AchievementController;
-import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.AchievementDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
+import com.softwaremagico.kt.core.controller.models.ParticipantReducedDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
@@ -79,9 +79,6 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     private RoleController roleController;
 
     @Autowired
-    private FightController fightController;
-
-    @Autowired
     private AchievementController achievementController;
 
     private TournamentDTO tournament1DTO;
@@ -95,13 +92,13 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     private TournamentDTO tournament9DTO;
     private TournamentDTO tournament10DTO;
 
-    private ParticipantDTO bambooAchievementParticipant;
-    private ParticipantDTO iLoveTheFlagsParticipant;
-    private ParticipantDTO iLoveTheFlagsParticipantSometimes;
-    private ParticipantDTO looksGoodFromFarAway;
-    private ParticipantDTO looksGoodFromFarAwaySometimes;
-    private ParticipantDTO loveSharer;
-    private ParticipantDTO loveSharerSometimes;
+    private ParticipantReducedDTO bambooAchievementParticipant;
+    private ParticipantReducedDTO iLoveTheFlagsParticipant;
+    private ParticipantReducedDTO iLoveTheFlagsParticipantSometimes;
+    private ParticipantReducedDTO looksGoodFromFarAway;
+    private ParticipantReducedDTO looksGoodFromFarAwaySometimes;
+    private ParticipantReducedDTO loveSharer;
+    private ParticipantReducedDTO loveSharerSometimes;
 
 
     @BeforeClass
@@ -109,13 +106,13 @@ public class RoleAchievementsTest extends TournamentTestUtils {
         List<ParticipantDTO> extras = addParticipants(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS,
                 BAMBOO_ACHIEVEMENT_PARTICIPANTS + I_LOVE_THE_FLAGS_PARTICIPANTS_SOMETIMES + LOOKS_GOOD_FROM_FAR_AWAY_SOMETIMES
                         + LOVE_SHARING_SOMETIMES);
-        bambooAchievementParticipant = extras.get(0);
-        iLoveTheFlagsParticipant = getReferees(MEMBERS, TEAMS, REFEREES).get(0);
-        iLoveTheFlagsParticipantSometimes = extras.get(1);
-        looksGoodFromFarAway = getOrganizers(MEMBERS, TEAMS, REFEREES, ORGANIZER).get(0);
-        looksGoodFromFarAwaySometimes = extras.get(2);
-        loveSharer = getVolunteers(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER).get(0);
-        loveSharerSometimes = extras.get(3);
+        bambooAchievementParticipant = new ParticipantReducedDTO(extras.get(0));
+        iLoveTheFlagsParticipant = new ParticipantReducedDTO(getReferees(MEMBERS, TEAMS, REFEREES).get(0));
+        iLoveTheFlagsParticipantSometimes = new ParticipantReducedDTO(extras.get(1));
+        looksGoodFromFarAway = new ParticipantReducedDTO(getOrganizers(MEMBERS, TEAMS, REFEREES, ORGANIZER).get(0));
+        looksGoodFromFarAwaySometimes = new ParticipantReducedDTO(extras.get(2));
+        loveSharer = new ParticipantReducedDTO(getVolunteers(MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER).get(0));
+        loveSharerSometimes = new ParticipantReducedDTO(extras.get(3));
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
@@ -372,7 +369,7 @@ public class RoleAchievementsTest extends TournamentTestUtils {
         Assert.assertTrue(tournamentDTOS.stream().map(TournamentDTO::getId).toList().contains(tournament1DTO.getId()));
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }

@@ -30,7 +30,7 @@ export class FightStatisticsPanelComponent extends KendoComponent implements OnI
 
   ngOnInit(): void {
     this.statisticsChangedService.areStatisticsChanged.pipe(takeUntil(this.destroySubject)).subscribe(() => {
-      if (this.tournament && this.tournament.id) {
+      if (this.tournament?.id) {
         this.statisticsServices.getFightStatistics(this.tournament.id, !this.teams, this.teams).subscribe((_fightStatistics) => {
           if (_fightStatistics === undefined || _fightStatistics === null) {
             _fightStatistics = new TournamentFightStatistics();

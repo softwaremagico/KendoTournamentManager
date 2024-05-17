@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.score;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,6 +46,7 @@ public class ScoreOfCompetitor {
     private Integer duelsDone = null;
     private Integer wonFights = null;
     private Integer drawFights = null;
+    private Integer totalFights = null;
     @JsonIgnore
     private boolean countNotOver = false;
 
@@ -83,6 +84,7 @@ public class ScoreOfCompetitor {
         wonDuels = null;
         drawDuels = null;
         hits = null;
+        totalFights = null;
         setDuelsWon();
         setDuelsDraw();
         setDuelsDone();
@@ -91,6 +93,7 @@ public class ScoreOfCompetitor {
         setUntieDuels();
         setUntieHits();
         setHits();
+        setTotalFights();
     }
 
     public Participant getCompetitor() {
@@ -104,7 +107,7 @@ public class ScoreOfCompetitor {
     public void setDuelsDone() {
         duelsDone = 0;
         fights.forEach(fight -> {
-            if (fight.isOver() || countNotOver) {
+            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
                 duelsDone += fight.getDuels(competitor).size();
             }
         });
@@ -113,7 +116,7 @@ public class ScoreOfCompetitor {
     public void setDuelsWon() {
         wonDuels = 0;
         fights.forEach(fight -> {
-            if (fight.isOver() || countNotOver) {
+            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
                 wonDuels += fight.getDuelsWon(competitor);
             }
         });
@@ -122,7 +125,7 @@ public class ScoreOfCompetitor {
     public void setFightsWon() {
         wonFights = 0;
         for (final Fight fight : fights) {
-            if (fight.isOver() || countNotOver) {
+            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
                 if (fight.isWon(competitor)) {
                     wonFights++;
                 }
@@ -133,7 +136,7 @@ public class ScoreOfCompetitor {
     public void setFightsDraw() {
         drawFights = 0;
         for (final Fight fight : fights) {
-            if (fight.isOver() || countNotOver) {
+            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
                 if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
                         || fight.getTeam2().isMember(competitor))) {
                     drawFights++;
@@ -142,10 +145,20 @@ public class ScoreOfCompetitor {
         }
     }
 
+    public void setTotalFights() {
+        totalFights = 0;
+        for (final Fight fight : fights) {
+            if ((fight != null && fight.isOver() && fight.getTeam1().isMember(competitor))
+                    || (fight != null && fight.getTeam2().isMember(competitor))) {
+                totalFights++;
+            }
+        }
+    }
+
     public void setDuelsDraw() {
         drawDuels = 0;
         for (final Fight fight : fights) {
-            if (fight.isOver() || countNotOver) {
+            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
                 drawDuels += fight.getDrawDuels(competitor);
             }
         }
@@ -154,7 +167,9 @@ public class ScoreOfCompetitor {
     public void setHits() {
         hits = 0;
         for (final Fight fight : fights) {
-            hits += fight.getScore(competitor);
+            if (fight != null) {
+                hits += fight.getScore(competitor);
+            }
         }
     }
 
@@ -250,6 +265,14 @@ public class ScoreOfCompetitor {
 
     public void setCountNotOver(boolean countNotOver) {
         this.countNotOver = countNotOver;
+    }
+
+    public Integer getTotalFights() {
+        return totalFights;
+    }
+
+    public void setTotalFights(Integer totalFights) {
+        this.totalFights = totalFights;
     }
 
     @Override

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,8 +22,6 @@ package com.softwaremagico.kt.core.converters;
  */
 
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
-import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
-import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ScoreOfCompetitorConverterRequest;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
@@ -36,27 +34,18 @@ import java.util.ArrayList;
 public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
 
     private final ParticipantConverter participantConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
 
-    private final FightConverter fightConverter;
-
-    private final DuelConverter duelConverter;
-
-    public ScoreOfCompetitorConverter(ParticipantConverter participantConverter, FightConverter fightConverter,
-                                      DuelConverter duelConverter) {
+    public ScoreOfCompetitorConverter(ParticipantConverter participantConverter, ParticipantReducedConverter participantReducedConverter) {
         this.participantConverter = participantConverter;
-        this.fightConverter = fightConverter;
-        this.duelConverter = duelConverter;
+        this.participantReducedConverter = participantReducedConverter;
     }
 
     @Override
     protected ScoreOfCompetitorDTO convertElement(ScoreOfCompetitorConverterRequest from) {
         final ScoreOfCompetitorDTO scoreOfCompetitorDTO = new ScoreOfCompetitorDTO();
         BeanUtils.copyProperties(from.getEntity(), scoreOfCompetitorDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        scoreOfCompetitorDTO.setCompetitor(participantConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
-        scoreOfCompetitorDTO.setFights(fightConverter.convertAll(from.getEntity().getFights().stream()
-                .map(FightConverterRequest::new).toList()));
-        scoreOfCompetitorDTO.setUnties(duelConverter.convertAll(from.getEntity().getUnties().stream()
-                .map(DuelConverterRequest::new).toList()));
+        scoreOfCompetitorDTO.setCompetitor(participantReducedConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
         return scoreOfCompetitorDTO;
     }
 
@@ -69,9 +58,7 @@ public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetit
         BeanUtils.copyProperties(to, scoreOfCompetitor, ConverterUtils.getNullPropertyNames(to));
         scoreOfCompetitor.setCompetitor(participantConverter.reverse(to.getCompetitor()));
         scoreOfCompetitor.setFights(new ArrayList<>());
-        to.getFights().forEach(fight -> scoreOfCompetitor.getFights().add(fightConverter.reverse(fight)));
         scoreOfCompetitor.setUnties(new ArrayList<>());
-        to.getUnties().forEach(duel -> scoreOfCompetitor.getUnties().add(duelConverter.reverse(duel)));
         return scoreOfCompetitor;
     }
 }

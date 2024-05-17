@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
-import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Random;
 
@@ -51,15 +52,17 @@ public class JwtTokenUtil {
     private static final int RANDOM_LEFT_LIMIT = 48; // numeral '0'
     private static final int RANDOM_RIGHT_LIMIT = 122; // letter 'z'
     private static final int RANDOM_LENGTH = 32; // 32 characters by key
-    private static final Random RANDOM = new Random(); // letter 'z'
+    private static final Random RANDOM = new SecureRandom();
 
     private final NetworkController networkController;
 
     private final String jwtSecret;
     private final long jwtExpiration;
+    private final long jwtGuestExpiration;
 
     @Autowired
     public JwtTokenUtil(@Value("${jwt.secret:#{null}}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
+                        @Value("${jwt.guest.expiration:null}") String jwtGuestExpiration,
                         NetworkController networkController) {
         this.networkController = networkController;
 
@@ -80,6 +83,19 @@ public class JwtTokenUtil {
             this.jwtSecret = generateRandomSecret();
         }
         this.jwtExpiration = calculatedJwtExpiration;
+
+        //If not set, guest expiration is the same that the standard one.
+        long calculatedGuestJwtExpiration;
+        if (jwtGuestExpiration == null) {
+            calculatedGuestJwtExpiration = this.jwtExpiration;
+        } else {
+            try {
+                calculatedGuestJwtExpiration = Long.parseLong(jwtGuestExpiration);
+            } catch (NumberFormatException e) {
+                calculatedGuestJwtExpiration = this.jwtExpiration;
+            }
+        }
+        this.jwtGuestExpiration = calculatedGuestJwtExpiration;
     }
 
     private String generateRandomSecret() {
@@ -90,7 +106,7 @@ public class JwtTokenUtil {
     }
 
 
-    public String generateAccessToken(AuthenticatedUser user, String userIp) {
+    public String generateAccessToken(IAuthenticatedUser user, String userIp) {
         return Jwts.builder()
                 .setSubject(String.format("%s,%s,%s,%s", user.getId(), user.getUsername(), userIp, networkController.getHostMac()))
                 .setIssuer(JWT_ISSUER)
@@ -107,6 +123,10 @@ public class JwtTokenUtil {
      */
     public long getJwtExpirationTime() {
         return (System.currentTimeMillis() + jwtExpiration);
+    }
+
+    public long getJwtGuestExpirationTime() {
+        return (System.currentTimeMillis() + jwtGuestExpiration);
     }
 
     public String getUserId(String token) {

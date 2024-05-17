@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,6 @@ package com.softwaremagico.kt.persistence.entities;
  */
 
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.TournamentExtraPropertyKeyTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -55,7 +54,6 @@ public class TournamentExtraProperty extends Element {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "property_key", nullable = false)
-    @Convert(converter = TournamentExtraPropertyKeyTypeCryptoConverter.class)
     private TournamentExtraPropertyKey propertyKey;
 
     @Column(name = "property_value", nullable = false)
@@ -71,6 +69,14 @@ public class TournamentExtraProperty extends Element {
         this.tournament = tournament;
         this.propertyKey = propertyKey;
         this.propertyValue = propertyValue;
+    }
+
+    public TournamentExtraProperty(Tournament tournament, TournamentExtraPropertyKey propertyKey, String propertyValue, String createdBy) {
+        this();
+        this.tournament = tournament;
+        this.propertyKey = propertyKey;
+        this.propertyValue = propertyValue;
+        this.setCreatedBy(createdBy);
     }
 
     public Tournament getTournament() {
@@ -95,5 +101,13 @@ public class TournamentExtraProperty extends Element {
 
     public void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
+    }
+
+    public static TournamentExtraProperty copy(TournamentExtraProperty tournamentExtraProperty) {
+        final TournamentExtraProperty newTournamentExtraProperty = new TournamentExtraProperty();
+        newTournamentExtraProperty.setTournament(tournamentExtraProperty.getTournament());
+        newTournamentExtraProperty.setPropertyKey(tournamentExtraProperty.getPropertyKey());
+        newTournamentExtraProperty.setPropertyValue(tournamentExtraProperty.getPropertyValue());
+        return newTournamentExtraProperty;
     }
 }

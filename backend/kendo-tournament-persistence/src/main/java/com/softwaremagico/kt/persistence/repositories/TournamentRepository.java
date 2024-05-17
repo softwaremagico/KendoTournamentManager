@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,4 +37,6 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt, Pageable pageable);
 
     List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt);
+
+    List<Tournament> findByLocked(boolean locked);
 }

@@ -79,6 +79,9 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   }
 
   getAchievementImage(): string {
+    if (!this.achievements || this.achievements?.length == 0) {
+      return "assets/achievements/locked.svg";
+    }
     return "assets/achievements/" + this.achievementType.toLowerCase() + ".svg";
   }
 
@@ -223,7 +226,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     this.calculateTooltipMargin();
   }
 
-  clearCoordinates($event: MouseEvent): void {
+  clearCoordinates(): void {
     this.mouseX = undefined;
     this.mouseY = undefined;
   }

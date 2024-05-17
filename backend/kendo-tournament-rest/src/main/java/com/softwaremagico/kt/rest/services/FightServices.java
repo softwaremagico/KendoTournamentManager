@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -117,13 +117,12 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         return getController().getCurrent(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
-                       HttpServletRequest request) {
-        getController().deleteById(id);
+                       Authentication authentication, HttpServletRequest request) {
+        getController().deleteById(id, authentication.getName());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
