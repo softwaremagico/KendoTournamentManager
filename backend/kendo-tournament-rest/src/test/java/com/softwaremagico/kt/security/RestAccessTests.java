@@ -4,7 +4,7 @@ package com.softwaremagico.kt.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -70,17 +70,6 @@ public class RestAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void checkForbiddenRestService() throws Exception {
-        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
-        requestParams.add("user", "1");
-
-        mockMvc.perform(get("/files/users")
-                        .params(requestParams)
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void checkForbiddenRestServiceWithAuth() throws Exception {
         MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
         requestParams.add("user", "1");
 

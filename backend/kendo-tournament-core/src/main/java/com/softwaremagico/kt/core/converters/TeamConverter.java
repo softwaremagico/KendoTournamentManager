@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,12 +21,12 @@ package com.softwaremagico.kt.core.converters;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -36,28 +36,33 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
-public class TeamConverter extends ElementConverter<Team, DTO, TeamConverterRequest> {
+public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverterRequest> {
     private final TournamentConverter tournamentConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
     private final ParticipantConverter participantConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public TeamConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter, TournamentProvider tournamentProvider) {
+    public TeamConverter(TournamentConverter tournamentConverter, ParticipantReducedConverter participantReducedConverter,
+                         ParticipantConverter participantConverter, TournamentRepository tournamentRepository) {
         this.tournamentConverter = tournamentConverter;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
     }
 
 
     @Override
-    protected DTO convertElement(TeamConverterRequest from) {
-        final DTO teamDTO = new DTO();
+    protected TeamDTO convertElement(TeamConverterRequest from) {
+        final TeamDTO teamDTO = new TeamDTO();
         BeanUtils.copyProperties(from.getEntity(), teamDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         teamDTO.setMembers(new ArrayList<>());
 
         try {
-            //Converter can have the tournament defined already.
-            if (from.getTournament() != null) {
+            if (from.getTournamentDTO() != null) {
+                teamDTO.setTournament(from.getTournamentDTO());
+            } else if (from.getTournament() != null) {
+                //Converter can have the tournament defined already.
                 teamDTO.setTournament(tournamentConverter.convert(
                         new TournamentConverterRequest(from.getTournament())));
             } else {
@@ -66,16 +71,16 @@ public class TeamConverter extends ElementConverter<Team, DTO, TeamConverterRequ
             }
         } catch (LazyInitializationException | FatalBeanException e) {
             teamDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
 
         from.getEntity().getMembers().forEach(member ->
-                teamDTO.getMembers().add(participantConverter.convert(new ParticipantConverterRequest(member))));
+                teamDTO.getMembers().add(participantReducedConverter.convert(new ParticipantConverterRequest(member))));
         return teamDTO;
     }
 
     @Override
-    public Team reverse(DTO to) {
+    public Team reverse(TeamDTO to) {
         if (to == null) {
             return null;
         }

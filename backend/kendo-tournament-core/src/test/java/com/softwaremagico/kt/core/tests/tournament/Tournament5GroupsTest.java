@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.tournament;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,7 +34,7 @@ import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
-import com.softwaremagico.kt.core.controller.models.DTO;
+import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
@@ -165,7 +165,7 @@ public class Tournament5GroupsTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"add5Groups"})
     public void addTeams() {
         int teamIndex = 0;
-        DTO team = null;
+        TeamDTO team = null;
         int teamMember = 0;
 
         final List<Group> groups = groupController.getGroups(tournamentDTO, 0);
@@ -174,7 +174,7 @@ public class Tournament5GroupsTest extends AbstractTestNGSpringContextTests {
             // Create a new team.
             if (team == null) {
                 teamIndex++;
-                team = new DTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
+                team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournamentDTO);
                 teamMember = 0;
             }
 
@@ -403,16 +403,16 @@ public class Tournament5GroupsTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(score.get(14).getTeam().getName(), "Team15");
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupController.delete(tournamentDTO);
         fightController.delete(tournamentDTO);
         duelController.delete(tournamentDTO);
         teamController.delete(tournamentDTO);
         roleController.delete(tournamentDTO);
-        tournamentController.delete(tournamentDTO);
+        tournamentController.delete(tournamentDTO, null);
         participantController.deleteAll();
-        clubController.delete(clubDTO);
+        clubController.delete(clubDTO, null);
         Assert.assertEquals(fightController.count(), 0);
         Assert.assertEquals(duelController.count(), 0);
     }

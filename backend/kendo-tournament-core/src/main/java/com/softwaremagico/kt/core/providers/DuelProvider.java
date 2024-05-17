@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +21,15 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Duel;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -43,9 +48,15 @@ import java.util.Set;
 public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     private static final int CACHE_EXPIRATION_TIME = 10 * 60 * 1000;
 
+    private final GroupRepository groupRepository;
+    private final TournamentRepository tournamentRepository;
+
     @Autowired
-    public DuelProvider(DuelRepository duelRepository) {
+    public DuelProvider(DuelRepository duelRepository, GroupRepository groupRepository,
+                        TournamentRepository tournamentRepository) {
         super(duelRepository);
+        this.groupRepository = groupRepository;
+        this.tournamentRepository = tournamentRepository;
     }
 
     public long delete(Tournament tournament) {
@@ -58,6 +69,10 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
 
     public List<Duel> get(Participant participant) {
         return getRepository().findByParticipant(participant);
+    }
+
+    public List<Duel> getWhenBothAreInvolved(Participant participant1, Participant participant2) {
+        return getRepository().findByParticipants(participant1, participant2);
     }
 
     public List<Duel> get(Tournament tournament) {
@@ -75,6 +90,11 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @Cacheable(value = "duels-duration-average", key = "'average'")
     public Long getDurationAverage() {
         final Long duration = getRepository().getDurationAverage();
+        return duration != null ? duration : -1;
+    }
+
+    public Long getDurationAverage(Participant participant) {
+        final Long duration = getRepository().getDurationAverage(participant);
         return duration != null ? duration : -1;
     }
 
@@ -138,6 +158,21 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @Scheduled(fixedDelay = CACHE_EXPIRATION_TIME)
     public void reportCacheEvict() {
         //Only for handling Spring cache.
+    }
+
+    public List<Duel> getUntiesFromTournament(Integer tournamentId) {
+        final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO)));
+        return groups.stream().flatMap(group -> group.getUnties().stream()).toList();
+    }
+
+    public List<Duel> getUntiesFromGroup(Integer groupId) {
+        final Group group = groupRepository.findById(groupId).orElse(null);
+        if (group == null) {
+            return new ArrayList<>();
+        }
+        return group.getUnties();
     }
 
 }

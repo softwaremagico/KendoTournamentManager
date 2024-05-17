@@ -12,6 +12,15 @@
   margin: 2vw;
 }
 
+
+.team-ranking-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: white;
+  height: 60px;
+}
+
 .team-ranking-header {
   max-width: 20vw;
   min-width: 100px;
@@ -36,6 +45,7 @@
 
 .team-ranking-value.team-name {
   font-weight: bold;
+  text-align: left;
 }
 
 .team-ranking-value.team-name.finished {

@@ -4,7 +4,7 @@ import {MessageService} from "../../../services/message.service";
 import {Tournament} from "../../../models/tournament";
 import {RoleType} from "../../../models/role-type";
 import {RoleService} from "../../../services/role.service";
-import {forkJoin} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {Participant} from "../../../models/participant";
 import {UserListData} from "../../../components/basic/user-list/user-list-data";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from "@angular/cdk/drag-drop";
@@ -26,6 +26,9 @@ import {random} from "../../../utils/random/random";
 import {FilterResetService} from "../../../services/notifications/filter-reset.service";
 import {Fight} from "../../../models/fight";
 import {Role} from "../../../models/role";
+import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
+import {TournamentType} from "../../../models/tournament-type";
+import {getBalancedMember} from "../../../utils/teams/members";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -57,13 +60,15 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   }
 
   ngOnInit(): void {
-    let teamsRequest = this.teamService.getFromTournament(this.tournament);
-    let roleRequests = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
-    forkJoin([teamsRequest, roleRequests]).subscribe(([teams, roles]) => {
+    let teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
+    let roleRequests: Observable<Role[]> = this.roleService.getFromTournamentAndType(this.tournament.id!, RoleType.COMPETITOR);
+    forkJoin([teamsRequest, roleRequests]).subscribe(([teams, roles]): void => {
       if (roles === undefined) {
         roles = [];
       }
-      this.userListData.participants = roles.map((role: Role) => role.participant);
+      this.userListData.participants = roles.map((role: Role) => role.participant).sort(function (a: Participant, b: Participant) {
+        return a.lastname.localeCompare(b.lastname) || a.name.localeCompare(b.name);
+      });
       //Block participants.
       if (this.tournament.locked) {
         for (let participant of this.userListData.participants) {
@@ -71,7 +76,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
       }
       if (teams !== undefined) {
-        teams.sort(function (a, b) {
+        teams.sort(function (a: Team, b: Team) {
           return a.name.localeCompare(b.name);
         });
         for (let team of teams) {
@@ -100,13 +105,13 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     //Prevent removing teams that are on fights
     this.fightService.getFromTournament(this.tournament).subscribe((_fights: Fight[]): void => {
       let teamInFights: Team[] = [];
-      teamInFights.push(..._fights.map(fight => fight.team1));
-      teamInFights.push(..._fights.map(fight => fight.team2));
+      teamInFights.push(..._fights.map((fight: Fight) => fight.team1));
+      teamInFights.push(..._fights.map((fight: Fight) => fight.team2));
       //Remove duplicates.
       teamInFights = teamInFights.filter((team: Team, i: number, a: Team[]): boolean => i === a.indexOf(team));
       if (this.teams) {
         for (let team of this.teams) {
-          team.locked = teamInFights.some(t => t.id === team.id);
+          team.locked = teamInFights.some((t: Team): boolean => t.id === team.id);
         }
       }
     })
@@ -183,8 +188,12 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         this.deleteMemberFromTeam(movedParticipant);
         this.updateTeam(sourceTeam, undefined);
         //Add to user list.
-        this.userListData.participants.push(movedParticipant);
-        this.userListData.filteredParticipants.push(movedParticipant);
+        if (!this.userListData.participants.includes(movedParticipant)) {
+          this.userListData.participants.push(movedParticipant);
+        }
+        if (!this.userListData.filteredParticipants.includes(movedParticipant)) {
+          this.userListData.filteredParticipants.push(movedParticipant);
+        }
 
         this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
         this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
@@ -248,7 +257,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
 
   updateTeam(team: Team, member: Participant | undefined): void {
     this.teamService.update(team).pipe(
-      tap((newTeam: Team) => {
+      tap((newTeam: Team): void => {
         if (member) {
           this.loggerService.info("Team '" + newTeam.name + "' member '" + member.name + " " + member.lastname + "' updated.")
         } else {
@@ -295,7 +304,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  updateTeamName(team: Team) {
+  updateTeamName(team: Team): void {
     this.teamService.update(team).pipe(
       tap((newTeam: Team) => {
         this.loggerService.info("Team name updated to '" + newTeam.name + "'.")
@@ -311,23 +320,24 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     team.tournament = this.tournament;
 
     this.teamService.add(team).pipe(
-      tap(() => {
+      tap((): void => {
         this.loggerService.info("Adding new team.");
       }),
       catchError(this.messageService.handleError<Team>("Adding new team."))
-    ).subscribe(_team => {
+    ).subscribe((_team: Team): void => {
       const teams: Team[] = [];
       teams.push(_team);
-      this.groupService.addTeamsToGroup(this.groups[0]!.id!, teams).pipe(
-        tap(() => {
-          this.loggerService.info("Adding team to group.");
-        }),
-        catchError(this.messageService.handleError<Group>("Adding team to group."))
-      ).subscribe(() => {
-        this.messageService.infoMessage("infoTeamStored");
-        this.teams.push(_team);
-        this.members.set(_team, []);
-      });
+      if (TournamentType.usesDefaultGroup(this.tournament.type)) {
+        this.groupService.addTeamsToGroup(this.groups[0]!.id!, teams).pipe(
+          tap((): void => {
+            this.loggerService.info("Adding team to group.");
+          }),
+          catchError(this.messageService.handleError<Group>("Adding team to group."))
+        ).subscribe();
+      }
+      this.messageService.infoMessage("infoTeamStored");
+      this.teams.push(_team);
+      this.members.set(_team, []);
       this.statisticsChangedService.areStatisticsChanged.next(true);
     });
   }
@@ -343,8 +353,8 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         }
       }
     }
-    this.userListData.filteredParticipants.sort((a, b) => a.lastname.localeCompare(b.lastname));
-    this.userListData.participants.sort((a, b) => a.lastname.localeCompare(b.lastname));
+    this.userListData.filteredParticipants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
+    this.userListData.participants.sort((a: Participant, b: Participant) => a.lastname.localeCompare(b.lastname));
 
     const teams: Team[] = [];
     teams.push(team);
@@ -372,26 +382,28 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     let participants: Participant[];
     participants = [...Array.prototype.concat.apply([], [...this.members.values()]), ...this.userListData.participants];
 
-    this.rankingService.getCompetitorsGlobalScoreRanking(participants).subscribe(_scoreRanking => {
+    this.rankingService.getCompetitorsGlobalScoreRanking(participants, undefined).subscribe((_scoreRanking: ScoreOfCompetitor[]): void => {
+      const sortedParticipants: Participant[] = _scoreRanking.map((scoreOfCompetitor: ScoreOfCompetitor) => scoreOfCompetitor.competitor);
       for (let team of this.teams) {
         team.members = [];
         for (let i = 0; i < (this.tournament.teamSize ? this.tournament.teamSize : 1); i++) {
-          const participant: Participant = this.getBalancedMember(participants, team.members.length,
+          const participant: Participant = getBalancedMember(sortedParticipants, team.members.length,
             (this.tournament.teamSize ? this.tournament.teamSize : 1));
           if (participant) {
             team.members[i] = participant;
+            sortedParticipants.splice(sortedParticipants.indexOf(participant), 1);
           }
         }
         this.members.set(team, team.members);
         this.teamService.update(team).pipe(
-          tap((newTeam: Team) => {
+          tap((newTeam: Team): void => {
             this.loggerService.info("Team '" + newTeam.name + "' updated.");
           }),
           catchError(this.messageService.handleError<Team>("Updating '" + team.name + "'"))
         ).subscribe(() => this.statisticsChangedService.areStatisticsChanged.next(true));
       }
       //Remaining one on left column.
-      this.userListData.participants = participants;
+      this.userListData.participants = sortedParticipants;
       this.userListData.filteredParticipants = this.userListData.participants;
     });
   }
@@ -427,24 +439,6 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     return participant;
   }
 
-  getBalancedMember(participants: Participant[], selectFromSector: number, availableSectors: number): Participant {
-    let selected: number = Math.floor(random() * (participants.length / availableSectors));
-    let participant: Participant;
-    if (selectFromSector == 0) {
-      participant = participants[selected];
-      participants.splice(selected, 1);
-    } else if (selectFromSector == availableSectors - 1) {
-      selected = participants.length - selected - 1;
-      participant = participants[selected];
-      participants.splice(selected, 1);
-    } else {
-      selected = Math.floor((participants.length / availableSectors)) * selectFromSector + selected;
-      participant = participants[selected];
-      participants.splice(selected, 1);
-    }
-    return participant;
-  }
-
   generateTeams(): void {
     if (this.tournament.teamSize === 1) {
       this.assignTeamByParticipant();
@@ -466,7 +460,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       team.members[0] = member;
       this.teams.push(team);
     }
-    this.teamService.setAll(this.teams).subscribe(_teams => {
+    this.teamService.setAll(this.teams).subscribe((_teams: Team[]): void => {
       this.messageService.infoMessage("infoTeamsAdded");
       this.teams = _teams
       this.userListData.participants = [];

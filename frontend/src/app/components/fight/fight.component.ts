@@ -6,6 +6,7 @@ import {takeUntil} from "rxjs";
 import {RbacBasedComponent} from "../RbacBasedComponent";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {TournamentType} from "../../models/tournament-type";
 
 @Component({
   selector: 'fight',
@@ -44,7 +45,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
 
   ngOnInit(): void {
     this.duelChangedService.isDuelUpdated.pipe(takeUntil(this.destroySubject)).subscribe(selectedDuel => {
-      if (selectedDuel && this.fight && this.fight.duels) {
+      if (selectedDuel && this.fight?.duels) {
         this.selected = false;
         this.selectedDuel = undefined;
         for (let duel of this.fight.duels) {
@@ -75,4 +76,5 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
     return duel.finished;
   }
 
+  protected readonly TournamentType = TournamentType;
 }

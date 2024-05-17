@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,7 @@ public class GroupDTO extends ElementDTO {
 
     private TournamentDTO tournament;
 
-    private List<DTO> teams;
+    private List<TeamDTO> teams;
 
     private Integer shiaijo;
 
@@ -50,11 +50,11 @@ public class GroupDTO extends ElementDTO {
         this.tournament = tournamentDTO;
     }
 
-    public List<DTO> getTeams() {
+    public List<TeamDTO> getTeams() {
         return teams;
     }
 
-    public void setTeams(List<DTO> teams) {
+    public void setTeams(List<TeamDTO> teams) {
         this.teams = teams;
     }
 

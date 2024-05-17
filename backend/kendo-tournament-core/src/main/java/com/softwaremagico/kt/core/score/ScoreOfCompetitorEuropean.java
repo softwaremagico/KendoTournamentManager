@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.score;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ public class ScoreOfCompetitorEuropean implements Comparator<ScoreOfCompetitor> 
 
         // More duels done with same score is negative.
         if (!Objects.equals(scoreOfCompetitor1.getDuelsDone(), scoreOfCompetitor2.getDuelsDone())) {
-            return scoreOfCompetitor2.getDuelsDone().compareTo(scoreOfCompetitor1.getDuelsDone());
+            return scoreOfCompetitor1.getDuelsDone().compareTo(scoreOfCompetitor2.getDuelsDone());
         }
 
         // Draw score, order by name;

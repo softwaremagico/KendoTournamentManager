@@ -4,7 +4,7 @@ package com.softwaremagico.kt.utils;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,6 +40,11 @@ public final class GroupUtils {
             sortedGroups.computeIfAbsent(group.getLevel(), k -> new ArrayList<>());
             sortedGroups.get(group.getLevel()).add(group);
         });
+        //Complete empty levels if any.
+        final int maxLevel = groups.stream().mapToInt(Group::getLevel).max().orElse(-1);
+        for (int level = 0; level < maxLevel; level++) {
+            sortedGroups.computeIfAbsent(level, k -> new ArrayList<>());
+        }
         return sortedGroups;
     }
 

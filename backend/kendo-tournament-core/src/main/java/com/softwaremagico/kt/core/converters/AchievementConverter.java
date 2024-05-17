@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,8 +26,8 @@ import com.softwaremagico.kt.core.converters.models.AchievementConverterRequest;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
+import com.softwaremagico.kt.persistence.repositories.TournamentRepository;
 import org.hibernate.LazyInitializationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
@@ -36,14 +36,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class AchievementConverter extends ElementConverter<Achievement, AchievementDTO, AchievementConverterRequest> {
     private final TournamentConverter tournamentConverter;
-    private final TournamentProvider tournamentProvider;
+    private final TournamentRepository tournamentRepository;
+    private final ParticipantReducedConverter participantReducedConverter;
     private final ParticipantConverter participantConverter;
     private final ParticipantProvider participantProvider;
 
-    public AchievementConverter(TournamentConverter tournamentConverter, TournamentProvider tournamentProvider,
-                                ParticipantConverter participantConverter, ParticipantProvider participantProvider) {
+    public AchievementConverter(TournamentConverter tournamentConverter, TournamentRepository tournamentRepository,
+                                ParticipantReducedConverter participantReducedConverter, ParticipantConverter participantConverter,
+                                ParticipantProvider participantProvider) {
         this.tournamentConverter = tournamentConverter;
-        this.tournamentProvider = tournamentProvider;
+        this.tournamentRepository = tournamentRepository;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.participantProvider = participantProvider;
     }
@@ -58,13 +61,13 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
                     new TournamentConverterRequest(from.getEntity().getTournament())));
         } catch (LazyInitializationException | FatalBeanException e) {
             achievementDTO.setTournament(tournamentConverter.convert(
-                    new TournamentConverterRequest(tournamentProvider.get(from.getEntity().getTournament().getId()).orElse(null))));
+                    new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
-            achievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
         } catch (LazyInitializationException | FatalBeanException e) {
-            achievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }
         return achievementDTO;

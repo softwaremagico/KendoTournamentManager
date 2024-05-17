@@ -48,7 +48,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     }).catch(() => console.error('Cannot select camera!'));
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close({action: Action.Cancel});
   }
 
@@ -79,7 +79,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     this.imageClicked.emit(webcamImage);
   }
 
-  public saveImage() {
+  public saveImage(): void {
     if (this.pictures.length > 0 && this.selectedPicture !== undefined) {
       const imageDataAsBase64: string = this.pictures[this.selectedPicture];
       if (imageDataAsBase64.length > 1) {
@@ -100,7 +100,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     return this.pictureGenerated.asObservable();
   }
 
-  selectImage(index: number) {
+  selectImage(index: number): void {
     if (this.selectedPicture !== index) {
       this.selectedPicture = index;
     } else {
@@ -108,8 +108,8 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
     }
   }
 
-  handleFileInput(event: Event) {
-    const element = event.currentTarget as HTMLInputElement;
+  handleFileInput(event: Event): void {
+    const element: HTMLInputElement = event.currentTarget as HTMLInputElement;
     let fileList: FileList | null = element.files;
     if (fileList) {
       const file: File | null = fileList.item(0);

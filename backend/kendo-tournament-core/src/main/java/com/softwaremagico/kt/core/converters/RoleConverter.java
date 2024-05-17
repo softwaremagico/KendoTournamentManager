@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,11 +34,14 @@ import org.springframework.stereotype.Component;
 public class RoleConverter extends ElementConverter<Role, RoleDTO, RoleConverterRequest> {
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
 
     @Autowired
-    public RoleConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter) {
+    public RoleConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter,
+                         ParticipantReducedConverter participantReducedConverter) {
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
+        this.participantReducedConverter = participantReducedConverter;
     }
 
 
@@ -48,7 +51,7 @@ public class RoleConverter extends ElementConverter<Role, RoleDTO, RoleConverter
         BeanUtils.copyProperties(from.getEntity(), roleDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
         roleDTO.setTournament(tournamentConverter.convert(
                 new TournamentConverterRequest(from.getEntity().getTournament())));
-        roleDTO.setParticipant(participantConverter.convert(
+        roleDTO.setParticipant(participantReducedConverter.convert(
                 new ParticipantConverterRequest(from.getEntity().getParticipant())));
         return roleDTO;
     }

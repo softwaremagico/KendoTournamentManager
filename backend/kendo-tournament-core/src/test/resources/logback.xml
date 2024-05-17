@@ -50,9 +50,6 @@
             level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="net.sf.ehcache" level="INFO">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
     <logger name="springfox.documentation.spring.web.PropertySourcedRequestMappingHandlerMapping" additivity="false"
             level="ERROR">
         <appender-ref ref="CONSOLE"/>
