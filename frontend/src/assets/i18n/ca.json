@@ -119,7 +119,7 @@
     "WonLostMenuItem": "Partits guanyats (Total)",
     "TournamentStatisticsMenu": "Campionat",
     "TeamTopTenMenuItem": "Classificació",
-    "competitorsRanking": "Classificació per competidors",
+    "competitorsRanking": "Classificació per competidors.",
     "competitorsClubRanking": "Classificació per competidors pertanyents a un club.",
     "DefineFightsMenu": "Definir lliga",
     "FightMenuItem": "Lliga senzilla",
@@ -223,11 +223,11 @@
     "RefereeTitle": "Llistat d'àrbitres",
     "DeleteLevelLabel": "Netejar fase",
     "classic": "Classificació",
-    "classicHint": "El guanyador s'obté mitjançant la suma de partits guanyats, i si hi ha empat es sumen els duels guanyats. En cas que hi haja un altre empat, es tenen en compte els cops. Els empats o els duels s'ignoren.",
+    "classicHint": "El guanyador s'obté mitjançant la suma de partits guanyats, i si hi ha empat es sumen els combats guanyats. En cas que hi haja un altre empat, es tenen en compte els cops. Els empats o els duels s'ignoren.",
     "european": "Europeu",
     "europeanHint": "El guanyador s'obté per partits guanyats. Si hi ha empat, se compten els partits empatats. Si a més hi ha un empat fem servir el mateix procediment amb els duels. Si la puntuació dels partits i duels també és un empat, es compten els cops.",
     "international": "Internacional",
-    "internationalHint": "El guanyador s'obté per partits guanyats. Si hi ha empat, es compten els partits empatats. Si a més hi ha un empat es compten els duels guanyats. Si encara hi ha empat, primer es compten el nombre de colps i si l'empat no es resol, es compten els duels empatats.",
+    "internationalHint": "El guanyador s'obté per partits guanyats. Si hi ha empat, es compten els partits empatats. Si a més hi ha un empat es compten els combats guanyats. Si encara hi ha empat, primer es compten el nombre de colps i si l'empat no es resol, es compten els combats empatats.",
     "custom": "Personalitzat",
     "customHint": "Us permet definir valors personalitzats per al vostre torneig.",
     "win_over_draws": "Victòria sobre l'empat",
@@ -892,5 +892,9 @@
     "logIn": "Iniciar Sessió",
     "fightsLost": "Partits perduts",
     "NameTeamError": "S'ha produït un error desconegut en accedir a la base de dades.",
-    "login": "Iniciar Sessió"
+    "login": "Iniciar Sessió",
+    "updatedAt": "Actualitzat a les",
+    "updatedBy": "Actualitzat per",
+    "teamsOrder": "Ordre dels equips:",
+    "web": "Web"
 }
