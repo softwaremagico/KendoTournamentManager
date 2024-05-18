@@ -24,8 +24,10 @@ package com.softwaremagico.kt.pdf.lists;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.context.MessageSource;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +41,11 @@ public class EmptyFightsList extends FightSummary {
     }
 
     @Override
+    protected Color getCellBorderColor() {
+        return Color.BLACK;
+    }
+
+    @Override
     protected String getDrawFight(FightDTO fightDTO, int duel) {
         return "";
     }
@@ -49,7 +56,7 @@ public class EmptyFightsList extends FightSummary {
     }
 
     @Override
-    protected String getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
-        return "";
+    protected Score getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
+        return null;
     }
 }
