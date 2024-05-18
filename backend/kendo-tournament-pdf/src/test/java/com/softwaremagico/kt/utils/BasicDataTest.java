@@ -165,10 +165,16 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected void resolveFights() {
         int counter = 0;
         for (final FightDTO fight : fights) {
+            if(counter %4 == 0){
+                fight.getDuels().get(1).setCompetitor1Fault(true);
+            }
             for (final DuelDTO duel : fight.getDuels()) {
                 List<Score> scores = new ArrayList<>();
                 for (int i = 0; i < (counter % 3); i++) {
                     scores.add(Score.MEN);
+                }
+                for (int i = 0; i < (counter % 2); i++) {
+                    scores.add(Score.FUSEN_GACHI);
                 }
                 duel.setCompetitor1Score(scores);
                 counter++;
