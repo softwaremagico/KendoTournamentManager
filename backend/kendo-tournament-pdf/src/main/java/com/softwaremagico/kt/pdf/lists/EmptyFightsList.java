@@ -51,8 +51,8 @@ public class EmptyFightsList extends FightSummary {
     }
 
     @Override
-    protected String getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
-        return "";
+    protected boolean getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
+        return false;
     }
 
     @Override

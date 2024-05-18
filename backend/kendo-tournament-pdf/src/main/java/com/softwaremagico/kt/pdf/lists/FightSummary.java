@@ -41,6 +41,7 @@ import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
 import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.pdf.PdfTheme;
+import com.softwaremagico.kt.pdf.events.FaultTriangleCellEvent;
 import com.softwaremagico.kt.pdf.events.ScoreCircleCellEvent;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -58,7 +59,7 @@ import java.util.Objects;
  * Creates a sheet with all fights and all its score. The scope is to have a report after the tournament is finished.
  */
 public class FightSummary extends ParentList {
-    private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.04f, 0.08f, 0.08f, 0.03f, 0.29f};
+    private static final float[] TABLE_WIDTH = {0.29f, 0.03f, 0.08f, 0.08f, 0.02f, 0.08f, 0.08f, 0.03f, 0.29f};
     private static final int DEFAULT_CELL_HEIGHT = 50;
     private static final int FIGHT_BORDER = 1;
     private final MessageSource messageSource;
@@ -86,13 +87,11 @@ public class FightSummary extends ParentList {
         }
     }
 
-    protected String getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
+    protected boolean getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
         if (leftTeam) {
-            return fightDTO.getDuels().get(duel).getCompetitor1Fault() ? String.valueOf(Score.FAULT.getPdfAbbreviation())
-                    : String.valueOf(Score.EMPTY.getPdfAbbreviation());
+            return fightDTO.getDuels().get(duel).getCompetitor1Fault();
         } else {
-            return fightDTO.getDuels().get(duel).getCompetitor2Fault() ? String.valueOf(Score.FAULT.getPdfAbbreviation())
-                    : String.valueOf(Score.EMPTY.getPdfAbbreviation());
+            return fightDTO.getDuels().get(duel).getCompetitor2Fault();
         }
     }
 
@@ -115,7 +114,9 @@ public class FightSummary extends ParentList {
             table.addCell(getEmptyRow(DEFAULT_CELL_HEIGHT));
         }
 
-        table.addCell(getHeader3(fightDTO.getTeam1().getName() + " - " + fightDTO.getTeam2().getName(), 0));
+        table.addCell(getTeamHeader(fightDTO.getTeam1().getName(), TABLE_WIDTH.length / 2));
+        table.addCell(getTeamHeader("", 1));
+        table.addCell(getTeamHeader(fightDTO.getTeam2().getName(), TABLE_WIDTH.length / 2));
 
         for (int i = 0; i < fightDTO.getTournament().getTeamSize(); i++) {
             // Team 1
@@ -124,25 +125,29 @@ public class FightSummary extends ParentList {
             if (competitor != null) {
                 name = NameUtils.getLastnameNameIni(competitor);
             }
-            table.addCell(getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), PdfTheme.SCORE_LIST_SIZE, Color.WHITE, 1, Element.ALIGN_LEFT));
+
+            final PdfPCell team1NameCell = getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), PdfTheme.SCORE_LIST_SIZE, Color.WHITE, 1, Element.ALIGN_LEFT);
+            team1NameCell.setBorder(PdfPCell.BOTTOM);
+            table.addCell(team1NameCell);
 
             // Faults
-            table.addCell(getCell(getFaults(fightDTO, i, true), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_CENTER));
+            table.addCell(getFaultCell(fightDTO, i, true));
 
             // Points
             table.addCell(getScoreCell(fightDTO, i, 1, true));
             table.addCell(getScoreCell(fightDTO, i, 0, true));
 
-            table.addCell(getCell(getDrawFight(fightDTO, i), FIGHT_BORDER, PdfTheme.getHandwrittenFont(),
-                    PdfTheme.SCORE_FONT_SIZE, null, 1, Element.ALIGN_CENTER));
+            final PdfPCell drawCell = getCell(getDrawFight(fightDTO, i), FIGHT_BORDER, PdfTheme.getHandwrittenFont(),
+                    PdfTheme.SCORE_FONT_SIZE, null, 1, Element.ALIGN_CENTER);
+            drawCell.setBorder(0);
+            table.addCell(drawCell);
 
             // Points Team 2
             table.addCell(getScoreCell(fightDTO, i, 0, false));
             table.addCell(getScoreCell(fightDTO, i, 1, false));
 
             // Faults
-            table.addCell(getCell(getFaults(fightDTO, i, false), FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1,
-                    Element.ALIGN_CENTER));
+            table.addCell(getFaultCell(fightDTO, i, false));
 
             // Team 2
             competitor = fightDTO.getTeam2().getMembers().get(i);
@@ -150,11 +155,19 @@ public class FightSummary extends ParentList {
             if (competitor != null) {
                 name = NameUtils.getLastnameNameIni(competitor);
             }
-            table.addCell(getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT));
+            final PdfPCell team2NameCell = getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), 1, Element.ALIGN_RIGHT);
+            team2NameCell.setBorder(PdfPCell.BOTTOM);
+            table.addCell(team2NameCell);
         }
         table.addCell(getEmptyRow(DEFAULT_CELL_HEIGHT));
 
         return table;
+    }
+
+    public PdfPCell getTeamHeader(String text, int colspan) {
+        final PdfPCell cell = getCell(text, 0, colspan, Element.ALIGN_CENTER, Color.WHITE, PdfTheme.getTitleFont(), PdfTheme.FONT_SIZE + FONT_SMALL_EXTRA_SIZE, Font.BOLD);
+        cell.setPaddingBottom(BOTTOM_PADDING);
+        return cell;
     }
 
 
@@ -164,6 +177,17 @@ public class FightSummary extends ParentList {
                 PdfTheme.getHandwrittenFont(), PdfTheme.SCORE_FONT_SIZE, null, 1, Element.ALIGN_CENTER);
         if (score != null) {
             pdfPCell.setCellEvent(new ScoreCircleCellEvent());
+        }
+        return pdfPCell;
+    }
+
+
+    private PdfPCell getFaultCell(FightDTO fightDTO, int index, boolean leftCompetitor) {
+        final boolean fault = getFaults(fightDTO, index, leftCompetitor);
+        final PdfPCell pdfPCell = getCell("", FIGHT_BORDER,
+                PdfTheme.getHandwrittenFont(), PdfTheme.SCORE_FONT_SIZE, null, 1, Element.ALIGN_CENTER);
+        if (fault) {
+            pdfPCell.setCellEvent(new FaultTriangleCellEvent());
         }
         return pdfPCell;
     }
