@@ -42,6 +42,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,5 +186,15 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         teams = createTeams(members, tournament);
         group = createGroup(tournament, teams);
         fights = createFights(tournament, teams, group);
+    }
+
+    protected boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }
