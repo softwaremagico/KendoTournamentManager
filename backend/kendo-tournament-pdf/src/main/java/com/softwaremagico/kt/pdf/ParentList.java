@@ -44,11 +44,11 @@ public abstract class ParentList extends PdfDocument {
     protected static final int TABLE_BORDER = 0;
     private static final float HEADER_SEPARATOR = 20f;
 
-    private static final int BOTTOM_PADDING = 15;
+    protected static final int BOTTOM_PADDING = 15;
 
     private static final int FONT_BIG_EXTRA_SIZE = 10;
     private static final int FONT_MEDIUM_EXTRA_SIZE = 6;
-    private static final int FONT_SMALL_EXTRA_SIZE = 4;
+    protected static final int FONT_SMALL_EXTRA_SIZE = 4;
 
 
     /**
@@ -177,7 +177,7 @@ public abstract class ParentList extends PdfDocument {
      * @return
      */
     public PdfPCell getHeader(String text, int border, int align, int fontSize) {
-        final PdfPCell cell = getCell(text, border, getTableWidths().length, align, new Color(255, 255, 255), PdfTheme.getTitleFont(), fontSize, Font.BOLD);
+        final PdfPCell cell = getCell(text, border, getTableWidths().length, align, Color.WHITE, PdfTheme.getTitleFont(), fontSize, Font.BOLD);
         cell.setPaddingBottom(BOTTOM_PADDING);
         return cell;
     }
