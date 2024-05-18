@@ -257,9 +257,9 @@ public class BlogExporter {
         // Draw Fights
         final String draw;
         if (fightDTO.getDuels().get(duel).getWinner() == 0 && fightDTO.isOver()) {
-            draw = String.valueOf(Score.DRAW.getAbbreviation());
+            draw = String.valueOf(Score.DRAW.getPdfAbbreviation());
         } else {
-            draw = String.valueOf(Score.EMPTY.getAbbreviation());
+            draw = String.valueOf(Score.EMPTY.getPdfAbbreviation());
         }
         return draw;
     }
@@ -273,9 +273,9 @@ public class BlogExporter {
             faults = fightDTO.getDuels().get(duel).getCompetitor2Fault();
         }
         if (faults) {
-            faultSymbol = String.valueOf(Score.FAULT.getAbbreviation());
+            faultSymbol = String.valueOf(Score.FAULT.getPdfAbbreviation());
         } else {
-            faultSymbol = String.valueOf(Score.EMPTY.getAbbreviation());
+            faultSymbol = String.valueOf(Score.EMPTY.getPdfAbbreviation());
         }
         return faultSymbol;
     }
@@ -283,9 +283,9 @@ public class BlogExporter {
     private String getScore(FightDTO fightDTO, int duel, int score, boolean leftTeam) {
         try {
             if (leftTeam) {
-                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getAbbreviation());
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor1Score().get(score).getPdfAbbreviation());
             } else {
-                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getAbbreviation());
+                return String.valueOf(fightDTO.getDuels().get(duel).getCompetitor2Score().get(score).getPdfAbbreviation());
             }
         } catch (IndexOutOfBoundsException | NullPointerException e) {
             return "";
