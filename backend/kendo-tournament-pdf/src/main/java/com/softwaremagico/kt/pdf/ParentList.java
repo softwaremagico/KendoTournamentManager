@@ -149,6 +149,7 @@ public abstract class ParentList extends PdfDocument {
         final PdfPCell cell = new PdfPCell(p);
         cell.setColspan(colspan);
         cell.setBorderWidth(border);
+        cell.setBorderColor(Color.LIGHT_GRAY);
         cell.setHorizontalAlignment(align);
         cell.setBackgroundColor(color);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
