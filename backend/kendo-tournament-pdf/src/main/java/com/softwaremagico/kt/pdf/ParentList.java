@@ -139,8 +139,16 @@ public abstract class ParentList extends PdfDocument {
         return getCell(text, border, colspan, align, BaseColor.WHITE, font, PdfTheme.FONT_SIZE, Font.NORMAL);
     }
 
+    public PdfPCell getCell(String text, int border, BaseFont font, int fontSize, Color color, int colspan, int align) {
+        return getCell(text, border, colspan, align, color, font, fontSize, Font.NORMAL);
+    }
+
     public PdfPCell getCell(String text, BaseFont font, int colspan, int align, int fontType) {
         return getCell(text, CELL_BORDER, colspan, align, BaseColor.WHITE, font, PdfTheme.FONT_SIZE, fontType);
+    }
+
+    protected Color getCellBorderColor() {
+        return Color.LIGHT_GRAY;
     }
 
     public PdfPCell getCell(String text, int border, int colspan, int align, Color color,
@@ -149,9 +157,11 @@ public abstract class ParentList extends PdfDocument {
         final PdfPCell cell = new PdfPCell(p);
         cell.setColspan(colspan);
         cell.setBorderWidth(border);
-        cell.setBorderColor(Color.LIGHT_GRAY);
+        cell.setBorderColor(getCellBorderColor());
         cell.setHorizontalAlignment(align);
-        cell.setBackgroundColor(color);
+        if (color != null) {
+            cell.setBackgroundColor(color);
+        }
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
         return cell;
