@@ -39,6 +39,13 @@
               matTooltip="{{'competitorsRanking' | translate}}">
         <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
       </button>
+      <button (click)="openParticipantDuels()"
+              *ngIf="(RbacActivity.VIEW_PARTICIPANT_FIGHTS | rbac : this.rbacService.getActivities())"
+              [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
+              color="primary" mat-button
+              matTooltip="{{'titleStatistics' | translate}}">
+        <mat-icon>bar_chart</mat-icon>
+      </button>
       <button (click)="showQrCode()"
               *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
               [disabled]="!basicTableData.selectedElement"

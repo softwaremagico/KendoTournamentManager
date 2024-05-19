@@ -58,6 +58,18 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
         return getController().getUntiesFromGroup(groupId);
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all duels from competitor.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitor/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DuelDTO> getByCompetitor(@Parameter(description = "Id of the competitor.", required = true)
+                                                        @PathVariable("competitorId")
+                                                        Integer competitorId,
+                                         HttpServletRequest request) {
+        return getController().getBy(competitorId);
+    }
+
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
