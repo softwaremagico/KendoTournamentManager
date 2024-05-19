@@ -119,6 +119,7 @@ import {RxStompService} from "./websockets/rx-stomp.service";
 import {rxStompServiceFactory} from "./websockets/rx-stomp-service-factory";
 import {TournamentQrCodeModule} from './components/tournament-qr-code/tournament-qr-code.module';
 import {ParticipantQrCodeModule} from './components/participant-qr-code/participant-qr-code.module';
+import {ParticipantFightListModule} from './views/participant-fight-list/participant-fight-list.module';
 
 
 registerLocaleData(localeES, "es");
@@ -229,6 +230,7 @@ registerLocaleData(localeNL, "nl");
     TournamentGeneratorModule,
     TournamentQrCodeModule,
     ParticipantQrCodeModule,
+    ParticipantFightListModule,
   ],
   providers: [
     CookieService, {
