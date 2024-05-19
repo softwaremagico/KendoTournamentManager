@@ -1,0 +1,44 @@
+<app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
+<div class="fight-view">
+  <div class="fights-table">
+    <div class="upper-menu">
+      <div class="cell">
+        <button (click)="goBackToUsers()"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500" color="secondary"
+                mat-button
+                matTooltip="{{'back' | translate}}">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+      <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
+      <div class="fight-container">
+        <div *ngFor="let group of groups" class="fight-list">
+          <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
+              [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+              class="level-name">{{ 'level' | translate }} {{ group.level + 1 }}</h2>
+          <h3 *ngIf="filteredFights.get(group.id!)?.length! > 0"
+              [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+              class="group-name">{{ 'group' | translate }} {{ group.index + 1 }}</h3>
+          <div *ngIf="filteredFights.get(group.id!)?.length! > 0"
+               [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
+            <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
+                   *ngFor="let fight of filteredFights.get(group.id!)"
+                   [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"
+                   [showAvatars]="showAvatars" [swapColors]="swappedColors"
+                   [swapTeams]="swappedTeams"></fight>
+
+            <div class="unties-list">
+              <untie-fight *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+                           (click)="selectDuel(duel)"
+                           (keydown)="selectDuel(duel)"
+                           [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
+                           [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                           [swapTeams]="swappedTeams"></untie-fight>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
