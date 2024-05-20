@@ -22,8 +22,11 @@ export class QrService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  getGuestsQr(tournament: Tournament): Observable<QrCode> {
-    const url: string = `${this.baseUrl}/guest/tournament/${tournament.id}`;
+  getGuestsQr(tournament: Tournament, port?: number): Observable<QrCode> {
+    let url: string = `${this.baseUrl}/guest/tournament/${tournament.id}`;
+    if (port) {
+      url = `${this.baseUrl}/guest/tournament/${tournament.id}/port/${port}`;
+    }
     return this.http.get<QrCode>(url)
       .pipe(
         tap({
@@ -35,9 +38,12 @@ export class QrService {
       );
   }
 
-  getGuestsQrAsPdf(tournament: Tournament): Observable<Blob> {
+  getGuestsQrAsPdf(tournament: Tournament, port?: number): Observable<Blob> {
     this.systemOverloadService.isBusy.next(true);
-    const url: string = `${this.baseUrl}/guest/tournament/${tournament.id}/pdf`;
+    let url: string = `${this.baseUrl}/guest/tournament/${tournament.id}/pdf`;
+    if (port) {
+      url = `${this.baseUrl}/guest/tournament/${tournament.id}/pdf/port/${port}`;
+    }
     return this.http.get<Blob>(url, {
       responseType: 'blob' as 'json', observe: 'body', headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -50,5 +56,21 @@ export class QrService {
       }),
       catchError(this.messageService.handleError<Blob>(`getting qr code as pdf from tournament ${tournament.id}`))
     );
+  }
+
+  getParticipantQr(participantId: number, port?: number): Observable<QrCode> {
+    let url: string = `${this.baseUrl}/participant/${participantId}/statistics`;
+    if (port) {
+      url = `${this.baseUrl}/participant/${participantId}/statistics/port/${port}`;
+    }
+    return this.http.get<QrCode>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting qr code from participant ${participantId}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<QrCode>(`getting qr code from participant ${participantId}`))
+      );
   }
 }

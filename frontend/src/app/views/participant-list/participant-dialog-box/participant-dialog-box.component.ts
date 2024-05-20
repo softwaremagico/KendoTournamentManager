@@ -59,7 +59,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       idCard: new UntypedFormControl({
         value: this.participant.idCard,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
-      }, [Validators.required, Validators.maxLength(20)]),
+      }, [Validators.maxLength(20)]),
       club: new UntypedFormControl({
         value: this.participant.club,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
@@ -92,8 +92,8 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   private _filter(name: string): Club[] {
-    const filterValue = name.toLowerCase();
-    return this.clubs.filter(club => club.name.toLowerCase().includes(filterValue));
+    const filterValue: string = name.toLowerCase();
+    return this.clubs.filter((club: Club) => club.name.toLowerCase().includes(filterValue));
   }
 
   doAction(): void {

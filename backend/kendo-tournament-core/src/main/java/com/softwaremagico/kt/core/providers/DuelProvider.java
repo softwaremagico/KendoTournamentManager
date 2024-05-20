@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,6 +71,10 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return getRepository().findByParticipant(participant);
     }
 
+    public List<Duel> getWhenBothAreInvolved(Participant participant1, Participant participant2) {
+        return getRepository().findByParticipants(participant1, participant2);
+    }
+
     public List<Duel> get(Tournament tournament) {
         return getRepository().findByTournament(tournament);
     }
@@ -86,6 +90,11 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
     @Cacheable(value = "duels-duration-average", key = "'average'")
     public Long getDurationAverage() {
         final Long duration = getRepository().getDurationAverage();
+        return duration != null ? duration : -1;
+    }
+
+    public Long getDurationAverage(Participant participant) {
+        final Long duration = getRepository().getDurationAverage(participant);
         return duration != null ? duration : -1;
     }
 

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -74,9 +74,6 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     private TournamentProvider tournamentProvider;
 
     @Autowired
-    private TournamentConverter tournamentConverter;
-
-    @Autowired
     private ParticipantProvider participantProvider;
 
     @Autowired
@@ -84,9 +81,6 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private TeamProvider teamProvider;
-
-    @Autowired
-    private SimpleLeagueHandler simpleLeagueHandler;
 
     @Autowired
     private FightProvider fightProvider;
@@ -99,12 +93,6 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private DuelProvider duelProvider;
-
-    @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
 
     @Autowired
     private RankingProvider rankingProvider;
@@ -213,7 +201,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"testSimpleWinner"})
     public void nextFight1() {
         kingOfTheMountainHandler.generateNextFights(tournament, null);
-        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 2);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 2);
@@ -232,7 +220,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"nextFight1"})
     public void nextFight2() {
         kingOfTheMountainHandler.generateNextFights(tournament, null);
-        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 3);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 3);
@@ -252,7 +240,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"nextFight2"})
     public void loopStartsAgain() {
         kingOfTheMountainHandler.generateNextFights(tournament, null);
-        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 4);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 4);
@@ -271,16 +259,16 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"loopStartsAgain"})
     public void team1Loose() {
         kingOfTheMountainHandler.generateNextFights(tournament, null);
-        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 5);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 5);
 
         //2nd team must be the previous one. But the 1st must be out.
         Assert.assertNotEquals(tournamentFights.get(4).getTeam1(), tournamentFights.get(3).getTeam1());
-        Assert.assertEquals(tournamentFights.get(4).getTeam2(), tournamentFights.get(3).getTeam2());
-        Assert.assertEquals(tournamentFights.get(4).getTeam2().getName(), "Team02");
-        Assert.assertEquals(tournamentFights.get(4).getTeam1().getName(), "Team03");
+        Assert.assertEquals(tournamentFights.get(4).getTeam1(), tournamentFights.get(3).getTeam2());
+        Assert.assertEquals(tournamentFights.get(4).getTeam1().getName(), "Team02");
+        Assert.assertEquals(tournamentFights.get(4).getTeam2().getName(), "Team03");
 
         //No winner
         tournamentFights.get(4).getDuels().forEach(duel -> duel.setFinished(true));
@@ -290,7 +278,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
     @Test(dependsOnMethods = {"team1Loose"})
     public void afterDraw() {
         kingOfTheMountainHandler.generateNextFights(tournament, null);
-        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 6);
+        Assert.assertEquals(kingOfTheMountainHandler.getGroups(tournament).size(), 1);
 
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 6);

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.logger.JwtFilterLogger;
 import com.softwaremagico.kt.logger.RestServerLogger;
-import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -106,7 +106,7 @@ public class JwtTokenUtil {
     }
 
 
-    public String generateAccessToken(AuthenticatedUser user, String userIp) {
+    public String generateAccessToken(IAuthenticatedUser user, String userIp) {
         return Jwts.builder()
                 .setSubject(String.format("%s,%s,%s,%s", user.getId(), user.getUsername(), userIp, networkController.getHostMac()))
                 .setIssuer(JWT_ISSUER)

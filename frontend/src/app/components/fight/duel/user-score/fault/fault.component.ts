@@ -2,7 +2,6 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation} f
 import {Duel} from "../../../../../models/duel";
 import {DuelService} from "../../../../../services/duel.service";
 import {MessageService} from "../../../../../services/message.service";
-import {Score} from "../../../../../models/score";
 import {ScoreUpdatedService} from "../../../../../services/notifications/score-updated.service";
 import {TranslateService} from "@ngx-translate/core";
 import {RbacService} from "../../../../../services/rbac/rbac.service";
@@ -46,7 +45,7 @@ export class FaultComponent implements OnInit, OnChanges {
     // This is intentional
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['duel'] || changes['left'] || changes['swapTeams']) {
       this.setTime();
     }
@@ -64,9 +63,7 @@ export class FaultComponent implements OnInit, OnChanges {
       } else {
         this.duel.competitor1Fault = false;
         this.duel.competitor1FaultTime = undefined;
-        if (this.duel.competitor2Score.length < 2) {
-          this.duel.competitor2Score.push(Score.HANSOKU);
-          this.duel.competitor2ScoreTime.push(this.duel.duration!);
+        if (Duel.addHansoku(this.duel, false)) {
           this.scoreUpdatedService.isScoreUpdated.next(this.duel);
         } else {
           this.messageService.warningMessage("scoreNotAdded");
@@ -85,9 +82,7 @@ export class FaultComponent implements OnInit, OnChanges {
       } else {
         this.duel.competitor2Fault = false;
         this.duel.competitor2FaultTime = undefined;
-        if (this.duel.competitor1Score.length < 2) {
-          this.duel.competitor1Score.push(Score.HANSOKU);
-          this.duel.competitor1ScoreTime.push(this.duel.duration!);
+        if (Duel.addHansoku(this.duel, true)) {
           this.scoreUpdatedService.isScoreUpdated.next(this.duel);
         } else {
           this.messageService.warningMessage("scoreNotAdded");
@@ -100,9 +95,9 @@ export class FaultComponent implements OnInit, OnChanges {
     return true;
   }
 
-  updateFault(fault: boolean) {
+  updateFault(fault: boolean): void {
     const faultAdded: boolean = this.setFault(fault);
-    this.duelService.update(this.duel).subscribe(duel => {
+    this.duelService.update(this.duel).subscribe((duel: Duel): Duel => {
       if (faultAdded) {
         this.messageService.infoMessage('infoFaultUpdated');
       }
@@ -110,7 +105,7 @@ export class FaultComponent implements OnInit, OnChanges {
     });
   }
 
-  setTime() {
+  setTime(): void {
     let seconds: number | undefined = (this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
       this.duel.competitor1FaultTime : this.duel.competitor2FaultTime;
     if (seconds) {
@@ -138,19 +133,19 @@ export class FaultComponent implements OnInit, OnChanges {
     return tooltipText;
   }
 
-  updateCoordinates($event: MouseEvent) {
+  updateCoordinates($event: MouseEvent): void {
     this.mouseX = $event.clientX;
     this.mouseY = $event.clientY;
     this.calculateTooltipMargin();
   }
 
-  clearCoordinates($event: MouseEvent) {
+  clearCoordinates($event: MouseEvent): void {
     this.mouseX = undefined;
     this.mouseY = undefined;
   }
 
 
-  calculateTooltipMargin() {
+  calculateTooltipMargin(): void {
     this.screenHeight = window.innerHeight;
     this.screenWidth = window.innerWidth;
     this.onLeftBorder = false;

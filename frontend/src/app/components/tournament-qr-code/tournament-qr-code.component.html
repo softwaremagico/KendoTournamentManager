@@ -4,7 +4,9 @@
   </div>
   <div *ngIf="qrCode" class="qr-container">
     <img alt="QR Code" class="qr-code" src="{{ qrCode }}"/>
-    <button (click)="downloadQrAsPdf()" *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
+    <a class="link" target=”_blank” *ngIf="link" href="{{link}}">{{'orClickHere' | translate}}</a>
+    <button (click)="downloadQrAsPdf()"
+            *ngIf="(RbacActivity.DOWNLOAD_QR_CODE | rbac : this.rbacService.getActivities())"
             class="floating-button"
             color="picture"
             mat-flat-button
@@ -13,9 +15,9 @@
       <mat-icon>file_download</mat-icon>
     </button>
   </div>
-  <div class="button-container" mat-dialog-actions>
-    <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button
-            type="button">{{'close' | translate}}
-    </button>
-  </div>
+</div>
+<div class="button-container" mat-dialog-actions>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button
+          type="button">{{'close' | translate}}
+  </button>
 </div>

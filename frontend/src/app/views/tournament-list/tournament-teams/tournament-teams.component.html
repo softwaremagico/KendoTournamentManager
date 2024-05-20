@@ -11,7 +11,9 @@
     <div class="teams">
       <div *ngFor="let team of teams" class="teams-location">
         <div>
-          <h2 (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))" *ngIf="!team.editing"
+          <h2 *ngIf="!team.editing"
+              (click)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
+              (keydown)="setEditable(team, this.rbacService.isAllowed(RbacActivity.EDIT_TEAM))"
               class="team-header">{{team.name}}</h2>
           <button (click)="deleteTeam(team)"
                   *ngIf="!team.editing && !team.locked && (RbacActivity.DELETE_TEAM | rbac : this.rbacService.getActivities())"
@@ -51,7 +53,9 @@
           </div>
         </div>
       </div>
-      <div (click)="addTeam()" *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())" class="new-team">
+      <div *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())" class="new-team"
+           (click)="addTeam()"
+           (keydown)="addTeam()">
         <div class="row">{{'addTeamToTournament' | translate}}</div>
       </div>
     </div>

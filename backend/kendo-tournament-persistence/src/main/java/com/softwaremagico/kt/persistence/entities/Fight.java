@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,6 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
@@ -67,7 +66,6 @@ public class Fight extends Element {
     private Tournament tournament;
 
     @Column(name = "shiaijo", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -80,7 +78,6 @@ public class Fight extends Element {
     private LocalDateTime finishedAt;
 
     @Column(name = "fight_level", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     public Fight() {
@@ -168,6 +165,17 @@ public class Fight extends Element {
             return team2;
         }
         return null;
+    }
+
+    public Team getLooser() {
+        final Team winner = getWinner();
+        if (winner == null) {
+            return null;
+        }
+        if (Objects.equals(winner, team1)) {
+            return team2;
+        }
+        return team1;
     }
 
     public boolean isOver() {

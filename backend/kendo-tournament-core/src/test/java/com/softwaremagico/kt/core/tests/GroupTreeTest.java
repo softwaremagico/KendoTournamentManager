@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -949,6 +949,28 @@ public class GroupTreeTest extends AbstractTestNGSpringContextTests {
 
         groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
         Assert.assertEquals(groupLinks.size(), 2);
+    }
+
+    /**
+     * ┌──────┐
+     * │Group1│
+     * └┬───┬─┘
+     * ┌▽───▽─┐
+     * │Group2│
+     * └──────┘
+     */
+
+    @Test
+    public void leagueWithFinalFight() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 2);
+
+        final List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 2);
+
+        checkLink(groupLinks.get(0), 0, 0);
+        checkLink(groupLinks.get(1), 0, 0);
     }
 
 

@@ -1,15 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -36,13 +25,14 @@ import {Message} from "@stomp/stompjs/esm6";
 import {MessageContent} from "../../websockets/message-content.model";
 import {RxStompService} from "../../websockets/rx-stomp.service";
 import {EnvironmentService} from "../../environment.service";
+import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
-export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnDestroy {
+export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
@@ -85,9 +75,10 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   private topicSubscription: Subscription;
 
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              private rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
+              public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
               private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
-              private rxStompService: RxStompService, private environmentService: EnvironmentService) {
+              private rxStompService: RxStompService, private environmentService: EnvironmentService,
+              private tournamentChangedService: TournamentChangedService) {
   }
 
   ngOnInit(): void {
@@ -100,30 +91,28 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
     });
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      //if (messageContent.topic == "Group" && messageContent.actor !== localStorage.getItem("username")) {
       if (messageContent.topic == "Group") {
         this.updateData(false);
       }
     });
+    this.tournamentChangedService.isTournamentChanged.subscribe((_tournament: Tournament): void => {
+      this.tournament = _tournament;
+      if (_tournament) {
+        this.updateData(true);
+      }
+    })
   }
 
   ngOnDestroy(): void {
     this.topicSubscription?.unsubscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.systemOverloadService.isBusy.next(true);
-    if (changes['tournament'] && this.tournament != undefined) {
-      this.updateData(true);
-    }
-  }
-
   updateData(showBusy: boolean): void {
     this.systemOverloadService.isBusy.next(showBusy);
-    if (this.tournament) {
+    if (this.tournament?.id) {
       const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
-      const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
-      const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
+      const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id);
+      const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id);
 
       forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
         if (_teams) {
@@ -162,10 +151,10 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
     const relations: Map<number, { src: number, dest: number, winner: number }[]> = new Map();
     if (groupRelations) {
       for (const groupLink of groupRelations) {
-        if (!relations.get(groupLink.source!.level!)) {
-          relations.set(groupLink.source!.level!, []);
+        if (!relations.get(groupLink.source.level!)) {
+          relations.set(groupLink.source.level!, []);
         }
-        relations.get(groupLink.source!.level!)?.push({
+        relations.get(groupLink.source.level!)?.push({
           src: groupLink.source!.index!,
           dest: groupLink.destination!.index!,
           winner: groupLink.winner
@@ -183,7 +172,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
       event.previousIndex,
       event.currentIndex,
     );
-    this.groupService.deleteTeamsFromTournament(this.tournament!.id!, this.teamListData.teams).subscribe();
+    this.groupService.deleteTeamsFromTournament(this.tournament.id!, this.teamListData.teams).subscribe();
     this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
     this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
   }
@@ -203,14 +192,16 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   }
 
   deleteLast(): void {
-    const lastGroup: Group = this.groups.filter((g: Group): boolean => {
-      return g.level === 0;
-    }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-      prev : current);
-    this.deleteGroup(lastGroup);
+    if (this.groups.length > 0) {
+      const lastGroup: Group = this.groups.filter((g: Group): boolean => {
+        return g.level === 0;
+      }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+        prev : current, this.groups[this.groups.length - 1]);
+      this.deleteGroup(lastGroup);
+    }
   }
 
-  deleteGroup(group: Group | undefined): void {
+  deleteGroup(group: Group | undefined | null): void {
     if (group) {
       this.systemOverloadService.isBusy.next(true);
       this.groupService.deleteGroup(group).subscribe((): void => {
@@ -224,7 +215,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
     const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
     //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size! + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
+    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
     const widthMM: number = this.getMM(width);
@@ -302,7 +293,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
     //Send final teams
     let observables: Observable<any>[] = [];
     for (const group of groups) {
-      observables.push(this.groupService.addTeamsToGroup(group!.id!, group.teams));
+      observables.push(this.groupService.addTeamsToGroup(group.id!, group.teams));
     }
     //Ensure all groups are updated.
     forkJoin(observables)
@@ -329,8 +320,10 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit, OnD
   }
 
   removeAllTeams(): void {
-    this.groupService.deleteAllTeamsFromTournament(this.tournament!.id!).subscribe((_groups: Group[]): void => {
+    this.groupService.deleteAllTeamsFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
   }
+
+  protected readonly RbacActivity = RbacActivity;
 }

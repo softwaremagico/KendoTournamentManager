@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,12 +21,20 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public class ParticipantDTO extends ElementDTO implements IParticipantName {
+public class ParticipantDTO extends ElementDTO implements IParticipantName, IAuthenticatedUser {
+
+    private static final int HASH_VALUE = 31;
 
     private String idCard;
 
@@ -70,6 +78,11 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
         return lastname;
     }
 
+    @Override
+    public Set<String> getRoles() {
+        return new HashSet<>(List.of(Participant.PARTICIPANT_ROLE));
+    }
+
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
@@ -104,15 +117,35 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ParticipantDTO that)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return getId().equals(that.getId()) && getName().equals(that.getName()) && getLastname().equals(that.getLastname())
-                && getClub().equals(that.getClub());
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        final ParticipantDTO that = (ParticipantDTO) o;
+
+        if (!name.equals(that.name)) {
+            return false;
+        }
+        if (!lastname.equals(that.lastname)) {
+            return false;
+        }
+        return Objects.equals(club, that.club);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getLastname(), getClub());
+        int result = super.hashCode();
+        result = HASH_VALUE * result + name.hashCode();
+        result = HASH_VALUE * result + lastname.hashCode();
+        result = HASH_VALUE * result + (club != null ? club.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String getUsername() {
+        return getId() + ParticipantProvider.TOKEN_NAME_SEPARATOR + name + ParticipantProvider.TOKEN_NAME_SEPARATOR + lastname;
     }
 }
