@@ -313,7 +313,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
     this.resetFilter();
     //Use a timeout or refresh before the components are drawn.
-    setTimeout(() => {
+    setTimeout((): void => {
       if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0 && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
         this.showTeamsClassification(true);
       }
@@ -327,7 +327,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (group.level >= showedLevel.length) {
         showedLevel.push(true);
         //Hide level label if it hasn't fights on any of its groups.
-        const groupsOfLevelWithFights: Group[] = sortedGroups.filter(group => group.level == showedLevel.length - 1 && group.fights.length > 0);
+        const groupsOfLevelWithFights: Group[] = sortedGroups.filter((group: Group) => group.level == showedLevel.length - 1 && group.fights.length > 0);
         if (groupsOfLevelWithFights.length == 0) {
           showedLevel[showedLevel.length - 1] = false;
         }
