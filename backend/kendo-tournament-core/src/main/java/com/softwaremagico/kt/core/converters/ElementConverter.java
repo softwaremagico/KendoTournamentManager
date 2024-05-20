@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> impl
         if (from == null) {
             return new ArrayList<>();
         }
-        return from.stream().map(this::convert).collect(Collectors.toList());
+        return from.stream().map(this::convert).collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -52,6 +52,6 @@ public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> impl
         if (to == null) {
             return new ArrayList<>();
         }
-        return to.stream().map(this::reverse).collect(Collectors.toList());
+        return to.stream().map(this::reverse).collect(Collectors.toCollection(ArrayList::new));
     }
 }

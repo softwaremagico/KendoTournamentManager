@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ public class QrTests extends BasicDataTest {
     @Test
     public void generateQrCode() {
 
-        Assert.assertEquals(pdfController.generateTournamentQr(Locale.getDefault(), tournament.getId())
+        Assert.assertEquals(pdfController.generateTournamentQr(Locale.getDefault(), tournament, null)
                 // No clue why are 2 pages and not 1.
                 .createFile(PDF_PATH_OUTPUT + "Tournament - QR.pdf") - 1, 1);
     }

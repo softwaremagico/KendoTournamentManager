@@ -4,7 +4,8 @@
   <mat-icon>tune</mat-icon>
 </button>
 <mat-menu #mainMenuButton="matMenu" class="table-settings">
-        <span (click)="$event.stopPropagation()" *ngFor="let column of basicTableData.columns; let i = index">
+        <span (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+              *ngFor="let column of basicTableData.columns; let i = index">
           <mat-checkbox (change)="toggleColumnVisibility(column)" [checked]="isColumnVisible(column)"
                         class="menu-setting-option"></mat-checkbox>
           <span class="menu-setting-option-text">{{basicTableData.columnsTags[i] | translate}}</span>
@@ -29,8 +30,12 @@
         <tr *matHeaderRowDef="basicTableData.visibleColumns" mat-header-row></tr>
       </div>
       <div class="table-content">
-        <tr (click)="basicTableData.selection.toggle(row); setSelectedItem(row)" (mouseout)="row.hovered=false"
+        <tr (click)="basicTableData.selection.toggle(row); setSelectedItem(row)"
+            (keydown)="basicTableData.selection.toggle(row); setSelectedItem(row)"
+            (mouseout)="row.hovered=false"
             (mouseover)="row.hovered=true" *matRowDef="let row; columns: basicTableData.visibleColumns;"
+            (focus)="row.hovered=true"
+            (blur)="row.hovered=false"
             [class.disabled]="disableRow(row)"
             [ngClass]="{hovered: row.hovered, highlighted: basicTableData.selection.isSelected(row)}"
             mat-row></tr>

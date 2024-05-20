@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -221,6 +221,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         tournamentFightStatistics.setHansokuNumber(duelProvider.countScore(tournament, Score.HANSOKU));
         tournamentFightStatistics.setTsukiNumber(duelProvider.countScore(tournament, Score.TSUKI));
         tournamentFightStatistics.setIpponNumber(duelProvider.countScore(tournament, Score.IPPON));
+        tournamentFightStatistics.setFusenGachiNumber(duelProvider.countScore(tournament, Score.FUSEN_GACHI));
         final Duel firstDuel = duelProvider.getFirstDuel(tournament);
         final Duel lastDuel = duelProvider.getLastDuel(tournament);
         if (firstDuel != null) {

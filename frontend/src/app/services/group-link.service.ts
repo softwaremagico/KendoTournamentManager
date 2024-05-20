@@ -6,10 +6,8 @@ import {LoggerService} from "./logger.service";
 import {LoginService} from "./login.service";
 import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Observable} from "rxjs";
-import {Group} from "../models/group";
 import {catchError, tap} from "rxjs/operators";
 import {GroupLink} from "../models/group-link.model";
-import {Tournament} from "../models/tournament";
 
 @Injectable({
   providedIn: 'root'

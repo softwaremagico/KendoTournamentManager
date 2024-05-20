@@ -12,7 +12,7 @@ export function convertSeconds(seconds: number | undefined): string {
 }
 
 export function convertDate(pipe: DatePipe, date: Date | undefined): string | null {
-  if (date) {
+  if (date && new Date(date).getFullYear() > 2000) {
     return pipe.transform(date, 'short');
   }
   return "";

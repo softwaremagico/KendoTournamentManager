@@ -2,11 +2,13 @@
 (RbacActivity.EDIT_DUEL | rbac : this.rbacService.getActivities())">
   <mat-menu #menu="matMenu">
     <button (click)="updateScore(score)" *ngFor="let score of possibleScores()"
-            mat-menu-item>{{score.toLowerCase() | translate}}
+            mat-menu-item>{{Score.toCamel(score) | translate}}
     </button>
   </mat-menu>
-  <div (mouseout)="clearCoordinates($event)" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
-       class="point">
+  <div (mouseout)="clearCoordinates()" (mouseover)="updateCoordinates($event)" *ngIf="scoreRepresentation!==''"
+       (focus)="clearCoordinates();"
+       (blur)="clearCoordinates();"
+       class="point" [ngClass]="{'hidden-point': scoreRepresentation === 'F'}" >
     {{scoreRepresentation}}
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
          [ngClass]="{

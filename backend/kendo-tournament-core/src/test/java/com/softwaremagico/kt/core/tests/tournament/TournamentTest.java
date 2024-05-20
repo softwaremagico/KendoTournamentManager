@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.tournament;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -94,16 +94,7 @@ public class TournamentTest extends AbstractTestNGSpringContextTests {
     private ClubController clubController;
 
     @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
-
-    @Autowired
     private RankingProvider rankingProvider;
-
-    @Autowired
-    private FightStatisticsController fightStatisticsController;
 
     @Autowired
     private GroupController groupController;

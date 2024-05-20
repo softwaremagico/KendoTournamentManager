@@ -7,8 +7,7 @@ import {Tournament} from "../../../../models/tournament";
 
 @Component({
   selector: 'app-shiaijo',
-  templateUrl: './shiaijo.component.html',
-  styleUrls: ['./shiaijo.component.scss']
+  templateUrl: './shiaijo.component.html'
 })
 export class ShiaijoComponent {
 
@@ -82,7 +81,7 @@ export class ShiaijoComponent {
   }
 
   getLastGroupIndex(shiaijo: number): number {
-    const maxGroup: Group | undefined = this.getLastGroup();
+    const maxGroup: Group | undefined | null = this.getLastGroup();
     if (maxGroup) {
       return maxGroup.index;
     }
@@ -91,7 +90,8 @@ export class ShiaijoComponent {
 
   getLastGroup(): Group | undefined {
     if (this.groups && this.groups.length > 0) {
-      return this.groups.reduce((group1: Group, group2: Group): Group => group1.index > group2.index ? group1 : group2);
+      return this.groups.reduce((group1: Group, group2: Group): Group => group1.index > group2.index ? group1 : group2,
+        this.groups[this.groups.length - 1]);
     }
     return undefined;
   }

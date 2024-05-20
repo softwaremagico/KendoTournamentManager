@@ -48,6 +48,8 @@ export enum AchievementType {
 
   V_FOR_VENDETTA = 'V_FOR_VENDETTA',
 
+  SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER = 'SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER',
+
 }
 
 export namespace AchievementType {
