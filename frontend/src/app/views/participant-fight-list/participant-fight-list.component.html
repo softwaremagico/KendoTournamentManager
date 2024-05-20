@@ -21,7 +21,8 @@
               <fight *ngFor="let fight of filteredFights.get(tournament!)"
                      [fight]="fight" [over]="false" [selected]="false"
                      [showAvatars]="false" [swapColors]="false"
-                     [swapTeams]="false"></fight>
+                     [swapTeams]="false"
+                     [locked]="true"></fight>
 
               <div class="unties-list">
                 <untie-fight *ngFor="let duel of filteredUnties.get(tournament!)" [duel]="duel"
