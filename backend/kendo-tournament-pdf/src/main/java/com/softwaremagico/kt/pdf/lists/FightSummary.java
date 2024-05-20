@@ -126,7 +126,8 @@ public class FightSummary extends ParentList {
                 name = NameUtils.getLastnameNameIni(competitor);
             }
 
-            final PdfPCell team1NameCell = getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(), PdfTheme.SCORE_LIST_SIZE, Color.WHITE, 1, Element.ALIGN_LEFT);
+            final PdfPCell team1NameCell = getCell(name, FIGHT_BORDER, PdfTheme.getHandwrittenFont(),
+                    PdfTheme.SCORE_LIST_SIZE, Color.WHITE, 1, Element.ALIGN_LEFT);
             team1NameCell.setBorder(PdfPCell.BOTTOM);
             table.addCell(team1NameCell);
 
@@ -165,7 +166,8 @@ public class FightSummary extends ParentList {
     }
 
     public PdfPCell getTeamHeader(String text, int colspan) {
-        final PdfPCell cell = getCell(text, 0, colspan, Element.ALIGN_CENTER, Color.WHITE, PdfTheme.getTitleFont(), PdfTheme.FONT_SIZE + FONT_SMALL_EXTRA_SIZE, Font.BOLD);
+        final PdfPCell cell = getCell(text, 0, colspan, Element.ALIGN_CENTER, Color.WHITE,
+                PdfTheme.getTitleFont(), PdfTheme.FONT_SIZE + FONT_SMALL_EXTRA_SIZE, Font.BOLD);
         cell.setPaddingBottom(BOTTOM_PADDING);
         return cell;
     }

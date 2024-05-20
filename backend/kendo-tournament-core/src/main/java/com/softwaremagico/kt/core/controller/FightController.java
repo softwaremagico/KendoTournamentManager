@@ -29,11 +29,13 @@ import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
+import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
@@ -41,6 +43,7 @@ import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
@@ -64,6 +67,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final TournamentHandlerSelector tournamentHandlerSelector;
     private final Set<FightsAddedListener> fightsAddedListeners = new HashSet<>();
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+    private final ParticipantProvider participantProvider;
 
     private final GroupProvider groupProvider;
     private final TeamConverter teamConverter;
@@ -76,13 +80,15 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     @Autowired
     public FightController(FightProvider provider, FightConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector,
-                           TournamentExtraPropertyProvider tournamentExtraPropertyProvider, GroupProvider groupProvider,
+                           TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
+                           ParticipantProvider participantProvider, GroupProvider groupProvider,
                            TeamConverter teamConverter) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
+        this.participantProvider = participantProvider;
         this.groupProvider = groupProvider;
         this.teamConverter = teamConverter;
     }
@@ -227,6 +233,17 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
             }
         }
         return new ArrayList<>();
+    }
+
+    public List<FightDTO> getBy(Integer participantId) {
+        final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
+                new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
+
+        return getBy(participant);
+    }
+
+    public List<FightDTO> getBy(Participant participant) {
+        return convertAll(getProvider().getBy(Collections.singletonList(participant)));
     }
 
 }

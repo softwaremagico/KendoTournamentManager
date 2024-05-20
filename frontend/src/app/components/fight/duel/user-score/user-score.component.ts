@@ -25,6 +25,12 @@ export class UserScoreComponent {
   @Input()
   showAvatar: boolean = false;
 
+  @Input()
+  locked: boolean = false;
+
+  @Input()
+  highlightedParticipantId: number | undefined;
+
   isUntie(): boolean {
     return this.duel.type === DuelType.UNDRAW;
   }

@@ -38,12 +38,32 @@ export class DuelService {
       );
   }
 
+
   getUntiesFromTournament(tournamentId: number): Observable<Duel[]> {
     const url: string = `${this.baseUrl}/tournaments/` + tournamentId + '/unties';
     return this.http.get<Duel[]>(url)
       .pipe(
         tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from tournament '` + tournamentId + `'`)),
         catchError(this.messageService.handleError<Duel[]>(`getting unties from tournament '` + tournamentId + `'`))
+      );
+  }
+
+  getUntiesFromParticipant(participantId: number): Observable<Duel[]> {
+    const url: string = `${this.baseUrl}/participant/` + participantId + '/unties';
+    return this.http.get<Duel[]>(url)
+      .pipe(
+        tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from participant '` + participantId + `'`)),
+        catchError(this.messageService.handleError<Duel[]>(`getting unties from participant '` + participantId + `'`))
+      );
+  }
+
+
+  getDuelsFromParticipant(competitorId: number): Observable<Duel[]> {
+    const url: string = `${this.baseUrl}/competitor/` + competitorId;
+    return this.http.get<Duel[]>(url)
+      .pipe(
+        tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting duels from participant '` + competitorId + `'`)),
+        catchError(this.messageService.handleError<Duel[]>(`getting duels from participant '` + competitorId + `'`))
       );
   }
 }
