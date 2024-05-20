@@ -7,7 +7,9 @@
 
 .upper-menu {
   padding-left: 30px;
+  margin-top: 10px;
 }
+
 
 .fight-list {
   width: 99%;
@@ -19,12 +21,12 @@
 
 .fights-table {
   min-width: 600px;
-  display: grid;
 }
 
 .tournament-name {
-  text-align: left;
+  text-align: center;
   margin-left: 20px;
-  font-size: 20px;
+  margin-top: 50px;
+  font-size: 30px;
   font-weight: bold;
 }
