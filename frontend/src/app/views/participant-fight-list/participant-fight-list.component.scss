@@ -1,0 +1,32 @@
+.fight-container {
+  height: 80vh;
+  max-height: 80vh;
+  min-height: 50vh;
+  overflow-y: auto;
+}
+
+.upper-menu {
+  padding-left: 30px;
+  margin-top: 10px;
+}
+
+
+.fight-list {
+  width: 99%;
+}
+
+.unties-list {
+  width: 100%;
+}
+
+.fights-table {
+  min-width: 600px;
+}
+
+.tournament-name {
+  text-align: center;
+  margin-left: 20px;
+  margin-top: 50px;
+  font-size: 30px;
+  font-weight: bold;
+}

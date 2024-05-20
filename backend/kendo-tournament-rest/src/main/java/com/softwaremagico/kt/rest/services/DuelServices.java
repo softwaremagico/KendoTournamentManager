@@ -58,6 +58,18 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
         return getController().getUntiesFromGroup(groupId);
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all duels from competitor.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitor/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DuelDTO> getByCompetitor(@Parameter(description = "Id of the competitor.", required = true)
+                                         @PathVariable("competitorId")
+                                         Integer competitorId,
+                                         HttpServletRequest request) {
+        return getController().getBy(competitorId);
+    }
+
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,6 +77,16 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
                                                  Integer tournamentId,
                                                  HttpServletRequest request) {
         return getController().getUntiesFromTournament(tournamentId);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all untie duel where one participant is involved.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/participant/{participantId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<DuelDTO> getUntiesFromParticipant(@Parameter(description = "Id of the participant.", required = true)
+                                                  @PathVariable("participantId") Integer participantId,
+                                                  HttpServletRequest request) {
+        return getController().getUntiesFromParticipant(participantId);
     }
 
 
