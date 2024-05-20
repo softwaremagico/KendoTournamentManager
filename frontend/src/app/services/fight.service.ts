@@ -208,4 +208,14 @@ export class FightService {
         catchError(this.messageService.handleError<Fight>(`generating duels for a fight`))
       );
   }
+
+
+  getFromParticipant(competitorId: number): Observable<Fight[]> {
+    const url: string = `${this.baseUrl}/competitor/` + competitorId;
+    return this.http.get<Fight[]>(url)
+      .pipe(
+        tap((_fights: Fight[]) => this.loggerService.info(`getting fights from participant '` + competitorId + `'`)),
+        catchError(this.messageService.handleError<Fight[]>(`getting fights from participant '` + competitorId + `'`))
+      );
+  }
 }
