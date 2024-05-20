@@ -24,6 +24,9 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   over: boolean;
 
+  @Input()
+  locked: boolean;
+
   @Output()
   onSelectedDuel: EventEmitter<Duel> = new EventEmitter();
 
