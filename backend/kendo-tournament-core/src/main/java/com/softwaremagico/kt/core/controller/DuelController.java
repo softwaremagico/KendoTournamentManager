@@ -160,6 +160,13 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         return convertAll(getProvider().getUntiesFromTournament(tournamentId));
     }
 
+    public List<DuelDTO> getUntiesFromParticipant(Integer participantId) {
+        final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
+                new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
+
+        return convertAll(getProvider().getUntiesFromParticipant(participant));
+    }
+
     public long count(TournamentDTO tournament) {
         return getProvider().count(tournamentConverter.reverse(tournament));
     }
