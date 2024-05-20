@@ -24,6 +24,9 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   @Input()
   over: boolean;
 
+  @Input()
+  locked: boolean;
+
   @Output()
   onSelectedDuel: EventEmitter<Duel> = new EventEmitter();
 
@@ -31,6 +34,9 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
 
   @Input()
   swapColors: boolean;
+
+  @Input()
+  highlightedParticipantId: number | undefined;
 
   @Input()
   swapTeams: boolean;
@@ -73,7 +79,7 @@ export class FightComponent extends RbacBasedComponent implements OnInit {
   }
 
   isOver(duel: Duel): boolean {
-    return duel.finished;
+    return duel.finished && !this.locked;
   }
 
   protected readonly TournamentType = TournamentType;

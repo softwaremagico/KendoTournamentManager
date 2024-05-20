@@ -175,4 +175,8 @@ public class DuelProvider extends CrudProvider<Duel, Integer, DuelRepository> {
         return group.getUnties();
     }
 
+    public List<Duel> getUntiesFromParticipant(Participant participant) {
+        return getRepository().findUntiesByParticipantIn(Collections.singletonList(participant));
+    }
+
 }
