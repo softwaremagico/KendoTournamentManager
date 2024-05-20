@@ -1,5 +1,5 @@
 export class Colors {
-  public static defaultPalette: string[] = [
+  public static readonly defaultPalette: string[] = [
     "#001239",
     "#6f8bff",
     "#8097b3",

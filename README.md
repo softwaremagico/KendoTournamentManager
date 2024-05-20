@@ -8,7 +8,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-532h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-622h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -22,24 +22,34 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
-Kendo Tournament Manager v2 is the final tool for handling all your kendo tournament information in one single place.
-Designed for small to big size tournaments, it allows you to handle any kind of event that you can imagine for your
-kendo club. Including experience from several fighting structures that we had experienced in the last 15 years of use
-of the previous version of this software. The goal is to have enough flexibility to be at the service of your club, and
-not the other way around.
+Kendo Tournament Manager v2 is [the final tool](https://github.com/softwaremagico/KendoTournamentManager/wiki) for handling all your kendo tournament information in one single place.
+Designed for [small to big size tournaments](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition#types-of-tournament), it allows you to handle any kind of event that you can imagine for your
+kendo club.
+Including experience from several fighting structures that we had experienced in the last 15 years of use.
+The goal is to have enough flexibility to be at the service of your club, and not the other way around.
+
+<p align="center">
+    <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
+</p>
 
 This tool is a complete rebuild from the old
-tool Kendo Tournament Generator [[1]](https://sourceforge.net/projects/kendotournament/files/) [[2]](https://github.com/softwaremagico/KendoTournament) with the
+tool Kendo Tournament
+Generator [[1]](https://sourceforge.net/projects/kendotournament/files/) [[2]](https://github.com/softwaremagico/KendoTournament)
+with the
 effort of adapting it to more modern technologies. The new architecture allows the deployment of this tool as a web
 application -rather than a desktop application- allowing some advantages such as better compatibility between devices,
-as now can be used in any Android/iOS through a browser. Also improves the scoring synchronization between multiple
+as now can be used in any Android/iOS through a browser. It Also improves the scoring synchronization between multiple
 devices as now everything can be centralized into the cloud.
 
-If you are looking for a desktop application, please go to [Kendo Tournament Generator](https://github.com/softwaremagico/KendoTournament) that maybe suites better to your needs. But if you want some professional tool that is accessible online, this is the project you are looking for. 
+If you are looking for a desktop application, please go
+to [Kendo Tournament Generator](https://github.com/softwaremagico/KendoTournament) that maybe suites better to your
+needs.
+But if you want some professional tool that is accessible online, this is the project you are looking for.
 
 ## Installation
 
-For an extended explanation about the installation, please check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation)
+For an extended explanation about the installation, please check
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Installation). But you can have some ideas here:
 
 ### From a release version
 
@@ -48,8 +58,8 @@ one for the backend.
 
 #### Deploy the frontend
 
-For the frontend you can use any web server you are familiar to (Apache, Nginx, ...). Simply uncompress the
-file `kendo-tournament-frontend.zip` on the server as a standard web page.
+For the frontend, you can use any web server you are familiar with (Apache, Nginx, ...).
+Decompress the file `kendo-tournament-frontend.zip` on the server as a standard web page.
 
 #### Deploy the backend
 
@@ -71,7 +81,7 @@ install anyone you desire. If you want to use any other database engine, you mus
 on `/BOOT-INF/lib/` inside the backend JAR. After choosing your database server, you must configure
 the `application.properties` as described on this [Readme](./backend/README.md) to match your database properties.
 
-For example, to use it with a PostgresSQL server the settings will be:
+For example, to use it with a PostgresSQL server, the settings will be:
 
 ```
 spring.kendo.datasource.platform=postgresql
@@ -85,12 +95,13 @@ And search and download the
 connector [postgresql-X.X.X.jar](https://mvnrepository.com/artifact/org.postgresql/postgresql) and deploy it
 on `/BOOT-INF/lib/` folder inside the JAR file.
 
-If the backend is connected successfully to the database, it will generate all required database structure for you.
+If the backend is connected successfully to the database, it will generate all required database structures for you.
 
 ### From the source code
 
-Please, download the complete project from [here](https://github.com/softwaremagico/KendoTournamentManager). The project
-is divided in two parts `frontend` and `backend`. Each one must be run separately.
+Please download the complete project from [here](https://github.com/softwaremagico/KendoTournamentManager).
+The project is divided in two parts `frontend` and `backend`.
+Each one must be run separately.
 
 #### Frontend Component
 
@@ -105,8 +116,9 @@ changed for security reasons.
 
 ##### Database Storage
 
-Backend needs a database to persist all data. You can use easily any of your preferred database providers. Please,
-check [the documentation](./backend/README.md) about how to configure your preferred database engine.
+Backend needs a database to persist all data.
+You can use any of your preferred database providers.
+Please check [the documentation](./backend/README.md) about how to configure your preferred database engine.
 
 ### Using Docker
 
@@ -118,18 +130,21 @@ application and probably the easiest way if you feel comfortable using docker.
 
 ### Hosting
 
-The application has been tested in a Raspberry Pi 3 model B with 1GB of RAM, with a very good response for a small to
-medium size event. For a bigger events, please consider to hire some more specific hardware hosted on the cloud.
+The application has been tested in a Raspberry Pi 3 model B with 1GB of RAM, with a great response for a small to
+medium size event.
+For a bigger events, please consider acquiring some more specific hardware hosted in the cloud.
 
 ### Client Side
 
-As a designed as a web application, any device with a browser can act as a client. The UX is designed for desktop
-environment and tablets. Has a responsive design that fits well in almost all devices of the market. The use of mobile
-devices is not recommended due to the physical size of the screen.
+As it is designed as a web application, any device with a browser can act as a client.
+The UX is designed for desktop environment and tablets.
+Has a responsive design that fits well in almost all devices of the market.
+The use of mobile devices is not recommended due to the physical size of the screen.
 
 # Using the application
 
-You can check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/) for a more extended description of how this application can be used. 
+You can check the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/) for a more extended description
+of how this application can be used.
 
 ## Default credentials.
 
@@ -138,9 +153,11 @@ Remember to change the password or remove this account.
 
 # Contributing to Kendo Tournament Manager v2
 
-You can contribute to this project in different way: the most basic way to show your support is to star the project, or
-to raise issues. But as a programmer you can also include new features or fixing bugs. If you speak a different
-language, you can translate the application to your own language. Also, any way of improving the design is welcome.
+You can contribute to this project in a different ways:
+the most basic way to show your support is to star the project, or to raise issues.
+But as a programmer, you can also include new features or fix bugs.
+If you speak a different language, you can translate the application to your own language.
+Also, any way of improving the design is welcome.
 
 To contribute to the code of Kendo Tournament Manager v2, follow these steps:
 
@@ -150,12 +167,19 @@ To contribute to the code of Kendo Tournament Manager v2, follow these steps:
     Push to the original branch: git push origin <project_name>/<location>
     Create the pull request.
 
-Alternatively see the GitHub documentation
+Alternatively, see the GitHub documentation
 on [creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
 
 ## Translations
 
-If you are not a programmer, but still you want to have this software available in your language, you can easly contribute on the translations using [Weblate](https://weblate.org). With weblate you can contribute on improving the translations, fixing existing issues or adding new languages if desired. No programming skills are needed. Only the will to help. To start translating, please access [this link to get more information](https://hosted.weblate.org/projects/kendotournamentmanager/). 
+If you are not a programmer, but still you want to have this software available in your language,
+you can easily contribute to the translations using [Weblate](https://weblate.org).
+With weblate you can contribute to improving the translations,
+fixing existing issues or adding new languages if desired.
+No programming skills are needed.
+Only the will to help.
+To start translating, please
+access [this link to get more information](https://hosted.weblate.org/projects/kendotournamentmanager/).
 
 ### Contributors
 
@@ -165,10 +189,10 @@ If you are not a programmer, but still you want to have this software available 
 
 # Contact
 
-If you want to contact me you can reach me at  ![email address image](./documents/email-address.gif)
+If you want to contact me, you can reach me at  ![email address image](./documents/email-address.gif)
 
 # License
 
 This project uses the following
 license: [AGPL License v3.0](https://github.com/softwaremagico/KendoTournamentManager/blob/main/LICENSE). Please take a
-look on it before using this application. 
+look at it before using this application. 

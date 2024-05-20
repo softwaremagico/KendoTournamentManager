@@ -2,6 +2,7 @@
 <div class="table-container">
   <table class="team-ranking-table">
     <caption class="table-caption">{{'teamsRanking' | translate}}</caption>
+    <thead>
     <tr>
       <th class="team-ranking-header">{{'team' | translate}}</th>
       <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
@@ -10,6 +11,7 @@
       <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
       <th class="team-ranking-header">{{'histsWon' | translate}}</th>
     </tr>
+    </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
       <td [ngClass]="{'finished': fightsFinished,
           'winner': teamScore.sortingIndex===0 && fightsFinished,
@@ -29,12 +31,18 @@
   </table>
 </div>
 <div class="button-container" mat-dialog-actions>
-  <button (click)="downloadPDF()" mat-flat-button mat-raised-button>
+  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
+          (click)="downloadPDF()" mat-flat-button mat-raised-button>
     <mat-icon>file_download</mat-icon>
     {{'download' | translate}}
   </button>
+  <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
+          (click)="openStatistics()" mat-flat-button mat-raised-button>
+    <mat-icon>bar_chart</mat-icon>
+    {{'statistics' | translate}}
+  </button>
   <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
-  (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)" mat-flat-button mat-raised-button>
+  (RbacActivity.CREATE_UNDRAW_FIGHTS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
     {{'undraw' | translate}}
   </button>

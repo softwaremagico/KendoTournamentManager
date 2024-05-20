@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -134,11 +134,9 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
 
     @Override
     public TeamDTO update(TeamDTO teamDTO, String username) {
-        teamDTO.setUpdatedBy(username);
-        validate(teamDTO);
-        final Team dbTeam = super.getProvider().save(reverse(teamDTO));
-        dbTeam.setTournament(tournamentConverter.reverse(teamDTO.getTournament()));
-        return convert(dbTeam);
+        final TeamDTO dbTeam = super.update(teamDTO, username);
+        dbTeam.setTournament(teamDTO.getTournament());
+        return dbTeam;
     }
 
     public long count(TournamentDTO tournament) {

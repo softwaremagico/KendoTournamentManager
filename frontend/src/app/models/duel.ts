@@ -42,10 +42,10 @@ export class Duel extends Element {
     }
     target.competitor1Score = [];
     target.competitor2Score = [];
-    source.competitor1Score.forEach(score => target.competitor1Score.push(score));
-    source.competitor2Score.forEach(score => target.competitor2Score.push(score));
-    source.competitor1ScoreTime.forEach(time => target.competitor1ScoreTime.push(time));
-    source.competitor2ScoreTime.forEach(time => target.competitor2ScoreTime.push(time));
+    source.competitor1Score.forEach((score: Score) => target.competitor1Score.push(score));
+    source.competitor2Score.forEach((score: Score) => target.competitor2Score.push(score));
+    source.competitor1ScoreTime.forEach((time: number) => target.competitor1ScoreTime.push(time));
+    source.competitor2ScoreTime.forEach((time: number) => target.competitor2ScoreTime.push(time));
 
     target.competitor1FaultTime = source.competitor1FaultTime;
     target.competitor2FaultTime = source.competitor2FaultTime;
@@ -61,5 +61,29 @@ export class Duel extends Element {
     const instance: Duel = new Duel();
     this.copy(data, instance);
     return instance;
+  }
+
+  public static addHansoku(duel: Duel, competitor1: boolean): boolean {
+    if (competitor1) {
+      if (duel.competitor1Score[0] == undefined) {
+        duel.competitor1Score[0] = Score.HANSOKU;
+        duel.competitor1ScoreTime[0] = duel.duration!;
+      } else if (duel.competitor1Score[1] == undefined) {
+        duel.competitor1Score[1] = Score.HANSOKU;
+        duel.competitor1ScoreTime[1] = duel.duration!;
+        return false;
+      }
+    } else {
+      if (duel.competitor2Score[0] == undefined) {
+        duel.competitor2Score[0] = Score.HANSOKU;
+        duel.competitor2ScoreTime[0] = duel.duration!;
+      } else if (duel.competitor2Score[1] == undefined) {
+        duel.competitor2Score[1] = Score.HANSOKU;
+        duel.competitor2ScoreTime[1] = duel.duration!;
+      } else {
+        return false;
+      }
+    }
+    return true;
   }
 }

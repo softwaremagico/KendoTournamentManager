@@ -22,8 +22,7 @@
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubEmail" matInput
-             placeholder="{{'clubEmail' | translate}}"
-             required>
+             placeholder="{{'clubEmail' | translate}}">
     </mat-form-field>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_CLUB)" formControlName="clubPhone" matInput
@@ -37,7 +36,7 @@
       <span [innerHTML]="'clubDeleteQuestion' | translate : {name: club.name}"></span>
     </ng-template>
     <div class="button-container" mat-dialog-actions>
-      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.activities)" [disabled]="registerForm.invalid"
+      <button *ngIf="(RbacActivity.EDIT_USER | rbac : this.rbacService.getActivities())" [disabled]="registerForm.invalid"
               color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">

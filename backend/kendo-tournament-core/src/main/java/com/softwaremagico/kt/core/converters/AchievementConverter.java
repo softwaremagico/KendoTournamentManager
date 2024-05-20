@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,13 +37,16 @@ import org.springframework.stereotype.Component;
 public class AchievementConverter extends ElementConverter<Achievement, AchievementDTO, AchievementConverterRequest> {
     private final TournamentConverter tournamentConverter;
     private final TournamentRepository tournamentRepository;
+    private final ParticipantReducedConverter participantReducedConverter;
     private final ParticipantConverter participantConverter;
     private final ParticipantProvider participantProvider;
 
     public AchievementConverter(TournamentConverter tournamentConverter, TournamentRepository tournamentRepository,
-                                ParticipantConverter participantConverter, ParticipantProvider participantProvider) {
+                                ParticipantReducedConverter participantReducedConverter, ParticipantConverter participantConverter,
+                                ParticipantProvider participantProvider) {
         this.tournamentConverter = tournamentConverter;
         this.tournamentRepository = tournamentRepository;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.participantProvider = participantProvider;
     }
@@ -61,10 +64,10 @@ public class AchievementConverter extends ElementConverter<Achievement, Achievem
                     new TournamentConverterRequest(tournamentRepository.findById(from.getEntity().getTournament().getId()).orElse(null))));
         }
         try {
-            achievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(from.getEntity().getParticipant())));
         } catch (LazyInitializationException | FatalBeanException e) {
-            achievementDTO.setParticipant(participantConverter.convert(
+            achievementDTO.setParticipant(participantReducedConverter.convert(
                     new ParticipantConverterRequest(participantProvider.get(from.getEntity().getParticipant().getId()).orElse(null))));
         }
         return achievementDTO;

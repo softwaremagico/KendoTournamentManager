@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -87,7 +87,7 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         return fight;
     }
 
-    public List<Fight> get(Collection<Participant> participants) {
+    public List<Fight> getBy(Collection<Participant> participants) {
         return getRepository().findByParticipantIn(participants);
     }
 
@@ -143,6 +143,14 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
             groupRepository.saveAll(groups);
             super.delete(fights);
         }
+    }
+
+    public Optional<Fight> findByDuels(Duel duel) {
+        return getRepository().findByDuels(duel);
+    }
+
+    public List<Fight> findByTournamentAndShiaijo(Tournament tournament, int shiaijo) {
+        return getRepository().findByTournamentAndShiaijo(tournament, shiaijo);
     }
 
 }

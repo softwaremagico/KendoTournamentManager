@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,14 +35,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
-
-    List<Participant> findByIdIn(List<Integer> ids);
-
-    List<Participant> findByOrderByLastnameAsc();
 
     @Query("SELECT r.participant FROM Role r WHERE r.tournament = :tournament")
     List<Participant> findByTournament(@Param("tournament") Tournament tournament);
@@ -83,4 +80,10 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
                                                                @Param("olderTournaments") Collection<Tournament> olderTournaments);
 
     List<Participant> findByClub(Club club);
+
+    long countByTemporalToken(String temporalToken);
+
+    Optional<Participant> findByTemporalToken(String temporalToken);
+
+    Optional<Participant> findByToken(String token);
 }
