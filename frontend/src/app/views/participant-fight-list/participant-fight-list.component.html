@@ -13,19 +13,21 @@
       </div>
       <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
       <div class="fight-container">
-        <div *ngFor="let tournament of tournaments" class="fight-list">
-          <h3 *ngIf="filteredFights.get(tournament)?.length! > 0"
-              class="group-name">{{ tournament.name }}</h3>
-          <div *ngIf="filteredFights.get(tournament)?.length! > 0">
-            <fight *ngFor="let fight of filteredFights.get(tournament!)"
-                   [fight]="fight" [over]="false" [selected]="false"
-                   [showAvatars]="false" [swapColors]="false"
-                   [swapTeams]="false"></fight>
+        <div *ngIf="tournaments" class="fight-container">
+          <div *ngFor="let tournament of tournaments" class="fight-list">
+            <h3 *ngIf="filteredFights.get(tournament)?.length! > 0"
+                class="tournament-name">{{ tournament.name }}</h3>
+            <div *ngIf="filteredFights.get(tournament)?.length! > 0">
+              <fight *ngFor="let fight of filteredFights.get(tournament!)"
+                     [fight]="fight" [over]="false" [selected]="false"
+                     [showAvatars]="false" [swapColors]="false"
+                     [swapTeams]="false"></fight>
 
-            <div class="unties-list">
-              <untie-fight *ngFor="let duel of filteredUnties.get(tournament!)" [duel]="duel"
-                           [selected]="false" [swapColors]="false"
-                           [swapTeams]="false"></untie-fight>
+              <div class="unties-list">
+                <untie-fight *ngFor="let duel of filteredUnties.get(tournament!)" [duel]="duel"
+                             [selected]="false" [swapColors]="false"
+                             [swapTeams]="false"></untie-fight>
+              </div>
             </div>
           </div>
         </div>
