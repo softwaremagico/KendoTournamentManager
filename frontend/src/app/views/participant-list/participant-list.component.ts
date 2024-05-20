@@ -4,7 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTable, MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {Participant} from "../../models/participant";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {ParticipantService} from "../../services/participant.service";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -18,6 +18,7 @@ import {RbacBasedComponent} from "../../components/RbacBasedComponent";
 import {Router} from "@angular/router";
 import {UserSessionService} from "../../services/user-session.service";
 import {CompetitorsRankingComponent} from "../../components/competitors-ranking/competitors-ranking.component";
+import {ParticipantQrCodeComponent} from "../../components/participant-qr-code/participant-qr-code.component";
 
 @Component({
   selector: 'app-participant-list',
@@ -45,20 +46,25 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   ngOnInit(): void {
-    this.clubService.getAll().subscribe(clubs => {
-      this.clubs = clubs
+    this.clubService.getAll().subscribe((_clubs: Club[]): void => {
+      if (_clubs) {
+        _clubs.sort(function (a: Club, b: Club) {
+          return a.name.localeCompare(b.name);
+        });
+        this.clubs = _clubs
+      }
     });
     this.showAllElements();
   }
 
   showAllElements(): void {
-    this.participantService.getAll().subscribe(participants => {
-      this.basicTableData.dataSource.data = participants.map(participant => Participant.clone(participant));
+    this.participantService.getAll().subscribe((participants: Participant[]): void => {
+      this.basicTableData.dataSource.data = participants.map((participant: Participant) => Participant.clone(participant));
     });
   }
 
   addElement(): void {
-    const participant = new Participant();
+    const participant: Participant = new Participant();
     this.openDialog(this.translateService.instant('participantAdd'), Action.Add, participant);
   }
 
@@ -94,11 +100,11 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
-      } else if (result.action == Action.Add) {
+      } else if (result?.action == Action.Add) {
         this.addRowData(result.data);
-      } else if (result.action == Action.Update) {
+      } else if (result?.action == Action.Update) {
         this.updateRowData(result.data);
-      } else if (result.action == Action.Delete) {
+      } else if (result?.action == Action.Delete) {
         this.deleteRowData(result.data);
       }
     });
@@ -112,7 +118,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
         this.basicTableData.dataSource._updateChangeSubscription();
       }
       this.basicTableData.selectItem(_participant);
-      this.basicTableData.selectedElement = _participant;
+      this.setSelectedItem(_participant);
       this.messageService.infoMessage('infoParticipantStored');
     });
   }
@@ -126,7 +132,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
           this.basicTableData.dataSource._updateChangeSubscription();
         }
         this.basicTableData.selectedElement = _participant;
-      this.basicTableData.selectItem(_participant);
+        this.basicTableData.selectItem(_participant);
       }
     );
   }
@@ -158,4 +164,14 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     });
   }
 
+  showQrCode(): void {
+    if (this.basicTableData.selectedElement) {
+      const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
+        data: {
+          participantId: this.basicTableData.selectedElement?.id,
+          port: window.location.port
+        }
+      });
+    }
+  }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +30,11 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class CacheController {
 
-    @Autowired(required = false)
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
+
+    public CacheController(@Autowired(required = false) CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
 
     public void deleteAllCache() {

@@ -1,0 +1,317 @@
+update achievements set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.achievements
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update achievements set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000)  where updated_at like '1%';
+
+alter table public.achievements
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.achievements
+    add constraint achievements_achievement_grade_check
+        check ((achievement_grade)::text = ANY
+               ((ARRAY ['NORMAL'::character varying, 'BRONZE'::character varying, 'SILVER'::character varying, 'GOLD'::character varying])::text[]));
+
+alter table public.achievements
+    add constraint achievements_achievement_type_check
+        check ((achievement_type)::text = ANY
+               ((ARRAY ['BILLY_THE_KID'::character varying, 'LETHAL_WEAPON'::character varying, 'TERMINATOR'::character varying, 'JUGGERNAUT'::character varying, 'THE_KING'::character varying, 'LOOKS_GOOD_FROM_FAR_AWAY_BUT'::character varying, 'I_LOVE_THE_FLAGS'::character varying, 'THE_TOWER'::character varying, 'THE_CASTLE'::character varying, 'ENTRENCHED'::character varying, 'A_LITTLE_OF_EVERYTHING'::character varying, 'BONE_BREAKER'::character varying, 'FLEXIBLE_AS_BAMBOO'::character varying, 'SWEATY_TENUGUI'::character varying, 'THE_WINNER'::character varying, 'THE_WINNER_TEAM'::character varying, 'WOODCUTTER'::character varying, 'THE_NEVER_ENDING_STORY'::character varying, 'LOVE_SHARING'::character varying, 'MASTER_THE_LOOP'::character varying, 'TIS_BUT_A_SCRATCH'::character varying, 'FIRST_BLOOD'::character varying, 'DARUMA'::character varying, 'STORMTROOPER_SYNDROME'::character varying, 'V_FOR_VENDETTA'::character varying, 'SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER'::character varying])::text[]));
+
+alter table public.authenticated_users
+    add username_hash varchar(150);
+
+update clubs set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.clubs
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update clubs set updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.clubs
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.competitor_1_score
+    alter column score_index set not null;
+
+alter table public.competitor_1_score
+    alter column score_index drop default;
+
+alter table public.competitor_1_score
+    add primary key (duel_id, score_index);
+
+alter table public.competitor_1_score
+    add constraint competitor_1_score_competitor1score_check
+        check ((competitor1score)::text = ANY
+               ((ARRAY ['MEN'::character varying, 'KOTE'::character varying, 'DO'::character varying, 'TSUKI'::character varying, 'IPPON'::character varying, 'HANSOKU'::character varying, 'EMPTY'::character varying, 'FAULT'::character varying, 'DRAW'::character varying])::text[]));
+
+alter table public.competitor_1_score_time
+    alter column score_index set not null;
+
+alter table public.competitor_1_score_time
+    alter column score_index drop default;
+
+alter table public.competitor_1_score_time
+    add primary key (duel_id, score_index);
+
+alter table public.competitor_2_score
+    alter column score_index set not null;
+
+alter table public.competitor_2_score
+    alter column score_index drop default;
+
+alter table public.competitor_2_score
+    add primary key (duel_id, score_index);
+
+alter table public.competitor_2_score
+    add constraint competitor_2_score_competitor2score_check
+        check ((competitor2score)::text = ANY
+               ((ARRAY ['MEN'::character varying, 'KOTE'::character varying, 'DO'::character varying, 'TSUKI'::character varying, 'IPPON'::character varying, 'HANSOKU'::character varying, 'EMPTY'::character varying, 'FAULT'::character varying, 'DRAW'::character varying])::text[]));
+
+alter table public.competitor_2_score_time
+    alter column score_index set not null;
+
+alter table public.competitor_2_score_time
+    alter column score_index drop default;
+
+alter table public.competitor_2_score_time
+    add primary key (duel_id, score_index);
+
+update duels set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.duels
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update duels set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.duels
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.duels
+    alter column tournament set not null;
+
+alter table public.duels
+    alter column finished type boolean using finished::boolean;
+
+update duels set  finished_at = to_timestamp(CAST(finished_at as bigint)/1000) where finished_at like '1%';
+
+alter table public.duels
+    alter column finished_at type timestamp(6) using finished_at::timestamp(6);
+
+update duels set  started_at = to_timestamp(CAST(started_at as bigint)/1000) where started_at like '1%';
+
+alter table public.duels
+    alter column started_at type timestamp(6) using started_at::timestamp(6);
+
+alter table public.duels
+    alter column competitor_1_fault type boolean using competitor_1_fault::boolean;
+
+alter table public.duels
+    alter column competitor_2_fault type boolean using competitor_2_fault::boolean;
+
+alter table public.duels
+    drop constraint "FKmwckcai6s413imdp4dxgkfs76";
+
+alter table public.duels
+    add constraint duels_type_check
+        check ((type)::text = ANY ((ARRAY ['STANDARD'::character varying, 'UNDRAW'::character varying])::text[]));
+
+update fights set  created_at = to_timestamp(CAST(created_at as bigint)/1000) where created_at like '1%';
+
+alter table public.fights
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update fights set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000)  where updated_at like '1%';
+
+alter table public.fights
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.fights
+    alter column fight_level type integer using fight_level::integer;
+
+alter table public.fights
+    alter column shiaijo type integer using shiaijo::integer;
+
+update participant_image set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.participant_image
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update participant_image set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.participant_image
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.participant_image
+    add constraint participant_image_format_check
+        check ((format)::text = ANY ((ARRAY ['RAW'::character varying, 'BASE64'::character varying])::text[]));
+
+update participants set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.participants
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update participants set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000)  where updated_at like '1%';
+
+alter table public.participants
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+update roles set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.roles
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update roles set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000)    where updated_at like '1%';
+
+alter table public.roles
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.roles
+    alter column accreditation_printed type boolean using accreditation_printed::boolean;
+
+alter table public.roles
+    alter column accreditation_printed drop default;
+
+alter table public.roles
+    alter column diploma_printed type boolean using diploma_printed::boolean;
+
+alter table public.roles
+    alter column diploma_printed drop default;
+
+alter table public.roles
+    add constraint roles_role_type_check
+        check ((role_type)::text = ANY
+               ((ARRAY ['REFEREE'::character varying, 'COMPETITOR'::character varying, 'ORGANIZER'::character varying, 'VOLUNTEER'::character varying, 'PRESS'::character varying])::text[]));
+
+update teams set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.teams
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update teams set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000)  where updated_at like '1%';
+
+alter table public.teams
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+update tournament_extra_properties set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.tournament_extra_properties
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update tournament_extra_properties set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.tournament_extra_properties
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.tournament_extra_properties
+    drop constraint uklemfypf3pxt3tlfhqvh0s5y3m;
+
+alter table public.tournament_extra_properties
+    add constraint tournament_extra_properties_property_key_check
+        check ((property_key)::text = ANY
+               ((ARRAY ['MAXIMIZE_FIGHTS'::character varying, 'AVOID_DUPLICATES'::character varying, 'KING_INDEX'::character varying, 'KING_DRAW_RESOLUTION'::character varying, 'DIPLOMA_NAME_HEIGHT'::character varying, 'NUMBER_OF_WINNERS'::character varying, 'LEAGUE_FIGHTS_ORDER_GENERATION'::character varying])::text[]));
+
+update tournament_groups set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.tournament_groups
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update tournament_groups set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.tournament_groups
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.tournament_groups
+    alter column group_index type integer using group_index::integer;
+
+alter table public.tournament_groups
+    alter column group_level type integer using group_level::integer;
+
+alter table public.tournament_groups
+    alter column number_of_winners type integer using number_of_winners::integer;
+
+alter table public.tournament_groups
+    alter column shiaijo type integer using shiaijo::integer;
+
+update tournament_groups_links set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.tournament_groups_links
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update tournament_groups_links set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.tournament_groups_links
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.tournament_groups_links
+    alter column winner_index type integer using winner_index::integer;
+
+update tournament_image set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.tournament_image
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update tournament_image set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.tournament_image
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.tournament_image
+    drop column imagetype;
+
+alter table public.tournament_image
+    add constraint tournament_image_image_format_check
+        check ((image_format)::text = ANY ((ARRAY ['PNG'::character varying, 'JPG'::character varying])::text[]));
+
+alter table public.tournament_image
+    add constraint tournament_image_image_type_check
+        check ((image_type)::text = ANY
+               ((ARRAY ['PHOTO'::character varying, 'BANNER'::character varying, 'DIPLOMA'::character varying, 'ACCREDITATION'::character varying])::text[]));
+
+update tournament_scores set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.tournament_scores
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update tournament_scores set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.tournament_scores
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.tournament_scores
+    add constraint tournament_scores_score_type_check
+        check ((score_type)::text = ANY
+               ((ARRAY ['CLASSIC'::character varying, 'WIN_OVER_DRAWS'::character varying, 'EUROPEAN'::character varying, 'CUSTOM'::character varying, 'INTERNATIONAL'::character varying])::text[]));
+
+update tournaments set  created_at = to_timestamp(CAST(created_at as bigint)/1000)   where created_at like '1%';
+
+alter table public.tournaments
+    alter column created_at type timestamp(6) using created_at::timestamp(6);
+
+update tournaments set  updated_at = to_timestamp(CAST(updated_at as bigint)/1000) where updated_at like '1%';
+
+alter table public.tournaments
+    alter column updated_at type timestamp(6) using updated_at::timestamp(6);
+
+alter table public.tournaments
+    drop column maximize_fights;
+
+update tournaments set  locked = true;
+
+alter table public.tournaments
+    alter column locked drop default,
+    alter column locked type boolean using locked::boolean,
+    alter column locked set default FALSE;
+
+alter table public.tournaments
+    alter column locked drop default;
+
+alter table public.tournaments
+    add constraint uk_3c4g15hl6muofjsp2i43jlwls
+        unique (tournament_score);
+
+alter table public.tournaments
+    add constraint tournaments_tournament_type_check
+        check ((tournament_type)::text = ANY
+               ((ARRAY ['CHAMPIONSHIP'::character varying, 'TREE'::character varying, 'LEAGUE'::character varying, 'LOOP'::character varying, 'CUSTOM_CHAMPIONSHIP'::character varying, 'KING_OF_THE_MOUNTAIN'::character varying, 'CUSTOMIZED'::character varying])::text[]));
+

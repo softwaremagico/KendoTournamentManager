@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.providers;
 
 
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
+import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Duel;
@@ -215,19 +216,24 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
     }
 
     public Group setTeams(Integer groupId, List<Team> teams, String username) {
+        if (teams.isEmpty()) {
+            throw new TeamNotFoundException(this.getClass(), "No teams found!");
+        }
+
         Group group = get(groupId).orElseThrow(() -> new NotFoundException(getClass(), "Group with id '" + groupId + "' not found.",
                 ExceptionType.INFO));
 
         final List<Fight> fights = new ArrayList<>(group.getFights());
         group.getFights().clear();
-        fightRepository.deleteAll(fights);
 
         final List<Duel> unties = new ArrayList<>(group.getUnties());
         group.getUnties().clear();
-        duelRepository.deleteAll(unties);
 
         group.getTeams().clear();
         group = save(group);
+        //Unties are unlinked from groups. Can be removed.
+        duelRepository.deleteAll(unties);
+        fightRepository.deleteAll(fights);
         group.setTeams(teams);
         group.setUpdatedBy(username);
         return save(group);

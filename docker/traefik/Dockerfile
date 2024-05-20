@@ -1,9 +1,10 @@
 FROM traefik:latest
 
 ARG email
+ARG timezone
 
 #Set timezone.
-ENV TZ=Europe/Madrid
+ENV TZ=${timezone}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 #Prepare folders structure

@@ -96,6 +96,8 @@ obtained from the value obtained on the previous step:
   - "traefik.http.middlewares.auth.basicauth.users=admin:<<put here your hashed password>>"
 ```
 
+Regenerate the docker container with a `docker-compose build --no-cache kendo-tournament-rproxy && docker-compose up -d kendo-tournament-rproxy` and the new password will be used. 
+
 ## Disable the REVERSE PROXY
 
 If you have your custom reverse proxy that is shared between other applications, maybe you need to disable the provided

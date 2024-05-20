@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class ParticipantFightStatisticsProvider extends CrudProvider<ParticipantFightStatistics, Integer, ParticipantFightStatisticsRepository> {
@@ -48,12 +47,16 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
     public ParticipantFightStatistics get(Participant participant) {
         final ParticipantFightStatistics participantFightStatistics = new ParticipantFightStatistics();
         final List<Duel> duels = duelProvider.get(participant);
-        long totalDuration = 0L;
-        long totalDuelsWithDuration = 0L;
+        long totalDuelsDuration = 0;
+        final long participantDurationAverage = duelProvider.getDurationAverage(participant);
+        long totalDuelWonsWithDuration = 0L;
+        long totalDuelLostsWithDuration = 0L;
         long quickestHit = Integer.MAX_VALUE;
         long quickestReceivedHit = Integer.MAX_VALUE;
         long wonDuels = 0L;
+        long wonDuelsWithDuration = 0L;
         long lostDuels = 0L;
+        long lostDuelsWithDuration = 0L;
         long drawDuels = 0L;
         for (final Duel duel : duels) {
             final int winner = duel.getWinner();
@@ -81,6 +84,9 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 } else {
                     lostDuels++;
                 }
+                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                    totalDuelsDuration += duel.getDuration();
+                }
             } else if (Objects.equals(duel.getCompetitor2(), participant)) {
                 populateScores(participantFightStatistics, duel.getCompetitor2Score());
                 populateReceivedScores(participantFightStatistics, duel.getCompetitor1Score());
@@ -105,14 +111,38 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 } else {
                     lostDuels++;
                 }
+                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                    totalDuelsDuration += duel.getDuration();
+                }
             }
-            totalDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? duel.getDuration() : 0;
-            totalDuelsWithDuration += duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION ? 1 : 0;
+
+            if (Objects.equals(duel.getCompetitorWinner(), participant)) {
+                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                    totalDuelWonsWithDuration += duel.getDuration();
+                    wonDuelsWithDuration++;
+                }
+            }
+            if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)) {
+                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                    totalDuelLostsWithDuration += duel.getDuration();
+                    lostDuelsWithDuration++;
+                }
+            }
         }
-        if (totalDuelsWithDuration > 0) {
-            participantFightStatistics.setAverageTime(totalDuration / totalDuelsWithDuration);
+        if (participantDurationAverage > 0) {
+            participantFightStatistics.setAverageTime(participantDurationAverage);
         } else {
             participantFightStatistics.setAverageTime(0L);
+        }
+        if (totalDuelWonsWithDuration > 0) {
+            participantFightStatistics.setAverageWinTime(totalDuelWonsWithDuration / wonDuelsWithDuration);
+        } else {
+            participantFightStatistics.setAverageWinTime(0L);
+        }
+        if (totalDuelLostsWithDuration > 0) {
+            participantFightStatistics.setAverageLostTime(totalDuelLostsWithDuration / lostDuelsWithDuration);
+        } else {
+            participantFightStatistics.setAverageLostTime(0L);
         }
         if (quickestHit < Integer.MAX_VALUE) {
             participantFightStatistics.setQuickestHit(quickestHit);
@@ -120,7 +150,7 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         if (quickestReceivedHit < Integer.MAX_VALUE) {
             participantFightStatistics.setQuickestReceivedHit(quickestReceivedHit);
         }
-        participantFightStatistics.setTotalDuelsTime(totalDuration);
+        participantFightStatistics.setTotalDuelsTime(totalDuelsDuration);
         participantFightStatistics.setDuelsNumber((long) duels.size());
         participantFightStatistics.setWonDuels(wonDuels);
         participantFightStatistics.setDrawDuels(drawDuels);
@@ -130,7 +160,7 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
 
     private void populateScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
         //Remove null values
-        scores = scores.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
+        scores = scores.parallelStream().filter(Objects::nonNull).toList();
         for (final Score score : scores) {
             switch (score) {
                 case MEN -> participantFightStatistics.setMenNumber(participantFightStatistics.getMenNumber() + 1);
@@ -142,6 +172,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                         participantFightStatistics.setHansokuNumber(participantFightStatistics.getHansokuNumber() + 1);
                 case IPPON ->
                         participantFightStatistics.setIpponNumber(participantFightStatistics.getIpponNumber() + 1);
+                case FUSEN_GACHI ->
+                        participantFightStatistics.setFusenGachiNumber(participantFightStatistics.getFusenGachiNumber() + 1);
                 default -> {
                 }
             }
@@ -150,7 +182,7 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
 
     private void populateReceivedScores(ParticipantFightStatistics participantFightStatistics, List<Score> scores) {
         //Remove null values
-        scores = scores.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
+        scores = scores.parallelStream().filter(Objects::nonNull).toList();
         for (final Score score : scores) {
             switch (score) {
                 case MEN ->
@@ -165,6 +197,8 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                         participantFightStatistics.setReceivedHansokuNumber(participantFightStatistics.getReceivedHansokuNumber() + 1);
                 case IPPON ->
                         participantFightStatistics.setReceivedIpponNumber(participantFightStatistics.getReceivedIpponNumber() + 1);
+                case FUSEN_GACHI ->
+                        participantFightStatistics.setReceivedFusenGachiNumber(participantFightStatistics.getReceivedFusenGachiNumber() + 1);
                 default -> {
                 }
             }

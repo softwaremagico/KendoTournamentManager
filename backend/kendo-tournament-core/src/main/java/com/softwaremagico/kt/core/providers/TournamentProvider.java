@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,6 +32,7 @@ import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.entities.TournamentImage;
+import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
@@ -68,14 +69,15 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     private final TeamRepository teamRepository;
     private final RoleRepository roleRepository;
     private final TournamentHandlerSelector tournamentHandlerSelector;
-
     private final TournamentImageRepository tournamentImageRepository;
+
+    private final AchievementRepository achievementRepository;
 
     @Autowired
     public TournamentProvider(TournamentRepository tournamentRepository, TournamentExtraPropertyRepository tournamentExtraPropertyRepository,
                               GroupRepository groupRepository, FightRepository fightRepository, DuelRepository duelRepository,
                               TeamRepository teamRepository, RoleRepository roleRepository, TournamentHandlerSelector tournamentHandlerSelector,
-                              TournamentImageRepository tournamentImageRepository) {
+                              TournamentImageRepository tournamentImageRepository, AchievementRepository achievementRepository) {
         super(tournamentRepository);
         this.tournamentExtraPropertyRepository = tournamentExtraPropertyRepository;
         this.groupRepository = groupRepository;
@@ -85,6 +87,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         this.roleRepository = roleRepository;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
         this.tournamentImageRepository = tournamentImageRepository;
+        this.achievementRepository = achievementRepository;
     }
 
     @Transactional
@@ -109,7 +112,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
     }
 
     private void setDefaultProperties(Tournament tournament, String username) {
-        final List<TournamentExtraProperty> properties = tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(username);
+        final List<TournamentExtraProperty> properties = tournamentExtraPropertyRepository.findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(username);
         properties.removeIf(tournamentExtraProperty -> Objects.equals(tournamentExtraProperty.getTournament().getId(), tournament.getId()));
         final List<TournamentExtraProperty> newProperties = new ArrayList<>();
         properties.forEach(tournamentExtraProperty -> {
@@ -132,6 +135,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             duelRepository.deleteByTournament(tournament);
             teamRepository.deleteByTournament(tournament);
             roleRepository.deleteByTournament(tournament);
+            achievementRepository.deleteByTournament(tournament);
             getRepository().delete(tournament);
         }
     }
@@ -280,5 +284,14 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         group.setTournament(tournament);
         groupRepository.save(group);
         return tournament;
+    }
+
+    public Tournament findLastByUnlocked() {
+        final List<Tournament> tournaments = getRepository().findByLocked(false);
+        if (!tournaments.isEmpty()) {
+            tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
+            return tournaments.get(0);
+        }
+        return null;
     }
 }

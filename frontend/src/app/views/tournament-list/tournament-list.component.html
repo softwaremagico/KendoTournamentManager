@@ -77,7 +77,7 @@
       </button>
       <button (click)="showQrCode()"
               *ngIf="(RbacActivity.SEE_QR_CODE | rbac : this.rbacService.getActivities())"
-              [disabled]="!basicTableData.selectedElement"
+              [disabled]="!basicTableData.selectedElement || basicTableData.selectedElement!.locked"
               [matTooltipShowDelay]="500"
               color="primary" mat-button
               matTooltip="{{'qrCodeHint' | translate}}">

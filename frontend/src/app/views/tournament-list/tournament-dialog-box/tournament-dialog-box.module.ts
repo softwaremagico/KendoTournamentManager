@@ -12,6 +12,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 
 @NgModule({
@@ -19,21 +20,22 @@ import {MatSpinnerOverlayModule} from "../../../components/mat-spinner-overlay/m
   exports: [
     TournamentDialogBoxComponent
   ],
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    TranslateModule,
-    MatSelectModule,
-    FormsModule,
-    MatTooltipModule,
-    RbacModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatInputModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatSpinnerOverlayModule
-  ]
+    imports: [
+        CommonModule,
+        MatFormFieldModule,
+        TranslateModule,
+        MatSelectModule,
+        FormsModule,
+        MatTooltipModule,
+        RbacModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatInputModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatSpinnerOverlayModule,
+        MatSlideToggleModule
+    ]
 })
 export class TournamentDialogBoxModule {
 }

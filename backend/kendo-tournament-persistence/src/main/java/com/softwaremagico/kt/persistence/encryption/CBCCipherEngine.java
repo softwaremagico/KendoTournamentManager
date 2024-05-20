@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,8 +38,9 @@ import java.util.Base64;
 import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
 
 /**
- * AES/CBC/PKCS5Padding implementation for encrypt and decrypt.
- * Is the only one fast enough for database access. Better than nothing.
+ * AES/CBC/PKCS5Padding implementation for encrypting and decrypt.
+ * Is the only one fast enough for database access?
+ * Better than nothing.
  */
 @SuppressWarnings("squid:S5542")
 public class CBCCipherEngine implements ICipherEngine {
@@ -48,9 +49,11 @@ public class CBCCipherEngine implements ICipherEngine {
     private static final String SECRET_KEY_ALGORITHM = "AES";
     private static final String SECRET_MESSAGE_DIGEST_ALGORITHM = "SHA-256";
     private static final int KEY_SIZE = 16;
+    private static final int PADDING_INPUT_BYTES = 3;
+    private static final int PADDING_OUTPUT_CHARS = 4;
+    private static final int STORED_KEY_SIZE = ((PADDING_OUTPUT_CHARS * KEY_SIZE / PADDING_INPUT_BYTES) + PADDING_INPUT_BYTES) & ~PADDING_INPUT_BYTES;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private Cipher cipher;
-    private IvParameterSpec ivSpec;
     private SecretKeySpec keySpec;
 
     @Override
@@ -59,13 +62,18 @@ public class CBCCipherEngine implements ICipherEngine {
     }
 
     @Override
-    public String encrypt(String input, String password) throws InvalidEncryptionException {
+    public synchronized String encrypt(String input, String password) throws InvalidEncryptionException {
         try {
-            getCipher(password).init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+            final Cipher encryptCipher = getCipher(password);
+            final byte[] iv = new byte[encryptCipher.getBlockSize()];
+            SECURE_RANDOM.nextBytes(iv);
+
+            getCipher(password).init(Cipher.ENCRYPT_MODE, keySpec, generateIvSpec(iv));
             final byte[] encryptedBytes = getCipher(password).doFinal(input.getBytes(StandardCharsets.UTF_8));
             final String encodedValue = Base64.getEncoder().encodeToString(encryptedBytes);
             EncryptorLogger.debug(this.getClass().getName(), "Encrypted value for '{}' is '{}'.", input, encodedValue);
-            return encodedValue;
+            //Add the iv on the message.
+            return Base64.getEncoder().encodeToString(iv) + encodedValue;
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                  | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
@@ -78,17 +86,23 @@ public class CBCCipherEngine implements ICipherEngine {
     }
 
     @Override
-    public synchronized String decrypt(String encrypted, String password) throws InvalidEncryptionException {
+    public String decrypt(String encrypted, String password) throws InvalidEncryptionException {
         try {
-            getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-            final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.getBytes(StandardCharsets.UTF_8));
-            final byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
-            EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
-            return decrypted;
+            synchronized (this) {
+                final Cipher deecryptCipher = getCipher(password);
+                final byte[] iv = Base64.getDecoder().decode(encrypted.substring(0, STORED_KEY_SIZE));
+                getCipher(password).init(Cipher.DECRYPT_MODE, keySpec, generateIvSpec(iv));
+                final byte[] encryptedBytes = Base64.getDecoder().decode(encrypted.substring(STORED_KEY_SIZE).getBytes(StandardCharsets.UTF_8));
+                final byte[] decryptedBytes = deecryptCipher.doFinal(encryptedBytes);
+                final String decrypted = new String(decryptedBytes, StandardCharsets.UTF_8);
+                EncryptorLogger.debug(this.getClass().getName(), "Decrypted value for '{}' is '{}'.", encrypted, decrypted);
+                return decrypted;
+            }
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException
                  | InvalidKeyException e) {
             throw new InvalidEncryptionException(e);
+        } catch (StringIndexOutOfBoundsException e) {
+            return null;
         }
     }
 
@@ -96,9 +110,6 @@ public class CBCCipherEngine implements ICipherEngine {
         if (cipher == null) {
             try {
                 cipher = Cipher.getInstance(CIPHER_INSTANCE_NAME);
-                final byte[] iv = new byte[cipher.getBlockSize()];
-                SECURE_RANDOM.nextBytes(iv);
-                ivSpec = new IvParameterSpec(iv);
 
                 // hash keyString with SHA-256 and crop the output to 128-bit for key
                 final MessageDigest digest = MessageDigest.getInstance(SECRET_MESSAGE_DIGEST_ALGORITHM);
@@ -113,5 +124,9 @@ public class CBCCipherEngine implements ICipherEngine {
             }
         }
         return cipher;
+    }
+
+    public IvParameterSpec generateIvSpec(byte[] iv) {
+        return new IvParameterSpec(iv);
     }
 }

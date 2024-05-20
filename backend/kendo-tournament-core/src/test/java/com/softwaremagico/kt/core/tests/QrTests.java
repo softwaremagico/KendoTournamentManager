@@ -42,6 +42,8 @@ import java.nio.file.Paths;
 @Test(groups = {"qrTest"})
 public class QrTests extends AbstractTestNGSpringContextTests {
 
+    private final static String LOGO = "/kote.png";
+
     private static final Color COLOR = Color.decode("#011d4a");
 
     private static final String SOFTWARE_URL = "https://github.com/softwaremagico/KendoTournamentManager";
@@ -85,44 +87,44 @@ public class QrTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void createQrWithLogo() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, null, null, null, "kote.png", null, null);
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, null, null, null, LOGO, null, null);
         saveImage(qrImage, "withLogo");
     }
 
     @Test
     public void createQrWithLogoAsSvg() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 5000, null, null, null, "kote.svg", null, null);
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 5000, null, null, null, "/kote.svg", null, null);
         saveImage(qrImage, "withLogoAsSvg");
     }
 
     @Test
     public void createQrWithLogoAsSvgAndColor() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 5000, Color.PINK, "kote.svg");
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 5000, Color.PINK, "/kote.svg");
         saveImage(qrImage, "withLogoAsSvgAndColor");
     }
 
 
     @Test
     public void createQrWithRoundedBorders() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, "kote.png");
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, LOGO);
         saveImage(qrImage, "withRoundedBorders");
     }
 
     @Test
     public void createQrWithRoundedBordersAndCircles() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, "kote.png", true);
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, LOGO, true);
         saveImage(qrImage, "withRoundedBordersAndCircles");
     }
 
     @Test
     public void createSizedQr() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 500, null, null, null, "kote.png", null, null);
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 500, null, null, null, LOGO, null, null);
         saveImage(qrImage, "withSize");
     }
 
     @Test
-    public void createSJwtQr() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL + "?token=" + JWT_TOKEN, 500, null, null, null, "kote.png", null, null);
+    public void createJwtQr() {
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL + "?token=" + JWT_TOKEN, 500, null, null, null, LOGO, null, null);
         saveImage(qrImage, "withToken");
     }
 

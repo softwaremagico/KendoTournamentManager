@@ -18,6 +18,5 @@ export class LocalErrorHandler implements ErrorHandler {
       //Show error
       this.messageService.errorMessage(`Error connecting to the backend service. ${error.url} failed: ${error ? error.message : ""}`);
     }
-    //this.loggerService.error(error.message);
   }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,11 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.rest.exceptions.UserNotFoundException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,15 +42,24 @@ import java.util.Collection;
 public class KendoUserDetailsService implements UserDetailsService {
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
+    private final ParticipantProvider participantProvider;
 
-    public KendoUserDetailsService(AuthenticatedUserProvider authenticatedUserProvider) {
+    public KendoUserDetailsService(AuthenticatedUserProvider authenticatedUserProvider,
+                                   ParticipantProvider participantProvider) {
         this.authenticatedUserProvider = authenticatedUserProvider;
+        this.participantProvider = participantProvider;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final AuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
+        final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", username)));
+
+        if (user instanceof Participant) {
+            throw new UserNotFoundException(this.getClass(), "User with username '" + username + "' is not a registered user");
+        }
+
+        final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
 
         return new UserDetails() {
             @Override

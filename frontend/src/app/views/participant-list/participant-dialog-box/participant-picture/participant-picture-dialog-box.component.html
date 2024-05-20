@@ -12,7 +12,7 @@
 
     <div class="gallery">
       <div *ngFor="let image of pictures; let i = index" class="image-container">
-        <img (click)="selectImage(i)" [class.selected-image]="i === selectedPicture" alt="Participant's Picture"
+        <img (click)="selectImage(i)" (keydown)="selectImage(i)" [class.selected-image]="i === selectedPicture" alt="Participant"
              src="{{ image }}"/>
       </div>
     </div>

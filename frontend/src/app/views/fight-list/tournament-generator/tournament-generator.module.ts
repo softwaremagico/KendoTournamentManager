@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TournamentGeneratorComponent } from './tournament-generator.component';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {TournamentGeneratorComponent} from './tournament-generator.component';
 import {
   TournamentBracketsEditorModule
 } from "../../../components/tournament-brackets-editor/tournament-brackets-editor.module";
@@ -11,7 +11,6 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {RbacModule} from "../../../pipes/rbac-pipe/rbac.module";
 import {TranslateModule} from "@ngx-translate/core";
 import {MatDividerModule} from "@angular/material/divider";
-
 
 
 @NgModule({

@@ -15,8 +15,7 @@
         </mat-form-field>
         <mat-form-field *ngIf="actionName != 'Delete'">
           <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)" formControlName="idCard" matInput
-                 placeholder="{{ 'idCard' | translate}}"
-                 required>
+                 placeholder="{{ 'idCard' | translate}}">
         </mat-form-field>
         <mat-form-field *ngIf="actionName != 'Delete'">
           <mat-label>{{ 'club' | translate}}</mat-label>
@@ -35,7 +34,7 @@
         </ng-template>
       </div>
       <div *ngIf="participantPicture" class="picture-container">
-        <img alt="Participant's Picture" class="picture" src="{{ participantPicture }}"/>
+        <img alt="Participant" class="picture" src="{{ participantPicture }}"/>
         <button (click)="deletePicture()" class="floating-button" color="warn" mat-flat-button mat-mini-fab
                 type="button">
           <mat-icon>cancel</mat-icon>
