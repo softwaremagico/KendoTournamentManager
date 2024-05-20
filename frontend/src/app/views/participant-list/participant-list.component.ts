@@ -157,13 +157,6 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
     }
   }
 
-  openParticipantDuels(): void {
-    if (this.basicTableData.selectedElement) {
-      this.userSessionService.setSelectedParticipant(this.basicTableData.selectedElement.id + "");
-      this.router.navigate(['/participants/fights'], {state: {participantId: this.basicTableData.selectedElement.id}});
-    }
-  }
-
   showCompetitorsClassification(): void {
     this.dialog.open(CompetitorsRankingComponent, {
       width: '85vw',
