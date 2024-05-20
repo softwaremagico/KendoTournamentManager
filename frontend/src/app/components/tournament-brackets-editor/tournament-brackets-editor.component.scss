@@ -4,14 +4,21 @@
   margin-top: 50px;
 }
 
+.team-panel {
+  position: fixed;
+}
+
 .teams-container {
-  height: 100%;
+  height: 70vh;
   width: 420px;
   border: 1px solid #1f1836;
+  min-height: 550px;
+  display: flex;
+  justify-content: center;
 }
 
 .tournament-brackets {
-  margin-left: 50px;
+  margin-left: 470px;
   flex: 3;
 }
 

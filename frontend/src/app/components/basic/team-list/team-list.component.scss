@@ -5,9 +5,10 @@ team-card {
 }
 
 .team-list{
-  flex-flow: row wrap;
-  display: flex;
-  justify-content: center;
+  display: block;
+  height: 60vh;
+  overflow-y:auto;
+  min-height: 460px;
 }
 
 .mat-card-header .mat-card-title {
