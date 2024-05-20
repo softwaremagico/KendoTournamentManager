@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +21,11 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class ElementDTO {
+public class ElementDTO implements Serializable {
     private Integer id;
     private LocalDateTime createdAt;
 
@@ -33,6 +34,8 @@ public class ElementDTO {
     private LocalDateTime updatedAt;
 
     private String updatedBy;
+
+    private Integer version;
 
     public Integer getId() {
         return id;
@@ -73,6 +76,14 @@ public class ElementDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

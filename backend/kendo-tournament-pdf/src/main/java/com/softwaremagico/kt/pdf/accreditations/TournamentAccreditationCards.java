@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.accreditations;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,6 +45,8 @@ import java.util.Map;
 
 
 public class TournamentAccreditationCards extends PdfDocument {
+
+    private static final String BACKGROUND_IMAGE = "/images/accreditation-background.png";
 
     private static final int BORDER = 1;
 
@@ -127,7 +129,7 @@ public class TournamentAccreditationCards extends PdfDocument {
             try {
                 competitorTable.setTableEvent(new TableBackgroundEvent(background, document));
             } catch (NullPointerException e) {
-                competitorTable.setTableEvent(new TableBackgroundEvent());
+                competitorTable.setTableEvent(new TableBackgroundEvent(BACKGROUND_IMAGE));
             }
             cell = new PdfPCell(competitorTable);
             cell.setBorderWidth(BORDER);

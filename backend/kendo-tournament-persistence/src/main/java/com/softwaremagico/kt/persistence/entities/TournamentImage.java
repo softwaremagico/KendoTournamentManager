@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,6 @@ package com.softwaremagico.kt.persistence.entities;
 
 import com.softwaremagico.kt.persistence.encryption.ByteArrayCryptoConverter;
 import com.softwaremagico.kt.persistence.encryption.ImageCompressionCryptoConverter;
-import com.softwaremagico.kt.persistence.encryption.TournamentImageTypeCryptoConverter;
 import com.softwaremagico.kt.persistence.values.ImageCompression;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
 import jakarta.persistence.Cacheable;
@@ -64,7 +63,6 @@ public class TournamentImage extends Element {
 
     @Column(name = "image_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Convert(converter = TournamentImageTypeCryptoConverter.class)
     private TournamentImageType imageType;
 
     @Column(name = "image_format", nullable = false)

@@ -75,7 +75,5 @@
   border-style: solid;
   box-shadow: 0 5px 10px 0 rgba(0, 18, 57, 0.5);
   transition: transform .2s; /* Animation */
-  //Transform causes problem with the timer component z-index.
-  //transform: scale(1.03);
   background: white;
 }

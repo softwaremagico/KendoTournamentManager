@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,13 +28,18 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
+import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.RoleType;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
@@ -68,7 +73,7 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     private TournamentController tournamentController;
 
     @Autowired
-    private FightController fightController;
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
 
     protected List<ParticipantDTO> participantsDTOs = new ArrayList<>();
 
@@ -174,6 +179,8 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
         TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null);
         tournamentDTO.setCreatedAt(LocalDateTime.now().minusMinutes(minutesPast));
         tournamentController.update(tournamentDTO, null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
         generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
         addTeams(tournamentDTO, members);
         return tournamentDTO;

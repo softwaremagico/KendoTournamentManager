@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.tournament;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -403,16 +403,16 @@ public class Tournament5GroupsTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(score.get(14).getTeam().getName(), "Team15");
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupController.delete(tournamentDTO);
         fightController.delete(tournamentDTO);
         duelController.delete(tournamentDTO);
         teamController.delete(tournamentDTO);
         roleController.delete(tournamentDTO);
-        tournamentController.delete(tournamentDTO);
+        tournamentController.delete(tournamentDTO, null);
         participantController.deleteAll();
-        clubController.delete(clubDTO);
+        clubController.delete(clubDTO, null);
         Assert.assertEquals(fightController.count(), 0);
         Assert.assertEquals(duelController.count(), 0);
     }

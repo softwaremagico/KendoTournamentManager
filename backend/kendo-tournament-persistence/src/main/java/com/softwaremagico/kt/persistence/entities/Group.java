@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,11 +21,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.IntegerCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -63,15 +61,12 @@ public class Group extends Element {
     private List<Team> teams;
 
     @Column(name = "shiaijo", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer shiaijo = 0;
 
     @Column(name = "group_level", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer level = 0;
 
     @Column(name = "group_index", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private Integer index = 0;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -80,7 +75,6 @@ public class Group extends Element {
     private List<Fight> fights;
 
     @Column(name = "number_of_winners", nullable = false)
-    @Convert(converter = IntegerCryptoConverter.class)
     private int numberOfWinners = 1;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -145,7 +139,11 @@ public class Group extends Element {
     }
 
     public void setFights(List<Fight> fights) {
-        this.fights = fights;
+        if (this.fights == null) {
+            this.fights = new ArrayList<>();
+        }
+        this.fights.clear();
+        this.fights.addAll(fights);
     }
 
     public void removeTeams() {
@@ -203,7 +201,11 @@ public class Group extends Element {
     }
 
     public void setUnties(List<Duel> unties) {
-        this.unties = unties;
+        if (this.unties == null) {
+            this.unties = new ArrayList<>();
+        }
+        this.unties.clear();
+        this.unties.addAll(unties);
     }
 
     @Override

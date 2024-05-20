@@ -17,17 +17,17 @@ export class ConfirmationDialogComponent implements OnInit {
 
   }
 
-  acceptAction() {
+  acceptAction(): void {
     this.dialogRef.close(true);
   }
 
-  cancelDialog() {
+  cancelDialog(): void {
     this.dialogRef.close(false);
   }
 
   ngOnInit(): void {
     this.message = "";
-    this.translateService.get(this.messageTag, this.parameters).subscribe((res: string) => {
+    this.translateService.get(this.messageTag, this.parameters).subscribe((res: string): void => {
       this.message += res;
     });
   }
