@@ -19,4 +19,12 @@
 
 .fights-table {
   min-width: 600px;
+  display: grid;
+}
+
+.tournament-name {
+  text-align: left;
+  margin-left: 20px;
+  font-size: 20px;
+  font-weight: bold;
 }
