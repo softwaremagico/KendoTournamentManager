@@ -1,6 +1,7 @@
 <user-score (cdkDropListDropped)="drop($event, true)" [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, true)"
             [duelIndex]="duelIndex" [duel]="duel" [left]="true"
             [showAvatar]="showAvatars"
+            [locked]="locked"
             [swapTeams]="swapTeams" cdkDropList
             class="user-score"></user-score>
 <draw [duel]="duel" class="draw-score"></draw>
@@ -8,6 +9,7 @@
             [cdkDropListEnterPredicate]="dropListEnterPredicate(fight, false)" [duelIndex]="duelIndex" [duel]="duel"
             [left]="false"
             [showAvatar]="showAvatars"
+            [locked]="locked"
             [swapTeams]="swapTeams" cdkDropList
             class="user-score"></user-score>
 

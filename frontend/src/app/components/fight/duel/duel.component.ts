@@ -22,6 +22,9 @@ export class DuelComponent extends KendoComponent implements OnInit {
   duel: Duel;
 
   @Input()
+  locked: boolean;
+
+  @Input()
   duelIndex: number;
 
   @Input()
