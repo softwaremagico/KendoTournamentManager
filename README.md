@@ -8,7 +8,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-620.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-621h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -59,7 +59,7 @@ one for the backend.
 #### Deploy the frontend
 
 For the frontend, you can use any web server you are familiar with (Apache, Nginx, ...).
-Simply uncompress the file `kendo-tournament-frontend.zip` on the server as a standard web page.
+Decompress the file `kendo-tournament-frontend.zip` on the server as a standard web page.
 
 #### Deploy the backend
 
@@ -131,7 +131,8 @@ application and probably the easiest way if you feel comfortable using docker.
 ### Hosting
 
 The application has been tested in a Raspberry Pi 3 model B with 1GB of RAM, with a great response for a small to
-medium size event. For a bigger events, please consider to adquire some more specific hardware hosted on the cloud.
+medium size event.
+For a bigger events, please consider acquiring some more specific hardware hosted in the cloud.
 
 ### Client Side
 

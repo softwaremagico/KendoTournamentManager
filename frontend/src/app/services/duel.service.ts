@@ -48,6 +48,15 @@ export class DuelService {
       );
   }
 
+  getUntiesFromParticipant(participantId: number): Observable<Duel[]> {
+    const url: string = `${this.baseUrl}/participant/` + participantId + '/unties';
+    return this.http.get<Duel[]>(url)
+      .pipe(
+        tap((_updatedDuel: Duel[]) => this.loggerService.info(`getting unties from participant '` + participantId + `'`)),
+        catchError(this.messageService.handleError<Duel[]>(`getting unties from participant '` + participantId + `'`))
+      );
+  }
+
 
   getDuelsFromParticipant(competitorId: number): Observable<Duel[]> {
     const url: string = `${this.baseUrl}/competitor/` + competitorId;
