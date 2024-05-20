@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -201,7 +201,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
                 TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
         generateRoles(tournament1DTO);
         addTeams(tournament1DTO);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
 
 
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
@@ -295,6 +295,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getHansokuNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getTsukiNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getIpponNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getFusenGachiNumber(), 0);
 
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedMenNumber(), 1);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedKoteNumber(), 0);
@@ -302,6 +303,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedHansokuNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedTsukiNumber(), 0);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedIpponNumber(), 0);
+        Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedFusenGachiNumber(), 0);
 
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getFaults(), 1);
         Assert.assertEquals((long) participantStatisticsDTO.getParticipantFightStatistics().getReceivedFaults(), 0);

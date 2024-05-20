@@ -4,7 +4,7 @@ package com.softwaremagico.kt;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,6 @@ package com.softwaremagico.kt;
  */
 
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -45,8 +44,11 @@ import java.util.HashMap;
 public class DatabaseConfiguration {
     public static final String PACKAGE = "com.softwaremagico.kt.persistence";
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+
+    public DatabaseConfiguration(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     @Primary

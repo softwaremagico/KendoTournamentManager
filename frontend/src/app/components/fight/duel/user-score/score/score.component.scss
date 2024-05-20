@@ -5,8 +5,8 @@
   border-color: var(--primay-color);
   border-style: solid;
   margin: 2px 0;
-  justify-content: center;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .point {
@@ -19,7 +19,7 @@
   align-items: center;
   font-weight: bold;
   font-size: 130%;
-  position: relative;
+  flex-grow: 1;
 }
 
 .point .tooltiptext {

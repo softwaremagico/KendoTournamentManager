@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,13 +44,13 @@ public interface TournamentExtraPropertyRepository extends JpaRepository<Tournam
 
     int deleteByTournament(Tournament tournament);
 
-    int deleteByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
+    void deleteByTournamentAndPropertyKey(Tournament tournament, TournamentExtraPropertyKey tournamentExtraPropertyKey);
 
     @Query("""
                 Select p from TournamentExtraProperty p WHERE
                 p.id IN (SELECT max(p2.id) FROM TournamentExtraProperty p2 WHERE
-                (:createdBy IS NULL OR p2.createdBy=:createdBy) GROUP BY p2.propertyKey)
+                (:createdBy IS NULL OR p2.createdByHash=:createdBy) GROUP BY p2.propertyKey)
             """)
-    List<TournamentExtraProperty> findDistinctPropertyKeyByCreatedByOrderByCreatedAtDesc(@Param("createdBy") String createdBy);
+    List<TournamentExtraProperty> findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(@Param("createdBy") String createdBy);
 
 }

@@ -23,33 +23,40 @@ package com.softwaremagico.kt.websockets;
 
 import com.softwaremagico.kt.core.controller.AchievementController;
 import com.softwaremagico.kt.core.controller.DuelController;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.utils.ShiaijoName;
 import com.softwaremagico.kt.websockets.models.messages.AchievementAllGeneratedNumberParameters;
 import com.softwaremagico.kt.websockets.models.messages.AchievementGeneratedNumberParameters;
 import com.softwaremagico.kt.websockets.models.messages.MessageContentType;
 import com.softwaremagico.kt.websockets.models.messages.ShiaijoFinishedParameters;
+import com.softwaremagico.kt.websockets.models.messages.UserAdminCreatedParameters;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WebsocketMessages {
 
-    public WebsocketMessages(AchievementController achievementController, DuelController duelController, WebSocketController webSocketController) {
+    public WebsocketMessages(AchievementController achievementController, DuelController duelController,
+                             WebSocketController webSocketController, AuthApi authApi) {
 
         //Send a message when the achievements from one tournament are finished.
         achievementController.addAchievementsGeneratedListener((achievementsGenerated, tournament) ->
-                webSocketController.sendMessage("achievementGenerated", MessageContentType.INFO,
+                webSocketController.sendMessage("backendMessage.achievementGenerated", MessageContentType.INFO,
                         new AchievementGeneratedNumberParameters(tournament.getName(), achievementsGenerated.size())));
 
         //Send a message when the achievements from all tournaments are finished.
         achievementController.addAchievementsGeneratedAllTournamentsListener((achievementsGenerated, tournaments) ->
-                webSocketController.sendMessage("achievementAllGenerated", MessageContentType.INFO,
+                webSocketController.sendMessage("backendMessage.achievementAllGenerated", MessageContentType.INFO,
                         new AchievementAllGeneratedNumberParameters(tournaments.size(), achievementsGenerated.size())));
 
         //Send a message when the all fights from a shiaijo are over.
-        duelController.addShiaijoFinishedListener(((tournament, shiaijo) -> {
-            webSocketController.sendMessage("shiaijoFinished", MessageContentType.INFO,
-                    new ShiaijoFinishedParameters(tournament.getName(), ShiaijoName.getShiaijoName(shiaijo)));
-        }));
+        duelController.addShiaijoFinishedListener(((tournament, shiaijo) ->
+                webSocketController.sendMessage("backendMessage.shiaijoFinished", MessageContentType.INFO,
+                        new ShiaijoFinishedParameters(tournament.getName(), ShiaijoName.getShiaijoName(shiaijo)))));
+
+        //Send a message when an admin user is generated
+        authApi.addUserAdminGeneratedListeners((username ->
+                webSocketController.sendMessage("backendMessage.userAdminGenerated", MessageContentType.INFO,
+                        new UserAdminCreatedParameters(username))));
     }
 
 }

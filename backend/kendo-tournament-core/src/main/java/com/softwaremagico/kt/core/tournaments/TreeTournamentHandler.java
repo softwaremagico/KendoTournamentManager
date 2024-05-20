@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -100,7 +100,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
         if (maximizeFightsProperty != null) {
             try {
-                return Boolean.getBoolean(maximizeFightsProperty.getPropertyValue());
+                return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
             } catch (Exception ignore) {
 
             }

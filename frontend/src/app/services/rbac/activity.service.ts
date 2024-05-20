@@ -61,6 +61,7 @@ export class ActivityService {
     this.removeActivity(adminActivities, RbacActivity.EDIT_USER);
     this.removeActivity(adminActivities, RbacActivity.DELETE_USER);
     this.removeActivity(adminActivities, RbacActivity.EDIT_LOCKED_TOURNAMENT);
+    this.removeActivity(adminActivities, RbacActivity.LINK_QR_CODE);
     return adminActivities;
   }
 
@@ -84,6 +85,9 @@ export class ActivityService {
       RbacActivity.CHECK_TOURNAMENT_BRACKETS,
       RbacActivity.SEE_QR_CODE,
       RbacActivity.DOWNLOAD_QR_CODE,
+      RbacActivity.DOWNLOAD_PDF,
+      RbacActivity.SHOW_TIMER,
+      RbacActivity.EDIT_FIGHT_TIME,
     ];
   }
 
@@ -95,7 +99,9 @@ export class ActivityService {
       RbacActivity.READ_ALL_DUELS,
       RbacActivity.READ_ONE_DUEL,
       RbacActivity.CHANGE_LANGUAGE,
-      RbacActivity.CHECK_TOURNAMENT_BRACKETS
+      RbacActivity.CHECK_TOURNAMENT_BRACKETS,
+      RbacActivity.READ_TEAMS_RANKINGS,
+      RbacActivity.READ_COMPETITORS_RANKINGS
     ];
   }
 

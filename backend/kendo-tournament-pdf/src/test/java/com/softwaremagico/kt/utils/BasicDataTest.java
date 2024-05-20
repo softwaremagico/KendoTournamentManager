@@ -4,7 +4,7 @@ package com.softwaremagico.kt.utils;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,10 +165,16 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     protected void resolveFights() {
         int counter = 0;
         for (final FightDTO fight : fights) {
+            if(counter %4 == 0){
+                fight.getDuels().get(1).setCompetitor1Fault(true);
+            }
             for (final DuelDTO duel : fight.getDuels()) {
                 List<Score> scores = new ArrayList<>();
                 for (int i = 0; i < (counter % 3); i++) {
                     scores.add(Score.MEN);
+                }
+                for (int i = 0; i < (counter % 2); i++) {
+                    scores.add(Score.FUSEN_GACHI);
                 }
                 duel.setCompetitor1Score(scores);
                 counter++;
@@ -185,5 +192,15 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
         teams = createTeams(members, tournament);
         group = createGroup(tournament, teams);
         fights = createFights(tournament, teams, group);
+    }
+
+    protected boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

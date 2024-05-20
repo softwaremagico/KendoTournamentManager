@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.values;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,7 +71,9 @@ public enum AchievementType {
 
     STORMTROOPER_SYNDROME,
 
-    V_FOR_VENDETTA;
+    V_FOR_VENDETTA,
+
+    SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER;
 
 
     public static AchievementType getType(String name) {

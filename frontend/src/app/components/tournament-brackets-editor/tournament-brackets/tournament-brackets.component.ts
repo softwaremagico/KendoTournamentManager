@@ -59,7 +59,7 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getGroupHigh(level: number, index: number): number {
-    if (this.groupsByLevel && this.groupsByLevel!.get(level) && this.groupsByLevel.get(level)![index]) {
+    if (this.groupsByLevel?.get(level) && this.groupsByLevel.get(level)![index]) {
       const estimatedTeams: number = Math.ceil(this.totalTeams / this.groupsByLevel.get(0)!.length);
       let teams: number = -1;
       for (const i of this.groupsByLevel.get(level)!.keys()) {
@@ -81,7 +81,7 @@ export class TournamentBracketsComponent implements OnInit {
     if (level == 0) {
       return group * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(level, group));
     }
-    if (groupsByLevel && groupsByLevel.get(0) && groupsByLevel.get(level)) {
+    if (groupsByLevel?.get(0) && groupsByLevel?.get(level)) {
       const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + BracketsMeasures.GROUP_SEPARATION);
       const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
       return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - BracketsMeasures.GROUP_SEPARATION / 2
