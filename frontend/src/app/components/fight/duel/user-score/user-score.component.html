@@ -9,6 +9,7 @@
                            class="participant-picture"></app-participant-picture>
   <user-name [duel]="duel" [left]="left" [memberIndex]="duelIndex" [participant]="getParticipant()"
              [swapTeams]="swapTeams"
+             [highlightedParticipantId]="highlightedParticipantId"
              class="user-name"></user-name>
   <app-participant-picture *ngIf="showAvatar && left" [participant]="getParticipant()"
                            class="participant-picture"></app-participant-picture>

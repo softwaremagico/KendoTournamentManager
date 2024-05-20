@@ -11,6 +11,7 @@ import {FightModule} from "../../components/fight/fight.module";
 import {UntieFightModule} from "../../components/untie-fight/untie-fight.module";
 import {FilterModule} from "../../components/basic/filter/filter.module";
 import {UserScoreModule} from "../../components/fight/duel/user-score/user-score.module";
+import {DuelModule} from "../../components/fight/duel/duel.module";
 
 
 @NgModule({
@@ -18,19 +19,20 @@ import {UserScoreModule} from "../../components/fight/duel/user-score/user-score
     ParticipantFightListComponent
   ],
   exports: [ParticipantFightListComponent],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSpinnerOverlayModule,
-        MatTooltipModule,
-        RbacModule,
-        TranslateModule,
-        FightModule,
-        UntieFightModule,
-        FilterModule,
-        UserScoreModule
-    ]
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSpinnerOverlayModule,
+    MatTooltipModule,
+    RbacModule,
+    TranslateModule,
+    FightModule,
+    UntieFightModule,
+    FilterModule,
+    UserScoreModule,
+    DuelModule
+  ]
 })
 export class ParticipantFightListModule {
 }
