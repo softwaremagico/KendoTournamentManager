@@ -18,7 +18,7 @@ import {DuelService} from "../../services/duel.service";
 })
 export class ParticipantFightListComponent extends RbacBasedComponent implements OnInit {
 
-  private readonly participantId: number | undefined;
+  readonly participantId: number | undefined;
 
   filteredFights: Map<Tournament, Fight[]>;
   filteredUnties: Map<Tournament, Duel[]>;
