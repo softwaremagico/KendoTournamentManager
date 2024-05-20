@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,7 @@ public class FrontendLoggerServices {
         return parameter.toString().replaceAll("[\n\r\t]", "_");
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Register an action that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
@@ -50,7 +50,7 @@ public class FrontendLoggerServices {
         FrontendLogger.info(this.getClass(), sanitize(log.getMessage()));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Register a warning that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/warning")
     @ResponseStatus(HttpStatus.OK)
@@ -58,7 +58,7 @@ public class FrontendLoggerServices {
         FrontendLogger.warning(this.getClass(), sanitize(log.getMessage()));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Register an error that must be logged.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/error")
     @ResponseStatus(HttpStatus.OK)

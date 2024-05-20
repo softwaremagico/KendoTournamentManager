@@ -4,7 +4,7 @@ package com.softwaremagico.kt.utils;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,14 @@ package com.softwaremagico.kt.utils;
  * #L%
  */
 
+import java.security.SecureRandom;
+
 public final class StringUtils {
+
+    private static final int RANDOM_MINIMUM_ASCII_CODE = 33;
+    private static final int RANDOM_MAXIMUM_ASCII_CODE = 90;
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private StringUtils() {
 
@@ -38,5 +45,13 @@ public final class StringUtils {
             }
         }
         return caseString.toString().trim().replace(";", ",");
+    }
+
+    public static String generateRandomToken(int targetStringLength) {
+
+        return RANDOM.ints(RANDOM_MINIMUM_ASCII_CODE, RANDOM_MAXIMUM_ASCII_CODE + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }

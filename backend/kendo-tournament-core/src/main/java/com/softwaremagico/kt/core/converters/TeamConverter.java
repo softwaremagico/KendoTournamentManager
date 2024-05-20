@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,12 +38,15 @@ import java.util.ArrayList;
 @Component
 public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverterRequest> {
     private final TournamentConverter tournamentConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
     private final ParticipantConverter participantConverter;
     private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public TeamConverter(TournamentConverter tournamentConverter, ParticipantConverter participantConverter, TournamentRepository tournamentRepository) {
+    public TeamConverter(TournamentConverter tournamentConverter, ParticipantReducedConverter participantReducedConverter,
+                         ParticipantConverter participantConverter, TournamentRepository tournamentRepository) {
         this.tournamentConverter = tournamentConverter;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.tournamentRepository = tournamentRepository;
     }
@@ -72,7 +75,7 @@ public class TeamConverter extends ElementConverter<Team, TeamDTO, TeamConverter
         }
 
         from.getEntity().getMembers().forEach(member ->
-                teamDTO.getMembers().add(participantConverter.convert(new ParticipantConverterRequest(member))));
+                teamDTO.getMembers().add(participantReducedConverter.convert(new ParticipantConverterRequest(member))));
         return teamDTO;
     }
 

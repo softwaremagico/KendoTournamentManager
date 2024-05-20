@@ -18,6 +18,7 @@
                 <include name="scoreAchievementTests"/>
                 <include name="darumaAchievementTests"/>
                 <include name="statisticsTests"/>
+                <include name="sithKillsMasterAchievementsTest"/>
                 <include name="tournamentTest"/>
                 <include name="tournamentTwoWinnersTest"/>
                 <include name="tournament5GroupsTest"/>
@@ -26,6 +27,7 @@
                 <include name="groupsTest"/>
                 <include name="numberOfWinners"/>
                 <include name="tournamentExtraProperties"/>
+                <include name="qrTest"/>
             </run>
         </groups>
         <classes>
@@ -36,6 +38,7 @@
             <class name="com.softwaremagico.kt.core.tests.tournament.Tournament5GroupsTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.Tournament5GroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLevelNotFinishedTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.LeagueWithFinalFightTest"/>
             <class name="com.softwaremagico.kt.core.tests.LoopLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainFiFoTest"/>
@@ -46,10 +49,12 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
+            <class name="com.softwaremagico.kt.core.tests.QrTests"/>
         </classes>
     </test>
 </suite>

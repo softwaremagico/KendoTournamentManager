@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,7 +46,6 @@ public abstract class LeagueHandler implements ITournamentManager {
     private final GroupProvider groupProvider;
     private final TeamProvider teamProvider;
     private final RankingProvider rankingProvider;
-
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
 

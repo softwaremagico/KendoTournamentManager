@@ -26,32 +26,36 @@ import java.util.Objects;
 
 public enum Score {
 
-    MEN("Men", 'M', 'M'),
+    MEN("Men", 'M', 'M', 'M'),
 
-    KOTE("Kote", 'K', 'K'),
+    KOTE("Kote", 'K', 'K', 'K'),
 
-    DO("Do", 'D', 'D'),
+    DO("Do", 'D', 'D', 'D'),
 
-    TSUKI("Tsuki", 'T', 'T'),
+    TSUKI("Tsuki", 'T', 'T', 'T'),
 
-    IPPON("Ippon", 'I', 'I'),
+    IPPON("Ippon", 'I', 'I', 'I'),
 
-    HANSOKU("Hansoku", 'H', 'H'),
+    FUSEN_GACHI("Ippon", 'F', 'F', ' '),
 
-    EMPTY("ClearMenuItem", ' ', ' '),
+    HANSOKU("Hansoku", 'H', 'H', 'H'),
 
-    FAULT("FaultMenuItem", '^', '\u25B2'),
+    EMPTY("ClearMenuItem", ' ', ' ', ' '),
 
-    DRAW("Draw", 'X', 'X');
+    FAULT("FaultMenuItem", '^', '\u25B2', '^'),
+
+    DRAW("Draw", 'X', 'X', 'X');
 
     private final char abbreviation;
     private final char enhancedAbbreviation;
+    private final char pdfAbbreviation;
     private final String name;
 
-    Score(String name, char abbreviation, char enhancedAbbreviation) {
+    Score(String name, char abbreviation, char enhancedAbbreviation, char pdfAbbreviation) {
         this.abbreviation = abbreviation;
         this.name = name;
         this.enhancedAbbreviation = enhancedAbbreviation;
+        this.pdfAbbreviation = pdfAbbreviation;
     }
 
     public static Score getScore(char abbreviation) {
@@ -83,6 +87,7 @@ public enum Score {
         points.add(DO);
         points.add(TSUKI);
         points.add(IPPON);
+        points.add(FUSEN_GACHI);
         points.add(HANSOKU);
         return points;
     }
@@ -103,6 +108,10 @@ public enum Score {
      */
     public char getEnhancedAbbreviation() {
         return enhancedAbbreviation;
+    }
+
+    public char getPdfAbbreviation() {
+        return pdfAbbreviation;
     }
 
     public String getName() {

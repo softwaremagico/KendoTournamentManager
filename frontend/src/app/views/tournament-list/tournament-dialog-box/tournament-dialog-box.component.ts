@@ -109,6 +109,13 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     return TournamentType.toCamel(tournamentType);
   }
 
+  getTournamentTypeHintTag(tournamentType: TournamentType): string {
+    if (!tournamentType) {
+      return "";
+    }
+    return TournamentType.toCamel(tournamentType) + 'Hint';
+  }
+
   addPicture(): void {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
       data: {
@@ -153,5 +160,13 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
         title: this.translateService.instant('tournamentProperties'), action: Action.Add, tournament: this.tournament
       }
     });
+  }
+
+  getMinutes(time: number): number {
+    return ~~(time / 60);
+  }
+
+  getSeconds(time: number): number {
+    return time % 60;
   }
 }

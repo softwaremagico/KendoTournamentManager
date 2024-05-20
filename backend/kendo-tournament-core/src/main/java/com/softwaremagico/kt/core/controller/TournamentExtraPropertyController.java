@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -60,8 +60,7 @@ public class TournamentExtraPropertyController extends BasicInsertableController
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
         getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
-        dto.setUpdatedBy(username);
-        return create(dto, null);
+        return super.update(dto, username);
     }
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {
