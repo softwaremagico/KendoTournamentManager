@@ -204,4 +204,10 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
   }
+
+  openParticipantFights(): void {
+    if (this.participantId) {
+      this.router.navigate(['/participants/fights'], {state: {participantId: this.participantId}});
+    }
+  }
 }
