@@ -28,6 +28,9 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  highlightedParticipantId: number | undefined;
+
   reorderAllowed: boolean = true;
 
   resizeSubscription$: Subscription;
@@ -47,7 +50,8 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
     this.displayName = this.getDisplayName(window.innerWidth);
   }
 
-  ngOnChanges() {
+
+  ngOnChanges(): void {
     this.displayName = this.getDisplayName(window.innerWidth);
   }
 
@@ -65,6 +69,10 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
 
   getDisplayName(resolution: number): string {
     return this.nameUtilsService.getDisplayName(this.participant, resolution);
+  }
+
+  highlightParticipant(): boolean {
+    return (this.participant?.id === this.highlightedParticipantId);
   }
 
 }

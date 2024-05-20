@@ -1,20 +1,63 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
-import {Observable, of} from "rxjs";
+import {Observable, of, Subscription} from "rxjs";
 import {LoggerService} from "./logger.service";
 import {Log} from "./models/log";
+import {Message} from "@stomp/stompjs/esm6";
+import {RxStompService} from "../websockets/rx-stomp.service";
+import {EnvironmentService} from "../environment.service";
+import {MessageContent} from "../websockets/message-content.model";
 
 @Injectable({
   providedIn: 'root'
 })
-export class MessageService {
+export class MessageService implements OnDestroy {
+
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
+
+  private messageSubscription: Subscription;
 
   constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
-              private loggerService: LoggerService) {
+              private loggerService: LoggerService, private rxStompService: RxStompService,
+              private environmentService: EnvironmentService) {
+    this.registerWebsocketsMessages();
   }
 
-  private openSnackBar(message: string, cssClass: string, duration: number, action?: string) {
+
+  ngOnDestroy(): void {
+    this.messageSubscription.unsubscribe();
+  }
+
+  private registerWebsocketsMessages(): void {
+    this.messageSubscription = this.rxStompService.watch(this.websocketsPrefix + '/messages').subscribe((message: Message): void => {
+      try {
+        const messageContent: MessageContent = JSON.parse(message.body);
+        this.translateService.get(messageContent.payload, messageContent.parameters).subscribe((res: string): void => {
+          let type: string = messageContent.type.toLowerCase();
+          if (!type) {
+            type = "info";
+          }
+          switch (type) {
+            case "error":
+              this.errorMessage(res);
+              break;
+            case "warning":
+              this.warningMessage(res);
+              break;
+            case "info":
+            default:
+              this.infoMessage(res);
+          }
+        });
+
+      } catch (e) {
+        console.log("Invalid message payload", message.body);
+      }
+    });
+  }
+
+  private openSnackBar(message: string, cssClass: string, duration: number, action?: string): void {
     this.snackBar.open(this.translateService.instant(message), action, {
       duration: duration,
       panelClass: [cssClass, 'message-service'],
@@ -57,7 +100,7 @@ export class MessageService {
     };
   }
 
-  logOnlyError<T>(operation = 'operation', result?: T) {
+  logOnlyError<T>(operation: string = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       //Log error
       const log: Log = new Log();

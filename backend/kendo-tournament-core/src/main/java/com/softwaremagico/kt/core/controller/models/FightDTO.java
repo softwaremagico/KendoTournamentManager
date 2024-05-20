@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -232,9 +232,11 @@ public class FightDTO extends ElementDTO {
         if (!super.equals(o)) {
             return false;
         }
-        return getTeam1().equals(fightDTO.getTeam1()) && getTeam2().equals(fightDTO.getTeam2()) && getTournament().equals(fightDTO.getTournament())
-                && getShiaijo().equals(fightDTO.getShiaijo()) && Objects.equals(getDuels(), fightDTO.getDuels()) && Objects.equals(getFinishedAt(),
-                fightDTO.getFinishedAt()) && getLevel().equals(fightDTO.getLevel());
+        return ((getTeam1() == null && fightDTO.getTeam1() == null) || getTeam1().equals(fightDTO.getTeam1()))
+                && ((getTeam2() == null && fightDTO.getTeam2() == null) || getTeam2().equals(fightDTO.getTeam2()))
+                && ((getTournament() == null && fightDTO.getTournament() == null) || getTournament().equals(fightDTO.getTournament()))
+                && Objects.equals(getShiaijo(), fightDTO.getShiaijo()) && Objects.equals(getDuels(), fightDTO.getDuels()) && Objects.equals(getFinishedAt(),
+                fightDTO.getFinishedAt()) && Objects.equals(getLevel(), fightDTO.getLevel());
     }
 
     @Override

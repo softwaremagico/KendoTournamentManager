@@ -12,14 +12,14 @@
 
     <div class="gallery">
       <div *ngFor="let image of pictures; let i = index" class="image-container">
-        <img (click)="selectImage(i)" [class.selected-image]="i === selectedPicture" alt="Participant's Picture"
+        <img (click)="selectImage(i)" (keydown)="selectImage(i)" [class.selected-image]="i === selectedPicture" alt="Participant"
              src="{{ image }}"/>
       </div>
     </div>
   </div>
 
   <div class="button-container" mat-dialog-actions>
-    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)"
+    <button (click)="takePicture()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
             color="picture"
             mat-flat-button
             mat-raised-button type="button">
@@ -27,7 +27,7 @@
       {{'photo' | translate}}
     </button>
     <button (click)="switchCamera()"
-            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)"
+            *ngIf="false && availableCameras>1 && (RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
             mat-flat-button
             mat-raised-button
             type="button">
@@ -35,14 +35,14 @@
       {{'switch' | translate}}
     </button>
     <button (click)="fileInput.click()"
-            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.activities)"
+            *ngIf="availableCameras<=1 && (RbacActivity.UPLOAD_PICTURE | rbac : this.rbacService.getActivities())"
             mat-flat-button mat-raised-button
             type="button">
       <mat-icon>upload_file</mat-icon>
       {{'upload' | translate}}
       <input #fileInput (change)="handleFileInput($event)" accept=".jpg,.jpeg,.png" style="display:none;" type="file"/>
     </button>
-    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.activities)"
+    <button (click)="saveImage()" *ngIf="(RbacActivity.TAKE_PICTURE | rbac : this.rbacService.getActivities())"
             [disabled]="selectedPicture == undefined" color="primary"
             mat-flat-button
             mat-raised-button type="button">

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,6 +53,9 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
 
     @Query("SELECT AVG(d.duration) FROM Duel d WHERE d.duration > " + Duel.DEFAULT_DURATION)
     Long getDurationAverage();
+
+    @Query("SELECT AVG(d.duration) FROM Duel d WHERE (d.competitor1=:participant OR d.competitor2=:participant) AND  d.duration > " + Duel.DEFAULT_DURATION)
+    Long getDurationAverage(@Param("participant") Participant participant);
 
     @Query("""
             SELECT d FROM Duel d WHERE d.tournament=:tournament AND (
@@ -115,6 +118,10 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     List<Duel> findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(Tournament tournament,
                                                                                                        int score1MaxDuration, int score2MaxDuration);
 
-    @Query("SELECT d FROM Duel d WHERE d.competitor1=:participant OR d.competitor2=:participant")
+    @Query("SELECT d FROM Duel d WHERE d.competitor1=:participant OR d.competitor2=:participant ORDER BY d.createdAt DESC")
     List<Duel> findByParticipant(@Param("participant") Participant participant);
+
+    @Query("SELECT d FROM Duel d WHERE (d.competitor1=:participant1 AND d.competitor2=:participant2) "
+            + "OR (d.competitor2=:participant1 AND d.competitor1=:participant2)")
+    List<Duel> findByParticipants(@Param("participant1") Participant participant1, @Param("participant2") Participant participant2);
 }

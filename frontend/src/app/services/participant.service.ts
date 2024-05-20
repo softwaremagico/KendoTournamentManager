@@ -47,7 +47,20 @@ export class ParticipantService {
       );
   }
 
-  deleteById(id: number) {
+  getByUsername(): Observable<Participant> {
+    const url: string = `${this.baseUrl}/jwt`;
+    return this.http.get<Participant>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched participant from jwt`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Participant>(`invalid participant from jwt`))
+      );
+  }
+
+  deleteById(id: number): void {
     const url: string = `${this.baseUrl}/${id}`;
     this.http.delete(url)
       .pipe(

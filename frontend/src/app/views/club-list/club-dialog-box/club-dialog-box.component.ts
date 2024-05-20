@@ -35,11 +35,11 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
       clubName: new UntypedFormControl({
         value: this.club.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
+      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
       clubCountry: new UntypedFormControl({
         value: this.club.country,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
+      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
       clubCity: new UntypedFormControl({
         value: this.club.city,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
@@ -47,19 +47,19 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
       clubAddress: new UntypedFormControl({
         value: this.club.address,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
+      }, [Validators.minLength(4), Validators.maxLength(40)]),
       clubEmail: new UntypedFormControl({
         value: this.club.email,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.email]),
+      }, [Validators.email]),
       clubPhone: new UntypedFormControl({
         value: this.club.phone,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.pattern("[- +()0-9]+"), Validators.minLength(4), Validators.maxLength(20)]),
+      }, [Validators.pattern("[- +()0-9]+"), Validators.minLength(4), Validators.maxLength(20)]),
       clubWeb: new UntypedFormControl({
         value: this.club.web,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'), Validators.minLength(4), Validators.maxLength(75)]),
+      }, [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'), Validators.minLength(4), Validators.maxLength(75)]),
     });
   }
 

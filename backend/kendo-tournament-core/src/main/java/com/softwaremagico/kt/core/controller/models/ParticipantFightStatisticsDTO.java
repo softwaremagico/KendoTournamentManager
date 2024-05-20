@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2022 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,6 +37,8 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     private Long ipponNumber;
 
+    private Long fusenGachiNumber;
+
     private Long receivedMenNumber;
 
     private Long receivedKoteNumber;
@@ -48,10 +50,13 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
     private Long receivedHansokuNumber;
 
     private Long receivedIpponNumber;
+    private Long receivedFusenGachiNumber;
 
     private Long duelsNumber;
     //In seconds.
     private Long averageTime;
+    private Long averageWinTime;
+    private Long averageLostTime;
 
     private Long totalDuelsTime;
 
@@ -81,13 +86,28 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
         }
     }
 
-
     public Long getAverageTime() {
         return averageTime;
     }
 
     public void setAverageTime(Long averageTime) {
         this.averageTime = averageTime;
+    }
+
+    public Long getAverageWinTime() {
+        return averageWinTime;
+    }
+
+    public void setAverageWinTime(Long averageWinTime) {
+        this.averageWinTime = averageWinTime;
+    }
+
+    public Long getAverageLostTime() {
+        return averageLostTime;
+    }
+
+    public void setAverageLostTime(Long averageLostTime) {
+        this.averageLostTime = averageLostTime;
     }
 
     public Long getMenNumber() {
@@ -136,6 +156,14 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     public void setIpponNumber(Long ipponNumber) {
         this.ipponNumber = ipponNumber;
+    }
+
+    public Long getFusenGachiNumber() {
+        return fusenGachiNumber;
+    }
+
+    public void setFusenGachiNumber(Long fusenGachiNumber) {
+        this.fusenGachiNumber = fusenGachiNumber;
     }
 
     public Long getFaults() {
@@ -192,6 +220,14 @@ public class ParticipantFightStatisticsDTO extends ElementDTO {
 
     public void setReceivedIpponNumber(Long receivedIpponNumber) {
         this.receivedIpponNumber = receivedIpponNumber;
+    }
+
+    public Long getReceivedFusenGachiNumber() {
+        return receivedFusenGachiNumber;
+    }
+
+    public void setReceivedFusenGachiNumber(Long receivedFusenGachiNumber) {
+        this.receivedFusenGachiNumber = receivedFusenGachiNumber;
     }
 
     public Long getReceivedFaults() {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -70,6 +70,8 @@ public class LeagueTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 0);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournament1DTO,
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
@@ -124,7 +126,7 @@ public class LeagueTest extends TournamentTestUtils {
         Assert.assertEquals(fightDTOs.get(5).getTeam2().getName(), "Team01");
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }

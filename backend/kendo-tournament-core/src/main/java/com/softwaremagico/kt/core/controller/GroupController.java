@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,8 +34,6 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.GroupConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
-import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
-import com.softwaremagico.kt.core.exceptions.TournamentInvalidException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
@@ -45,14 +43,15 @@ import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
-import com.softwaremagico.kt.persistence.values.TournamentType;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class GroupController extends BasicInsertableController<Group, GroupDTO, GroupRepository, GroupProvider, GroupConverterRequest, GroupConverter> {
@@ -64,6 +63,14 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final DuelConverter duelConverter;
     private final TeamConverter teamConverter;
     private final TournamentHandlerSelector tournamentHandlerSelector;
+
+    private final Set<GroupsUpdatedListener> groupsUpdatedListeners = new HashSet<>();
+
+
+    public interface GroupsUpdatedListener {
+        void updated(TournamentDTO tournament, String actor);
+    }
+
 
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
@@ -81,10 +88,17 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.tournamentHandlerSelector = tournamentHandlerSelector;
     }
 
+
+    public void addGroupUpdatedListeners(GroupsUpdatedListener listener) {
+        groupsUpdatedListeners.add(listener);
+    }
+
+
     @Override
     protected GroupConverterRequest createConverterRequest(Group group) {
         return new GroupConverterRequest(group);
     }
+
 
     public List<GroupDTO> getFromTournament(Integer tournamentId) {
         return get(tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
@@ -92,41 +106,61 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                         ExceptionType.INFO)))));
     }
 
+
     public GroupDTO getFromTournament(Integer tournamentId, Integer level, Integer index) {
         return convert(getProvider().getGroupByLevelAndIndex(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)), level, index));
     }
 
+
     public List<Group> getGroups(TournamentDTO tournament, Integer level) {
         return getProvider().getGroups(tournamentConverter.reverse(tournament), level);
     }
 
+
     @Override
     public GroupDTO create(GroupDTO groupDTO, String username) {
-        return convert(tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).addGroup(
-                tournamentConverter.reverse(groupDTO.getTournament()), reverse(groupDTO)));
+        try {
+            return convert(tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).addGroup(
+                    tournamentConverter.reverse(groupDTO.getTournament()), reverse(groupDTO)));
+        } finally {
+            new Thread(() ->
+                    groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(groupDTO.getTournament(), username))
+            ).start();
+        }
     }
 
-    @Override
-    public void deleteById(Integer id) {
-        delete(get(id));
-    }
 
     @Override
-    public void delete(GroupDTO groupDTO) {
-        tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(tournamentConverter.reverse(groupDTO.getTournament()),
-                groupDTO.getLevel(), groupDTO.getIndex());
+    public void deleteById(Integer id, String username) {
+        delete(get(id), username);
     }
 
+
     @Override
-    public void delete(Collection<GroupDTO> groupDTOs) {
-        groupDTOs.forEach(groupDTO -> delete(groupDTOs));
+    public void delete(GroupDTO groupDTO, String username) {
+        try {
+            tournamentHandlerSelector.selectManager(groupDTO.getTournament().getType()).removeGroup(tournamentConverter.reverse(groupDTO.getTournament()),
+                    groupDTO.getLevel(), groupDTO.getIndex());
+        } finally {
+            new Thread(() ->
+                    groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(groupDTO.getTournament(), username))
+            ).start();
+        }
     }
+
+
+    @Override
+    public void delete(Collection<GroupDTO> groupDTOs, String username) {
+        groupDTOs.forEach(groupDTO -> delete(groupDTOs, username));
+    }
+
 
     public List<GroupDTO> get(TournamentDTO tournament) {
         return convertAll(getProvider().getGroups(tournamentConverter.reverse(tournament)));
     }
+
 
     @Transactional
     public GroupDTO update(GroupDTO groupDTO, String username) {
@@ -145,63 +179,105 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
         //Ensure that the group contains the teams of the fight.
         groupDTO.getFights().forEach(fightDTO -> {
-            if (!groupDTO.getTeams().contains(fightDTO.getTeam1())) {
-                groupDTO.getTeams().add(fightDTO.getTeam1());
-            }
-            if (!groupDTO.getTeams().contains(fightDTO.getTeam2())) {
-                groupDTO.getTeams().add(fightDTO.getTeam2());
+            if (fightDTO != null) {
+                if (!groupDTO.getTeams().contains(fightDTO.getTeam1())) {
+                    groupDTO.getTeams().add(fightDTO.getTeam1());
+                }
+                if (!groupDTO.getTeams().contains(fightDTO.getTeam2())) {
+                    groupDTO.getTeams().add(fightDTO.getTeam2());
+                }
             }
         });
 
-        groupDTO.setUpdatedBy(username);
-        return create(groupDTO, null);
+        try {
+            return super.update(groupDTO, username);
+        } finally {
+            new Thread(() ->
+                    groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(groupDTO.getTournament(), username))
+            ).start();
+        }
     }
+
 
     public GroupDTO addTeams(Integer groupId, List<TeamDTO> teams, String username) {
-        return convert(getProvider().addTeams(groupId, teamConverter.reverseAll(teams), username));
+        try {
+            return convert(getProvider().addTeams(groupId, teamConverter.reverseAll(teams), username));
+        } finally {
+            new Thread(() -> {
+                final GroupDTO groupDTO = get(groupId);
+                groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(groupDTO.getTournament(), username));
+            }).start();
+        }
     }
+
 
     public GroupDTO deleteTeams(Integer groupId, List<TeamDTO> teams, String username) {
-        return convert(getProvider().deleteTeams(groupId, teamConverter.reverseAll(teams), username));
+        try {
+            return convert(getProvider().deleteTeams(groupId, teamConverter.reverseAll(teams), username));
+        } finally {
+            new Thread(() -> {
+                final GroupDTO groupDTO = get(groupId);
+                groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(groupDTO.getTournament(), username));
+            }).start();
+        }
     }
+
 
     public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, String username) {
-        return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
-                        new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
-                username));
+        try {
+            return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
+                            new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
+                    username));
+        } finally {
+            new Thread(() -> {
+                final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
+                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                                ExceptionType.INFO))));
+                groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(tournamentDTO, username));
+            }).start();
+        }
     }
+
 
     public List<GroupDTO> deleteTeamsFromTournament(Integer tournamentId, List<TeamDTO> teams, String username) {
-        return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
-                        new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
-                teamConverter.reverseAll(teams), username));
+        try {
+            return convertAll(getProvider().deleteTeams(tournamentProvider.get(tournamentId).orElseThrow(() ->
+                            new TournamentNotFoundException(this.getClass(), "Tournament with id" + tournamentId + " not found!")),
+                    teamConverter.reverseAll(teams), username));
+        } finally {
+            new Thread(() -> {
+                final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
+                        .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                                ExceptionType.INFO))));
+                groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(tournamentDTO, username));
+            }).start();
+        }
     }
+
 
     public GroupDTO setTeams(Integer groupId, List<TeamDTO> teams, String username) {
-        return convert(getProvider().setTeams(groupId, teamConverter.reverseAll(teams), username));
+        try {
+            return convert(getProvider().setTeams(groupId, teamConverter.reverseAll(teams), username));
+        } finally {
+            new Thread(() -> {
+                final GroupDTO groupDTO = get(groupId);
+                groupsUpdatedListeners.forEach(groupsUpdatedListener -> groupsUpdatedListener.updated(groupDTO.getTournament(), username));
+            }).start();
+        }
     }
 
+
     public GroupDTO setTeams(List<TeamDTO> teams, String username) {
-        if (teams.isEmpty()) {
-            throw new TeamNotFoundException(this.getClass(), "No teams found!");
-        }
-        GroupDTO groupDTO = get(teams.get(0).getTournament()).stream().findAny().orElseThrow(() ->
+        final GroupDTO groupDTO = get(teams.get(0).getTournament()).stream().findAny().orElseThrow(() ->
                 new GroupNotFoundException(this.getClass(), "No groups found!"));
-        if (groupDTO.getTournament().getType().equals(TournamentType.CHAMPIONSHIP)
-                || groupDTO.getTournament().getType().equals(TournamentType.TREE)
-                || groupDTO.getTournament().getType().equals(TournamentType.CUSTOM_CHAMPIONSHIP)) {
-            throw new TournamentInvalidException(this.getClass(), "On tournaments with type '"
-                    + groupDTO.getTournament().getType() + "' group must be selected.");
+        try {
+            return convert(getProvider().setTeams(groupDTO.getId(), teamConverter.reverseAll(teams), username));
+        } finally {
+            new Thread(() -> groupsUpdatedListeners.forEach(groupsUpdatedListener ->
+                    groupsUpdatedListener.updated(groupDTO.getTournament(), username))).start();
         }
-        final List<FightDTO> fights = groupDTO.getFights();
-        groupDTO.getFights().clear();
-        fightProvider.delete(fightConverter.reverseAll(fights));
-        groupDTO.getTeams().clear();
-        groupDTO = convert(getProvider().save(reverse(groupDTO)));
-        groupDTO.setTeams(teams);
-        groupDTO.setUpdatedBy(username);
-        return convert(getProvider().save(reverse(groupDTO)));
     }
+
 
     public GroupDTO addUnties(Integer groupId, List<DuelDTO> duelDTOS, String username) {
         final GroupDTO groupDTO = get(groupId);
@@ -214,9 +290,11 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return convert(getProvider().save(reverse(groupDTO)));
     }
 
+
     public long count(TournamentDTO tournament) {
         return getProvider().count(tournamentConverter.reverse(tournament));
     }
+
 
     public long delete(TournamentDTO tournamentDTO) {
         return getProvider().delete(tournamentConverter.reverse(tournamentDTO));

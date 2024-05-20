@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,35 +23,79 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.exceptions.DuplicatedUserException;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.AuthenticatedUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.softwaremagico.kt.persistence.encryption.KeyProperty.getDatabaseEncryptionKey;
+
 @Repository
 public class AuthenticatedUserProvider {
+
+    public static final String GUEST_USER = "guest";
+    public static final String GUEST_ROLE = "guest";
+
     private final AuthenticatedUserRepository authenticatedUserRepository;
 
+    private final ParticipantProvider participantProvider;
+
+
+    private final boolean guestEnabled;
+
     @Autowired
-    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository) {
+    public AuthenticatedUserProvider(AuthenticatedUserRepository authenticatedUserRepository, ParticipantProvider participantProvider,
+                                     @Value("${enable.guest.user:false}") String guestUsersEnabled) {
         this.authenticatedUserRepository = authenticatedUserRepository;
+        this.participantProvider = participantProvider;
+        guestEnabled = Boolean.parseBoolean(guestUsersEnabled);
     }
 
 
-    public Optional<AuthenticatedUser> findByUsername(String username) {
-        return authenticatedUserRepository.findByUsername(username);
+    public Optional<IAuthenticatedUser> findByUsername(String username) {
+        //Create guest user on the fly
+        if (Objects.equals(username, GUEST_USER) && guestEnabled) {
+            final AuthenticatedUser guest = new AuthenticatedUser(GUEST_USER);
+            guest.setRoles(Collections.singleton(GUEST_ROLE));
+            return Optional.of(guest);
+        }
+        if (getDatabaseEncryptionKey() != null) {
+            //Username is encrypted, use hash
+            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
+            if (authenticatedUser.isPresent()) {
+                authenticatedUser.get().setUsernameHash(authenticatedUser.get().getUsername());
+                return Optional.of(authenticatedUser.get());
+            }
+        } else {
+            //Username is not encrypted, use username for compatibility with old databases.
+            final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository
+                    .findByUsername(username);
+            if (authenticatedUser.isPresent()) {
+                return Optional.of(authenticatedUser.get());
+            }
+        }
+        final Optional<Participant> participant = participantProvider.findByTokenUsername(username);
+        if (participant.isPresent()) {
+            return Optional.of(participant.get());
+        }
+        return Optional.empty();
     }
 
     public long count() {
         return authenticatedUserRepository.count();
     }
 
-    public Optional<AuthenticatedUser> findByUniqueId(String uniqueId) {
+    public Optional<IAuthenticatedUser> findByUniqueId(String uniqueId) {
         return findByUsername(uniqueId);
     }
 
@@ -87,6 +131,10 @@ public class AuthenticatedUserProvider {
 
     public void delete(AuthenticatedUser authenticatedUser) {
         authenticatedUserRepository.delete(authenticatedUser);
+    }
+
+    public void deleteAll() {
+        authenticatedUserRepository.deleteAll();
     }
 
 }

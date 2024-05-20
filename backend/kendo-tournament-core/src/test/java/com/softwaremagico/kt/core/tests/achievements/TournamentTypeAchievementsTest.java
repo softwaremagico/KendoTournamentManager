@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -93,7 +94,7 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TournamentType.LOOP, 2);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Winner is Participant2
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
@@ -123,7 +124,7 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TournamentType.KING_OF_THE_MOUNTAIN, 1);
-        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null));
 
         //Winner is Participant2
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
@@ -150,7 +151,7 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theKing);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();
     }

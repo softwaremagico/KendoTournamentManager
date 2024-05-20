@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.managers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,8 +32,9 @@ import java.util.List;
 @Service
 public class CompleteGroupFightManager {
 
-    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, boolean fifo, String createdBy) {
-        return createCompleteFightList(tournament, teams, teamsOrder, level, fifo, createdBy);
+    public List<Fight> createFights(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level,
+                                    Integer shiaijo, boolean fifo, String createdBy) {
+        return createCompleteFightList(tournament, teams, teamsOrder, level, shiaijo, fifo, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
@@ -48,7 +49,7 @@ public class CompleteGroupFightManager {
      * @param teamsOrder
      * @return
      */
-    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, boolean fifo,
+    protected List<Fight> createCompleteFightList(Tournament tournament, List<Team> teams, TeamsOrder teamsOrder, Integer level, Integer shiaijo, boolean fifo,
                                                   String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
@@ -57,7 +58,7 @@ public class CompleteGroupFightManager {
         final TeamSelector teamSelector = new TeamSelector(teams, teamsOrder);
 
         Team team1 = teamSelector.getTeamWithMoreAdversaries(teamsOrder);
-        Fight fight = null;
+        Fight fight;
         Fight lastFight = null;
         while (teamSelector.remainFights()) {
             final Team team2 = teamSelector.getNextAdversary(team1, teamsOrder);
@@ -68,13 +69,13 @@ public class CompleteGroupFightManager {
             }
             // Remaining fights sometimes repeat team. Align them.
             if (lastFight != null && (lastFight.getTeam1().equals(team2) || lastFight.getTeam2().equals(team1))) {
-                fight = createFight(tournament, team2, team1, 0, level, createdBy);
+                fight = createFight(tournament, team2, team1, shiaijo, level, createdBy);
             } else if (lastFight != null && (lastFight.getTeam1().equals(team1) || lastFight.getTeam2().equals(team2))) {
-                fight = createFight(tournament, team1, team2, 0, level, createdBy);
+                fight = createFight(tournament, team1, team2, shiaijo, level, createdBy);
             } else if (fights.size() % 2 == 0) {
-                fight = createFight(tournament, team1, team2, 0, level, createdBy);
+                fight = createFight(tournament, team1, team2, shiaijo, level, createdBy);
             } else {
-                fight = createFight(tournament, team2, team1, 0, level, createdBy);
+                fight = createFight(tournament, team2, team1, shiaijo, level, createdBy);
             }
             fights.add(fight);
             lastFight = fight;

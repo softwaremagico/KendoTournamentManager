@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverterRequest> {
+    private final ParticipantReducedConverter participantReducedConverter;
     private final ParticipantConverter participantConverter;
 
     private final TournamentConverter tournamentConverter;
@@ -42,8 +43,9 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
     private final TournamentRepository tournamentRepository;
 
     @Autowired
-    public DuelConverter(ParticipantConverter participantConverter, TournamentConverter tournamentConverter,
-                         TournamentRepository tournamentRepository) {
+    public DuelConverter(ParticipantReducedConverter participantReducedConverter, ParticipantConverter participantConverter,
+                         TournamentConverter tournamentConverter, TournamentRepository tournamentRepository) {
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.tournamentConverter = tournamentConverter;
         this.tournamentRepository = tournamentRepository;
@@ -54,9 +56,9 @@ public class DuelConverter extends ElementConverter<Duel, DuelDTO, DuelConverter
     protected DuelDTO convertElement(DuelConverterRequest from) {
         final DuelDTO duelDTO = new DuelDTO();
         BeanUtils.copyProperties(from.getEntity(), duelDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        duelDTO.setCompetitor1(participantConverter.convert(
+        duelDTO.setCompetitor1(participantReducedConverter.convert(
                 new ParticipantConverterRequest(from.getEntity().getCompetitor1())));
-        duelDTO.setCompetitor2(participantConverter.convert(
+        duelDTO.setCompetitor2(participantReducedConverter.convert(
                 new ParticipantConverterRequest(from.getEntity().getCompetitor2())));
         try {
             if (from.getTournamentDTO() != null) {

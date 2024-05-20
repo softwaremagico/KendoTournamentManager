@@ -1,4 +1,5 @@
 .table-container {
+  position: relative;
   overflow: auto;
   max-height: 70vh;
 }
@@ -9,7 +10,15 @@
 }
 
 .competitor-ranking-table {
-  margin: 2vw;
+  margin: 2vw -190px 2vm 2vm;
+}
+
+.competitor-ranking-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: white;
+  height: 60px;
 }
 
 .competitor-ranking-header {
@@ -34,6 +43,10 @@
   white-space: nowrap;
 }
 
+.competitor-ranking-value.competitor-name {
+  text-align: left;
+}
+
 .competitor-ranking-value.selected {
   font-weight: bold;
 }
@@ -45,4 +58,17 @@
 .mat-dialog-actions {
   display: flex;
   justify-content: center;
+}
+
+.days-selector {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  width: 200px;
+  display: flex;
+}
+
+.day-input {
+  padding: 0 10px 0 0;
+  min-width: 0;
 }

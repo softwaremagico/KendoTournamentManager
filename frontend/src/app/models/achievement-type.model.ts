@@ -46,10 +46,14 @@ export enum AchievementType {
 
   STORMTROOPER_SYNDROME = 'STORMTROOPER_SYNDROME',
 
+  V_FOR_VENDETTA = 'V_FOR_VENDETTA',
+
+  SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER = 'SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER',
+
 }
 
 export namespace AchievementType {
-  export function getByKey(key: string) {
+  export function getByKey(key: string): string | undefined {
     for (const valueKey in AchievementType) {
       if ((AchievementType as any)[valueKey] === key) {
         return valueKey;
@@ -61,13 +65,13 @@ export namespace AchievementType {
 
 export namespace AchievementType {
   export function getKeys(): string[] {
-    return Object.keys(AchievementType).filter(enumValue => (typeof (AchievementType[enumValue as AchievementType]) !== 'function'))
+    return Object.keys(AchievementType).filter((enumValue: string): boolean => (typeof (AchievementType[enumValue as AchievementType]) !== 'function'))
   }
 }
 
 export namespace AchievementType {
   export function toArray(): AchievementType[] {
-    return AchievementType.getKeys().map(key => {
+    return AchievementType.getKeys().map((key: string) => {
       return <AchievementType>(<any>AchievementType)[key];
     });
   }
@@ -76,7 +80,7 @@ export namespace AchievementType {
 export namespace AchievementType {
   export function toCamel(achievementType: AchievementType) {
     return achievementType.toLowerCase()
-      .replace(/_(.)/g, function ($1) {
+      .replace(/_(.)/g, function ($1: string) {
         return $1.toUpperCase();
       })
       .replace(/_/g, '');

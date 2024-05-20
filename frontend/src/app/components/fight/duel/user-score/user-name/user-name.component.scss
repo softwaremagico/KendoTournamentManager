@@ -15,6 +15,14 @@
   text-align: left;
 }
 
+.user-name-text {
+  display: inline-block;
+}
+
+.user-name-text.highlighted {
+  background-color: yellow;
+}
+
 .left .drag-handle {
   float: left;
 }

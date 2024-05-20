@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -36,6 +36,7 @@ public class ScoreOfCompetitorDTO {
     private Integer duelsDone = null;
     private Integer wonFights = null;
     private Integer drawFights = null;
+    private Integer totalFights = null;
     @JsonIgnore
     private boolean countNotOver = false;
 
@@ -127,6 +128,14 @@ public class ScoreOfCompetitorDTO {
 
     public void setCountNotOver(boolean countNotOver) {
         this.countNotOver = countNotOver;
+    }
+
+    public Integer getTotalFights() {
+        return totalFights;
+    }
+
+    public void setTotalFights(Integer totalFights) {
+        this.totalFights = totalFights;
     }
 
     @Override

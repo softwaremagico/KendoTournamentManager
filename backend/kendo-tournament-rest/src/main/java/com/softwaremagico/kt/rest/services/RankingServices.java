@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -60,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -92,6 +94,7 @@ public class RankingServices {
         this.zipController = zipController;
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,7 +104,8 @@ public class RankingServices {
         return rankingController.getCompetitorsScoreRankingFromGroup(groupId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -110,27 +114,33 @@ public class RankingServices {
         return rankingController.getCompetitorsScoreRankingFromTournament(tournamentId);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestBody(required = false) Set<ParticipantDTO> participants,
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestParam(name = "from") Optional<Integer> from,
+                                                                       @RequestBody(required = false) Set<ParticipantDTO> participants,
                                                                        HttpServletRequest request) {
-        return rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>());
+        return rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>(), from.orElse(null));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets participant global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompetitorRanking getCompetitorsRanking(@PathVariable("competitorId") Integer competitorId, HttpServletRequest request) {
         return rankingController.getCompetitorRanking(participantController.get(competitorId));
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
-    public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestBody(required = false) Set<ParticipantDTO> participants,
+    public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestParam(name = "from") Optional<Integer> from,
+                                                        @RequestBody(required = false) Set<ParticipantDTO> participants,
                                                         Locale locale, HttpServletResponse response, HttpServletRequest request) {
-        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>());
+        final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>(),
+                from.orElse(null));
         try {
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename("competitors score.pdf").build();
@@ -152,6 +162,7 @@ public class RankingServices {
         return rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/clubs/{clubId}/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -169,6 +180,7 @@ public class RankingServices {
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -189,6 +201,7 @@ public class RankingServices {
         }
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -198,7 +211,8 @@ public class RankingServices {
         return rankingController.getTeamsScoreRankingFromGroup(groupId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -206,6 +220,7 @@ public class RankingServices {
                                                                    HttpServletRequest request) {
         return rankingController.getTeamsScoreRankingFromTournament(tournamentId);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -225,6 +240,7 @@ public class RankingServices {
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -246,6 +262,7 @@ public class RankingServices {
         }
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets complete tournament summary as html", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/summary/{tournamentId}/html", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -259,6 +276,7 @@ public class RankingServices {
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Download all files as a zip", security = @SecurityRequirement(name = "bearerAuth"))
