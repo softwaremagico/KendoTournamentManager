@@ -31,13 +31,16 @@ import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.FightNotFoundException;
+import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.values.Score;
@@ -61,6 +64,8 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     private final TournamentProvider tournamentProvider;
 
+    private final ParticipantProvider participantProvider;
+
     private final Set<ShiaijoFinishedListener> shiaijoFinishedListeners = new HashSet<>();
     private final Set<FightUpdatedListener> fightsUpdatedListeners = new HashSet<>();
 
@@ -76,12 +81,15 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
     public DuelController(DuelProvider provider,
                           DuelConverter converter,
                           TournamentConverter tournamentConverter,
-                          FightProvider fightProvider, FightConverter fightConverter, TournamentProvider tournamentProvider) {
+                          FightProvider fightProvider, FightConverter fightConverter,
+                          TournamentProvider tournamentProvider,
+                          ParticipantProvider participantProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.fightProvider = fightProvider;
         this.fightConverter = fightConverter;
         this.tournamentProvider = tournamentProvider;
+        this.participantProvider = participantProvider;
     }
 
     public void addShiaijoFinishedListener(ShiaijoFinishedListener listener) {
@@ -152,12 +160,30 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
         return convertAll(getProvider().getUntiesFromTournament(tournamentId));
     }
 
+    public List<DuelDTO> getUntiesFromParticipant(Integer participantId) {
+        final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
+                new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
+
+        return convertAll(getProvider().getUntiesFromParticipant(participant));
+    }
+
     public long count(TournamentDTO tournament) {
         return getProvider().count(tournamentConverter.reverse(tournament));
     }
 
     public void delete(TournamentDTO tournamentDTO) {
         getProvider().delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
+    public List<DuelDTO> getBy(Integer participantId) {
+        final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
+                new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
+
+        return getBy(participant);
+    }
+
+    public List<DuelDTO> getBy(Participant participant) {
+        return convertAll(getProvider().get(participant));
     }
 
 }

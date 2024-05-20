@@ -118,7 +118,7 @@ public interface DuelRepository extends JpaRepository<Duel, Integer> {
     List<Duel> findByTournamentAndCompetitor1ScoreTimeLessThanEqualOrCompetitor2ScoreTimeLessThanEqual(Tournament tournament,
                                                                                                        int score1MaxDuration, int score2MaxDuration);
 
-    @Query("SELECT d FROM Duel d WHERE d.competitor1=:participant OR d.competitor2=:participant")
+    @Query("SELECT d FROM Duel d WHERE d.competitor1=:participant OR d.competitor2=:participant ORDER BY d.createdAt DESC")
     List<Duel> findByParticipant(@Param("participant") Participant participant);
 
     @Query("SELECT d FROM Duel d WHERE (d.competitor1=:participant1 AND d.competitor2=:participant2) "
