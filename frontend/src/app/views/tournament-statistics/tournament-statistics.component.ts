@@ -29,6 +29,7 @@ import {Achievement} from "../../models/achievement.model";
 import {AchievementsService} from "../../services/achievements.service";
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -46,6 +47,8 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public participantsByTournament: StackedBarChartData = new StackedBarChartData();
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
   public fightsOverData: GaugeChartData;
+
+  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
 
   private readonly tournamentId: number | undefined;
   public tournamentStatistics: TournamentStatistics | undefined = undefined;
@@ -127,9 +130,11 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
       }
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
-    this.achievementService.getTournamentAchievements(this.tournamentId!).subscribe((_achievements: Achievement[]): void => {
-      this.achievements = _achievements;
-    });
+    if (this.achievementsEnabled) {
+      this.achievementService.getTournamentAchievements(this.tournamentId!).subscribe((_achievements: Achievement[]): void => {
+        this.achievements = _achievements;
+      });
+    }
   }
 
   generatePreviousTournamentsStatistics(tournamentId: number): void {
