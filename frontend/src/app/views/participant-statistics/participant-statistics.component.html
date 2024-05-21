@@ -237,7 +237,7 @@
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
 
-        <div class="box-statistics box  achievements-box">
+        <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
           <div class="statistics-table-title">
             <mat-icon>stars</mat-icon>
             <h3>{{'achievements' | translate}}</h3>
