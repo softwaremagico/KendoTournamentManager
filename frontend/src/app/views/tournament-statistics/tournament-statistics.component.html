@@ -131,7 +131,7 @@
                                 [title]="('hitsByTournament' | translate)" [width]="400"></app-stacked-bars-chart>
         <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | translate"
                         [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
-        <div class="box-statistics box achievements-box">
+        <div *ngIf="achievementsEnabled" class="box-statistics box achievements-box">
           <div class="statistics-table-title">
             <mat-icon>stars</mat-icon>
             <h3>{{'achievements' | translate}}</h3>
