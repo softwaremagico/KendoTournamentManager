@@ -21,27 +21,38 @@ package com.softwaremagico.kt.core.converters;
  * #L%
  */
 
-import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST extends ConverterRequest<ENTITY>>
-        extends SimpleConverter<ENTITY, DTO, REQUEST> implements IElementConverter<ENTITY, DTO, REQUEST> {
+public abstract class SimpleConverter<ENTITY, DTO, REQUEST extends ConverterRequest<ENTITY>>
+        implements IElementConverter<ENTITY, DTO, REQUEST> {
 
     protected abstract DTO convertElement(REQUEST from);
+
+    public DTO convert(REQUEST from) {
+        if (from == null || !from.hasEntity()) {
+            return null;
+        }
+        return convertElement(from);
+    }
 
     @Override
     public List<DTO> convertAll(Collection<REQUEST> from) {
         if (from == null) {
             return new ArrayList<>();
         }
-        //Returns the DTOs sorted by creation time by default
-        return from.stream().map(this::convert).sorted(Comparator.comparing(ElementDTO::getCreatedAt,
-                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+        return from.stream().map(this::convert).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public List<ENTITY> reverseAll(Collection<DTO> to) {
+        if (to == null) {
+            return new ArrayList<>();
+        }
+        return to.stream().map(this::reverse).collect(Collectors.toCollection(ArrayList::new));
     }
 }
