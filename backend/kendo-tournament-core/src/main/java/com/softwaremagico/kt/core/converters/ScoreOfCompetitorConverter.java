@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
-public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
+public class ScoreOfCompetitorConverter extends SimpleConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
 
     private final ParticipantConverter participantConverter;
     private final ParticipantReducedConverter participantReducedConverter;
