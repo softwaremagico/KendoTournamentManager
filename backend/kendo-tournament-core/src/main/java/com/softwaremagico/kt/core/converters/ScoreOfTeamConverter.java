@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 @Component
 
-public class ScoreOfTeamConverter extends ElementConverter<ScoreOfTeam, ScoreOfTeamDTO, ScoreOfTeamConverterRequest> {
+public class ScoreOfTeamConverter extends SimpleConverter<ScoreOfTeam, ScoreOfTeamDTO, ScoreOfTeamConverterRequest> {
 
     private final TeamConverter teamConverter;
 
