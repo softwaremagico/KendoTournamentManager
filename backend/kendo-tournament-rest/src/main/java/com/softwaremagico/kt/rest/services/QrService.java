@@ -77,7 +77,7 @@ public class QrService {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/guest/tournament/{tournamentId}/png", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/guest/tournament/{tournamentId}/png", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] generateGuestQrCodeForTournamentFightsImage(@Parameter(description = "Id of an existing tournament", required = true)
                                                             @PathVariable("tournamentId") Integer tournamentId,
                                                             HttpServletResponse response, HttpServletRequest request) {
@@ -107,7 +107,7 @@ public class QrService {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/guest/tournament/{tournamentId}/port/{port}/png", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/guest/tournament/{tournamentId}/port/{port}/png", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] generateGuestQrCodeForTournamentFightsImage(@Parameter(description = "Id of an existing tournament", required = true)
                                                             @PathVariable("tournamentId") Integer tournamentId,
                                                             @Parameter(description = "Frontend port")
