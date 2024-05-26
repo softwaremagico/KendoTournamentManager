@@ -290,7 +290,7 @@ public class BlogExporter {
         }
         final int scoreTime = getScoreTime(fightDTO, duel, score, leftTeam);
         return "<div style=\"border-radius: 50%;border: 1px solid black; text-align: center;height=100%\""
-                + (scoreTime > 0 ? "  title=\"Duration " + scoreTime + "&quot;\">" : ">")
+                + (scoreTime > 0 ? "  title=\"" + scoreTime + "&quot;\">" : ">")
                 + String.valueOf(scoreText.getPdfAbbreviation()).replace(" ", "&nbsp;")
                 + "</div>";
     }
@@ -301,7 +301,7 @@ public class BlogExporter {
             if (leftTeam) {
                 time = fightDTO.getDuels().get(duel).getCompetitor1ScoreTime().get(score);
             } else {
-                time = fightDTO.getDuels().get(duel).getCompetitor1ScoreTime().get(score);
+                time = fightDTO.getDuels().get(duel).getCompetitor2ScoreTime().get(score);
             }
             return time;
         } catch (Exception ignored) {
