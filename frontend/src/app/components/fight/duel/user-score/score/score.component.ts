@@ -230,9 +230,8 @@ export class ScoreComponent implements OnInit, OnChanges {
     if (!this.timeRepresentation || this.timeRepresentation.length == 0) {
       return "";
     }
-    let tooltipText: string = '<b>' + this.getScore() + '</b><br>' +
-      '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip">' + this.timeRepresentation + '</span></div>';
-    return tooltipText;
+    return '<span class="tooltip-score"><b>' + this.getScore() + '</b></span><br>' +
+      '<div class="time-tooltip-container"><span class="material-icons time-tooltip">timer</span><span class="time-tooltip-text">' + this.timeRepresentation + '</span></div>';
   }
 
   updateCoordinates($event: MouseEvent): void {
