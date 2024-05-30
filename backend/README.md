@@ -1,25 +1,28 @@
 # Backend
 
-This project is based on Java and Maven. You need to have both tools installed on your system.
+This project is built on Java and Maven. It is essential to have both tools properly installed on your system.
 
 ## Compiling the project
 
-As is based on Maven, simply run `mvn clean install` inside the `backend` folder.
+Given that Maven is the foundation of this project, executing `mvn clean install` within the `backend` directory
+suffices.
 
 ## Configuration
 
-Some properties of the project are customizable and for security reason, in some case must be customized. On the backend
-side you can see all configuration settings inside the
-file [application.properties](kendo-tournament-rest/src/main/resources/application.properties)
+Certain aspects of the project are configurable, with some requiring customization for security purposes.
+Within the backend component, all configuration settings can be found in the
+file [application.properties](kendo-tournament-rest/src/main/resources/application.properties).
 
 ### Security
 
-On the security level, you must perform the next actions to ensure that your deployment is safe:
+Regarding security measures, it is imperative to undertake the following actions to ensure a secure deployment:
 
 #### Update the database encryption key
 
-The property `database.encryption.key` is used for personal data encryption purpose. Obviously this value must be keep in
-secret. If the property is left empty, no encryption is applied on the database. Some examples of use:
+The property `database.encryption.key` serves the purpose of encrypting personal data.
+It is crucial that this value remains confidential.
+If left empty, no encryption will be applied to the database.
+Examples of usage include:
 
 ```
 database.encryption.key=mypassword
@@ -27,9 +30,10 @@ database.encryption.key=mypassword
 
 #### JWT secret key
 
-This setting configures the encryption token used for the communication between the frontend and the backend. Any value
-is fine here meanwhile is kept secret. If `jwt_secret` is left empty, the system will generate a random one on start.
-Random is more secure, but any user will be forced to log in into the system again if the server is restarted.
+This setting defines the encryption token utilized for communication between the frontend and backend.
+Any value may be used here as long as it remains confidential.
+Should `jwt_secret` be left blank, a random token will be generated upon initialization.
+While randomness enhances security, users will need to log back into the system if the server restarts.
 
 ```
 jwt.secret=anotherpassword
@@ -37,52 +41,58 @@ jwt.secret=anotherpassword
 
 #### Initial user
 
-A user is automatically inserted into the database to allow an admin to login into the application for the first time.
-This user will be used to connect from the frontend to the backend endpoints and retrieve the needed data needed by the
-application. You can find the script that generates the admin user
-[here](kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sql). It is strongly recommended
-changing the user credentials on this script before running the software for the first time. The password must be
-encrypted using BCrypt algorithm. You can use an online tool like [this](https://bcrypt-generator.com/) for this
-purpose.
+A user is automatically added to the database to enable an administrator to log in to the application for the initial
+time.
+This user is intended for connecting from the frontend to the backend endpoints and retrieving the necessary data
+required by the application.
+The script responsible for generating the admin user can be
+accessed [here](kendo-tournament-rest/src/main/resources/database/default-authenticated-users.sql).
+It is highly advisable to modify the user credentials within this script before initiating the software.
+The password should be encrypted using the BCrypt algorithm.
+An online tool such as [this one](https://bcrypt-generator.com/) can be utilized for this purpose.
 
 ### Database configuration
 
-The project is based on Hibernate for handling the connections to the database, that means that you can easily switch
-between different databases providers. Currently, for development purposes, is configured to use MySQL database (v5.7),
-and the configuration can be found on the
-file [application.properties](kendo-tournament-rest/src/main/resources/application.properties) file:
+The project utilizes Hibernate for managing database connections, allowing easy interchange between different database
+providers.
+Currently, for developmental purposes, it is configured to operate with MySQL database (v8.3), and this configuration
+can be located in the file [application.properties](kendo-tournament-rest/src/main/resources/application.properties):
 
 ```
 spring.kendo.datasource.driver-class-name=com.mysql.jdbc.Driver
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 spring.kendo.datasource.platform=mysql
 spring.kendo.datasource.jdbc-url=jdbc:mysql://localhost:3306/kendotournament?useSSL=false
 spring.kendo.datasource.username=user
 spring.kendo.datasource.password=asd123
 ```
 
-Update the configuration according to your needs. If you want to use a different database provider, remember to include
-the corresponding `jar` dependency into the project or copy the `jar` into your server manually.
+Adjust the configuration according to your requirements.
+If opting for a different database provider, ensure inclusion of the corresponding `jar` dependency into the project or
+manual transfer of the `jar` into your server.
 
 ## Run the project
 
-We use Spring Boot as a framework for developing the backend. For running the project, first access to the
-folder `backend/kendo-tournament-rest/target` after compiling and execute `mvn spring-boot:run`
+Spring Boot serves as our framework for backend development.
+To run the project, navigate first to `backend/kendo-tournament-rest/target` directory post-compilation, and
+execute `mvn spring-boot:run`.
 
 ### Check API Endpoints
 
-This project is using OpenAPI Documentation. You can check all available endpoints
-on `http://localhost:8080/kendo-tournament-backend/` or using your server domain instead of localhost if is in
-production. If you can see the endpoints description here, probably the backend is working correctly.
+This project utilizes OpenAPI Documentation.
+To review all available endpoints, please visit `http://localhost:8080/kendo-tournament-backend/` or substitute
+`localhost` with your server domain if in a production environment.
+The presence of endpoint descriptions indicates proper functionality of the backend.
 
-Note that the endpoints need the Bearer Auth Token to be executed. You can obtain it using the login service
-on `auth/public/login` path, and the admin user credentials described previously on this document.
+Kindly note that the endpoints require a Bearer Auth Token for execution.
+This token can be obtained through the login service at the `auth/public/login` endpoint, using the admin user
+credentials specified earlier in this document.
 
 ## Running unit tests
 
-In the case you want to run the tests, run `mvn test` on the `backend` folder to execute all tests.
+For testing purposes, to execute all tests, navigate to the `backend` folder and run `mvn test`.
 
 # 3rd party components
 
-Font used on pdf is: ArchitectsDaughter
-by [Kimberly Geswein](https://fonts.google.com/specimen/Architects+Daughter/about). 
+The font used in the PDF is ArchitectsDaughter by Kimberly Geswein; further details can be
+found [here](https://fonts.google.com/specimen/Architects+Daughter/about).
