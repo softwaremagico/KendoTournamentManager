@@ -204,7 +204,7 @@ public class AuthApi {
                         .orElseThrow(() -> new GuestDisabledException(this.getClass(),
                                 String.format("User '%s' not found!", AuthenticatedUserProvider.GUEST_USER)));
                 final long jwtExpiration = jwtTokenUtil.getJwtGuestExpirationTime();
-                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
+                final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip, jwtExpiration);
 
                 //Guest user can only access to non-locked tournaments.
                 final Tournament tournament = tournamentProvider.get(request.getTournamentId()).orElseThrow(() ->
@@ -239,7 +239,8 @@ public class AuthApi {
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();
 
-        final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip);
+        final long jwtExpiration = jwtTokenUtil.getJwtParticipantExpirationTime();
+        final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
