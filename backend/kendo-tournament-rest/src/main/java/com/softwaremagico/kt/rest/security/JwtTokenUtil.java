@@ -59,10 +59,12 @@ public class JwtTokenUtil {
     private final String jwtSecret;
     private final long jwtExpiration;
     private final long jwtGuestExpiration;
+    private final long jwtParticipantExpiration;
 
     @Autowired
     public JwtTokenUtil(@Value("${jwt.secret:#{null}}") String jwtSecret, @Value("${jwt.expiration}") String jwtExpiration,
                         @Value("${jwt.guest.expiration:null}") String jwtGuestExpiration,
+                        @Value("${jwt.participant.expiration:null}") String jwtParticipantExpiration,
                         NetworkController networkController) {
         this.networkController = networkController;
 
@@ -96,6 +98,19 @@ public class JwtTokenUtil {
             }
         }
         this.jwtGuestExpiration = calculatedGuestJwtExpiration;
+
+        //If not set, participant expiration is the same that the standard one.
+        long calculatedParticipantJwtExpiration;
+        if (jwtParticipantExpiration == null) {
+            calculatedParticipantJwtExpiration = this.jwtExpiration;
+        } else {
+            try {
+                calculatedParticipantJwtExpiration = Long.parseLong(jwtParticipantExpiration);
+            } catch (NumberFormatException e) {
+                calculatedParticipantJwtExpiration = this.jwtExpiration;
+            }
+        }
+        this.jwtParticipantExpiration = calculatedParticipantJwtExpiration;
     }
 
     private String generateRandomSecret() {
@@ -107,11 +122,15 @@ public class JwtTokenUtil {
 
 
     public String generateAccessToken(IAuthenticatedUser user, String userIp) {
+        return generateAccessToken(user, userIp, jwtExpiration);
+    }
+
+    public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime) {
         return Jwts.builder()
                 .setSubject(String.format("%s,%s,%s,%s", user.getId(), user.getUsername(), userIp, networkController.getHostMac()))
                 .setIssuer(JWT_ISSUER)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // 1 week
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 1 week
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
@@ -127,6 +146,10 @@ public class JwtTokenUtil {
 
     public long getJwtGuestExpirationTime() {
         return (System.currentTimeMillis() + jwtGuestExpiration);
+    }
+
+    public long getJwtParticipantExpirationTime() {
+        return (System.currentTimeMillis() + jwtParticipantExpiration);
     }
 
     public String getUserId(String token) {
