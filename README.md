@@ -47,7 +47,11 @@ If you are seeking a desktop application, please visit
 the [Kendo Tournament Generator page](https://sourceforge.net/projects/kendotournament/files/) for more information.
 
 But if you are in need of a professional online tool, the project described here may be exactly what you are searching
-for.
+for. If you are interested in discovering the capabilities of this tool for your tournaments, you can explore the 
+[wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition) for details on its features 
+and customization choices. 
+Alternatively, for practical illustrations, you can directly check out a few description examples provided 
+[here](https://github.com/softwaremagico/KendoTournamentManager/wiki/Full-Examples).
 
 ## Installation
 
