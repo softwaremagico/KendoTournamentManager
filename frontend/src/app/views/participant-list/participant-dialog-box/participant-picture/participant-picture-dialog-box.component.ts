@@ -90,6 +90,7 @@ export class ParticipantPictureDialogBoxComponent extends RbacBasedComponent imp
         this.fileService.setBase64Picture(image).subscribe((_picture: ParticipantImage): void => {
           this.messageService.infoMessage('infoPictureStored');
           this.pictureUpdatedService.isPictureUpdated.next(_picture.base64);
+          this.participant.hasAvatar = true;
           this.closeDialog();
         });
       }
