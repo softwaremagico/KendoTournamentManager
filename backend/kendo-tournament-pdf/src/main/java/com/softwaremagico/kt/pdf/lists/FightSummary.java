@@ -236,7 +236,8 @@ public class FightSummary extends ParentList {
                         }
 
                         for (final FightDTO fight : fights) {
-                            if (groupsOfLevel.get(i).getFights().contains(fight)) {
+                            if (i < groupsOfLevel.size() && groupsOfLevel.get(i).getFights() != null
+                                    && groupsOfLevel.get(i).getFights().contains(fight)) {
                                 final PdfPCell cell = new PdfPCell(fightTable(fight, true));
                                 cell.setBorderWidth(BORDER_WIDTH);
                                 cell.setColspan(getTableWidths().length);
