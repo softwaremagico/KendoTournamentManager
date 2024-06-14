@@ -128,6 +128,8 @@ public class TreeTournamentHandler extends LeagueHandler {
     public void recreateGroupSize(Tournament tournament, int numberOfWinners) {
         groupProvider.delete(tournament, 1);
         adjustGroupsSize(tournament, numberOfWinners);
+        //Update the shiaijo numbers.
+        adjustGroupsShiaijos(tournament);
     }
 
     public void adjustGroupsSize(Tournament tournament, int numberOfWinners) {
