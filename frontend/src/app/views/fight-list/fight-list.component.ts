@@ -722,17 +722,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
+  //this.selectedGroup = this.groups.find((group: Group): boolean => group.fights.indexOf(fight) >= 0)!;
+
   selectDuel(duel: Duel): void {
     this.selectedDuel = duel;
     this.duelChangedService.isDuelUpdated.next(duel);
     if (duel) {
+      this.selectedGroup = this.groups.find((group: Group): boolean => group.unties.indexOf(duel) >= 0)!;
       if (duel.duration) {
         this.timeChangedService.isElapsedTimeChanged.next(duel.duration);
       } else {
         this.timeChangedService.isElapsedTimeChanged.next(0);
       }
-    }
-    if (duel) {
       if (duel.totalDuration) {
         this.timeChangedService.isTotalTimeChanged.next(duel.totalDuration);
       } else {
@@ -746,8 +747,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   areAllDuelsOver(): boolean {
-    const fights: Fight[] = this.getFights();
-    const unties: Duel[] = this.getUnties();
+    const fights: Fight[] | undefined = this.selectedGroup ? this.filteredFights.get(this.selectedGroup!.id!) : this.getFights();
+    const unties: Duel[] | undefined = this.selectedGroup ? this.filteredUnties.get(this.selectedGroup!.id!) : this.getUnties();
     if (fights) {
       for (const fight of fights) {
         for (const duel of fight.duels) {
@@ -756,9 +757,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
           }
         }
       }
-      for (const duel of unties) {
-        if (!duel.finished) {
-          return false;
+      if (unties) {
+        for (const duel of unties) {
+          if (!duel.finished) {
+            return false;
+          }
         }
       }
     }
