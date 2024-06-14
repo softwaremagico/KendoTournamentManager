@@ -75,7 +75,7 @@ export class ArrowComponent implements OnInit {
         this.y2 += ArrowComponent.WINNER_SEPARATION;
       }
     }
-    if (this.level > 0) {
+    if (this.level > 0 || this.numberOfWinnersFirstLevel == 1) {
       if (this.y1 < this.y2) {
         this.y2 -= ArrowComponent.WINNER_SEPARATION;
       } else {
