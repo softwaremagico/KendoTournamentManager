@@ -17,6 +17,8 @@ export class TournamentBracketsComponent implements OnInit {
   @Input()
   droppingDisabled: boolean;
 
+  numberOfWinnersFirstLevel: number;
+
   totalTeams: number;
 
   relations: Map<number, { src: number, dest: number, winner: number }[]>;
@@ -40,6 +42,16 @@ export class TournamentBracketsComponent implements OnInit {
       winner: number,
     }[]>): void => {
       this.relations = _relations;
+      this.numberOfWinnersFirstLevel = 0;
+      _relations.forEach((value: {
+        src: number,
+        dest: number,
+        winner: number,
+      }[], key: number): void => {
+        value.forEach(value1 => {
+          this.numberOfWinnersFirstLevel = Math.max(this.numberOfWinnersFirstLevel, value1.winner + 1);
+        });
+      });
     });
   }
 
