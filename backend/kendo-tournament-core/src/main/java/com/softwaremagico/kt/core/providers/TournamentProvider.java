@@ -215,9 +215,6 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             //Resize tournament
             ((TreeTournamentHandler) tournamentManager).recreateGroupSize(tournament, numberOfWinners);
             KendoTournamentLogger.info(this.getClass(), "Updated tournament '{}' with number of winners '{}' by '{}'", tournament, numberOfWinners, updatedBy);
-
-            //Update the shiaijo numbers.
-            ((TreeTournamentHandler) tournamentManager).adjustGroupsShiaijos(tournament);
         } else {
             KendoTournamentLogger.warning(this.getClass(), "Cannot change the number of winners as tournament is of type '{}'.", tournament.getType());
         }
