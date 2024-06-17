@@ -82,8 +82,7 @@ export class ArrowComponent implements OnInit {
         this.y2 += ArrowComponent.WINNER_SEPARATION;
       }
     }
-    //Arrows define the height of the brackets. Put 300 px to show correctly the group.
-    this.height = Math.max(this.y2, this.y1) + ArrowComponent.ARROW_SIZE / 2 + BracketsMeasures.GROUP_HIGH + BracketsMeasures.GROUP_SEPARATION;
+    this.height = Math.max(this.y2, this.y1) + ArrowComponent.ARROW_SIZE / 2;
     this.width = Math.max(this.x2, this.x1);
   }
 
