@@ -75,6 +75,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         this.tournamentController = tournamentController;
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all fights from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,6 +84,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         return getController().getByTournamentId(tournamentId);
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,6 +92,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
                                  HttpServletRequest request) {
         return getController().get(tournamentDTO);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all fights summary in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -109,6 +112,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         }
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets current fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/current", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -116,6 +120,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
                                HttpServletRequest request) {
         return getController().getCurrent(tournamentId);
     }
+
 
     @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -125,6 +130,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         getController().deleteById(id, authentication.getName());
     }
 
+
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Deletes all fights from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -132,6 +138,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     public void delete(@RequestBody TournamentDTO tournamentDTO, HttpServletRequest request) {
         getController().delete(tournamentDTO);
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generate duels on a fight.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -146,6 +153,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
         }
         return getController().generateDuels(fightDto, authentication.getName());
     }
+
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Updates a fight.", security = @SecurityRequirement(name = "bearerAuth"))
@@ -165,6 +173,17 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
                                      Integer tournamentId,
                                      Authentication authentication, HttpServletRequest request) {
         return getController().createNextFights(tournamentId, authentication.getName());
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets all fights from competitor.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/competitor/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<FightDTO> getByCompetitor(@Parameter(description = "Id of the competitor.", required = true)
+                                          @PathVariable("competitorId")
+                                          Integer competitorId,
+                                          HttpServletRequest request) {
+        return getController().getBy(competitorId);
     }
 
 

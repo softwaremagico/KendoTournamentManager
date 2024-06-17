@@ -71,6 +71,7 @@ services:
         - protocol
         - timezone
         - websocket_protocol
+        - achievements_enabled
     image: kendo-tournament-frontend
     restart: always
     networks:

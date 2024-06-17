@@ -9,14 +9,14 @@
        (focus)="clearCoordinates();"
        (blur)="clearCoordinates();"
        class="point" [ngClass]="{'hidden-point': scoreRepresentation === 'F'}" >
-    {{scoreRepresentation}}
+    <span class="point-value">{{scoreRepresentation}}</span>
     <div *ngIf="this.timeRepresentation" [innerHTML]="tooltipText()"
          [ngClass]="{
           'left-border': onLeftBorder,
           'center': !onRightBorder && !onLeftBorder,
           'right-border': onRightBorder
         }"
-         class="tooltiptext">
+         class="tooltip-popup">
       <mat-icon>timer</mat-icon>
     </div>
   </div>

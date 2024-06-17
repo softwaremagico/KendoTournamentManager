@@ -22,6 +22,7 @@ import {ParticipantService} from "../../services/participant.service";
 import {Participant} from "../../models/participant";
 import {LoginService} from "../../services/login.service";
 import {MatDialog} from "@angular/material/dialog";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -33,10 +34,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   pipe: DatePipe;
 
   private participantId: number | undefined;
-  private temporalToken: string | null;
+  private readonly temporalToken: string | null;
   public participantStatistics: ParticipantStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
+
+  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
 
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
@@ -132,9 +135,11 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
-    this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {
-      this.achievements = _achievements;
-    });
+    if (this.achievementsEnabled) {
+      this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {
+        this.achievements = _achievements;
+      });
+    }
   }
 
   initializeScoreStatistics(participantStatistics: ParticipantStatistics): void {
@@ -203,5 +208,11 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
+  }
+
+  openParticipantFights(): void {
+    if (this.participantId) {
+      this.router.navigate(['/participants/fights'], {state: {participantId: this.participantId}});
+    }
   }
 }

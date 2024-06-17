@@ -1,5 +1,5 @@
 <div class="container" cdkDropListGroup>
-  <div>
+  <div class="team-panel">
     <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
          (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
          cdkDropList cdkDropListSortingDisabled="true"
@@ -38,7 +38,7 @@
   <button
     *ngIf="!droppingDisabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
     (click)="downloadAsPdf()"
-          class="floating-button" color="picture" mat-flat-button mat-mini-fab
+          class="floating-button" color="secondary" mat-flat-button mat-mini-fab
           type="button">
     <mat-icon color="primary">download_file</mat-icon>
   </button>

@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Objects;
 
-public class ScoreOfTeamDTO {
+public class ScoreOfTeamDTO extends ElementDTO {
 
     private TeamDTO team;
     @JsonIgnore

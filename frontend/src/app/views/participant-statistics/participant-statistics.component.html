@@ -10,6 +10,13 @@
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
+        <button (click)="openParticipantFights()"
+                *ngIf="(RbacActivity.VIEW_PARTICIPANT_FIGHTS | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'titleStatistics' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
+        </button>
       </div>
     </div>
     <h1 class="name" *ngIf="participant">{{participant.name}} {{participant.lastname}}</h1>
@@ -230,7 +237,7 @@
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
 
-        <div class="box-statistics box  achievements-box">
+        <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
           <div class="statistics-table-title">
             <mat-icon>stars</mat-icon>
             <h3>{{'achievements' | translate}}</h3>
