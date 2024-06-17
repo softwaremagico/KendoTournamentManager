@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,6 +39,7 @@ import com.softwaremagico.kt.pdf.BaseColor;
 import com.softwaremagico.kt.pdf.EmptyPdfBodyException;
 import com.softwaremagico.kt.pdf.ParentList;
 import com.softwaremagico.kt.utils.GroupUtils;
+import com.softwaremagico.kt.utils.ShiaijoName;
 import org.springframework.context.MessageSource;
 
 import java.util.List;
@@ -75,7 +76,9 @@ public class GroupList extends ParentList {
     public PdfPTable groupTable(GroupDTO groupDTO) {
         final PdfPTable teamTable = new PdfPTable(1);
 
-        teamTable.addCell(getHeader4(messageSource.getMessage("tournament.group", null, locale) + " " + (groupDTO.getIndex() + 1), 0));
+        teamTable.addCell(getHeader4(messageSource.getMessage("tournament.group", null, locale) + " " + (groupDTO.getIndex() + 1)
+                + (tournament.getShiaijos() > 1 ? " (" + messageSource.getMessage("tournament.shiaijo", null, locale) + ": "
+                + ShiaijoName.getShiaijoName(groupDTO.getShiaijo()) + ")" : ""), 0));
 
         for (final TeamDTO teamDTO : groupDTO.getTeams()) {
             teamTable.addCell(getCell(teamDTO.getName()));

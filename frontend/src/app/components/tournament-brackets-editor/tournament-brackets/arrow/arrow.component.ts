@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {GroupsUpdatedService} from "../groups-updated.service";
-import {TournamentBracketsComponent} from "../tournament-brackets.component";
 import {Group} from "../../../../models/group";
+import {BracketsMeasures} from "../brackets-measures";
 
 @Component({
   selector: 'app-arrow',
@@ -11,6 +11,7 @@ import {Group} from "../../../../models/group";
 export class ArrowComponent implements OnInit {
 
   public static readonly ARROW_SIZE: number = 30;
+  public static readonly WINNER_SEPARATION: number = 15;
   arrow_size: number = ArrowComponent.ARROW_SIZE;
 
   @Input()
@@ -35,7 +36,10 @@ export class ArrowComponent implements OnInit {
   groupDestination: number;
 
   @Input()
-  winner: number = 1;
+  numberOfWinnersFirstLevel: number = 1;
+
+  @Input()
+  winner: number = 0;
 
   totalTeams: number;
 
@@ -59,31 +63,43 @@ export class ArrowComponent implements OnInit {
 
   generateCoordinates(): void {
     this.x1 = this.getArrowX1Coordinate(this.level, this.groupSource);
-    this.y1 = this.getArrowY1Coordinate(this.level, this.groupSource);
+    this.y1 = this.getArrowY1Coordinate(this.level, this.groupSource, this.winner);
     this.x2 = this.getArrowX2Coordinate(this.level + 1, this.groupDestination);
     this.y2 = this.getArrowY2Coordinate(this.level + 1, this.groupSource, this.groupDestination);
+    if (this.numberOfWinnersFirstLevel > 1 && this.level == 0) {
+      if (this.winner == 0) {
+        this.y1 -= ArrowComponent.WINNER_SEPARATION;
+        this.y2 -= ArrowComponent.WINNER_SEPARATION;
+      } else {
+        this.y1 += ArrowComponent.WINNER_SEPARATION;
+        this.y2 += ArrowComponent.WINNER_SEPARATION;
+      }
+    }
+    if (this.level > 0 || this.numberOfWinnersFirstLevel == 1) {
+      if (this.y1 < this.y2) {
+        this.y2 -= ArrowComponent.WINNER_SEPARATION;
+      } else {
+        this.y2 += ArrowComponent.WINNER_SEPARATION;
+      }
+    }
     this.height = Math.max(this.y2, this.y1) + ArrowComponent.ARROW_SIZE / 2;
     this.width = Math.max(this.x2, this.x1);
   }
 
   getArrowX1Coordinate(level: number, group: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * (level + 1) + TournamentBracketsComponent.LEVEL_SEPARATION * level + 5;
+    return BracketsMeasures.GROUP_WIDTH * (level + 1) + BracketsMeasures.LEVEL_SEPARATION * level + 5;
   }
 
-  getArrowY1Coordinate(level: number, group: number): number {
+  getArrowY1Coordinate(level: number, group: number, winner: number): number {
     return this.getGroupTopSeparation(level, group, this.groupsByLevel) + this.getGroupHigh(level, group) / 2;
   }
 
   getArrowX2Coordinate(column: number, group: number): number {
-    return TournamentBracketsComponent.GROUP_WIDTH * column + TournamentBracketsComponent.LEVEL_SEPARATION * column + 5;
+    return BracketsMeasures.GROUP_WIDTH * column + BracketsMeasures.LEVEL_SEPARATION * column + 5;
   }
 
   getArrowY2Coordinate(column: number, sourceGroupIndex: number, destinationGroupIndex: number): number {
-    let correction: number = 15;
-    if (sourceGroupIndex % 2 === 0) {
-      correction = -correction;
-    }
-    return this.getGroupTopSeparation(column, destinationGroupIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceGroupIndex) / 2 + correction;
+    return this.getGroupTopSeparation(column, destinationGroupIndex, this.groupsByLevel) + this.getGroupHigh(column, sourceGroupIndex) / 2;
   }
 
 }

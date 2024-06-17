@@ -86,7 +86,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.disableShiaijos();
   }
 
-  doAction() {
+  doAction(): void {
     this.tournament.name = this.registerForm.get('tournamentName')!.value;
     this.tournament.shiaijos = this.registerForm.get('shiaijos')!.value;
     this.tournament.type = this.registerForm.get('tournamentType')!.value;
@@ -98,7 +98,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.closeDialog(this.action);
   }
 
-  closeDialog(action: Action) {
+  closeDialog(action: Action): void {
     this.dialogRef.close({action: action, data: this.tournament});
   }
 
@@ -109,7 +109,14 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     return TournamentType.toCamel(tournamentType);
   }
 
-  addPicture() {
+  getTournamentTypeHintTag(tournamentType: TournamentType): string {
+    if (!tournamentType) {
+      return "";
+    }
+    return TournamentType.toCamel(tournamentType) + 'Hint';
+  }
+
+  addPicture(): void {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
       data: {
         title: "", action: Action.Add, tournament: this.tournament
@@ -118,7 +125,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     dialogRef.afterClosed().subscribe();
   }
 
-  disableShiaijos() {
+  disableShiaijos(): void {
     if (this.selectedType == TournamentType.KING_OF_THE_MOUNTAIN || this.selectedType == TournamentType.LEAGUE || this.selectedType == TournamentType.LOOP) {
       this.registerForm.controls['shiaijos'].disable();
       this.registerForm.controls['shiaijos'].setValue(1);
@@ -127,12 +134,12 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     }
   }
 
-  select(type: TournamentType) {
+  select(type: TournamentType): void {
     this.selectedType = type;
     this.disableShiaijos();
   }
 
-  openScoreDefinition() {
+  openScoreDefinition(): void {
     const dialogRef = this.dialog.open(TournamentScoreEditorComponent, {
       data: {
         title: this.translateService.instant('scoreRules'), action: Action.Add, tournament: this.tournament
@@ -147,11 +154,19 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
     this.selectedScore = score;
   }
 
-  openCustomProperties() {
+  openCustomProperties(): void {
     const dialogRef = this.dialog.open(TournamentExtraPropertiesComponent, {
       data: {
         title: this.translateService.instant('tournamentProperties'), action: Action.Add, tournament: this.tournament
       }
     });
+  }
+
+  getMinutes(time: number): number {
+    return ~~(time / 60);
+  }
+
+  getSeconds(time: number): number {
+    return time % 60;
   }
 }

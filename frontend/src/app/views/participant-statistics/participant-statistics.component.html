@@ -4,18 +4,26 @@
     <div class="upper-menu">
       <div class="cell">
         <button (click)="goBackToUsers()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" color="secondary"
                 mat-button
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
+        <button (click)="openParticipantFights()"
+                *ngIf="(RbacActivity.VIEW_PARTICIPANT_FIGHTS | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                matTooltip="{{'titleStatistics' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
+        </button>
       </div>
     </div>
+    <h1 class="name" *ngIf="participant">{{participant.name}} {{participant.lastname}}</h1>
     <div class="statistics-container">
       <div class="dashboard">
 
-        <div class="box-statistics box shadow">
+        <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
             <h3>{{'roles' | translate}}</h3>
@@ -43,7 +51,7 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow">
+        <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon>timer</mat-icon>
             <h3>{{'time' | translate}}</h3>
@@ -86,7 +94,7 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow">
+        <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="match"></mat-icon>
             <h3>{{'hits' | translate}}</h3>
@@ -116,6 +124,10 @@
               <td>{{'ippon' | translate}}:</td>
               <td>{{participantStatistics.participantFightStatistics.ipponNumber}}</td>
             </tr>
+            <tr>
+              <td>{{'fusenGachi' | translate}}:</td>
+              <td>{{participantStatistics.participantFightStatistics.fusenGachiNumber}}</td>
+            </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon>flag</mat-icon>
@@ -130,7 +142,7 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow">
+        <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon flip" svgIcon="match"></mat-icon>
             <h3>{{'receivedHits' | translate}}</h3>
@@ -160,6 +172,10 @@
               <td>{{'ippon' | translate}}:</td>
               <td>{{participantStatistics.participantFightStatistics.receivedIpponNumber}}</td>
             </tr>
+            <tr>
+              <td>{{'fusenGachi' | translate}}:</td>
+              <td>{{participantStatistics.participantFightStatistics.receivedFusenGachiNumber}}</td>
+            </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon class="flip">flag</mat-icon>
@@ -174,7 +190,7 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable">
+        <div class="box-statistics box  scrollable">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
             <h3>{{'competitorsRanking' | translate}}</h3>
@@ -201,14 +217,17 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable">
+        <div class="box-statistics box  scrollable">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="gauge"></mat-icon>
             <h3>{{'performance' | translate}}</h3>
           </div>
           <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
                             [ngClass]="'bar-'+i"
-                            [percentage]="value[1]" [text]="value[0] | translate"></app-progress-bar>
+                            [percentage]="value[1]?value[1]:0"
+                            [text]="value[0] | translate"
+                            [hint]="value[0] + 'Hint' | translate"
+          ></app-progress-bar>
         </div>
 
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
@@ -218,7 +237,7 @@
                        [title]="'participantReceivedHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>
 
-        <div class="box-statistics box shadow achievements-box">
+        <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
           <div class="statistics-table-title">
             <mat-icon>stars</mat-icon>
             <h3>{{'achievements' | translate}}</h3>

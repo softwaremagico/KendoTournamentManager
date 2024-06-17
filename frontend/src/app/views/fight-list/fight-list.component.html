@@ -4,44 +4,44 @@
     <div class="upper-menu">
       <div class="cell">
         <button (click)="goBackToTournament()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" color="secondary"
                 mat-button
                 matTooltip="{{'back' | translate}}">
           <mat-icon>arrow_back</mat-icon>
         </button>
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="tournament && tournament.locked" [matTooltipShowDelay]="500"
-                class="add-button"
-                color="primary" mat-button
-                matTooltip="{{'addFight' | translate}}">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.activities)"
-                [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
-                [matTooltipShowDelay]="500"
-                class="delete-button" color="warn" mat-button
-                matTooltip="{{'delete' | translate}}">
-          <mat-icon>clear</mat-icon>
-        </button>
         <button (click)="openConfirmationGenerateElementsDialog()"
-                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+                *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
                 [disabled]="(tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'wizard' | translate}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
+        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                [disabled]="tournament && tournament.locked" [matTooltipShowDelay]="500"
+                class="add-button"
+                color="primary" mat-button
+                matTooltip="{{'addFight' | translate}}">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.getActivities())"
+                [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
+                [matTooltipShowDelay]="500"
+                class="delete-button" color="warn" mat-button
+                matTooltip="{{'delete' | translate}}">
+          <mat-icon>clear</mat-icon>
+        </button>
         <button (click)="openBracketsManager()"
-                *ngIf="isBracketsEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.activities)"
+                *ngIf="isBracketsEnabled && (RbacActivity.CHECK_TOURNAMENT_BRACKETS | rbac : this.rbacService.getActivities())"
                 [disabled]="(tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'groups' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" class="timer-divider"></mat-divider>
-        <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)
+        <mat-divider [vertical]="true" class="timer-divider" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"></mat-divider>
+        <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())
                 && (!selectedDuel || selectedDuel?.finished == false)"
                 [disabled]="!selectedDuel || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
@@ -49,16 +49,16 @@
                 matTooltip="{{'finishFight' | translate}}">
           <mat-icon>check_circle</mat-icon>
         </button>
-        <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)
+        <button (click)="unfinishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())
                 && selectedDuel?.finished == true"
-                [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | rbac : this.rbacService.activities)"
+                [disabled]="!selectedDuel || (tournament && tournament.locked) || !(RbacActivity.UNFINISH_FIGHT | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'reopenFight' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="unfinish"></mat-icon>
         </button>
         <button (click)="showTimer(canStartFight(selectedDuel))"
-                *ngIf="!timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+                *ngIf="!timer && (RbacActivity.SHOW_TIMER | rbac : this.rbacService.getActivities())"
                 [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [matTooltipShowDelay]="500"
                 class="timer-button"
@@ -68,7 +68,7 @@
           <mat-icon>timer</mat-icon>
         </button>
         <button (click)="showTimer(false)"
-                *ngIf="timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.activities)"
+                *ngIf="timer && (RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"
                 [disabled]="selectedDuel===undefined || (showSelectedRelatedButton() && !canStartFight(selectedDuel))"
                 [matTooltipShowDelay]="500"
                 class="timer-button"
@@ -77,21 +77,24 @@
                 matTooltip="{{'chronometerOff' | translate}}">
           <mat-icon>timer_off</mat-icon>
         </button>
-        <mat-divider [vertical]="true"></mat-divider>
-        <button (click)="swapColors()" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.activities)"
+        <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())
+          || (RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())
+          || (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"></mat-divider>
+        <button (click)="swapColors()"
+                *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" class="exchange-colors"
                 color="primary" mat-button
                 matTooltip="{{'swapColors' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="exchange-colors"></mat-icon>
         </button>
-        <button (click)="swapTeams()" *ngIf="(RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.activities)"
+        <button (click)="swapTeams()" *ngIf="(RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" class="exchange-teams"
                 color="primary" mat-button
                 matTooltip="{{'swapTeams' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="exchange-teams"></mat-icon>
         </button>
         <button (click)="enableMemberOrder(true)"
-                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.activities)"
+                *ngIf="!membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"
                 [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="member-order"
                 color="primary" mat-button
@@ -99,16 +102,17 @@
           <mat-icon class="kendo-icon" svgIcon="member-order"></mat-icon>
         </button>
         <button (click)="enableMemberOrder(false)"
-                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.activities)"
+                *ngIf="membersOrder && (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"
                 [disabled]="(tournament && tournament.locked)" [matTooltipShowDelay]="500"
                 class="member-order"
                 color="primary" mat-button
                 matTooltip="{{'membersOrder' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
         </button>
-        <mat-divider [vertical]="true"></mat-divider>
+        <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities()) ||
+            (RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"></mat-divider>
         <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType))
-                 && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.activities)"
+                 && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities())"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" color="primary"
                 mat-button
@@ -116,7 +120,7 @@
           <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
         </button>
         <button (click)="showCompetitorsClassification()"
-                *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.activities)"
+                *ngIf="(RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500"
                 class="competitors-classification" color="primary"
@@ -124,8 +128,11 @@
                 matTooltip="{{'competitorsRanking' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" class="download-divider"></mat-divider>
-        <button (click)="downloadPDF()" *ngIf="(RbacActivity.READ_ALL_FIGHTS | rbac : this.rbacService.activities)"
+        <mat-divider [vertical]="true"
+                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                     class="download-divider"></mat-divider>
+        <button (click)="downloadPDF()"
+                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500"
                 class="download-button" color="primary"
@@ -133,6 +140,14 @@
                 matTooltip="{{'fightList' | translate}}">
           <mat-icon>file_download</mat-icon>
         </button>
+      </div>
+    </div>
+    <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1">
+      <div class="shiaijo-label">
+        {{'shiaijo'| translate}}
+      </div>
+      <div class="shiaijo-name" (click)="changeShiaijo()" (keydown)="changeShiaijo()" >
+        {{getShiaijoTag()}}
       </div>
     </div>
     <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
@@ -146,20 +161,24 @@
                [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
     <div class="fight-container">
       <div *ngFor="let group of groups" class="fight-list">
-        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group)"
+        <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="level-name">{{'level' | translate}} {{group.level + 1}}</h2>
-        <h3 [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
+        <h3 *ngIf="filteredFights.get(group.id!)?.length! > 0"
+            [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="group-name">{{'group' | translate}} {{group.index + 1}}</h3>
-        <div [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
-          <fight (click)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
+        <div *ngIf="filteredFights.get(group.id!)?.length! > 0"
+             [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
+          <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
                  [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
                  [swapTeams]="swappedTeams"></fight>
 
           <div class="unties-list">
-            <untie-fight (click)="selectDuel(duel)" *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+            <untie-fight *ngFor="let duel of filteredUnties.get(group.id!)" [duel]="duel"
+                         (click)="selectDuel(duel)"
+                         (keydown)="selectDuel(duel)"
                          [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
                          [selected]="duel === selectedDuel" [swapColors]="swappedColors"
                          [swapTeams]="swappedTeams"></untie-fight>

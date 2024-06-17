@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.controller;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ package com.softwaremagico.kt.pdf.controller;
 
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantImageController;
+import com.softwaremagico.kt.core.controller.QrController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
@@ -30,6 +31,7 @@ import com.softwaremagico.kt.core.controller.TournamentImageController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantImageDTO;
+import com.softwaremagico.kt.core.controller.models.QrCodeDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfCompetitorDTO;
 import com.softwaremagico.kt.core.controller.models.ScoreOfTeamDTO;
@@ -37,7 +39,10 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentImageDTO;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
+import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.pdf.accreditations.TournamentAccreditationCards;
 import com.softwaremagico.kt.pdf.diplomas.DiplomaPDF;
 import com.softwaremagico.kt.pdf.lists.CompetitorsScoreList;
@@ -47,6 +52,7 @@ import com.softwaremagico.kt.pdf.lists.GroupList;
 import com.softwaremagico.kt.pdf.lists.RoleList;
 import com.softwaremagico.kt.pdf.lists.TeamList;
 import com.softwaremagico.kt.pdf.lists.TeamsScoreList;
+import com.softwaremagico.kt.pdf.qr.TournamentQr;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentImageType;
@@ -81,9 +87,15 @@ public class PdfController {
 
     private final TournamentExtraPropertyController tournamentExtraPropertyController;
 
+    private final ParticipantProvider participantProvider;
+    private final ParticipantConverter participantConverter;
+
+    private final QrController qrController;
+
     public PdfController(MessageSource messageSource, RoleController roleController, TeamController teamController, GroupController groupController,
                          TournamentImageController tournamentImageController, ParticipantImageController participantImageController,
-                         TournamentExtraPropertyController tournamentExtraPropertyController) {
+                         TournamentExtraPropertyController tournamentExtraPropertyController, ParticipantProvider participantProvider,
+                         ParticipantConverter participantConverter, QrController qrController) {
         this.messageSource = messageSource;
         this.roleController = roleController;
         this.teamController = teamController;
@@ -91,6 +103,9 @@ public class PdfController {
         this.tournamentImageController = tournamentImageController;
         this.participantImageController = participantImageController;
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
+        this.participantProvider = participantProvider;
+        this.participantConverter = participantConverter;
+        this.qrController = qrController;
     }
 
     public CompetitorsScoreList generateCompetitorsScoreList(Locale locale, TournamentDTO tournament, List<ScoreOfCompetitorDTO> competitorTopTen) {
@@ -103,14 +118,23 @@ public class PdfController {
 
     public RoleList generateClubList(Locale locale, TournamentDTO tournamentDTO) {
         final List<RoleDTO> roles = roleController.get(tournamentDTO);
+
+        //Gets all participants with clubs.
+        final List<ParticipantDTO> participants = participantConverter.convertAll(participantProvider
+                .findByIdIn(roles.stream().map(roleDTO -> roleDTO.getParticipant().getId())
+                        .collect(Collectors.toSet())).stream().map(ParticipantConverterRequest::new).toList());
+
+        final Map<Integer, ParticipantDTO> participantsById = participants.stream()
+                .collect(Collectors.toMap(ParticipantDTO::getId, Function.identity()));
+
         final Map<ClubDTO, List<RoleDTO>> rolesByClub = roles.stream().collect(
-                Collectors.groupingBy(roleDTO -> roleDTO.getParticipant().getClub())
+                Collectors.groupingBy(roleDTO -> participantsById.get(roleDTO.getParticipant().getId()).getClub())
         );
         return new RoleList(messageSource, locale, tournamentDTO, rolesByClub);
     }
 
     public TeamList generateTeamList(TournamentDTO tournamentDTO) {
-        final List<TeamDTO> teams = teamController.getAllByTournament(tournamentDTO, null);
+        final List<TeamDTO> teams = new ArrayList<>(teamController.getAllByTournament(tournamentDTO, null));
         teams.sort(Comparator.comparing(TeamDTO::getName));
         return new TeamList(tournamentDTO, teams);
     }
@@ -223,5 +247,10 @@ public class PdfController {
         } catch (Exception e) {
             return DEFAULT_NAME_POSITION;
         }
+    }
+
+    public TournamentQr generateTournamentQr(Locale locale, TournamentDTO tournament, Integer port) {
+        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId(), port);
+        return new TournamentQr(messageSource, locale, tournament, qrCodeDTO.getData(), null);
     }
 }

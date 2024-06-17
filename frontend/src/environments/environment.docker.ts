@@ -1,4 +1,7 @@
 export const environment = {
   production: true,
-  backendUrl: "PROTOCOL://MACHINE_DOMAIN/kendo-tournament-backend"
+  backendUrl: "BACKEND_PROTOCOL://MACHINE_DOMAIN/kendo-tournament-backend",
+  websocketsUrl: "WEBSOCKET_PROTOCOL://MACHINE_DOMAIN/kendo-tournament-backend/websockets",
+  websocketsTopicPrefix: "/topic",
+  achievementsEnabled: "ACHIEVEMENTS_ENABLED",
 };

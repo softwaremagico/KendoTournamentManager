@@ -1,14 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Group} from "../../models/group";
 import {CdkDragDrop, transferArrayItem} from "@angular/cdk/drag-drop";
 import {Team} from "../../models/team";
@@ -22,7 +12,7 @@ import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {GroupsUpdatedService} from "./tournament-brackets/groups-updated.service";
-import {forkJoin, Observable} from "rxjs";
+import {forkJoin, Observable, Subscription} from "rxjs";
 import jsPDF from 'jspdf';
 import domToImage from 'dom-to-image';
 import {TournamentBracketsComponent} from "./tournament-brackets/tournament-brackets.component";
@@ -30,13 +20,21 @@ import {NumberOfWinnersUpdatedService} from "../../services/notifications/number
 import {random} from "../../utils/random/random";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {ConfirmationDialogComponent} from "../basic/confirmation-dialog/confirmation-dialog.component";
+import {BracketsMeasures} from "./tournament-brackets/brackets-measures";
+import {Message} from "@stomp/stompjs/esm6";
+import {MessageContent} from "../../websockets/message-content.model";
+import {RxStompService} from "../../websockets/rx-stomp.service";
+import {EnvironmentService} from "../../environment.service";
+import {TournamentChangedService} from "./tournament-brackets/tournament-changed.service";
 
 @Component({
   selector: 'app-tournament-brackets-editor',
   templateUrl: './tournament-brackets-editor.component.html',
   styleUrls: ['./tournament-brackets-editor.component.scss']
 })
-export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
+export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
+
+  private websocketsPrefix: string = this.environmentService.getWebsocketPrefix();
 
   @Input()
   tournament: Tournament;
@@ -74,34 +72,47 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
 
   numberOfWinnersFirstLevel: number;
 
+  private topicSubscription: Subscription;
+
   constructor(private teamService: TeamService, private groupService: GroupService, private groupLinkService: GroupLinkService,
-              private rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
-              private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService) {
+              public rbacService: RbacService, private systemOverloadService: SystemOverloadService, private dialog: MatDialog,
+              private groupsUpdatedService: GroupsUpdatedService, private numberOfWinnersUpdatedService: NumberOfWinnersUpdatedService,
+              private rxStompService: RxStompService, private environmentService: EnvironmentService,
+              private tournamentChangedService: TournamentChangedService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
-      this.updateData();
+      this.updateData(true);
     });
     this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
       this.numberOfWinnersFirstLevel = numberOfWinners;
-      this.updateData();
+      this.updateData(true);
+    });
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.topic == "Group") {
+        this.updateData(false);
+      }
+    });
+    this.tournamentChangedService.isTournamentChanged.subscribe((_tournament: Tournament): void => {
+      this.tournament = _tournament;
+      if (_tournament) {
+        this.updateData(true);
+      }
     })
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.systemOverloadService.isBusy.next(true);
-    if (changes['tournament'] && this.tournament != undefined) {
-      this.updateData();
-    }
+  ngOnDestroy(): void {
+    this.topicSubscription?.unsubscribe();
   }
 
-  updateData(): void {
-    this.systemOverloadService.isBusy.next(true);
-    if (this.tournament) {
+  updateData(showBusy: boolean): void {
+    this.systemOverloadService.isBusy.next(showBusy);
+    if (this.tournament?.id) {
       const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
-      const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id!);
-      const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id!);
+      const groupsRequest: Observable<Group[]> = this.groupService.getFromTournament(this.tournament.id);
+      const relationsRequest: Observable<GroupLink[]> = this.groupLinkService.getFromTournament(this.tournament.id);
 
       forkJoin([teamsRequest, groupsRequest, relationsRequest]).subscribe(([_teams, _groups, _groupRelations]): void => {
         if (_teams) {
@@ -140,10 +151,10 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     const relations: Map<number, { src: number, dest: number, winner: number }[]> = new Map();
     if (groupRelations) {
       for (const groupLink of groupRelations) {
-        if (!relations.get(groupLink.source!.level!)) {
-          relations.set(groupLink.source!.level!, []);
+        if (!relations.get(groupLink.source.level!)) {
+          relations.set(groupLink.source.level!, []);
         }
-        relations.get(groupLink.source!.level!)?.push({
+        relations.get(groupLink.source.level!)?.push({
           src: groupLink.source!.index!,
           dest: groupLink.destination!.index!,
           winner: groupLink.winner
@@ -161,7 +172,7 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
       event.previousIndex,
       event.currentIndex,
     );
-    this.groupService.deleteTeamsFromTournament(this.tournament!.id!, this.teamListData.teams).subscribe();
+    this.groupService.deleteTeamsFromTournament(this.tournament.id!, this.teamListData.teams).subscribe();
     this.teamListData.filteredTeams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
     this.teamListData.teams.sort((a: Team, b: Team) => a.name.localeCompare(b.name));
   }
@@ -176,33 +187,35 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     }).length;
     this.groupService.addGroup(group).subscribe((_group: Group): void => {
       //Refresh all groups, also other levels that can change.
-      this.updateData();
+      this.updateData(true);
     });
   }
 
   deleteLast(): void {
-    const lastGroup: Group = this.groups.filter((g: Group): boolean => {
-      return g.level === 0;
-    }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-      prev : current);
-    this.deleteGroup(lastGroup);
+    if (this.groups.length > 0) {
+      const lastGroup: Group = this.groups.filter((g: Group): boolean => {
+        return g.level === 0;
+      }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+        prev : current, this.groups[this.groups.length - 1]);
+      this.deleteGroup(lastGroup);
+    }
   }
 
-  deleteGroup(group: Group | undefined): void {
+  deleteGroup(group: Group | undefined | null): void {
     if (group) {
       this.systemOverloadService.isBusy.next(true);
       this.groupService.deleteGroup(group).subscribe((): void => {
         //Refresh all groups, also other levels that can change.
-        this.updateData();
+        this.updateData(true);
       });
     }
   }
 
   public downloadAsPdf(): void {
     const groupsByLevel: Map<number, Group[]> = TournamentBracketsComponent.convert(this.groups);
-    const height: number = groupsByLevel.get(0)?.length! * TournamentBracketsComponent.GROUP_SEPARATION + this.totalTeams * 100;
+    const height: number = groupsByLevel.get(0)?.length! * BracketsMeasures.GROUP_SEPARATION + this.totalTeams * 100;
     //const width = Math.max(groupsByLevel.size!, 3) * 500 + 100;
-    const width: number = (groupsByLevel.size! + 1) * (TournamentBracketsComponent.GROUP_WIDTH + TournamentBracketsComponent.LEVEL_SEPARATION + 100);
+    const width: number = (groupsByLevel.size + 1) * (BracketsMeasures.GROUP_WIDTH + BracketsMeasures.LEVEL_SEPARATION + 100);
     const orientation: "p" | "portrait" | "l" | "landscape" = "landscape";
     const imageUnit: "pt" | "px" | "in" | "mm" | "cm" | "ex" | "em" | "pc" = "px";
     const widthMM: number = this.getMM(width);
@@ -280,12 +293,12 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
     //Send final teams
     let observables: Observable<any>[] = [];
     for (const group of groups) {
-      observables.push(this.groupService.addTeamsToGroup(group!.id!, group.teams));
+      observables.push(this.groupService.addTeamsToGroup(group.id!, group.teams));
     }
     //Ensure all groups are updated.
     forkJoin(observables)
       .subscribe((): void => {
-        this.updateData();
+        this.updateData(true);
       });
   }
 
@@ -307,8 +320,10 @@ export class TournamentBracketsEditorComponent implements OnChanges, OnInit {
   }
 
   removeAllTeams(): void {
-    this.groupService.deleteAllTeamsFromTournament(this.tournament!.id!).subscribe((_groups: Group[]): void => {
+    this.groupService.deleteAllTeamsFromTournament(this.tournament.id!).subscribe((_groups: Group[]): void => {
       this.groupsUpdatedService.areTeamListUpdated.next([]);
     })
   }
+
+  protected readonly RbacActivity = RbacActivity;
 }

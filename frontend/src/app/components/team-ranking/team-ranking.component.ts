@@ -3,7 +3,7 @@ import {ScoreOfTeam} from "../../models/score-of-team";
 import {RankingService} from "../../services/ranking.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Tournament} from "../../models/tournament";
-import {forkJoin, Observable, Subject} from "rxjs";
+import {forkJoin, Observable} from "rxjs";
 import {TranslateService} from "@ngx-translate/core";
 import {UndrawTeamsComponent} from "../../views/fight-list/undraw-teams/undraw-teams.component";
 import {Team} from "../../models/team";
@@ -16,6 +16,7 @@ import {TournamentExtendedPropertiesService} from "../../services/tournament-ext
 import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property-key";
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
 import {MessageService} from "../../services/message.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-team-ranking',
@@ -32,9 +33,6 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   existsDraws: boolean = false;
   numberOfWinners: number;
 
-  private destroy$: Subject<void> = new Subject<void>();
-  _loading = false;
-
   constructor(public dialogRef: MatDialogRef<TeamRankingComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: {
                 tournament: Tournament, group: Group, finished: boolean,
@@ -42,7 +40,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
               },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
-              rbacService: RbacService) {
+              public override rbacService: RbacService, private router: Router) {
     super(rbacService);
     this.tournament = data.tournament;
     this.group = data.group;
@@ -53,12 +51,12 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.CHAMPIONSHIP) {
         if (this.group) {
-          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group!.id!);
+          const rankingRequest: Observable<ScoreOfTeam[]> = this.rankingService.getTeamsScoreRankingByGroup(this.group.id!);
           const winnersRequest: Observable<TournamentExtendedProperty> = this.tournamentExtendedPropertiesService.getByTournamentAndKey(this.tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
 
           forkJoin([rankingRequest, winnersRequest]).subscribe(([_scoresOfTeams, _numberOfWinners]): void => {
             this.teamScores = _scoresOfTeams;
-            this.numberOfWinners = _numberOfWinners !== undefined ? Number(_numberOfWinners.propertyValue) : 1;
+            this.numberOfWinners = _numberOfWinners ? Number(_numberOfWinners.propertyValue) : 1;
             if (this.isDrawWinner(0) || (_numberOfWinners && _numberOfWinners.propertyValue == "2" && this.isDrawWinner(1))) {
               this.messageService.warningMessage("drawScore");
               this.existsDraws = true;
@@ -68,6 +66,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       } else {
         if (this.tournament?.id) {
           this.rankingService.getTeamsScoreRankingByTournament(this.tournament.id).subscribe((scoresOfTeams: ScoreOfTeam[]): void => {
+            this.numberOfWinners = 1;
             this.teamScores = scoresOfTeams;
           });
         }
@@ -107,7 +106,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   downloadPDF(): void {
     if (this.tournament) {
       if (this.tournament.type == TournamentType.CHAMPIONSHIP && this.group) {
-        this.rankingService.getTeamsScoreRankingByGroupAsPdf(this.group!.id!).subscribe((pdf: Blob): void => {
+        this.rankingService.getTeamsScoreRankingByGroupAsPdf(this.group.id!).subscribe((pdf: Blob): void => {
           const blob: Blob = new Blob([pdf], {type: 'application/pdf'});
           const downloadURL: string = window.URL.createObjectURL(blob);
           const anchor: HTMLAnchorElement = document.createElement("a");
@@ -145,9 +144,16 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
     });
     this.dialogRef.afterClosed().subscribe(result => {
-      if (result.action === Action.Update) {
+      if (result?.action === Action.Update) {
         this.dialogRef.close({action: Action.Update, draws: result.draws});
       }
     });
+  }
+
+  openStatistics(): void {
+    if (this.tournament) {
+      this.closeDialog();
+      this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.tournament.id}});
+    }
   }
 }

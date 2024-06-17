@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {SystemOverloadService} from "../../services/notifications/system-overload.service";
 import {RbacBasedComponent} from "../../components/RbacBasedComponent";
@@ -18,6 +18,11 @@ import {RankingService} from "../../services/ranking.service";
 import {CompetitorRanking} from "../../models/competitor-ranking";
 import {AchievementsService} from "../../services/achievements.service";
 import {Achievement} from "../../models/achievement.model";
+import {ParticipantService} from "../../services/participant.service";
+import {Participant} from "../../models/participant";
+import {LoginService} from "../../services/login.service";
+import {MatDialog} from "@angular/material/dialog";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -28,10 +33,13 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   pipe: DatePipe;
 
-  private readonly participantId: number | undefined;
+  private participantId: number | undefined;
+  private readonly temporalToken: string | null;
   public participantStatistics: ParticipantStatistics | undefined = undefined;
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
+
+  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
 
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
@@ -39,10 +47,14 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public performance: [string, number][];
   public achievements: Achievement[];
 
-  constructor(private router: Router, rbacService: RbacService, private systemOverloadService: SystemOverloadService,
+  public participant: Participant;
+
+  constructor(private router: Router, private activatedRoute: ActivatedRoute,
+              rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
               private translateService: TranslateService, private rankingService: RankingService,
-              private achievementService: AchievementsService) {
+              private achievementService: AchievementsService, private participantService: ParticipantService,
+              private loginService: LoginService, public dialog: MatDialog) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -52,7 +64,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
         this.goBackToUsers();
       }
     } else {
-      this.goBackToUsers();
+      //Gets participant from URL parameter (from QR codes).
+      this.participantId = Number(this.activatedRoute.snapshot.queryParamMap.get('participantId'));
+      this.temporalToken = this.activatedRoute.snapshot.queryParamMap.get('temporalToken');
+      if (!this.participantId || isNaN(this.participantId)) {
+        this.goBackToUsers();
+      }
     }
     this.setLocale();
   }
@@ -72,7 +89,40 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   }
 
   ngOnInit(): void {
-    this.generateStatistics();
+    if (this.loginService.getJwtValue()) {
+      //Already logged in.
+      this.initializeData();
+    } else {
+      if (this.temporalToken) {
+        this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
+          this.initializeData();
+        });
+      } else {
+        this.goBackToUsers();
+      }
+    }
+  }
+
+  initializeData(): void {
+    if (this.participantId) {
+      this.participantService.get(this.participantId).subscribe((_participant: Participant): void => {
+        this.participant = _participant;
+      })
+      this.generateStatistics();
+    } else {
+      //If a participant is logged in directly to this page. Get his id.
+      this.participantService.getByUsername().subscribe({
+        next: (_participant: Participant): void => {
+          this.participantId = _participant.id;
+          this.participant = _participant;
+          this.generateStatistics();
+        },
+        error: (): void => {
+          console.error("User logged in is not a participant");
+          this.goBackToUsers()
+        }
+      });
+    }
   }
 
   generateStatistics(): void {
@@ -85,9 +135,11 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
-    this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {
-      this.achievements = _achievements;
-    });
+    if (this.achievementsEnabled) {
+      this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {
+        this.achievements = _achievements;
+      });
+    }
   }
 
   initializeScoreStatistics(participantStatistics: ParticipantStatistics): void {
@@ -104,19 +156,23 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
     performance.push(['willpower', participantStatistics.totalTournaments > 0 ?
       (participantStatistics.tournaments / participantStatistics.totalTournaments) * 100 : 0]);
     const aggressivenessMargin: number = 20;
-    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageTime > 0 ?
-      Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageTime - aggressivenessMargin) / 180)) * 100, 2)) : 0]);
+    performance.push(['aggressiveness', participantStatistics.participantFightStatistics.averageWinTime > 0 ?
+      Math.min(100, truncate((1 - ((participantStatistics.participantFightStatistics.averageWinTime - aggressivenessMargin) / 180)) * 100, 2)) : 0]);
+    performance.push(['affection', participantStatistics.participantFightStatistics.averageLostTime > 0 ?
+      Math.min(100, truncate(((participantStatistics.participantFightStatistics.averageLostTime + aggressivenessMargin) / 180) * 100, 2)) : 0]);
     return performance;
   }
 
   obtainPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
     if (participantStatistics?.participantFightStatistics) {
-      scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.menNumber ? participantStatistics.participantFightStatistics.menNumber : 0]);
-      scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.koteNumber ? participantStatistics.participantFightStatistics.koteNumber : 0]);
-      scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
-      scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.tsukiNumber ? participantStatistics.participantFightStatistics.tsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.ipponNumber ? participantStatistics.participantFightStatistics.ipponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.MEN)), participantStatistics.participantFightStatistics.menNumber ? participantStatistics.participantFightStatistics.menNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.KOTE)), participantStatistics.participantFightStatistics.koteNumber ? participantStatistics.participantFightStatistics.koteNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.DO)), participantStatistics.participantFightStatistics.doNumber ? participantStatistics.participantFightStatistics.doNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.TSUKI)), participantStatistics.participantFightStatistics.tsukiNumber ? participantStatistics.participantFightStatistics.tsukiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.IPPON)), participantStatistics.participantFightStatistics.ipponNumber ? participantStatistics.participantFightStatistics.ipponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.FUSEN_GACHI)), participantStatistics.participantFightStatistics.fusenGachiNumber ? participantStatistics.participantFightStatistics.fusenGachiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.HANSOKU)), participantStatistics.participantFightStatistics.hansokuNumber ? participantStatistics.participantFightStatistics.hansokuNumber : 0]);
     }
     return scores;
   }
@@ -124,11 +180,13 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   obtainReceivedPoints(participantStatistics: ParticipantStatistics): [string, number][] {
     const scores: [string, number][] = [];
     if (participantStatistics?.participantFightStatistics) {
-      scores.push([Score.label(Score.MEN), participantStatistics.participantFightStatistics.receivedMenNumber ? participantStatistics.participantFightStatistics.receivedMenNumber : 0]);
-      scores.push([Score.label(Score.KOTE), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
-      scores.push([Score.label(Score.DO), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
-      scores.push([Score.label(Score.TSUKI), participantStatistics.participantFightStatistics.receivedTsukiNumber ? participantStatistics.participantFightStatistics.receivedTsukiNumber : 0]);
-      scores.push([Score.label(Score.IPPON), participantStatistics.participantFightStatistics.receivedIpponNumber ? participantStatistics.participantFightStatistics.receivedIpponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.MEN)), participantStatistics.participantFightStatistics.receivedMenNumber ? participantStatistics.participantFightStatistics.receivedMenNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.KOTE)), participantStatistics.participantFightStatistics.receivedKoteNumber ? participantStatistics.participantFightStatistics.receivedKoteNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.DO)), participantStatistics.participantFightStatistics.receivedDoNumber ? participantStatistics.participantFightStatistics.receivedDoNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.TSUKI)), participantStatistics.participantFightStatistics.receivedTsukiNumber ? participantStatistics.participantFightStatistics.receivedTsukiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.IPPON)), participantStatistics.participantFightStatistics.receivedIpponNumber ? participantStatistics.participantFightStatistics.receivedIpponNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.FUSEN_GACHI)), participantStatistics.participantFightStatistics.receivedFusenGachiNumber ? participantStatistics.participantFightStatistics.receivedFusenGachiNumber : 0]);
+      scores.push([this.translateService.instant(Score.toCamel(Score.HANSOKU)), participantStatistics.participantFightStatistics.receivedHansokuNumber ? participantStatistics.participantFightStatistics.receivedHansokuNumber : 0]);
     }
     return scores;
   }
@@ -150,5 +208,11 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
 
   convertDate(date: Date | undefined): string | null {
     return convertDate(this.pipe, date);
+  }
+
+  openParticipantFights(): void {
+    if (this.participantId) {
+      this.router.navigate(['/participants/fights'], {state: {participantId: this.participantId}});
+    }
   }
 }

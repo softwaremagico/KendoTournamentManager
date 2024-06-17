@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,19 +31,21 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
-public class ScoreOfCompetitorConverter extends ElementConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
+public class ScoreOfCompetitorConverter extends SimpleConverter<ScoreOfCompetitor, ScoreOfCompetitorDTO, ScoreOfCompetitorConverterRequest> {
 
     private final ParticipantConverter participantConverter;
+    private final ParticipantReducedConverter participantReducedConverter;
 
-    public ScoreOfCompetitorConverter(ParticipantConverter participantConverter) {
+    public ScoreOfCompetitorConverter(ParticipantConverter participantConverter, ParticipantReducedConverter participantReducedConverter) {
         this.participantConverter = participantConverter;
+        this.participantReducedConverter = participantReducedConverter;
     }
 
     @Override
     protected ScoreOfCompetitorDTO convertElement(ScoreOfCompetitorConverterRequest from) {
         final ScoreOfCompetitorDTO scoreOfCompetitorDTO = new ScoreOfCompetitorDTO();
         BeanUtils.copyProperties(from.getEntity(), scoreOfCompetitorDTO, ConverterUtils.getNullPropertyNames(from.getEntity()));
-        scoreOfCompetitorDTO.setCompetitor(participantConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
+        scoreOfCompetitorDTO.setCompetitor(participantReducedConverter.convert(new ParticipantConverterRequest(from.getEntity().getCompetitor())));
         return scoreOfCompetitorDTO;
     }
 

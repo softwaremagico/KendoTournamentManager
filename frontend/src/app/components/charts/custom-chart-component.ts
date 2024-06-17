@@ -80,7 +80,7 @@ export abstract class CustomChartComponent implements OnInit {
   }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.darkModeService.darkModeSwitched.subscribe((switched: boolean): void => {
       this.darkMode = switched;
       this.setFontColors(switched);
@@ -99,9 +99,10 @@ export abstract class CustomChartComponent implements OnInit {
 
   protected abstract setProperties(): void;
 
-  protected getChart(type: ChartType, width: number, shadow: boolean, showToolbar: boolean): ApexChart {
+  protected getChart(type: ChartType, width: number, height: number | undefined, shadow: boolean, showToolbar: boolean): ApexChart {
     return {
       width: width,
+      //height: height,
       type: type,
       dropShadow: this.getShadow(shadow),
       toolbar: this.getToolbar(showToolbar),
@@ -240,7 +241,7 @@ export abstract class CustomChartComponent implements OnInit {
       //fillSeriesColor: true,
       style: {
         fontFamily: 'Roboto',
-      },
+      }
     }
   }
 

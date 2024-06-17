@@ -7,6 +7,10 @@ import {CookieService} from "ngx-cookie-service";
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
 import {EnvironmentService} from "../environment.service";
+import {Router} from "@angular/router";
+import {ActivityService} from "./rbac/activity.service";
+import {AuthGuestRequest} from "./models/auth-guest-request";
+import {TemporalToken} from "./models/temporal-token";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +22,7 @@ export class LoginService {
   private interval: NodeJS.Timeout | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private cookies: CookieService) {
+              private cookies: CookieService, private activityService: ActivityService, private router: Router) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
       this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
         (jwt: string, expires: number): void => {
@@ -41,6 +45,87 @@ export class LoginService {
         }));
   }
 
+  loginAsGuest(tournamentId: number): Observable<AuthenticatedUser> {
+    const url: string = `${this.baseUrl}/public/login/guest`;
+    return this.http.post<AuthenticatedUser>(url, new AuthGuestRequest(tournamentId), {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+      responseType: 'json',
+      observe: 'response'
+    })
+      .pipe(
+        map((response: any) => {
+          response.body.jwt = response.headers.get('Authorization');
+          response.body.expires = response.headers.get('Expires');
+          return response.body;
+        }));
+  }
+
+  loginAsParticipant(temporalToken: string): Observable<AuthenticatedUser> {
+    const url: string = `${this.baseUrl}/public/participant/token`;
+    return this.http.post<AuthenticatedUser>(url, new TemporalToken(temporalToken), {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+      responseType: 'json',
+      observe: 'response'
+    })
+      .pipe(
+        map((response: any) => {
+          response.body.jwt = response.headers.get('Authorization');
+          response.body.expires = response.headers.get('Expires');
+          return response.body;
+        }));
+  }
+
+  //Basic login for guests.
+  setUserSession(username: string, password: string): void {
+    this.login(username, password).subscribe({
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (): void => {
+          });
+        this.activityService.setRoles(authenticatedUser.roles);
+        localStorage.setItem('username', username);
+      },
+      error: (error): void => {
+        this.router.navigate(["/"]);
+      }
+    });
+  }
+
+  setGuestUserSession(tournamentId: number, callback: (token: string, expiration: number) => void): void {
+    this.loginAsGuest(tournamentId).subscribe({
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (): void => {
+          });
+        this.activityService.setRoles(authenticatedUser.roles);
+        localStorage.setItem('username', 'guest');
+        callback(authenticatedUser.jwt, authenticatedUser.expires);
+      },
+      error: (): void => {
+        this.router.navigate(["/"]);
+      }
+    });
+  }
+
+  setParticipantUserSession(temporalToken: string, callback: (token: string, expiration: number) => void): void {
+    this.loginAsParticipant(temporalToken).subscribe({
+      next: (authenticatedUser: AuthenticatedUser): void => {
+        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+          (): void => {
+          });
+        this.activityService.setRoles(authenticatedUser.roles);
+        localStorage.setItem('username', authenticatedUser.username);
+        callback(authenticatedUser.jwt, authenticatedUser.expires);
+      },
+      error: (): void => {
+        this.router.navigate(["/"]);
+      }
+    });
+  }
+
   logout(): void {
     this.cookies.delete("jwt");
     this.cookies.delete("selectedLanguage");
@@ -49,6 +134,7 @@ export class LoginService {
   }
 
   public setJwtValue(token: string, expires: number): void {
+    localStorage.setItem("jwt", token);
     this.cookies.set("jwt", token);
     this.cookies.set("jwt_expires", expires.toString());
   }
@@ -99,6 +185,16 @@ export class LoginService {
         }
       )
     }, timeout);
+  }
+
+  getUserRoles(): Observable<String[]> {
+    const url: string = `${this.baseUrl}/roles`;
+    return this.http.get<String[]>(url)
+      .pipe(
+        tap({
+          next: (_roles: String[]) => console.info(`Obtained '${_roles}' roles!`)
+        })
+      );
   }
 
   private renew(): Observable<any> {

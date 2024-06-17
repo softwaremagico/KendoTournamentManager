@@ -4,7 +4,7 @@
     <div class="upper-menu">
       <div class="cell">
         <button (click)="goBackToTournament()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.activities)"
+                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" color="secondary"
                 mat-button
                 matTooltip="{{'back' | translate}}">
@@ -12,10 +12,11 @@
         </button>
       </div>
     </div>
+    <h1 class="name" *ngIf="tournament">{{tournament.name}}</h1>
     <div class="statistics-container">
       <div class="dashboard">
 
-        <div class="box-statistics box shadow">
+        <div class="box-statistics box">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
             <h3>{{'participants' | translate}}</h3>
@@ -43,7 +44,7 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow">
+        <div class="box-statistics box">
           <div class="statistics-table-title">
             <mat-icon>timer</mat-icon>
             <h3>{{'time' | translate}}</h3>
@@ -88,7 +89,7 @@
         </div>
 
         <div *ngIf="tournamentStatistics && tournamentStatistics.teamSize>1"
-             class="box-statistics box shadow scrollable">
+             class="box-statistics box scrollable">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
             <h3>{{'teamsRanking' | translate}}</h3>
@@ -100,16 +101,18 @@
           </table>
         </div>
 
-        <div class="box-statistics box shadow scrollable">
+        <div class="box-statistics box">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
             <h3>{{'competitorsRanking' | translate}}</h3>
           </div>
-          <table *ngIf="competitorsScore" aria-hidden="true" class="statistics-table">
-            <tr *ngFor="let scoreOfCompetitor of competitorsScore">
-              <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
-            </tr>
-          </table>
+          <div class="scrollable">
+            <table *ngIf="competitorsScore" aria-hidden="true" class="statistics-table">
+              <tr *ngFor="let scoreOfCompetitor of competitorsScore">
+                <td class="ranking">{{getCompetitorRanking(scoreOfCompetitor)}}</td>
+              </tr>
+            </table>
+          </div>
         </div>
 
         <app-gauge-chart *ngIf="fightsOverData" [data]="fightsOverData" [height]="260"
@@ -123,16 +126,12 @@
                                 [width]="400"></app-stacked-bars-chart>
         <app-line-chart #timeSizeByTournamentChart [data]="teamSizeByTournament" [title]="'teams' | translate"
                         [width]="400"></app-line-chart>
-        <app-stacked-bars-chart #hitsByTournamentPercentageChart [data]="hitsByTournament"
-                                [enableTotals]="false" [stackType]="'100%'"
-                                [title]="('hitsByTournament' | translate) + ' (%)'" [width]="400"
-                                [yAxisTitle]="'%'"></app-stacked-bars-chart>
         <app-stacked-bars-chart #hitsByTournamentChart [data]="hitsByTournament"
                                 [stackType]="'normal'"
                                 [title]="('hitsByTournament' | translate)" [width]="400"></app-stacked-bars-chart>
         <app-line-chart #timeByTournamentChart [data]="timeByTournament" [title]="'timeByTournament' | translate"
                         [width]="400" [yAxisTitle]="'minutes' | translate"></app-line-chart>
-        <div class="box-statistics box shadow achievements-box">
+        <div *ngIf="achievementsEnabled" class="box-statistics box achievements-box">
           <div class="statistics-table-title">
             <mat-icon>stars</mat-icon>
             <h3>{{'achievements' | translate}}</h3>

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,37 +21,27 @@ package com.softwaremagico.kt.core.converters;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ElementConverter<F, T, R extends ConverterRequest<F>> implements IElementConverter<F, T, R> {
+public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST extends ConverterRequest<ENTITY>>
+        extends SimpleConverter<ENTITY, DTO, REQUEST> implements IElementConverter<ENTITY, DTO, REQUEST> {
 
-    protected abstract T convertElement(R from);
-
-    public T convert(R from) {
-        if (from == null || !from.hasEntity()) {
-            return null;
-        }
-        return convertElement(from);
-    }
+    protected abstract DTO convertElement(REQUEST from);
 
     @Override
-    public List<T> convertAll(Collection<R> from) {
+    public List<DTO> convertAll(Collection<REQUEST> from) {
         if (from == null) {
             return new ArrayList<>();
         }
-        return from.stream().map(this::convert).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<F> reverseAll(Collection<T> to) {
-        if (to == null) {
-            return new ArrayList<>();
-        }
-        return to.stream().map(this::reverse).collect(Collectors.toList());
+        //Returns the DTOs sorted by creation time by default
+        return from.stream().map(this::convert).sorted(Comparator.comparing(ElementDTO::getCreatedAt,
+                Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
     }
 }

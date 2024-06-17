@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,10 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
+import com.softwaremagico.kt.persistence.encryption.SHA512HashGenerator;
 import com.softwaremagico.kt.persistence.encryption.StringCryptoConverter;
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.GeneratedValue;
@@ -33,13 +35,15 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.MappedSuperclass;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.Version;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Element {
+public abstract class Element implements Serializable {
     protected static final int MAX_UNIQUE_COLUMN_LENGTH = 190;
 
     @Id
@@ -48,21 +52,32 @@ public abstract class Element {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime createdAt;
 
+    @Access(AccessType.PROPERTY)
     @Column(name = "created_by")
     @Convert(converter = StringCryptoConverter.class)
     private String createdBy;
 
+    @Column(name = "created_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String createdByHash;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
     private LocalDateTime updatedAt;
 
+    @Access(AccessType.PROPERTY)
     @Column(name = "updated_by")
     @Convert(converter = StringCryptoConverter.class)
     private String updatedBy;
+
+    @Column(name = "updated_by_hash", length = SHA512HashGenerator.ALGORITHM_LENGTH)
+    @Convert(converter = SHA512HashGenerator.class)
+    private String updatedByHash;
+
+    @Version
+    private Integer version;
 
     public Integer getId() {
         return id;
@@ -94,6 +109,15 @@ public abstract class Element {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+        this.createdByHash = createdBy;
+    }
+
+    public String getCreatedByHash() {
+        return createdByHash;
+    }
+
+    public void setCreatedByHash(String createdByHash) {
+        this.createdByHash = createdByHash;
     }
 
     public String getUpdatedBy() {
@@ -102,6 +126,15 @@ public abstract class Element {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+        this.updatedByHash = updatedBy;
+    }
+
+    public String getUpdatedByHash() {
+        return updatedByHash;
+    }
+
+    public void setUpdatedByHash(String updatedByHash) {
+        this.updatedByHash = updatedByHash;
     }
 
     @Override
@@ -119,5 +152,13 @@ public abstract class Element {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

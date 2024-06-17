@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2023 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@ import com.softwaremagico.kt.core.converters.DuelConverter;
 import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.ParticipantConverter;
+import com.softwaremagico.kt.core.converters.ParticipantReducedConverter;
 import com.softwaremagico.kt.core.converters.ScoreOfCompetitorConverter;
 import com.softwaremagico.kt.core.converters.ScoreOfTeamConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
@@ -52,8 +53,8 @@ import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
-import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
+import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -63,7 +64,6 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -93,6 +94,8 @@ public class RankingController {
 
     private final DuelConverter duelConverter;
 
+    private final ParticipantReducedConverter participantReducedConverter;
+
     private final ParticipantConverter participantConverter;
 
     private final RankingProvider rankingProvider;
@@ -100,8 +103,6 @@ public class RankingController {
     private final ScoreOfCompetitorConverter scoreOfCompetitorConverter;
 
     private final ScoreOfTeamConverter scoreOfTeamConverter;
-
-    private final TournamentProvider tournamentProvider;
 
     private final ClubProvider clubProvider;
 
@@ -113,9 +114,11 @@ public class RankingController {
 
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
-                             TeamConverter teamConverter, DuelConverter duelConverter, ParticipantConverter participantConverter,
-                             RankingProvider rankingProvider, ScoreOfCompetitorConverter scoreOfCompetitorConverter,
-                             ScoreOfTeamConverter scoreOfTeamConverter, TournamentProvider tournamentProvider,
+                             TeamConverter teamConverter, DuelConverter duelConverter,
+                             ParticipantReducedConverter participantReducedConverter,
+                             ParticipantConverter participantConverter, RankingProvider rankingProvider,
+                             ScoreOfCompetitorConverter scoreOfCompetitorConverter,
+                             ScoreOfTeamConverter scoreOfTeamConverter,
                              ClubProvider clubProvider, ParticipantProvider participantProvider, ClubConverter clubConverter,
                              RoleProvider roleProvider) {
         this.groupProvider = groupProvider;
@@ -124,11 +127,11 @@ public class RankingController {
         this.fightConverter = fightConverter;
         this.teamConverter = teamConverter;
         this.duelConverter = duelConverter;
+        this.participantReducedConverter = participantReducedConverter;
         this.participantConverter = participantConverter;
         this.rankingProvider = rankingProvider;
         this.scoreOfCompetitorConverter = scoreOfCompetitorConverter;
         this.scoreOfTeamConverter = scoreOfTeamConverter;
-        this.tournamentProvider = tournamentProvider;
         this.clubProvider = clubProvider;
         this.participantProvider = participantProvider;
         this.clubConverter = clubConverter;
@@ -261,26 +264,37 @@ public class RankingController {
         final List<Role> competitorRoles = roleProvider.get(participants, RoleType.COMPETITOR);
         participants.retainAll(competitorRoles.stream().map(Role::getParticipant).collect(Collectors.toSet()));
         return getCompetitorsGlobalScoreRanking(participantConverter.convertAll(participants.stream()
-                .map(participant -> new ParticipantConverterRequest(participant, clubConverter.convert(new ClubConverterRequest(club)))).toList()));
+                .map(participant -> new ParticipantConverterRequest(participant, clubConverter.convert(new ClubConverterRequest(club)))).toList()), null);
     }
 
-    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors) {
-        return getCompetitorsGlobalScoreRanking(competitors, ScoreType.DEFAULT);
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, Integer fromNumberOfDays) {
+        return getCompetitorsGlobalScoreRanking(competitors.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new)),
+                ScoreType.DEFAULT, fromNumberOfDays);
     }
 
 
-    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType) {
-        final Map<Integer, ClubDTO> clubsById = competitors.stream()
-                .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity()));
-        return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorsGlobalScoreRanking(
-                        participantConverter.reverseAll(competitors),
-                        scoreType
-                )
-                .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor,
-                        clubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
+    public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(Collection<ParticipantDTO> competitors, ScoreType scoreType, Integer fromNumberOfDays) {
+        Map<Integer, ClubDTO> clubsById = null;
+        try {
+            clubsById = competitors.stream()
+                    .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity(), (r1, r2) -> r1));
+        } catch (NullPointerException ignore) {
+
+        }
+
+        final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsGlobalScoreRanking(
+                participantConverter.reverseAll(competitors), scoreType, fromNumberOfDays);
+
+        if (clubsById != null) {
+            final Map<Integer, ClubDTO> finalClubsById = clubsById;
+            return scoreOfCompetitorConverter.convertAll(scoreOfCompetitors
+                    .stream().map(scoreOfCompetitor -> new ScoreOfCompetitorConverterRequest(scoreOfCompetitor,
+                            finalClubsById.get(scoreOfCompetitor.getCompetitor().getClub().getId()))).toList());
+        }
+        return scoreOfCompetitorConverter.convertAll(scoreOfCompetitors
+                .stream().map(ScoreOfCompetitorConverterRequest::new).toList());
     }
 
-    @Cacheable("competitors-ranking")
     public List<ScoreOfCompetitorDTO> getCompetitorGlobalRanking(ScoreType scoreType) {
         return scoreOfCompetitorConverter.convertAll(rankingProvider.getCompetitorGlobalRanking(scoreType).stream()
                 .map(ScoreOfCompetitorConverterRequest::new).collect(Collectors.toSet()));
@@ -299,7 +313,7 @@ public class RankingController {
     }
 
     public ParticipantDTO getCompetitor(GroupDTO groupDTO, Integer order) {
-        return participantConverter.convert(new ParticipantConverterRequest(
+        return participantReducedConverter.convert(new ParticipantConverterRequest(
                 rankingProvider.getCompetitor(groupConverter.reverse(groupDTO), order)));
     }
 

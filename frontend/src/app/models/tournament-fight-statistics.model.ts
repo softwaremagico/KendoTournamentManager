@@ -8,6 +8,7 @@ export class TournamentFightStatistics extends Element {
   tsukiNumber: number;
   hansokuNumber: number;
   ipponNumber: number;
+  fusenGachiNumber: number;
   fightsNumber: number;
   fightsByTeam?: number;
   duelsNumber: number;
@@ -27,6 +28,7 @@ export class TournamentFightStatistics extends Element {
     target.tsukiNumber = source.tsukiNumber;
     target.hansokuNumber = source.hansokuNumber;
     target.ipponNumber = source.ipponNumber;
+    target.fusenGachiNumber = source.fusenGachiNumber;
     target.fightsNumber = source.fightsNumber;
     target.fightsByTeam = source.fightsByTeam;
     target.duelsNumber = source.duelsNumber;
