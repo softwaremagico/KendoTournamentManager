@@ -96,6 +96,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
         Tournament tournamentChangingWinners = new Tournament(TOURNAMENT_TWO_WINNERS_NAME, 1, MEMBERS, TournamentType.TREE, null);
         tournamentChangingWinners = tournamentProvider.save(tournamentChangingWinners);
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, "false"));
 
 
         treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(0, tournamentChangingWinners));
@@ -171,6 +172,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
         Tournament tournamentChangingWinners = new Tournament(TOURNAMENT_TWO_WINNERS_NAME, 1, MEMBERS, TournamentType.TREE, null);
         tournamentChangingWinners = tournamentProvider.save(tournamentChangingWinners);
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, "false"));
 
 
         treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(0, tournamentChangingWinners));
