@@ -141,7 +141,7 @@ public class TreeTournamentHandler extends LeagueHandler {
     public void adjustGroupSize(Tournament tournament, int numberOfWinners) {
         final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
                 .getByTournamentAndProperty(tournament,
-                        TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
+                        TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
 
         //Update the shiaijo numbers.
         if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue())) {
@@ -250,7 +250,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
         final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
                 .getByTournamentAndProperty(tournament,
-                        TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
+                        TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
 
 
         //Check if inner levels must be decreased on size.
