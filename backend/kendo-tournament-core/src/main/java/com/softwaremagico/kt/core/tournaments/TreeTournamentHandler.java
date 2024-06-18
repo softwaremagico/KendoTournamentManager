@@ -186,7 +186,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             while (level > 0
                     //It is not a power of two.
                     && (groupsByLevel.get(level).size()
-                    < GroupUtils.getNextPowerOfTwo((groupsByLevel.get(level - 1).size() * (level == 1 ? numberOfWinners : 1)) / 2))
+                    < GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(level - 1).size() * (level == 1 ? numberOfWinners : 1)) + 1) / 2))
                     //Except the Last level, that has only one group.
                     && !(groupsByLevel.get(level).size() == 1 && previousLevelSize == 2)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
@@ -196,11 +196,13 @@ public class TreeTournamentHandler extends LeagueHandler {
             previousLevelSize = groupsByLevel.get(level).size();
         }
 
-        addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners);
+        if (addExtraLevelIfNeeded(tournament, groupsByLevel, numberOfWinners)) {
+            adjustGroupsSizeRemovingOddNumbers(tournament, numberOfWinners);
+        }
     }
 
 
-    private void addExtraLevelIfNeeded(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, int numberOfWinners) {
+    private boolean addExtraLevelIfNeeded(Tournament tournament, Map<Integer, List<Group>> groupsByLevel, int numberOfWinners) {
         //Add extra level if needed.
         if (groupsByLevel.get(groupsByLevel.size() - 1).size() > 1 || (groupsByLevel.size() == 1 && numberOfWinners > 1)) {
             final Integer newLevel = groupsByLevel.size();
@@ -208,7 +210,9 @@ public class TreeTournamentHandler extends LeagueHandler {
             groupsByLevel.put(newLevel, new ArrayList<>());
             groupsByLevel.get(newLevel).add(levelGroup);
             groupProvider.addGroup(tournament, levelGroup);
+            return true;
         }
+        return false;
     }
 
 
