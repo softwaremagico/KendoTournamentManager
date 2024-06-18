@@ -337,7 +337,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             if (link.getWinner() != null && teamsRanking.get(link.getWinner()) != null && teamsRanking.get(link.getWinner()).getTeam() != null) {
                 link.getDestination().getTeams().add(teamsRanking.get(link.getWinner()).getTeam());
             } else {
-                KendoTournamentLogger.warning(this.getClass(), "Missing data for level '' population with winner '' using ranking:\n\t",
+                KendoTournamentLogger.warning(this.getClass(), "Missing data for level '{}' population with winner '{}' using ranking:\n\t{}",
                         level, link.getWinner(), link.getWinner() != null ? teamsRanking.get(link.getWinner()) : null);
             }
             groupsOfLevel.add(link.getDestination());
