@@ -107,38 +107,38 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
 
     /*
-                                            ┌───────────┐
-                                 ┌──────────►  Group0   │
-                                 │          └───────────┘
-                                 │
-                                 │          ┌───────────┐
-                                 │   ┌──────►  Group1   │
-    ┌──────────┐                 │   │      └───────────┘
-    │  Group0  ├─────────────────┤   │
-    └──────────┘                 │   │      ┌───────────┐
-                                 │   │   ┌──►  Group2   │
-    ┌───────────┐                │   │   │  └───────────┘
-    │  Group1   ├────────────────┼───┤   │
-    └───────────┘                │   │   │  ┌───────────┐
-                      ┌─────┬────┼───┼───┼──┤  Group3   │
-    ┌───────────┐     │     │    │   │   │  └───────────┘
-    │  Group2   ├─────┼─────┼────┼───┼───┤
-    └───────────┘     │     │    │   │   │  ┌───────────┐
-                      │     │    └───┴───┼──┤  Group4   │
-    ┌───────────┐     │     │            │  └───────────┘
-    │  Group3   ├─────┼─────┤            │
-    └───────────┘     │     │            │  ┌───────────┐
-                      │     │            └──┤  Group5   │
-    ┌───────────┐     │     │               └───────────┘
-    │  Group4   ├─────┤     │
-    └───────────┘     │     │               ┌───────────┐
-                      │     └───────────────►  Group6   │
-                      │                     └───────────┘
-                      │
-                      │                     ┌───────────┐
-                      └─────────────────────►  Group7   │
-                                            └───────────┘
-     */
+                                        ┌───────────┐
+                             ┌──────────►  Group0   ├────┐
+                             │          └───────────┘    │  ┌──────────┐
+                             │                           ├──►  Group0  ├──┐
+                             │          ┌───────────┐    │  └──────────┘  │
+                             │   ┌──────►  Group1   ├────┘                │
+┌──────────┐                 │   │      └───────────┘                     │    ┌──────────┐
+│  Group0  ├─────────────────┤   │                                        ├────►  Group0  ├────┐
+└──────────┘                 │   │      ┌───────────┐                     │    └──────────┘    │
+                             │   │   ┌──►  Group2   ├────┐                │                    │
+┌───────────┐                │   │   │  └───────────┘    │  ┌───────────┐ │                    │
+│  Group1   ├────────────────┼───┤   │                   ├──►  Group1   ├─┘                    │
+└───────────┘                │   │   │  ┌───────────┐    │  └───────────┘                      │
+                  ┌─────┬────┼───┼───┼──┤  Group3   ├────┘                                     │
+┌───────────┐     │     │    │   │   │  └───────────┘                                          │ ┌──────────┐
+│  Group2   ├─────┼─────┼────┼───┼───┤                                                         ├─►  Group0  │
+└───────────┘     │     │    │   │   │  ┌───────────┐                                          │ └──────────┘
+                  │     │    └───┴───┼──┤  Group4   ├────┐                                     │
+┌───────────┐     │     │            │  └───────────┘    │  ┌───────────┐                      │
+│  Group3   ├─────┼─────┤            │                   ├──►  Group2   ├─┐                    │
+└───────────┘     │     │            │  ┌───────────┐    │  └───────────┘ │                    │
+                  │     │            └──┤  Group5   ├────┘                │                    │
+┌───────────┐     │     │               └───────────┘                     │     ┌──────────┐   │
+│  Group4   ├─────┤     │                                                 ├─────►  Group1  ├───┘
+└───────────┘     │     │               ┌───────────┐                     │     └──────────┘
+                  │     └───────────────►  Group6   ├────┐                │
+                  │                     └───────────┘    │  ┌───────────┐ │
+                  │                                      ├──►  Group3   ├─┘
+                  │                     ┌───────────┐    │  └───────────┘
+                  └─────────────────────►  Group7   ├────┘
+                                        └───────────┘
+ */
     @Test
     public void fiveStartingGroupsTwoWinners() {
         treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
@@ -203,6 +203,85 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         checkLink(groupLinks.get(12), 0, 0, 0);
         checkLink(groupLinks.get(13), 1, 0, 0);
+    }
+
+
+    /*
+                                        ┌───────────┐
+              ┌─────────────────────────►  Group0   ├────┐
+              │                         └───────────┘    │  ┌──────────┐
+              │                                          ├──►  Group0  ├──┐
+              │                         ┌───────────┐    │  └──────────┘  │
+              │    ┌────────────────────►  Group1   ├────┘                │
+┌──────────┐  │    │                    └───────────┘                     │    ┌──────────┐
+│  Group0  ├──┤    │                                                      ├────►  Group0  ├────┐
+└──────────┘  │    │                    ┌───────────┐                     │    └──────────┘    │
+              │    │    ┌──┬────────────►  Group2   ├────┐                │                    │
+┌───────────┐ │    │    │  │            └───────────┘    │  ┌───────────┐ │                    │
+│  Group1   ├─┼────┤    │  │                             ├──►  Group1   ├─┘                    │
+└───────────┘ │    │    │  │            ┌───────────┐    │  └───────────┘                      │
+              │    │    │  │   ┌───┬────┤  Group3   ├────┘                                     │
+┌───────────┐ │    │    │  │   │   │    └───────────┘                                          │ ┌──────────┐
+│  Group2   ├─┼────┼────┼──┤   │   │                                                           ├─►  Group0  │
+└───────────┘ │    │    │  │   │   │    ┌───────────┐                                          │ └──────────┘
+              └────┴────┼──┼───┼───┼────┤  Group4   ├────┐                                     │
+┌───────────┐           │  │   │   │    └───────────┘    │  ┌───────────┐                      │
+│  Group3   ├───────────┤  │   │   │                     ├──►  Group2   ├─┐                    │
+└───────────┘           │  │   │   │    ┌───────────┐    │  └───────────┘ │                    │
+                        └──┴───┼───┼────►  Group5   ├────┘                │                    │
+┌───────────┐                  │   │    └───────────┘                     │     ┌──────────┐   │
+│  Group4   ├──────────────────┤   │                                      ├─────►  Group1  ├───┘
+└───────────┘                  │   │    ┌───────────┐                     │     └──────────┘
+                               └───┼────►  Group6   ├────┐                │
+┌───────────┐                      │    └───────────┘    │  ┌───────────┐ │
+│  Group5   ├──────────────────────┤                     ├──►  Group3   ├─┘
+└───────────┘                      │    ┌───────────┐    │  └───────────┘
+                                   └────►  Group7   ├────┘
+                                        └───────────┘
+ */
+    @Test
+    public void sixStartingGroupsTwoWinners() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(2, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(3, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(4, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(5, tournamentTwoWinners));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 21);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 26);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 2, 0);
+        checkLink(groupLinks.get(3), 3, 5, 0);
+        checkLink(groupLinks.get(4), 4, 6, 0);
+        checkLink(groupLinks.get(5), 5, 7, 0);
+        checkLink(groupLinks.get(6), 0, 4, 1);
+        checkLink(groupLinks.get(7), 1, 4, 1);
+        checkLink(groupLinks.get(8), 2, 5, 1);
+        checkLink(groupLinks.get(9), 3, 2, 1);
+        checkLink(groupLinks.get(10), 4, 3, 1);
+        checkLink(groupLinks.get(11), 5, 3, 1);
+
+        checkLink(groupLinks.get(12), 0, 0, 0);
+        checkLink(groupLinks.get(13), 1, 0, 0);
+        checkLink(groupLinks.get(14), 2, 1, 0);
+        checkLink(groupLinks.get(15), 3, 1, 0);
+        checkLink(groupLinks.get(16), 4, 2, 0);
+        checkLink(groupLinks.get(17), 5, 2, 0);
+        checkLink(groupLinks.get(18), 6, 3, 0);
+        checkLink(groupLinks.get(19), 7, 3, 0);
+
+        checkLink(groupLinks.get(20), 0, 0, 0);
+        checkLink(groupLinks.get(21), 1, 0, 0);
+        checkLink(groupLinks.get(22), 2, 1, 0);
+        checkLink(groupLinks.get(23), 3, 1, 0);
+
+        checkLink(groupLinks.get(24), 0, 0, 0);
+        checkLink(groupLinks.get(25), 1, 0, 0);
     }
 
 
