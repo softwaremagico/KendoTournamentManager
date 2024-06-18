@@ -28,7 +28,8 @@ public enum TournamentExtraPropertyKey {
     KING_DRAW_RESOLUTION,
     DIPLOMA_NAME_HEIGHT,
     NUMBER_OF_WINNERS,
-    LEAGUE_FIGHTS_ORDER_GENERATION;
+    LEAGUE_FIGHTS_ORDER_GENERATION,
+    ODD_TEAMS_RESOLVED_ASAP;
 
 
     public static TournamentExtraPropertyKey getType(String name) {
