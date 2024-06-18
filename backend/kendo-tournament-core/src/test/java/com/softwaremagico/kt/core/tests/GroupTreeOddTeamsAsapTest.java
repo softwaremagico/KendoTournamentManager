@@ -106,6 +106,60 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
     }
 
 
+
+    @Test
+    public void fourStartingGroupsTwoWinners() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(2, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(3, tournamentTwoWinners));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 11);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 14);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 2, 0);
+        checkLink(groupLinks.get(3), 3, 3, 0);
+        checkLink(groupLinks.get(4), 0, 3, 1);
+        checkLink(groupLinks.get(5), 1, 2, 1);
+        checkLink(groupLinks.get(6), 2, 1, 1);
+        checkLink(groupLinks.get(7), 3, 0, 1);
+
+        checkLink(groupLinks.get(8), 0, 0, 0);
+        checkLink(groupLinks.get(9), 1, 0, 0);
+        checkLink(groupLinks.get(10), 2, 1, 0);
+        checkLink(groupLinks.get(11), 3, 1, 0);
+
+        checkLink(groupLinks.get(12), 0, 0, 0);
+        checkLink(groupLinks.get(13), 1, 0, 0);
+
+        //Removing last group
+        treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 3);
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 10);
+
+        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 12);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 3, 0);
+        checkLink(groupLinks.get(3), 0, 2, 1);
+        checkLink(groupLinks.get(4), 1, 2, 1);
+        checkLink(groupLinks.get(5), 2, 1, 1);
+
+        checkLink(groupLinks.get(6), 0, 0, 0);
+        checkLink(groupLinks.get(7), 1, 0, 0);
+        checkLink(groupLinks.get(8), 2, 1, 0);
+        checkLink(groupLinks.get(9), 3, 1, 0);
+
+        checkLink(groupLinks.get(10), 0, 0, 0);
+        checkLink(groupLinks.get(11), 1, 0, 0);
+    }
+
+
     /*
                                         ┌───────────┐
                              ┌──────────►  Group0   ├────┐
