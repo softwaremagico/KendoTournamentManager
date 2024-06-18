@@ -51,6 +51,10 @@ export namespace TournamentType {
     return type === TournamentType.CHAMPIONSHIP || type === TournamentType.LEAGUE;
   }
 
+  export function resolveOddFightsAsap(type: TournamentType | undefined): boolean {
+    return type === TournamentType.CHAMPIONSHIP;
+  }
+
   /**
    * Has a default group that is automatically handled by the system.
    */
