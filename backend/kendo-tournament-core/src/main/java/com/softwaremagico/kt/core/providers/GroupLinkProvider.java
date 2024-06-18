@@ -97,7 +97,7 @@ public class GroupLinkProvider {
                     .getByTournamentAndProperty(sourceGroup.getTournament(),
                             TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
-                    //If has same number of groups, can be use the standard way.
+                    //If it has the same number of groups, can be use the standard way.
                     && currentLevelGroups.size() != nextLevelGroups.size()) {
                 return nextLevelGroups.get(obtainPositionOfWinnerRemovingOddNumbers(sourceGroup.getIndex(),
                         currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
@@ -163,13 +163,13 @@ public class GroupLinkProvider {
                                                          int winnerOrder) {
         //Standard case.
         if (winnerOrder == 0) {
-            if (sourceGroupLevelIndex <= sourceGroupLevelSize / 2) {
+            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
                 return sourceGroupLevelIndex;
             } else {
                 return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex - 1) - 1;
             }
         } else if (winnerOrder == 1) {
-            if (sourceGroupLevelIndex <= sourceGroupLevelSize / 2) {
+            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
                 //Last -1 is for list starts at 0.
                 return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex / 2);
             } else {
