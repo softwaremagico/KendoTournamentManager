@@ -90,13 +90,13 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         Tournament newTournament = new Tournament(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE, null);
         tournament = tournamentProvider.save(newTournament);
         Assert.assertEquals(tournamentProvider.count(), 1);
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, "true"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "true"));
 
         Tournament newTournamentTwoWinners = new Tournament(TOURNAMENT_TWO_WINNERS_NAME, 1, MEMBERS, TournamentType.TREE, null);
         tournamentTwoWinners = tournamentProvider.save(newTournamentTwoWinners);
         Assert.assertEquals(tournamentProvider.count(), 2);
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentTwoWinners, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"));
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentTwoWinners, TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, "true"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentTwoWinners, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "true"));
     }
 
     @AfterMethod
@@ -105,6 +105,75 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         groupProvider.delete(tournamentTwoWinners);
     }
 
+
+    @Test
+    public void threeStartingGroupsOneWinners() {
+        treeTournamentHandler.addGroup(tournament, generateGroup(0, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(1, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(2, tournament));
+
+        Assert.assertEquals(groupProvider.getGroups(tournament).size(), 6);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        Assert.assertEquals(groupLinks.size(), 5);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 1, 0);
+
+        checkLink(groupLinks.get(3), 0, 0, 0);
+        checkLink(groupLinks.get(4), 1, 0, 0);
+    }
+
+
+    @Test
+    public void threeStartingGroupsTwoWinners() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournament));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(2, tournamentTwoWinners));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 10);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 12);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 3, 0);
+        checkLink(groupLinks.get(3), 0, 2, 1);
+        checkLink(groupLinks.get(4), 1, 2, 1);
+        checkLink(groupLinks.get(5), 2, 1, 1);
+
+        checkLink(groupLinks.get(6), 0, 0, 0);
+        checkLink(groupLinks.get(7), 1, 0, 0);
+        checkLink(groupLinks.get(8), 2, 1, 0);
+        checkLink(groupLinks.get(9), 3, 1, 0);
+
+        checkLink(groupLinks.get(10), 0, 0, 0);
+        checkLink(groupLinks.get(11), 1, 0, 0);
+    }
+
+
+    @Test
+    public void fourStartingGroupsOneWinners() {
+        treeTournamentHandler.addGroup(tournament, generateGroup(0, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(1, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(2, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(3, tournament));
+
+        Assert.assertEquals(groupProvider.getGroups(tournament).size(), 7);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        Assert.assertEquals(groupLinks.size(), 6);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 0, 0);
+        checkLink(groupLinks.get(3), 3, 1, 0);
+
+        checkLink(groupLinks.get(4), 0, 0, 0);
+        checkLink(groupLinks.get(5), 1, 0, 0);
+    }
 
 
     @Test
@@ -157,6 +226,35 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
         checkLink(groupLinks.get(10), 0, 0, 0);
         checkLink(groupLinks.get(11), 1, 0, 0);
+    }
+
+
+    @Test
+    public void fiveStartingGroupsOneWinners() {
+        treeTournamentHandler.addGroup(tournament, generateGroup(0, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(1, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(2, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(3, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(4, tournament));
+
+        Assert.assertEquals(groupProvider.getGroups(tournament).size(), 12);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        Assert.assertEquals(groupLinks.size(), 11);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 2, 0);
+        checkLink(groupLinks.get(3), 3, 2, 0);
+        checkLink(groupLinks.get(4), 4, 3, 0);
+
+        checkLink(groupLinks.get(5), 0, 0, 0);
+        checkLink(groupLinks.get(6), 1, 0, 0);
+        checkLink(groupLinks.get(7), 2, 1, 0);
+        checkLink(groupLinks.get(8), 3, 1, 0);
+
+        checkLink(groupLinks.get(9), 0, 0, 0);
+        checkLink(groupLinks.get(10), 1, 0, 0);
     }
 
 
@@ -258,6 +356,39 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         checkLink(groupLinks.get(12), 0, 0, 0);
         checkLink(groupLinks.get(13), 1, 0, 0);
     }
+
+
+
+    @Test
+    public void sixStartingGroupsOneWinners() {
+        treeTournamentHandler.addGroup(tournament, generateGroup(0, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(1, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(2, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(3, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(4, tournament));
+        treeTournamentHandler.addGroup(tournament, generateGroup(5, tournament));
+
+        Assert.assertEquals(groupProvider.getGroups(tournament).size(), 13);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournament);
+        Assert.assertEquals(groupLinks.size(), 12);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 2, 2, 0);
+        checkLink(groupLinks.get(3), 3, 1, 0);
+        checkLink(groupLinks.get(4), 4, 2, 0);
+        checkLink(groupLinks.get(5), 5, 3, 0);
+
+        checkLink(groupLinks.get(6), 0, 0, 0);
+        checkLink(groupLinks.get(7), 1, 0, 0);
+        checkLink(groupLinks.get(8), 2, 1, 0);
+        checkLink(groupLinks.get(9), 3, 1, 0);
+
+        checkLink(groupLinks.get(10), 0, 0, 0);
+        checkLink(groupLinks.get(11), 1, 0, 0);
+    }
+
 
 
     /*
