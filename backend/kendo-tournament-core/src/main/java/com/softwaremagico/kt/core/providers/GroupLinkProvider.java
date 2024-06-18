@@ -95,7 +95,7 @@ public class GroupLinkProvider {
         try {
             final TournamentExtraProperty oddTeamsResolvedAsapProperty = tournamentExtraPropertyProvider
                     .getByTournamentAndProperty(sourceGroup.getTournament(),
-                            TournamentExtraPropertyKey.ODD_TEAMS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
+                            TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
                     //If it has the same number of groups, can be use the standard way.
                     && currentLevelGroups.size() != nextLevelGroups.size()) {
