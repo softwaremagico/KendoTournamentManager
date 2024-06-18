@@ -209,7 +209,6 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
     @AfterClass(alwaysRun = true)
     public void deleteTournament() {
         groupProvider.deleteAll();
-        groupLinkProvider.deleteAll();
         tournamentExtraPropertyProvider.deleteAll();
         tournamentProvider.deleteAll();
     }

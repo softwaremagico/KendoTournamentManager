@@ -25,7 +25,6 @@ import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
-import com.softwaremagico.kt.persistence.repositories.GroupLinkRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.stereotype.Service;
 
@@ -37,14 +36,13 @@ import java.util.Objects;
 import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAULT_ODD_TEAMS_RESOLUTION_ASAP;
 
 @Service
-public class GroupLinkProvider extends CrudProvider<GroupLink, Integer, GroupLinkRepository> {
+public class GroupLinkProvider {
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final GroupProvider groupProvider;
 
-    public GroupLinkProvider(GroupLinkRepository groupLinkRepository, TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
+    public GroupLinkProvider(TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
                              GroupProvider groupProvider) {
-        super(groupLinkRepository);
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
         this.groupProvider = groupProvider;
     }
