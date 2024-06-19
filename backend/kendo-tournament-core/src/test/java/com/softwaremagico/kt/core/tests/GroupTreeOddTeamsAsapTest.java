@@ -203,8 +203,8 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         Assert.assertEquals(groupLinks.size(), 6);
 
         checkLink(groupLinks.get(0), 0, 0, 0);
-        checkLink(groupLinks.get(1), 1, 1, 0);
-        checkLink(groupLinks.get(2), 2, 0, 0);
+        checkLink(groupLinks.get(1), 1, 0, 0);
+        checkLink(groupLinks.get(2), 2, 1, 0);
         checkLink(groupLinks.get(3), 3, 1, 0);
 
         checkLink(groupLinks.get(4), 0, 0, 0);
