@@ -702,5 +702,7 @@
     "shiaijoFinished": "Todos los partidos del shiaijo {{shiaijoName}} han acabado.",
     "userAdminGenerated": "Usuario {{userName}} ha sido creado!"
   },
-  "daysFrom": "Aplica solo estos días"
+  "daysFrom": "Aplica solo estos días",
+  "oddFightsResolvedAsap": "Resuelve los partidos sin combates lo antes posible.",
+  "oddFightsResolvedAsapHint": "Si el numero de equipos o grupos del torneo es impar, es posible que durante los cruces algunos equipos no tengan combates asociados y se clasifiquen para la fase siguiente automaticamente. Con esta opción te aseguras que estos casos se resuelven lo antes posible."
 }

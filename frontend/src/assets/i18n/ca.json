@@ -706,5 +706,7 @@
   "updatedAt": "Actualitzat a les",
   "updatedBy": "Actualitzat per",
   "teamsOrder": "Ordre dels equips:",
-  "web": "Web"
+  "web": "Web",
+  "oddFightsResolvedAsap": "Resol els partits sense combats com més aviat millor",
+  "oddFightsResolvedAsapHint": "Si el nombre d'equips o grups del torneig és imparell, és possible que durant els encreuament alguns equips no tinguin combats associats i es classifiquin per a la fase següent automàticament. Amb aquesta opció t'assegures que aquests casos es resolen com més aviat millor."
 }

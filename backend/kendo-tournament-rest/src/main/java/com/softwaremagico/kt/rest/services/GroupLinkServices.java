@@ -23,11 +23,6 @@ package com.softwaremagico.kt.rest.services;
 
 import com.softwaremagico.kt.core.controller.GroupLinkController;
 import com.softwaremagico.kt.core.controller.models.GroupLinkDTO;
-import com.softwaremagico.kt.core.converters.GroupLinkConverter;
-import com.softwaremagico.kt.core.converters.models.GroupLinkConverterRequest;
-import com.softwaremagico.kt.core.providers.GroupLinkProvider;
-import com.softwaremagico.kt.persistence.entities.GroupLink;
-import com.softwaremagico.kt.persistence.repositories.GroupLinkRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -43,11 +38,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/groups-links")
-public class GroupLinkServices extends BasicServices<GroupLink, GroupLinkDTO, GroupLinkRepository, GroupLinkProvider,
-        GroupLinkConverterRequest, GroupLinkConverter, GroupLinkController> {
+public class GroupLinkServices {
+
+    private final GroupLinkController groupController;
 
     public GroupLinkServices(GroupLinkController groupController) {
-        super(groupController);
+        this.groupController = groupController;
     }
 
 
@@ -55,8 +51,8 @@ public class GroupLinkServices extends BasicServices<GroupLink, GroupLinkDTO, Gr
     @Operation(summary = "Gets all groups links.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupLinkDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true)
-                                         @PathVariable("tournamentId") Integer tournamentId,
+                                     @PathVariable("tournamentId") Integer tournamentId,
                                      HttpServletRequest request) {
-        return getController().getLinks(tournamentId);
+        return groupController.getLinks(tournamentId);
     }
 }
