@@ -21,31 +21,12 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import jakarta.persistence.Cacheable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-@Entity
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "tournament_groups_links")
 public class GroupLink extends Element {
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "source", nullable = false)
     private Group source;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "destination", nullable = false)
     private Group destination;
 
-    @Column(name = "winner_index", nullable = false)
     private Integer winner = 0;
 
     public Group getSource() {

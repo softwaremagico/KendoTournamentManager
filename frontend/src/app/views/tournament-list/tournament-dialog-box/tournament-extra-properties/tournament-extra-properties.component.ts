@@ -29,6 +29,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   canMaximizeFights: boolean;
   needsDrawResolution: boolean;
   needsFifoWinner: boolean;
+  canResolveOddFightsAsap: boolean;
   canAvoidDuplicatedFights: boolean;
 
   //Values
@@ -36,6 +37,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   firstInFirstOut: boolean;
   selectedDrawResolution: DrawResolution;
   avoidDuplicatedFights: boolean;
+  resolveOddFightsAsap: boolean;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentExtraPropertiesComponent>, rbacService: RbacService, public translateService: TranslateService,
@@ -50,6 +52,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
     this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
     this.canAvoidDuplicatedFights = TournamentType.avoidsDuplicatedFights(this.tournament.type);
+    this.canResolveOddFightsAsap = TournamentType.resolveOddFightsAsap(this.tournament.type);
 
     this.defaultPropertiesValue();
   }
@@ -70,6 +73,9 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
           if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.AVOID_DUPLICATES) {
             this.avoidDuplicatedFights = (_tournamentProperty.propertyValue.toLowerCase() == "true");
           }
+          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
+            this.resolveOddFightsAsap = (_tournamentProperty.propertyValue.toLowerCase() == "true");
+          }
         }
       }
     });
@@ -80,6 +86,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     this.selectedDrawResolution = TournamentExtraPropertyKey.getDefaultKingDrawResolutions();
     this.firstInFirstOut = TournamentExtraPropertyKey.getDefaultLeagueFightsOrderGeneration();
     this.avoidDuplicatedFights = TournamentExtraPropertyKey.avoidDuplicateFightsGeneration();
+    this.resolveOddFightsAsap = TournamentExtraPropertyKey.oddFightsResolvedAsap();
   }
 
   getDrawResolutionTranslationTag(drawResolution: DrawResolution): string {
@@ -103,7 +110,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = drawResolution;
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
-    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe(():void => {
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }
@@ -137,6 +144,16 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = $event.checked + "";
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.AVOID_DUPLICATES;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
+  resolveOddFightsAsapToggle($event: MatSlideToggleChange): void {
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = $event.checked + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });

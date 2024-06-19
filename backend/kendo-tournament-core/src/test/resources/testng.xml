@@ -25,6 +25,7 @@
                 <include name="tournament5GroupsTwoWinnersTest"/>
                 <include name="tournamentLevelNotFinishedTest"/>
                 <include name="groupsTest"/>
+                <include name="groupsTest"/>
                 <include name="numberOfWinners"/>
                 <include name="tournamentExtraProperties"/>
                 <include name="qrTest"/>
@@ -52,6 +53,7 @@
             <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
+            <class name="com.softwaremagico.kt.core.tests.GroupTreeOddTeamsAsapTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
             <class name="com.softwaremagico.kt.core.tests.QrTests"/>
