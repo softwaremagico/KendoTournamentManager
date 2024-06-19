@@ -105,6 +105,42 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         groupProvider.delete(tournamentTwoWinners);
     }
 
+    @Test
+    public void twoStartingGroupsTwoWinners() {
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1, tournamentTwoWinners));
+
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 5);
+
+        List<GroupLink> groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 6);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 1, 1, 0);
+        checkLink(groupLinks.get(2), 0, 1, 1);
+        checkLink(groupLinks.get(3), 1, 0, 1);
+
+        checkLink(groupLinks.get(4), 0, 0, 0);
+        checkLink(groupLinks.get(5), 1, 0, 0);
+
+        //Removing last group
+        treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 1);
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 2);
+
+        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 2);
+
+        checkLink(groupLinks.get(0), 0, 0, 0);
+        checkLink(groupLinks.get(1), 0, 0, 1);
+
+        //Removing last group
+        treeTournamentHandler.removeGroup(tournamentTwoWinners, 0, 0);
+        Assert.assertEquals(groupProvider.getGroups(tournamentTwoWinners).size(), 0);
+
+        groupLinks = groupLinkProvider.generateLinks(tournamentTwoWinners);
+        Assert.assertEquals(groupLinks.size(), 0);
+    }
+
 
     @Test
     public void threeStartingGroupsOneWinners() {
@@ -128,7 +164,7 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
 
     @Test
     public void threeStartingGroupsTwoWinners() {
-        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournament));
+        treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(0, tournamentTwoWinners));
         treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(1, tournamentTwoWinners));
         treeTournamentHandler.addGroup(tournamentTwoWinners, generateGroup(2, tournamentTwoWinners));
 
@@ -358,7 +394,6 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
     }
 
 
-
     @Test
     public void sixStartingGroupsOneWinners() {
         treeTournamentHandler.addGroup(tournament, generateGroup(0, tournament));
@@ -388,7 +423,6 @@ public class GroupTreeOddTeamsAsapTest extends AbstractTestNGSpringContextTests 
         checkLink(groupLinks.get(10), 0, 0, 0);
         checkLink(groupLinks.get(11), 1, 0, 0);
     }
-
 
 
     /*
