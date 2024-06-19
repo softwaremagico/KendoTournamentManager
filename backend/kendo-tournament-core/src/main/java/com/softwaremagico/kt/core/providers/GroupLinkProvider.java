@@ -26,6 +26,7 @@ import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.utils.GroupUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -98,7 +99,7 @@ public class GroupLinkProvider {
                             TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
                     //If it has the same number of groups, can be use the standard way.
-                    && currentLevelGroups.size() != nextLevelGroups.size()) {
+                    && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size())) {
                 return nextLevelGroups.get(obtainPositionOfWinnerRemovingOddNumbers(sourceGroup.getIndex(),
                         currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
             } else {
