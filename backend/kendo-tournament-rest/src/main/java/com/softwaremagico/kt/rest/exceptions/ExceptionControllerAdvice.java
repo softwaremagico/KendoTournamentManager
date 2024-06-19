@@ -21,6 +21,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
@@ -155,6 +156,12 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<Object> invalidRequestException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidGroupException.class)
+    public ResponseEntity<Object> invalidGroupException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
     }
