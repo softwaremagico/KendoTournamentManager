@@ -684,5 +684,7 @@
     "shiaijoFinished": "Alle Spiele von Shiaijo {{shiaijoName}} sind beendet.",
     "userAdminGenerated": "Benutzer {{userName}} wurde erstellt!"
   },
-  "daysFrom": ""
+  "daysFrom": "Bewerben Sie sich nur noch an diesen Tagen",
+  "oddFightsResolvedAsap": "Lösen Sie Spiele ohne Kampf so schnell wie möglich",
+  "oddFightsResolvedAsapHint": "Wenn die Anzahl der Mannschaften oder Gruppen im Turnier ungerade ist, ist es möglich, dass einige Mannschaften während der Spiele keine zugehörigen Spiele haben und sich automatisch für die nächste Phase qualifizieren. Mit dieser Option stellen Sie sicher, dass diese Fälle schnellstmöglich gelöst werden."
 }

@@ -16,6 +16,11 @@
     {{'leagueFifo' | translate }}
   </mat-slide-toggle>
 
+  <mat-slide-toggle *ngIf="canResolveOddFightsAsap" [checked]="resolveOddFightsAsap" (change)="resolveOddFightsAsapToggle($event)"
+                    [matTooltipShowDelay]="1000" matTooltip="{{'oddFightsResolvedAsapHint' | translate}}">
+    {{'oddFightsResolvedAsap' | translate }}
+  </mat-slide-toggle>
+
 
   <mat-form-field *ngIf="needsDrawResolution">
     <mat-label>{{'drawResolution' | translate}}</mat-label>
