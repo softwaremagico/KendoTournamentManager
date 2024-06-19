@@ -187,8 +187,8 @@ public class TreeTournamentHandler extends LeagueHandler {
                     //It is not a power of two.
                     && (groupsByLevel.get(level).size()
                     < GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(level - 1).size() * (level == 1 ? numberOfWinners : 1)) + 1) / 2))
-                    //Except the Last level, that has only one group.
-                    && !(groupsByLevel.get(level).size() == 1 && previousLevelSize == 2)) {
+                    //Except the Last level, that has only one group. Skip this if the previous level has more than one winner.
+                    && !(groupsByLevel.get(level).size() == 1 && previousLevelSize == 2 && groupsByLevel.get(level - 1).get(0).getNumberOfWinners() > 1)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
                 groupsByLevel.get(level).add(levelGroup);
@@ -262,6 +262,13 @@ public class TreeTournamentHandler extends LeagueHandler {
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = Integer.MAX_VALUE - 1;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
+            //If previous level has no groups, remove all.
+            if (level > 0 && (!groupsByLevel.containsKey(level - 1) || groupsByLevel.get(level - 1).isEmpty())) {
+                while (!groupsByLevel.get(level).isEmpty()) {
+                    groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
+                    groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
+                }
+            }
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue())) {
                 // Normal levels, the number of groups must be the half rounded up that the previous one.
                 if ((level > 1)) {
