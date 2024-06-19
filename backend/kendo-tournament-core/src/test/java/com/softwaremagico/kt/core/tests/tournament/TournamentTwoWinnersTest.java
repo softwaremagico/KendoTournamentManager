@@ -158,7 +158,7 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "addTournament")
     public void add4Groups() {
-        treeTournamentHandler.adjustGroupsSize(tournamentConverter.reverse(tournamentDTO), 2);
+        treeTournamentHandler.adjustGroupsSizeRemovingOddNumbers(tournamentConverter.reverse(tournamentDTO), 2);
         //First group is already inserted.
         for (int i = 1; i < GROUPS; i++) {
             final GroupDTO groupDTO = new GroupDTO();
