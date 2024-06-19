@@ -1,5 +1,5 @@
 <div class="container" cdkDropListGroup>
-  <div class="team-panel">
+  <div class="team-panel" *ngIf="!droppingDisabled">
     <div *ngIf="!droppingDisabled && (RbacActivity.EDIT_GROUP | rbac : this.rbacService.getActivities())"
          (cdkDropListDropped)="removeTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
          cdkDropList cdkDropListSortingDisabled="true"
@@ -42,7 +42,7 @@
           type="button">
     <mat-icon color="primary">download_file</mat-icon>
   </button>
-  <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets" [tournament]="tournament"
+  <app-tournament-brackets #tournamentBracketsComponent class="tournament-brackets" [class.started] = "droppingDisabled" [tournament]="tournament"
                            [droppingDisabled]="droppingDisabled">
   </app-tournament-brackets>
 </div>

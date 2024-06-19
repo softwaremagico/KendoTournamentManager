@@ -701,5 +701,7 @@
     "shiaijoFinished": "All shiaijo {{shiaijoName}} matches have ended.",
     "userAdminGenerated": "User {{userName}} has been created!"
   },
-  "daysFrom": "Apply only these days"
+  "daysFrom": "Apply only these days",
+  "oddFightsResolvedAsap": "Resolve matches without combat as soon as possible",
+  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically. With this option you ensure that these cases are resolved as soon as possible.\n\n"
 }
