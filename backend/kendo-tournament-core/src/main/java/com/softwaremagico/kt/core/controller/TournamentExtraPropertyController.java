@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.TournamentExtraPropertyConverter;
 import com.softwaremagico.kt.core.converters.models.TournamentExtraPropertyConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
+import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
@@ -42,14 +43,17 @@ public class TournamentExtraPropertyController extends BasicInsertableController
 
     private final TournamentProvider tournamentProvider;
     private final TournamentConverter tournamentConverter;
+    private final GroupProvider groupProvider;
 
 
     @Autowired
     protected TournamentExtraPropertyController(TournamentExtraPropertyProvider provider, TournamentExtraPropertyConverter converter,
-                                                TournamentProvider tournamentProvider, TournamentConverter tournamentConverter) {
+                                                TournamentProvider tournamentProvider, TournamentConverter tournamentConverter,
+                                                GroupProvider groupProvider) {
         super(provider, converter);
         this.tournamentProvider = tournamentProvider;
         this.tournamentConverter = tournamentConverter;
+        this.groupProvider = groupProvider;
     }
 
     @Override
@@ -60,6 +64,10 @@ public class TournamentExtraPropertyController extends BasicInsertableController
     @Override
     public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
         getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
+        //Remove any existing group if changed.
+        if (dto.getPropertyKey() == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
+            groupProvider.delete(tournamentConverter.reverse(dto.getTournament()));
+        }
         return super.update(dto, username);
     }
 
