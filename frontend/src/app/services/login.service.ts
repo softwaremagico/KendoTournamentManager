@@ -79,6 +79,7 @@ export class LoginService {
     this.loginAsGuest(tournamentId).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.setAuthenticatedUser(authenticatedUser, callback);
+        localStorage.setItem('account', 'guest');
       },
       error: (): void => {
         this.router.navigate(["/"]);
@@ -90,6 +91,7 @@ export class LoginService {
     this.loginAsParticipant(temporalToken).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.setAuthenticatedUser(authenticatedUser, callback);
+        localStorage.setItem('account', 'participant');
       },
       error: (): void => {
         this.router.navigate(["/"]);

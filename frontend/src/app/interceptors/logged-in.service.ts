@@ -20,13 +20,13 @@ export class LoggedInService {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const context: string = state.url.substring(0, state.url.indexOf('?') > 0 ? state.url.indexOf('?') : state.url.length);
+    const params: string = state.url.indexOf('?') > 0 ? state.url.substring(state.url.indexOf('?') + 1) : "";
     if (this.loginService.getJwtValue() || this.whiteListedPages.includes(context)) {
       //Read roles from JWT if it is a returning user.
       this.loginService.refreshDataFormJwt();
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
-      //return this.userLoginPageDependingOnRoles(context);
-      return true;
+      return this.userLoginPageDependingOnRoles(context, params);
     }
 
     // Not logged in so redirect to login page with the return url
@@ -35,8 +35,14 @@ export class LoggedInService {
     return false;
   }
 
-  userLoginPageDependingOnRoles(context: string): boolean {
+  userLoginPageDependingOnRoles(context: string, params: string): boolean {
     if (this.loginService.getJwtValue()) {
+      //Participant users must redirect to their statistcs.
+      if (localStorage.getItem('account') == 'participant' && !context.startsWith('/participants/statistics')) {
+        this.router.navigate(['/participants/statistics']);
+      } else if (localStorage.getItem('account') == 'guest' && !context.startsWith('/tournaments/fights')) {
+        this.router.navigate(['/tournaments/fights']);
+      }
       this.loginService.getUserRoles().subscribe((_roles: String[]): void => {
         if (_roles.includes("viewer") || _roles.includes("editor") || _roles.includes("admin")) {
           // Do nothing and navigate as usual.
@@ -56,7 +62,7 @@ export class LoggedInService {
       });
       return true;
     }
-    return false;
+    return this.whiteListedPages.includes(context);
   }
 }
 
