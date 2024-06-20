@@ -691,6 +691,6 @@
     "userAdminGenerated": "L'utente {{userName}} è stato creato!"
   },
   "daysFrom": "Applicare solo in questi giorni",
-  "oddFightsResolvedAsap": "Risolvi le partite senza combattimento il prima possibile",
-  "oddFightsResolvedAsapHint": "Se il numero di squadre o gruppi nel torneo è dispari, è possibile che durante le partite alcune squadre non abbiano partite associate e si qualifichino automaticamente alla fase successiva. Con questa opzione ti assicuri che questi casi vengano risolti il prima possibile."
+  "oddFightsResolvedAsap": "Risolvere le esenzioni senza combattimenti il prima possibile",
+  "oddFightsResolvedAsapHint": "Se il numero di squadre o gruppi nel torneo è dispari, è possibile che durante le partite alcune squadre non abbiano partite associate e si qualifichino automaticamente alla fase successiva (esenzioni). Con questa opzione ti assicuri che questi casi vengano risolti il prima possibile."
 }
