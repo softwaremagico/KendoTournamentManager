@@ -176,7 +176,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets all fights from competitor.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitor/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FightDTO> getByCompetitor(@Parameter(description = "Id of the competitor.", required = true)
