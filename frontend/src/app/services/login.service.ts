@@ -80,6 +80,8 @@ export class LoginService {
       next: (authenticatedUser: AuthenticatedUser): void => {
         this.setAuthenticatedUser(authenticatedUser, callback);
         localStorage.setItem('account', 'guest');
+        debugger
+        localStorage.setItem('tournamentId', tournamentId + "");
       },
       error: (): void => {
         this.router.navigate(["/"]);
