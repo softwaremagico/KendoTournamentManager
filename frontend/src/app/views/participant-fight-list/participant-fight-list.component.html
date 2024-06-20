@@ -3,8 +3,8 @@
   <div class="fights-table">
     <div class="upper-menu">
       <div class="cell">
-        <button (click)="goBackToUsers()"
-                *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
+        <button (click)="goBackToStatistics()"
+                *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500"
                 mat-button
                 matTooltip="{{'back' | translate}}">
