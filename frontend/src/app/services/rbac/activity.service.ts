@@ -105,7 +105,8 @@ export class ActivityService {
       RbacActivity.CHANGE_LANGUAGE,
       RbacActivity.CHECK_TOURNAMENT_BRACKETS,
       RbacActivity.READ_TEAMS_RANKINGS,
-      RbacActivity.READ_COMPETITORS_RANKINGS
+      RbacActivity.READ_COMPETITORS_RANKINGS,
+      RbacActivity.CAN_LOGOUT
     ];
   }
 

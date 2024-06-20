@@ -67,6 +67,9 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       //Gets participant from URL parameter (from QR codes).
       this.participantId = Number(this.activatedRoute.snapshot.queryParamMap.get('participantId'));
       this.temporalToken = this.activatedRoute.snapshot.queryParamMap.get('temporalToken');
+      if (this.temporalToken) {
+        this.loginService.logout()
+      }
       if (!this.participantId || isNaN(this.participantId)) {
         this.goBackToUsers();
       }
@@ -96,6 +99,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       if (this.temporalToken) {
         this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
           this.initializeData();
+          this.router.navigate([]);
         });
       } else {
         this.goBackToUsers();
