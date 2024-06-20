@@ -685,6 +685,6 @@
     "userAdminGenerated": "Gebruiker {{userName}} is aangemaakt!"
   },
   "daysFrom": "Bewerben Sie sich nur noch an diesen Tagen",
-  "oddFightsResolvedAsap": "Los wedstrijden zo snel mogelijk op zonder gevechten",
+  "oddFightsResolvedAsap": "Los vrijstellingen zo snel mogelijk op zonder strijd",
   "oddFightsResolvedAsapHint": "Als het aantal teams of groepen in het toernooi oneven is, is het mogelijk dat tijdens de wedstrijden sommige teams geen geassocieerde wedstrijden hebben en zich automatisch kwalificeren voor de volgende fase. Met deze optie zorgt u ervoor dat deze zaken zo snel mogelijk worden opgelost."
 }
