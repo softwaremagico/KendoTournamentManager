@@ -685,6 +685,6 @@
     "userAdminGenerated": "Benutzer {{userName}} wurde erstellt!"
   },
   "daysFrom": "Bewerben Sie sich nur noch an diesen Tagen",
-  "oddFightsResolvedAsap": "Lösen Sie Spiele ohne Kampf so schnell wie möglich",
+  "oddFightsResolvedAsap": "Ausnahmen so schnell wie möglich kampflos lösen",
   "oddFightsResolvedAsapHint": "Wenn die Anzahl der Mannschaften oder Gruppen im Turnier ungerade ist, ist es möglich, dass einige Mannschaften während der Spiele keine zugehörigen Spiele haben und sich automatisch für die nächste Phase qualifizieren. Mit dieser Option stellen Sie sicher, dass diese Fälle schnellstmöglich gelöst werden."
 }
