@@ -36,30 +36,32 @@ export class LoggedInService {
   }
 
   userLoginPageDependingOnRoles(context: string, params: string): boolean {
+    debugger
     if (this.loginService.getJwtValue()) {
       //Participant users must redirect to their statistcs.
-      if (localStorage.getItem('account') == 'participant' && !context.startsWith('/participants/statistics')) {
+      if (localStorage.getItem('account') == 'participant'
+        && (!context.startsWith('/participants/statistics') && !context.startsWith('/participants/fights'))) {
         this.router.navigate(['/participants/statistics']);
       } else if (localStorage.getItem('account') == 'guest' && !context.startsWith('/tournaments/fights')) {
         this.router.navigate(['/tournaments/fights']);
       }
-      this.loginService.getUserRoles().subscribe((_roles: String[]): void => {
-        if (_roles.includes("viewer") || _roles.includes("editor") || _roles.includes("admin")) {
-          // Do nothing and navigate as usual.
-        } else if (_roles.includes("guest")) {
-          //Gets last tournament and redirects to fight list.
-          this.tournamentService.getLastUnlockedTournament().subscribe((_tournament: Tournament): void => {
-            //Path '/tournaments/fights' and '/fights/championship' does not call  LoggedInService to avoid redirect loops.
-            if (_tournament) {
-              this.router.navigate(['/tournaments/fights'], {state: {tournamentId: _tournament.id}});
-            } else {
-              this.router.navigate(['/login']);
-            }
-          });
-        } else if (_roles.includes("participant")) {
-          this.router.navigate(['/participants/statistics']);
-        }
-      });
+      // this.loginService.getUserRoles().subscribe((_roles: String[]): void => {
+      //   if (_roles.includes("viewer") || _roles.includes("editor") || _roles.includes("admin")) {
+      //     // Do nothing and navigate as usual.
+      //   } else if (_roles.includes("guest")) {
+      //     //Gets last tournament and redirects to fight list.
+      //     this.tournamentService.getLastUnlockedTournament().subscribe((_tournament: Tournament): void => {
+      //       //Path '/tournaments/fights' and '/fights/championship' does not call  LoggedInService to avoid redirect loops.
+      //       if (_tournament) {
+      //         this.router.navigate(['/tournaments/fights'], {state: {tournamentId: _tournament.id}});
+      //       } else {
+      //         this.router.navigate(['/login']);
+      //       }
+      //     });
+      //   } else if (_roles.includes("participant")) {
+      //     this.router.navigate(['/participants/statistics']);
+      //   }
+      // });
       return true;
     }
     return this.whiteListedPages.includes(context);
