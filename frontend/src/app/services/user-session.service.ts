@@ -41,7 +41,7 @@ export class UserSessionService {
     }
   }
 
-  getSelectedParticipant() {
+  getSelectedParticipant(): string | null {
     return sessionStorage.getItem("lastSelectedParticipant");
   }
 
@@ -83,13 +83,13 @@ export class UserSessionService {
 
   setNightMode(nightMode: boolean): void {
     if (nightMode) {
-      sessionStorage.setItem("nightMode", nightMode.toString());
+      localStorage.setItem("nightMode", nightMode.toString());
     } else {
-      sessionStorage.removeItem("nightMode");
+      localStorage.removeItem("nightMode");
     }
   }
 
   getNightMode(): boolean {
-    return Boolean(sessionStorage.getItem("nightMode"));
+    return Boolean(localStorage.getItem("nightMode"));
   }
 }
