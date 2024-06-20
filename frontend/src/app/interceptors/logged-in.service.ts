@@ -21,6 +21,8 @@ export class LoggedInService {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const context: string = state.url.substring(0, state.url.indexOf('?') > 0 ? state.url.indexOf('?') : state.url.length);
     if (this.loginService.getJwtValue() || this.whiteListedPages.includes(context)) {
+      //Read roles from JWT if it is a returning user.
+      this.loginService.refreshDataFormJwt();
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
       //return this.userLoginPageDependingOnRoles(context);
