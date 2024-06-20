@@ -106,6 +106,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     } else {
       //Gets tournament from URL parameter (from QR codes).
       this.tournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
+      if (!this.tournamentId) {
+        this.tournamentId = Number(localStorage.getItem('tournamentId'));
+        debugger
+      }
       if (!this.tournamentId || isNaN(this.tournamentId)) {
         this.goBackToTournament();
       }
