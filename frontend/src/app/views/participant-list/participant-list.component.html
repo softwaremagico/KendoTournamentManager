@@ -26,7 +26,7 @@
     <basic-table [basicTableData]="basicTableData" [disableRow]="disableRow"></basic-table>
     <div class="bottom-menu">
       <button (click)="openStatistics()"
-              *ngIf="(RbacActivity.VIEW_TOURNAMENT_STATISTICS | rbac : this.rbacService.getActivities())"
+              *ngIf="(RbacActivity.VIEW_PARTICIPANT_STATISTICS | rbac : this.rbacService.getActivities())"
               [disabled]="!basicTableData.selectedElement" [matTooltipShowDelay]="500"
               color="primary" mat-button
               matTooltip="{{'titleStatistics' | translate}}">

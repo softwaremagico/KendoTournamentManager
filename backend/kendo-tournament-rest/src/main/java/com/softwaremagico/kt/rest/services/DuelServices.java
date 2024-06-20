@@ -80,7 +80,7 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
     @Operation(summary = "Gets all untie duel where one participant is involved.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participant/{participantId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromParticipant(@Parameter(description = "Id of the participant.", required = true)
