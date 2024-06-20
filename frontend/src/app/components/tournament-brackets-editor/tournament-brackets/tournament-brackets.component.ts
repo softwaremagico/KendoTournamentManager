@@ -32,10 +32,7 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
-      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
-      this.shiaijosByLevel = this.getShiaijos();
-    });
+    this.updateShiaijos();
     this.groupsUpdatedService.areRelationsUpdated.subscribe((_relations: Map<number, {
       src: number,
       dest: number,
@@ -52,6 +49,13 @@ export class TournamentBracketsComponent implements OnInit {
           this.numberOfWinnersFirstLevel = Math.max(this.numberOfWinnersFirstLevel, value1.winner + 1);
         });
       });
+    });
+  }
+
+  private updateShiaijos(): void {
+    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
+      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
+      this.shiaijosByLevel = this.getShiaijos();
     });
   }
 
