@@ -16,7 +16,8 @@
   padding: 0 10px;
   line-height: 24px;
   /* Rotate from top left corner (not default) */
-  writing-mode: sideways-lr;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
   text-align: center;
   height: 100%;
 }
