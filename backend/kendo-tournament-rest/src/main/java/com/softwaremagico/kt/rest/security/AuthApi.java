@@ -319,7 +319,7 @@ public class AuthApi {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT', 'ROLE_GUEST')")
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -327,7 +327,7 @@ public class AuthApi {
         return authenticatedUserController.getRoles(authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT', 'ROLE_GUEST')")
     @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
