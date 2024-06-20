@@ -13,6 +13,10 @@ export class ActivityService {
     this.activities = this.getActivities(roles);
   }
 
+  public hasRoles(): boolean {
+    return this.activities.length > 0;
+  }
+
   public isAllowed(activity: RbacActivity | undefined): boolean {
     if (!activity || !this.activities) {
       return false;
