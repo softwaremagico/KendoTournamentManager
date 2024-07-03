@@ -100,16 +100,7 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
     private ClubController clubController;
 
     @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
-
-    @Autowired
     private RankingProvider rankingProvider;
-
-    @Autowired
-    private FightStatisticsController fightStatisticsController;
 
     @Autowired
     private GroupController groupController;
@@ -143,6 +134,8 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentController.count(), 0);
         TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
         tournamentDTO = tournamentController.create(newTournament, null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "false"), null);
         Assert.assertEquals(tournamentController.count(), 1);
 
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"), null);
