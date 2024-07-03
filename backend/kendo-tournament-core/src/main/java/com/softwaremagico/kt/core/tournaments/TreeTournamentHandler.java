@@ -109,7 +109,7 @@ public class TreeTournamentHandler extends LeagueHandler {
 
             }
         }
-        return false;
+        return true;
     }
 
 
