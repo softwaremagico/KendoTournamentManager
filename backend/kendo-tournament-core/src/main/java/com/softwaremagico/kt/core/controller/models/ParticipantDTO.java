@@ -26,6 +26,7 @@ import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +39,10 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName, IAut
 
     private String idCard;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String lastname;
 
     private ClubDTO club;

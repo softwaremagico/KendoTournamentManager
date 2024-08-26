@@ -21,10 +21,13 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Objects;
 
 public class ClubDTO extends ElementDTO {
 
+    @NotBlank
     private String name = "";
 
     private String country = "";
