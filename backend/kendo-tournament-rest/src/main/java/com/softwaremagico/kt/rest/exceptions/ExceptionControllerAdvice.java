@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.exceptions.NoContentException;
 import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.spi.ErrorMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -43,6 +45,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
@@ -165,6 +169,26 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
     }
+
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            final MethodArgumentNotValidException ex, @NotNull final HttpHeaders headers, @NotNull final HttpStatusCode status,
+            @NotNull final WebRequest request) {
+        final Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            final String fieldName = error.getField();
+            final String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        final StringBuilder message = new StringBuilder();
+        errors.forEach((key, value) -> message.append(key).append(": ").append(value).append("\n"));
+        final ErrorMessage error = new ErrorMessage(message.toString(), ex);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 
     private String getStacktrace(Throwable e) {
         try {
