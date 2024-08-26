@@ -86,12 +86,12 @@ public class AuthenticatedUserController {
 
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
 
-        //Check old password.
+        //Check the old password.
         if (!BCrypt.checkpw(oldPassword, authenticatedUser.getPassword())) {
             throw new InvalidPasswordException(this.getClass(), "Provided password is incorrect!");
         }
 
-        //Update new password.
+        //Update the new password.
         authenticatedUser.setPassword(newPassword);
         authenticatedUserProvider.save(authenticatedUser);
         KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", username);

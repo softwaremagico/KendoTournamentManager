@@ -10,12 +10,12 @@ package com.softwaremagico.kt.security;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -65,7 +65,15 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private final static String USER_NEW_FIRST_NAME = "New Test";
     private final static String USER_NEW_LAST_NAME = "New User";
     private static final String USER_PASSWORD = "password";
-    private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
+    private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
+
+    private static final String USER2_NAME = "user2";
+    private final static String USER2_FIRST_NAME = "Test2";
+    private final static String USER2_LAST_NAME = "User2";
+    private static final String USER2_PASSWORD = "password";
+
+    private final static String USER2_NEW_FIRST_NAME = "New Test2";
+    private final static String USER2_NEW_LAST_NAME = "New  User2";
 
     private MockMvc mockMvc;
 
@@ -263,5 +271,59 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(updateRequest.getLastname(), authenticatedUser.getLastname());
         Assert.assertEquals(updateRequest.getName(), authenticatedUser.getName());
         Assert.assertNotEquals(updateRequest.getPassword(), authenticatedUser.getPassword());
+    }
+
+
+    @Test(dependsOnMethods = "testJwt")
+    public void testUpdateUserPasswordNotChanged() throws Exception {
+
+        authenticatedUserController.createUser(null, USER2_NAME, USER2_FIRST_NAME, USER2_LAST_NAME, USER2_PASSWORD, USER_ROLES);
+
+        AuthRequest request = new AuthRequest();
+        request.setUsername(USER2_NAME);
+        request.setPassword(USER2_PASSWORD);
+
+        MvcResult createResult = this.mockMvc
+                .perform(post("/auth/public/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(request))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        String newJwtToken = createResult.getResponse().getHeader(HttpHeaders.AUTHORIZATION);
+
+        CreateUserRequest updateRequest = new CreateUserRequest();
+        updateRequest.setUsername(USER2_NAME);
+        updateRequest.setName(USER2_NEW_FIRST_NAME);
+        updateRequest.setLastname(USER2_NEW_LAST_NAME);
+
+        this.mockMvc
+                .perform(patch("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + newJwtToken)
+                        .content(toJson(updateRequest))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+
+        //Ensure that the password is not updated.
+        request = new AuthRequest();
+        request.setUsername(USER2_NAME);
+        request.setPassword(USER2_PASSWORD);
+
+        createResult = this.mockMvc
+                .perform(post("/auth/public/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(request))
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                .andReturn();
+
+        AuthenticatedUser authenticatedUser = fromJson(createResult.getResponse().getContentAsString(), AuthenticatedUser.class);
+        Assert.assertEquals(authenticatedUser.getName(), USER2_NEW_FIRST_NAME);
     }
 }
