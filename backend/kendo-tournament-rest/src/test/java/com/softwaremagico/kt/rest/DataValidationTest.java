@@ -119,7 +119,7 @@ public class DataValidationTest extends AbstractTestNGSpringContextTests {
         Assert.assertNotNull(jwtToken);
 
         this.mockMvc
-                .perform(post("/clubs")
+                .perform(post("/clubs/new-club")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)
                         .content(toJson(new ClubDTO("", CLUB_CITY)))
