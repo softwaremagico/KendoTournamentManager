@@ -32,17 +32,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/clubs")
 public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, ClubProvider, ClubConverterRequest, ClubConverter, ClubController> {
@@ -60,5 +63,13 @@ public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, C
                        @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
                        Authentication authentication, HttpServletRequest request) {
         return getController().create(name, country, city, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Creates an entity.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/new-club", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ClubDTO addNew(@Valid @RequestBody ClubDTO dto, Authentication authentication, HttpServletRequest request) {
+        return getController().create(dto, authentication.getName());
     }
 }
