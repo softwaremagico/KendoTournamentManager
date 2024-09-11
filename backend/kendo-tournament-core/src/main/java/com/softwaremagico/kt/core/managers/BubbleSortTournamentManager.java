@@ -1,10 +1,10 @@
-package com.softwaremagico.kt.persistence.values;
+package com.softwaremagico.kt.core.managers;
 
-/*
+/*-
  * #%L
- * KendoTournamentGenerator
+ * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2008 - 2012 Softwaremagico
+ * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,34 +21,10 @@ package com.softwaremagico.kt.persistence.values;
  * #L%
  */
 
-public enum TournamentType {
+import org.springframework.stereotype.Service;
 
-    CHAMPIONSHIP,
+@Service
+public class BubbleSortTournamentManager extends KingOfTheMountainFightManager {
 
-    TREE,
 
-    LEAGUE,
-
-    LOOP,
-
-    CUSTOM_CHAMPIONSHIP,
-
-    KING_OF_THE_MOUNTAIN,
-
-    BUBBLE_SORT,
-
-    CUSTOMIZED;
-
-    public static TournamentType getType(String name) {
-        for (final TournamentType type : TournamentType.values()) {
-            if (type.name().equalsIgnoreCase(name)) {
-                return type;
-            }
-        }
-        return null;
-    }
-
-    public String getCode() {
-        return name().replace("-", ".").toLowerCase();
-    }
 }
