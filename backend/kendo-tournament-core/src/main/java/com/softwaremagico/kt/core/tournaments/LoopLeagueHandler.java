@@ -60,9 +60,9 @@ public class LoopLeagueHandler extends LeagueHandler {
             return null;
         }
         //Automatically generates the group if needed in getGroup.
-        final List<Fight> fights = fightProvider.saveAll(loopGroupFightManager.createFights(tournament, getGroup(tournament).getTeams(),
+        final List<Fight> fights = fightProvider.saveAll(loopGroupFightManager.createFights(tournament, getFirstGroup(tournament).getTeams(),
                 TeamsOrder.NONE, level, createdBy));
-        final Group group = getGroup(tournament);
+        final Group group = getFirstGroup(tournament);
         group.setFights(fights);
         groupRepository.save(group);
         return fights;
