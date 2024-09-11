@@ -28,7 +28,6 @@ import com.softwaremagico.kt.core.exceptions.NotFoundException;
 import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.logger.RestServerExceptionLogger;
 import org.jetbrains.annotations.NotNull;
-import org.modelmapper.spi.ErrorMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -55,31 +54,31 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
-        return new ResponseEntity<>(new ErrorMessage("MESSAGE_NOT_READABLE", ex), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse("MESSAGE_NOT_READABLE", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handleNullPointer(NullPointerException ex) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INTERNAL_SERVER_ERROR", ex), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse("INTERNAL_SERVER_ERROR", ex), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
-        return new ResponseEntity<>(new ErrorMessage("BAD_REQUEST", ex), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse("BAD_REQUEST", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> unknownException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INTERNAL_SERVER_ERROR", ex), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorResponse("INTERNAL_SERVER_ERROR", ex), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Object> badRequestException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("BAD_REQUEST", ex), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse("BAD_REQUEST", ex), HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -87,7 +86,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
-        return new ResponseEntity<>(new ErrorMessage("METHOD_NOT_ALLOWED", ex), HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(new ErrorResponse("METHOD_NOT_ALLOWED", ex), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Override
@@ -95,19 +94,19 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
             HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
             WebRequest request) {
         RestServerExceptionLogger.errorMessage(this.getClass(), ex);
-        return new ResponseEntity<>(new ErrorMessage("UNSUPPORTED_MEDIA_TYPE", ex), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return new ResponseEntity<>(new ErrorResponse("UNSUPPORTED_MEDIA_TYPE", ex), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> accessDeniedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("INVALID CREDENTIALS", ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResponse("INVALID CREDENTIALS", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NoContentException.class)
@@ -119,55 +118,55 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<Object> userBlockedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "user_blocked", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LevelNotFinishedException.class)
     public ResponseEntity<Object> levelNotFinishedException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "level_not_finished", ex), HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(InvalidMacException.class)
     public ResponseEntity<Object> invalidMacException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_mac", ex), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidIpException.class)
     public ResponseEntity<Object> invalidIpException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_ip", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidJwtException.class)
     public ResponseEntity<Object> invalidJwtException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_jwt", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(GuestDisabledException.class)
     public ResponseEntity<Object> guestDisabledException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "guest_disabled", ex), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<Object> tokenExpiredException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "token_expired", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<Object> invalidRequestException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_request", ex), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidGroupException.class)
     public ResponseEntity<Object> invalidGroupException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorMessage(ex.getMessage(), ex), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_group", ex), HttpStatus.BAD_REQUEST);
     }
 
 
@@ -185,7 +184,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
         final StringBuilder message = new StringBuilder();
         errors.forEach((key, value) -> message.append(key).append(": ").append(value).append("\n"));
-        final ErrorMessage error = new ErrorMessage(message.toString(), ex);
+        final ErrorResponse error = new ErrorResponse(message.toString(), ex);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
