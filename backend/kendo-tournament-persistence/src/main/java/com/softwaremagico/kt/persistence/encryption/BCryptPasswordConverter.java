@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @Converter
 public class BCryptPasswordConverter implements AttributeConverter<String, String> {
     //From org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-    private static final Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
+    private static final Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2([ayb])?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 

@@ -33,7 +33,7 @@ import java.util.List;
 
 public interface ITournamentManager {
 
-    List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy);
+    List<Fight> createInitialFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy);
 
     List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy);
 
@@ -81,7 +81,7 @@ public interface ITournamentManager {
     void removeFights(Tournament tournament);
 
 
-    void createNextLevel() throws TournamentFinishedException;
+    void createNextLevel(Tournament tournament) throws TournamentFinishedException;
 
     /**
      * Defines if a fight has a draw value or not.

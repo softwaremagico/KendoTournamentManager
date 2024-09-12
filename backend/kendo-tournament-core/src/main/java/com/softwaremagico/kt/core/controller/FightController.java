@@ -82,7 +82,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                            TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector,
                            TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
                            ParticipantProvider participantProvider, GroupProvider groupProvider,
-                           TeamConverter teamConverter) {
+                           TeamConverter teamConverter, FightProvider fightProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -197,6 +197,9 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         final Tournament tournament = (tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
                         ExceptionType.INFO)));
+        //Delete any deeper level. If a group changes, the inner levels are invalid.
+        getProvider().delete(tournament, level + 1);
+        groupProvider.delete(tournament, level + 1);
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
             final List<Fight> createdFights = getProvider().saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
