@@ -167,7 +167,7 @@ public class Fight extends Element {
         return null;
     }
 
-    public Team getLooser() {
+    public Team getLoser() {
         final Team winner = getWinner();
         if (winner == null) {
             return null;

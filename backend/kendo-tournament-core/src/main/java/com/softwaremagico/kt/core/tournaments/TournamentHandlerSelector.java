@@ -31,15 +31,17 @@ public class TournamentHandlerSelector {
     private final LoopLeagueHandler loopLeagueHandler;
     private final TreeTournamentHandler treeTournamentHandler;
     private final KingOfTheMountainHandler kingOfTheMountainHandler;
+    private final BubbleSortTournamentHandler bubbleSortTournamentHandler;
 
     public TournamentHandlerSelector(SimpleLeagueHandler simpleLeagueHandler, CustomLeagueHandler customTournamentHandler,
                                      LoopLeagueHandler loopLeagueHandler, TreeTournamentHandler treeTournamentHandler,
-                                     KingOfTheMountainHandler kingOfTheMountainHandler) {
+                                     KingOfTheMountainHandler kingOfTheMountainHandler, BubbleSortTournamentHandler bubbleSortTournamentHandler) {
         this.simpleLeagueHandler = simpleLeagueHandler;
         this.customTournamentHandler = customTournamentHandler;
         this.loopLeagueHandler = loopLeagueHandler;
         this.treeTournamentHandler = treeTournamentHandler;
         this.kingOfTheMountainHandler = kingOfTheMountainHandler;
+        this.bubbleSortTournamentHandler = bubbleSortTournamentHandler;
     }
 
     public ITournamentManager selectManager(TournamentType type) {
@@ -59,6 +61,8 @@ public class TournamentHandlerSelector {
                 return kingOfTheMountainHandler;
             case LEAGUE:
                 return simpleLeagueHandler;
+            case BUBBLE_SORT:
+                return bubbleSortTournamentHandler;
             default:
                 break;
         }
