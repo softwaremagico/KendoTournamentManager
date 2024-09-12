@@ -48,18 +48,22 @@ import com.softwaremagico.kt.core.converters.models.ScoreOfTeamConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ClubNotFoundException;
 import com.softwaremagico.kt.core.exceptions.GroupNotFoundException;
+import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
+import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.CompetitorRanking;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
+import com.softwaremagico.kt.core.tournaments.BubbleSortTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.ScoreType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -69,12 +73,14 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -112,6 +118,10 @@ public class RankingController {
 
     private final RoleProvider roleProvider;
 
+    private final TournamentProvider tournamentProvider;
+
+    private final BubbleSortTournamentHandler bubbleSortTournamentHandler;
+
     public RankingController(GroupProvider groupProvider, GroupConverter groupConverter,
                              TournamentConverter tournamentConverter, FightConverter fightConverter,
                              TeamConverter teamConverter, DuelConverter duelConverter,
@@ -120,7 +130,8 @@ public class RankingController {
                              ScoreOfCompetitorConverter scoreOfCompetitorConverter,
                              ScoreOfTeamConverter scoreOfTeamConverter,
                              ClubProvider clubProvider, ParticipantProvider participantProvider, ClubConverter clubConverter,
-                             RoleProvider roleProvider) {
+                             RoleProvider roleProvider, TournamentProvider tournamentProvider,
+                             BubbleSortTournamentHandler bubbleSortTournamentHandler) {
         this.groupProvider = groupProvider;
         this.groupConverter = groupConverter;
         this.tournamentConverter = tournamentConverter;
@@ -136,6 +147,8 @@ public class RankingController {
         this.participantProvider = participantProvider;
         this.clubConverter = clubConverter;
         this.roleProvider = roleProvider;
+        this.tournamentProvider = tournamentProvider;
+        this.bubbleSortTournamentHandler = bubbleSortTournamentHandler;
     }
 
     private static Set<ParticipantDTO> getParticipants(List<TeamDTO> teams) {
@@ -164,8 +177,27 @@ public class RankingController {
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(Integer tournamentId) {
-        return scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRankingFromTournament(tournamentId)
+        final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(
+                () -> new TournamentNotFoundException(this.getClass(), "No tournamnet exists with id '" + tournamentId + "'."));
+        final List<ScoreOfTeamDTO> ranking = scoreOfTeamConverter.convertAll(rankingProvider.getTeamsScoreRankingFromTournament(tournamentId)
                 .stream().map(ScoreOfTeamConverterRequest::new).toList());
+        //Bubble sort is different. The winner is only on the first group.
+        if (tournament.getType().equals(TournamentType.BUBBLE_SORT)) {
+            final List<Team> sortedTeams = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament);
+            Collections.reverse(sortedTeams);
+            final List<ScoreOfTeamDTO> scoreOfTeamDTOS = new ArrayList<>();
+            final AtomicInteger counter = new AtomicInteger(0);
+            sortedTeams.forEach(team -> {
+                final ScoreOfTeamDTO score = ranking.stream().filter(rankingElement ->
+                        Objects.equals(rankingElement.getTeam().getId(), team.getId())).findFirst().orElse(null);
+                if (score != null) {
+                    score.setSortingIndex(counter.getAndIncrement());
+                    scoreOfTeamDTOS.add(score);
+                }
+            });
+            return scoreOfTeamDTOS;
+        }
+        return ranking;
     }
 
     public List<ScoreOfTeamDTO> getTeamsScoreRanking(GroupDTO groupDTO) {

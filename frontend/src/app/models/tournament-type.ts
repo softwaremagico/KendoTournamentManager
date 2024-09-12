@@ -4,6 +4,7 @@ export enum TournamentType {
   LOOP = 'LOOP',
   // CUSTOM_CHAMPIONSHIP = 'CUSTOM_CHAMPIONSHIP',
   KING_OF_THE_MOUNTAIN = 'KING_OF_THE_MOUNTAIN',
+  BUBBLE_SORT = 'BUBBLE_SORT',
   CUSTOMIZED = 'CUSTOMIZED'
 }
 
@@ -44,7 +45,7 @@ export namespace TournamentType {
   }
 
   export function needsDrawResolution(type: TournamentType | undefined): boolean {
-    return type === TournamentType.KING_OF_THE_MOUNTAIN;
+    return type === TournamentType.KING_OF_THE_MOUNTAIN || type === TournamentType.BUBBLE_SORT;
   }
 
   export function needsFifoWinner(type: TournamentType | undefined): boolean {
