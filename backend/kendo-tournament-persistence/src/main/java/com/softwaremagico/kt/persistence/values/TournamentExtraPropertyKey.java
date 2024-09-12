@@ -21,16 +21,26 @@ package com.softwaremagico.kt.persistence.values;
  * #L%
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public enum TournamentExtraPropertyKey {
-    MAXIMIZE_FIGHTS,
-    AVOID_DUPLICATES,
-    KING_INDEX,
-    KING_DRAW_RESOLUTION,
-    DIPLOMA_NAME_HEIGHT,
-    NUMBER_OF_WINNERS,
-    LEAGUE_FIGHTS_ORDER_GENERATION,
-    ODD_FIGHTS_RESOLVED_ASAP,
-    BUBBLE_SORT_ITERATION;
+    MAXIMIZE_FIGHTS(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.CUSTOM_CHAMPIONSHIP),
+    AVOID_DUPLICATES(TournamentType.LOOP),
+    KING_INDEX(TournamentType.KING_OF_THE_MOUNTAIN, TournamentType.BUBBLE_SORT),
+    KING_DRAW_RESOLUTION(TournamentType.KING_OF_THE_MOUNTAIN, TournamentType.BUBBLE_SORT),
+    DIPLOMA_NAME_HEIGHT(TournamentType.values()),
+    NUMBER_OF_WINNERS(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
+    LEAGUE_FIGHTS_ORDER_GENERATION(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
+    ODD_FIGHTS_RESOLVED_ASAP(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
+    BUBBLE_SORT_ITERATION(TournamentType.BUBBLE_SORT);
+
+    private final Set<TournamentType> allowedTournaments;
+
+    TournamentExtraPropertyKey(TournamentType... allowedTournaments) {
+        this.allowedTournaments = new HashSet<>(Arrays.asList(allowedTournaments));
+    }
 
 
     public static TournamentExtraPropertyKey getType(String name) {
@@ -40,5 +50,9 @@ public enum TournamentExtraPropertyKey {
             }
         }
         return null;
+    }
+
+    public Set<TournamentType> getAllowedTournaments() {
+        return allowedTournaments;
     }
 }
