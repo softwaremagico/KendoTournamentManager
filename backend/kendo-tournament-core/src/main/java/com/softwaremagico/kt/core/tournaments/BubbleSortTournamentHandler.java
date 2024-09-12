@@ -226,38 +226,22 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
 
     public List<Team> getTeamsOrderedByRanks(Tournament tournament, Group group, DrawResolution drawResolution) {
         final List<Team> teams = new ArrayList<>();
-        if (group != null && group.getFights() != null && !group.getFights().isEmpty()) {
-            //From the last fight we get both teams
-            if (group.getFights().get(group.getFights().size() - 1).getWinner() != null) {
-                teams.add(0, group.getFights().get(group.getFights().size() - 1).getWinner());
-                teams.add(0, group.getFights().get(group.getFights().size() - 1).getLoser());
-            } else {
-                switch (drawResolution) {
-                    case NEWEST_ELIMINATED:
-                        //Newest is Team2 always.
-                        teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
-                        teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
-                        break;
-                    case OLDEST_ELIMINATED:
-                    case BOTH_ELIMINATED:
-                        //Both cannot be on bubble sort!
-                    default:
-                        //Oldest is Team1 always.
-                        teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
-                        teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
-                        break;
-                }
-
+        if (group != null) {
+            //Add last teams that have no fights!
+            for (int i = group.getLevel(); i > 0; i--) {
+                teams.add(0, group.getTeams().get(group.getTeams().size() - (group.getLevel() - i) - 1));
             }
-            //For any other fight, we get the disqualified one.
-            for (int i = group.getFights().size() - 2; i >= 0; i--) {
-                if (group.getFights().get(i).getWinner() != null) {
-                    //Add the disqualified, as the winner has been already added on other fights.
-                    teams.add(0, group.getFights().get(i).getLoser());
+            if (group.getFights() != null && !group.getFights().isEmpty()) {
+                //From the last fight we get both teams
+                if (group.getFights().get(group.getFights().size() - 1).getWinner() != null) {
+                    //Winner only if is not added before.
+                    teams.add(0, group.getFights().get(group.getFights().size() - 1).getWinner());
+                    teams.add(0, group.getFights().get(group.getFights().size() - 1).getLoser());
                 } else {
                     switch (drawResolution) {
                         case NEWEST_ELIMINATED:
                             //Newest is Team2 always.
+                            teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
                             teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
                             break;
                         case OLDEST_ELIMINATED:
@@ -265,12 +249,35 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
                             //Both cannot be on bubble sort!
                         default:
                             //Oldest is Team1 always.
+                            teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
                             teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
                             break;
                     }
+
                 }
+                //For any other fight, we get the disqualified one.
+                for (int i = group.getFights().size() - 2; i >= 0; i--) {
+                    if (group.getFights().get(i).getWinner() != null) {
+                        //Add the disqualified, as the winner has been already added on other fights.
+                        teams.add(0, group.getFights().get(i).getLoser());
+                    } else {
+                        switch (drawResolution) {
+                            case NEWEST_ELIMINATED:
+                                //Newest is Team2 always.
+                                teams.add(0, group.getFights().get(i).getTeam2());
+                                break;
+                            case OLDEST_ELIMINATED:
+                            case BOTH_ELIMINATED:
+                                //Both cannot be on bubble sort!
+                            default:
+                                //Oldest is Team1 always.
+                                teams.add(0, group.getFights().get(i).getTeam1());
+                                break;
+                        }
+                    }
+                }
+                return teams;
             }
-            return teams;
         }
         if (group == null) {
             return teamProvider.getAll(tournament);
@@ -294,7 +301,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
             extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
                     TournamentExtraPropertyKey.KING_INDEX, "1"));
         } else {
-            //It is lazy the tournament.
+            //It is 'lazy' the tournament.
             extraProperty.setTournament(tournamentRepository.findById(extraProperty.getTournament().getId()).orElse(null));
         }
         return extraProperty;
@@ -305,7 +312,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
                 TournamentExtraPropertyKey.KING_DRAW_RESOLUTION);
         if (extraProperty == null) {
             extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.NEWEST_ELIMINATED.name()));
+                    TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.OLDEST_ELIMINATED.name()));
         }
 
         return DrawResolution.getFromTag(extraProperty.getPropertyValue());

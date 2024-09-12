@@ -46,6 +46,8 @@
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainFiFoTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainLiFoTest"/>
             <class name="com.softwaremagico.kt.core.tests.BubbleSortTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortReversedTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortDrawTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
