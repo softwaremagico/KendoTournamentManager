@@ -703,5 +703,7 @@
   },
   "daysFrom": "Apply only these days",
   "oddFightsResolvedAsap": "Resolve team byes as soon as possible",
-  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically (byes). With this option you ensure that byes are resolved as soon as possible."
+  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically (byes). With this option you ensure that byes are resolved as soon as possible.",
+  "bubbleSort": "Dethrone the King Tournament",
+  "bubbleSortHint": "Competitors with lower ranks try to rise in their ranking until they beat the king. He who does not succeed becomes his vassal and fights to protect the king."
 }
