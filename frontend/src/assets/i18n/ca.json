@@ -708,5 +708,7 @@
   "teamsOrder": "Ordre dels equips:",
   "web": "Web",
   "oddFightsResolvedAsap": "Resol les exempcions sense combats com més aviat millor",
-  "oddFightsResolvedAsapHint": "Si el nombre d'equips o grups del torneig és imparell, és possible que durant els encreuament alguns equips no tinguin combats associats i es classifiquin per a la fase següent automàticament (exempcions). Amb aquesta opció t'assegures que aquests casos es resolen com més aviat millor."
+  "oddFightsResolvedAsapHint": "Si el nombre d'equips o grups del torneig és imparell, és possible que durant els encreuament alguns equips no tinguin combats associats i es classifiquin per a la fase següent automàticament (exempcions). Amb aquesta opció t'assegures que aquests casos es resolen com més aviat millor.",
+  "bubbleSort": "Torneig d'ordenació",
+  "bubbleSortHint": "Un torneig que permet ordenar els competidors per habilitat."
 }

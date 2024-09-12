@@ -18,14 +18,14 @@
                 matTooltip="{{'wizard' | translate}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
                 [disabled]="tournament && tournament.locked" [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
                 matTooltip="{{'addFight' | translate}}">
           <mat-icon>add</mat-icon>
         </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.getActivities())"
+        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
                 [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
