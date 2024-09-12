@@ -18,14 +18,16 @@
                 matTooltip="{{'wizard' | translate}}">
           <mat-icon>auto_fix_high</mat-icon>
         </button>
-        <button (click)="addElement()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
+        <button (click)="addElement()"
+                *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
                 [disabled]="tournament && tournament.locked" [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
                 matTooltip="{{'addFight' | translate}}">
           <mat-icon>add</mat-icon>
         </button>
-        <button (click)="deleteElement()" *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
+        <button (click)="deleteElement()"
+                *ngIf="(RbacActivity.DELETE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
                 [disabled]="showSelectedRelatedButton() || (tournament && tournament.locked)"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
@@ -40,7 +42,8 @@
                 matTooltip="{{'groups' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="brackets"></mat-icon>
         </button>
-        <mat-divider [vertical]="true" class="timer-divider" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"></mat-divider>
+        <mat-divider [vertical]="true" class="timer-divider"
+                     *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())"></mat-divider>
         <button (click)="finishDuel()" *ngIf="(RbacActivity.EDIT_FIGHT | rbac : this.rbacService.getActivities())
                 && (!selectedDuel || selectedDuel?.finished == false)"
                 [disabled]="!selectedDuel || (tournament && tournament.locked)"
@@ -111,7 +114,8 @@
         </button>
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities()) ||
             (RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"></mat-divider>
-        <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType))
+        <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
+                || (tournament && tournament.type === bubbleSortType))
                  && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities())"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" color="primary"
@@ -144,10 +148,10 @@
     </div>
     <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1">
       <div class="shiaijo-label">
-        {{'shiaijo'| translate}}
+        {{ 'shiaijo'| translate }}
       </div>
-      <div class="shiaijo-name" (click)="changeShiaijo()" (keydown)="changeShiaijo()" >
-        {{getShiaijoTag()}}
+      <div class="shiaijo-name" (click)="changeShiaijo()" (keydown)="changeShiaijo()">
+        {{ getShiaijoTag() }}
       </div>
     </div>
     <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
@@ -163,10 +167,10 @@
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
-            class="level-name">{{'level' | translate}} {{group.level + 1}}</h2>
+            class="level-name">{{ 'level' | translate }} {{ group.level + 1 }}</h2>
         <h3 *ngIf="filteredFights.get(group.id!)?.length! > 0"
             [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
-            class="group-name">{{'group' | translate}} {{group.index + 1}}</h3>
+            class="group-name">{{ 'group' | translate }} {{ group.index + 1 }}</h3>
         <div *ngIf="filteredFights.get(group.id!)?.length! > 0"
              [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
           <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"

@@ -693,6 +693,6 @@
   "daysFrom": "Applicare solo in questi giorni",
   "oddFightsResolvedAsap": "Risolvere le esenzioni senza combattimenti il prima possibile",
   "oddFightsResolvedAsapHint": "Se il numero di squadre o gruppi nel torneo è dispari, è possibile che durante le partite alcune squadre non abbiano partite associate e si qualifichino automaticamente alla fase successiva (esenzioni). Con questa opzione ti assicuri che questi casi vengano risolti il prima possibile.",
-  "bubbleSort": "Torneo di Smistamento",
-  "bubbleSortHint": "Un torneo che consente ai concorrenti di essere ordinati in base all'abilità."
+  "bubbleSort": "Torneo Detronizzare il Re",
+  "bubbleSortHint": "I concorrenti con ranghi inferiori cercano di salire nella loro classifica fino a battere il re. Chi non ci riesce diventa suo vassallo e combatte per proteggere il re."
 }
