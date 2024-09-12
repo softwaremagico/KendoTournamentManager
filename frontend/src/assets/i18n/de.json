@@ -687,6 +687,6 @@
   "daysFrom": "Bewerben Sie sich nur noch an diesen Tagen",
   "oddFightsResolvedAsap": "Ausnahmen so schnell wie möglich kampflos lösen",
   "oddFightsResolvedAsapHint": "Wenn die Anzahl der Mannschaften oder Gruppen im Turnier ungerade ist, ist es möglich, dass einige Mannschaften während der Spiele keine zugehörigen Spiele haben und sich automatisch für die nächste Phase qualifizieren. Mit dieser Option stellen Sie sicher, dass diese Fälle schnellstmöglich gelöst werden.",
-  "bubbleSort": "Sortierturnier",
-  "bubbleSortHint": "Ein Turnier, bei dem die Teilnehmer nach Können sortiert werden können."
+  "bubbleSort": "Entthrone das Königsturnier",
+  "bubbleSortHint": "Konkurrenten mit niedrigeren Rängen versuchen in ihrer Rangliste aufzusteigen, bis sie den König schlagen. Wem es nicht gelingt, wird sein Vasall und kämpft für den Schutz des Königs."
 }

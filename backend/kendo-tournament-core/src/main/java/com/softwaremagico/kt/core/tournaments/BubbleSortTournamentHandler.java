@@ -223,6 +223,14 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
                 TournamentExtraPropertyKey.KING_INDEX, "1"));
     }
 
+    public List<Team> getTeamsOrderedByRanks(Tournament tournament) {
+        final List<Group> groups = groupProvider.getGroups(tournament);
+        if (groups.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return getTeamsOrderedByRanks(tournament, groups.get(groups.size() - 1), getDrawResolution(tournament));
+    }
+
 
     public List<Team> getTeamsOrderedByRanks(Tournament tournament, Group group, DrawResolution drawResolution) {
         final List<Team> teams = new ArrayList<>();
