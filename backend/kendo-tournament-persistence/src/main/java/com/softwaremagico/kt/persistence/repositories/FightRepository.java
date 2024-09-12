@@ -56,6 +56,8 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
 
     long deleteByTournament(Tournament tournament);
 
+    long deleteByTournamentAndLevelGreaterThanEqual(Tournament tournament, int level);
+
     Optional<Fight> findFirstByTournamentOrderByLevelDesc(Tournament tournament);
 
     @Query("""

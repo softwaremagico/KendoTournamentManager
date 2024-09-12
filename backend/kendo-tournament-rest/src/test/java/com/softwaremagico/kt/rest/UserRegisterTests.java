@@ -57,8 +57,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "userRegister")
 public class UserRegisterTests extends AbstractTestNGSpringContextTests {
 
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
