@@ -61,10 +61,10 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
     public static final String USER_NAME_2 = "Goku";
     public static final String USER_FIRST_NAME_2 = "Goku";
     public static final String USER_LAST_NAME_2 = "Son";
-    private final static String USER_NAME = "user";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
-    private final static String USER_PASSWORD = "password";
+    private static final String USER_NAME = "user";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
+    private static final String USER_PASSWORD = "password";
     private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
 
     @Autowired

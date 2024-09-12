@@ -34,8 +34,8 @@ import org.testng.annotations.Test;
 @SpringBootTest
 public class PasswordTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "password";
 
     private static final String USER_NEW_PASSWORD = "password2";
