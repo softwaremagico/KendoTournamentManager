@@ -703,5 +703,7 @@
   },
   "daysFrom": "Apply only these days",
   "oddFightsResolvedAsap": "Resolve team byes as soon as possible",
-  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically (byes). With this option you ensure that byes are resolved as soon as possible."
+  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically (byes). With this option you ensure that byes are resolved as soon as possible.",
+  "bubbleSort": "Sorting Tournament",
+  "bubbleSortHint": "A tournament that sorts the competitors by skill."
 }

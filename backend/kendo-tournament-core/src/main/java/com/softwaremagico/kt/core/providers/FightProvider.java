@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -98,6 +97,14 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
             groupRepository.save(group);
         });
         getRepository().deleteByTournament(tournament);
+    }
+
+    public void delete(Tournament tournament, int level) {
+        groupRepository.findByTournamentAndLevelIsGreaterThanEqual(tournament, level).forEach(group -> {
+            group.setFights(new ArrayList<>());
+            groupRepository.save(group);
+        });
+        getRepository().deleteByTournamentAndLevelGreaterThanEqual(tournament, level);
     }
 
     public long count(Tournament tournament) {
