@@ -170,4 +170,6 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   getSeconds(time: number): number {
     return time % 60;
   }
+
+  protected readonly TournamentType = TournamentType;
 }

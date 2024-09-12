@@ -688,5 +688,5 @@
   "oddFightsResolvedAsap": "Los vrijstellingen zo snel mogelijk op zonder strijd",
   "oddFightsResolvedAsapHint": "Als het aantal teams of groepen in het toernooi oneven is, is het mogelijk dat tijdens de wedstrijden sommige teams geen geassocieerde wedstrijden hebben en zich automatisch kwalificeren voor de volgende fase. Met deze optie zorgt u ervoor dat deze zaken zo snel mogelijk worden opgelost.",
   "bubbleSort": "Sorteertoernooi",
-  "bubbleSortHint": "Een toernooi waarmee deelnemers op vaardigheid kunnen worden gesorteerd."
+  "bubbleSortHint": "Concurrenten met een lagere rang proberen in hun rangorde te stijgen totdat ze de koning verslaan. Hij die niet slaagt, wordt zijn vazal en vecht om de koning te beschermen."
 }

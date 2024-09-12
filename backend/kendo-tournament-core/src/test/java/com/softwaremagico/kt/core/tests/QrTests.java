@@ -42,7 +42,7 @@ import java.nio.file.Paths;
 @Test(groups = {"qrTest"})
 public class QrTests extends AbstractTestNGSpringContextTests {
 
-    private final static String LOGO = "/kote.png";
+    private static final String LOGO = "/kote.png";
 
     private static final Color COLOR = Color.decode("#011d4a");
 

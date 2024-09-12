@@ -60,17 +60,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "participantAccess")
 public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
-    private final static String CLUB_NAME = "Club";
+    private static final String CLUB_NAME = "Club";
 
-    private final static String PARTICIPANT_NAME = "Participant Name";
-    private final static String PARTICIPANT_LASTNAME = "Participant Last Name";
+    private static final String PARTICIPANT_NAME = "Participant Name";
+    private static final String PARTICIPANT_LASTNAME = "Participant Last Name";
 
     @Autowired
     private ObjectMapper objectMapper;

@@ -39,7 +39,7 @@
              placeholder="{{'tournamentTeamSize' | translate}}">
     </mat-form-field>
     <div class="types">
-      <mat-form-field *ngIf="actionName != 'Delete'">
+      <mat-form-field *ngIf="actionName != 'Delete' && tournament && tournament.type!== TournamentType.BUBBLE_SORT">
         <mat-label>{{ 'scoreRules' | translate }}</mat-label>
         <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                     formControlName="scoreTypes"

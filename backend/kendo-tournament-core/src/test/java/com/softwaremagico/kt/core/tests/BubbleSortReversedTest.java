@@ -299,8 +299,16 @@ public class BubbleSortReversedTest extends AbstractTestNGSpringContextTests {
         Assert.assertTrue(bubbleSortTournamentHandler.generateNextFights(tournament, null).isEmpty());
 
         //Check calculated order
-        final List<Team> ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groupProvider.getGroups(tournament).get(2),
+        List<Team> ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groupProvider.getGroups(tournament).get(2),
                 bubbleSortTournamentHandler.getDrawResolution(tournament));
+        Assert.assertEquals(ranking.size(), 4);
+        Assert.assertEquals(ranking.get(0).getName(), "Team01");
+        Assert.assertEquals(ranking.get(1).getName(), "Team02");
+        Assert.assertEquals(ranking.get(2).getName(), "Team03");
+        Assert.assertEquals(ranking.get(3).getName(), "Team04");
+
+        //Order is the same if search for global.
+        ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament);
         Assert.assertEquals(ranking.size(), 4);
         Assert.assertEquals(ranking.get(0).getName(), "Team01");
         Assert.assertEquals(ranking.get(1).getName(), "Team02");
