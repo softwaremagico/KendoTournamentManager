@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 @Test(groups = {"tournamentExtraProperties"})
 public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSpringContextTests {
 
-    private final static String USER = "Me";
+    private static final String USER = "Me";
 
     @Autowired
     private TournamentProvider tournamentProvider;

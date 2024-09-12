@@ -65,6 +65,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   isWizardEnabled: boolean;
   isBracketsEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  bubbleSortType: TournamentType = TournamentType.BUBBLE_SORT;
   showAvatars: boolean = false;
 
   resetFilterValue: Subject<boolean> = new Subject();
@@ -374,7 +375,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   generateElements(): void {
     let dialogRef;
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
-      this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
+      this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.BUBBLE_SORT) {
       dialogRef = this.dialog.open(LeagueGeneratorComponent, {
         width: '85vw',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
@@ -648,7 +649,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         let showClassification: boolean = true;
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
-          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
+          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN  && this.tournament.type !== TournamentType.BUBBLE_SORT) {
             //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();
             showClassification = false;
@@ -709,7 +710,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showClassification(): void {
     if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
-      (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
+      (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN
+        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
       this.showTeamsClassification(true);
     } else {
       this.showCompetitorsClassification();
