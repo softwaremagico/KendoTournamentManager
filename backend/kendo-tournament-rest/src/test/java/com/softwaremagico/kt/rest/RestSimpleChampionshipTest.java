@@ -82,8 +82,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
     private static final String USER_NAME = "admin";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "asd123";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 

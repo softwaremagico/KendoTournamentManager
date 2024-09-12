@@ -1360,7 +1360,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody loose a combat only by Hansokus.
+     * When somebody loses a combat only by Hansokus.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
