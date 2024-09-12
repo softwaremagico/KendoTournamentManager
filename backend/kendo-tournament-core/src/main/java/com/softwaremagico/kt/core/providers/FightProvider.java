@@ -99,6 +99,14 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         getRepository().deleteByTournament(tournament);
     }
 
+    public void delete(Tournament tournament, int level) {
+        groupRepository.findByTournamentAndLevelIsGreaterThanEqual(tournament, level).forEach(group -> {
+            group.setFights(new ArrayList<>());
+            groupRepository.save(group);
+        });
+        getRepository().deleteByTournamentAndLevelGreaterThanEqual(tournament, level);
+    }
+
     public long count(Tournament tournament) {
         return getRepository().countByTournament(tournament);
     }

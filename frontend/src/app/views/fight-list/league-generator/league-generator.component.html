@@ -5,7 +5,7 @@
     <team-list [teamListData]="teamListData"></team-list>
   </div>
   <div class="sorted-teams">
-    <h2>{{'teamsOrder' | translate}}</h2>
+    <h2>{{ 'teamsOrder' | translate }}</h2>
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamsOrder"
          cdkDropList class="final-team-list">
       <app-team-card *ngFor="let team of teamsOrder" [team]="team"></app-team-card>
@@ -15,28 +15,28 @@
          class="extra-properties">
       <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
                         [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
-        {{'maximizeFights' | translate }}
+        {{ 'maximizeFights' | translate }}
       </mat-slide-toggle>
 
       <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights"
                         (change)="avoidDuplicatesToggle($event)">
-        {{'avoidDuplicateFights' | translate }}
+        {{ 'avoidDuplicateFights' | translate }}
       </mat-slide-toggle>
 
 
       <mat-form-field *ngIf="needsDrawResolution">
-        <mat-label>{{'drawResolution' | translate}}</mat-label>
+        <mat-label>{{ 'drawResolution' | translate }}</mat-label>
         <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
           <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
                       [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
-            {{getDrawResolutionTranslationTag(resolution) | translate}}
+            {{ getDrawResolutionTranslationTag(resolution) | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
                         [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
-        {{'leagueFifo' | translate }}
+        {{ 'leagueFifo' | translate }}
       </mat-slide-toggle>
     </div>
 
@@ -45,34 +45,34 @@
 <div class="button-container" mat-dialog-actions>
   <button
     (click)="balancedTeams()"
-    *ngIf="(tournament.type ==TournamentType.KING_OF_THE_MOUNTAIN || tournament.type ==TournamentType.LOOP)
+    *ngIf="(tournament.type == TournamentType.KING_OF_THE_MOUNTAIN || tournament.type == TournamentType.LOOP || tournament.type == TournamentType.BUBBLE_SORT)
           && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
     mat-flat-button
     mat-raised-button>
     <mat-icon>auto_fix_high</mat-icon>
-    {{'wizard' | translate}}
+    {{ 'wizard' | translate }}
   </button>
   <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="fight-button" mat-flat-button
           mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
-    {{'sorted' | translate}}
+    {{ 'sorted' | translate }}
   </button>
   <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           class="fight-button" mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
-    {{'random' | translate}}
+    {{ 'random' | translate }}
   </button>
   <button (click)="acceptAction()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
           [disabled]="teamsOrder.length===0 || teamListData.teams.length>0" class="fight-button" color="primary"
           mat-flat-button
           mat-raised-button>
     <mat-icon>done</mat-icon>
-    {{'accept' | translate}}
+    {{ 'accept' | translate }}
   </button>
   <button (click)="cancelDialog()" color="accent" mat-flat-button mat-raised-button>
     <mat-icon>cancel</mat-icon>
-    {{'cancel' | translate}}
+    {{ 'cancel' | translate }}
   </button>
 </div>

@@ -59,7 +59,8 @@ public abstract class BasicLogger {
                 arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
             }
         }
-        logger.warn(className + ": " + messageTemplate, arguments);
+        final String templateWithClass = className + ": " + messageTemplate;
+        logger.warn(templateWithClass, arguments);
     }
 
     /**

@@ -1,13 +1,13 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<h1 mat-dialog-title>{{title}}</h1>
+<h1 mat-dialog-title>{{ title }}</h1>
 <div class="form-layout" mat-dialog-content>
   <form (ngSubmit)="doAction()" [formGroup]="registerForm">
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-label>{{'tournamentType' | translate}}</mat-label>
+      <mat-label>{{ 'tournamentType' | translate }}</mat-label>
       <mat-select [(value)]="tournament.type" formControlName="tournamentType">
         <mat-option (click)="select(type)" (keydown)="select(type)" *ngFor="let type of tournamentType" [value]="type"
                     [matTooltipShowDelay]="500" matTooltip="{{getTournamentTypeHintTag(type) | translate}}">
-          {{getTournamentTypeTranslationTag(type) | translate}}
+          {{ getTournamentTypeTranslationTag(type) | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -29,7 +29,8 @@
     </div>
     <mat-form-field *ngIf="actionName != 'Delete'">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT) || selectedType == typeLoop
-          || this.selectedType == typeLeague || this.selectedType == typeKing" formControlName="shiaijos" matInput
+          || this.selectedType == typeLeague || this.selectedType == typeKing || this.selectedType == typeSorting"
+             formControlName="shiaijos" matInput
              placeholder="{{'tournamentShiaijos' | translate}}"
              required>
     </mat-form-field>
@@ -38,15 +39,15 @@
              placeholder="{{'tournamentTeamSize' | translate}}">
     </mat-form-field>
     <div class="types">
-      <mat-form-field *ngIf="actionName != 'Delete'">
-        <mat-label>{{'scoreRules' | translate}}</mat-label>
+      <mat-form-field *ngIf="actionName != 'Delete' && tournament && tournament.type!== TournamentType.BUBBLE_SORT">
+        <mat-label>{{ 'scoreRules' | translate }}</mat-label>
         <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                     formControlName="scoreTypes"
                     matTooltip="{{tournament.tournamentScore.scoreType.toLowerCase()+'Hint' | translate}}">
           <mat-option *ngFor="let type of scoreTypes" [matTooltipShowDelay]="1000"
                       (click)="selectScore(type)" (keydown)="selectScore(type)"
                       [value]="type" matTooltip="{{type.toLowerCase()+'Hint' | translate}}">
-            {{type.toLowerCase() | translate}}
+            {{ type.toLowerCase() | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -58,12 +59,12 @@
       </button>
     </div>
     <mat-form-field *ngIf="actionName != 'Delete'">
-      <mat-label>{{'tournamentDuelsDurations' | translate}}</mat-label>
+      <mat-label>{{ 'tournamentDuelsDurations' | translate }}</mat-label>
       <mat-select [(value)]="tournament.duelsDuration" formControlName="duelsDuration">
         <mat-option *ngFor="let number of [30, 60, 90, 120, 150, 180, 240, 300, 360, 420, 480, 540, 600]"
                     [value]="number">
-          {{number}} {{'seconds' | translate}}
-          ({{getMinutes(number)}} {{'minutes' | translate}} {{getSeconds(number)}} {{'seconds' | translate}})
+          {{ number }} {{ 'seconds' | translate }}
+          ({{ getMinutes(number) }} {{ 'minutes' | translate }} {{ getSeconds(number) }} {{ 'seconds' | translate }})
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -79,17 +80,17 @@
               mat-raised-button
               type="button">
         <mat-icon>image</mat-icon>
-        {{'images' | translate}}
+        {{ 'images' | translate }}
       </button>
       <button *ngIf="(RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
               [disabled]="registerForm.invalid" color="primary"
               mat-flat-button mat-raised-button
               type="submit" value="Submit">
         <mat-icon>done</mat-icon>
-        {{actionName.toLowerCase() | translate}}
+        {{ actionName.toLowerCase() | translate }}
       </button>
       <button (click)="closeDialog(cancel)" color="warn" mat-flat-button mat-raised-button
-              type="button">{{'cancel' | translate}}
+              type="button">{{ 'cancel' | translate }}
       </button>
     </div>
   </form>

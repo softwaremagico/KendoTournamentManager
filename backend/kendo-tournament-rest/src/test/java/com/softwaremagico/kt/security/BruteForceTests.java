@@ -54,10 +54,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith(MockitoExtension.class)
 @Test(groups = "bruteForce")
 public class BruteForceTests extends AbstractTestNGSpringContextTests {
-    private final static String USER_NAME = "user";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
-    private final static String USER_PASSWORD = "password";
+    private static final String USER_NAME = "user";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
+    private static final String USER_PASSWORD = "password";
 
     private MockMvc mockMvc;
 

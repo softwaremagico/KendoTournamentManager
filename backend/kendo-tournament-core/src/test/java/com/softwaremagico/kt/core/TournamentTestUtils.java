@@ -10,19 +10,18 @@ package com.softwaremagico.kt.core;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
 import com.softwaremagico.kt.core.controller.ClubController;
-import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
@@ -36,7 +35,6 @@ import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
-import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -179,8 +177,10 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
         TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null);
         tournamentDTO.setCreatedAt(LocalDateTime.now().minusMinutes(minutesPast));
         tournamentController.update(tournamentDTO, null);
-        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
-                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
+        if (TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION.getAllowedTournaments().contains(type)) {
+            tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
+        }
         generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
         addTeams(tournamentDTO, members);
         return tournamentDTO;
