@@ -26,12 +26,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum TournamentExtraPropertyKey {
-    MAXIMIZE_FIGHTS(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.CUSTOM_CHAMPIONSHIP),
+    MAXIMIZE_FIGHTS(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.CUSTOM_CHAMPIONSHIP, TournamentType.TREE),
     AVOID_DUPLICATES(TournamentType.LOOP),
     KING_INDEX(TournamentType.KING_OF_THE_MOUNTAIN, TournamentType.BUBBLE_SORT),
     KING_DRAW_RESOLUTION(TournamentType.KING_OF_THE_MOUNTAIN, TournamentType.BUBBLE_SORT),
     DIPLOMA_NAME_HEIGHT(TournamentType.values()),
-    NUMBER_OF_WINNERS(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
+    NUMBER_OF_WINNERS(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP, TournamentType.LEAGUE),
     LEAGUE_FIGHTS_ORDER_GENERATION(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
     ODD_FIGHTS_RESOLVED_ASAP(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
     BUBBLE_SORT_ITERATION(TournamentType.BUBBLE_SORT);
