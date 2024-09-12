@@ -54,7 +54,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"bubleSortTest"})
-public class BubbleSortTest extends AbstractTestNGSpringContextTests {
+public class BubbleSortDrawTest extends AbstractTestNGSpringContextTests {
 
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
@@ -137,7 +137,7 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = {"addGroup"})
     public void addTeams() {
-        int teamIndex = 0;
+        int teamIndex = TEAMS;
         Team team = null;
         int teamMember = 0;
 
@@ -146,8 +146,8 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         for (Participant competitor : participantProvider.getAll()) {
             // Create a new team.
             if (team == null) {
-                teamIndex++;
                 team = new Team("Team" + String.format("%02d", teamIndex), tournament);
+                teamIndex--;
                 teamMember = 0;
             }
 
@@ -185,34 +185,33 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 1);
 
-        //The First fight is team1 vs. team2. It is won by team1
-        Assert.assertEquals(tournamentFights.get(tournamentFights.size() - 1).getTeam1().getName(), "Team01");
-        Assert.assertEquals(tournamentFights.get(tournamentFights.size() - 1).getTeam2().getName(), "Team02");
+        //The First fight is team4 vs. team3. It is won by team4
+        Assert.assertEquals(tournamentFights.get(tournamentFights.size() - 1).getTeam1().getName(), "Team04");
+        Assert.assertEquals(tournamentFights.get(tournamentFights.size() - 1).getTeam2().getName(), "Team03");
         tournamentFights.get(tournamentFights.size() - 1).getDuels().get(0).addCompetitor1Score(Score.DO);
         tournamentFights.forEach(fight -> fight.getDuels().forEach(duel -> duel.setFinished(true)));
         fightProvider.save(tournamentFights.get(tournamentFights.size() - 1));
 
-        //The Second fight must be done team1 vs. team3. It is won by team1
+        //The Second fight must be done team4 vs. team2. It is draw!
         bubbleSortTournamentHandler.generateNextFights(tournament, null);
         tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 2);
         Assert.assertEquals(bubbleSortTournamentHandler.getGroups(tournament).size(), 1);
         List<Fight> groupFights = bubbleSortTournamentHandler.getGroups(tournament).get(0).getFights();
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team01");
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team03");
-        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor1Score(Score.DO);
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team04");
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team02");
         groupFights.get(groupFights.size() - 1).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(groupFights.get(groupFights.size() - 1));
 
-        //The Third fight must be done team1 vs. team4. It is won by team4
+        //The Third fight must be done team2 vs. team1. It is won by team2
         bubbleSortTournamentHandler.generateNextFights(tournament, null);
         tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 3);
         Assert.assertEquals(bubbleSortTournamentHandler.getGroups(tournament).size(), 1);
         groupFights = bubbleSortTournamentHandler.getGroups(tournament).get(0).getFights();
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team01");
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team04");
-        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor2Score(Score.KOTE);
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team02");
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team01");
+        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor1Score(Score.DO);
         groupFights.get(groupFights.size() - 1).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(groupFights.get(groupFights.size() - 1));
 
@@ -220,10 +219,10 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         final List<Team> ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groupProvider.getGroups(tournament).get(0),
                 bubbleSortTournamentHandler.getDrawResolution(tournament));
         Assert.assertEquals(ranking.size(), 4);
-        Assert.assertEquals(ranking.get(0).getName(), "Team02");
-        Assert.assertEquals(ranking.get(1).getName(), "Team03");
+        Assert.assertEquals(ranking.get(0).getName(), "Team03");
+        Assert.assertEquals(ranking.get(1).getName(), "Team04");
         Assert.assertEquals(ranking.get(2).getName(), "Team01");
-        Assert.assertEquals(ranking.get(3).getName(), "Team04");
+        Assert.assertEquals(ranking.get(3).getName(), "Team02");
     }
 
     @Test(dependsOnMethods = {"firstIteration"})
@@ -234,18 +233,18 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 2);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(1).getLevel(), 1);
 
-        //The First fight is team2 vs. team3. It is won by team3
+        //The First fight is team3 vs. team4. It is won by team3
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 4);
         Assert.assertEquals(bubbleSortTournamentHandler.getGroups(tournament).size(), 2);
         List<Fight> groupFights = bubbleSortTournamentHandler.getGroups(tournament).get(1).getFights();
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team02");
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team03");
-        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor2Score(Score.KOTE);
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team03");
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team04");
+        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor1Score(Score.DO);
         groupFights.get(groupFights.size() - 1).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(groupFights.get(groupFights.size() - 1));
 
-        //The Second fight must be done team3 vs. team1. It is won by team1
+        //The Second fight must be done team3 vs. team1. It is a draw!
         bubbleSortTournamentHandler.generateNextFights(tournament, null);
         tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 5);
@@ -253,7 +252,6 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         groupFights = bubbleSortTournamentHandler.getGroups(tournament).get(1).getFights();
         Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team03");
         Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team01");
-        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor1Score(Score.DO);
         groupFights.get(groupFights.size() - 1).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(groupFights.get(groupFights.size() - 1));
 
@@ -261,19 +259,19 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         List<Team> ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groupProvider.getGroups(tournament).get(0),
                 bubbleSortTournamentHandler.getDrawResolution(tournament));
         Assert.assertEquals(ranking.size(), 4);
-        Assert.assertEquals(ranking.get(0).getName(), "Team02");
-        Assert.assertEquals(ranking.get(1).getName(), "Team03");
+        Assert.assertEquals(ranking.get(0).getName(), "Team03");
+        Assert.assertEquals(ranking.get(1).getName(), "Team04");
         Assert.assertEquals(ranking.get(2).getName(), "Team01");
-        Assert.assertEquals(ranking.get(3).getName(), "Team04");
+        Assert.assertEquals(ranking.get(3).getName(), "Team02");
 
         //Check calculated order current group
         ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groupProvider.getGroups(tournament).get(1),
                 bubbleSortTournamentHandler.getDrawResolution(tournament));
         Assert.assertEquals(ranking.size(), 4);
-        Assert.assertEquals(ranking.get(0).getName(), "Team02");
-        Assert.assertEquals(ranking.get(1).getName(), "Team01");
-        Assert.assertEquals(ranking.get(2).getName(), "Team03");
-        Assert.assertEquals(ranking.get(3).getName(), "Team04");
+        Assert.assertEquals(ranking.get(0).getName(), "Team04");
+        Assert.assertEquals(ranking.get(1).getName(), "Team03");
+        Assert.assertEquals(ranking.get(2).getName(), "Team01");
+        Assert.assertEquals(ranking.get(3).getName(), "Team02");
     }
 
     @Test(dependsOnMethods = {"secondIteration"})
@@ -284,14 +282,13 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(groupProvider.getGroups(tournament).size(), 3);
         Assert.assertEquals(groupProvider.getGroups(tournament).get(2).getLevel(), 2);
 
-        //The First fight is team2 vs. team3. It is won by team2
+        //The First fight is team4 vs. team3. It is a draw!
         List<Fight> tournamentFights = fightProvider.getFights(tournament);
         Assert.assertEquals(tournamentFights.size(), 6);
         Assert.assertEquals(bubbleSortTournamentHandler.getGroups(tournament).size(), 3);
         List<Fight> groupFights = bubbleSortTournamentHandler.getGroups(tournament).get(2).getFights();
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team02");
-        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team01");
-        groupFights.get(groupFights.size() - 1).getDuels().get(0).addCompetitor1Score(Score.DO);
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam1().getName(), "Team04");
+        Assert.assertEquals(groupFights.get(groupFights.size() - 1).getTeam2().getName(), "Team03");
         groupFights.get(groupFights.size() - 1).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(groupFights.get(groupFights.size() - 1));
 
@@ -302,10 +299,10 @@ public class BubbleSortTest extends AbstractTestNGSpringContextTests {
         final List<Team> ranking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groupProvider.getGroups(tournament).get(2),
                 bubbleSortTournamentHandler.getDrawResolution(tournament));
         Assert.assertEquals(ranking.size(), 4);
-        Assert.assertEquals(ranking.get(0).getName(), "Team01");
-        Assert.assertEquals(ranking.get(1).getName(), "Team02");
-        Assert.assertEquals(ranking.get(2).getName(), "Team03");
-        Assert.assertEquals(ranking.get(3).getName(), "Team04");
+        Assert.assertEquals(ranking.get(0).getName(), "Team04");
+        Assert.assertEquals(ranking.get(1).getName(), "Team03");
+        Assert.assertEquals(ranking.get(2).getName(), "Team01");
+        Assert.assertEquals(ranking.get(3).getName(), "Team02");
     }
 
 
