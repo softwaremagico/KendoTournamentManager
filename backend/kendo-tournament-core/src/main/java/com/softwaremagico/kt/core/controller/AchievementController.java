@@ -120,6 +120,11 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DARUMA_TOURNAMENTS_SILVER = 30;
     private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
+    private static final int DETHRONE_THE_KING_NORMAL = 2;
+    private static final int DETHRONE_THE_KING_BRONZE = 3;
+    private static final int DETHRONE_THE_KING_SILVER = 5;
+    private static final int DETHRONE_THE_KING_GOLD = 7;
+
     private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
     private static final int MIN_TOURNAMENT_FIGHTS = 5;
 
@@ -2054,16 +2059,29 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (tournament.getType() == TournamentType.BUBBLE_SORT) {
             final List<Group> groups = groupProvider.getGroups(tournament);
             if (groups.size() > 1) {
-                final List<Team> startingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.get(0),
-                        bubbleSortTournamentHandler.getDrawResolution(tournament));
+                final List<Team> startingRanking = groups.get(0).getTeams();
                 final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.get(groups.size() - 1),
                         bubbleSortTournamentHandler.getDrawResolution(tournament));
 
+                //The King is the last one.
+                final Team kingTeam = endingRanking.get(endingRanking.size() - 1);
 
-                final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
-                if (!scoreOfCompetitors.isEmpty()) {
-                    return generateAchievement(AchievementType.THE_KING, AchievementGrade.NORMAL,
-                            Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+                //How much have fought to be the king:
+                final int startingPosition = startingRanking.indexOf(kingTeam);
+                final int kingPosition = endingRanking.size() - 1;
+
+                if (kingPosition - startingPosition >= DETHRONE_THE_KING_GOLD) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.GOLD,
+                            kingTeam.getMembers(), tournament);
+                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_SILVER) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.SILVER,
+                            kingTeam.getMembers(), tournament);
+                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_BRONZE) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.BRONZE,
+                            kingTeam.getMembers(), tournament);
+                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_NORMAL) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.NORMAL,
+                            kingTeam.getMembers(), tournament);
                 }
             }
         }

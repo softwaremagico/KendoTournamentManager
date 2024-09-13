@@ -666,7 +666,15 @@
       "normal": "Win als je al twee keer hebt verloren van je tegenstander.",
       "bronze": "Win als je al drie keer hebt verloren van je tegenstander.",
       "silver": "Win als je al vier keer hebt verloren van je tegenstander.",
-      "gold": "Win als je al vijf keer hebt verloren van je tegenstander.\n\n"
+      "gold": "Win als je al vijf keer hebt verloren van je tegenstander."
+    },
+    "dethroneTheKing": {
+      "title": "Onttroner van koningen",
+      "description": "Eindig als koning in een 'Dethrone the King'-toernooi waarin je niet als koning of prins begon.",
+      "normal": "Je hebt de koning onttroond.",
+      "bronze": "Je hebt de koning onttroond en bent minstens drie posities gestegen.",
+      "silver": "Je hebt de koning onttroond en bent minstens vijf posities gestegen.",
+      "gold": "Je hebt de koning onttroond en bent minstens zeven posities gestegen."
     }
   },
   "removeTeams": "Teams verwijderen",

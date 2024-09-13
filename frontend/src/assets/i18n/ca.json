@@ -679,6 +679,14 @@
       "bronze": "Guanya quan ja hagis perdut tres vegades contra el teu oponent.",
       "silver": "Guanya quan ja hagis perdut quatre vegades contra el teu oponent.",
       "gold": "Guanya quan ja hagis perdut cinc vegades contra el teu oponent."
+    },
+    "dethroneTheKing": {
+      "title": "Destronador de Reis",
+      "description": "Finalitza com a rei en un torneig 'Destronar el Rei' en què no has començat com a rei o príncep.",
+      "normal": "Has destronat el rei.",
+      "bronze": "Has destronat el rei, escalant almenys tres posicions.",
+      "silver": "Has destronat el rei, escalant almenys cinc posicions.",
+      "gold": "Has destronat el rei, escalant almenys set posicions."
     }
   },
   "removeTeams": "Treure Equips",
