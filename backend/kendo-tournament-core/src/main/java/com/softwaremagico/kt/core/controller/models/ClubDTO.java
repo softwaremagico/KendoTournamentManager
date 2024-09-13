@@ -23,11 +23,15 @@ package com.softwaremagico.kt.core.controller.models;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serial;
 import java.util.Objects;
 
 public class ClubDTO extends ElementDTO {
 
-    @NotBlank
+    @Serial
+    private static final long serialVersionUID = -5342001958437046042L;
+
+    @NotBlank(message = "Name is mandatory")
     private String name = "";
 
     private String country = "";

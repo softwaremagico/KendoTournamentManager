@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BruteForceService extends BasePool<String, Integer> {
     private static final Long EXPIRATION_TIME = 10 * 60 * 1000L;
-    private static final int MAX_ATTEMPTS = 3;
+    private static final int MAX_ATTEMPTS = 10;
 
     public void loginSucceeded(String key) {
         removeElement(key);
