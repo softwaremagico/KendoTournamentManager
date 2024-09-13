@@ -684,6 +684,14 @@
       "bronze": "Win when you have already lost three times against your opponent.",
       "silver": "Win when you have already lost four times against your opponent.",
       "gold": "Win when you have already lost five times against your opponent."
+    },
+    "dethroneTheKing": {
+      "title": "Dethroner of Kings",
+      "description": "Finish as king in a 'Dethrone the King' tournament in which you did not start as king or prince.",
+      "normal": "You have dethroned the king.",
+      "bronze": "You have dethroned the king, climbing at least three positions.",
+      "silver": "You have dethroned the king, climbing at least five positions.",
+      "gold": "You have dethroned the king, climbing at least seven positions."
     }
   },
   "removeTeams": "Remove Teams",

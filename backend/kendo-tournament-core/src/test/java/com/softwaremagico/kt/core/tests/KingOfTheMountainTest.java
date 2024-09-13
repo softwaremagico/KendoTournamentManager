@@ -172,7 +172,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(teamProvider.count(tournament), TEAMS);
     }
 
     @Test(dependsOnMethods = {"addTeams"})
