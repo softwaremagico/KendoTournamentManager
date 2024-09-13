@@ -119,7 +119,10 @@ public class Tournament extends Element implements IName {
     }
 
     public Integer getTeamSize() {
-        return teamSize;
+        if (type != null && type != TournamentType.SENBATSU) {
+            return teamSize;
+        }
+        return 1;
     }
 
     public void setTeamSize(Integer teamSize) {
