@@ -54,13 +54,15 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(Logger logger, String className, String messageTemplate, Object... arguments) {
-        for (int i = 0; i < arguments.length; i++) {
-            if (arguments[i] != null) {
-                arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+        if (logger.isWarnEnabled()) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                }
             }
+            final String templateWithClass = className + ": " + messageTemplate;
+            logger.warn(templateWithClass.replaceAll("[\n\r]", "_"), arguments);
         }
-        final String templateWithClass = className + ": " + messageTemplate;
-        logger.warn(templateWithClass, arguments);
     }
 
     /**
@@ -71,12 +73,14 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String messageTemplate, Object... arguments) {
-        for (int i = 0; i < arguments.length; i++) {
-            if (arguments[i] != null) {
-                arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+        if (logger.isInfoEnabled()) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                }
             }
+            logger.info(messageTemplate.replaceAll("[\n\r]", "_"), arguments);
         }
-        logger.info(messageTemplate, arguments);
     }
 
     /**
@@ -135,12 +139,14 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     protected static void severe(Logger logger, String messageTemplate, Object... arguments) {
-        for (int i = 0; i < arguments.length; i++) {
-            if (arguments[i] != null) {
-                arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+        if (logger.isErrorEnabled()) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                }
             }
+            logger.error(messageTemplate.replaceAll("[\n\r]", "_"), arguments);
         }
-        logger.error(messageTemplate, arguments);
     }
 
     /**

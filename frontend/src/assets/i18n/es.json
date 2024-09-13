@@ -680,6 +680,14 @@
       "bronze": "Gana cuando ya hayas perdido tres veces contra tu oponente.",
       "silver": "Gana cuando ya hayas perdido cuatro veces contra tu oponente.",
       "gold": "Gana cuando ya hayas perdido cinco veces contra tu oponente."
+    },
+    "dethroneTheKing": {
+      "title": "Destronador de Reyes",
+      "description": "Finaliza como rey en un torneo 'Destronar al Rey' en el que no has empezado como rey o príncipe.",
+      "normal": "Has destronado al rey.",
+      "bronze": "Has destronado al rey, escalando al menos tres posiciones.",
+      "silver": "Has destronado al rey, escalando al menos cinco posiciones.",
+      "gold": "Has destronado al rey, escalando al menos siete posiciones."
     }
   },
   "removeTeams": "Quitar equipos",
