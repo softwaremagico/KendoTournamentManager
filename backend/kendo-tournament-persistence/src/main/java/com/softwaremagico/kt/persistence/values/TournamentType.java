@@ -37,7 +37,9 @@ public enum TournamentType {
 
     BUBBLE_SORT,
 
-    CUSTOMIZED;
+    CUSTOMIZED,
+
+    SENBATSU;
 
     public static TournamentType getType(String name) {
         for (final TournamentType type : TournamentType.values()) {

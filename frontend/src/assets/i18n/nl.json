@@ -696,5 +696,9 @@
   "oddFightsResolvedAsap": "Los vrijstellingen zo snel mogelijk op zonder strijd",
   "oddFightsResolvedAsapHint": "Als het aantal teams of groepen in het toernooi oneven is, is het mogelijk dat tijdens de wedstrijden sommige teams geen geassocieerde wedstrijden hebben en zich automatisch kwalificeren voor de volgende fase. Met deze optie zorgt u ervoor dat deze zaken zo snel mogelijk worden opgelost.",
   "bubbleSort": "Sorteertoernooi",
-  "bubbleSortHint": "Concurrenten met een lagere rang proberen in hun rangorde te stijgen totdat ze de koning verslaan. Hij die niet slaagt, wordt zijn vazal en vecht om de koning te beschermen."
+  "bubbleSortHint": "Concurrenten met een lagere rang proberen in hun rangorde te stijgen totdat ze de koning verslaan. Hij die niet slaagt, wordt zijn vazal en vecht om de koning te beschermen.",
+  "senbatsu": "Senbatsu",
+  "senbatsuHint": "De deelnemers worden gerangschikt op basis van hun vaardigheden. Het idee is om 'de ladder te beklimmen' door de persoon boven je te verslaan en diens plaats op de ladder in te nemen. Beginnend vanaf de onderkant mag een deelnemer een andere persoon uitdagen, meestal twee of drie 'sporten' boven hem. Als hij wint, neemt hij zijn plaats in en wordt de tegenstander uitgeschakeld. Als je verliest, word je geëlimineerd.",
+  "senbatsuRungLength": "Afstand tussen de veilige afstanden",
+  "senbatsuRungLengthHint": "Het maximaal toegestane verschil in bekwaamheid tussen twee concurrenten met als doel een uitdaging aan te gaan."
 }
