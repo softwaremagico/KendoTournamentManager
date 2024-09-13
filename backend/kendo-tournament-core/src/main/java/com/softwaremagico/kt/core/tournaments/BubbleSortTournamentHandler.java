@@ -86,7 +86,6 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         List<Group> groups = groupProvider.getGroups(tournament);
         Group group = groups.get(groups.size() - 1);
 
-        // It is finished if there are as many levels as teams - 1;
         if (groups.size() == teamProvider.getAll(tournament).size() - 1) {
             return new ArrayList<>();
         }
