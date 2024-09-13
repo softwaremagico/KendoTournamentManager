@@ -74,7 +74,7 @@ export class FightDialogBoxComponent implements OnInit {
     });
   }
 
-  closeDialog() {
+  closeDialog(): void {
     this.dialogRef.close();
   }
 
@@ -96,7 +96,7 @@ export class FightDialogBoxComponent implements OnInit {
     return (drop.data.length === 0 || drop.data.length === 1 && drop.data!.includes(item.data));
   }
 
-  addFights() {
+  addFights(): void {
     this.fight.team1 = this.selectedTeam1[0];
     this.fight.team2 = this.selectedTeam2[0];
 
