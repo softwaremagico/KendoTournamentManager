@@ -34,6 +34,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.AchievementProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
@@ -41,9 +42,11 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.core.tournaments.BubbleSortTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -141,6 +144,10 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private final RankingProvider rankingProvider;
 
+    private final GroupProvider groupProvider;
+
+    private final BubbleSortTournamentHandler bubbleSortTournamentHandler;
+
     private Tournament tournament;
 
     private List<Role> rolesFromTournament;
@@ -169,7 +176,8 @@ public class AchievementController extends BasicInsertableController<Achievement
                                     ParticipantProvider participantProvider, ParticipantConverter participantConverter,
                                     RoleProvider roleProvider, TeamProvider teamProvider, AchievementProvider achievementProvider,
                                     FightProvider fightProvider, DuelProvider duelProvider,
-                                    RankingProvider rankingProvider) {
+                                    RankingProvider rankingProvider, GroupProvider groupProvider,
+                                    BubbleSortTournamentHandler bubbleSortTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -181,6 +189,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.rankingProvider = rankingProvider;
+        this.groupProvider = groupProvider;
+        this.bubbleSortTournamentHandler = bubbleSortTournamentHandler;
     }
 
     public interface AchievementsGeneratedListener {
@@ -442,6 +452,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievement(tournament));
         achievementsGenerated.addAll(generateVendettaAchievement(tournament));
         achievementsGenerated.addAll(generateSithApprenticesAlwaysKillTheirMasterAchievement(tournament));
+        achievementsGenerated.addAll(generateDethroneTheKingAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
@@ -2032,6 +2043,31 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         return achievementProvider.saveAll(achievements);
+    }
+
+    /**
+     * Somebody wins a fight despite the opponent has scored first.
+     *
+     * @param tournament
+     */
+    private List<Achievement> generateDethroneTheKingAchievement(Tournament tournament) {
+        if (tournament.getType() == TournamentType.BUBBLE_SORT) {
+            final List<Group> groups = groupProvider.getGroups(tournament);
+            if (groups.size() > 1) {
+                final List<Team> startingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.get(0),
+                        bubbleSortTournamentHandler.getDrawResolution(tournament));
+                final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.get(groups.size() - 1),
+                        bubbleSortTournamentHandler.getDrawResolution(tournament));
+
+
+                final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsScoreRanking(tournament);
+                if (!scoreOfCompetitors.isEmpty()) {
+                    return generateAchievement(AchievementType.THE_KING, AchievementGrade.NORMAL,
+                            Collections.singletonList(scoreOfCompetitors.get(0).getCompetitor()), tournament);
+                }
+            }
+        }
+        return new ArrayList<>();
     }
 
 
