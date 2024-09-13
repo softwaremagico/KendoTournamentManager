@@ -21,6 +21,11 @@ package com.softwaremagico.kt.core.tests;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.AchievementController;
+import com.softwaremagico.kt.core.controller.models.AchievementDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
+import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;
@@ -39,6 +44,8 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -94,6 +101,12 @@ public class BubbleSortReversedTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private BubbleSortTournamentHandler bubbleSortTournamentHandler;
+
+    @Autowired
+    private AchievementController achievementController;
+
+    @Autowired
+    private TournamentConverter tournamentConverter;
 
     private Club club;
 
@@ -167,7 +180,7 @@ public class BubbleSortReversedTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(teamProvider.count(tournament), TEAMS);
     }
 
     @Test(dependsOnMethods = {"addTeams"})
@@ -314,6 +327,18 @@ public class BubbleSortReversedTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(ranking.get(1).getName(), "Team02");
         Assert.assertEquals(ranking.get(2).getName(), "Team03");
         Assert.assertEquals(ranking.get(3).getName(), "Team04");
+    }
+
+    @Test(dependsOnMethods = {"thirdIteration"})
+    public void achievementsAreGranted() {
+        final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
+        achievementController.generateAchievements(tournamentDTO);
+
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournamentDTO, AchievementType.DETHRONE_THE_KING);
+        Assert.assertEquals(achievementsDTOs.size(), MEMBERS);
+
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant().getLastname(), "Lastname0"); //P4 -> Lastname 3
+        Assert.assertEquals(achievementsDTOs.get(0).getAchievementGrade(), AchievementGrade.BRONZE);
     }
 
 

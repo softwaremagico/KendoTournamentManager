@@ -50,6 +50,8 @@ export enum AchievementType {
 
   SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER = 'SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER',
 
+  DETHRONE_THE_KING = 'DETHRONE_THE_KING',
+
 }
 
 export namespace AchievementType {

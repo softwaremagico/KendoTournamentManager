@@ -73,7 +73,9 @@ public enum AchievementType {
 
     V_FOR_VENDETTA,
 
-    SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER;
+    SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
+
+    DETHRONE_THE_KING;
 
 
     public static AchievementType getType(String name) {

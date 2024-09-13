@@ -50,7 +50,6 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
     private final GroupProvider groupProvider;
     private final FightProvider fightProvider;
     private final TeamProvider teamProvider;
-    private final RankingProvider rankingProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final TournamentRepository tournamentRepository;
 
@@ -62,7 +61,6 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         this.groupProvider = groupProvider;
         this.fightProvider = fightProvider;
         this.teamProvider = teamProvider;
-        this.rankingProvider = rankingProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
         this.tournamentRepository = tournamentRepository;
     }
@@ -88,12 +86,11 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         List<Group> groups = groupProvider.getGroups(tournament);
         Group group = groups.get(groups.size() - 1);
 
-        //It is finished if there are as many levels as teams - 1;
         if (groups.size() == teamProvider.getAll(tournament).size() - 1) {
             return new ArrayList<>();
         }
 
-        //Check if the group is over. The Number of fights must be the number of teams -1 and one less by level.
+        // Check if the group is over. The Number of fights must be the number of teams -1 and one less by level.
         if (group.getFights().size() >= group.getTeams().size() - 1 - group.getLevel()) {
             //Create a new level. And add a new group to this level.
             createNextLevel(tournament);
@@ -113,31 +110,31 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
 
         final Fight newFight = new Fight();
         newFight.setTournament(tournament);
-        //Previous winner with no draw
+        // Previous winner with no draw
         if (lastFight.getWinner() != null) {
             newFight.setTeam1(lastFight.getWinner());
             newFight.setTeam2(getNextTeam(group.getTeams(), Collections.singletonList(lastFight.getWinner()),
-                    Collections.singletonList(lastFight.getLoser()), tournament, null));
+                    Collections.singletonList(lastFight.getLoser()), tournament));
         } else {
             final DrawResolution drawResolution = getDrawResolution(tournament);
             switch (drawResolution) {
                 case BOTH_ELIMINATED -> {
                     newFight.setTeam1(getNextTeam(group.getTeams(), new ArrayList<>(),
-                            Arrays.asList(lastFight.getTeam1(), lastFight.getTeam2()), tournament, drawResolution));
+                            Arrays.asList(lastFight.getTeam1(), lastFight.getTeam2()), tournament));
                     newFight.setTeam2(getNextTeam(group.getTeams(), new ArrayList<>(),
-                            Arrays.asList(lastFight.getTeam1(), lastFight.getTeam2(), newFight.getTeam1()), tournament, drawResolution));
+                            Arrays.asList(lastFight.getTeam1(), lastFight.getTeam2(), newFight.getTeam1()), tournament));
                 }
                 case OLDEST_ELIMINATED -> {
                     //Oldest is Team1 always.
                     newFight.setTeam1(lastFight.getTeam2());
                     newFight.setTeam2(getNextTeam(group.getTeams(), Collections.singletonList(lastFight.getTeam2()),
-                            Collections.singletonList(lastFight.getTeam1()), tournament, drawResolution));
+                            Collections.singletonList(lastFight.getTeam1()), tournament));
                 }
                 case NEWEST_ELIMINATED -> {
                     //Newest is Team2 always.
                     newFight.setTeam1(lastFight.getTeam1());
                     newFight.setTeam2(getNextTeam(group.getTeams(), Collections.singletonList(lastFight.getTeam1()),
-                            Collections.singletonList(lastFight.getTeam2()), tournament, drawResolution));
+                            Collections.singletonList(lastFight.getTeam2()), tournament));
                 }
                 default -> {
                     // Ignore.
@@ -151,7 +148,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         return Collections.singletonList(newFight);
     }
 
-    private Team getNextTeam(List<Team> teams, List<Team> winners, List<Team> losers, Tournament tournament, DrawResolution drawResolution) {
+    private Team getNextTeam(List<Team> teams, List<Team> winners, List<Team> losers, Tournament tournament) {
         final AtomicInteger kingIndex = new AtomicInteger(0);
         final TournamentExtraProperty extraProperty = getKingIndex(tournament);
         try {
@@ -252,8 +249,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
                             teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam1());
                             teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
                             break;
-                        case OLDEST_ELIMINATED:
-                        case BOTH_ELIMINATED:
+                        case OLDEST_ELIMINATED, BOTH_ELIMINATED:
                             //Both cannot be on bubble sort!
                         default:
                             //Oldest is Team1 always.
@@ -274,8 +270,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
                                 //Newest is Team2 always.
                                 teams.add(0, group.getFights().get(i).getTeam2());
                                 break;
-                            case OLDEST_ELIMINATED:
-                            case BOTH_ELIMINATED:
+                            case OLDEST_ELIMINATED, BOTH_ELIMINATED:
                                 //Both cannot be on bubble sort!
                             default:
                                 //Oldest is Team1 always.
@@ -293,6 +288,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         return group.getTeams();
     }
 
+    @Override
     protected Group addGroup(Tournament tournament, List<Team> teams, Integer level, Integer index) {
         final Group group = new Group();
         group.setTournament(tournament);
