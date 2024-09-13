@@ -39,6 +39,7 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.ITournamentManager;
+import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Fight;
@@ -50,6 +51,7 @@ import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -68,6 +70,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     private final Set<FightsAddedListener> fightsAddedListeners = new HashSet<>();
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final ParticipantProvider participantProvider;
+    private final SenbatsuTournamentHandler senbatsuTournamentHandler;
 
     private final GroupProvider groupProvider;
     private final TeamConverter teamConverter;
@@ -82,7 +85,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                            TournamentProvider tournamentProvider, TournamentHandlerSelector tournamentHandlerSelector,
                            TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
                            ParticipantProvider participantProvider, GroupProvider groupProvider,
-                           TeamConverter teamConverter, FightProvider fightProvider) {
+                           TeamConverter teamConverter, SenbatsuTournamentHandler senbatsuTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -91,6 +94,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         this.participantProvider = participantProvider;
         this.groupProvider = groupProvider;
         this.teamConverter = teamConverter;
+        this.senbatsuTournamentHandler = senbatsuTournamentHandler;
     }
 
     public void addFightsAddedListeners(FightsAddedListener listener) {
@@ -116,9 +120,24 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)))));
     }
 
+
+    @Transactional
+    public FightDTO create(FightDTO dto, String username) {
+        if (dto.getTournament().getType() == TournamentType.SENBATSU) {
+            //Senbatsu only accepts fights on challenge distance.
+            senbatsuTournamentHandler.checkFight(reverse(dto));
+        }
+        return super.create(dto, username);
+    }
+
+
     @Override
     public FightDTO update(FightDTO dto, String username) {
         try {
+            if (dto.getTournament().getType() == TournamentType.SENBATSU) {
+                //Senbatsu only accepts fights on challenge distance.
+                senbatsuTournamentHandler.checkFight(reverse(dto));
+            }
             return super.update(dto, username);
         } finally {
             if (dto.getTournament().getType() == TournamentType.KING_OF_THE_MOUNTAIN) {

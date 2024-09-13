@@ -430,12 +430,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  editElement(): void {
-    if (this.selectedFight && this.selectedGroup) {
-      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.selectedGroup, undefined);
-    }
-  }
-
   deleteElement(): void {
     if (this.selectedFight || this.selectedDuel) {
       let dialogRef = this.dialog.open(ConfirmationDialogComponent, {

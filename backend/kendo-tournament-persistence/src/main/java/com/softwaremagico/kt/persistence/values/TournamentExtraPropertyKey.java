@@ -34,7 +34,7 @@ public enum TournamentExtraPropertyKey {
     NUMBER_OF_WINNERS(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP, TournamentType.LEAGUE),
     LEAGUE_FIGHTS_ORDER_GENERATION(TournamentType.LEAGUE, TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
     ODD_FIGHTS_RESOLVED_ASAP(TournamentType.CHAMPIONSHIP, TournamentType.TREE, TournamentType.CUSTOM_CHAMPIONSHIP),
-    BUBBLE_SORT_ITERATION(TournamentType.BUBBLE_SORT);
+    SENBATSU_CHALLENGE_DISTANCE(TournamentType.SENBATSU);
 
     private final Set<TournamentType> allowedTournaments;
 
