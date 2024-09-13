@@ -667,6 +667,14 @@
       "bronze": "Gewinnen Sie, wenn Sie bereits dreimal gegen Ihren Gegner verloren haben.",
       "silver": "Gewinnen Sie, wenn Sie bereits viermal gegen Ihren Gegner verloren haben.",
       "gold": "Gewinnen Sie, wenn Sie bereits fünf Mal gegen Ihren Gegner verloren haben."
+    },
+    "dethroneTheKing": {
+      "title": "Entthroner der Könige",
+      "description": "Beenden Sie als König ein 'Dethrone the King'-Turnier, bei dem Sie nicht als König oder Prinz begonnen haben.",
+      "normal": "Du hast den König entthront.",
+      "bronze": "Sie haben den König entthront und sind um mindestens drei Positionen nach oben geklettert.",
+      "silver": "Sie haben den König entthront und sind um mindestens fünf Positionen nach oben geklettert.",
+      "gold": "Sie haben den König entthront und sind um mindestens sieben Positionen nach oben geklettert."
     }
   },
   "removeTeams": "Teams entfernenn",
