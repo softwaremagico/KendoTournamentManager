@@ -26,7 +26,6 @@ import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
-import com.softwaremagico.kt.core.converters.GroupConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
@@ -238,7 +237,7 @@ public class SimpleLeagueTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(teamProvider.count(tournament), TEAMS);
     }
 
 
