@@ -673,6 +673,14 @@
       "bronze": "Vinci quando hai già perso tre volte contro il tuo avversario.",
       "silver": "Vinci quando hai già perso quattro volte contro il tuo avversario.",
       "gold": "Vinci quando hai già perso cinque volte contro il tuo avversario."
+    },
+    "dethroneTheKing": {
+      "title": "Detronizzatore dei re",
+      "description": "Finisci come re in un torneo 'Detronizza il re' in cui non hai iniziato come re o principe.",
+      "normal": "Hai detronizzato il re.",
+      "bronze": "Hai detronizzato il re, scalando almeno tre posizioni.",
+      "silver": "Hai detronizzato il re, scalando almeno cinque posizioni.",
+      "gold": "Hai detronizzato il re, scalando almeno sette posizioni."
     }
   },
   "removeTeams": "Rimuovi squadre",
