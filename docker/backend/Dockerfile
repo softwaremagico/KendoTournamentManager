@@ -1,4 +1,4 @@
-FROM eclipse-temurin:22-jdk-alpine
+FROM eclipse-temurin:22-jdk
 
 ARG release
 ARG machine_domain
