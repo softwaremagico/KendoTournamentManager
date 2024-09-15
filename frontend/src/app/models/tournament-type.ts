@@ -49,6 +49,10 @@ export namespace TournamentType {
     return type === TournamentType.KING_OF_THE_MOUNTAIN || type === TournamentType.BUBBLE_SORT;
   }
 
+  export function canSelectChallengeDistance(type: TournamentType | undefined): boolean {
+    return type === TournamentType.SENBATSU;
+  }
+
   export function needsFifoWinner(type: TournamentType | undefined): boolean {
     return type === TournamentType.CHAMPIONSHIP || type === TournamentType.LEAGUE;
   }
