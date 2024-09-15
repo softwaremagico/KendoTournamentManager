@@ -33,6 +33,10 @@ export namespace TournamentExtraPropertyKey {
     return true;
   }
 
+  export function senbatsuChallengeDistance(): number {
+    return 3;
+  }
+
   export function getByKey(key: string) {
     for (const valueKey in TournamentExtraPropertyKey) {
       if ((TournamentExtraPropertyKey as any)[valueKey] === key) {
