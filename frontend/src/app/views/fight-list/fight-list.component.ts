@@ -425,7 +425,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       fight.shiaijo = 0;
       fight.level = this.selectedGroup.level;
       fight.duels = [];
-      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight, true);
+      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight,
+        this.tournament.type == TournamentType.SENBATSU, this.tournament.type !== TournamentType.SENBATSU);
     } else {
       this.messageService.warningMessage('errorFightNotSelected');
     }
@@ -472,8 +473,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined, horizontalTeams: boolean): void {
-    const height : string = horizontalTeams? '550px' : '95vh';
+  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined, horizontalTeams: boolean, grid: boolean): void {
+    const height: string = horizontalTeams ? '550px' : '95vh';
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '90vw',
       height: height,
@@ -488,6 +489,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         swappedColors: this.swappedColors,
         swappedTeams: this.swappedTeams,
         horizontalTeams: horizontalTeams,
+        grid: grid,
       }
     });
     dialogRef.afterClosed().subscribe(result => {
