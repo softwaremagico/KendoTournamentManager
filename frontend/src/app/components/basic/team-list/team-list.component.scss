@@ -11,6 +11,20 @@ team-card {
   min-height: 460px;
 }
 
+.team-list.horizontal {
+  min-height: 80px;
+  height: 100px;
+  padding: 20px;
+}
+
+.team-list .horizontal {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  min-height: 60px;
+  height: 10vh;
+}
+
 .mat-card-header .mat-card-title {
   font-size: 16px;
 }

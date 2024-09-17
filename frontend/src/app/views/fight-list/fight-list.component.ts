@@ -425,7 +425,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       fight.shiaijo = 0;
       fight.level = this.selectedGroup.level;
       fight.duels = [];
-      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight);
+      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight, true);
     } else {
       this.messageService.warningMessage('errorFightNotSelected');
     }
@@ -472,10 +472,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined): void {
+  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined, horizontalTeams: boolean): void {
+    const height : string = horizontalTeams? '550px' : '95vh';
     const dialogRef = this.dialog.open(FightDialogBoxComponent, {
       width: '90vw',
-      height: '95vh',
+      height: height,
       maxWidth: '1000px',
       data: {
         title: 'Add a new Fight',
@@ -485,7 +486,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         previousFight: afterFight,
         tournament: this.tournament,
         swappedColors: this.swappedColors,
-        swappedTeams: this.swappedTeams
+        swappedTeams: this.swappedTeams,
+        horizontalTeams: horizontalTeams,
       }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -644,7 +646,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         let showClassification: boolean = true;
         if (selectedGroup != null) {
           // Tournament, each group must have a winner. Show for each group the winners.
-          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN  && this.tournament.type !== TournamentType.BUBBLE_SORT) {
+          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT) {
             //Shows group classification. And if there is a tie score can be solved.
             this.showClassification();
             showClassification = false;
