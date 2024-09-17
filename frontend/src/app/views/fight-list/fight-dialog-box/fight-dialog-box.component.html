@@ -3,7 +3,7 @@
   <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
        cdkDropList
        class="teams-container" [ngClass]="{'horizontal' : horizontalTeams }">
-    <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [ngClass]="{'horizontal' : horizontalTeams }"></team-list>
+    <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [grid]="grid" [ngClass]="{'horizontal' : horizontalTeams }"></team-list>
   </div>
   <div class="new-fight-title">
     <h2 [class.red-ribbon]="!swappedColors" [class.white-ribbon]="swappedColors"
