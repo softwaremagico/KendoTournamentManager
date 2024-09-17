@@ -32,6 +32,7 @@ export class FightDialogBoxComponent implements OnInit {
   swappedColors: boolean = false;
   swappedTeams: boolean = false;
   horizontalTeams: boolean = false;
+  grid: boolean = false;
 
   selectedTeam1: Team[] = [];
   selectedTeam2: Team[] = [];
@@ -53,6 +54,7 @@ export class FightDialogBoxComponent implements OnInit {
       swappedColors: boolean,
       swappedTeams: boolean,
       horizontalTeams: boolean,
+      grid: boolean,
     }
   ) {
     this.group = data.group;
@@ -65,6 +67,7 @@ export class FightDialogBoxComponent implements OnInit {
     this.swappedColors = data.swappedColors;
     this.swappedTeams = data.swappedTeams;
     this.horizontalTeams = data.horizontalTeams;
+    this.grid = data.grid;
   }
 
   ngOnInit(): void {
