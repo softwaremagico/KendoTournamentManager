@@ -14,6 +14,9 @@ export class TeamListComponent implements OnInit {
   @Input()
   minify: boolean = false;
 
+  @Input()
+  horizontal: boolean = false;
+
   ngOnInit(): void {
     // This is intentional
   }
