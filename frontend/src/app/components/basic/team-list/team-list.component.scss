@@ -7,7 +7,7 @@ team-card {
 .team-list {
   display: block;
   height: 60vh;
-  overflow-y: auto;
+  overflow: auto;
   min-height: 460px;
 }
 
@@ -31,6 +31,12 @@ team-card {
 
 .mat-card-header .mat-card-subtitle {
   font-size: 12px;
+}
+
+.team-grid.grid {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: auto auto;
 }
 
 @media screen and (max-height: 800px) {
