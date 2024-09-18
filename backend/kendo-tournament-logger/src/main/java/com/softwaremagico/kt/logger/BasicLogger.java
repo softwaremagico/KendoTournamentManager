@@ -106,7 +106,12 @@ public abstract class BasicLogger {
      */
     public static void debug(Logger logger, String messageTemplate, Object... arguments) {
         if (logger.isDebugEnabled()) {
-            logger.debug(messageTemplate, arguments);
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                }
+            }
+            logger.debug(messageTemplate.replaceAll("[\n\r]", "_"), arguments);
         }
     }
 
@@ -171,15 +176,24 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void errorMessageNotification(Logger logger, String className, String messageTemplate, Object... arguments) {
-        severe(logger, className, messageTemplate, arguments);
+        if (logger.isErrorEnabled()) {
+            severe(logger, className, messageTemplate, arguments);
+            //sendByEmail(logger, className, messageTemplate, arguments);
+        }
     }
 
     public static void errorMessageNotification(Logger logger, String messageTemplate, Object... arguments) {
-        severe(logger, messageTemplate, arguments);
+        if (logger.isErrorEnabled()) {
+            severe(logger, messageTemplate, arguments);
+            //sendByEmail(logger, messageTemplate, arguments);
+        }
     }
 
     public static void errorMessageNotification(Logger logger, String className, Throwable throwable) {
-        logger.error("Exception on class {}:\n", className, throwable);
+        if (logger.isErrorEnabled()) {
+            logger.error("Exception on class {}:\n", className, throwable);
+            //sendByEmail(logger, className, getStackTrace(throwable));
+        }
     }
 
 
