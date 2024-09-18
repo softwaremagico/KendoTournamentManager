@@ -62,6 +62,20 @@ export class TeamService {
       );
   }
 
+  getRemainingFromTournament(tournament: Tournament): Observable<Team[]> {
+    const url: string = `${this.baseUrl}/remaining/tournaments/${tournament.id}`;
+    return this.http.get<Team[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched teams from tournament ${tournament.name}`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Team[]>(`get from tournament ${tournament}`))
+      );
+  }
+
+
   deleteById(id: number): Observable<number> {
     const url: string = `${this.baseUrl}/${id}`;
     return this.http.delete<number>(url)
