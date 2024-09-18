@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TeamListData} from "./team-list-data";
+import {Team} from "../../../models/team";
 
 @Component({
   selector: 'team-list',
@@ -20,6 +21,9 @@ export class TeamListComponent implements OnInit {
   @Input()
   grid: boolean = false;
 
+  @Input()
+  teamsDragDisabled: Team[] = [];
+
   ngOnInit(): void {
     // This is intentional
   }
@@ -30,6 +34,10 @@ export class TeamListComponent implements OnInit {
 
   reset() {
     this.teamListData.filter('');
+  }
+
+  public isDragDisabled(team: Team): boolean {
+    return this.teamsDragDisabled && this.teamsDragDisabled.indexOf(team) >= 0;
   }
 
 }
