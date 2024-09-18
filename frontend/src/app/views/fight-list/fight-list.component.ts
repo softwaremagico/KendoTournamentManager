@@ -36,6 +36,7 @@ import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
 import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
+import {SenbatsuFightDialogBoxComponent} from "./senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.component";
 
 @Component({
   selector: 'app-fight-list',
@@ -425,8 +426,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       fight.shiaijo = 0;
       fight.level = this.selectedGroup.level;
       fight.duels = [];
-      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight,
-        this.tournament.type == TournamentType.SENBATSU, this.tournament.type !== TournamentType.SENBATSU);
+      this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight);
     } else {
       this.messageService.warningMessage('errorFightNotSelected');
     }
@@ -473,25 +473,46 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined, horizontalTeams: boolean, grid: boolean): void {
+  openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined): void {
+    const horizontalTeams: boolean = this.tournament.type === TournamentType.SENBATSU;
+    const grid: boolean = this.tournament.type !== TournamentType.SENBATSU;
     const height: string = horizontalTeams ? '550px' : '95vh';
-    const dialogRef = this.dialog.open(FightDialogBoxComponent, {
-      width: '90vw',
-      height: height,
-      maxWidth: '1000px',
-      data: {
-        title: 'Add a new Fight',
-        action: Action.Add,
-        entity: fight,
-        group: group,
-        previousFight: afterFight,
-        tournament: this.tournament,
-        swappedColors: this.swappedColors,
-        swappedTeams: this.swappedTeams,
-        horizontalTeams: horizontalTeams,
-        grid: grid,
-      }
-    });
+    let dialogRef;
+    if (this.tournament.type == TournamentType.SENBATSU) {
+      dialogRef = this.dialog.open(SenbatsuFightDialogBoxComponent, {
+        width: '90vw',
+        height: height,
+        maxWidth: '1000px',
+        data: {
+          action: Action.Add,
+          entity: fight,
+          group: group,
+          previousFight: afterFight,
+          tournament: this.tournament,
+          swappedColors: this.swappedColors,
+          swappedTeams: this.swappedTeams,
+          horizontalTeams: horizontalTeams,
+          grid: grid,
+        }
+      });
+    } else {
+      dialogRef = this.dialog.open(FightDialogBoxComponent, {
+        width: '90vw',
+        height: height,
+        maxWidth: '1000px',
+        data: {
+          action: Action.Add,
+          entity: fight,
+          group: group,
+          previousFight: afterFight,
+          tournament: this.tournament,
+          swappedColors: this.swappedColors,
+          swappedTeams: this.swappedTeams,
+          horizontalTeams: horizontalTeams,
+          grid: grid,
+        }
+      });
+    }
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
@@ -906,4 +927,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
     this.resetFilter();
   }
+
+  protected readonly TournamentType = TournamentType;
 }

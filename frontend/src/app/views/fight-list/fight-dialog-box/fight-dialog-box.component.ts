@@ -39,13 +39,12 @@ export class FightDialogBoxComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<FightDialogBoxComponent>,
-    private teamService: TeamService,
-    private fightService: FightService,
-    private groupServices: GroupService,
-    private messageService: MessageService,
-    private groupUpdatedService: GroupUpdatedService,
+    protected teamService: TeamService,
+    protected fightService: FightService,
+    protected groupServices: GroupService,
+    protected messageService: MessageService,
+    protected groupUpdatedService: GroupUpdatedService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-      title: string,
       action: Action,
       entity: Fight,
       group: Group,
@@ -60,7 +59,6 @@ export class FightDialogBoxComponent implements OnInit {
     this.group = data.group;
     this.previousFight = data.previousFight;
     this.fight = data.entity;
-    this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
@@ -71,12 +69,16 @@ export class FightDialogBoxComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
-      teams.sort(function (a: Team, b: Team) {
+    this.getTeams();
+  }
+
+  getTeams(): void {
+    this.teamService.getRemainingFromTournament(this.tournament).subscribe((_teams: Team[]): void => {
+      _teams.sort(function (a: Team, b: Team) {
         return a.name.localeCompare(b.name);
       });
-      this.teamListData.teams = teams;
-      this.teamListData.filteredTeams = teams;
+      this.teamListData.teams = _teams;
+      this.teamListData.filteredTeams = _teams;
     });
   }
 
