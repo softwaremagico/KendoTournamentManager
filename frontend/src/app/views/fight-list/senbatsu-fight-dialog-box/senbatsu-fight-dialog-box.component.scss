@@ -1,0 +1,110 @@
+.mat-dialog-container {
+  max-width: 1010px;
+}
+
+.mat-dialog-actions {
+  display: block;
+  text-align: center;
+  padding: 0;
+}
+
+.fights-creator {
+  display: flex;
+  flex-direction: column;
+  height: 95%;
+}
+
+.fights-creator.horizontal {
+  height: 90%;
+}
+
+.teams-container {
+  overflow: hidden;
+  margin-left: 50px;
+  margin-right: 50px;
+  height: 75%;
+}
+
+.teams-container.horizontal {
+  max-height: 220px;
+  overflow: unset;
+}
+
+.roles-location.ng-star-inserted {
+  padding-bottom: 30px;
+  padding-right: 20px;
+}
+
+.team {
+  min-height: 200px;
+  border-color: #c3d1e1;
+  border-radius: 15px;
+  border-style: dotted;
+  overflow: auto;
+}
+
+.teams {
+  overflow: auto;
+  padding-left: 10px;
+}
+
+.team-list {
+  padding-right: 10px;
+  min-height: 20vh;
+  max-height: 400px;
+}
+
+.team-list > horizontal {
+  min-height: 5vh;
+  max-height: 20px;
+}
+
+.mat-raised-button {
+  width: 150px;
+}
+
+.new-fight-title {
+  display: flex;
+  width: 100%;
+  padding-top: 20px;
+}
+
+.teams-title {
+  width: 100%;
+  text-align: center;
+  background-color: var(--contrast-color);
+  border-width: 2px;
+  border-color: white;
+  border-style: solid;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.red-ribbon {
+  color: red;
+}
+
+.white-ribbon {
+  color: white;
+}
+
+.new-fight {
+  display: flex;
+  height: 140px;
+  padding-bottom: 20px;
+}
+
+.team-selected {
+  border: 2px solid #011d4a;
+  min-height: 140px;
+  height: 140px;
+  width: 100%;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+
+
+
+
+

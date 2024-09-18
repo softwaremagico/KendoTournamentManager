@@ -46,10 +46,9 @@ import java.util.Objects;
 
 @Service
 public class SenbatsuTournamentHandler extends LeagueHandler {
-    private static final int DEFAULT_CHALLENGE_DISTANCE = 3;
+    public static final int DEFAULT_CHALLENGE_DISTANCE = 3;
     private final FightProvider fightProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
-    private final TeamProvider teamProvider;
 
     public SenbatsuTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider,
                                      RankingProvider rankingProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
@@ -57,7 +56,6 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
         super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
         this.fightProvider = fightProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
-        this.teamProvider = teamProvider;
     }
 
     @Override
@@ -89,7 +87,7 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
 
     public List<Team> getNextTeamsOrderedByRanks(Tournament tournament, Fight ignoredFight) {
         final Group group = getFirstGroup(tournament);
-        final List<Team> tournamentTeams = new ArrayList<>(teamProvider.getAll(tournament));
+        final List<Team> tournamentTeams = new ArrayList<>(group.getTeams());
         //Reorder the teams.
         final List<Fight> fights = fightProvider.getFights(tournament);
         for (Fight checkedFight : fights) {
@@ -109,13 +107,8 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
 
 
     public int getChallengeDistance(Tournament tournament) {
-        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE);
-        if (extraProperty == null) {
-            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE, String.valueOf(DEFAULT_CHALLENGE_DISTANCE)));
-        }
-
+        final TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE, DEFAULT_CHALLENGE_DISTANCE);
         try {
             return Integer.parseInt(extraProperty.getPropertyValue());
         } catch (Exception e) {
