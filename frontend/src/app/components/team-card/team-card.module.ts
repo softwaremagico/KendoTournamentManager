@@ -4,6 +4,8 @@ import {TeamCardComponent} from "./team-card.component";
 import {MatCardModule} from "@angular/material/card";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {TranslateModule} from "@ngx-translate/core";
+import {MatIconModule} from "@angular/material/icon";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 
 @NgModule({
@@ -11,11 +13,13 @@ import {TranslateModule} from "@ngx-translate/core";
   exports: [
     TeamCardComponent
   ],
-  imports: [
-    CommonModule,
-    MatCardModule,
-    DragDropModule,
-    TranslateModule
-  ]
+    imports: [
+        CommonModule,
+        MatCardModule,
+        DragDropModule,
+        TranslateModule,
+        MatIconModule,
+        MatTooltipModule
+    ]
 })
 export class TeamCardModule { }

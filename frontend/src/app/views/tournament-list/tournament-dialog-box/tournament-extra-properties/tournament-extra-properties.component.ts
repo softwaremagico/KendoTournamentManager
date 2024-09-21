@@ -28,6 +28,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   //Enable
   canMaximizeFights: boolean;
   needsDrawResolution: boolean;
+  canSelectChallengeDistance: boolean;
   needsFifoWinner: boolean;
   canResolveOddFightsAsap: boolean;
   canAvoidDuplicatedFights: boolean;
@@ -38,6 +39,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
   selectedDrawResolution: DrawResolution;
   avoidDuplicatedFights: boolean;
   resolveOddFightsAsap: boolean;
+  challengeDistance: number;
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, tournament: Tournament },
               public dialogRef: MatDialogRef<TournamentExtraPropertiesComponent>, rbacService: RbacService, public translateService: TranslateService,
@@ -50,6 +52,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     this.drawResolution = DrawResolution.toArray();
     this.canMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
+    this.canSelectChallengeDistance = TournamentType.canSelectChallengeDistance(this.tournament.type);
     this.needsFifoWinner = TournamentType.needsFifoWinner(this.tournament.type);
     this.canAvoidDuplicatedFights = TournamentType.avoidsDuplicatedFights(this.tournament.type);
     this.canResolveOddFightsAsap = TournamentType.resolveOddFightsAsap(this.tournament.type);
@@ -76,6 +79,9 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
           if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
             this.resolveOddFightsAsap = (_tournamentProperty.propertyValue.toLowerCase() == "true");
           }
+          if (_tournamentProperty.propertyKey == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
+            this.challengeDistance = isNaN(+_tournamentProperty.propertyValue) ? TournamentExtraPropertyKey.senbatsuChallengeDistance() : Number(_tournamentProperty.propertyValue);
+          }
         }
       }
     });
@@ -87,6 +93,7 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     this.firstInFirstOut = TournamentExtraPropertyKey.getDefaultLeagueFightsOrderGeneration();
     this.avoidDuplicatedFights = TournamentExtraPropertyKey.avoidDuplicateFightsGeneration();
     this.resolveOddFightsAsap = TournamentExtraPropertyKey.oddFightsResolvedAsap();
+    this.challengeDistance = TournamentExtraPropertyKey.senbatsuChallengeDistance();
   }
 
   getDrawResolutionTranslationTag(drawResolution: DrawResolution): string {
@@ -110,6 +117,17 @@ export class TournamentExtraPropertiesComponent extends RbacBasedComponent imple
     tournamentProperty.tournament = this.tournament;
     tournamentProperty.propertyValue = drawResolution;
     tournamentProperty.propertyKey = TournamentExtraPropertyKey.KING_DRAW_RESOLUTION;
+    this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
+      this.messageService.infoMessage('infoTournamentUpdated');
+    });
+  }
+
+  selectChallengeDistance(challengeDistance: number): void {
+    this.challengeDistance = challengeDistance;
+    const tournamentProperty: TournamentExtendedProperty = new TournamentExtendedProperty();
+    tournamentProperty.tournament = this.tournament;
+    tournamentProperty.propertyValue = challengeDistance + "";
+    tournamentProperty.propertyKey = TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE;
     this.tournamentExtendedPropertiesService.update(tournamentProperty).subscribe((): void => {
       this.messageService.infoMessage('infoTournamentUpdated');
     });

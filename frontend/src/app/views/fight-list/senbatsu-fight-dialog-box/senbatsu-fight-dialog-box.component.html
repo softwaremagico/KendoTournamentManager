@@ -1,9 +1,13 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div cdkDropListGroup class="fights-creator" [ngClass]="{'horizontal' : horizontalTeams }">
   <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
+       [cdkDropListOrientation]="(horizontalTeams?'horizontal':'vertical')"
+       cdkDropListSortingDisabled
        cdkDropList
        class="teams-container" [ngClass]="{'horizontal' : horizontalTeams }">
-    <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [grid]="grid" [ngClass]="{'horizontal' : horizontalTeams }"></team-list>
+    <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [grid]="grid" [ngClass]="{'horizontal' : horizontalTeams }"
+    [teamsDragDisabled]="teamDragDisabled">
+    </team-list>
   </div>
   <div class="new-fight-title">
     <h2 [class.red-ribbon]="!swappedColors" [class.white-ribbon]="swappedColors"
@@ -14,11 +18,8 @@
       translate)}}</h2>
   </div>
   <div class="new-fight">
-    <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam1"
-         [cdkDropListEnterPredicate]="checkDroppedElement"
-         [cdkDropListSortingDisabled]="false" cdkDropList
-         class="team-selected">
-      <app-team-card *ngFor="let team of selectedTeam1" [team]="team"></app-team-card>
+    <div class="team-selected">
+      <app-team-card [disableDrag]="true" *ngFor="let team of selectedTeam1" [team]="team"></app-team-card>
     </div>
     <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="selectedTeam2"
          [cdkDropListEnterPredicate]="checkDroppedElement"
