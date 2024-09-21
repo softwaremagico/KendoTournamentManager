@@ -5,7 +5,8 @@ export enum TournamentType {
   // CUSTOM_CHAMPIONSHIP = 'CUSTOM_CHAMPIONSHIP',
   KING_OF_THE_MOUNTAIN = 'KING_OF_THE_MOUNTAIN',
   BUBBLE_SORT = 'BUBBLE_SORT',
-  CUSTOMIZED = 'CUSTOMIZED'
+  CUSTOMIZED = 'CUSTOMIZED',
+  SENBATSU = 'SENBATSU'
 }
 
 export namespace TournamentType {
@@ -46,6 +47,10 @@ export namespace TournamentType {
 
   export function needsDrawResolution(type: TournamentType | undefined): boolean {
     return type === TournamentType.KING_OF_THE_MOUNTAIN || type === TournamentType.BUBBLE_SORT;
+  }
+
+  export function canSelectChallengeDistance(type: TournamentType | undefined): boolean {
+    return type === TournamentType.SENBATSU;
   }
 
   export function needsFifoWinner(type: TournamentType | undefined): boolean {

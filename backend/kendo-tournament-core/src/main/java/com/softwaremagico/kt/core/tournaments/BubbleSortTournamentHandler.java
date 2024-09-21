@@ -76,8 +76,6 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
         //Reset the counter.
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
                 TournamentExtraPropertyKey.KING_INDEX, "1"));
-        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                TournamentExtraPropertyKey.BUBBLE_SORT_ITERATION, "0"));
         return fights;
     }
 
@@ -250,7 +248,7 @@ public class BubbleSortTournamentHandler extends LeagueHandler {
                             teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());
                             break;
                         case OLDEST_ELIMINATED, BOTH_ELIMINATED:
-                            //Both cannot be on bubble sort!
+                            //Both_eliminated cannot be on bubble sort!
                         default:
                             //Oldest is Team1 always.
                             teams.add(0, group.getFights().get(group.getFights().size() - 1).getTeam2());

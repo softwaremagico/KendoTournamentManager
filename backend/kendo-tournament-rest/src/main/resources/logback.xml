@@ -57,7 +57,7 @@
     <logger name="com.softwaremagico.kt.logger.RestServerLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <logger name="com.softwaremagico.kt.logger.JwtFilterLogger" additivity="false" level="DEBUG">
+    <logger name="com.softwaremagico.kt.logger.JwtFilterLogger" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <logger name="com.softwaremagico.kt.logger.RestServerExceptionLogger" additivity="false" level="INFO">
