@@ -692,6 +692,14 @@
       "bronze": "You have dethroned the king, climbing at least three positions.",
       "silver": "You have dethroned the king, climbing at least five positions.",
       "gold": "You have dethroned the king, climbing at least seven positions."
+    },
+    "climbTheLadder": {
+      "title": "Climb the Ladder",
+      "description": "Climb several steps in the Senbatsu tournament.",
+      "normal": "Go up three steps.",
+      "bronze": "Go up four steps.",
+      "silver": "Go up five steps.",
+      "gold": "Go up seven steps."
     }
   },
   "removeTeams": "Remove Teams",
