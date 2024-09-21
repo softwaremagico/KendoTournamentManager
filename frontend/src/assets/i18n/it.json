@@ -681,6 +681,14 @@
       "bronze": "Hai detronizzato il re, scalando almeno tre posizioni.",
       "silver": "Hai detronizzato il re, scalando almeno cinque posizioni.",
       "gold": "Hai detronizzato il re, scalando almeno sette posizioni."
+    },
+    "climbTheLadder": {
+      "title": "Sali le scale",
+      "description": "Sali diversi gradini nel torneo Senbatsu.",
+      "normal": "Sali tre gradini.",
+      "bronze": "Sali quattro gradini.",
+      "silver": "Sali cinque gradini.",
+      "gold": "Sali sette gradini."
     }
   },
   "removeTeams": "Rimuovi squadre",
@@ -702,5 +710,9 @@
   "oddFightsResolvedAsap": "Risolvere le esenzioni senza combattimenti il prima possibile",
   "oddFightsResolvedAsapHint": "Se il numero di squadre o gruppi nel torneo è dispari, è possibile che durante le partite alcune squadre non abbiano partite associate e si qualifichino automaticamente alla fase successiva (esenzioni). Con questa opzione ti assicuri che questi casi vengano risolti il prima possibile.",
   "bubbleSort": "Torneo Detronizzare il Re",
-  "bubbleSortHint": "I concorrenti con ranghi inferiori cercano di salire nella loro classifica fino a battere il re. Chi non ci riesce diventa suo vassallo e combatte per proteggere il re."
+  "bubbleSortHint": "I concorrenti con ranghi inferiori cercano di salire nella loro classifica fino a battere il re. Chi non ci riesce diventa suo vassallo e combatte per proteggere il re.",
+  "senbatsu": "Senbatsu",
+  "senbatsuHint": "I concorrenti vengono classificati in base alla loro abilità. L'idea è quella di \"salire la scala\" sconfiggendo la persona sopra di te e prendendo il suo posto sulla scala. Partendo dal basso, un concorrente può sfidare un'altra persona, solitamente due o tre \"pioli\" sopra di lui. Se vince, prende il suo posto e l'avversario viene eliminato. Se perdi sei eliminato.",
+  "senbatsuRungLength": "Distanza tra i desafíos",
+  "senbatsuRungLengthHint": "La massima disparità consentita nell'abilità tra due concorrenti allo scopo di stabilire una sfida."
 }
