@@ -31,7 +31,6 @@ import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
-import com.softwaremagico.kt.persistence.entities.Element;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -42,7 +41,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -101,6 +99,21 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
                     Collections.swap(tournamentTeams, tournamentTeams.indexOf(checkedFight.getTeam1()), tournamentTeams.indexOf(checkedFight.getTeam2()));
                     //And remove the challenged.
                     tournamentTeams.remove(checkedFight.getTeam2());
+                }
+            }
+        }
+        return tournamentTeams;
+    }
+
+    public List<Team> getFinalRanking(Tournament tournament) {
+        final Group group = getFirstGroup(tournament);
+        final List<Team> tournamentTeams = new ArrayList<>(group.getTeams());
+        //Reorder the teams.
+        final List<Fight> fights = group.getFights();
+        for (Fight checkedFight : fights) {
+            if (checkedFight.isOver()) {
+                if (Objects.equals(checkedFight.getWinner(), checkedFight.getTeam1())) {
+                    Collections.swap(tournamentTeams, tournamentTeams.indexOf(checkedFight.getTeam1()), tournamentTeams.indexOf(checkedFight.getTeam2()));
                 }
             }
         }
