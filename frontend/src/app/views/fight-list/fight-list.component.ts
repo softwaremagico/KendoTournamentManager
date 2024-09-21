@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
@@ -207,6 +207,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       }
     });
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (event.key === 't') {
+      this.showTimer(!this.timer);
+    }
   }
 
   private replaceGroup(group: Group): void {
