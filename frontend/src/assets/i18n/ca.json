@@ -687,6 +687,14 @@
       "bronze": "Has destronat el rei, escalant almenys tres posicions.",
       "silver": "Has destronat el rei, escalant almenys cinc posicions.",
       "gold": "Has destronat el rei, escalant almenys set posicions."
+    },
+    "climbTheLadder": {
+      "title": "Pujar l'escala",
+      "description": "Puja diversos graons al torneig Senbatsu.",
+      "normal": "Puja tres graons.",
+      "bronze": "Puja quatre graons.",
+      "silver": "Puja cinc graons.",
+      "gold": "Puja set graons."
     }
   },
   "removeTeams": "Treure Equips",

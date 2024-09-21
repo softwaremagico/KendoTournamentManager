@@ -675,6 +675,14 @@
       "bronze": "Je hebt de koning onttroond en bent minstens drie posities gestegen.",
       "silver": "Je hebt de koning onttroond en bent minstens vijf posities gestegen.",
       "gold": "Je hebt de koning onttroond en bent minstens zeven posities gestegen."
+    },
+    "climbTheLadder": {
+      "title": "Beklim de trap",
+      "description": "Beklim verschillende treden in het Senbatsu-toernooi",
+      "normal": "Ga drie treden omhoog.",
+      "bronze": "Ga vier treden omhoog.",
+      "silver": "Ga vijf treden omhoog.",
+      "gold": "Ga zeven treden omhoog."
     }
   },
   "removeTeams": "Teams verwijderen",
