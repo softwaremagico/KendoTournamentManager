@@ -675,6 +675,14 @@
       "bronze": "Sie haben den König entthront und sind um mindestens drei Positionen nach oben geklettert.",
       "silver": "Sie haben den König entthront und sind um mindestens fünf Positionen nach oben geklettert.",
       "gold": "Sie haben den König entthront und sind um mindestens sieben Positionen nach oben geklettert."
+    },
+    "climbTheLadder": {
+      "title": "Steige die Treppe hinauf",
+      "description": "Erklimmen Sie beim Senbatsu-Turnier mehrere Stufen.",
+      "normal": "Gehen Sie drei Stufen hinauf.",
+      "bronze": "Gehen Sie vier Stufen hinauf.",
+      "silver": "Gehen Sie fünf Stufen hinauf.",
+      "gold": "Gehen Sie sieben Stufen hinauf."
     }
   },
   "removeTeams": "Teams entfernenn",
@@ -696,5 +704,9 @@
   "oddFightsResolvedAsap": "Ausnahmen so schnell wie möglich kampflos lösen",
   "oddFightsResolvedAsapHint": "Wenn die Anzahl der Mannschaften oder Gruppen im Turnier ungerade ist, ist es möglich, dass einige Mannschaften während der Spiele keine zugehörigen Spiele haben und sich automatisch für die nächste Phase qualifizieren. Mit dieser Option stellen Sie sicher, dass diese Fälle schnellstmöglich gelöst werden.",
   "bubbleSort": "Entthrone das Königsturnier",
-  "bubbleSortHint": "Konkurrenten mit niedrigeren Rängen versuchen in ihrer Rangliste aufzusteigen, bis sie den König schlagen. Wem es nicht gelingt, wird sein Vasall und kämpft für den Schutz des Königs."
+  "bubbleSortHint": "Konkurrenten mit niedrigeren Rängen versuchen in ihrer Rangliste aufzusteigen, bis sie den König schlagen. Wem es nicht gelingt, wird sein Vasall und kämpft für den Schutz des Königs.",
+  "senbatsu": "Senbatsu",
+  "senbatsuHint": "Die Teilnehmer werden nach ihrem Können eingestuft. Die Idee besteht darin, „die Leiter zu erklimmen“, indem man die Person über einem besiegt und ihren Platz auf der Leiter einnimmt. Von unten beginnend kann ein Teilnehmer eine andere Person herausfordern, normalerweise zwei oder drei „Sprossen“ über ihm. Wenn er gewinnt, nimmt er seinen Platz ein und der Gegner scheidet aus. Wenn Sie verlieren, werden Sie eliminiert.",
+  "senbatsuRungLength": "Distanz zwischen Desafíos",
+  "senbatsuRungLengthHint": "Der maximal zulässige Leistungsunterschied zwischen zwei Teilnehmern zum Zwecke der Festlegung einer Herausforderung."
 }

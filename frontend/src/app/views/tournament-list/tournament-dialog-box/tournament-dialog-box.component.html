@@ -34,12 +34,13 @@
              placeholder="{{'tournamentShiaijos' | translate}}"
              required>
     </mat-form-field>
-    <mat-form-field *ngIf="actionName != 'Delete'">
+    <mat-form-field *ngIf="actionName != 'Delete'  && tournament && tournament.type!== TournamentType.SENBATSU">
       <input [readonly]="!rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)" formControlName="teamSize" matInput
              placeholder="{{'tournamentTeamSize' | translate}}">
     </mat-form-field>
     <div class="types">
-      <mat-form-field *ngIf="actionName != 'Delete' && tournament && tournament.type!== TournamentType.BUBBLE_SORT">
+      <mat-form-field
+        *ngIf="actionName != 'Delete' && tournament && tournament.type!== TournamentType.BUBBLE_SORT && tournament.type!== TournamentType.SENBATSU">
         <mat-label>{{ 'scoreRules' | translate }}</mat-label>
         <mat-select [(value)]="tournament.tournamentScore.scoreType" [matTooltipShowDelay]="1000"
                     formControlName="scoreTypes"
