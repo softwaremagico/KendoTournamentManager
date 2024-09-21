@@ -179,27 +179,17 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     }
 
     public TournamentExtraProperty getKingIndex(Tournament tournament) {
-        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.KING_INDEX);
-        if (extraProperty == null) {
-            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.KING_INDEX, "1"));
-        } else {
-            //It is lazy the tournament.
-            extraProperty.setTournament(tournamentRepository.findById(extraProperty.getTournament().getId()).orElse(null));
-        }
+        final TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.KING_INDEX, "1");
+        //It is lazy the tournament.
+        extraProperty.setTournament(tournamentRepository.findById(extraProperty.getTournament().getId()).orElse(null));
         return extraProperty;
     }
 
 
     public DrawResolution getDrawResolution(Tournament tournament) {
-        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.KING_DRAW_RESOLUTION);
-        if (extraProperty == null) {
-            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.BOTH_ELIMINATED.name()));
-        }
-
+        final TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.BOTH_ELIMINATED.name());
         return DrawResolution.getFromTag(extraProperty.getPropertyValue());
     }
 }

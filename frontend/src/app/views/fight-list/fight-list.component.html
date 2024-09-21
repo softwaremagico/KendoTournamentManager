@@ -20,7 +20,8 @@
         </button>
         <button (click)="addElement()"
                 *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities()) && tournament && tournament.type !== bubbleSortType"
-                [disabled]="tournament && tournament.locked" [matTooltipShowDelay]="500"
+                [disabled]="tournament && (tournament.locked || (tournament.type == TournamentType.SENBATSU && this.selectedGroup?.teams?.length == 0))"
+                [matTooltipShowDelay]="500"
                 class="add-button"
                 color="primary" mat-button
                 matTooltip="{{'addFight' | translate}}">
