@@ -681,6 +681,14 @@
       "bronze": "Hai detronizzato il re, scalando almeno tre posizioni.",
       "silver": "Hai detronizzato il re, scalando almeno cinque posizioni.",
       "gold": "Hai detronizzato il re, scalando almeno sette posizioni."
+    },
+    "climbTheLadder": {
+      "title": "Sali le scale",
+      "description": "Sali diversi gradini nel torneo Senbatsu.",
+      "normal": "Sali tre gradini.",
+      "bronze": "Sali quattro gradini.",
+      "silver": "Sali cinque gradini.",
+      "gold": "Sali sette gradini."
     }
   },
   "removeTeams": "Rimuovi squadre",

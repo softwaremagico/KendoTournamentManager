@@ -688,6 +688,14 @@
       "bronze": "Has destronado al rey, escalando al menos tres posiciones.",
       "silver": "Has destronado al rey, escalando al menos cinco posiciones.",
       "gold": "Has destronado al rey, escalando al menos siete posiciones."
+    },
+    "climbTheLadder": {
+      "title": "Subir la escalera",
+      "description": "Sube varios escalones en el torneo Senbatsu.",
+      "normal": "Sube tres escalones.",
+      "bronze": "Sube cuatro escalones.",
+      "silver": "Sube cinco escalones.",
+      "gold": "Sube siete escalones."
     }
   },
   "removeTeams": "Quitar equipos",
