@@ -21,8 +21,12 @@ package com.softwaremagico.kt.core.tests;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.AchievementController;
 import com.softwaremagico.kt.core.controller.FightController;
+import com.softwaremagico.kt.core.controller.models.AchievementDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.FightConverter;
 import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
@@ -45,6 +49,8 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -111,7 +117,14 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private TournamentConverter tournamentConverter;
 
+    @Autowired
+    private AchievementController achievementController;
+
+    @Autowired
+    private FightConverter fightConverter;
+
     private Club club;
+
 
     @Test
     public void addClub() {
@@ -231,6 +244,11 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null);
 
+        //Save the fight at group.
+        Group group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group.getFights().add(fightConverter.reverse(fight));
+        groupProvider.save(group);
+
         //Ensure team03 is eliminated
         teams = senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null);
         Assert.assertEquals(teams.size(), TEAMS - 1);
@@ -246,18 +264,119 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
         fight = fightController.create(fight, null);
         fightController.generateDuels(fight, null);
 
-        //Wins Team02.
+        //Wins Team01.
+        fight.getDuels().get(0).addCompetitor2Score(Score.DO);
+        fight.getDuels().forEach(duel -> duel.setFinished(true));
+        fightController.update(fight, null);
+
+        //Save the fight at group.
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group.getFights().add(fightConverter.reverse(fight));
+        groupProvider.save(group);
+
+        //Ensure Team02 and Team03 are eliminated
+        teams = senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null);
+        Assert.assertEquals(teams.size(), TEAMS - 2);
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team03")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team02")));
+        Assert.assertTrue(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team01")));
+
+        //Now Team01 again. Agains Team04
+        fight = new FightDTO(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
+                teamConverter.convert(new TeamConverterRequest(teams.get(0))),
+                teamConverter.convert(new TeamConverterRequest(teams.get(1))), 0, 0);
+        Assert.assertEquals(fight.getTeam1().getName(), "Team01");
+        Assert.assertEquals(fight.getTeam2().getName(), "Team04");
+        fight = fightController.create(fight, null);
+        fightController.generateDuels(fight, null);
+
+        //Wins Team01.
         fight.getDuels().get(0).addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
         fightController.update(fight, null);
 
-        //Ensure Team01 and Team03 are eliminated
-        teams = senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null);
-        Assert.assertEquals(teams.size(), TEAMS - 2);
-        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team03")));
-        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team01")));
-        Assert.assertTrue(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team02")));
+        //Save the fight at group.
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group.getFights().add(fightConverter.reverse(fight));
+        groupProvider.save(group);
 
+        //Ensure Team04, Team02 and Team03 are eliminated
+        teams = senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null);
+        Assert.assertEquals(teams.size(), TEAMS - 3);
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team03")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team02")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team04")));
+        Assert.assertTrue(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team01")));
+
+        //Now Team01 again, but vs. Team06.
+        fight = new FightDTO(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
+                teamConverter.convert(new TeamConverterRequest(teams.get(0))),
+                teamConverter.convert(new TeamConverterRequest(teams.get(2))), 0, 0);
+        Assert.assertEquals(fight.getTeam1().getName(), "Team01");
+        Assert.assertEquals(fight.getTeam2().getName(), "Team06");
+        fight = fightController.create(fight, null);
+        fightController.generateDuels(fight, null);
+
+        //Wins Team01.
+        fight.getDuels().get(0).addCompetitor1Score(Score.DO);
+        fight.getDuels().forEach(duel -> duel.setFinished(true));
+        fightController.update(fight, null);
+
+        //Save the fight at group.
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group.getFights().add(fightConverter.reverse(fight));
+        groupProvider.save(group);
+
+        //Ensure Team06, Team04, Team02 and Team03 are eliminated
+        teams = senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null);
+        Assert.assertEquals(teams.size(), TEAMS - 4);
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team03")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team02")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team04")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team06")));
+        Assert.assertTrue(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team01")));
+
+        //Now Team05 vs Team01
+        fight = new FightDTO(tournamentConverter.convert(new TournamentConverterRequest(tournament)),
+                teamConverter.convert(new TeamConverterRequest(teams.get(0))),
+                teamConverter.convert(new TeamConverterRequest(teams.get(1))), 0, 0);
+        Assert.assertEquals(fight.getTeam1().getName(), "Team05");
+        Assert.assertEquals(fight.getTeam2().getName(), "Team01");
+        fight = fightController.create(fight, null);
+        fightController.generateDuels(fight, null);
+
+        //Wins Team01.
+        fight.getDuels().get(0).addCompetitor2Score(Score.DO);
+        fight.getDuels().forEach(duel -> duel.setFinished(true));
+        fightController.update(fight, null);
+
+        //Save the fight at group.
+        group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
+        group.getFights().add(fightConverter.reverse(fight));
+        groupProvider.save(group);
+
+        //Ensure Team05, Team06, Team04, Team02 and Team03 are eliminated
+        teams = senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null);
+        Assert.assertEquals(teams.size(), TEAMS - 5);
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team03")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team02")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team04")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team06")));
+        Assert.assertFalse(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team05")));
+        Assert.assertTrue(teams.stream().anyMatch(team -> Objects.equals(team.getName(), "Team01")));
+    }
+
+
+    @Test(dependsOnMethods = {"createFights"})
+    public void achievementsAreGranted() {
+        final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
+        achievementController.generateAchievements(tournamentDTO);
+
+        List<AchievementDTO> achievementsDTOs = achievementController.getAchievements(tournamentDTO, AchievementType.CLIMB_THE_LADDER);
+        Assert.assertEquals(achievementsDTOs.size(), MEMBERS);
+
+        Assert.assertEquals(achievementsDTOs.get(0).getParticipant().getLastname(), "Lastname0"); //P4 -> Lastname 3
+        Assert.assertEquals(achievementsDTOs.get(0).getAchievementGrade(), AchievementGrade.SILVER);
     }
 
 
