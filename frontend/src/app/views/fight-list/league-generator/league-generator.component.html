@@ -45,7 +45,8 @@
 <div class="button-container" mat-dialog-actions>
   <button
     (click)="balancedTeams()"
-    *ngIf="(tournament.type == TournamentType.KING_OF_THE_MOUNTAIN || tournament.type == TournamentType.LOOP || tournament.type == TournamentType.BUBBLE_SORT)
+    *ngIf="(tournament.type == TournamentType.KING_OF_THE_MOUNTAIN || tournament.type == TournamentType.LOOP || tournament.type == TournamentType.BUBBLE_SORT
+    || tournament.type == TournamentType.SENBATSU)
           && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
     mat-flat-button
     mat-raised-button>
