@@ -320,7 +320,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.resetFilter();
     //Use a timeout or refresh before the components are drawn.
     setTimeout((): void => {
-      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0 && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
+      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0
+        && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT
+        && this.tournament.type !== TournamentType.SENBATSU) {
         this.showTeamsClassification(true);
       }
     }, 1000);
@@ -668,16 +670,25 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
         let showClassification: boolean = true;
         if (selectedGroup != null) {
-          // Tournament, each group must have a winner. Show for each group the winners.
-          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT) {
-            //Shows group classification. And if there is a tie score can be solved.
-            this.showClassification();
-            showClassification = false;
+          // Senbatsu, has a limited number of fights
+          if (this.tournament.type === TournamentType.SENBATSU) {
+            if (this.getFights().length < this.groups[0].teams.length - 1) {
+              this.addElement();
+            } else {
+              this.showClassification();
+            }
+          } else {
+            // Tournament, each group must have a winner. Show for each group the winners.
+            if (this.tournament.type === TournamentType.CHAMPIONSHIP && Group.isFinished(selectedGroup)) {
+              //Shows group classification. And if there is a tie score can be solved.
+              this.showClassification();
+              showClassification = false;
+            }
           }
         }
         // King of the mountain. Generate infinite fights.
         if (!this.selectFirstUnfinishedDuel()) {
-          this.generateNextFights(showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN);
+          this.generateNextFights(showClassification);
         }
       });
     }
@@ -720,7 +731,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (_fights.length > 0) {
         this.refreshFights();
       } else {
-        if (showClassification) {
+        if (showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN
+          && this.tournament.type !== TournamentType.BUBBLE_SORT && this.tournament.type !== TournamentType.SENBATSU) {
           this.showClassification();
         }
         this.finishTournament(new Date());
@@ -868,7 +880,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (const group of this.groups) {
       if (group.fights) {
         this.filteredFights.set(group.id!, group.fights.filter((fight: Fight) =>
-          (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
+          fight != null && (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
             (fight.team1 ? fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
             (fight.team2 ? fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
             (fight.team1 && fight.team1.members ? fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
