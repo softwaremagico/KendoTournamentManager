@@ -21,6 +21,8 @@ package com.softwaremagico.kt.rest.exceptions;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.InvalidChallengeDistanceException;
+import com.softwaremagico.kt.core.exceptions.InvalidFightException;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
 import com.softwaremagico.kt.core.exceptions.NoContentException;
@@ -167,6 +169,19 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> invalidGroupException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_group", ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidChallengeDistanceException.class)
+    public ResponseEntity<Object> invalidChallengeDistanceException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_challenge_distance", ex), HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(InvalidFightException.class)
+    public ResponseEntity<Object> invalidFightException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_fight", ex), HttpStatus.BAD_REQUEST);
     }
 
 

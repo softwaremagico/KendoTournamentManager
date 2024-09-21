@@ -52,6 +52,8 @@ export enum AchievementType {
 
   DETHRONE_THE_KING = 'DETHRONE_THE_KING',
 
+  CLIMB_THE_LADDER = 'CLIMB_THE_LADDER',
+
 }
 
 export namespace AchievementType {

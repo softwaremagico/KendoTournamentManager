@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -77,6 +78,11 @@ public class TournamentExtraPropertyController extends BasicInsertableController
     }
 
     public TournamentExtraPropertyDTO getByTournamentAndProperty(Integer tournamentId, TournamentExtraPropertyKey key) {
+        if (key == TournamentExtraPropertyKey.SENBATSU_CHALLENGE_DISTANCE) {
+            return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
+                            .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key,
+                    SenbatsuTournamentHandler.DEFAULT_CHALLENGE_DISTANCE));
+        }
         return convert(getProvider().getByTournamentAndProperty(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'.")), key));
     }
