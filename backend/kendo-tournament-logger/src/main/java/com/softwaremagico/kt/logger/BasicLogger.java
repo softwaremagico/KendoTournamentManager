@@ -60,8 +60,8 @@ public abstract class BasicLogger {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            final String templateWithClass = className + ": " + messageTemplate;
-            logger.warn(templateWithClass.replaceAll("[\n\r]", "_"), arguments);
+            final String templateWithClass = (className + ": " + messageTemplate).replaceAll("[\n\r]", "_");
+            logger.warn(templateWithClass, arguments);
         }
     }
 
@@ -79,7 +79,8 @@ public abstract class BasicLogger {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            logger.info(messageTemplate.replaceAll("[\n\r]", "_"), arguments);
+            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            logger.info(messageTemplate, arguments);
         }
     }
 
@@ -111,7 +112,8 @@ public abstract class BasicLogger {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            logger.debug(messageTemplate.replaceAll("[\n\r]", "_"), arguments);
+            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            logger.debug(messageTemplate, arguments);
         }
     }
 
@@ -132,6 +134,7 @@ public abstract class BasicLogger {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
+            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
             logger.debug(String.format("%s: %s", className, messageTemplate), arguments); //NOSONAR
         }
     }
@@ -150,7 +153,8 @@ public abstract class BasicLogger {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            logger.error(messageTemplate.replaceAll("[\n\r]", "_"), arguments);
+            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            logger.error(messageTemplate, arguments);
         }
     }
 
