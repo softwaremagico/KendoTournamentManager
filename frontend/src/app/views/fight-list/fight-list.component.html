@@ -116,7 +116,7 @@
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities()) ||
             (RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"></mat-divider>
         <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
-                || (tournament && tournament.type === bubbleSortType))
+                || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU))
                  && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities())"
                 [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
                 [matTooltipShowDelay]="500" color="primary"
