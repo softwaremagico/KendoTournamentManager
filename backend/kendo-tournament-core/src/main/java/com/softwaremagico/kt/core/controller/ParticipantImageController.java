@@ -63,7 +63,12 @@ public class ParticipantImageController extends BasicInsertableController<Partic
     public int deleteByParticipantId(Integer participantId) {
         final Participant participant = participantProvider.get(participantId)
                 .orElseThrow(() -> new ParticipantNotFoundException(getClass(), "No participant found with id '" + participantId + "'."));
-        return getProvider().delete(participant);
+        try {
+            return getProvider().delete(participant);
+        } finally {
+            participant.setHasAvatar(false);
+            participantProvider.save(participant);
+        }
     }
 
     public List<ParticipantImageDTO> get(List<ParticipantDTO> participantDTOS) {
