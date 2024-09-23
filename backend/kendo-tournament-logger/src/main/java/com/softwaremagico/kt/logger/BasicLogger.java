@@ -54,13 +54,13 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void warning(Logger logger, String className, String messageTemplate, Object... arguments) {
-        if (logger.isWarnEnabled()) {
+        if (logger.isWarnEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            final String templateWithClass = (className + ": " + messageTemplate).replaceAll("[\n\r]", "_");
+            final String templateWithClass = (className + ": " + messageTemplate).replaceAll("[\n\r\t]", "_");
             logger.warn(templateWithClass, arguments);
         }
     }
@@ -73,13 +73,13 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String messageTemplate, Object... arguments) {
-        if (logger.isInfoEnabled()) {
+        if (logger.isInfoEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
             logger.info(messageTemplate, arguments);
         }
     }
@@ -106,13 +106,13 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void debug(Logger logger, String messageTemplate, Object... arguments) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
             logger.debug(messageTemplate, arguments);
         }
     }
@@ -127,14 +127,14 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void debug(Logger logger, String className, String messageTemplate, Object... arguments) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled() && messageTemplate != null) {
             // Replace pattern-breaking characters
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
             logger.debug(String.format("%s: %s", className, messageTemplate), arguments); //NOSONAR
         }
     }
@@ -147,13 +147,13 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     protected static void severe(Logger logger, String messageTemplate, Object... arguments) {
-        if (logger.isErrorEnabled()) {
+        if (logger.isErrorEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
                     arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r]", "_");
+            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
             logger.error(messageTemplate, arguments);
         }
     }
