@@ -121,6 +121,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
     }
 
 
+    @Override
     @Transactional
     public FightDTO create(FightDTO dto, String username) {
         if (dto.getTournament().getType() == TournamentType.SENBATSU) {
