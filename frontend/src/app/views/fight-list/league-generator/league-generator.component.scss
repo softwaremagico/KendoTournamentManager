@@ -26,6 +26,11 @@
  // padding-bottom: 20px;
 }
 
+.header {
+  display: inline-flex;
+  height: 40px;
+}
+
 .final-team-list{
   border-color: #c3d1e1;
   border-radius: 15px;
@@ -52,4 +57,22 @@
 .extra-properties{
   margin: 20px;
   padding-bottom: 0;
+}
+
+@media screen and (max-width: 1250px) {
+  .reverse-button {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 1050px) {
+  .sorted-button {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .random-button {
+    display: none !important;
+  }
 }

@@ -725,5 +725,7 @@
   "senbatsu": "Senbatsu",
   "senbatsuHint": "Competitors are sorted on ability. The idea is to 'climb the ladder' by defeating the person above you and taking their place on the ladder. Starting from the bottom, a competitor can challenge someone else, usually two or three 'rungs' above him. If wins takes its position and the adversary is eliminated. If loses he is eliminated.",
   "senbatsuRungLength": "Challenge distance",
-  "senbatsuRungLengthHint": "The maximum allowable disparity in ability between two competitors for the purpose of establishing a challenge."
+  "senbatsuRungLengthHint": "The maximum allowable disparity in ability between two competitors for the purpose of establishing a challenge.",
+  "reverseOrder": "Reverse",
+  "reverseOrderHint": "Reverse teams' order"
 }
