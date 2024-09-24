@@ -221,10 +221,14 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
       this.teamsOrder.push(...sortedTeams.values());
       this.teamListData.teams = [];
       this.teamListData.filteredTeams = [];
-      if (this.tournament.type == TournamentType.LOOP || this.tournament.type == TournamentType.BUBBLE_SORT || this.tournament.type == TournamentType.SENBATSU) {
+      if (this.tournament.type == TournamentType.SENBATSU) {
         this.teamsOrder = this.teamsOrder.reverse();
       }
     });
+  }
+
+  reverseTeams(): void {
+    this.teamsOrder = this.teamsOrder.reverse();
   }
 
 

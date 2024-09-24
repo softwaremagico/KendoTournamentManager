@@ -119,6 +119,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
 
   addPicture(): void {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
+      panelClass: 'pop-up-panel',
       data: {
         title: "", action: Action.Add, tournament: this.tournament
       }
