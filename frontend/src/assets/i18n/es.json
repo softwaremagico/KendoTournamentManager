@@ -726,5 +726,7 @@
   "senbatsu": "Senbatsu",
   "senbatsuHint": "Los competidores se clasifican según su capacidad. La idea es 'subir la escalera' derrotando a la persona que está encima de ti y ocupando su lugar en la escalera. Comenzando desde abajo, un competidor puede desafiar a otra persona, generalmente dos o tres 'peldaños' por encima de él. Si gana toma su puesto y el adversario queda eliminado. Si pierde queda eliminado.",
   "senbatsuRungLength": "Distancia entre desafíos",
-  "senbatsuRungLengthHint": "La disparidad máxima permitida en la capacidad entre dos competidores con el fin de establecer un desafío."
+  "senbatsuRungLengthHint": "La disparidad máxima permitida en la capacidad entre dos competidores con el fin de establecer un desafío.",
+  "reverseOrder": "Invertir",
+  "reverseOrderHint": "Invertir el orden de los equipos."
 }

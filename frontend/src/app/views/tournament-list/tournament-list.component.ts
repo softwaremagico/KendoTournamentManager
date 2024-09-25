@@ -160,6 +160,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   addRoles(): void {
     if (this.basicTableData.selectedElement) {
       this.dialog.open(TournamentRolesComponent, {
+        panelClass: 'pop-up-panel',
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -170,6 +171,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   addTeams(): void {
     if (this.basicTableData.selectedElement) {
       this.dialog.open(TournamentTeamsComponent, {
+        panelClass: 'pop-up-panel',
         data: {
           tournament: this.basicTableData.selectedElement
         }
@@ -328,6 +330,7 @@ export class TournamentListComponent extends RbacBasedComponent implements OnIni
   showQrCode(): void {
     if (this.basicTableData.selectedElement) {
       const dialogRef: MatDialogRef<TournamentQrCodeComponent> = this.dialog.open(TournamentQrCodeComponent, {
+        panelClass: 'pop-up-panel',
         data: {
           tournament: this.basicTableData.selectedElement,
           port: window.location.port

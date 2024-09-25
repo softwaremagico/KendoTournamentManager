@@ -714,5 +714,7 @@
   "senbatsu": "Senbatsu",
   "senbatsuHint": "I concorrenti vengono classificati in base alla loro abilità. L'idea è quella di \"salire la scala\" sconfiggendo la persona sopra di te e prendendo il suo posto sulla scala. Partendo dal basso, un concorrente può sfidare un'altra persona, solitamente due o tre \"pioli\" sopra di lui. Se vince, prende il suo posto e l'avversario viene eliminato. Se perdi sei eliminato.",
   "senbatsuRungLength": "Distanza tra i desafíos",
-  "senbatsuRungLengthHint": "La massima disparità consentita nell'abilità tra due concorrenti allo scopo di stabilire una sfida."
+  "senbatsuRungLengthHint": "La massima disparità consentita nell'abilità tra due concorrenti allo scopo di stabilire una sfida.",
+  "reverseOrder": "Invertire",
+  "reverseOrderHint": "Invertire l'ordine delle squadre."
 }

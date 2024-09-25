@@ -730,5 +730,7 @@
   "senbatsu": "Senbatsu",
   "senbatsuHint": "Els competidors es classifiquen segons la capacitat. La idea és 'pujar l'escala' derrotant la persona que està damunt teu i ocupant el seu lloc a l'escala. Començant des de baix, un competidor pot desafiar una altra persona, generalment dos o tres esglaons per sobre d'ell. Si guanya, agafa el seu lloc i l'adversari queda eliminat. Si perd queda eliminat.",
   "senbatsuRungLength": "Distància entre desafiaments",
-  "senbatsuRungLengthHint": "La disparitat màxima permesa a la capacitat entre dos competidors per tal d'establir un desafiament."
+  "senbatsuRungLengthHint": "La disparitat màxima permesa a la capacitat entre dos competidors per tal d'establir un desafiament.",
+  "reverseOrder": "Invertir",
+  "reverseOrderHint": "Invertir l'ordre dels equips."
 }
