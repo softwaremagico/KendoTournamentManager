@@ -140,6 +140,7 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   undrawTeams(index: number): void {
     const teams: Team[] = this.getDrawWinners(index);
     this.dialog.open(UndrawTeamsComponent, {
+      panelClass: 'pop-up-panel',
       disableClose: false,
       data: {tournament: this.tournament, groupId: this.group.id, teams: teams}
     });
