@@ -79,6 +79,7 @@ export class AuthenticatedUserListComponent extends RbacBasedComponent implement
 
   openDialog(title: string, action: Action, authenticatedUser: AuthenticatedUser): void {
     const dialogRef = this.dialog.open(AuthenticatedUserDialogBoxComponent, {
+      panelClass: 'pop-up-panel',
       width: '400px',
       data: {title: title, action: action, entity: authenticatedUser}
     });
