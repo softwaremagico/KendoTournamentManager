@@ -158,8 +158,8 @@ However, using mobile devices is not advised due to screen size limitations.
 
 # Using the application
 
-For detailed information on how to use this application, you can refer to
-the  [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
+For instructions on using the application, please visit the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
+There, you will find comprehensive examples for various types of tournaments and guidance on how to configure them.
 
 ## Default credentials.
 
