@@ -708,5 +708,7 @@
   "senbatsu": "Senbatsu",
   "senbatsuHint": "De deelnemers worden gerangschikt op basis van hun vaardigheden. Het idee is om 'de ladder te beklimmen' door de persoon boven je te verslaan en diens plaats op de ladder in te nemen. Beginnend vanaf de onderkant mag een deelnemer een andere persoon uitdagen, meestal twee of drie 'sporten' boven hem. Als hij wint, neemt hij zijn plaats in en wordt de tegenstander uitgeschakeld. Als je verliest, word je geëlimineerd.",
   "senbatsuRungLength": "Afstand tussen de veilige afstanden",
-  "senbatsuRungLengthHint": "Het maximaal toegestane verschil in bekwaamheid tussen twee concurrenten met als doel een uitdaging aan te gaan."
+  "senbatsuRungLengthHint": "Het maximaal toegestane verschil in bekwaamheid tussen twee concurrenten met als doel een uitdaging aan te gaan.",
+  "reverseOrder": "Reverse",
+  "reverseOrderHint": "Draai de volgorde van de teams om."
 }
