@@ -708,5 +708,7 @@
   "senbatsu": "Senbatsu",
   "senbatsuHint": "Die Teilnehmer werden nach ihrem Können eingestuft. Die Idee besteht darin, „die Leiter zu erklimmen“, indem man die Person über einem besiegt und ihren Platz auf der Leiter einnimmt. Von unten beginnend kann ein Teilnehmer eine andere Person herausfordern, normalerweise zwei oder drei „Sprossen“ über ihm. Wenn er gewinnt, nimmt er seinen Platz ein und der Gegner scheidet aus. Wenn Sie verlieren, werden Sie eliminiert.",
   "senbatsuRungLength": "Distanz zwischen Desafíos",
-  "senbatsuRungLengthHint": "Der maximal zulässige Leistungsunterschied zwischen zwei Teilnehmern zum Zwecke der Festlegung einer Herausforderung."
+  "senbatsuRungLengthHint": "Der maximal zulässige Leistungsunterschied zwischen zwei Teilnehmern zum Zwecke der Festlegung einer Herausforderung.",
+  "reverseOrder": "Reverse",
+  "reverseOrderHint": "Kehren Sie die Reihenfolge der Teams um."
 }

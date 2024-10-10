@@ -389,6 +389,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       || this.tournament.type === TournamentType.SENBATSU) {
       dialogRef = this.dialog.open(LeagueGeneratorComponent, {
         width: '85vw',
+        panelClass: 'pop-up-panel',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
       });
     } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
@@ -489,6 +490,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     let dialogRef;
     if (this.tournament.type == TournamentType.SENBATSU) {
       dialogRef = this.dialog.open(SenbatsuFightDialogBoxComponent, {
+        panelClass: 'pop-up-panel',
         width: '90vw',
         height: height,
         maxWidth: '1000px',
@@ -506,6 +508,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       });
     } else {
       dialogRef = this.dialog.open(FightDialogBoxComponent, {
+        panelClass: 'pop-up-panel',
         width: '90vw',
         height: height,
         maxWidth: '1000px',
@@ -599,6 +602,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showTeamsClassification(fightsFinished: boolean): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
       const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
+        panelClass: 'pop-up-panel',
         width: '85vw',
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
       });
@@ -611,6 +615,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showCompetitorsClassification(): void {
     this.dialog.open(CompetitorsRankingComponent, {
+      panelClass: 'pop-up-panel',
       width: '85vw',
       data: {tournament: this.tournament}
     });
