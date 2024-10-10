@@ -53,14 +53,24 @@
     <mat-icon>auto_fix_high</mat-icon>
     {{ 'wizard' | translate }}
   </button>
+  <button
+    class="reverse-button"
+    (click)="reverseTeams()"
+    *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+    matTooltip="{{'reverseOrderHint' | translate}}"
+    mat-flat-button
+    mat-raised-button>
+    <mat-icon>loop</mat-icon>
+    {{ 'reverseOrder' | translate }}
+  </button>
   <button (click)="sortedTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-          class="fight-button" mat-flat-button
+          class="sorted-button" mat-flat-button
           mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="sorted"></mat-icon>
     {{ 'sorted' | translate }}
   </button>
   <button (click)="randomTeams()" *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
-          class="fight-button" mat-flat-button
+          class="random-button" mat-flat-button
           mat-raised-button>
     <mat-icon>casino</mat-icon>
     {{ 'random' | translate }}

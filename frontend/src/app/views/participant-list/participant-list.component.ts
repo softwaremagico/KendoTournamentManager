@@ -90,6 +90,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   openDialog(title: string, action: Action, participant: Participant): void {
     const dialogRef = this.dialog.open(ParticipantDialogBoxComponent, {
+      panelClass: 'pop-up-panel',
       width: '700px',
       data: {
         title: title, action: action, entity: participant,
@@ -159,6 +160,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
 
   showCompetitorsClassification(): void {
     this.dialog.open(CompetitorsRankingComponent, {
+      panelClass: 'pop-up-panel',
       width: '85vw',
       data: {competitor: this.basicTableData.selectedElement, showIndex: true}
     });
@@ -167,6 +169,7 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   showQrCode(): void {
     if (this.basicTableData.selectedElement) {
       const dialogRef: MatDialogRef<ParticipantQrCodeComponent> = this.dialog.open(ParticipantQrCodeComponent, {
+        panelClass: 'pop-up-panel',
         data: {
           participantId: this.basicTableData.selectedElement?.id,
           port: window.location.port
