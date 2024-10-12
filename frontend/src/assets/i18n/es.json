@@ -680,6 +680,22 @@
       "bronze": "Gana cuando ya hayas perdido tres veces contra tu oponente.",
       "silver": "Gana cuando ya hayas perdido cuatro veces contra tu oponente.",
       "gold": "Gana cuando ya hayas perdido cinco veces contra tu oponente."
+    },
+    "dethroneTheKing": {
+      "title": "Destronador de Reyes",
+      "description": "Finaliza como rey en un torneo 'Destronar al Rey' en el que no has empezado como rey o príncipe.",
+      "normal": "Has destronado al rey.",
+      "bronze": "Has destronado al rey, escalando al menos tres posiciones.",
+      "silver": "Has destronado al rey, escalando al menos cinco posiciones.",
+      "gold": "Has destronado al rey, escalando al menos siete posiciones."
+    },
+    "climbTheLadder": {
+      "title": "Subir la escalera",
+      "description": "Sube varios escalones en el torneo Senbatsu.",
+      "normal": "Sube tres escalones.",
+      "bronze": "Sube cuatro escalones.",
+      "silver": "Sube cinco escalones.",
+      "gold": "Sube siete escalones."
     }
   },
   "removeTeams": "Quitar equipos",
@@ -704,5 +720,13 @@
   },
   "daysFrom": "Aplica solo estos días",
   "oddFightsResolvedAsap": "Resuelve las exenciones sin combates lo antes posible",
-  "oddFightsResolvedAsapHint": "Si el numero de equipos o grupos del torneo es impar, es posible que durante los cruces algunos equipos no tengan combates asociados y se clasifiquen para la fase siguiente automaticamente (exenciones). Con esta opción te aseguras que estos casos se resuelven lo antes posible."
+  "oddFightsResolvedAsapHint": "Si el numero de equipos o grupos del torneo es impar, es posible que durante los cruces algunos equipos no tengan combates asociados y se clasifiquen para la fase siguiente automaticamente (exenciones). Con esta opción te aseguras que estos casos se resuelven lo antes posible.",
+  "bubbleSort": "Torneo Destronar al Rey",
+  "bubbleSortHint": "Competidores con peores rangos intentan subir en su ranking hasta ganar al rey. El que no lo consigue se convierte en su vasayo y lucha por proteger al rey.",
+  "senbatsu": "Senbatsu",
+  "senbatsuHint": "Los competidores se clasifican según su capacidad. La idea es 'subir la escalera' derrotando a la persona que está encima de ti y ocupando su lugar en la escalera. Comenzando desde abajo, un competidor puede desafiar a otra persona, generalmente dos o tres 'peldaños' por encima de él. Si gana toma su puesto y el adversario queda eliminado. Si pierde queda eliminado.",
+  "senbatsuRungLength": "Distancia entre desafíos",
+  "senbatsuRungLengthHint": "La disparidad máxima permitida en la capacidad entre dos competidores con el fin de establecer un desafío.",
+  "reverseOrder": "Invertir",
+  "reverseOrderHint": "Invertir el orden de los equipos."
 }

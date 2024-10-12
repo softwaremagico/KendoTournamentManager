@@ -31,6 +31,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   typeLeague: TournamentType = TournamentType.LEAGUE;
   typeKing: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
   typeCustom: TournamentType = TournamentType.CUSTOMIZED;
+  typeSorting: TournamentType = TournamentType.BUBBLE_SORT;
   scoreTypeCustom: ScoreType = ScoreType.CUSTOM;
   selectedScore: ScoreType;
 
@@ -118,6 +119,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
 
   addPicture(): void {
     const dialogRef = this.dialog.open(TournamentImageSelectorComponent, {
+      panelClass: 'pop-up-panel',
       data: {
         title: "", action: Action.Add, tournament: this.tournament
       }
@@ -169,4 +171,6 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
   getSeconds(time: number): number {
     return time % 60;
   }
+
+  protected readonly TournamentType = TournamentType;
 }

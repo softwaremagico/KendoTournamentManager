@@ -78,6 +78,7 @@ export class ClubListComponent extends RbacBasedComponent implements OnInit {
 
   openDialog(title: string, action: Action, club: Club): void {
     const dialogRef = this.dialog.open(ClubDialogBoxComponent, {
+      panelClass: 'pop-up-panel',
       width: '400px',
       data: {title: title, action: action, entity: club}
     });

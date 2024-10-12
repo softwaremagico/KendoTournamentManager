@@ -65,8 +65,8 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     }
 
     @Override
-    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
-        return createFights(tournament, teamsOrder, getNextLevel(tournament), createdBy);
+    public List<Fight> createInitialFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
+        return createFights(tournament, teamsOrder, 0, createdBy);
     }
 
     private int getNextLevel(Tournament tournament) {
@@ -76,10 +76,10 @@ public class KingOfTheMountainHandler extends LeagueHandler {
 
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        //Create first fight.
+        //Create the first fight.
         final List<Fight> fights = fightProvider.saveAll(kingOfTheMountainFightManager.createFights(tournament,
-                getGroup(tournament).getTeams().subList(0, 2), level, createdBy));
-        final Group group = getGroup(tournament);
+                getFirstGroup(tournament).getTeams(), level, createdBy));
+        final Group group = getFirstGroup(tournament);
         group.setFights(fights);
         groupProvider.save(group);
         //Reset the counter.
@@ -99,17 +99,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         if (lastFight.getWinner() != null) {
             newFight.setTeam1(lastFight.getWinner());
             newFight.setTeam2(getNextTeam(group.getTeams(), Collections.singletonList(lastFight.getWinner()),
-                    Collections.singletonList(lastFight.getLooser()), tournament));
+                    Collections.singletonList(lastFight.getLoser()), tournament));
         } else {
-            //Depending on the configuration.
-            TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                    TournamentExtraPropertyKey.KING_DRAW_RESOLUTION);
-            if (extraProperty == null) {
-                extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                        TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.BOTH_ELIMINATED.name()));
-            }
-
-            final DrawResolution drawResolution = DrawResolution.getFromTag(extraProperty.getPropertyValue());
+            final DrawResolution drawResolution = getDrawResolution(tournament);
             switch (drawResolution) {
                 case BOTH_ELIMINATED -> {
                     newFight.setTeam1(getNextTeam(group.getTeams(), new ArrayList<>(),
@@ -135,24 +127,16 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             }
         }
         newFight.generateDuels(createdBy);
-        //Fight is saved in group by cascade.
+        //Fight is saved in a group by cascade.
         group.getFights().add(newFight);
         groupProvider.save(group);
         return Collections.singletonList(newFight);
     }
 
 
-    private Team getNextTeam(List<Team> teams, List<Team> winners, List<Team> loosers, Tournament tournament) {
+    private Team getNextTeam(List<Team> teams, List<Team> winners, List<Team> losers, Tournament tournament) {
         final AtomicInteger kingIndex = new AtomicInteger(0);
-        TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
-                TournamentExtraPropertyKey.KING_INDEX);
-        if (extraProperty == null) {
-            extraProperty = tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournament,
-                    TournamentExtraPropertyKey.KING_INDEX, "1"));
-        } else {
-            //It is lazy the tournament.
-            extraProperty.setTournament(tournamentRepository.findById(extraProperty.getTournament().getId()).orElse(null));
-        }
+        final TournamentExtraProperty extraProperty = getKingIndex(tournament);
         try {
             kingIndex.addAndGet(Integer.parseInt(extraProperty.getPropertyValue()));
         } catch (NumberFormatException | NullPointerException e) {
@@ -166,9 +150,9 @@ public class KingOfTheMountainHandler extends LeagueHandler {
                 forbiddenWinner = kingIndex.getAndIncrement();
             }
         }
-        // Avoid to repeat a looser.
-        for (final Team looser : loosers) {
-            if (teams.indexOf(looser) == (kingIndex.get() % teams.size())) {
+        // Avoid repeating a loser.
+        for (final Team loser : losers) {
+            if (teams.indexOf(loser) == (kingIndex.get() % teams.size())) {
                 kingIndex.getAndIncrement();
                 //Avoid the new one is still the winner.
                 if (forbiddenWinner != null && (kingIndex.get() % teams.size()) == (forbiddenWinner % teams.size())) {
@@ -177,22 +161,11 @@ public class KingOfTheMountainHandler extends LeagueHandler {
             }
         }
 
-        // Get next team and save index.
+        // Get the next team and save index.
         final Team nextTeam = teams.get(kingIndex.get() % teams.size());
         extraProperty.setPropertyValue(String.valueOf(kingIndex.get()));
         tournamentExtraPropertyProvider.save(extraProperty);
         return nextTeam;
-    }
-
-    private int getMaxIndex(List<Team> listWithIndex, List<Team> elements) {
-        int index = 0;
-        for (Team element : elements) {
-            final int indexOf = listWithIndex.indexOf(element);
-            if (indexOf > index) {
-                index = indexOf;
-            }
-        }
-        return index;
     }
 
     @Override
@@ -203,5 +176,20 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     @Override
     public Group addGroup(Tournament tournament, Group group) {
         return groupProvider.addGroup(tournament, group);
+    }
+
+    public TournamentExtraProperty getKingIndex(Tournament tournament) {
+        final TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.KING_INDEX, "1");
+        //It is lazy the tournament.
+        extraProperty.setTournament(tournamentRepository.findById(extraProperty.getTournament().getId()).orElse(null));
+        return extraProperty;
+    }
+
+
+    public DrawResolution getDrawResolution(Tournament tournament) {
+        final TournamentExtraProperty extraProperty = tournamentExtraPropertyProvider.getByTournamentAndProperty(tournament,
+                TournamentExtraPropertyKey.KING_DRAW_RESOLUTION, DrawResolution.BOTH_ELIMINATED.name());
+        return DrawResolution.getFromTag(extraProperty.getPropertyValue());
     }
 }

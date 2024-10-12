@@ -59,21 +59,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Test(groups = "authApi")
 public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
 
-    private final static String USER_NEW_FIRST_NAME = "New Test";
-    private final static String USER_NEW_LAST_NAME = "New User";
+    private static final String USER_NEW_FIRST_NAME = "New Test";
+    private static final String USER_NEW_LAST_NAME = "New User";
     private static final String USER_PASSWORD = "password";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
     private static final String USER2_NAME = "user2";
-    private final static String USER2_FIRST_NAME = "Test2";
-    private final static String USER2_LAST_NAME = "User2";
+    private static final String USER2_FIRST_NAME = "Test2";
+    private static final String USER2_LAST_NAME = "User2";
     private static final String USER2_PASSWORD = "password";
 
-    private final static String USER2_NEW_FIRST_NAME = "New Test2";
-    private final static String USER2_NEW_LAST_NAME = "New  User2";
+    private static final String USER2_NEW_FIRST_NAME = "New Test2";
+    private static final String USER2_NEW_LAST_NAME = "New  User2";
 
     private MockMvc mockMvc;
 

@@ -11,6 +11,8 @@
                 <include name="simpleChampionshipTest"/>
                 <include name="loopChampionshipTest"/>
                 <include name="kingOfTheMountainTest"/>
+                <include name="bubleSortTest"/>
+                <include name="senbatsuTest"/>
                 <include name="converterTests"/>
                 <include name="scoreTests"/>
                 <include name="roleAchievementTests"/>
@@ -44,6 +46,10 @@
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainFiFoTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainLiFoTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortReversedTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortDrawTest"/>
+            <class name="com.softwaremagico.kt.core.tests.SenbatsuTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>

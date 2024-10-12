@@ -679,6 +679,22 @@
       "bronze": "Guanya quan ja hagis perdut tres vegades contra el teu oponent.",
       "silver": "Guanya quan ja hagis perdut quatre vegades contra el teu oponent.",
       "gold": "Guanya quan ja hagis perdut cinc vegades contra el teu oponent."
+    },
+    "dethroneTheKing": {
+      "title": "Destronador de Reis",
+      "description": "Finalitza com a rei en un torneig 'Destronar el Rei' en què no has començat com a rei o príncep.",
+      "normal": "Has destronat el rei.",
+      "bronze": "Has destronat el rei, escalant almenys tres posicions.",
+      "silver": "Has destronat el rei, escalant almenys cinc posicions.",
+      "gold": "Has destronat el rei, escalant almenys set posicions."
+    },
+    "climbTheLadder": {
+      "title": "Pujar l'escala",
+      "description": "Puja diversos graons al torneig Senbatsu.",
+      "normal": "Puja tres graons.",
+      "bronze": "Puja quatre graons.",
+      "silver": "Puja cinc graons.",
+      "gold": "Puja set graons."
     }
   },
   "removeTeams": "Treure Equips",
@@ -708,5 +724,13 @@
   "teamsOrder": "Ordre dels equips:",
   "web": "Web",
   "oddFightsResolvedAsap": "Resol les exempcions sense combats com més aviat millor",
-  "oddFightsResolvedAsapHint": "Si el nombre d'equips o grups del torneig és imparell, és possible que durant els encreuament alguns equips no tinguin combats associats i es classifiquin per a la fase següent automàticament (exempcions). Amb aquesta opció t'assegures que aquests casos es resolen com més aviat millor."
+  "oddFightsResolvedAsapHint": "Si el nombre d'equips o grups del torneig és imparell, és possible que durant els encreuament alguns equips no tinguin combats associats i es classifiquin per a la fase següent automàticament (exempcions). Amb aquesta opció t'assegures que aquests casos es resolen com més aviat millor.",
+  "bubbleSort": "Torneig Destronar el Rei",
+  "bubbleSortHint": "Competidors amb pitjors rangs intenten pujar al seu rànquing fins a guanyar el rei. Qui no ho aconsegueix es converteix en el seu vasai i lluita per protegir el rei.",
+  "senbatsu": "Senbatsu",
+  "senbatsuHint": "Els competidors es classifiquen segons la capacitat. La idea és 'pujar l'escala' derrotant la persona que està damunt teu i ocupant el seu lloc a l'escala. Començant des de baix, un competidor pot desafiar una altra persona, generalment dos o tres esglaons per sobre d'ell. Si guanya, agafa el seu lloc i l'adversari queda eliminat. Si perd queda eliminat.",
+  "senbatsuRungLength": "Distància entre desafiaments",
+  "senbatsuRungLengthHint": "La disparitat màxima permesa a la capacitat entre dos competidors per tal d'establir un desafiament.",
+  "reverseOrder": "Invertir",
+  "reverseOrderHint": "Invertir l'ordre dels equips."
 }

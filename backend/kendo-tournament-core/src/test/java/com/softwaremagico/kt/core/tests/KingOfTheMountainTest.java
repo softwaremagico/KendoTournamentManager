@@ -172,7 +172,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(teamProvider.count(tournament), TEAMS);
     }
 
     @Test(dependsOnMethods = {"addTeams"})
@@ -250,7 +250,7 @@ public class KingOfTheMountainTest extends AbstractTestNGSpringContextTests {
         Assert.assertNotEquals(tournamentFights.get(3).getTeam2(), tournamentFights.get(2).getTeam2());
         Assert.assertEquals(tournamentFights.get(3).getTeam2().getName(), "Team02");
 
-        //Finish the fight. Team1 loose now
+        //Finish the fight. Team1 lose now
         tournamentFights.get(3).getDuels().get(0).addCompetitor2Score(Score.KOTE);
         tournamentFights.get(3).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(tournamentFights.get(3));

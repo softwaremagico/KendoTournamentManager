@@ -62,7 +62,7 @@ public class ErrorResponse implements Serializable {
             return code;
         }
         if (message != null) {
-            return message.replaceAll(" ", "_").toLowerCase();
+            return message.replace(" ", "_").toLowerCase();
         }
         return null;
     }

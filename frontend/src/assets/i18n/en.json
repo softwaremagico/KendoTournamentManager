@@ -684,6 +684,22 @@
       "bronze": "Win when you have already lost three times against your opponent.",
       "silver": "Win when you have already lost four times against your opponent.",
       "gold": "Win when you have already lost five times against your opponent."
+    },
+    "dethroneTheKing": {
+      "title": "Dethroner of Kings",
+      "description": "Finish as king in a 'Dethrone the King' tournament in which you did not start as king or prince.",
+      "normal": "You have dethroned the king.",
+      "bronze": "You have dethroned the king, climbing at least three positions.",
+      "silver": "You have dethroned the king, climbing at least five positions.",
+      "gold": "You have dethroned the king, climbing at least seven positions."
+    },
+    "climbTheLadder": {
+      "title": "Climb the Ladder",
+      "description": "Climb several steps in the Senbatsu tournament.",
+      "normal": "Go up three steps.",
+      "bronze": "Go up four steps.",
+      "silver": "Go up five steps.",
+      "gold": "Go up seven steps."
     }
   },
   "removeTeams": "Remove Teams",
@@ -703,5 +719,13 @@
   },
   "daysFrom": "Apply only these days",
   "oddFightsResolvedAsap": "Resolve team byes as soon as possible",
-  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically (byes). With this option you ensure that byes are resolved as soon as possible."
+  "oddFightsResolvedAsapHint": "If the number of teams or groups in the tournament is odd, it is possible that during the matches some teams do not have associated matches and qualify for the next phase automatically (byes). With this option you ensure that byes are resolved as soon as possible.",
+  "bubbleSort": "Dethrone the King Tournament",
+  "bubbleSortHint": "Competitors with lower ranks try to rise in their ranking until they beat the king. He who does not succeed becomes his vassal and fights to protect the king.",
+  "senbatsu": "Senbatsu",
+  "senbatsuHint": "Competitors are sorted on ability. The idea is to 'climb the ladder' by defeating the person above you and taking their place on the ladder. Starting from the bottom, a competitor can challenge someone else, usually two or three 'rungs' above him. If wins takes its position and the adversary is eliminated. If loses he is eliminated.",
+  "senbatsuRungLength": "Challenge distance",
+  "senbatsuRungLengthHint": "The maximum allowable disparity in ability between two competitors for the purpose of establishing a challenge.",
+  "reverseOrder": "Reverse",
+  "reverseOrderHint": "Reverse teams' order"
 }

@@ -23,8 +23,12 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 
+import java.io.Serial;
+
 public class TournamentExtraPropertyDTO extends ElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = -4825047701201067422L;
 
     private TournamentDTO tournament;
 
