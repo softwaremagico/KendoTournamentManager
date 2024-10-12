@@ -30,6 +30,7 @@ import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -56,6 +57,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc
 @Test(groups = "authApi")
 public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
@@ -75,10 +77,8 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
     private static final String USER2_NEW_FIRST_NAME = "New Test2";
     private static final String USER2_NEW_LAST_NAME = "New  User2";
 
-    private MockMvc mockMvc;
-
     @Autowired
-    private WebApplicationContext context;
+    private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -101,10 +101,6 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
-
         authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
     }
 
