@@ -34,6 +34,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.AchievementProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
+import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.RoleProvider;
@@ -41,9 +42,12 @@ import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfCompetitor;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
+import com.softwaremagico.kt.core.tournaments.BubbleSortTournamentHandler;
+import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
@@ -117,6 +121,16 @@ public class AchievementController extends BasicInsertableController<Achievement
     private static final int DARUMA_TOURNAMENTS_SILVER = 30;
     private static final int DARUMA_TOURNAMENTS_GOLD = 50;
 
+    private static final int DETHRONE_THE_KING_NORMAL = 2;
+    private static final int DETHRONE_THE_KING_BRONZE = 3;
+    private static final int DETHRONE_THE_KING_SILVER = 5;
+    private static final int DETHRONE_THE_KING_GOLD = 7;
+
+    private static final int SENBATSU_RUNGS_NORMAL = 3;
+    private static final int SENBATSU_RUNGS_BRONZE = 4;
+    private static final int SENBATSU_RUNGS_SILVER = 5;
+    private static final int SENBATSU_RUNGS_GOLD = 7;
+
     private static final int MAX_PREVIOUS_TOURNAMENTS = 100;
     private static final int MIN_TOURNAMENT_FIGHTS = 5;
 
@@ -140,6 +154,12 @@ public class AchievementController extends BasicInsertableController<Achievement
     private final DuelProvider duelProvider;
 
     private final RankingProvider rankingProvider;
+
+    private final GroupProvider groupProvider;
+
+    private final BubbleSortTournamentHandler bubbleSortTournamentHandler;
+
+    private final SenbatsuTournamentHandler senbatsuTournamentHandler;
 
     private Tournament tournament;
 
@@ -169,7 +189,9 @@ public class AchievementController extends BasicInsertableController<Achievement
                                     ParticipantProvider participantProvider, ParticipantConverter participantConverter,
                                     RoleProvider roleProvider, TeamProvider teamProvider, AchievementProvider achievementProvider,
                                     FightProvider fightProvider, DuelProvider duelProvider,
-                                    RankingProvider rankingProvider) {
+                                    RankingProvider rankingProvider, GroupProvider groupProvider,
+                                    BubbleSortTournamentHandler bubbleSortTournamentHandler,
+                                    SenbatsuTournamentHandler senbatsuTournamentHandler) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -181,6 +203,9 @@ public class AchievementController extends BasicInsertableController<Achievement
         this.fightProvider = fightProvider;
         this.duelProvider = duelProvider;
         this.rankingProvider = rankingProvider;
+        this.groupProvider = groupProvider;
+        this.bubbleSortTournamentHandler = bubbleSortTournamentHandler;
+        this.senbatsuTournamentHandler = senbatsuTournamentHandler;
     }
 
     public interface AchievementsGeneratedListener {
@@ -442,6 +467,8 @@ public class AchievementController extends BasicInsertableController<Achievement
         achievementsGenerated.addAll(generateStormtrooperSyndromeAchievement(tournament));
         achievementsGenerated.addAll(generateVendettaAchievement(tournament));
         achievementsGenerated.addAll(generateSithApprenticesAlwaysKillTheirMasterAchievement(tournament));
+        achievementsGenerated.addAll(generateDethroneTheKingAchievement(tournament));
+        achievementsGenerated.addAll(generateClimbTheLadderAchievement(tournament));
 
         // Now generate extra grades.
         achievementsGenerated.addAll(generateBillyTheKidAchievementBronze(tournament));
@@ -1360,7 +1387,7 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * When somebody loose a combat only by Hansokus.
+     * When somebody loses a combat only by Hansokus.
      *
      * @param tournament The tournament to check.
      * @return a list of new achievements.
@@ -2032,6 +2059,80 @@ public class AchievementController extends BasicInsertableController<Achievement
             }
         });
         return achievementProvider.saveAll(achievements);
+    }
+
+    /**
+     * Somebody wins a fight despite the opponent has scored first.
+     *
+     * @param tournament
+     */
+    private List<Achievement> generateDethroneTheKingAchievement(Tournament tournament) {
+        if (tournament.getType() == TournamentType.BUBBLE_SORT) {
+            final List<Group> groups = groupProvider.getGroups(tournament);
+            if (groups.size() > 1) {
+                final List<Team> startingRanking = groups.get(0).getTeams();
+                final List<Team> endingRanking = bubbleSortTournamentHandler.getTeamsOrderedByRanks(tournament, groups.get(groups.size() - 1),
+                        bubbleSortTournamentHandler.getDrawResolution(tournament));
+
+                //The King is the last one.
+                final Team kingTeam = endingRanking.get(endingRanking.size() - 1);
+
+                //How much have fought to be the king:
+                final int startingPosition = startingRanking.indexOf(kingTeam);
+                final int kingPosition = endingRanking.size() - 1;
+
+                if (kingPosition - startingPosition >= DETHRONE_THE_KING_GOLD) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.GOLD,
+                            kingTeam.getMembers(), tournament);
+                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_SILVER) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.SILVER,
+                            kingTeam.getMembers(), tournament);
+                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_BRONZE) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.BRONZE,
+                            kingTeam.getMembers(), tournament);
+                } else if (kingPosition - startingPosition >= DETHRONE_THE_KING_NORMAL) {
+                    return generateAchievement(AchievementType.DETHRONE_THE_KING, AchievementGrade.NORMAL,
+                            kingTeam.getMembers(), tournament);
+                }
+            }
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Somebody wins a fight despite the opponent has scored first.
+     *
+     * @param tournament
+     */
+    private List<Achievement> generateClimbTheLadderAchievement(Tournament tournament) {
+        final List<Achievement> achievements = new ArrayList<>();
+        if (tournament.getType() == TournamentType.SENBATSU) {
+
+            final List<Group> groups = groupProvider.getGroups(tournament);
+            final List<Team> startingRanking = groups.get(0).getTeams();
+            final List<Team> endingRanking = senbatsuTournamentHandler.getFinalRanking(tournament);
+
+            //Hay many rungs have you climbed?
+            startingRanking.forEach(team -> {
+                final int startingPosition = startingRanking.indexOf(team);
+                final int endingPosition = endingRanking.indexOf(team);
+                if (endingPosition - startingPosition >= SENBATSU_RUNGS_GOLD) {
+                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.GOLD,
+                            team.getMembers(), tournament));
+                } else if (endingPosition - startingPosition >= SENBATSU_RUNGS_SILVER) {
+                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.SILVER,
+                            team.getMembers(), tournament));
+                } else if (endingPosition - startingPosition >= SENBATSU_RUNGS_BRONZE) {
+                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.BRONZE,
+                            team.getMembers(), tournament));
+                } else if (endingPosition - startingPosition >= SENBATSU_RUNGS_NORMAL) {
+                    achievements.addAll(generateAchievement(AchievementType.CLIMB_THE_LADDER, AchievementGrade.NORMAL,
+                            team.getMembers(), tournament));
+
+                }
+            });
+        }
+        return achievements;
     }
 
 

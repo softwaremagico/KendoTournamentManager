@@ -20,11 +20,13 @@ export class LoggedInService {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const context: string = state.url.substring(0, state.url.indexOf('?') > 0 ? state.url.indexOf('?') : state.url.length);
+    const params: string = state.url.indexOf('?') > 0 ? state.url.substring(state.url.indexOf('?') + 1) : "";
     if (this.loginService.getJwtValue() || this.whiteListedPages.includes(context)) {
+      //Read roles from JWT if it is a returning user.
+      this.loginService.refreshDataFormJwt();
       // JWT Token exists, is a registered participant.
       this.isUserLoggedIn.next(true);
-      //return this.userLoginPageDependingOnRoles(context);
-      return true;
+      return this.userLoginPageDependingOnRoles(context, params);
     }
 
     // Not logged in so redirect to login page with the return url
@@ -33,28 +35,18 @@ export class LoggedInService {
     return false;
   }
 
-  userLoginPageDependingOnRoles(context: string): boolean {
+  userLoginPageDependingOnRoles(context: string, params: string): boolean {
     if (this.loginService.getJwtValue()) {
-      this.loginService.getUserRoles().subscribe((_roles: String[]): void => {
-        if (_roles.includes("viewer") || _roles.includes("editor") || _roles.includes("admin")) {
-          // Do nothing and navigate as usual.
-        } else if (_roles.includes("guest")) {
-          //Gets last tournament and redirects to fight list.
-          this.tournamentService.getLastUnlockedTournament().subscribe((_tournament: Tournament): void => {
-            //Path '/tournaments/fights' and '/fights/championship' does not call  LoggedInService to avoid redirect loops.
-            if (_tournament) {
-              this.router.navigate(['/tournaments/fights'], {state: {tournamentId: _tournament.id}});
-            } else {
-              this.router.navigate(['/login']);
-            }
-          });
-        } else if (_roles.includes("participant")) {
-          this.router.navigate(['/participants/statistics']);
-        }
-      });
+      //Participant users must redirect to their statistcs.
+      if (localStorage.getItem('account') == 'participant'
+        && (!context.startsWith('/participants/statistics') && !context.startsWith('/participants/fights'))) {
+        this.router.navigate(['/participants/statistics']);
+      } else if (localStorage.getItem('account') == 'guest' && !context.startsWith('/tournaments/fights')) {
+        this.router.navigate(['/tournaments/fights']);
+      }
       return true;
     }
-    return false;
+    return this.whiteListedPages.includes(context);
   }
 }
 

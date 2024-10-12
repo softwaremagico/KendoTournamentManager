@@ -24,21 +24,20 @@ package com.softwaremagico.kt.core.tests.tournament;
 import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
-import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
@@ -49,6 +48,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -94,16 +94,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
     private ClubController clubController;
 
     @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
-
-    @Autowired
     private RankingProvider rankingProvider;
-
-    @Autowired
-    private FightStatisticsController fightStatisticsController;
 
     @Autowired
     private GroupController groupController;
@@ -116,6 +107,9 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
 
     @Autowired
     private FightConverter fightConverter;
+
+    @Autowired
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
 
     private ClubDTO clubDTO;
 
@@ -137,6 +131,8 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         Assert.assertEquals(tournamentController.count(), 0);
         TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
         tournamentDTO = tournamentController.create(newTournament, null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "false"), null);
         Assert.assertEquals(tournamentController.count(), 1);
     }
 
@@ -195,7 +191,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
             }
         }
 
-        Assert.assertEquals(TEAMS, teamController.count(tournamentDTO));
+        Assert.assertEquals(teamController.count(tournamentDTO), TEAMS);
 
         final List<Group> tournamentGroups = groupController.getGroups(tournamentDTO, 0);
         for (Group group : tournamentGroups) {

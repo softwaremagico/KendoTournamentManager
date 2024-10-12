@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {MessageService} from "../../services/message.service";
 import {FightService} from "../../services/fight.service";
@@ -36,6 +36,7 @@ import {Message} from "@stomp/stompjs";
 import {EnvironmentService} from "../../environment.service";
 import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
+import {SenbatsuFightDialogBoxComponent} from "./senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.component";
 
 @Component({
   selector: 'app-fight-list',
@@ -65,6 +66,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   isWizardEnabled: boolean;
   isBracketsEnabled: boolean;
   kingOfTheMountainType: TournamentType = TournamentType.KING_OF_THE_MOUNTAIN;
+  bubbleSortType: TournamentType = TournamentType.BUBBLE_SORT;
   showAvatars: boolean = false;
 
   resetFilterValue: Subject<boolean> = new Subject();
@@ -106,6 +108,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     } else {
       //Gets tournament from URL parameter (from QR codes).
       this.tournamentId = Number(this.activatedRoute.snapshot.queryParamMap.get('tournamentId'));
+      if (!this.tournamentId) {
+        this.tournamentId = Number(localStorage.getItem('tournamentId'));
+        debugger
+      }
       if (!this.tournamentId || isNaN(this.tournamentId)) {
         this.goBackToTournament();
       }
@@ -201,6 +207,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       }
     });
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (event.key === 't') {
+      this.showTimer(!this.timer);
+    }
   }
 
   private replaceGroup(group: Group): void {
@@ -314,7 +327,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.resetFilter();
     //Use a timeout or refresh before the components are drawn.
     setTimeout((): void => {
-      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0 && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
+      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0
+        && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT
+        && this.tournament.type !== TournamentType.SENBATSU) {
         this.showTeamsClassification(true);
       }
     }, 1000);
@@ -370,9 +385,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   generateElements(): void {
     let dialogRef;
     if (this.tournament.type === TournamentType.LEAGUE || this.tournament.type === TournamentType.LOOP ||
-      this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
+      this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.BUBBLE_SORT
+      || this.tournament.type === TournamentType.SENBATSU) {
       dialogRef = this.dialog.open(LeagueGeneratorComponent, {
         width: '85vw',
+        panelClass: 'pop-up-panel',
         data: {title: 'Create Fights', action: Action.Add, tournament: this.tournament}
       });
     } else if (this.tournament.type === TournamentType.CHAMPIONSHIP) {
@@ -425,12 +442,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
   }
 
-  editElement(): void {
-    if (this.selectedFight && this.selectedGroup) {
-      this.openAddFightDialog('Edit fight', Action.Update, this.selectedFight, this.selectedGroup, undefined);
-    }
-  }
-
   deleteElement(): void {
     if (this.selectedFight || this.selectedDuel) {
       let dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -473,21 +484,47 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   openAddFightDialog(title: string, action: Action, fight: Fight, group: Group, afterFight: Fight | undefined): void {
-    const dialogRef = this.dialog.open(FightDialogBoxComponent, {
-      width: '90vw',
-      height: '95vh',
-      maxWidth: '1000px',
-      data: {
-        title: 'Add a new Fight',
-        action: Action.Add,
-        entity: fight,
-        group: group,
-        previousFight: afterFight,
-        tournament: this.tournament,
-        swappedColors: this.swappedColors,
-        swappedTeams: this.swappedTeams
-      }
-    });
+    const horizontalTeams: boolean = this.tournament.type === TournamentType.SENBATSU;
+    const grid: boolean = this.tournament.type !== TournamentType.SENBATSU;
+    const height: string = horizontalTeams ? '550px' : '95vh';
+    let dialogRef;
+    if (this.tournament.type == TournamentType.SENBATSU) {
+      dialogRef = this.dialog.open(SenbatsuFightDialogBoxComponent, {
+        panelClass: 'pop-up-panel',
+        width: '90vw',
+        height: height,
+        maxWidth: '1000px',
+        data: {
+          action: Action.Add,
+          entity: fight,
+          group: group,
+          previousFight: afterFight,
+          tournament: this.tournament,
+          swappedColors: this.swappedColors,
+          swappedTeams: this.swappedTeams,
+          horizontalTeams: horizontalTeams,
+          grid: grid,
+        }
+      });
+    } else {
+      dialogRef = this.dialog.open(FightDialogBoxComponent, {
+        panelClass: 'pop-up-panel',
+        width: '90vw',
+        height: height,
+        maxWidth: '1000px',
+        data: {
+          action: Action.Add,
+          entity: fight,
+          group: group,
+          previousFight: afterFight,
+          tournament: this.tournament,
+          swappedColors: this.swappedColors,
+          swappedTeams: this.swappedTeams,
+          horizontalTeams: horizontalTeams,
+          grid: grid,
+        }
+      });
+    }
     dialogRef.afterClosed().subscribe(result => {
       if (result == undefined) {
         //Do nothing
@@ -565,6 +602,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   showTeamsClassification(fightsFinished: boolean): void {
     if (this.groups.length > 0 && this.getFights().length > 0) {
       const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
+        panelClass: 'pop-up-panel',
         width: '85vw',
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
       });
@@ -577,6 +615,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showCompetitorsClassification(): void {
     this.dialog.open(CompetitorsRankingComponent, {
+      panelClass: 'pop-up-panel',
       width: '85vw',
       data: {tournament: this.tournament}
     });
@@ -643,16 +682,25 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
         let showClassification: boolean = true;
         if (selectedGroup != null) {
-          // Tournament, each group must have a winner. Show for each group the winners.
-          if (Group.isFinished(selectedGroup) && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN) {
-            //Shows group classification. And if there is a tie score can be solved.
-            this.showClassification();
-            showClassification = false;
+          // Senbatsu, has a limited number of fights
+          if (this.tournament.type === TournamentType.SENBATSU) {
+            if (this.getFights().length < this.groups[0].teams.length - 1) {
+              this.addElement();
+            } else {
+              this.showClassification();
+            }
+          } else {
+            // Tournament, each group must have a winner. Show for each group the winners.
+            if (this.tournament.type === TournamentType.CHAMPIONSHIP && Group.isFinished(selectedGroup)) {
+              //Shows group classification. And if there is a tie score can be solved.
+              this.showClassification();
+              showClassification = false;
+            }
           }
         }
         // King of the mountain. Generate infinite fights.
         if (!this.selectFirstUnfinishedDuel()) {
-          this.generateNextFights(showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN);
+          this.generateNextFights(showClassification);
         }
       });
     }
@@ -695,7 +743,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (_fights.length > 0) {
         this.refreshFights();
       } else {
-        if (showClassification) {
+        if (showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN
+          && this.tournament.type !== TournamentType.BUBBLE_SORT && this.tournament.type !== TournamentType.SENBATSU) {
           this.showClassification();
         }
         this.finishTournament(new Date());
@@ -705,7 +754,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   showClassification(): void {
     if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
-      (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
+      (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.SENBATSU
+        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
       this.showTeamsClassification(true);
     } else {
       this.showCompetitorsClassification();
@@ -842,7 +892,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (const group of this.groups) {
       if (group.fights) {
         this.filteredFights.set(group.id!, group.fights.filter((fight: Fight) =>
-          (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
+          fight != null && (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
             (fight.team1 ? fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
             (fight.team2 ? fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
             (fight.team1 && fight.team1.members ? fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
@@ -901,4 +951,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
     this.resetFilter();
   }
+
+  protected readonly TournamentType = TournamentType;
 }

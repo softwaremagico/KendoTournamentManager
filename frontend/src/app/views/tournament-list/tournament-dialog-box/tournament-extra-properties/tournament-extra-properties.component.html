@@ -1,35 +1,52 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<h1 mat-dialog-title>{{title}}</h1>
+<h1 mat-dialog-title>{{ title }}</h1>
 <div class="options">
 
   <mat-slide-toggle *ngIf="canMaximizeFights" [checked]="areFightsMaximized" (change)="maxFightsToggle($event)"
                     [matTooltipShowDelay]="500" matTooltip="{{'maximizeFightsHint' | translate}}">
-    {{'maximizeFights' | translate }}
+    {{ 'maximizeFights' | translate }}
   </mat-slide-toggle>
 
-  <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights" (change)="avoidDuplicatesToggle($event)">
-    {{'avoidDuplicateFights' | translate }}
+  <mat-slide-toggle *ngIf="canAvoidDuplicatedFights" [checked]="avoidDuplicatedFights"
+                    (change)="avoidDuplicatesToggle($event)">
+    {{ 'avoidDuplicateFights' | translate }}
   </mat-slide-toggle>
 
   <mat-slide-toggle *ngIf="needsFifoWinner" [checked]="firstInFirstOut" (change)="fifoToggle($event)"
                     [matTooltipShowDelay]="1000" matTooltip="{{'leagueFifoHint' | translate}}">
-    {{'leagueFifo' | translate }}
+    {{ 'leagueFifo' | translate }}
+  </mat-slide-toggle>
+
+  <mat-slide-toggle *ngIf="canResolveOddFightsAsap" [checked]="resolveOddFightsAsap"
+                    (change)="resolveOddFightsAsapToggle($event)"
+                    [matTooltipShowDelay]="1000" matTooltip="{{'oddFightsResolvedAsapHint' | translate}}">
+    {{ 'oddFightsResolvedAsap' | translate }}
   </mat-slide-toggle>
 
 
   <mat-form-field *ngIf="needsDrawResolution">
-    <mat-label>{{'drawResolution' | translate}}</mat-label>
+    <mat-label>{{ 'drawResolution' | translate }}</mat-label>
     <mat-select (selectionChange)="selectDrawResolution($event.value)" [(value)]="selectedDrawResolution">
       <mat-option *ngFor="let resolution of drawResolution" [matTooltipShowDelay]="500"
                   [value]="resolution" matTooltip="{{getDrawResolutionHintTag(resolution) | translate}}">
-        {{getDrawResolutionTranslationTag(resolution) | translate}}
+        {{ getDrawResolutionTranslationTag(resolution) | translate }}
       </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field *ngIf="canSelectChallengeDistance">
+    <mat-label>{{ 'senbatsuRungLength' | translate }}</mat-label>
+    <mat-select (selectionChange)="selectChallengeDistance($event.value)" [(value)]="challengeDistance">
+      <mat-option [value]=2>2</mat-option>
+      <mat-option [value]=3>3</mat-option>
+      <mat-option [value]=4>4</mat-option>
+      <mat-option [value]=5>5</mat-option>
     </mat-select>
   </mat-form-field>
 
 </div>
 <div class="button-container" mat-dialog-actions>
   <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button
-          type="button">{{'close' | translate}}
+          type="button">{{ 'close' | translate }}
   </button>
 </div>

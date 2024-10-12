@@ -32,10 +32,7 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
-      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
-      this.shiaijosByLevel = this.getShiaijos();
-    });
+    this.updateShiaijos();
     this.groupsUpdatedService.areRelationsUpdated.subscribe((_relations: Map<number, {
       src: number,
       dest: number,
@@ -52,6 +49,13 @@ export class TournamentBracketsComponent implements OnInit {
           this.numberOfWinnersFirstLevel = Math.max(this.numberOfWinnersFirstLevel, value1.winner + 1);
         });
       });
+    });
+  }
+
+  private updateShiaijos(): void {
+    this.groupsUpdatedService.areGroupsUpdated.subscribe((_groups: Group[]): void => {
+      this.groupsByLevel = TournamentBracketsComponent.convert(_groups);
+      this.shiaijosByLevel = this.getShiaijos();
     });
   }
 
@@ -90,11 +94,22 @@ export class TournamentBracketsComponent implements OnInit {
   }
 
   getGroupTopSeparation(level: number, group: number, groupsByLevel: Map<number, Group[]> | null): number {
-    if (level == 0) {
+    let maxGroupsByLevel: number = 0;
+    let levelWithMaxGroups: number = 0;
+    //Now group 0 maybe is the one with the highest number of groups. Search for which level is.
+    if (groupsByLevel) {
+      for (let key of groupsByLevel.keys()) {
+        if (groupsByLevel.get(key)!.length > maxGroupsByLevel) {
+          maxGroupsByLevel = groupsByLevel.get(key)!.length;
+          levelWithMaxGroups = key;
+        }
+      }
+    }
+    if (level == levelWithMaxGroups) {
       return group * (BracketsMeasures.GROUP_SEPARATION + this.getGroupHigh(level, group));
     }
-    if (groupsByLevel?.get(0) && groupsByLevel?.get(level)) {
-      const maxHeight: number = groupsByLevel.get(0)!.length * (this.getGroupHigh(0, group) + BracketsMeasures.GROUP_SEPARATION);
+    if (groupsByLevel?.get(levelWithMaxGroups) && groupsByLevel?.get(level)) {
+      const maxHeight: number = groupsByLevel.get(levelWithMaxGroups)!.length * (this.getGroupHigh(levelWithMaxGroups, group) + BracketsMeasures.GROUP_SEPARATION);
       const portion: number = (maxHeight / groupsByLevel.get(level)!.length);
       return (portion * (group + 1)) - portion / 2 - this.getGroupHigh(level, group) / 2 - BracketsMeasures.GROUP_SEPARATION / 2
     }

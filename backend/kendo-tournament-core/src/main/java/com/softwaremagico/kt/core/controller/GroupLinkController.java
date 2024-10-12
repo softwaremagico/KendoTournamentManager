@@ -30,20 +30,24 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.repositories.GroupLinkRepository;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
-public class GroupLinkController extends BasicInsertableController<GroupLink, GroupLinkDTO, GroupLinkRepository,
-        GroupLinkProvider, GroupLinkConverterRequest, GroupLinkConverter> {
+public class GroupLinkController {
 
     private final TournamentProvider tournamentProvider;
+    private final GroupLinkProvider groupLinkProvider;
+    private final GroupLinkConverter groupLinkConverter;
 
-    public GroupLinkController(GroupLinkProvider provider, GroupLinkConverter converter, TournamentProvider tournamentProvider) {
-        super(provider, converter);
+    public GroupLinkController(TournamentProvider tournamentProvider, GroupLinkProvider groupLinkProvider, GroupLinkConverter groupLinkConverter) {
         this.tournamentProvider = tournamentProvider;
+        this.groupLinkProvider = groupLinkProvider;
+        this.groupLinkConverter = groupLinkConverter;
     }
 
 
@@ -58,7 +62,12 @@ public class GroupLinkController extends BasicInsertableController<GroupLink, Gr
     }
 
     public List<GroupLinkDTO> getLinks(Tournament tournament) {
-        return convertAll(getProvider().generateLinks(tournament));
+        return convertAll(groupLinkProvider.generateLinks(tournament));
+    }
+
+    private List<GroupLinkDTO> convertAll(Collection<GroupLink> entities) {
+        return new ArrayList<>(groupLinkConverter.convertAll(entities.stream().map(this::createConverterRequest)
+                .collect(Collectors.toCollection(ArrayList::new))));
     }
 
 

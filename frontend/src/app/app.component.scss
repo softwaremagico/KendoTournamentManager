@@ -110,11 +110,19 @@ a {
   padding-left: 5px;
 }
 
+.pop-up-panel {
+
+  @media screen and (max-width: 660px) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 @media screen and (min-width: 960px) {
   .side-menu {
     display: none !important;
   }
-  .button-menu{
+  .button-menu {
     display: none !important;
   }
 }

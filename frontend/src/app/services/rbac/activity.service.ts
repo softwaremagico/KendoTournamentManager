@@ -13,6 +13,10 @@ export class ActivityService {
     this.activities = this.getActivities(roles);
   }
 
+  public hasRoles(): boolean {
+    return this.activities.length > 0;
+  }
+
   public isAllowed(activity: RbacActivity | undefined): boolean {
     if (!activity || !this.activities) {
       return false;
@@ -101,7 +105,10 @@ export class ActivityService {
       RbacActivity.CHANGE_LANGUAGE,
       RbacActivity.CHECK_TOURNAMENT_BRACKETS,
       RbacActivity.READ_TEAMS_RANKINGS,
-      RbacActivity.READ_COMPETITORS_RANKINGS
+      RbacActivity.READ_COMPETITORS_RANKINGS,
+      RbacActivity.CAN_LOGOUT,
+      RbacActivity.VIEW_PARTICIPANT_FIGHTS,
+      RbacActivity.VIEW_PARTICIPANT_STATISTICS
     ];
   }
 

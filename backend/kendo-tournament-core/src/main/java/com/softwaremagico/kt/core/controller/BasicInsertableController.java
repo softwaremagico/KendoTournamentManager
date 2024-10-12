@@ -214,6 +214,11 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
                 .collect(Collectors.toCollection(ArrayList::new))));
     }
 
+    protected List<DTO> convertAllNotSorted(Collection<ENTITY> entities) {
+        return new ArrayList<>(converter.convertAllNotSorted(entities.stream().map(this::createConverterRequest)
+                .collect(Collectors.toCollection(ArrayList::new))));
+    }
+
     protected List<ENTITY> reverseAll(Collection<DTO> dtos) {
         return converter.reverseAll(dtos);
     }

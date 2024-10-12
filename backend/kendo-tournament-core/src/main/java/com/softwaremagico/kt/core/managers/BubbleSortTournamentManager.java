@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.persistence.repositories;
+package com.softwaremagico.kt.core.managers;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Core)
  * %%
  * Copyright (C) 2021 - 2024 Softwaremagico
  * %%
@@ -21,12 +21,10 @@ package com.softwaremagico.kt.persistence.repositories;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.entities.GroupLink;
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
-@Transactional
-public interface GroupLinkRepository extends JpaRepository<GroupLink, Integer> {
+@Service
+public class BubbleSortTournamentManager extends KingOfTheMountainFightManager {
+
+
 }

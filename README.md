@@ -8,7 +8,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-625h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-651.5h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -158,8 +158,8 @@ However, using mobile devices is not advised due to screen size limitations.
 
 # Using the application
 
-For detailed information on how to use this application, you can refer to
-the  [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
+For instructions on using the application, please visit the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
+There, you will find comprehensive examples for various types of tournaments and guidance on how to configure them.
 
 ## Default credentials.
 

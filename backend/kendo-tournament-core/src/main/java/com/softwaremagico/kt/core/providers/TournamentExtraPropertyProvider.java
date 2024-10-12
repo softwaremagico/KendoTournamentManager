@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.InvalidExtraPropertyException;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
@@ -39,17 +40,30 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         super(repository);
     }
 
+
     public List<TournamentExtraProperty> getAll(Tournament tournament) {
         return getRepository().findByTournament(tournament);
     }
+
+
+    public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key, Object defaultValue) {
+        TournamentExtraProperty extraProperty = getByTournamentAndProperty(tournament, key);
+        if (extraProperty == null) {
+            extraProperty = save(new TournamentExtraProperty(tournament, key, String.valueOf(defaultValue)));
+        }
+        return extraProperty;
+    }
+
 
     public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
         return getRepository().findByTournamentAndPropertyKey(tournament, key);
     }
 
+
     public List<TournamentExtraProperty> getLatestPropertiesByCreatedBy(String createdBy) {
         return getRepository().findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(createdBy);
     }
+
 
     public int delete(Tournament tournament) {
         return getRepository().deleteByTournament(tournament);
@@ -61,11 +75,17 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         getRepository().flush();
     }
 
+
     @Override
     public TournamentExtraProperty save(TournamentExtraProperty entity) {
+        if (!entity.getPropertyKey().getAllowedTournaments().contains(entity.getTournament().getType())) {
+            throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
+                    + "' cannot have property '" + entity.getPropertyKey() + "'");
+        }
         deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
         return getRepository().save(entity);
     }
+
 
     @Override
     public List<TournamentExtraProperty> saveAll(Collection<TournamentExtraProperty> tournamentExtraProperties) {

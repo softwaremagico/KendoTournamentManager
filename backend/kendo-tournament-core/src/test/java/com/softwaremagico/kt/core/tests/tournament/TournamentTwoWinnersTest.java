@@ -24,7 +24,6 @@ package com.softwaremagico.kt.core.tests.tournament;
 import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
-import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
@@ -39,8 +38,6 @@ import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
@@ -100,16 +97,7 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
     private ClubController clubController;
 
     @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
-
-    @Autowired
     private RankingProvider rankingProvider;
-
-    @Autowired
-    private FightStatisticsController fightStatisticsController;
 
     @Autowired
     private GroupController groupController;
@@ -143,6 +131,8 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(tournamentController.count(), 0);
         TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
         tournamentDTO = tournamentController.create(newTournament, null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "false"), null);
         Assert.assertEquals(tournamentController.count(), 1);
 
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"), null);
@@ -158,7 +148,7 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "addTournament")
     public void add4Groups() {
-        treeTournamentHandler.adjustGroupsSize(tournamentConverter.reverse(tournamentDTO), 2);
+        treeTournamentHandler.adjustGroupsSizeRemovingOddNumbers(tournamentConverter.reverse(tournamentDTO), 2);
         //First group is already inserted.
         for (int i = 1; i < GROUPS; i++) {
             final GroupDTO groupDTO = new GroupDTO();
@@ -204,7 +194,7 @@ public class TournamentTwoWinnersTest extends AbstractTestNGSpringContextTests {
             }
         }
 
-        Assert.assertEquals(TEAMS, teamController.count(tournamentDTO));
+        Assert.assertEquals(teamController.count(tournamentDTO), TEAMS);
 
         final List<Group> tournamentGroups = groupController.getGroups(tournamentDTO, 0);
         for (Group group : tournamentGroups) {
