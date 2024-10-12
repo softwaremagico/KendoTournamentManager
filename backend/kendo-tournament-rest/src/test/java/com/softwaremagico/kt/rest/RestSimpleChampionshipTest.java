@@ -48,17 +48,14 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -78,6 +75,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @Test(groups = {"restSimpleChampionshipTest"})
 public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests {
 
@@ -96,16 +94,10 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     private static final String CLUB_CITY = "Valencia";
 
     @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
     private AuthenticatedUserController authenticatedUserController;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private GroupController groupController;
@@ -134,7 +126,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     @Autowired
     private ClubController clubController;
 
-
+    @Autowired
     private MockMvc mockMvc;
 
     private String jwtToken;
@@ -179,13 +171,6 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
     }
 
     @BeforeClass
-    public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
-    }
-
-    @BeforeClass(dependsOnMethods = "setUp")
     public void setAuthentication() throws Exception {
         //Create the admin user
         authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
