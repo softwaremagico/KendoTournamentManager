@@ -31,6 +31,7 @@ import com.softwaremagico.kt.rest.security.dto.CreateUserRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -56,6 +57,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc
 @Test(groups = "userRegistration")
 public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
     public static final String USER_NAME_2 = "Goku";
@@ -68,7 +70,6 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
     private static final String[] USER_ROLES = new String[] {"admin", "viewer"};
 
     @Autowired
-    private WebApplicationContext context;
     private MockMvc mockMvc;
 
 
@@ -96,10 +97,6 @@ public class UserRegistrationTest extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
-
         authenticatedUserController.findAll().forEach(authenticatedUser -> authenticatedUserController.delete(authenticatedUser));
     }
 
