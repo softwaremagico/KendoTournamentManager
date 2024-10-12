@@ -30,6 +30,7 @@ import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -51,6 +52,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 @Test(groups = "bruteForce")
 public class BruteForceTests extends AbstractTestNGSpringContextTests {
@@ -59,10 +61,8 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
     private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "password";
 
-    private MockMvc mockMvc;
-
     @Autowired
-    private WebApplicationContext context;
+    private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -79,13 +79,6 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
     private <T> T fromJson(String payload, Class<T> clazz) throws IOException {
         return objectMapper.readValue(payload, clazz);
-    }
-
-    @BeforeClass
-    public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
     }
 
     @BeforeMethod
