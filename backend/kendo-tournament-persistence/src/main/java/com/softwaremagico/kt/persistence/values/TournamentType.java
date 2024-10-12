@@ -35,7 +35,11 @@ public enum TournamentType {
 
     KING_OF_THE_MOUNTAIN,
 
-    CUSTOMIZED;
+    BUBBLE_SORT,
+
+    CUSTOMIZED,
+
+    SENBATSU;
 
     public static TournamentType getType(String name) {
         for (final TournamentType type : TournamentType.values()) {

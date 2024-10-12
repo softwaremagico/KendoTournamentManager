@@ -65,7 +65,13 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
-    this.drawResolution = DrawResolution.toArray();
+    if (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN) {
+      this.drawResolution = DrawResolution.toArray();
+    } else if (TournamentType.BUBBLE_SORT) {
+      this.drawResolution = [DrawResolution.OLDEST_ELIMINATED, DrawResolution.NEWEST_ELIMINATED];
+    } else {
+      this.drawResolution = [];
+    }
 
     this.canMaximizeFights = TournamentType.canMaximizeFights(this.tournament.type);
     this.needsDrawResolution = TournamentType.needsDrawResolution(this.tournament.type);
@@ -215,10 +221,14 @@ export class LeagueGeneratorComponent extends RbacBasedComponent implements OnIn
       this.teamsOrder.push(...sortedTeams.values());
       this.teamListData.teams = [];
       this.teamListData.filteredTeams = [];
-      if (this.tournament.type == TournamentType.LOOP) {
+      if (this.tournament.type == TournamentType.SENBATSU) {
         this.teamsOrder = this.teamsOrder.reverse();
       }
     });
+  }
+
+  reverseTeams(): void {
+    this.teamsOrder = this.teamsOrder.reverse();
   }
 
 

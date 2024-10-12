@@ -85,6 +85,17 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         return getController().getAllByTournament(tournamentId, authentication.getName());
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @Operation(summary = "Gets teams not disqualified from a tournament. Only for Senbatsu mode", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/remaining/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<TeamDTO> getAllRemaining(@Parameter(description = "Id of an existing tournament", required = true)
+                                         @PathVariable("tournamentId") Integer tournamentId,
+                                         Authentication authentication, HttpServletRequest request) {
+        return getController().getAllRemainingByTournament(tournamentId, authentication.getName());
+    }
+
+
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Counts all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/count", produces = MediaType.APPLICATION_JSON_VALUE)

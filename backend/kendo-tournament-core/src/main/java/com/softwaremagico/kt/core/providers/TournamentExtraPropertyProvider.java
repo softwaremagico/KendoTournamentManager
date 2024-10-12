@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.InvalidExtraPropertyException;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
@@ -77,6 +78,10 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
 
     @Override
     public TournamentExtraProperty save(TournamentExtraProperty entity) {
+        if (!entity.getPropertyKey().getAllowedTournaments().contains(entity.getTournament().getType())) {
+            throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
+                    + "' cannot have property '" + entity.getPropertyKey() + "'");
+        }
         deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
         return getRepository().save(entity);
     }
