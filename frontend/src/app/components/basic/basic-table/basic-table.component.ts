@@ -133,7 +133,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  filter(filter: string) {
+  filter(filter: string): void {
     this.basicTableData.dataSource.filter = filter;
   }
 
@@ -141,7 +141,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
     return this.basicTableData.visibleColumns.includes(column);
   }
 
-  toggleColumnVisibility(column: string) {
+  toggleColumnVisibility(column: string): void {
     const index: number = this.basicTableData.visibleColumns.indexOf(column);
     if (index !== -1) {
       this.basicTableData.visibleColumns.splice(index, 1);
@@ -164,7 +164,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
   }
 
 
-  onPaginateChange($event: PageEvent) {
+  onPaginateChange($event: PageEvent): void {
     this.userSessionService.setItemsPerPage($event.pageSize);
   }
 
