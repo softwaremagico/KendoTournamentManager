@@ -21,9 +21,9 @@ package com.softwaremagico.kt.core.tournaments;
  * #L%
  */
 
-import com.softwaremagico.kt.core.exceptions.CustomTournamentFightsException;
 import com.softwaremagico.kt.core.exceptions.InvalidChallengeDistanceException;
 import com.softwaremagico.kt.core.exceptions.InvalidFightException;
+import com.softwaremagico.kt.core.exceptions.SenbatsuTournamentFightsException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
@@ -60,7 +60,7 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
 
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
-        throw new CustomTournamentFightsException(this.getClass(), "This league cannot generate fights.");
+        throw new SenbatsuTournamentFightsException(this.getClass(), "This league cannot generate fights.");
     }
 
 
