@@ -325,14 +325,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     }
 
     this.resetFilter();
-    //Use a timeout or refresh before the components are drawn.
-    setTimeout((): void => {
-      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0
-        && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT
-        && this.tournament.type !== TournamentType.SENBATSU) {
-        this.showTeamsClassification(true);
-      }
-    }, 1000);
   }
 
   private setLevelTagVisibility(sortedGroups: Group[]): void {
@@ -607,6 +599,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
         panelClass: 'pop-up-panel',
         width: '85vw',
+        restoreFocus: false,
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -690,7 +683,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             if (this.getFights().length < this.groups[0].teams.length - 1) {
               this.addElement();
             } else {
-              this.showClassification();
+              this.showFightsFinishedMessage();
             }
           } else {
             // Tournament, each group must have a winner. Show for each group the winners.
@@ -748,6 +741,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       } else {
         if (showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN
           && this.tournament.type !== TournamentType.BUBBLE_SORT && this.tournament.type !== TournamentType.SENBATSU) {
+          this.showFightsFinishedMessage();
           this.showClassification();
         }
         this.finishTournament(new Date());
@@ -763,6 +757,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     } else {
       this.showCompetitorsClassification();
     }
+  }
+
+  showFightsFinishedMessage(): void {
+    this.messageService.infoMessage("fightsEnded");
   }
 
   finishTournament(date: Date | undefined): void {
