@@ -79,6 +79,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   selectedShiaijo: number = -1;
 
   private topicSubscription: Subscription;
+  private classificationAlreadyShown: boolean = false;
 
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
@@ -327,7 +328,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.resetFilter();
     //Use a timeout or refresh before the components are drawn.
     setTimeout((): void => {
-      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0
+      if (!this.classificationAlreadyShown && !this.selectFirstUnfinishedDuel() && this.getUnties().length === 0
         && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT
         && this.tournament.type !== TournamentType.SENBATSU) {
         this.showTeamsClassification(true);
@@ -532,10 +533,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       if (result == undefined) {
         //Do nothing
       } else if (result?.action === Action.Add) {
+        this.classificationAlreadyShown = false;
         this.selectFirstUnfinishedDuel();
       } else if (result?.action === Action.Update) {
+        this.classificationAlreadyShown = false;
         this.updateRowData(result.data);
       } else if (result?.action === Action.Delete) {
+        this.classificationAlreadyShown = false;
         this.deleteRowData(result.data);
       }
     });
@@ -745,6 +749,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       //Null value means that fights are not created due to an existing draw score.
       if (_fights.length > 0) {
         this.refreshFights();
+        this.classificationAlreadyShown = false;
       } else {
         if (showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN
           && this.tournament.type !== TournamentType.BUBBLE_SORT && this.tournament.type !== TournamentType.SENBATSU) {
@@ -756,12 +761,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   showClassification(): void {
-    if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
-      (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.SENBATSU
-        || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
-      this.showTeamsClassification(true);
-    } else {
-      this.showCompetitorsClassification();
+    if (!this.classificationAlreadyShown) {
+      if ((this.tournament?.teamSize && this.tournament?.teamSize > 1) ||
+        (this.tournament && (this.tournament.type === TournamentType.KING_OF_THE_MOUNTAIN || this.tournament.type === TournamentType.SENBATSU
+          || this.tournament.type === TournamentType.BUBBLE_SORT || this.tournament.type === TournamentType.CHAMPIONSHIP))) {
+        this.showTeamsClassification(true);
+      } else {
+        this.showCompetitorsClassification();
+      }
     }
   }
 
