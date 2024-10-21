@@ -727,5 +727,6 @@
   "senbatsuRungLength": "Challenge distance",
   "senbatsuRungLengthHint": "The maximum allowable disparity in ability between two competitors for the purpose of establishing a challenge.",
   "reverseOrder": "Reverse",
-  "reverseOrderHint": "Reverse teams' order"
+  "reverseOrderHint": "Reverse teams' order",
+  "fightsEnded": "All matches have finished."
 }
