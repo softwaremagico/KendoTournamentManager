@@ -728,5 +728,6 @@
   "senbatsuRungLength": "Distancia entre desafíos",
   "senbatsuRungLengthHint": "La disparidad máxima permitida en la capacidad entre dos competidores con el fin de establecer un desafío.",
   "reverseOrder": "Invertir",
-  "reverseOrderHint": "Invertir el orden de los equipos."
+  "reverseOrderHint": "Invertir el orden de los equipos.",
+  "fightsEnded": "Todos los partidos han terminado."
 }
