@@ -357,7 +357,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   openConfirmationGenerateElementsDialog(): void {
     if (this.getFights().length > 0) {
       let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-        disableClose: false
+        disableClose: false,
+        restoreFocus: false,
       });
       dialogRef.componentInstance.messageTag = "deleteFightsWarning"
 
@@ -494,6 +495,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         width: '90vw',
         height: height,
         maxWidth: '1000px',
+        restoreFocus: false,
         data: {
           action: Action.Add,
           entity: fight,
@@ -512,6 +514,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         width: '90vw',
         height: height,
         maxWidth: '1000px',
+        restoreFocus: false,
         data: {
           action: Action.Add,
           entity: fight,
