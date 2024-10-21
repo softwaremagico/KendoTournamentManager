@@ -710,5 +710,6 @@
   "senbatsuRungLength": "Afstand tussen de veilige afstanden",
   "senbatsuRungLengthHint": "Het maximaal toegestane verschil in bekwaamheid tussen twee concurrenten met als doel een uitdaging aan te gaan.",
   "reverseOrder": "Reverse",
-  "reverseOrderHint": "Draai de volgorde van de teams om."
+  "reverseOrderHint": "Draai de volgorde van de teams om.",
+  "fightsEnded": "Alle spellen zijn voorbij."
 }
