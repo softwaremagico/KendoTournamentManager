@@ -83,7 +83,7 @@ export class FightDialogBoxComponent implements OnInit {
   }
 
   closeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({action: Action.Cancel, data: this.data});
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): Team {
@@ -119,7 +119,7 @@ export class FightDialogBoxComponent implements OnInit {
       this.groupServices.update(this.group).subscribe((_group: Group): void => {
         this.messageService.infoMessage("addFightMessage");
         this.groupUpdatedService.isGroupUpdated.next(_group);
-        this.dialogRef.close(this.fight);
+        this.dialogRef.close({action: this.action, data: this.data});
       });
     });
 
