@@ -324,6 +324,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.selectedGroup = groups[0];
     }
 
+    this.selectFirstUnfinishedDuel();
+
     this.resetFilter();
   }
 
@@ -632,8 +634,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   showTimer(show: boolean): void {
-    this.timer = show;
-    this.resetTimerPosition.next(show);
+    console.log(this.selectedDuel)
+    if (this.canStartFight(this.selectedDuel)) {
+      this.timer = show;
+      this.resetTimerPosition.next(show);
+    }
   }
 
   setIpponScores(duel: Duel): void {
@@ -663,7 +668,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   canStartFight(duel: Duel | undefined): boolean {
-    return duel?.competitor1 !== null && duel?.competitor2 !== null;
+    return duel != undefined && duel?.competitor1 !== null && duel?.competitor2 !== null;
   }
 
   finishDuel(): void {
