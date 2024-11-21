@@ -22,10 +22,10 @@ export class QrService {
               private systemOverloadService: SystemOverloadService) {
   }
 
-  getGuestsQr(tournament: Tournament, port?: number): Observable<QrCode> {
+  getGuestsQr(tournament: Tournament, nightMode: boolean, port?: number): Observable<QrCode> {
     let url: string = `${this.baseUrl}/guest/tournament/${tournament.id}`;
     if (port) {
-      url = `${this.baseUrl}/guest/tournament/${tournament.id}/port/${port}`;
+      url = `${this.baseUrl}/guest/tournament/${tournament.id}/port/${port}?nightMode=${nightMode}`;
     }
     return this.http.get<QrCode>(url)
       .pipe(
@@ -58,10 +58,10 @@ export class QrService {
     );
   }
 
-  getParticipantQr(participantId: number, port?: number): Observable<QrCode> {
+  getParticipantQr(participantId: number, nightMode: boolean, port?: number): Observable<QrCode> {
     let url: string = `${this.baseUrl}/participant/${participantId}/statistics`;
     if (port) {
-      url = `${this.baseUrl}/participant/${participantId}/statistics/port/${port}`;
+      url = `${this.baseUrl}/participant/${participantId}/statistics/port/${port}?nightMode=${nightMode}`;
     }
     return this.http.get<QrCode>(url)
       .pipe(
