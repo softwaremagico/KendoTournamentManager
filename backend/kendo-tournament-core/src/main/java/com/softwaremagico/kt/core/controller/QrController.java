@@ -51,7 +51,10 @@ public class QrController {
     private static final String LOGO_RESOURCE = "/kote.svg";
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
-    private static final Color QR_COLOR = Color.decode("#001239");
+    private static final Color QR_COLOR_LIGHT_MODE = Color.decode("#001239");
+    private static final Color QR_COLOR_NIGHT_MODE = Color.decode("#b0a3d5");
+    private static final Color BACKGROUND_LIGHT_MODE = Color.decode("#ffffff");
+    private static final Color BACKGROUND_NIGHT_MODE = Color.decode("#424242");
 
     private final QrProvider qrProvider;
 
@@ -72,14 +75,17 @@ public class QrController {
     }
 
     @Cacheable(cacheNames = "qr-codes", key = "#tournamentId")
-    public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port) {
+    public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port, boolean nightMode) {
         //Check that exists.
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
                     + "?tournamentId=" + tournament.getId() + "&user=guest";
-            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
+                    !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
+                    LOGO_RESOURCE,
+                    !nightMode ? BACKGROUND_LIGHT_MODE : BACKGROUND_NIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setLink(link);
@@ -96,7 +102,7 @@ public class QrController {
      * @param port          if the frontend is running on a different port.
      * @return
      */
-    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId, Integer port) {
+    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId, Integer port, boolean nightMode) {
         final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
                 new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
 
@@ -106,7 +112,10 @@ public class QrController {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getContent(), StandardCharsets.UTF_8);
-            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
+                    !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
+                    LOGO_RESOURCE,
+                    !nightMode ? BACKGROUND_LIGHT_MODE : BACKGROUND_NIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setLink(link);
