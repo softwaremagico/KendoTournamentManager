@@ -42,9 +42,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/qr")
@@ -69,8 +71,9 @@ public class QrService {
     @GetMapping(value = "/guest/tournament/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public QrCodeDTO generateGuestQrCodeForTournamentFights(@Parameter(description = "Id of an existing tournament", required = true)
                                                             @PathVariable("tournamentId") Integer tournamentId,
+                                                            @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                             HttpServletResponse response, HttpServletRequest request) {
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, null);
+        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, null, nightMode.orElse(false));
     }
 
 
@@ -79,14 +82,15 @@ public class QrService {
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/guest/tournament/{tournamentId}/png", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] generateGuestQrCodeForTournamentFightsImage(@Parameter(description = "Id of an existing tournament", required = true)
-                                                            @PathVariable("tournamentId") Integer tournamentId,
-                                                            HttpServletResponse response, HttpServletRequest request) {
+                                                              @PathVariable("tournamentId") Integer tournamentId,
+                                                              @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
+                                                              HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, null).getData();
+        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, null, nightMode.orElse(false)).getData();
     }
 
 
@@ -98,9 +102,10 @@ public class QrService {
                                                             @PathVariable("tournamentId") Integer tournamentId,
                                                             @Parameter(description = "Frontend port")
                                                             @PathVariable("port") Integer port,
+                                                            @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                             HttpServletResponse response, HttpServletRequest request) {
 
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, port);
+        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, port, nightMode.orElse(false));
     }
 
 
@@ -109,16 +114,17 @@ public class QrService {
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/guest/tournament/{tournamentId}/port/{port}/png", produces = MediaType.IMAGE_PNG_VALUE)
     public byte[] generateGuestQrCodeForTournamentFightsImage(@Parameter(description = "Id of an existing tournament", required = true)
-                                                            @PathVariable("tournamentId") Integer tournamentId,
-                                                            @Parameter(description = "Frontend port")
-                                                            @PathVariable("port") Integer port,
-                                                            HttpServletResponse response, HttpServletRequest request) {
+                                                              @PathVariable("tournamentId") Integer tournamentId,
+                                                              @Parameter(description = "Frontend port")
+                                                              @PathVariable("port") Integer port,
+                                                              @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
+                                                              HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, port).getData();
+        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, port, nightMode.orElse(false)).getData();
     }
 
 
@@ -170,13 +176,14 @@ public class QrService {
     @GetMapping(value = "/participant/{participantId}/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
     public QrCodeDTO generateParticipantQrCodeForStatistics(@Parameter(description = "Id of an existing participant", required = true)
                                                             @PathVariable("participantId") Integer participantId,
+                                                            @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                             HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Statistics - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateParticipantQrCodeForStatistics(participantId, null);
+        return qrController.generateParticipantQrCodeForStatistics(participantId, null, nightMode.orElse(false));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
@@ -187,12 +194,13 @@ public class QrService {
                                                                     @PathVariable("participantId") Integer participantId,
                                                                     @Parameter(description = "Frontend port")
                                                                     @PathVariable("port") Integer port,
+                                                                    @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                                     HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Statistics - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateParticipantQrCodeForStatistics(participantId, port);
+        return qrController.generateParticipantQrCodeForStatistics(participantId, port, nightMode.orElse(false));
     }
 }
