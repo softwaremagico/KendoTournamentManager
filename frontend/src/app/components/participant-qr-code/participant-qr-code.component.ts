@@ -5,6 +5,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {QrService} from "../../services/qr.service";
 import {RbacService} from "../../services/rbac/rbac.service";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
+import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
   selector: 'app-participant-qr-code',
@@ -20,13 +21,13 @@ export class ParticipantQrCodeComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ParticipantQrCodeComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { participantId: number, port: number },
-              private qrService: QrService, public rbacService: RbacService) {
+              private qrService: QrService, private userSessionService: UserSessionService, public rbacService: RbacService) {
     this.participantId = data.participantId;
     this.port = data.port;
   }
 
   ngOnInit(): void {
-    this.qrService.getParticipantQr(this.participantId, this.port).subscribe((_qrCode: QrCode): void => {
+    this.qrService.getParticipantQr(this.participantId, this.userSessionService.getNightMode(), this.port).subscribe((_qrCode: QrCode): void => {
       if (_qrCode) {
         this.qrCode = _qrCode.base64;
         this.link = _qrCode.link;
