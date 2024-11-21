@@ -20,17 +20,23 @@
   --card-shadow2: rgba(1, 47, 103, 0.14);
   --card-shadow3: rgba(1, 47, 103, 0.12);
   --table-header-color: #ffffff;
-  --table-header-text:  #001239;
+  --table-header-text: #001239;
+  --dragable-area: #c3d1e1;
+  --fight-border-color: #011d4a;
+  --tooltip-text: #ffffff;
+  --tooltip-background: #555555;
+  --ribbon-border: #ffffff;
+  --ribbon-background: #011d4a;
 }
 
 :root .dark-mode {
   margin: 0;
-  --text-color: #ffffff;
+  --text-color: #c9c5d3;
   --secondary-text-color: #b0a3d5;
   --primay-color: #5f4ca1;
   --selected-color: #ffffff;
-  --hightligh-color: #5f4ca1;
-  --contrast-color: #1f1836;
+  --hightligh-color: #45367d;
+  --contrast-color: #5f4ca1;
   --border-color: #5f4ca1;
   --hover-color: #b0a3d5;
   --score-color: #b0a3d5;
@@ -42,7 +48,13 @@
   --card-shadow1: rgba(176, 163, 213, 0.6);
   --card-shadow2: rgba(176, 163, 213, 0.5);
   --card-shadow3: rgba(176, 163, 213, 0.3);
-  --table-header-color: #e9e3fa;
-  --table-header-text:  #424049;
+  --table-header-color: #a3a2d5;
+  --table-header-text: #424049;
+  --dragable-area: #c3d1e1;
+  --fight-border-color: #665e83;
+  --tooltip-text: #c9c5d3;
+  --tooltip-background: #564f6e;
+  --ribbon-border: #665e83;
+  --ribbon-background: #303030;
 }
 
