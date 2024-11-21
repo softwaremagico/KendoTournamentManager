@@ -29,8 +29,8 @@
   visibility: hidden;
   width: 120px;
   min-height: 50px;
-  background-color: #555555;
-  color: #ffffff;
+  background-color: var(--tooltip-background);
+  color: var(--tooltip-text);
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
