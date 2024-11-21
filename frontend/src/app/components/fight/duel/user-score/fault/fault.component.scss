@@ -21,8 +21,8 @@
 .fault .tooltiptext {
   visibility: hidden;
   width: 200px;
-  background-color: #555555;
-  color: #ffffff;
+  background-color: var(--tooltip-background);
+  color: var(--tooltip-text);
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
