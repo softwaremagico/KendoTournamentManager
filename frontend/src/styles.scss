@@ -125,3 +125,23 @@ body {
   font-family: "Square Sans Serif 7";
   src: local("Square Sans Serif 7"), url(./assets/fonts/square_sans_serif_7.ttf) format("truetype");
 }
+
+
+a:link {
+  color: var(--link);
+}
+
+/* visited link */
+a:visited {
+  color: var(--link-visited);
+}
+
+/* mouse over link */
+a:hover {
+  color: var(--link-hover);
+}
+
+/* selected link */
+a:active {
+  color: var(--link-active);
+}
