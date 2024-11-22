@@ -99,20 +99,20 @@ public class QrTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void createQrWithLogoAsSvgAndColor() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 5000, Color.PINK, "/kote.svg");
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, 5000, Color.PINK, "/kote.svg", Color.white);
         saveImage(qrImage, "withLogoAsSvgAndColor");
     }
 
 
     @Test
     public void createQrWithRoundedBorders() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, LOGO);
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, LOGO, Color.white);
         saveImage(qrImage, "withRoundedBorders");
     }
 
     @Test
     public void createQrWithRoundedBordersAndCircles() {
-        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, LOGO, true);
+        BufferedImage qrImage = qrProvider.getQr(SOFTWARE_URL, null, COLOR, LOGO, true, Color.white);
         saveImage(qrImage, "withRoundedBordersAndCircles");
     }
 
