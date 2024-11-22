@@ -28,6 +28,11 @@
   --ribbon-border: #ffffff;
   --ribbon-background: #011d4a;
   --focus-element: #00081a;
+  --title-color: white;
+  --link: #001239;
+  --link-visited: #012f67;
+  --link-hover: #8097b3;
+  --link-active: #012f67;
 }
 
 :root .dark-mode {
@@ -58,5 +63,10 @@
   --ribbon-border: #665e83;
   --ribbon-background: #303030;
   --focus-element: #c9c5d3;
+  --title-color: white;
+  --link: #ccc5dd;
+  --link-visited: #afa5d5;
+  --link-hover: #9f98b9;
+  --link-active: #8d7fc3;
 }
 
