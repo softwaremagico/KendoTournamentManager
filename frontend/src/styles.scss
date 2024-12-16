@@ -145,3 +145,22 @@ a:hover {
 a:active {
   color: var(--link-active);
 }
+
+.mat-toolbar a:link {
+  color: var(--title-color);
+}
+
+/* visited link */
+.mat-toolbar a:visited {
+  color: var(--title-color);
+}
+
+/* mouse over link */
+.mat-toolbar a:hover {
+  color: var(--title-color);
+}
+
+/* selected link */
+.mat-toolbar a:active {
+  color: var(--title-color);
+}
