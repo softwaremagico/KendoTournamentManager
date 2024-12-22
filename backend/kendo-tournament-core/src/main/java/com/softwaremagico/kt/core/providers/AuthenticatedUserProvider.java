@@ -69,7 +69,7 @@ public class AuthenticatedUserProvider {
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        if (getDatabaseEncryptionKey() != null) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
             //Username is encrypted, use hash
             final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
             if (authenticatedUser.isPresent()) {
