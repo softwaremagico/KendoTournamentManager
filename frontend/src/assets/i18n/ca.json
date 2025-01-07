@@ -733,5 +733,7 @@
   "senbatsuRungLengthHint": "La disparitat màxima permesa a la capacitat entre dos competidors per tal d'establir un desafiament.",
   "reverseOrder": "Invertir",
   "reverseOrderHint": "Invertir l'ordre dels equips.",
-  "fightsEnded": "Tots els partits s'han acabat."
+  "fightsEnded": "Tots els partits s'han acabat.",
+  "yourWorstNightmare": "El teu pitjor malson",
+  "worstNightmareOf": "Tu ets el pitjor malson de"
 }
