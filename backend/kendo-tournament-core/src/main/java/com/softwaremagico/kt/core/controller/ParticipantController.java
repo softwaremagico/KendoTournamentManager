@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.core.exceptions.UserNotFoundException;
+import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
@@ -40,10 +41,13 @@ import java.time.LocalDateTime;
 public class ParticipantController extends BasicInsertableController<Participant, ParticipantDTO, ParticipantRepository,
         ParticipantProvider, ParticipantConverterRequest, ParticipantConverter> {
 
+    private final DuelProvider duelProvider;
+
 
     @Autowired
-    public ParticipantController(ParticipantProvider provider, ParticipantConverter converter) {
+    public ParticipantController(ParticipantProvider provider, ParticipantConverter converter, DuelProvider duelProvider) {
         super(provider, converter);
+        this.duelProvider = duelProvider;
     }
 
     @Override
@@ -87,6 +91,16 @@ public class ParticipantController extends BasicInsertableController<Participant
             participant.setTemporalTokenExpiration(null);
             getProvider().save(participant);
         }
+    }
+
+
+    public ParticipantDTO getYourWorstNightmare(ParticipantDTO participant) {
+        return convert(getProvider().getYourWorstNightmare(reverse(participant)));
+    }
+
+
+    public ParticipantDTO getYouAreTheWorstNightmareOf(ParticipantDTO participant) {
+        return convert(getProvider().getYouAreTheWorstNightmareOf(reverse(participant)));
     }
 
 }

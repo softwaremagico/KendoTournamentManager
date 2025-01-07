@@ -230,6 +230,28 @@
           ></app-progress-bar>
         </div>
 
+        <div class="box-statistics box  scrollable">
+          <div class="statistics-table-title">
+            <mat-icon class="kendo-icon" svgIcon="yourWorstNightmare"></mat-icon>
+            <h3>{{'yourWorstNightmare' | translate}}</h3>
+          </div>
+          <table *ngIf="yourWorstNightmare" aria-hidden="true" class="statistics-table">
+            <tr>
+              <td class="single">{{yourWorstNightmare.name}} {{yourWorstNightmare.lastname}}</td>
+            </tr>
+          </table>
+          <div class="statistics-table-title">
+            <mat-icon class="kendo-icon" svgIcon="youAreTheWorstNightmareOf"></mat-icon>
+            <h3>{{'worstNightmareOf' | translate}}</h3>
+          </div>
+          <table *ngIf="youAreTheWorstNightmareOf" aria-hidden="true" class="statistics-table">
+            <tr>
+              <td class="single">{{youAreTheWorstNightmareOf.name}} {{youAreTheWorstNightmareOf.lastname}}
+              </td>
+            </tr>
+          </table>
+        </div>
+
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
                        [title]="'participantHitsStatistics' | translate"
                        [width]="360"></app-pie-chart>

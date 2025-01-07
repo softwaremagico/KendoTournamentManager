@@ -233,6 +233,15 @@ public class Duel extends Element {
         return null;
     }
 
+    public Participant getCompetitorLooser() {
+        if (getWinner() < 0) {
+            return getCompetitor2();
+        } else if (getWinner() > 0) {
+            return getCompetitor1();
+        }
+        return null;
+    }
+
     public Integer getCompetitor1ScoreValue() {
         return (int) competitor1Score.stream().filter(Score::isValidPoint).count();
     }
