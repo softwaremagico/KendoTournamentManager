@@ -24,8 +24,10 @@ package com.softwaremagico.kt.core.providers;
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Club;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.repositories.DuelRepository;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
@@ -35,8 +37,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,9 +50,12 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
     public static final String TOKEN_NAME_SEPARATOR = "_";
 
+    private final DuelRepository duelRepository;
+
     @Autowired
-    public ParticipantProvider(ParticipantRepository repository) {
+    public ParticipantProvider(ParticipantRepository repository, DuelRepository duelRepository) {
         super(repository);
+        this.duelRepository = duelRepository;
     }
 
     public List<Participant> get(Tournament tournament) {
@@ -96,6 +103,10 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return getRepository().findByClub(club);
     }
 
+    public Participant getByIdCard(String idCard) {
+        return getRepository().findByIdCard(idCard);
+    }
+
     public TemporalToken generateTemporalToken(Participant participant) {
         do {
             participant.generateTemporalToken();
@@ -128,5 +139,45 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         }
         KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
         return Optional.empty();
+    }
+
+    public Participant getYourWorstNightmare(Participant sourceParticipant) {
+        if (sourceParticipant == null) {
+            return null;
+        }
+        final List<Duel> duels = duelRepository.findByParticipant(sourceParticipant);
+        final Map<Participant, Integer> lostBy = new HashMap<>();
+        for (Duel duel : duels) {
+            final Participant winner = duel.getCompetitorWinner();
+            if (!Objects.equals(winner, sourceParticipant)) {
+                lostBy.put(winner, lostBy.getOrDefault(winner, 0) + 1);
+            }
+        }
+        final List<Map.Entry<Participant, Integer>> sortedLostBy = lostBy.entrySet().stream().sorted(Map.Entry.comparingByValue()).toList();
+        if (!sortedLostBy.isEmpty()) {
+            return sortedLostBy.get(0).getKey();
+        }
+        return null;
+    }
+
+
+    public Participant getYouAreTheWorstNightmareOf(Participant sourceParticipant) {
+        if (sourceParticipant == null) {
+            return null;
+        }
+        final List<Duel> duels = duelRepository.findByParticipant(sourceParticipant);
+        final Map<Participant, Integer> lostBy = new HashMap<>();
+        for (Duel duel : duels) {
+            final Participant winner = duel.getCompetitorWinner();
+            final Participant looser = duel.getCompetitorLooser();
+            if (Objects.equals(winner, sourceParticipant)) {
+                lostBy.put(looser, lostBy.getOrDefault(looser, 0) + 1);
+            }
+        }
+        final List<Map.Entry<Participant, Integer>> sortedLostBy = lostBy.entrySet().stream().sorted(Map.Entry.comparingByValue()).toList();
+        if (!sortedLostBy.isEmpty()) {
+            return sortedLostBy.get(0).getKey();
+        }
+        return null;
     }
 }
