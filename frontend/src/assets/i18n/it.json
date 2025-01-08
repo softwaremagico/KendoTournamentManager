@@ -717,5 +717,7 @@
   "senbatsuRungLengthHint": "La massima disparità consentita nell'abilità tra due concorrenti allo scopo di stabilire una sfida.",
   "reverseOrder": "Invertire",
   "reverseOrderHint": "Invertire l'ordine delle squadre.",
-  "fightsEnded": "Tutti gli incontri sono finiti."
+  "fightsEnded": "Tutti gli incontri sono finiti.",
+  "yourWorstNightmare": "Il tuo peggior incubo",
+  "worstNightmareOf": "Sei l'incubo peggiore di"
 }

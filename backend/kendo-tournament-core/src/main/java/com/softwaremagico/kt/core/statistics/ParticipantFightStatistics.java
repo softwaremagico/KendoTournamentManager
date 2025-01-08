@@ -36,6 +36,7 @@ public class ParticipantFightStatistics {
     private Long hansokuNumber;
 
     private Long ipponNumber;
+
     private Long fusenGachiNumber;
 
     private Long receivedMenNumber;
