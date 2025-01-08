@@ -95,7 +95,15 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String className, String messageTemplate, Object... arguments) {
-        info(logger, className + ": " + messageTemplate, arguments);
+        if (logger.isInfoEnabled() && messageTemplate != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                }
+            }
+            final String templateWithClass = (className + ": " + messageTemplate).replaceAll("[\n\r\t]", "_");
+            logger.info(templateWithClass, arguments);
+        }
     }
 
     /**
