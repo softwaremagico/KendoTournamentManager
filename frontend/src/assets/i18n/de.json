@@ -711,5 +711,7 @@
   "senbatsuRungLengthHint": "Der maximal zulässige Leistungsunterschied zwischen zwei Teilnehmern zum Zwecke der Festlegung einer Herausforderung.",
   "reverseOrder": "Reverse",
   "reverseOrderHint": "Kehren Sie die Reihenfolge der Teams um.",
-  "fightsEnded": "Alle Spiele sind vorbei."
+  "fightsEnded": "Alle Spiele sind vorbei.",
+  "yourWorstNightmare": "Dein schlimmster Albtraum",
+  "worstNightmareOf": "Du bist der schlimmste Albtraum"
 }

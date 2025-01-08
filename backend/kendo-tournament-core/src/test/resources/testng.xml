@@ -31,6 +31,7 @@
                 <include name="numberOfWinners"/>
                 <include name="tournamentExtraProperties"/>
                 <include name="qrTest"/>
+                <include name="worstNightmareTest"/>
             </run>
         </groups>
         <classes>
@@ -63,6 +64,7 @@
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
             <class name="com.softwaremagico.kt.core.tests.QrTests"/>
+            <class name="com.softwaremagico.kt.core.tests.WorstNightmareTest"/>
         </classes>
     </test>
 </suite>

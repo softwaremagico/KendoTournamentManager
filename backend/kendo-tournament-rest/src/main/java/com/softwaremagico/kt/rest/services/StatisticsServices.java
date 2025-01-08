@@ -26,6 +26,7 @@ import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.ParticipantStatisticsController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentStatisticsController;
+import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantStatisticsDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentFightStatisticsDTO;
@@ -152,5 +153,47 @@ public class StatisticsServices {
         participantStatisticsDTO.setCreatedBy(authentication != null ? authentication.getName() : null);
         participantStatisticsDTO.setCreatedAt(LocalDateTime.now());
         return participantStatisticsDTO;
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @Operation(summary = "Gets participant worst nightmare.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/participants/your-worst-nightmare/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantDTO getYourWorstNightmareFromParticipant(@Parameter(description = "Id of an existing participant", required = true)
+                                                               @PathVariable("participantId") Integer participantId,
+                                                               Authentication authentication,
+                                                               HttpServletRequest request) {
+        //If is a participant guest, only its own statistics can see.
+        if (authentication != null) {
+            final Optional<Participant> participant = participantProvider.findByTokenUsername(authentication.getName());
+            if (participant.isPresent()) {
+                if (!Objects.equals(participant.get().getId(), participantId)) {
+                    throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
+                            + "' is trying to access to statistics from user '" + participantId + "'.");
+                }
+            }
+        }
+        return participantController.getYourWorstNightmare(participantController.get(participantId));
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @Operation(summary = "Gets participant worst nightmare.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/participants/worst-nightmare-of/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ParticipantDTO getWorstNightmareOf(@Parameter(description = "Id of an existing participant", required = true)
+                                              @PathVariable("participantId") Integer participantId,
+                                              Authentication authentication,
+                                              HttpServletRequest request) {
+        //If is a participant guest, only its own statistics can see.
+        if (authentication != null) {
+            final Optional<Participant> participant = participantProvider.findByTokenUsername(authentication.getName());
+            if (participant.isPresent()) {
+                if (!Objects.equals(participant.get().getId(), participantId)) {
+                    throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
+                            + "' is trying to access to statistics from user '" + participantId + "'.");
+                }
+            }
+        }
+        return participantController.getYouAreTheWorstNightmareOf(participantController.get(participantId));
     }
 }
