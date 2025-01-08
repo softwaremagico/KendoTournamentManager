@@ -728,5 +728,7 @@
   "senbatsuRungLengthHint": "The maximum allowable disparity in ability between two competitors for the purpose of establishing a challenge.",
   "reverseOrder": "Reverse",
   "reverseOrderHint": "Reverse teams' order",
-  "fightsEnded": "All matches have finished."
+  "fightsEnded": "All matches have finished.",
+  "yourWorstNightmare": "Your worst nightmare",
+  "worstNightmareOf": "You are the worst nightmare of"
 }
