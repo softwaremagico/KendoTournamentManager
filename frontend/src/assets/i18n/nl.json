@@ -711,5 +711,7 @@
   "senbatsuRungLengthHint": "Het maximaal toegestane verschil in bekwaamheid tussen twee concurrenten met als doel een uitdaging aan te gaan.",
   "reverseOrder": "Reverse",
   "reverseOrderHint": "Draai de volgorde van de teams om.",
-  "fightsEnded": "Alle spellen zijn voorbij."
+  "fightsEnded": "Alle spellen zijn voorbij.",
+  "yourWorstNightmare": "Je ergste nachtmerrie",
+  "worstNightmareOf": "JJij bent de ergste nachtmerrie"
 }

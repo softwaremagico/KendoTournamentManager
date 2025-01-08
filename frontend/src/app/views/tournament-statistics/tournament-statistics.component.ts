@@ -48,7 +48,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
   public fightsOverData: GaugeChartData;
 
-  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
+  protected achievementsEnabled: boolean = JSON.parse(String(environment.achievementsEnabled));
 
   private readonly tournamentId: number | undefined;
   public tournamentStatistics: TournamentStatistics | undefined = undefined;

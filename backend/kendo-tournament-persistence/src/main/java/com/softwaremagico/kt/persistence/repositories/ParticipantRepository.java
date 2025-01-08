@@ -81,6 +81,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 
     List<Participant> findByClub(Club club);
 
+    Participant findByIdCard(String idCard);
+
     long countByTemporalToken(String temporalToken);
 
     Optional<Participant> findByTemporalToken(String temporalToken);
