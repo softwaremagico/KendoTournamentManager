@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,10 +104,6 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return getRepository().findByClub(club);
     }
 
-    public Participant getByIdCard(String idCard) {
-        return getRepository().findByIdCard(idCard);
-    }
-
     public TemporalToken generateTemporalToken(Participant participant) {
         do {
             participant.generateTemporalToken();
@@ -141,7 +138,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return Optional.empty();
     }
 
-    public Participant getYourWorstNightmare(Participant sourceParticipant) {
+    public List<Participant> getYourWorstNightmare(Participant sourceParticipant) {
         if (sourceParticipant == null) {
             return null;
         }
@@ -149,19 +146,27 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         final Map<Participant, Integer> lostBy = new HashMap<>();
         for (Duel duel : duels) {
             final Participant winner = duel.getCompetitorWinner();
-            if (!Objects.equals(winner, sourceParticipant)) {
+            if (winner != null && !Objects.equals(winner, sourceParticipant)) {
                 lostBy.put(winner, lostBy.getOrDefault(winner, 0) + 1);
             }
         }
-        final List<Map.Entry<Participant, Integer>> sortedLostBy = lostBy.entrySet().stream().sorted(Map.Entry.comparingByValue()).toList();
+        final List<Map.Entry<Participant, Integer>> sortedLostBy = lostBy.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
+        final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            return sortedLostBy.get(0).getKey();
+            final int maxScore = sortedLostBy.get(0).getValue();
+            int count = 0;
+            while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
+                selected.add(sortedLostBy.get(count).getKey());
+                count++;
+            }
         }
-        return null;
+
+        return selected;
     }
 
 
-    public Participant getYouAreTheWorstNightmareOf(Participant sourceParticipant) {
+    public List<Participant> getYouAreTheWorstNightmareOf(Participant sourceParticipant) {
         if (sourceParticipant == null) {
             return null;
         }
@@ -174,10 +179,18 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
                 lostBy.put(looser, lostBy.getOrDefault(looser, 0) + 1);
             }
         }
-        final List<Map.Entry<Participant, Integer>> sortedLostBy = lostBy.entrySet().stream().sorted(Map.Entry.comparingByValue()).toList();
+        final List<Map.Entry<Participant, Integer>> sortedLostBy = lostBy.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).toList();
+        final List<Participant> selected = new ArrayList<>();
         if (!sortedLostBy.isEmpty()) {
-            return sortedLostBy.get(0).getKey();
+            final int maxScore = sortedLostBy.get(0).getValue();
+            int count = 0;
+            while (count < sortedLostBy.size() && sortedLostBy.get(count) != null && sortedLostBy.get(count).getValue() == maxScore) {
+                selected.add(sortedLostBy.get(count).getKey());
+                count++;
+            }
         }
-        return null;
+
+        return selected;
     }
 }

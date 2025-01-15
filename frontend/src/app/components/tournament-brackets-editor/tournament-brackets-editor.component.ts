@@ -233,7 +233,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       const pdf: jsPDF = new jsPDF(jsPdfOptions);
       pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);
       pdf.save(this.tournament.name + '.pdf');
-    }).catch(error => {
+    }).catch((): void => {
     });
   }
 
