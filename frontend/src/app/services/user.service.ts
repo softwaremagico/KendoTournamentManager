@@ -29,7 +29,7 @@ export class UserService {
     const url: string = `${this.baseUrl}/register`;
     return this.http.get<AuthenticatedUser[]>(url)
       .pipe(
-        map(_users => {
+        map((_users: any) => {
           for (let user of _users) {
             user.roles = UserRoles.getByKeys(user.roles);
           }
@@ -53,7 +53,7 @@ export class UserService {
             this.loggerService.info(`adding user ${_authenticatedUser}`);
             this.messageService.infoMessage("infoAuthenticatedUserStored");
           },
-          error: (error) => {
+          error: (error: { status: any; }): void => {
             this.systemOverloadService.isBusy.next(false);
             if (error instanceof HttpErrorResponse) {
               switch (error.status) {

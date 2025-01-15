@@ -90,26 +90,26 @@ export class StatisticsService {
   }
 
 
-  getYourWorstNightmare(participantId: number): Observable<Participant> {
+  getYourWorstNightmare(participantId: number): Observable<Participant[]> {
     const url: string = `${this.baseUrl}/participants/your-worst-nightmare/${participantId}`;
-    return this.http.get<Participant>(url)
+    return this.http.get<Participant[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched worst nightmare for participant id=${participantId}`)
         }),
-        catchError(this.messageService.logOnlyError<Participant>(`get id=${participantId}`))
+        catchError(this.messageService.logOnlyError<Participant[]>(`get id=${participantId}`))
       );
   }
 
 
-  getWorstNightmareOf(participantId: number): Observable<Participant> {
+  getWorstNightmareOf(participantId: number): Observable<Participant[]> {
     const url: string = `${this.baseUrl}/participants/worst-nightmare-of/${participantId}`;
-    return this.http.get<Participant>(url)
+    return this.http.get<Participant[]>(url)
       .pipe(
         tap({
           next: () => this.loggerService.info(`fetched worst nightmare to participant id=${participantId}`),
         }),
-        catchError(this.messageService.logOnlyError<Participant>(`get id=${participantId}`))
+        catchError(this.messageService.logOnlyError<Participant[]>(`get id=${participantId}`))
       );
   }
 }
