@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             }
         }
 
+        selected.sort(Comparator.comparing(Participant::getLastname).thenComparing(Participant::getName));
         return selected;
     }
 
@@ -191,6 +193,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             }
         }
 
+        selected.sort(Comparator.comparing(Participant::getLastname).thenComparing(Participant::getName));
         return selected;
     }
 }
