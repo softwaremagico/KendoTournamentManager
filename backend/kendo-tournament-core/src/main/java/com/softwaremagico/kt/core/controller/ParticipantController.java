@@ -28,7 +28,6 @@ import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TokenExpiredException;
 import com.softwaremagico.kt.core.exceptions.UserNotFoundException;
-import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
@@ -36,18 +35,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class ParticipantController extends BasicInsertableController<Participant, ParticipantDTO, ParticipantRepository,
         ParticipantProvider, ParticipantConverterRequest, ParticipantConverter> {
 
-    private final DuelProvider duelProvider;
-
 
     @Autowired
-    public ParticipantController(ParticipantProvider provider, ParticipantConverter converter, DuelProvider duelProvider) {
+    public ParticipantController(ParticipantProvider provider, ParticipantConverter converter) {
         super(provider, converter);
-        this.duelProvider = duelProvider;
     }
 
     @Override
@@ -94,13 +91,13 @@ public class ParticipantController extends BasicInsertableController<Participant
     }
 
 
-    public ParticipantDTO getYourWorstNightmare(ParticipantDTO participant) {
-        return convert(getProvider().getYourWorstNightmare(reverse(participant)));
+    public List<ParticipantDTO> getYourWorstNightmare(ParticipantDTO participant) {
+        return convertAll(getProvider().getYourWorstNightmare(reverse(participant)));
     }
 
 
-    public ParticipantDTO getYouAreTheWorstNightmareOf(ParticipantDTO participant) {
-        return convert(getProvider().getYouAreTheWorstNightmareOf(reverse(participant)));
+    public List<ParticipantDTO> getYouAreTheWorstNightmareOf(ParticipantDTO participant) {
+        return convertAll(getProvider().getYouAreTheWorstNightmareOf(reverse(participant)));
     }
 
 }

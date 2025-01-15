@@ -48,8 +48,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public achievements: Achievement[];
 
   public participant: Participant;
-  public yourWorstNightmare: Participant;
-  public youAreTheWorstNightmareOf: Participant;
+  public yourWorstNightmare: Participant[];
+  public youAreTheWorstNightmareOf: Participant[];
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               rbacService: RbacService, private systemOverloadService: SystemOverloadService,
@@ -141,10 +141,10 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
     });
-    this.statisticsService.getYourWorstNightmare(this.participantId!).subscribe((_yourWorstNightmare: Participant): void => {
+    this.statisticsService.getYourWorstNightmare(this.participantId!).subscribe((_yourWorstNightmare: Participant[]): void => {
       this.yourWorstNightmare = _yourWorstNightmare;
     });
-    this.statisticsService.getWorstNightmareOf(this.participantId!).subscribe((_youAreTheWorstNightmareOf: Participant): void => {
+    this.statisticsService.getWorstNightmareOf(this.participantId!).subscribe((_youAreTheWorstNightmareOf: Participant[]): void => {
       this.youAreTheWorstNightmareOf = _youAreTheWorstNightmareOf;
     });
     if (this.achievementsEnabled) {
