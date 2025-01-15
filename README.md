@@ -30,6 +30,24 @@ event for your kendo club.
 Drawing on 15 years of experience with different fighting structures, this tool aims to
 provide flexibility that serves your club's needs effectively.
 
+What can this tool do for you or you and your club? Some improvements that you can quickly notice include:
+
+- Streamline the [creation](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition)
+  and [development](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution) of a
+  championship, league, or tournament in various formats, suitable for both professional and amateur levels.
+- Prevent scoring errors by
+  providing [instant tracking](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#scores)
+  and
+  automated [point counting](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#advancing-on-the-matches).
+- Track participants while
+  displaying [their statistics](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participants-statistics)
+  to monitor their progress over time.
+- [Encourage](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements) participation from
+  all club members in tournaments, regardless of their skill level.
+
+Additionally, there are many more details outlined in
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
+
 <p align="center">
     <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
 </p>
@@ -47,10 +65,10 @@ If you are seeking a desktop application, please visit
 the [Kendo Tournament Generator page](https://sourceforge.net/projects/kendotournament/files/) for more information.
 
 But if you are in need of a professional online tool, the project described here may be exactly what you are searching
-for. If you are interested in discovering the capabilities of this tool for your tournaments, you can explore the 
-[wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition) for details on its features 
-and customization choices. 
-Alternatively, for practical illustrations, you can directly check out a few description 
+for. If you are interested in discovering the capabilities of this tool for your tournaments, you can explore the
+[wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition) for details on its features
+and customization choices.
+Alternatively, for practical illustrations, you can directly check out a few description
 [examples](https://github.com/softwaremagico/KendoTournamentManager/wiki/Full-Examples) provided.
 
 ## Installation
@@ -158,7 +176,8 @@ However, using mobile devices is not advised due to screen size limitations.
 
 # Using the application
 
-For instructions on using the application, please visit the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
+For instructions on using the application, please visit
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
 There, you will find comprehensive examples for various types of tournaments and guidance on how to configure them.
 
 ## Default credentials.
