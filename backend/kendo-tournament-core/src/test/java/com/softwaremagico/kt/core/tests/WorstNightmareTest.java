@@ -25,6 +25,7 @@ import com.softwaremagico.kt.core.TournamentTestUtils;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.converters.ParticipantConverter;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -59,6 +60,9 @@ public class WorstNightmareTest extends TournamentTestUtils {
 
     @Autowired
     private ParticipantProvider participantProvider;
+
+    @Autowired
+    private ParticipantConverter participantConverter;
 
     @BeforeClass
     public void prepareData() {
@@ -98,37 +102,37 @@ public class WorstNightmareTest extends TournamentTestUtils {
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         //P7 vs P4
         fightDTOs.get(1).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         //P8 vs P5
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         //P6 vs P0
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(0).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
 
         //P7 vs P1
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
 
         //P8 vs P2
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
     }
 
     @BeforeClass(dependsOnMethods = "createTournaments")
@@ -160,54 +164,60 @@ public class WorstNightmareTest extends TournamentTestUtils {
         //P7 vs P4
         fightDTOs.get(1).getDuels().get(1).addCompetitor2Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         //P8 vs P5
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
 
         //P6 vs P0
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(0).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
 
         //P7 vs P1
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
 
         //P8 vs P2
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
     }
 
     @Test
     public void checkYourWorstNightmare() {
-        final Participant participant1 = participantProvider.getByIdCard("0001");
-        final Participant participant3 = participantProvider.getByIdCard("0003");
-        final Participant participant4 = participantProvider.getByIdCard("0004");
-        final Participant participant6 = participantProvider.getByIdCard("0006");
-        Assert.assertEquals(participantProvider.getYourWorstNightmare(participant3), participant6);
-        Assert.assertEquals(participantProvider.getYourWorstNightmare(participant4), participant1);
+        final Participant participant0 = participantConverter.reverse(participantsDTOs.get(0));
+        final Participant participant1 = participantConverter.reverse(participantsDTOs.get(1));
+        final Participant participant3 = participantConverter.reverse(participantsDTOs.get(3));
+        final Participant participant4 = participantConverter.reverse(participantsDTOs.get(4));
+        //P0 and P6
+        Assert.assertEquals(participantProvider.getYourWorstNightmare(participant3).size(), 2);
+        Assert.assertEquals(participantProvider.getYourWorstNightmare(participant3).get(0), participant0);
+        Assert.assertEquals(participantProvider.getYourWorstNightmare(participant4).size(), 1);
+        Assert.assertEquals(participantProvider.getYourWorstNightmare(participant4).get(0), participant1);
     }
 
     @Test
     public void checkWorstNightmareOf() {
-        final Participant participant1 = participantProvider.getByIdCard("0001");
-        final Participant participant3 = participantProvider.getByIdCard("0003");
-        final Participant participant4 = participantProvider.getByIdCard("0004");
-        final Participant participant6 = participantProvider.getByIdCard("0006");
-        Assert.assertEquals(participantProvider.getYouAreTheWorstNightmareOf(participant6), participant3);
-        Assert.assertEquals(participantProvider.getYouAreTheWorstNightmareOf(participant1), participant4);
+        final Participant participant0 = participantConverter.reverse(participantsDTOs.get(0));
+        final Participant participant1 = participantConverter.reverse(participantsDTOs.get(1));
+        final Participant participant4 = participantConverter.reverse(participantsDTOs.get(4));
+        final Participant participant6 = participantConverter.reverse(participantsDTOs.get(6));
+        Assert.assertEquals(participantProvider.getYouAreTheWorstNightmareOf(participant6).size(), 1);
+        Assert.assertEquals(participantProvider.getYouAreTheWorstNightmareOf(participant6).get(0), participant0);
+        Assert.assertEquals(participantProvider.getYouAreTheWorstNightmareOf(participant1).size(), 1);
+        Assert.assertEquals(participantProvider.getYouAreTheWorstNightmareOf(participant1).get(0), participant4);
     }
 
     @AfterClass(alwaysRun = true)
+    @Override
     public void wipeOut() {
         super.wipeOut();
     }
