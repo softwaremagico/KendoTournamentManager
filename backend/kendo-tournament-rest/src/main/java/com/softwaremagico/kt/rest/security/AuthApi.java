@@ -234,7 +234,7 @@ public class AuthApi {
     public ResponseEntity<IAuthenticatedUser> getToken(@RequestBody TemporalToken temporalToken,
                                                        HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
-        final Token token = participantController.generateToken(temporalToken.getContent());
+        final Token token = participantController.generateFromToken(temporalToken.getContent());
 
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();
