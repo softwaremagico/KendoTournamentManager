@@ -65,6 +65,7 @@ public class TemporalToken {
 
     @Override
     public String toString() {
-        return content;
+        return "TemporalToken{"
+                + content + '}';
     }
 }

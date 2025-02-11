@@ -72,7 +72,7 @@ public class ParticipantController extends BasicInsertableController<Participant
         throw new UserNotFoundException(this.getClass(), "Invalid username '" + userName + "'!");
     }
 
-    public Token generateToken(String temporalToken) {
+    public Token generateFromToken(String temporalToken) {
         final Participant participant = getProvider().findByTemporalToken(temporalToken).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found for the provided token!"));
         try {
