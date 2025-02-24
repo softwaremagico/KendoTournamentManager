@@ -75,4 +75,8 @@ export class UserNameComponent extends KendoComponent implements OnInit, OnChang
     return (this.participant?.id === this.highlightedParticipantId);
   }
 
+  openStatistics(): void {
+    window.open("/#/participants/statistics?participantId=" + this.participant?.id, "_blank");
+  }
+
 }
