@@ -240,7 +240,7 @@
               <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}</td>
             </tr>
           </table>
-          <table *ngIf="!yourWorstNightmare.length" aria-hidden="true" class="statistics-table">
+          <table *ngIf="!yourWorstNightmare || !yourWorstNightmare.length" aria-hidden="true" class="statistics-table">
             <tr>
               <td class="single">--</td>
             </tr>
@@ -254,7 +254,7 @@
               <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}
               </td>
             </tr>
-            <tr *ngIf="!youAreTheWorstNightmareOf.length">
+            <tr *ngIf="!youAreTheWorstNightmareOf || !youAreTheWorstNightmareOf.length">
               <td class="single">--</td>
             </tr>
           </table>

@@ -122,4 +122,8 @@ public class Achievement extends Element {
                 + ", achievementGrade=" + achievementGrade
                 + "} " + super.toString();
     }
+
+    public String keyByUserAndType() {
+        return participant.getId() + "_" + achievementType + "_" + achievementGrade;
+    }
 }

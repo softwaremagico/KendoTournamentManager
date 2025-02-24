@@ -30,6 +30,8 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -103,5 +106,25 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
     @PatchMapping(value = "/tournaments/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> regenerateAllTournamentAchievements(HttpServletRequest request) {
         return getController().regenerateAllAchievements();
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets total achievements by type.", description = "Not includes duplicates",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count/types", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<AchievementType, Map<AchievementGrade, Integer>> countByType(HttpServletRequest request) {
+        return getController().getAchievementsCount();
+    }
+
+
+    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @Operation(summary = "Gets total achievements by type.", description = "Not includes duplicates",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count/types/{achievementType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long count(@Parameter(description = "Type to count", required = true)
+                      @PathVariable("achievementType") AchievementType achievementType,
+                      HttpServletRequest request) {
+        return getController().countAchievements(achievementType);
     }
 }

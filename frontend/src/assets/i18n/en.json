@@ -451,6 +451,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:<br>",
   "achievementToolTipObtainedAt": "Obtained at",
   "achievementToolTipObtainedBy": "Obtained by",
+  "achievementToolTipOthersTotal": "(Obtained by other <b>{{totalParticipants}}</b> competitors.)",
+  "achievementToolTipTotal": "(Obtained by <b>{{totalParticipants}}</b> competitors.)",
   "time": "Time",
   "lockedAt": "Locked at",
   "fightsStartedAt": "Matches started at",
