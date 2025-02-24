@@ -1,6 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "basic-colors";
 
+.cdk-overlay-pane {
+  &.mat-tooltip-panel {
+    .mat-tooltip {
+      background: var(--tooltip-background);
+      font-size: 15px;
+      padding: 10px;
+    }
+  }
+}
+
+
 //Messages
 .mat-snack-bar-container.info-snackbar.message-service {
   background: #3700B3;
