@@ -25,7 +25,7 @@
   position: relative;
 }
 
-.point .tooltip-popup {
+.point .tooltip-time-popup {
   visibility: hidden;
   width: 120px;
   min-height: 50px;
@@ -47,20 +47,20 @@
   transition: opacity 0.3s;
 }
 
-.point .tooltip-popup.left-border {
+.point .tooltip-time-popup.left-border {
   margin-left: -40px;
 }
 
-.point .tooltip-popup.right-border {
+.point .tooltip-time-popup.right-border {
   margin-left: -260px;
 }
 
-.tooltip-popup.center {
+.tooltip-time-popup.center {
   translate: -50%;
 }
 
 /* Tooltip arrow */
-.point .tooltip-popup::after {
+.point .tooltip-time-popup::after {
   content: "";
   position: absolute;
   top: -18%;
@@ -73,7 +73,7 @@
 
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.point:hover .tooltip-popup {
+.point:hover .tooltip-time-popup {
   visibility: visible;
   opacity: 1;
 }
