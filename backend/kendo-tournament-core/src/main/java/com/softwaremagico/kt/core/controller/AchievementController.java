@@ -2040,18 +2040,18 @@ public class AchievementController extends BasicInsertableController<Achievement
                         }
                     }
                 }
-                if (isApprentice) {
+                if (isApprentice && duel.getCompetitorWinner() != null) {
                     //Generate achievement depending on the number of fights.
-                    if (numberOfPreviousDuels == MINIMUM_LOST_SITH_NORMAL) {
+                    if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_NORMAL && numberOfPreviousDuels < MINIMUM_LOST_SITH_BRONZE) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.NORMAL));
-                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_BRONZE) {
+                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_BRONZE && numberOfPreviousDuels < MINIMUM_LOST_SITH_SILVER) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.BRONZE));
-                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_SILVER) {
+                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_SILVER && numberOfPreviousDuels < MINIMUM_LOST_SITH_GOLD) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.SILVER));
-                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_GOLD) {
+                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_GOLD) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.GOLD));
                     }
