@@ -430,6 +430,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Verkregen op:",
   "achievementToolTipObtainedAt": "Verkregen op",
   "achievementToolTipObtainedBy": "Verkregen door",
+  "achievementToolTipOthersTotal": "(Behaald door andere <b>{{totalParticipants}}</b> deelnemers).",
+  "achievementToolTipTotal": "(Behaald door <b>{{totalParticipants}}</b> deelnemers).",
   "time": "Tijd",
   "lockedAt": "Op slot",
   "fightsStartedAt": "Begin van wedstrijden",

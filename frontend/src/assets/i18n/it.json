@@ -436,6 +436,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Ottenuto a:",
   "achievementToolTipObtainedAt": "Ottenuto a",
   "achievementToolTipObtainedBy": "Ottenuto da",
+  "achievementToolTipOthersTotal": "(Ottenuto da altri <b>{{totalParticipants}}</b> concorrenti).",
+  "achievementToolTipTotal": "(Ottenuto da <b>{{totalParticipants}}</b> concorrenti).",
   "time": "Tempi",
   "lockedAt": "Bloccato",
   "fightsStartedAt": "Inizio delle partite",

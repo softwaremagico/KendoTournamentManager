@@ -402,6 +402,10 @@ public class AchievementController extends BasicInsertableController<Achievement
     public List<AchievementDTO> regenerateAchievements(Integer tournamentId) {
         final TournamentDTO tournament = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
+        return regenerateAchievements(tournament);
+    }
+
+    public List<AchievementDTO> regenerateAchievements(TournamentDTO tournament) {
         deleteAchievements(tournament);
         final List<AchievementDTO> achievementsGenerated = generateAchievements(tournament);
         achievementsGeneratedListeners.forEach(achievementsGeneratedListener
@@ -411,6 +415,14 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private void deleteAchievements(TournamentDTO tournamentDTO) {
         getProvider().delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
+    public Map<AchievementType, Map<AchievementGrade, Integer>> getAchievementsCount() {
+        return getProvider().getAchievementsCount();
+    }
+
+    public int countAchievements(AchievementType achievementType) {
+        return getProvider().countAchievements(achievementType);
     }
 
     public List<AchievementDTO> generateAchievements(TournamentDTO tournamentDTO) {
@@ -563,8 +575,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * Generate achievements based on normal achievements grades already on database. A new grade is generated if some consecutive
-     * tournaments achievements exists. Note that a grade cannot be a multiplier of the previous
+     * Generate achievements based on normal achievements grades already on the database. A new grade is generated if some consecutive
+     * tournaments achievements exist. Note that a grade cannot be a multiplier of the previous
      * grade level to work properly
      *
      * @param tournament             the tournament to check
@@ -2040,18 +2052,18 @@ public class AchievementController extends BasicInsertableController<Achievement
                         }
                     }
                 }
-                if (isApprentice) {
+                if (isApprentice && duel.getCompetitorWinner() != null) {
                     //Generate achievement depending on the number of fights.
-                    if (numberOfPreviousDuels == MINIMUM_LOST_SITH_NORMAL) {
+                    if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_NORMAL && numberOfPreviousDuels < MINIMUM_LOST_SITH_BRONZE) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.NORMAL));
-                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_BRONZE) {
+                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_BRONZE && numberOfPreviousDuels < MINIMUM_LOST_SITH_SILVER) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.BRONZE));
-                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_SILVER) {
+                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_SILVER && numberOfPreviousDuels < MINIMUM_LOST_SITH_GOLD) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.SILVER));
-                    } else if (numberOfPreviousDuels == MINIMUM_LOST_SITH_GOLD) {
+                    } else if (numberOfPreviousDuels >= MINIMUM_LOST_SITH_GOLD) {
                         achievements.add(new Achievement(duel.getCompetitorWinner(), tournament, AchievementType.SITH_APPRENTICES_ALWAYS_KILL_THEIR_MASTER,
                                 AchievementGrade.GOLD));
                     }
