@@ -24,7 +24,12 @@ package com.softwaremagico.kt.core.controller.models;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 
+import java.io.Serial;
+
 public class AchievementDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 700852091905611286L;
 
     private ParticipantDTO participant;
 
