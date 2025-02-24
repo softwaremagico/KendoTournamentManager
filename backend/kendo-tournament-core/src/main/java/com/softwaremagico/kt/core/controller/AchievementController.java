@@ -402,6 +402,10 @@ public class AchievementController extends BasicInsertableController<Achievement
     public List<AchievementDTO> regenerateAchievements(Integer tournamentId) {
         final TournamentDTO tournament = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
+        return regenerateAchievements(tournament);
+    }
+
+    public List<AchievementDTO> regenerateAchievements(TournamentDTO tournament) {
         deleteAchievements(tournament);
         final List<AchievementDTO> achievementsGenerated = generateAchievements(tournament);
         achievementsGeneratedListeners.forEach(achievementsGeneratedListener
@@ -411,6 +415,14 @@ public class AchievementController extends BasicInsertableController<Achievement
 
     private void deleteAchievements(TournamentDTO tournamentDTO) {
         getProvider().delete(tournamentConverter.reverse(tournamentDTO));
+    }
+
+    public Map<AchievementType, Map<AchievementGrade, Integer>> getAchievementsCount() {
+        return getProvider().getAchievementsCount();
+    }
+
+    public int countAchievements(AchievementType achievementType) {
+        return getProvider().countAchievements(achievementType);
     }
 
     public List<AchievementDTO> generateAchievements(TournamentDTO tournamentDTO) {
@@ -563,8 +575,8 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     /**
-     * Generate achievements based on normal achievements grades already on database. A new grade is generated if some consecutive
-     * tournaments achievements exists. Note that a grade cannot be a multiplier of the previous
+     * Generate achievements based on normal achievements grades already on the database. A new grade is generated if some consecutive
+     * tournaments achievements exist. Note that a grade cannot be a multiplier of the previous
      * grade level to work properly
      *
      * @param tournament             the tournament to check
