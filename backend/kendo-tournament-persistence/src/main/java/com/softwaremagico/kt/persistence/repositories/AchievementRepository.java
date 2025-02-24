@@ -28,6 +28,7 @@ import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -64,5 +65,8 @@ public interface AchievementRepository extends JpaRepository<Achievement, Intege
             AchievementType achievementType, AchievementGrade achievementGrade, Tournament tournament, Collection<Participant> participants);
 
     int deleteByTournament(Tournament tournament);
+
+    @Query(value = "SELECT COUNT(DISTINCT(a.participant)) FROM Achievement a WHERE a.achievementType = :achievementType")
+    int countAchievementsByAchievementType(AchievementType achievementType);
 }
 

@@ -35,7 +35,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class AchievementProvider extends CrudProvider<Achievement, Integer, AchievementRepository> {
@@ -118,5 +122,25 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
     public long delete(AchievementType achievementType, AchievementGrade achievementGrade, Collection<Participant> participants, Tournament tournament) {
         return getRepository().deleteByAchievementTypeAndAchievementGradeAndTournamentAndParticipantIn(
                 achievementType, achievementGrade, tournament, participants);
+    }
+
+    public Map<AchievementType, Map<AchievementGrade, Integer>> getAchievementsCount() {
+        final List<Achievement> achievements = getRepository().findAll()
+                //Filter duplicates by user and type.
+                .stream().collect(Collectors.toMap(Achievement::keyByUserAndType, Function.identity(),
+                        (a, b) -> a))
+                .values().stream().toList();
+        final Map<AchievementType, Map<AchievementGrade, Integer>> counter = new HashMap<>();
+        for (Achievement achievement : achievements) {
+            counter.putIfAbsent(achievement.getAchievementType(), new HashMap<>());
+            counter.get(achievement.getAchievementType()).putIfAbsent(achievement.getAchievementGrade(), 0);
+            counter.get(achievement.getAchievementType()).put(achievement.getAchievementGrade(),
+                    counter.get(achievement.getAchievementType()).get(achievement.getAchievementGrade()) + 1);
+        }
+        return counter;
+    }
+
+    public int countAchievements(AchievementType achievementType) {
+        return getRepository().countAchievementsByAchievementType(achievementType);
     }
 }
