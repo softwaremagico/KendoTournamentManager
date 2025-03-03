@@ -732,5 +732,7 @@
   "reverseOrderHint": "Reverse teams' order",
   "fightsEnded": "All matches have finished.",
   "yourWorstNightmare": "Your worst nightmare",
-  "worstNightmareOf": "You are the worst nightmare of"
+  "worstNightmareOf": "You are the worst nightmare of",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode"
 }

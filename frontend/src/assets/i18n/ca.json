@@ -737,5 +737,7 @@
   "reverseOrderHint": "Invertir l'ordre dels equips.",
   "fightsEnded": "Tots els partits s'han acabat.",
   "yourWorstNightmare": "El teu pitjor malson",
-  "worstNightmareOf": "Tu ets el pitjor malson de"
+  "worstNightmareOf": "Tu ets el pitjor malson de",
+  "darkMode": "Mode Fosc",
+  "lightMode": "Mode Clar"
 }
