@@ -721,5 +721,7 @@
   "reverseOrderHint": "Invertire l'ordine delle squadre.",
   "fightsEnded": "Tutti gli incontri sono finiti.",
   "yourWorstNightmare": "Il tuo peggior incubo",
-  "worstNightmareOf": "Sei l'incubo peggiore di"
+  "worstNightmareOf": "Sei l'incubo peggiore di",
+  "darkMode": "Modalità Scura",
+  "lightMode": "Modalità Chiara"
 }
