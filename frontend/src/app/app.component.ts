@@ -91,4 +91,8 @@ export class AppComponent extends RbacBasedComponent {
       this._renderer.removeClass(document.body, 'dark-mode');
     }
   }
+
+  openWiki(): void {
+    window.open("https://github.com/softwaremagico/KendoTournamentManager/wiki", "_blank");
+  }
 }

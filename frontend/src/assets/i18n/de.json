@@ -715,5 +715,7 @@
   "reverseOrderHint": "Kehren Sie die Reihenfolge der Teams um.",
   "fightsEnded": "Alle Spiele sind vorbei.",
   "yourWorstNightmare": "Dein schlimmster Albtraum",
-  "worstNightmareOf": "Du bist der schlimmste Albtraum"
+  "worstNightmareOf": "Du bist der schlimmste Albtraum",
+  "darkMode": "Donkere Modus",
+  "lightMode": "Lichte Modus"
 }

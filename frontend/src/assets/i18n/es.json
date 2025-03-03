@@ -733,5 +733,7 @@
   "reverseOrderHint": "Invertir el orden de los equipos.",
   "fightsEnded": "Todos los partidos han terminado.",
   "yourWorstNightmare": "Tu peor pesadilla",
-  "worstNightmareOf": "Eres la peor pesadilla de"
+  "worstNightmareOf": "Eres la peor pesadilla de",
+  "darkMode": "Modo Oscuro",
+  "lightMode": "Modo Claro"
 }
