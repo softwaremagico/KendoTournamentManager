@@ -715,5 +715,7 @@
   "reverseOrderHint": "Draai de volgorde van de teams om.",
   "fightsEnded": "Alle spellen zijn voorbij.",
   "yourWorstNightmare": "Je ergste nachtmerrie",
-  "worstNightmareOf": "JJij bent de ergste nachtmerrie"
+  "worstNightmareOf": "JJij bent de ergste nachtmerrie",
+  "darkMode": "Dunkler Modus",
+  "lightMode": "Heller Modus"
 }
