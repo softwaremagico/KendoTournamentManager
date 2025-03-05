@@ -717,5 +717,6 @@
   "yourWorstNightmare": "Dein schlimmster Albtraum",
   "worstNightmareOf": "Du bist der schlimmste Albtraum",
   "darkMode": "Donkere Modus",
-  "lightMode": "Lichte Modus"
+  "lightMode": "Lichte Modus",
+  "newVersionAvailable": "Version '{{newVersion}}' ist verfügbar! Aktuelle Version ist '{{currentVersion}}'."
 }
