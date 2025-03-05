@@ -216,15 +216,15 @@
             </a>
           </mat-nav-list>
         </mat-expansion-panel>
-        <mat-list-item (click)="openWiki()">
+        <mat-list-item (click)="openWiki()" (keydown)="openWiki()">
           <mat-icon>help</mat-icon>
           <span class="left-menu-single-entry">{{ 'titleHelp' | translate }}</span>
         </mat-list-item>
-        <mat-list-item *ngIf="!nightModeEnabled" (click)="switchDarkMode()">
+        <mat-list-item *ngIf="!nightModeEnabled" (click)="switchDarkMode()" (keydown)="switchDarkMode()">
           <mat-icon>bedtime</mat-icon>
           <span class="left-menu-single-entry">{{ 'darkMode' | translate }}</span>
         </mat-list-item>
-        <mat-list-item *ngIf="nightModeEnabled" (click)="switchDarkMode()">
+        <mat-list-item *ngIf="nightModeEnabled" (click)="switchDarkMode()" (keydown)="switchDarkMode()">
           <mat-icon *ngIf="nightModeEnabled">bedtime_off</mat-icon>
           <span class="left-menu-single-entry">{{ 'lightMode' | translate }}</span>
         </mat-list-item>
