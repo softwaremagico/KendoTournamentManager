@@ -739,5 +739,6 @@
   "yourWorstNightmare": "El teu pitjor malson",
   "worstNightmareOf": "Tu ets el pitjor malson de",
   "darkMode": "Mode Fosc",
-  "lightMode": "Mode Clar"
+  "lightMode": "Mode Clar",
+  "newVersionAvailable": "La versió '{{newVersion}}' està disponible! La versió actual és '{{currentVersion}}'."
 }
