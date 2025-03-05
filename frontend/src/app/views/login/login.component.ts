@@ -44,16 +44,18 @@ export class LoginComponent implements OnInit {
   }
 
   isLastVersion(): void {
-    //Get last version and compare with current one.
-    const headers = new HttpHeaders().set('x-skip-auth', "true");
-    this.infoService.getLatestVersion().subscribe((_version: string): void => {
-      if (this.checkForNewVersion && _version && this.appVersion != _version) {
-        const parameters: object = {currentVersion: this.appVersion, newVersion: _version};
-        this.translateService.get('newVersionAvailable', parameters).subscribe((message: string): void => {
-          this.messageService.warningMessage(message);
-        });
-      }
-    })
+    if (this.checkForNewVersion) {
+      //Get last version and compare with current one.
+      const headers = new HttpHeaders().set('x-skip-auth', "true");
+      this.infoService.getLatestVersion().subscribe((_version: string): void => {
+        if (_version && this.appVersion != _version) {
+          const parameters: object = {currentVersion: this.appVersion, newVersion: _version};
+          this.translateService.get('newVersionAvailable', parameters).subscribe((message: string): void => {
+            this.messageService.warningMessage(message);
+          });
+        }
+      })
+    }
   }
 
   login(): void {
