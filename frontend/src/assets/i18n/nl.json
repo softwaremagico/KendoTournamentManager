@@ -717,5 +717,6 @@
   "yourWorstNightmare": "Je ergste nachtmerrie",
   "worstNightmareOf": "JJij bent de ergste nachtmerrie",
   "darkMode": "Dunkler Modus",
-  "lightMode": "Heller Modus"
+  "lightMode": "Heller Modus",
+  "newVersionAvailable": "Versie '{{newVersion}}' is beschikbaar! Huidige versie is '{{currentVersion}}'."
 }

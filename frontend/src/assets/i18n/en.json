@@ -734,5 +734,6 @@
   "yourWorstNightmare": "Your worst nightmare",
   "worstNightmareOf": "You are the worst nightmare of",
   "darkMode": "Dark Mode",
-  "lightMode": "Light Mode"
+  "lightMode": "Light Mode",
+  "newVersionAvailable": "Version '{{newVersion}}' is available! Current version is '{{currentVersion}}'"
 }
