@@ -6,6 +6,7 @@ ARG protocol
 ARG timezone
 ARG websocket_protocol
 ARG achievements_enabled
+ARG check_new_version_enabled
 
 ENV HTML_ROOT_FOLDER /www
 
@@ -39,6 +40,7 @@ RUN sed -i "s|ROOT_FOLDER|${HTML_ROOT_FOLDER}|g" /etc/nginx/conf.d/default.conf 
     sed -i "s|DOCKER:BACKEND_PROTOCOL|${protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
     sed -i "s|DOCKER:WEBSOCKET_PROTOCOL|${websocket_protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
     sed -i "s|\"DOCKER:ACHIEVEMENTS_ENABLED\"|${achievements_enabled}|g" ${HTML_ROOT_FOLDER}/main.*.js
+    sed -i "s|\"DOCKER:CHECK_FOR_NEW_VERSION\"|${check_new_version_enabled}|g" ${HTML_ROOT_FOLDER}/main.*.js
 
 #Working in the app directory
 WORKDIR ${HTML_ROOT_FOLDER}

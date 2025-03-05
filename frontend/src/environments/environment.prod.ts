@@ -4,4 +4,5 @@ export const environment = {
   websocketsUrl: "http://localhost:8080/kendo-tournament-backend/websockets",
   websocketsTopicPrefix: "/topic",
   achievementsEnabled: true,
+  checkForNewVersion: true,
 };

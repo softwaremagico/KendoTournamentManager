@@ -10,6 +10,7 @@ import {AuthenticatedUser} from "../../models/authenticated-user";
 import {HttpHeaders} from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
 import {TranslateService} from "@ngx-translate/core";
+import {environment} from "../../../environments/environment";
 
 const {version: appVersion} = require('../../../../package.json')
 
@@ -23,6 +24,8 @@ export class LoginComponent implements OnInit {
   password: string;
   loginForm: UntypedFormGroup;
   appVersion: string;
+
+  protected checkForNewVersion: boolean = JSON.parse(String(environment.checkForNewVersion));
 
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
@@ -44,7 +47,7 @@ export class LoginComponent implements OnInit {
     //Get last version and compare with current one.
     const headers = new HttpHeaders().set('x-skip-auth', "true");
     this.infoService.getLatestVersion().subscribe((_version: string): void => {
-      if (_version && this.appVersion != _version) {
+      if (this.checkForNewVersion && _version && this.appVersion != _version) {
         const parameters: object = {currentVersion: this.appVersion, newVersion: _version};
         this.translateService.get('newVersionAvailable', parameters).subscribe((message: string): void => {
           this.messageService.warningMessage(message);
