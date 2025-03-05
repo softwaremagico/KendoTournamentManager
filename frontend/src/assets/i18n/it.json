@@ -723,5 +723,6 @@
   "yourWorstNightmare": "Il tuo peggior incubo",
   "worstNightmareOf": "Sei l'incubo peggiore di",
   "darkMode": "Modalità Scura",
-  "lightMode": "Modalità Chiara"
+  "lightMode": "Modalità Chiara",
+  "newVersionAvailable": "La versione '{{newVersion}}' è disponibile! La versione attuale è '{{currentVersion}}'."
 }

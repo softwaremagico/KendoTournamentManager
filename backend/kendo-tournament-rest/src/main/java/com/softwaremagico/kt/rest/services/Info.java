@@ -21,23 +21,55 @@ package com.softwaremagico.kt.rest.services;
  * #L%
  */
 
+import com.softwaremagico.kt.core.controller.VersionController;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 
 @RestController
 @RequestMapping("/info")
 public class Info {
 
+    private static final int CHECKING_VERSION_TIME_MINUTES = 30;
+
+    private final VersionController versionController;
+    private String latestVersion;
+    private LocalDateTime checkedVersionAt;
+
+    public Info(VersionController versionController) {
+        this.versionController = versionController;
+    }
+
     @Operation(summary = "Basic method to check if the server is online.")
     @GetMapping(value = "/health-check")
     @ResponseStatus(HttpStatus.OK)
     public void healthCheck(HttpServletRequest httpRequest) {
 
+    }
+
+
+    @Operation(summary = "Basic method that checks the latest deployed version of the software.")
+    @GetMapping(value = "/latest-version", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getLatestVersion(HttpServletRequest httpRequest) {
+        //To no request too much to github.
+        if (checkedVersionAt != null && checkedVersionAt.isBefore(LocalDateTime.now().plusMinutes(CHECKING_VERSION_TIME_MINUTES))) {
+            return ResponseEntity.ok().body(latestVersion);
+        }
+        try {
+            latestVersion = versionController.getLatestVersionFromGithub();
+            checkedVersionAt = LocalDateTime.now();
+            return ResponseEntity.ok().body(latestVersion);
+        } catch (Exception ex) {
+            return ResponseEntity.ok().body("");
+        }
     }
 }
