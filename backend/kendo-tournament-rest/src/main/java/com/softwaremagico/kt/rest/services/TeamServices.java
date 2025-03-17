@@ -167,16 +167,17 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
                                             Integer tournamentId,
                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - teams list.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTeamList(tournament).generate();
+            final byte[] bytes = pdfController.generateTeamList(tournament).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - teams list.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());

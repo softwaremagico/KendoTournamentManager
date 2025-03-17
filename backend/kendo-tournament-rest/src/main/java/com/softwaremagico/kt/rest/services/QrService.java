@@ -86,11 +86,11 @@ public class QrService {
                                                               @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                               HttpServletResponse response, HttpServletRequest request) {
 
+        final byte[] bytes = qrController.generateGuestQrCodeForTournamentFights(tournamentId, null, nightMode.orElse(false)).getData();
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, null, nightMode.orElse(false)).getData();
+        return bytes;
     }
 
 
@@ -120,28 +120,29 @@ public class QrService {
                                                               @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                               HttpServletResponse response, HttpServletRequest request) {
 
+        final byte[] bytes = qrController.generateGuestQrCodeForTournamentFights(tournamentId, port, nightMode.orElse(false)).getData();
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename("Tournament - QR.png").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
-        return qrController.generateGuestQrCodeForTournamentFights(tournamentId, port, nightMode.orElse(false)).getData();
+        return bytes;
     }
 
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/guest/tournament/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/guest/tournament/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getParticipantDiplomaFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                            @PathVariable("tournamentId") Integer tournamentId,
                                                            Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
 
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - qr.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentQr(locale, tournament, null).generate();
+            final byte[] bytes = pdfController.generateTournamentQr(locale, tournament, null).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - qr.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -151,7 +152,7 @@ public class QrService {
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/guest/tournament/{tournamentId}/pdf/port/{port}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/guest/tournament/{tournamentId}/pdf/port/{port}", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getParticipantDiplomaFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                            @PathVariable("tournamentId") Integer tournamentId,
                                                            @Parameter(description = "Frontend port")
@@ -159,11 +160,12 @@ public class QrService {
                                                            Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
 
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - qr.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentQr(locale, tournament, null).generate();
+            final byte[] bytes = pdfController.generateTournamentQr(locale, tournament, null).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - qr.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -178,11 +180,6 @@ public class QrService {
                                                             @PathVariable("participantId") Integer participantId,
                                                             @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                             HttpServletResponse response, HttpServletRequest request) {
-
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename("Statistics - QR.png").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
         return qrController.generateParticipantQrCodeForStatistics(participantId, null, nightMode.orElse(false));
     }
 
@@ -196,11 +193,6 @@ public class QrService {
                                                                     @PathVariable("port") Integer port,
                                                                     @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                                     HttpServletResponse response, HttpServletRequest request) {
-
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename("Statistics - QR.png").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-
         return qrController.generateParticipantQrCodeForStatistics(participantId, port, nightMode.orElse(false));
     }
 }

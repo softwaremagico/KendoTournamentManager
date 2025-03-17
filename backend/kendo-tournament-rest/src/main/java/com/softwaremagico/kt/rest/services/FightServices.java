@@ -96,16 +96,17 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all fights summary in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getTeamsScoreRankingFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournamentDTO = tournamentController.get(tournamentId);
         try {
+            final byte[] bytes = pdfController.generateFightsSummaryList(locale, tournamentDTO).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournamentDTO.getName() + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateFightsSummaryList(locale, tournamentDTO).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
