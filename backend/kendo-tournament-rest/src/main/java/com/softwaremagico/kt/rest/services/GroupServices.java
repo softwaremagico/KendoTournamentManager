@@ -164,16 +164,17 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets all groups from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
                                             Integer tournamentId,
                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - group list.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateGroupList(locale, tournament).generate();
+            final byte[] bytes = pdfController.generateGroupList(locale, tournament).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - group list.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
