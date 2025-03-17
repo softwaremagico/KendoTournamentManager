@@ -618,6 +618,7 @@
     "masterTheLoop": {
       "title": "Meister die Schleife",
       "description": "Gewinne eine Liga in Rueda.",
+      "normal": "Gewinne eine Liga in Rueda.",
       "bronze": "Dominiere die Runde in drei Turnieren im selben Jahr.",
       "silver": "Dominiere die Runde in vier Turnieren im selben Jahr.",
       "gold": "Dominiere die Runde in fünf Turnieren im selben Jahr."
