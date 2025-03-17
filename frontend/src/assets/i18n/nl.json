@@ -618,6 +618,7 @@
     "masterTheLoop": {
       "title": "Beheers de lus",
       "description": "Win een competitie in Loop.",
+      "normal": "Win een competitie in Loop.",
       "bronze": "Domineer de lus in drie toernooien in hetzelfde jaar.",
       "silver": "Domineer de lus in vier toernooien in hetzelfde jaar.",
       "gold": "Domineer de lus in vijf toernooien in hetzelfde jaar."

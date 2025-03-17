@@ -624,6 +624,7 @@
     "masterTheLoop": {
       "title": "Padroneggia il loop",
       "description": "Vinci una lega in loop.",
+      "normal": "Vinci una lega in loop.",
       "bronze": "Domina il loop in tre tornei nello stesso anno.",
       "silver": "Domina il loop in quattro tornei nello stesso anno.",
       "gold": "Domina il loop in cinque tornei nello stesso anno."
