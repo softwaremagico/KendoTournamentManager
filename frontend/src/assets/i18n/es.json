@@ -631,6 +631,7 @@
     "masterTheLoop": {
       "title": "Domina el bucle",
       "description": "Gana un Liga en Rueda.",
+      "normal": "Gana un Liga en Rueda.",
       "bronze": "Domina el bucle en tres torneos durante el mismo año.",
       "silver": "Domina el bucle en cuatro torneos durante el mismo año.",
       "gold": "Domina el bucle en cinco torneos durante el mismo año."

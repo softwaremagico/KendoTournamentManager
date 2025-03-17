@@ -630,6 +630,7 @@
     "masterTheLoop": {
       "title": "Domina el bucle",
       "description": "Guanya una Lliga a Roda.",
+      "normal": "Guanya una Lliga a Roda.",
       "bronze": "Domina el bucle en tres tornejos durant el mateix any.",
       "silver": "Domina el bucle en quatre tornejos durant el mateix any.",
       "gold": "Domina el bucle a cinc torneigs durant el mateix any."
