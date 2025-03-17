@@ -635,6 +635,7 @@
     "masterTheLoop": {
       "title": "Master the loop",
       "description": "Win a Loop Tournament.",
+      "normal": "Win a Loop Tournament.",
       "bronze": "Master the loop in three tournaments during the same year.",
       "silver": "Master the loop in four tournaments during the same year.",
       "gold": "Master the loop in five tournaments during the same year."
