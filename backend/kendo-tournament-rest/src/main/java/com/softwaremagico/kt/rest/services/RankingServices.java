@@ -142,10 +142,11 @@ public class RankingServices {
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>(),
                 from.orElse(null));
         try {
+            final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename("competitors score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -171,10 +172,11 @@ public class RankingServices {
                                                               Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
         try {
+            final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename("club score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -184,17 +186,18 @@ public class RankingServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets participants' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/competitors/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/competitors/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getCompetitorsScoreRankingTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                             @PathVariable("tournamentId") Integer tournamentId,
                                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsScoreRanking(tournament);
         try {
+            final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, tournament, scores).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - competitors score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateCompetitorsScoreList(locale, tournament, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -224,17 +227,18 @@ public class RankingServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/teams/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/teams/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getTeamsScoreRankingFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(tournament);
         try {
+            final byte[] bytes = pdfController.generateTeamsScoreList(locale, tournament, scores).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateTeamsScoreList(locale, tournament, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -244,18 +248,19 @@ public class RankingServices {
 
     @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/teams/groups/{groupId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/teams/groups/{groupId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getTeamsScoreRankingFromGroupAsPdf(@Parameter(description = "Id of an existing group", required = true)
                                                      @PathVariable("groupId") Integer groupId,
                                                      Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final GroupDTO groupDTO = groupController.get(groupId);
         final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(groupDTO);
         try {
+            final byte[] bytes = pdfController.generateTeamsScoreList(locale, groupDTO.getTournament(), scores).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(groupDTO.getTournament().getName() + "_" + groupDTO.getLevel() + "-" + groupDTO.getIndex()
                             + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateTeamsScoreList(locale, groupDTO.getTournament(), scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -271,10 +276,11 @@ public class RankingServices {
                                               Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
 
+        final byte[] bytes = htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + ".txt").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-        return htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
+        return bytes;
     }
 
 
@@ -285,9 +291,10 @@ public class RankingServices {
                                @PathVariable("tournamentId") Integer tournamentId, Locale locale,
                                Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
+        final byte[] bytes = zipController.createZipData(locale, tournament);
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                 .filename(tournament.getName() + ".zip").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-        return zipController.createZipData(locale, tournament);
+        return bytes;
     }
 }
