@@ -63,7 +63,8 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         this.participantProvider = participantProvider;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.participantPrivilege)")
     @Operation(summary = "Gets participant's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> getParticipantAchievements(@Parameter(description = "Id of an existing participant", required = true)
@@ -83,7 +84,7 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         return getController().getParticipantAchievements(participantId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> getTournamentAchievements(@Parameter(description = "Id of an existing tournament", required = true)
@@ -92,7 +93,7 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         return getController().getTournamentAchievements(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Regenerates tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> regenerateTournamentAchievements(@Parameter(description = "Id of an existing tournament", required = true)
@@ -101,7 +102,7 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         return getController().regenerateAchievements(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Regenerates all tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/tournaments/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> regenerateAllTournamentAchievements(HttpServletRequest request) {
@@ -109,7 +110,7 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets total achievements by type.", description = "Not includes duplicates",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/count/types", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -118,7 +119,8 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.guestPrivilege, @securityService.viewerPrivilege, @securityService.editorPrivilege, "
+            + "@securityService.adminPrivilege, @securityService.participantPrivilege)")
     @Operation(summary = "Gets total achievements by type.", description = "Not includes duplicates",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/count/types/{achievementType}", produces = MediaType.APPLICATION_JSON_VALUE)
