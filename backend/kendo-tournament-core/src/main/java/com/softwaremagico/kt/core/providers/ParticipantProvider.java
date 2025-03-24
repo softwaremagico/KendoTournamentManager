@@ -72,6 +72,10 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         return getRepository().findParticipantsWithMoreRoleTypesThan(tournament, differentRoleTypes);
     }
 
+    public List<Participant> get(Collection<Tournament> previousTournaments, int differentRoleTypes) {
+        return getRepository().findParticipantsWithMoreRoleTypesThan(previousTournaments, differentRoleTypes);
+    }
+
     public List<Participant> getParticipantsWithAchievementFromList(AchievementType achievementType, List<Participant> participants) {
         return getRepository().findParticipantsWithAchievementFromList(achievementType, participants);
     }
