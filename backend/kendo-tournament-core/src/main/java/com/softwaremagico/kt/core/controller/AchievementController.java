@@ -798,8 +798,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
             return new ArrayList<>();
         }
-        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
-        getDuelsFromTournament().forEach(duel -> {
+
+        final List<Duel> duels = getDuelsFromTournament();
+        final Set<Participant> competitors = new HashSet<>();
+        duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
+
+        duels.forEach(duel -> {
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor1());
             }
@@ -847,11 +851,16 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateJuggernautAchievement(Tournament tournament) {
-        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
             return new ArrayList<>();
         }
-        getDuelsFromTournament().forEach(duel -> {
+
+        final List<Duel> duels = getDuelsFromTournament();
+
+        final Set<Participant> competitors = new HashSet<>();
+        duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
+
+        duels.forEach(duel -> {
             //Max score competitor 1.
             if (duel.getCompetitor1Score().size() < Duel.POINTS_TO_WIN) {
                 competitors.remove(duel.getCompetitor1());
@@ -1221,8 +1230,12 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
             return new ArrayList<>();
         }
-        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
-        getDuelsFromTournament().forEach(duel -> {
+
+        final List<Duel> duels = getDuelsFromTournament();
+        final Set<Participant> competitors = new HashSet<>();
+        duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
+
+        duels.forEach(duel -> {
             if (!duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
             }
@@ -1275,8 +1288,11 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (getFightsFromTournament().size() < MIN_TOURNAMENT_FIGHTS) {
             return new ArrayList<>();
         }
-        final List<Participant> competitors = participantProvider.get(tournament, RoleType.COMPETITOR);
-        getDuelsFromTournament().forEach(duel -> {
+        final List<Duel> duels = getDuelsFromTournament();
+        final Set<Participant> competitors = new HashSet<>();
+        duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
+
+        duels.forEach(duel -> {
             if (!duel.getCompetitor1Score().isEmpty() || !duel.getCompetitor2Score().isEmpty()) {
                 competitors.remove(duel.getCompetitor1());
                 competitors.remove(duel.getCompetitor2());
@@ -1432,13 +1448,15 @@ public class AchievementController extends BasicInsertableController<Achievement
             return new ArrayList<>();
         }
         final List<Duel> duels = new ArrayList<>(getDuelsFromTournament());
-        final List<Participant> woodcutters = new ArrayList<>(getParticipantsFromTournament());
+        final Set<Participant> woodcutters = new HashSet<>();
+        duels.forEach(duel -> woodcutters.addAll(duel.getCompetitors()));
         //Only applied to competitors.
         getRolesFromTournament().forEach(role -> {
             if (role.getRoleType() != RoleType.COMPETITOR) {
                 woodcutters.remove(role.getParticipant());
             }
         });
+        //Retain all competitors that are in a fight.
         //Must have at least one hit, and cannot have something different that a 'Do'.
         duels.forEach(duel -> {
             if (duel.getCompetitor1Score().isEmpty()) {
@@ -1578,7 +1596,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateSweatyTenuguiAchievementBronze(Tournament tournament) {
         final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
-        //Remove the ones that has no the required number of tournaments.
+        //Remove the ones that have no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
@@ -1600,7 +1618,7 @@ public class AchievementController extends BasicInsertableController<Achievement
      */
     private List<Achievement> generateSweatyTenuguiAchievementSilver(Tournament tournament) {
         final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
-        //Remove the ones that has no the required number of tournaments.
+        //Remove the ones that have no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
         rolesByParticipant.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
