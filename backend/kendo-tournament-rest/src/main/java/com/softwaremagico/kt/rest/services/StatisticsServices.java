@@ -77,7 +77,7 @@ public class StatisticsServices {
         this.participantProvider = participantProvider;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets fight statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/fights", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentFightStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -96,7 +96,7 @@ public class StatisticsServices {
         return fightStatisticsController.estimate(tournamentController.get(tournamentId));
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentStatisticsDTO getStatisticsFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -109,7 +109,8 @@ public class StatisticsServices {
         return tournamentStatisticsDTO;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.participantPrivilege)")
     @Operation(summary = "Gets previous tournament statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/previous/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentStatisticsDTO> getStatisticsFromPreviousTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -132,7 +133,8 @@ public class StatisticsServices {
         return statisticsDTOS;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.participantPrivilege)")
     @Operation(summary = "Gets participant statistics.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantStatisticsDTO getStatisticsFromParticipant(@Parameter(description = "Id of an existing participant", required = true)
@@ -156,7 +158,8 @@ public class StatisticsServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.participantPrivilege)")
     @Operation(summary = "Gets participant worst nightmare.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/your-worst-nightmare/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ParticipantDTO> getYourWorstNightmareFromParticipant(@Parameter(description = "Id of an existing participant", required = true)
@@ -175,7 +178,8 @@ public class StatisticsServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.participantPrivilege)")
     @Operation(summary = "Gets participant worst nightmare.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/worst-nightmare-of/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ParticipantDTO> getWorstNightmareOf(@Parameter(description = "Id of an existing participant", required = true)
