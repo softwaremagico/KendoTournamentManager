@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 public class Token {
 
     private String content;
+
     private LocalDateTime expiration;
 
     private ParticipantDTO participant;

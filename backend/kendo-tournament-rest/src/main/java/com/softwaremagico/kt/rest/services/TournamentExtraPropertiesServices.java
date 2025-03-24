@@ -52,7 +52,8 @@ public class TournamentExtraPropertiesServices {
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.guestPrivilege)")
     @Operation(summary = "Gets tournament's properties.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentExtraPropertyDTO> get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
@@ -60,7 +61,7 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.getByTournamentId(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets tournament's properties by key.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/key/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO getByKey(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
@@ -71,7 +72,7 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.getByTournamentAndProperty(tournamentId, key);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a tournament property with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,7 +81,7 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.create(tournamentExtraPropertyDTO, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a tournament property.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO update(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
@@ -89,7 +90,7 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Get latest selected properties from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/latest", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentExtraPropertyDTO> getLatest(Authentication authentication, HttpServletRequest request) {
