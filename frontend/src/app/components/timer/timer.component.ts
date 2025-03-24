@@ -27,6 +27,9 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   @Input()
   editable: boolean = true;
 
+  @Input()
+  shown: boolean = false;
+
   private keysControls: boolean;
 
   @Input()
@@ -110,7 +113,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
 
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
-    if (!this.secondsEditable && !this.minutesEditable && this.editable && this.keysControls) {
+    if (this.shown && !this.secondsEditable && !this.minutesEditable && this.editable && this.keysControls) {
       if (event.key === ' ') {
         if (this.started) {
           this.pauseTimer();

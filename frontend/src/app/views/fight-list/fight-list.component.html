@@ -163,6 +163,7 @@
                [editable]="tournament && !tournament.locked" [hidden]="!timer"
                [resetTimerPosition]="resetTimerPosition"
                [startingMinutes]="getDuelDefaultMinutesDuration()"
+               [shown]="timer"
                [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
     <div class="fight-container">
       <div *ngFor="let group of groups" class="fight-list">
