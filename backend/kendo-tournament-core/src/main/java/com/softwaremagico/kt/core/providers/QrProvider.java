@@ -195,7 +195,9 @@ public class QrProvider {
 
             //Background.
             //pngTranscoder.addTranscodingHint(PNGTranscoder.KEY_FORCE_TRANSPARENT_WHITE, true);
-            pngTranscoder.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, background);
+            if (background != null) {
+                pngTranscoder.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, background);
+            }
 
             // Set the transcoding hints.
             pngTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, size / 2);
