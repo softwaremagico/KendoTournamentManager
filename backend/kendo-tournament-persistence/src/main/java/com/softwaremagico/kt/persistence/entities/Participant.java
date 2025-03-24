@@ -235,7 +235,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(AvailableRole.ROLE_PARTICIPANT.name()));
+        return Collections.singleton(new SimpleGrantedAuthority(AvailableRole.PARTICIPANT.name()));
     }
 
     @Override

@@ -1,8 +1,8 @@
-package com.softwaremagico.kt.security;
+package com.softwaremagico.kt.rest.security;
 
 /*-
  * #%L
- * Kendo Tournament Manager (Persistence)
+ * Kendo Tournament Manager (Rest)
  * %%
  * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
@@ -21,23 +21,30 @@ package com.softwaremagico.kt.security;
  * #L%
  */
 
-public enum AvailableRole {
-    VIEWER,
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 
-    EDITOR,
+@Primary
+@Service("securityService")
+public class KendoSecurityService {
 
-    ADMIN,
+    public String getGuestPrivilege() {
+        return "GUEST";
+    }
 
-    PARTICIPANT,
+    public String getViewerPrivilege() {
+        return "VIEWER";
+    }
 
-    GUEST;
+    public String getAdminPrivilege() {
+        return "ADMIN";
+    }
 
-    public static AvailableRole get(String roleName) {
-        for (final AvailableRole availableRole : AvailableRole.values()) {
-            if (availableRole.name().equalsIgnoreCase(roleName)) {
-                return availableRole;
-            }
-        }
-        return null;
+    public String getEditorPrivilege() {
+        return "EDITOR";
+    }
+
+    public String getParticipantPrivilege() {
+        return "PARTICIPANT";
     }
 }

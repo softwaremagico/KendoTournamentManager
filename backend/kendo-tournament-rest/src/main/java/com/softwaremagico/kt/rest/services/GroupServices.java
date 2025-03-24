@@ -71,7 +71,8 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         this.tournamentController = tournamentController;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.guestPrivilege)")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
@@ -79,7 +80,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().getFromTournament(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all groups.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/level/{level}/index/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
@@ -92,7 +93,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().getFromTournament(tournamentId, level, index);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
@@ -102,7 +103,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().setTeams(groupId, teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/add", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addTeam(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
@@ -112,7 +113,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().addTeams(groupId, teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Set teams on a group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/{groupId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO deleteTeamFromGroup(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
@@ -122,7 +123,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().deleteTeams(groupId, teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes teams from any group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> deleteTeam(@Parameter(description = "Id of an existing tournament", required = true)
@@ -133,7 +134,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().deleteTeamsFromTournament(tournamentId, teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Removes all teams from all groups", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "/tournaments/{tournamentId}/teams/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupDTO> deleteAllTeam(@Parameter(description = "Id of an existing tournament", required = true)
@@ -143,7 +144,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().deleteTeamsFromTournament(tournamentId, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Set teams on the first group.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO updateTeam(@RequestBody List<TeamDTO> teamsDto,
@@ -152,7 +153,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().setTeams(teamsDto, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Adds untie duels.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addUnties(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
@@ -162,7 +163,7 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
         return getController().addUnties(groupId, duelDTOs, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all groups from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
