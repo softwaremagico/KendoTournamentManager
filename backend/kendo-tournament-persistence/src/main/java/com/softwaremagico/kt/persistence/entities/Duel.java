@@ -143,6 +143,17 @@ public class Duel extends Element {
         setCreatedBy(createdBy);
     }
 
+    public List<Participant> getCompetitors() {
+        final List<Participant> competitors = new ArrayList<>();
+        if (competitor1 != null) {
+            competitors.add(competitor1);
+        }
+        if (competitor2 != null) {
+            competitors.add(competitor2);
+        }
+        return competitors;
+    }
+
     public Participant getCompetitor1() {
         return competitor1;
     }
