@@ -22,7 +22,6 @@ package com.softwaremagico.kt.rest.security;
  */
 
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
-import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -33,6 +32,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -42,12 +42,9 @@ import java.util.Collection;
 public class KendoUserDetailsService implements UserDetailsService {
 
     private final AuthenticatedUserProvider authenticatedUserProvider;
-    private final ParticipantProvider participantProvider;
 
-    public KendoUserDetailsService(AuthenticatedUserProvider authenticatedUserProvider,
-                                   ParticipantProvider participantProvider) {
+    public KendoUserDetailsService(AuthenticatedUserProvider authenticatedUserProvider) {
         this.authenticatedUserProvider = authenticatedUserProvider;
-        this.participantProvider = participantProvider;
     }
 
     @Override
@@ -62,6 +59,10 @@ public class KendoUserDetailsService implements UserDetailsService {
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
 
         return new UserDetails() {
+
+            @Serial
+            private static final long serialVersionUID = 9019872870017065529L;
+
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
                 return null;

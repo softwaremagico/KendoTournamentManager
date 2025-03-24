@@ -29,6 +29,7 @@ import com.softwaremagico.kt.core.converters.models.ParticipantConverterRequest;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.ParticipantRepository;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,32 +47,36 @@ import org.springframework.web.bind.annotation.RestController;
 public class ParticipantServices extends BasicServices<Participant, ParticipantDTO, ParticipantRepository,
         ParticipantProvider, ParticipantConverterRequest, ParticipantConverter, ParticipantController> {
 
+    private final KendoSecurityService kendoSecurityService;
 
-    public ParticipantServices(ParticipantController participantController) {
+    public ParticipantServices(ParticipantController participantController, KendoSecurityService kendoSecurityService) {
         super(participantController);
+        this.kendoSecurityService = kendoSecurityService;
     }
 
     /**
-     * This method is done due to @PreAuthorize cannot be overriden. TournamentService need to set a GUEST permission to it.
+     * This method is done due to @PreAuthorize cannot be overridden. TournamentService need to set a GUEST permission to it.
      *
      * @return an array of roles.
      */
     @Override
     public String[] requiredRoleForEntityById() {
-        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN", "ROLE_PARTICIPANT"};
+        return new String[]{kendoSecurityService.getParticipantPrivilege(),
+                kendoSecurityService.getViewerPrivilege(), kendoSecurityService.getEditorPrivilege(), kendoSecurityService.getAdminPrivilege()};
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.guestPrivilege, @securityService.participantPrivilege)")
     @Operation(summary = "Gets the participant data from the jwt token username.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/jwt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ParticipantDTO getByUsername(Authentication authentication,
-                              HttpServletRequest request) {
+                                        HttpServletRequest request) {
         return getController().getByUserName(authentication.getName());
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a temporal token for a participant.")
     @PostMapping(value = "/temporal-token", produces = MediaType.APPLICATION_JSON_VALUE)
     public TemporalToken getTemporalToken(@RequestBody ParticipantDTO participantDTO,
