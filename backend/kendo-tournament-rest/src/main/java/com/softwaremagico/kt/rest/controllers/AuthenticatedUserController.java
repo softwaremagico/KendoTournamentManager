@@ -71,7 +71,7 @@ public class AuthenticatedUserController {
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, AvailableRole... roles) {
         final String[] roleTags = new String[roles.length];
         for (int i = 0; i < roles.length; i++) {
-            roleTags[i] = roles[i].name().replaceAll(AvailableRole.ROLE_PREFIX, "").toLowerCase();
+            roleTags[i] = roles[i].name().toLowerCase();
         }
         return createUser(creator, username, firstName, lastName, password, roleTags);
     }
