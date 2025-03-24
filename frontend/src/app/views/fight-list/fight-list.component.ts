@@ -634,7 +634,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   showTimer(show: boolean): void {
-    console.log(this.selectedDuel)
     if (this.canStartFight(this.selectedDuel)) {
       this.timer = show;
       this.resetTimerPosition.next(show);
