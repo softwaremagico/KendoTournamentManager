@@ -58,8 +58,12 @@ export class ParticipantListComponent extends RbacBasedComponent implements OnIn
   }
 
   showAllElements(): void {
-    this.participantService.getAll().subscribe((participants: Participant[]): void => {
-      this.basicTableData.dataSource.data = participants.map((participant: Participant) => Participant.clone(participant));
+    this.participantService.getAll().subscribe((_participants: Participant[]): void => {
+      if (_participants) {
+        this.basicTableData.dataSource.data = _participants.map((participant: Participant) => Participant.clone(participant));
+      } else {
+        this.basicTableData.dataSource.data = [];
+      }
     });
   }
 
