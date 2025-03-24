@@ -50,7 +50,7 @@ public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, C
         super(clubController);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a club with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)

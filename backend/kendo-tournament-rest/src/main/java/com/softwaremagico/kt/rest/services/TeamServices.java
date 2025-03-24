@@ -77,7 +77,8 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.guestPrivilege)")
     @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId") Integer tournamentId,
@@ -86,7 +87,8 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.guestPrivilege)")
     @Operation(summary = "Gets teams not disqualified from a tournament. Only for Senbatsu mode", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/remaining/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAllRemaining(@Parameter(description = "Id of an existing tournament", required = true)
@@ -96,7 +98,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Counts all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long countByTournamentId(@Parameter(description = "Id of an existing tournament", required = true)
@@ -105,7 +107,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         return getController().countByTournament(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> getAll(@RequestBody TournamentDTO tournamentDto,
@@ -114,7 +116,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates default teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> create(@RequestBody TournamentDTO tournamentDto,
@@ -122,7 +124,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         return getController().create(tournamentDto, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/tournaments/delete", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -130,7 +132,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         getController().delete(tournamentDto);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Defines the teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/set", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -147,7 +149,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         return getController().create(teamsDTOs, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes a member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -155,7 +157,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         return getController().delete(participantInTournament.getTournament(), participantInTournament.getParticipant());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes multiples member from any team.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete/members/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -165,7 +167,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all teams from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getAllFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
