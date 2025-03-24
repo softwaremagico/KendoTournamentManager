@@ -44,7 +44,9 @@ import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Cacheable
@@ -141,6 +143,17 @@ public class Duel extends Element {
         setCompetitor2(competitor2);
         setTournament(tournament);
         setCreatedBy(createdBy);
+    }
+
+    public Set<Participant> getCompetitors() {
+        final Set<Participant> competitors = new HashSet<>();
+        if (competitor1 != null) {
+            competitors.add(competitor1);
+        }
+        if (competitor2 != null) {
+            competitors.add(competitor2);
+        }
+        return competitors;
     }
 
     public Participant getCompetitor1() {
