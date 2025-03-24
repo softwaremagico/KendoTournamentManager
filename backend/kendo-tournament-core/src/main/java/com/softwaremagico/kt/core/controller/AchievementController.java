@@ -800,7 +800,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         }
 
         final List<Duel> duels = getDuelsFromTournament();
-        final List<Participant> competitors = new ArrayList<>();
+        final Set<Participant> competitors = new HashSet<>();
         duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
 
         duels.forEach(duel -> {
@@ -857,7 +857,7 @@ public class AchievementController extends BasicInsertableController<Achievement
 
         final List<Duel> duels = getDuelsFromTournament();
 
-        final List<Participant> competitors = new ArrayList<>();
+        final Set<Participant> competitors = new HashSet<>();
         duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
 
         duels.forEach(duel -> {
@@ -1232,7 +1232,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         }
 
         final List<Duel> duels = getDuelsFromTournament();
-        final List<Participant> competitors = new ArrayList<>();
+        final Set<Participant> competitors = new HashSet<>();
         duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
 
         duels.forEach(duel -> {
@@ -1289,7 +1289,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             return new ArrayList<>();
         }
         final List<Duel> duels = getDuelsFromTournament();
-        final List<Participant> competitors = new ArrayList<>();
+        final Set<Participant> competitors = new HashSet<>();
         duels.forEach(duel -> competitors.addAll(duel.getCompetitors()));
 
         duels.forEach(duel -> {
@@ -1448,7 +1448,7 @@ public class AchievementController extends BasicInsertableController<Achievement
             return new ArrayList<>();
         }
         final List<Duel> duels = new ArrayList<>(getDuelsFromTournament());
-        final List<Participant> woodcutters = new ArrayList<>();
+        final Set<Participant> woodcutters = new HashSet<>();
         duels.forEach(duel -> woodcutters.addAll(duel.getCompetitors()));
         //Only applied to competitors.
         getRolesFromTournament().forEach(role -> {
