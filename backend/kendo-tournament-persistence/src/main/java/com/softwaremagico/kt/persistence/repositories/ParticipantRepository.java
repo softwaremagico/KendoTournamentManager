@@ -55,6 +55,16 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
             """)
     List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournament") Tournament tournament, @Param("differentRoleTypes") long differentRoleTypes);
 
+    @Query("""
+            SELECT r.participant FROM Role r WHERE
+               r.tournament IN :tournaments
+            GROUP BY r.participant
+            HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes
+            """)
+    List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournaments") Collection<Tournament> tournaments,
+                                                            @Param("differentRoleTypes") long differentRoleTypes);
+
+
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);
 
