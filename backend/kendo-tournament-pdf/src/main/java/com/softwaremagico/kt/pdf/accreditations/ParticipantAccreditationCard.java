@@ -221,6 +221,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 case PRESS -> cell.setBackgroundColor(PRESS_COLOR);
                 case ORGANIZER -> cell.setBackgroundColor(ORGANIZER_COLOR);
                 default -> {
+                    //No default action.
                 }
             }
         } catch (NullPointerException npe) {

@@ -92,7 +92,6 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     private static final RoleType ROLE_TYPE = RoleType.REFEREE;
 
     private static final String TEAM_NAME = "Name";
-    private static final Integer TEAM_GROUP = 129;
 
     private static final List<Score> DUEL_SCORES = Arrays.asList(Score.MEN, Score.DO);
     private static final Boolean DUEL_FAULTS = true;
@@ -169,8 +168,6 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     private void checkParticipant(Participant participant) {
         Assert.assertEquals(participant.getName(), PARTICIPANT_NAME);
         Assert.assertEquals(participant.getLastname(), PARTICIPANT_LASTNAME);
-        //Assert.assertEquals(participant.getIdCard(), PARTICIPANT_ID_CARD);
-        //checkClub(participant.getClub());
     }
 
     private TournamentScore createTournamentScore() {

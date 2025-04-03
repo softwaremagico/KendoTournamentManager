@@ -43,7 +43,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"darumaAchievementTests"})
-public class TimeTournamentTestUtils extends TournamentTestUtils {
+public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -264,6 +264,7 @@ public class TimeTournamentTestUtils extends TournamentTestUtils {
     }
 
     @AfterClass(alwaysRun = true)
+     @Override
     public void wipeOut() {
         super.wipeOut();
     }

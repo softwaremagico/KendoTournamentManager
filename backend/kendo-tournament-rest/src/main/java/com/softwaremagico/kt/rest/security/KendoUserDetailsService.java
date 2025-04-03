@@ -33,6 +33,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -65,7 +66,7 @@ public class KendoUserDetailsService implements UserDetailsService {
 
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
-                return null;
+                return new ArrayList<>();
             }
 
             @Override

@@ -163,6 +163,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
 
     @Transactional
+    @Override
     public GroupDTO update(GroupDTO groupDTO, String username) {
         validate(groupDTO);
         final GroupDTO oldGroupDTO = get(groupDTO.getId());

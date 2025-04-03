@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.controller.models;
 import com.softwaremagico.kt.persistence.values.RoleType;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class ParticipantStatisticsDTO extends ElementDTO {
@@ -41,7 +41,7 @@ public class ParticipantStatisticsDTO extends ElementDTO {
 
     private long totalTournaments;
 
-    private Map<RoleType, Long> rolesPerformed = new HashMap<>();
+    private Map<RoleType, Long> rolesPerformed = new EnumMap<>(RoleType.class);
 
     public ParticipantFightStatisticsDTO getParticipantFightStatistics() {
         return participantFightStatistics;

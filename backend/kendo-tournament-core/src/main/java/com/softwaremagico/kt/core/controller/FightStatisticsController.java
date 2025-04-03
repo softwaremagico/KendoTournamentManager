@@ -38,7 +38,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class FightStatisticsController extends BasicInsertableController<TournamentFightStatistics, TournamentFightStatisticsDTO,
@@ -95,8 +94,7 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
                 return estimateLeagueStatistics(teamSize, teams);
             case LOOP:
                 return estimateLoopStatistics(tournamentDTO, teamSize, teams);
-            case CUSTOMIZED:
-            case KING_OF_THE_MOUNTAIN:
+            case CUSTOMIZED, KING_OF_THE_MOUNTAIN:
             default:
                 return null;
         }
@@ -108,19 +106,6 @@ public class FightStatisticsController extends BasicInsertableController<Tournam
 
     private TournamentFightStatisticsDTO estimateLoopStatistics(TournamentDTO tournamentDTO, int teamSize, Collection<TeamDTO> teams) {
         return convert(getProvider().estimateLoopStatistics(tournamentConverter.reverse(tournamentDTO), teamSize, teamConverter.reverseAll(teams)));
-    }
-
-    private int getDuels(int fightByTeam, int teamSize, Collection<TeamDTO> teams) {
-        final AtomicInteger counter = new AtomicInteger();
-        final AtomicInteger missingMembers = new AtomicInteger();
-
-        teams.forEach(teamDTO -> {
-            counter.addAndGet((teamDTO.getMembers().size() * fightByTeam) - missingMembers.get());
-            missingMembers.addAndGet(teamSize - teamDTO.getMembers().size());
-        });
-
-        //Duels are counted twice, once for each team
-        return counter.get() / 2;
     }
 
     /**

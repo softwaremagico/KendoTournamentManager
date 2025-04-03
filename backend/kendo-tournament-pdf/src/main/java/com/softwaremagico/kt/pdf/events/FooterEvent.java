@@ -40,12 +40,10 @@ public class FooterEvent extends PdfPageEventHelper {
      */
     @Override
     public void onEndPage(PdfWriter writer, Document document) {
-        //if (writer.getPageNumber() % 2 == 0) {
         final PdfContentByte cb = writer.getDirectContent();
         final Phrase footer = new Phrase("Created using 'Kendo Tournament Manager v2'",
                 new Font(PdfTheme.getFooterFont(), PdfTheme.FOOTER_FONT_SIZE));
         ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer, (document.right() - document.left()) / 2 + document.leftMargin(),
                 document.bottom() + BOTTOM_MARGIN, 0);
-        //}
     }
 }

@@ -25,7 +25,6 @@ import com.softwaremagico.kt.core.exceptions.InvalidChallengeDistanceException;
 import com.softwaremagico.kt.core.exceptions.InvalidFightException;
 import com.softwaremagico.kt.core.exceptions.SenbatsuTournamentFightsException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
-import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
 import com.softwaremagico.kt.core.providers.RankingProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
@@ -47,14 +46,11 @@ import java.util.Objects;
 @Service
 public class SenbatsuTournamentHandler extends LeagueHandler {
     public static final int DEFAULT_CHALLENGE_DISTANCE = 3;
-    private final FightProvider fightProvider;
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
     public SenbatsuTournamentHandler(GroupProvider groupProvider, TeamProvider teamProvider,
-                                     RankingProvider rankingProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider,
-                                     FightProvider fightProvider) {
+                                     RankingProvider rankingProvider, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(groupProvider, teamProvider, rankingProvider, tournamentExtraPropertyProvider);
-        this.fightProvider = fightProvider;
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
@@ -111,10 +107,8 @@ public class SenbatsuTournamentHandler extends LeagueHandler {
         //Reorder the teams.
         final List<Fight> fights = group.getFights();
         for (Fight checkedFight : fights) {
-            if (checkedFight.isOver()) {
-                if (Objects.equals(checkedFight.getWinner(), checkedFight.getTeam1())) {
-                    Collections.swap(tournamentTeams, tournamentTeams.indexOf(checkedFight.getTeam1()), tournamentTeams.indexOf(checkedFight.getTeam2()));
-                }
+            if (checkedFight.isOver() && Objects.equals(checkedFight.getWinner(), checkedFight.getTeam1())) {
+                Collections.swap(tournamentTeams, tournamentTeams.indexOf(checkedFight.getTeam1()), tournamentTeams.indexOf(checkedFight.getTeam2()));
             }
         }
         return tournamentTeams;

@@ -97,10 +97,6 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
     private AuthenticatedUser authenticatedUser;
 
-    private <T> String toJson(T object) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(object);
-    }
-
     private <T> T fromJson(String payload, Class<T> clazz) {
         try {
             return objectMapper.readValue(payload, clazz);

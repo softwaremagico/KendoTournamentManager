@@ -103,7 +103,7 @@ public class TeamSelector {
             }
         }
 
-        if (possibleAdversaries.size() > 0) {
+        if (!possibleAdversaries.isEmpty()) {
             return possibleAdversaries.get(randomGenerator.nextInt(possibleAdversaries.size()));
         }
         return null;

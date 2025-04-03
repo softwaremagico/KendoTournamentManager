@@ -32,17 +32,14 @@ public class TournamentStatisticsProvider extends CrudProvider<TournamentStatist
 
     private final TournamentFightStatisticsProvider fightStatisticsProvider;
 
-    private final DuelProvider duelProvider;
-
     private final TeamProvider teamProvider;
 
     private final RoleProvider roleProvider;
 
     protected TournamentStatisticsProvider(TournamentStatisticsRepository repository, TournamentFightStatisticsProvider fightStatisticsProvider,
-                                           DuelProvider duelProvider, TeamProvider teamProvider, RoleProvider roleProvider) {
+                                           TeamProvider teamProvider, RoleProvider roleProvider) {
         super(repository);
         this.fightStatisticsProvider = fightStatisticsProvider;
-        this.duelProvider = duelProvider;
         this.teamProvider = teamProvider;
         this.roleProvider = roleProvider;
     }

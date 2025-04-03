@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -46,8 +47,8 @@ import java.util.List;
 public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
         DuelProvider, DuelConverterRequest, DuelConverter, DuelController> {
 
-    public DuelServices(DuelController duelController) {
-        super(duelController);
+    public DuelServices(DuelController duelController, KendoSecurityService kendoSecurityService) {
+        super(duelController, kendoSecurityService);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")

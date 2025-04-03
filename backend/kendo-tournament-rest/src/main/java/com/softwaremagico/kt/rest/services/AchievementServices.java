@@ -33,6 +33,7 @@ import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -58,8 +59,9 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
 
     private final ParticipantProvider participantProvider;
 
-    public AchievementServices(AchievementController achievementController, ParticipantProvider participantProvider) {
-        super(achievementController);
+    public AchievementServices(AchievementController achievementController, KendoSecurityService kendoSecurityService,
+                               ParticipantProvider participantProvider) {
+        super(achievementController, kendoSecurityService);
         this.participantProvider = participantProvider;
     }
 
@@ -74,11 +76,9 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         //If is a participant guest, only its own statistics can see.
         if (authentication != null) {
             final Optional<Participant> participant = participantProvider.findByTokenUsername(authentication.getName());
-            if (participant.isPresent()) {
-                if (!Objects.equals(participant.get().getId(), participantId)) {
-                    throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
-                            + "' is trying to access to statistics from user '" + participantId + "'.");
-                }
+            if (participant.isPresent() && !Objects.equals(participant.get().getId(), participantId)) {
+                throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
+                        + "' is trying to access to statistics from user '" + participantId + "'.");
             }
         }
         return getController().getParticipantAchievements(participantId);

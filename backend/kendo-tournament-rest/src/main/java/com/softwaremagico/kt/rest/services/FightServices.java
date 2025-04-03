@@ -36,6 +36,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -69,8 +70,9 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
 
     private final TournamentController tournamentController;
 
-    public FightServices(FightController fightController, PdfController pdfController, TournamentController tournamentController) {
-        super(fightController);
+    public FightServices(FightController fightController, KendoSecurityService kendoSecurityService,
+                         PdfController pdfController, TournamentController tournamentController) {
+        super(fightController, kendoSecurityService);
         this.pdfController = pdfController;
         this.tournamentController = tournamentController;
     }
@@ -126,6 +128,7 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
     @Operation(summary = "Deletes a fight.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
     public void delete(@Parameter(description = "Id of an existing fight", required = true) @PathVariable("id") Integer id,
                        Authentication authentication, HttpServletRequest request) {
         getController().deleteById(id, authentication.getName());

@@ -68,6 +68,8 @@ import java.util.Set;
 @RequestMapping("/rankings")
 public class RankingServices {
 
+    private static final String ATTACHMENT = "attachment";
+
     private final RankingController rankingController;
 
     private final TournamentController tournamentController;
@@ -145,7 +147,7 @@ public class RankingServices {
                 from.orElse(null));
         try {
             final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename("competitors score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -175,7 +177,7 @@ public class RankingServices {
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
         try {
             final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename("club score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -196,7 +198,7 @@ public class RankingServices {
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsScoreRanking(tournament);
         try {
             final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, tournament, scores).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(tournament.getName() + " - competitors score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -238,7 +240,7 @@ public class RankingServices {
         final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(tournament);
         try {
             final byte[] bytes = pdfController.generateTeamsScoreList(locale, tournament, scores).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(tournament.getName() + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
             return bytes;
@@ -259,7 +261,7 @@ public class RankingServices {
         final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(groupDTO);
         try {
             final byte[] bytes = pdfController.generateTeamsScoreList(locale, groupDTO.getTournament(), scores).generate();
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(groupDTO.getTournament().getName() + "_" + groupDTO.getLevel() + "-" + groupDTO.getIndex()
                             + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
@@ -280,7 +282,7 @@ public class RankingServices {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
 
         final byte[] bytes = htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename(tournament.getName() + ".txt").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return bytes;
@@ -295,7 +297,7 @@ public class RankingServices {
                                Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final byte[] bytes = zipController.createZipData(locale, tournament);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename(tournament.getName() + ".zip").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         return bytes;

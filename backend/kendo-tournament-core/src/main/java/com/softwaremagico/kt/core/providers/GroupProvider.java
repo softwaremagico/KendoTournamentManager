@@ -134,8 +134,6 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
         if (!groups.isEmpty()) {
             if (!groupsByLevel.get(0).isEmpty()) {
                 for (int i = level; i <= groups.get(groups.size() - 1).getLevel(); i++) {
-
-                    //deleted += getRepository().deleteByTournamentAndLevel(tournament, i);
                     if (i > 1 || groupsByLevel.get(0).get(0).getNumberOfWinners() == 1) {
                         if (!groupsByLevel.get(i).isEmpty()) {
                             while ((groupsByLevel.get(i - 1).size() + 1) / 2 < groupsByLevel.get(i).size()) {
@@ -151,14 +149,12 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
                                 groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
                             }
                         }
-                    } else if (i == 1 && groupsByLevel.get(0).get(0).getNumberOfWinners() == 2) {
-                        if (!groupsByLevel.get(i).isEmpty()) {
-                            while ((groupsByLevel.get(0).size() + 1) < groupsByLevel.get(i).size()) {
-                                //Delete last group.
-                                getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
-                                deleted++;
-                                groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
-                            }
+                    } else if (i == 1 && groupsByLevel.get(0).get(0).getNumberOfWinners() == 2 && !groupsByLevel.get(i).isEmpty()) {
+                        while ((groupsByLevel.get(0).size() + 1) < groupsByLevel.get(i).size()) {
+                            //Delete last group.
+                            getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
+                            deleted++;
+                            groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
                         }
                     }
                 }

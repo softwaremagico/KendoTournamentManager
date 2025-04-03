@@ -50,11 +50,6 @@ public class ParticipantRepositoryTests extends AbstractTestNGSpringContextTests
     @Autowired
     private ClubFactory clubFactory;
 
-    @BeforeClass
-    public void createDefaultStructure() {
-
-    }
-
     @Test
     public void addUser() throws Exception {
         Club club = clubFactory.createDefaultClub();

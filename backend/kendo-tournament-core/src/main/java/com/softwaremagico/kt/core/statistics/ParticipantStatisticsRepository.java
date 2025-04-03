@@ -68,27 +68,27 @@ public class ParticipantStatisticsRepository implements JpaRepository<Participan
 
     @Override
     public void deleteById(Integer integer) {
-
+        //Not needed
     }
 
     @Override
     public void delete(ParticipantStatistics entity) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllById(Iterable<? extends Integer> integers) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAll(Iterable<? extends ParticipantStatistics> entities) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAll() {
-
+        //Not needed
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ParticipantStatisticsRepository implements JpaRepository<Participan
 
     @Override
     public void flush() {
-
+        //Not needed
     }
 
     @Override
@@ -128,22 +128,22 @@ public class ParticipantStatisticsRepository implements JpaRepository<Participan
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends ParticipantStatistics> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public void deleteAllInBatch(Iterable<ParticipantStatistics> entities) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllByIdInBatch(Iterable<Integer> integers) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllInBatch() {
-
+        //Not needed
     }
 
     @Override
@@ -172,13 +172,13 @@ public class ParticipantStatisticsRepository implements JpaRepository<Participan
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends ParticipantStatistics> List<S> findAll(Example<S> example) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends ParticipantStatistics> List<S> findAll(Example<S> example, Sort sort) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

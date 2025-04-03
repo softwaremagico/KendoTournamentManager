@@ -48,7 +48,7 @@ public class ScoreOfCompetitorEuropean implements Comparator<ScoreOfCompetitor> 
             return scoreOfCompetitor1.getDuelsDone().compareTo(scoreOfCompetitor2.getDuelsDone());
         }
 
-        // Draw score, order by name;
+        // Same obtained score, order by name;
         return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
     }
 

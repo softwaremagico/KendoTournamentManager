@@ -35,10 +35,8 @@ public class ScoreOfTeamEuropean implements Comparator<ScoreOfTeam> {
 
     @Override
     public int compare(ScoreOfTeam scoreOfTeam1, ScoreOfTeam scoreOfTeam2) {
-        if (checkLevel) {
-            if (!Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
-                return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
-            }
+        if (checkLevel && !Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
+            return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
         }
 
         if (!Objects.equals(scoreOfTeam1.getWonFights(), scoreOfTeam2.getWonFights())) {

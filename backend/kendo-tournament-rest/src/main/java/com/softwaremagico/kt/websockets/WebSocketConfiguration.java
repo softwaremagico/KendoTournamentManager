@@ -129,7 +129,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
         @Override
         public String getName() {
-            return null;
+            return name;
         }
     }
 }

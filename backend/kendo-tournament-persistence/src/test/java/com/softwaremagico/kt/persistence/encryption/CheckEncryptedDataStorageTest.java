@@ -42,11 +42,11 @@ public class CheckEncryptedDataStorageTest extends AbstractTransactionalTestNGSp
 
 
     public Set<TestEntity> createEntities() {
-        Set<TestEntity> entities = new HashSet<>();
+        Set<TestEntity> entitiesCreated = new HashSet<>();
         for (int i = 0; i < NUMBER_OF_ENTITIES; i++) {
-            entities.add(TestEntity.newEntity());
+            entitiesCreated.add(TestEntity.newEntity());
         }
-        return entities;
+        return entitiesCreated;
     }
 
     @Test

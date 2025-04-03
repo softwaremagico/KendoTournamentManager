@@ -716,6 +716,7 @@ public class SithKillsMasterAchievementsTest extends TournamentTestUtils {
 
 
     @AfterClass(alwaysRun = true)
+    @Override
     public void wipeOut() {
         super.wipeOut();
     }

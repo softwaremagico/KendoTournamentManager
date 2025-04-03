@@ -53,7 +53,7 @@ public class Info {
     @GetMapping(value = "/health-check")
     @ResponseStatus(HttpStatus.OK)
     public void healthCheck(HttpServletRequest httpRequest) {
-
+        //Not needed.
     }
 
 

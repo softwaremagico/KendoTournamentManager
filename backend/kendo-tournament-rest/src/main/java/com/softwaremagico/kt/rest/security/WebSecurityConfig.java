@@ -109,7 +109,7 @@ public class WebSecurityConfig {
                                     response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
                                 })
                 )
-                .authorizeHttpRequests((requests) -> requests
+                .authorizeHttpRequests(requests -> requests
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

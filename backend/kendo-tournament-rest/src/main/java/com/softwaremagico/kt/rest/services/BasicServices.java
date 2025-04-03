@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,11 +54,11 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
         CONTROLLER extends BasicInsertableController<ENTITY, DTO, REPOSITORY, PROVIDER, CONVERTER_REQUEST, CONVERTER>> {
     private final CONTROLLER controller;
 
-    @Autowired
-    private KendoSecurityService kendoSecurityService;
+    private final KendoSecurityService kendoSecurityService;
 
-    protected BasicServices(CONTROLLER controller) {
+    protected BasicServices(CONTROLLER controller, KendoSecurityService kendoSecurityService) {
         this.controller = controller;
+        this.kendoSecurityService = kendoSecurityService;
     }
 
     protected CONTROLLER getController() {

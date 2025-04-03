@@ -35,8 +35,6 @@ public class TeamDTO extends ElementDTO implements IName {
 
     private List<ParticipantDTO> members;
 
-    private Integer group;
-
     public TeamDTO() {
         super();
         members = new ArrayList<>();

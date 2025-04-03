@@ -22,6 +22,9 @@ package com.softwaremagico.kt.utils;
  */
 
 public final class NameUtils {
+
+    private static final String DEFAULT_NAME = " ***REMOVED*** ***REMOVED*** ";
+
     private static final int MAX_NAME_LENGTH = 11;
     private static final int MAX_SHORT_NAME_LENGTH = 8;
     private static final int NAME_PREFIX = 3;
@@ -35,22 +38,22 @@ public final class NameUtils {
 
     public static String getLastnameName(IParticipantName participant) {
         if (participant == null) {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
         return getLastnameName(participant.getLastname(), participant.getName());
     }
 
     public static String getLastnameName(String lastname, String name) {
-        if (lastname.length() > 0 || name.length() > 0) {
+        if (!lastname.isEmpty() || !name.isEmpty()) {
             return lastname + ", " + name;
         } else {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
     }
 
     public static String getLastnameNameIni(IParticipantName participant) {
         if (participant == null) {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
         return getLastnameNameIni(participant.getLastname(), participant.getName());
     }
@@ -67,7 +70,7 @@ public final class NameUtils {
 
     public static String getLastnameNameIni(IParticipantName participant, int maxLength) {
         if (participant == null) {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
         return getLastnameNameIni(participant.getLastname(), participant.getName(), maxLength);
     }
@@ -83,7 +86,7 @@ public final class NameUtils {
      * @return
      */
     public static String getLastnameNameIni(String lastname, String name, int maxLength) {
-        if (lastname.length() > 0 || name.length() > 0) {
+        if (!lastname.isEmpty() || !name.isEmpty()) {
             // Short lastname.
             String lastnameShort = lastname.substring(0, Math.min(maxLength, lastname.length())).toUpperCase();
             if (lastname.length() > maxLength) {
@@ -103,13 +106,13 @@ public final class NameUtils {
                 return lastnameShort.trim() + ", " + name.charAt(0) + ".";
             }
         } else {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
     }
 
     public static String getShortLastname(IParticipantName participant, int length) {
         if (participant == null) {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
         return getShortLastname(participant.getLastname(), length);
     }
@@ -131,7 +134,7 @@ public final class NameUtils {
 
     public static String getShortLastname(IParticipantName participant) {
         if (participant == null) {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
         return getShortLastname(participant.getLastname());
     }
@@ -147,7 +150,7 @@ public final class NameUtils {
 
     public static String getShortLastnameName(IParticipantName participant, int maxLength) {
         if (participant == null) {
-            return " ***REMOVED*** ***REMOVED*** ";
+            return DEFAULT_NAME;
         }
         return getShortLastnameName(participant.getLastname(), participant.getName(), maxLength);
     }

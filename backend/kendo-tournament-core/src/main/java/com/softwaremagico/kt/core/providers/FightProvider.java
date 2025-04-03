@@ -145,9 +145,9 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
     public void delete(Collection<Fight> fights) {
         if (fights != null) {
             final List<Group> groups = groupRepository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toSet()));
-            groups.forEach(group -> {
-                group.getFights().removeAll(fights);
-            });
+            groups.forEach(group ->
+                    group.getFights().removeAll(fights)
+            );
             groupRepository.saveAll(groups);
             super.delete(fights);
         }

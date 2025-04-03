@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -130,9 +130,9 @@ public class AchievementProvider extends CrudProvider<Achievement, Integer, Achi
                 .stream().collect(Collectors.toMap(Achievement::keyByUserAndType, Function.identity(),
                         (a, b) -> a))
                 .values().stream().toList();
-        final Map<AchievementType, Map<AchievementGrade, Integer>> counter = new HashMap<>();
+        final Map<AchievementType, Map<AchievementGrade, Integer>> counter = new EnumMap<>(AchievementType.class);
         for (Achievement achievement : achievements) {
-            counter.putIfAbsent(achievement.getAchievementType(), new HashMap<>());
+            counter.putIfAbsent(achievement.getAchievementType(), new EnumMap<>(AchievementGrade.class));
             counter.get(achievement.getAchievementType()).putIfAbsent(achievement.getAchievementGrade(), 0);
             counter.get(achievement.getAchievementType()).put(achievement.getAchievementGrade(),
                     counter.get(achievement.getAchievementType()).get(achievement.getAchievementGrade()) + 1);

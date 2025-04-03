@@ -37,6 +37,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -65,8 +66,9 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     private final PdfController pdfController;
     private final TournamentController tournamentController;
 
-    public GroupServices(GroupController groupController, PdfController pdfController, TournamentController tournamentController) {
-        super(groupController);
+    public GroupServices(GroupController groupController, KendoSecurityService kendoSecurityService, PdfController pdfController,
+                         TournamentController tournamentController) {
+        super(groupController, kendoSecurityService);
         this.pdfController = pdfController;
         this.tournamentController = tournamentController;
     }

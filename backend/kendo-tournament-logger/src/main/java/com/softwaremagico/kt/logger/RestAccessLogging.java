@@ -70,7 +70,7 @@ public class RestAccessLogging extends AbstractLogging {
      */
     @Before(value = "selectAll() && !avoidClasses()")
     public void beforeAdvice(JoinPoint joinPoint) {
-
+        //Not needed yet.
     }
 
     @Around(value = "selectAll() && !avoidClasses()")
@@ -92,6 +92,7 @@ public class RestAccessLogging extends AbstractLogging {
      */
     @After(value = "selectAll() && !avoidClasses()")
     public void afterAdvice() {
+        //Not needed yet.
     }
 
     /**

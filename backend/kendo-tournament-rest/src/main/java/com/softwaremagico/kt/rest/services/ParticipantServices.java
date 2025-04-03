@@ -50,7 +50,7 @@ public class ParticipantServices extends BasicServices<Participant, ParticipantD
     private final KendoSecurityService kendoSecurityService;
 
     public ParticipantServices(ParticipantController participantController, KendoSecurityService kendoSecurityService) {
-        super(participantController);
+        super(participantController, kendoSecurityService);
         this.kendoSecurityService = kendoSecurityService;
     }
 

@@ -51,12 +51,9 @@ public class TournamentHandlerSelector {
         switch (type) {
             case LOOP:
                 return loopLeagueHandler;
-            case TREE:
-            case CHAMPIONSHIP:
+            case TREE, CHAMPIONSHIP:
                 return treeTournamentHandler;
             case CUSTOM_CHAMPIONSHIP:
-                //manager = new CustomChampionship(tournament);
-                //manager.fillGroups();
                 break;
             case CUSTOMIZED:
                 return customTournamentHandler;

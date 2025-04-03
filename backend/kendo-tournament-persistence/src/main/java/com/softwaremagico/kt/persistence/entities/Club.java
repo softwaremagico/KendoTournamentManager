@@ -174,7 +174,7 @@ public class Club extends Element implements Comparable<Club> {
     }
 
     public String getMail() {
-        return email;
+        return getEmail();
     }
 
     /**
@@ -183,7 +183,7 @@ public class Club extends Element implements Comparable<Club> {
      * @param email
      */
     public void setMail(String email) {
-        this.email = email;
+        setEmail(email);
     }
 
     public String getPhone() {
@@ -224,6 +224,8 @@ public class Club extends Element implements Comparable<Club> {
 
         return collator.compare(getName() + getCity(), c.getName() + c.getCity());
     }
+
+
 
 
 }

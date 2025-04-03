@@ -125,10 +125,8 @@ public class ScoreOfCompetitor {
     public void setFightsWon() {
         wonFights = 0;
         for (final Fight fight : fights) {
-            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
-                if (fight.isWon(competitor)) {
-                    wonFights++;
-                }
+            if (((fight != null && fight.isOver()) || (fight != null && countNotOver)) && fight.isWon(competitor)) {
+                wonFights++;
             }
         }
     }
@@ -136,11 +134,10 @@ public class ScoreOfCompetitor {
     public void setFightsDraw() {
         drawFights = 0;
         for (final Fight fight : fights) {
-            if ((fight != null && fight.isOver()) || (fight != null && countNotOver)) {
-                if (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
-                        || fight.getTeam2().isMember(competitor))) {
-                    drawFights++;
-                }
+            if (((fight != null && fight.isOver()) || (fight != null && countNotOver))
+                    && (fight.getWinner() == null && (fight.getTeam1().isMember(competitor)
+                    || fight.getTeam2().isMember(competitor)))) {
+                drawFights++;
             }
         }
     }
@@ -176,9 +173,8 @@ public class ScoreOfCompetitor {
     public void setUntieDuels() {
         untieDuels = 0;
         unties.forEach(duel -> {
-            if (Objects.equals(duel.getCompetitor1(), competitor) && duel.getWinner() == -1) {
-                untieDuels++;
-            } else if (Objects.equals(duel.getCompetitor2(), competitor) && duel.getWinner() == 1) {
+            if (Objects.equals(duel.getCompetitor1(), competitor) && duel.getWinner() == -1
+                    || Objects.equals(duel.getCompetitor2(), competitor) && duel.getWinner() == 1) {
                 untieDuels++;
             }
         });

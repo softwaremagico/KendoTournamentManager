@@ -132,9 +132,8 @@ public class ScoreOfTeam {
     public void setUntieDuels() {
         untieDuels = 0;
         unties.forEach(duel -> {
-            if ((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1) {
-                untieDuels++;
-            } else if ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1) {
+            if (((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1)
+                    || ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1)) {
                 untieDuels++;
             }
         });

@@ -46,6 +46,8 @@ import java.util.Objects;
 })
 public class Achievement extends Element {
 
+    private static final int HASH_MULTIPLIER = 31;
+
     @ManyToOne
     @JoinColumn(name = "participant", nullable = false)
     private Participant participant;
@@ -125,5 +127,28 @@ public class Achievement extends Element {
 
     public String keyByUserAndType() {
         return participant.getId() + "_" + achievementType + "_" + achievementGrade;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Achievement that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        return participant.equals(that.participant) && tournament.equals(that.tournament) && achievementType == that.achievementType
+                && achievementGrade == that.achievementGrade;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = HASH_MULTIPLIER * result + participant.hashCode();
+        result = HASH_MULTIPLIER * result + tournament.hashCode();
+        result = HASH_MULTIPLIER * result + achievementType.hashCode();
+        result = HASH_MULTIPLIER * result + achievementGrade.hashCode();
+        return result;
     }
 }

@@ -72,7 +72,7 @@ public class TeamList extends ParentList {
         for (final ParticipantDTO member : teamDTO.getMembers()) {
             String memberName;
             try {
-                if (member.getLastname() != null && member.getLastname().length() > 0) {
+                if (member.getLastname() != null && !member.getLastname().isEmpty()) {
                     memberName = NameUtils.getLastnameName(member);
                 } else {
                     memberName = " ";
