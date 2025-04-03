@@ -80,10 +80,6 @@ public class TestEntity {
     @Convert(converter = TimestampCryptoConverter.class)
     private Timestamp timestampColumn;
 
-    public TestEntity() {
-
-    }
-
     public static TestEntity newEntity() {
         TestEntity randomEntity = new TestEntity();
         randomEntity.setData();

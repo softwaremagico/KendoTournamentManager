@@ -38,6 +38,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -70,8 +71,9 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
 
     private final PdfController pdfController;
 
-    public TeamServices(TeamController teamController, TournamentController tournamentController, PdfController pdfController) {
-        super(teamController);
+    public TeamServices(TeamController teamController, KendoSecurityService kendoSecurityService, TournamentController tournamentController,
+                        PdfController pdfController) {
+        super(teamController, kendoSecurityService);
         this.tournamentController = tournamentController;
         this.pdfController = pdfController;
     }

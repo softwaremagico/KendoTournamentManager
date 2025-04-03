@@ -37,6 +37,7 @@ import com.softwaremagico.kt.persistence.values.LeagueFightsOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,7 +63,7 @@ public class SimpleLeagueHandler extends LeagueHandler {
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
         if (level != 0) {
-            return null;
+            return new ArrayList<>();
         }
         //Automatically generates the group if needed in getGroup.
         final TournamentExtraProperty extraProperty = getLeagueFightsOrder(tournament);

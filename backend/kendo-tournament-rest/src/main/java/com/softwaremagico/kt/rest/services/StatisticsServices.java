@@ -85,11 +85,11 @@ public class StatisticsServices {
                                                                     @RequestParam(name = "calculateByTeams") Optional<Boolean> checkByTeams,
                                                                     @RequestParam(name = "calculateByMembers") Optional<Boolean> checkByMembers,
                                                                     HttpServletRequest request) {
-        if (checkByMembers.isPresent() && checkByMembers.get()) {
+        if (checkByMembers.isPresent() && Boolean.TRUE.equals(checkByMembers.get())) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by members.");
             return fightStatisticsController.estimateByMembers(tournamentController.get(tournamentId));
         }
-        if (checkByTeams.isPresent() && checkByTeams.get()) {
+        if (checkByTeams.isPresent() && Boolean.TRUE.equals(checkByMembers.get())) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by teams.");
             return fightStatisticsController.estimateByTeams(tournamentController.get(tournamentId));
         }

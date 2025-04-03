@@ -72,27 +72,27 @@ public class ParticipantFightStatisticsRepository implements JpaRepository<Parti
 
     @Override
     public void deleteById(Integer integer) {
-
+        //Ignored
     }
 
     @Override
     public void delete(ParticipantFightStatistics entity) {
-
+        //Ignored
     }
 
     @Override
     public void deleteAllById(Iterable<? extends Integer> integers) {
-
+        //Ignored
     }
 
     @Override
     public void deleteAll(Iterable<? extends ParticipantFightStatistics> entities) {
-
+        //Ignored
     }
 
     @Override
     public void deleteAll() {
-
+        //Ignored
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ParticipantFightStatisticsRepository implements JpaRepository<Parti
 
     @Override
     public void flush() {
-
+        //Ignored
     }
 
     @Override
@@ -133,22 +133,22 @@ public class ParticipantFightStatisticsRepository implements JpaRepository<Parti
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends ParticipantFightStatistics> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public void deleteAllInBatch(Iterable<ParticipantFightStatistics> entities) {
-
+        //Ignored
     }
 
     @Override
     public void deleteAllByIdInBatch(Iterable<Integer> integers) {
-
+        //Ignored
     }
 
     @Override
     public void deleteAllInBatch() {
-
+        //Ignored
     }
 
     @Override
@@ -178,13 +178,13 @@ public class ParticipantFightStatisticsRepository implements JpaRepository<Parti
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends ParticipantFightStatistics> List<S> findAll(Example<S> example) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends ParticipantFightStatistics> List<S> findAll(Example<S> example, Sort sort) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

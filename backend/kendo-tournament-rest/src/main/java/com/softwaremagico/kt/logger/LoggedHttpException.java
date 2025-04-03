@@ -25,7 +25,7 @@ import org.springframework.http.HttpStatus;
 
 public abstract class LoggedHttpException extends RuntimeException {
     private static final long serialVersionUID = -2118048384077287599L;
-    private HttpStatus status;
+    private final HttpStatus status;
 
     protected LoggedHttpException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
         super(message);
@@ -48,23 +48,27 @@ public abstract class LoggedHttpException extends RuntimeException {
     }
 
     protected LoggedHttpException(Class<?> clazz, Throwable e, HttpStatus status) {
-        this(clazz, e);
+        super(e);
+        RestServerLogger.errorMessage(clazz, e);
         this.status = status;
     }
 
     protected LoggedHttpException(Class<?> clazz, String message, Throwable e, HttpStatus status) {
-        this(clazz, message, e);
+        super(message, e);
+        RestServerLogger.errorMessage(clazz, e);
         this.status = status;
     }
 
-    public LoggedHttpException(Class<?> clazz, Throwable e) {
+    protected LoggedHttpException(Class<?> clazz, Throwable e) {
         super(e);
         RestServerLogger.errorMessage(clazz, e);
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     protected LoggedHttpException(Class<?> clazz, String message, Throwable e) {
         super(message, e);
         RestServerLogger.errorMessage(clazz, e);
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     public HttpStatus getStatus() {

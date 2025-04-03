@@ -37,6 +37,6 @@ public class DummyApi {
     @GetMapping(value = "/test")
     @ResponseStatus(HttpStatus.OK)
     public void healthCheck(HttpServletRequest httpRequest) {
-
+        //No action.
     }
 }

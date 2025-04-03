@@ -37,12 +37,6 @@ import java.util.List;
 @Test(groups = {"groupRepository"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class GroupRepositoryTests extends BasicDataTest {
-    private static final String CLUB_NAME = "ClubName";
-    private static final String CLUB_COUNTRY = "ClubCountry";
-    private static final String CLUB_CITY = "ClubCity";
-    private static final Integer MEMBERS = 1;
-    private static final Integer TEAMS = 3;
-    private static final String TOURNAMENT_NAME = "groupTournamentTest";
 
     @Autowired
     private GroupRepository groupRepository;

@@ -38,8 +38,6 @@ import java.util.Locale;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class HtmlTests extends BasicDataTest {
 
-    private static final String PATH_OUTPUT = System.getProperty("java.io.tmpdir") + File.separator;
-
     @Autowired
     private HtmlController htmlController;
 

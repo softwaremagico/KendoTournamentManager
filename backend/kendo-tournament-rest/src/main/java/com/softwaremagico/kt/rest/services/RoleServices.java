@@ -37,6 +37,7 @@ import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.repositories.RoleRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -67,8 +68,9 @@ public class RoleServices extends BasicServices<Role, RoleDTO, RoleRepository,
 
     private final TournamentController tournamentController;
 
-    public RoleServices(RoleController roleController, PdfController pdfController, TournamentController tournamentController) {
-        super(roleController);
+    public RoleServices(RoleController roleController, KendoSecurityService kendoSecurityService, PdfController pdfController,
+                        TournamentController tournamentController) {
+        super(roleController, kendoSecurityService);
         this.pdfController = pdfController;
         this.tournamentController = tournamentController;
     }

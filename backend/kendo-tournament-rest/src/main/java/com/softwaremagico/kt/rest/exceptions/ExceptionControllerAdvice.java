@@ -45,8 +45,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -205,16 +203,5 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         errors.forEach((key, value) -> message.append(key).append(": ").append(value).append("\n"));
         final ErrorResponse error = new ErrorResponse(message.toString(), ex);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-
-    private String getStacktrace(Throwable e) {
-        try {
-            final StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            return sw.toString();
-        } catch (Exception ex) {
-            return "";
-        }
     }
 }

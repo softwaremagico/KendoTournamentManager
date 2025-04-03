@@ -320,7 +320,7 @@ public class RankingController {
             clubsById = competitors.stream()
                     .map(ParticipantDTO::getClub).collect(Collectors.toMap(ClubDTO::getId, Function.identity(), (r1, r2) -> r1));
         } catch (NullPointerException ignore) {
-
+            //Not needed.
         }
 
         final List<ScoreOfCompetitor> scoreOfCompetitors = rankingProvider.getCompetitorsGlobalScoreRanking(

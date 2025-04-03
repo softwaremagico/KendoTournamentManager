@@ -101,13 +101,13 @@ public class FightsList extends ParentList {
 
         for (int i = 0; i < tournamentDto.getShiaijos(); i++) {
             final int shiaijo = i;
-            final List<FightDTO> fights = this.fights.stream().filter(fightDTO -> fightDTO.getShiaijo().equals(shiaijo)).toList();
+            final List<FightDTO> fightsRow = this.fights.stream().filter(fightDTO -> fightDTO.getShiaijo().equals(shiaijo)).toList();
             mainTable.addCell(getEmptyRow());
             mainTable.addCell(getEmptyRow());
             mainTable.addCell(getHeader2(
                     messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(i), TABLE_BORDER));
 
-            for (final FightDTO fight : fights) {
+            for (final FightDTO fight : fightsRow) {
                 cell = new PdfPCell(fightTable(fight));
                 cell.setBorderWidth(BORDER_WIDTH);
                 cell.setColspan(TABLE_WITH.length);

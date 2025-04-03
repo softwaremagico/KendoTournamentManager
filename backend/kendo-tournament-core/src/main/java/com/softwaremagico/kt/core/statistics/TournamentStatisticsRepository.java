@@ -69,27 +69,27 @@ public class TournamentStatisticsRepository implements JpaRepository<TournamentS
 
     @Override
     public void deleteById(Integer integer) {
-
+        //Not needed
     }
 
     @Override
     public void delete(TournamentStatistics entity) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllById(Iterable<? extends Integer> integers) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAll(Iterable<? extends TournamentStatistics> entities) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAll() {
-
+        //Not needed
     }
 
     @Override
@@ -117,7 +117,7 @@ public class TournamentStatisticsRepository implements JpaRepository<TournamentS
 
     @Override
     public void flush() {
-
+        //Not needed
     }
 
     @Override
@@ -129,22 +129,22 @@ public class TournamentStatisticsRepository implements JpaRepository<TournamentS
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends TournamentStatistics> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public void deleteAllInBatch(Iterable<TournamentStatistics> entities) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllByIdInBatch(Iterable<Integer> integers) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllInBatch() {
-
+        //Not needed
     }
 
     @Override
@@ -173,13 +173,13 @@ public class TournamentStatisticsRepository implements JpaRepository<TournamentS
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends TournamentStatistics> List<S> findAll(Example<S> example) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends TournamentStatistics> List<S> findAll(Example<S> example, Sort sort) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

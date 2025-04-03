@@ -370,6 +370,7 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     }
 
     @AfterClass(alwaysRun = true)
+    @Override
     public void wipeOut() {
         super.wipeOut();
     }

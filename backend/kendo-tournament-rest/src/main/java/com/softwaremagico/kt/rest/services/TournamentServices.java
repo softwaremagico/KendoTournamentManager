@@ -72,8 +72,9 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
 
     private final KendoSecurityService kendoSecurityService;
 
-    public TournamentServices(TournamentController tournamentController, PdfController pdfController, KendoSecurityService kendoSecurityService) {
-        super(tournamentController);
+    public TournamentServices(TournamentController tournamentController, KendoSecurityService kendoSecurityService,
+                              PdfController pdfController) {
+        super(tournamentController, kendoSecurityService);
         this.pdfController = pdfController;
         this.kendoSecurityService = kendoSecurityService;
     }
@@ -89,6 +90,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                 kendoSecurityService.getViewerPrivilege(), kendoSecurityService.getEditorPrivilege(), kendoSecurityService.getAdminPrivilege()};
     }
 
+    @Override
     @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
@@ -96,6 +98,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         return super.get(id, request);
     }
 
+    @Override
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentDTO> getAll(HttpServletRequest request) {
@@ -129,7 +132,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                           HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
         try {
-            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null ? onlyNew : false, authentication.getName(),
+            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null && onlyNew, authentication.getName(),
                     roles).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - accreditations.pdf").build();
@@ -179,7 +182,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                     HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
         try {
-            final byte[] bytes = pdfController.generateTournamentDiplomas(tournament, onlyNew != null ? onlyNew : false,
+            final byte[] bytes = pdfController.generateTournamentDiplomas(tournament, onlyNew != null && onlyNew,
                     authentication.getName(), roles).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - diplomas.pdf").build();

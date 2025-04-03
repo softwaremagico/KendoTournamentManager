@@ -50,7 +50,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
 
     @Autowired
-    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
+    protected LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
                          TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
@@ -103,7 +103,7 @@ public abstract class LeagueHandler implements ITournamentManager {
         if (level == 0) {
             return getGroups(tournament);
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
@@ -175,7 +175,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     @Override
     public boolean isTheLastFight(Tournament tournament) {
         final List<Fight> fights = getFirstGroup(tournament).getFights();
-        return (fights.size() > 0) && (fights.size() == 1 || fights.get(fights.size() - 2).isOver());
+        return (!fights.isEmpty()) && (fights.size() == 1 || fights.get(fights.size() - 2).isOver());
     }
 
     @Override

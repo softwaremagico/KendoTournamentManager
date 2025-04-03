@@ -22,6 +22,7 @@ package com.softwaremagico.kt.persistence.values;
  */
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public enum Score {
@@ -80,7 +81,7 @@ public enum Score {
         return getValidPoints().contains(sc);
     }
 
-    public static ArrayList<Score> getValidPoints() {
+    public static List<Score> getValidPoints() {
         final ArrayList<Score> points = new ArrayList<>();
         points.add(MEN);
         points.add(KOTE);

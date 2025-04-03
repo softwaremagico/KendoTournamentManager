@@ -97,7 +97,7 @@ public class TournamentAccreditationCards extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        //Ignored.
     }
 
     @Override
@@ -137,7 +137,6 @@ public class TournamentAccreditationCards extends PdfDocument {
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.addElement(competitorTable);
-            //cell.setMinimumHeight(document.getPageSize().getHeight() / 2 - 50);
             mainTable.addCell(cell);
         }
         mainTable.completeRow();

@@ -25,14 +25,14 @@ ENV PATH "$PATH:${JAVA_HOME}/bin"
 
 #Set timezone.
 ENV TZ=${timezone}
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 #Copy libraries
 RUN mkdir -p /opt/libraries/BOOT-INF/lib/
-ADD libraries/* /opt/libraries/BOOT-INF/lib/
+COPY libraries/* /opt/libraries/BOOT-INF/lib/
 
 #Download project and install it
-RUN apk --no-cache add supervisor openssl zip unzip curl && \
+RUN apk --no-cache add curl openssl supervisor unzip zip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
     wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-backend.jar && \

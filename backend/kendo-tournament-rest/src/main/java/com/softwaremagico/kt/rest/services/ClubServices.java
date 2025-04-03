@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -46,8 +47,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/clubs")
 public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, ClubProvider, ClubConverterRequest, ClubConverter, ClubController> {
 
-    public ClubServices(ClubController clubController) {
-        super(clubController);
+    public ClubServices(ClubController clubController, KendoSecurityService kendoSecurityService) {
+        super(clubController, kendoSecurityService);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")

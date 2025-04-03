@@ -36,10 +36,10 @@ import java.io.FileOutputStream;
 
 public abstract class PdfDocument {
     protected static final int TOTAL_WIDTH = 100;
-    private final int rightMargin = 30;
-    private final int leftMargin = 30;
-    private final int topMargin = 30;
-    private final int bottomMargin = 30;
+    private static final int RIGHT_MARGIN = 30;
+    private static final int LEFT_MARGIN = 30;
+    private static final int TOP_MARGIN = 30;
+    private static final int BOTTOM_MARGIN = 30;
 
     protected Document addMetaData(Document document) {
         document.addTitle("List Report");
@@ -73,7 +73,7 @@ public abstract class PdfDocument {
      * @throws InvalidXmlElementException
      */
     public final byte[] generate() throws EmptyPdfBodyException, DocumentException, InvalidXmlElementException {
-        final Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin);
+        final Document document = new Document(getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN);
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final PdfWriter writer = PdfWriter.getInstance(document, byteArrayOutputStream);
         addEvent(writer);
@@ -89,7 +89,7 @@ public abstract class PdfDocument {
             path += ".pdf";
         }
 
-        try (Document document = new Document(getPageSize(), rightMargin, leftMargin, topMargin, bottomMargin)) {
+        try (Document document = new Document(getPageSize(), RIGHT_MARGIN, LEFT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN)) {
 
             try {
                 final PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));

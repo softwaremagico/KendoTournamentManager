@@ -55,7 +55,7 @@
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
-            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtilsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>

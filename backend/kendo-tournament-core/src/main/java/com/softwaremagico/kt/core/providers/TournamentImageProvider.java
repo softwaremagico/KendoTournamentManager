@@ -135,6 +135,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
             case DIPLOMA -> tournamentImage.setData(getDefaultDiploma());
             case PHOTO -> tournamentImage.setData(getDefaultPhoto());
             default -> {
+                //Not needed
             }
         }
         return tournamentImage;

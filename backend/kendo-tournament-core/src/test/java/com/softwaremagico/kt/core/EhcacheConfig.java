@@ -28,17 +28,4 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class EhcacheConfig {
 
-//    @Bean
-//    public JCacheManagerFactoryBean cacheManagerFactoryBean() throws Exception {
-//        JCacheManagerFactoryBean jCacheManagerFactoryBean = new JCacheManagerFactoryBean();
-//        jCacheManagerFactoryBean.setCacheManagerUri(new ClassPathResource("ehcache.xml").getURI());
-//        return jCacheManagerFactoryBean;
-//    }
-//
-//    @Bean
-//    public CacheManager cacheManager() throws Exception {
-//        final JCacheCacheManager jCacheCacheManager = new JCacheCacheManager();
-//        jCacheCacheManager.setCacheManager(cacheManagerFactoryBean().getObject());
-//        return jCacheCacheManager;
-//    }
 }

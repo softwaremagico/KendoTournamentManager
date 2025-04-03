@@ -77,7 +77,7 @@ public class BasicLogging extends AbstractLogging {
      */
     @Before(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
     public void beforeAdvice(JoinPoint joinPoint) {
-
+        //Not needed.
     }
 
     @Around(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
@@ -99,6 +99,7 @@ public class BasicLogging extends AbstractLogging {
      */
     @After(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
     public void afterAdvice() {
+        //Not needed.
     }
 
     /**

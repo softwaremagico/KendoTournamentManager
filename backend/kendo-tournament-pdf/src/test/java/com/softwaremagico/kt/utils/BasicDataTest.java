@@ -83,12 +83,12 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<ParticipantDTO> createParticipants(ClubDTO club) {
-        List<ParticipantDTO> members = new ArrayList<>();
+        List<ParticipantDTO> participants = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            members.add(participantController.create(
+            participants.add(participantController.create(
                     new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club), null));
         }
-        return members;
+        return participants;
     }
 
     protected TournamentDTO createTournament() {
@@ -96,11 +96,11 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<RoleDTO> createRoles(List<ParticipantDTO> members, TournamentDTO tournament) {
-        List<RoleDTO> roles = new ArrayList<>();
+        List<RoleDTO> rolesCreated = new ArrayList<>();
         for (ParticipantDTO competitor : members) {
-            roles.add(roleController.create(new RoleDTO(tournament, competitor, RoleType.COMPETITOR), null));
+            rolesCreated.add(roleController.create(new RoleDTO(tournament, competitor, RoleType.COMPETITOR), null));
         }
-        return roles;
+        return rolesCreated;
     }
 
     protected RoleDTO createReferee() {
@@ -109,7 +109,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<TeamDTO> createTeams(List<ParticipantDTO> members, TournamentDTO tournament) {
-        List<TeamDTO> teams = new ArrayList<>();
+        List<TeamDTO> teamsCreated = new ArrayList<>();
         int teamIndex = 0;
         TeamDTO team = null;
         int teamMember = 0;
@@ -120,13 +120,13 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournament);
                 teamMember = 0;
                 team = teamController.create(team, null);
-                teams.add(team);
+                teamsCreated.add(team);
             }
 
             // Add member.
             team.addMember(competitor);
             team = teamController.update(team, null);
-            teams.set(teams.size() - 1, team);
+            teamsCreated.set(teamsCreated.size() - 1, team);
             teamMember++;
 
             // Team filled up, create a new team.
@@ -134,19 +134,19 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 team = null;
             }
         }
-        return teams;
+        return teamsCreated;
     }
 
     protected GroupDTO createGroup(TournamentDTO tournament, List<TeamDTO> teams) {
-        final GroupDTO group = new GroupDTO();
-        group.setTournament(tournament);
-        group.setLevel(0);
-        group.setTeams(teams);
-        return groupController.create(group, null);
+        final GroupDTO groupsCreated = new GroupDTO();
+        groupsCreated.setTournament(tournament);
+        groupsCreated.setLevel(0);
+        groupsCreated.setTeams(teams);
+        return groupController.create(groupsCreated, null);
     }
 
     protected List<FightDTO> createFights(TournamentDTO tournament, List<TeamDTO> teams, GroupDTO group) {
-        List<FightDTO> fights = new ArrayList<>();
+        List<FightDTO> fightsCreated = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
             FightDTO fightDTO = new FightDTO(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL);
             List<DuelDTO> duels = new ArrayList<>();
@@ -155,11 +155,11 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                         tournament, null));
             }
             fightDTO.setDuels(duels);
-            fights.add(fightController.create(fightDTO, null));
+            fightsCreated.add(fightController.create(fightDTO, null));
         }
-        group.setFights(fights);
+        group.setFights(fightsCreated);
         groupController.create(group, null);
-        return fights;
+        return fightsCreated;
     }
 
     protected void resolveFights() {

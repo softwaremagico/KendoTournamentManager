@@ -31,6 +31,8 @@ public class AchievementDTO extends ElementDTO {
     @Serial
     private static final long serialVersionUID = 700852091905611286L;
 
+    private static final int HASH_MAGIC = 31;
+
     private ParticipantDTO participant;
 
     private TournamentDTO tournament;
@@ -79,5 +81,28 @@ public class AchievementDTO extends ElementDTO {
                 + ", achievementType=" + achievementType
                 + ", achievementGrade=" + achievementGrade
                 + "} " + super.toString();
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof AchievementDTO that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        return participant.equals(that.participant) && tournament.equals(that.tournament) && achievementType == that.achievementType
+                && achievementGrade == that.achievementGrade;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = HASH_MAGIC * result + participant.hashCode();
+        result = HASH_MAGIC * result + tournament.hashCode();
+        result = HASH_MAGIC * result + achievementType.hashCode();
+        result = HASH_MAGIC * result + achievementGrade.hashCode();
+        return result;
     }
 }

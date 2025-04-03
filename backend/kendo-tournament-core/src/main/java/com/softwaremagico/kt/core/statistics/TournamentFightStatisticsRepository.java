@@ -72,27 +72,27 @@ public class TournamentFightStatisticsRepository implements JpaRepository<Tourna
 
     @Override
     public void deleteById(Integer integer) {
-
+        //Not needed
     }
 
     @Override
     public void delete(TournamentFightStatistics entity) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllById(Iterable<? extends Integer> integers) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAll(Iterable<? extends TournamentFightStatistics> entities) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAll() {
-
+        //Not needed
     }
 
     @Override
@@ -121,7 +121,7 @@ public class TournamentFightStatisticsRepository implements JpaRepository<Tourna
 
     @Override
     public void flush() {
-
+        //Not needed
     }
 
     @Override
@@ -133,22 +133,22 @@ public class TournamentFightStatisticsRepository implements JpaRepository<Tourna
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends TournamentFightStatistics> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public void deleteAllInBatch(Iterable<TournamentFightStatistics> entities) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllByIdInBatch(Iterable<Integer> integers) {
-
+        //Not needed
     }
 
     @Override
     public void deleteAllInBatch() {
-
+        //Not needed
     }
 
     @Override
@@ -178,13 +178,13 @@ public class TournamentFightStatisticsRepository implements JpaRepository<Tourna
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends TournamentFightStatistics> List<S> findAll(Example<S> example) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
     public <S extends TournamentFightStatistics> List<S> findAll(Example<S> example, Sort sort) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

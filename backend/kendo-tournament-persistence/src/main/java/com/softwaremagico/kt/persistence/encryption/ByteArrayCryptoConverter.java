@@ -51,7 +51,7 @@ public class ByteArrayCryptoConverter extends AbstractCryptoConverter<byte[]>
             return (dbData == null || dbData.isEmpty()) ? null : Base64.getDecoder().decode(dbData.getBytes(StandardCharsets.UTF_8));
         } catch (IllegalArgumentException e) {
             EncryptorLogger.errorMessage(this.getClass().getName(), e);
-            return null;
+            return new byte[0];
         }
     }
 

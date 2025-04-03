@@ -137,6 +137,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
             try {
                 return getRepository().findById(Integer.parseInt(fields[0]));
             } catch (NumberFormatException ignore) {
+                //Ignored exception.
             }
         }
         KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
@@ -145,7 +146,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
     public List<Participant> getYourWorstNightmare(Participant sourceParticipant) {
         if (sourceParticipant == null) {
-            return null;
+            return new ArrayList<>();
         }
         final List<Duel> duels = duelRepository.findByParticipant(sourceParticipant);
         final Map<Participant, Integer> lostBy = new HashMap<>();
@@ -174,7 +175,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
 
     public List<Participant> getYouAreTheWorstNightmareOf(Participant sourceParticipant) {
         if (sourceParticipant == null) {
-            return null;
+            return new ArrayList<>();
         }
         final List<Duel> duels = duelRepository.findByParticipant(sourceParticipant);
         final Map<Participant, Integer> lostBy = new HashMap<>();

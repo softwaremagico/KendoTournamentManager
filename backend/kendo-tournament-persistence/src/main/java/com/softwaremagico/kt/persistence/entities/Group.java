@@ -99,7 +99,7 @@ public class Group extends Element {
      * @return
      */
     public static boolean areFightsOverOrNull(List<Fight> fights) {
-        if (fights.size() > 0) {
+        if (!fights.isEmpty()) {
             for (final Fight fight : fights) {
                 if (!fight.isOver()) {
                     return false;

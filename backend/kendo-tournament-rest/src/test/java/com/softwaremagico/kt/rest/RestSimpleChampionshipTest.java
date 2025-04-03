@@ -465,7 +465,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
 
         Assert.assertEquals(tournamentGroups.size(), 1);
 
-        MvcResult rankingResult = this.mockMvc
+        this.mockMvc
                 .perform(get("/rankings/teams/tournaments/{tournamentId}", tournamentDTO.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwtToken)

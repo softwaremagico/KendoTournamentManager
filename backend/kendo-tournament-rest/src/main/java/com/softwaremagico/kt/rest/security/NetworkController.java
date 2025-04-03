@@ -40,8 +40,8 @@ public class NetworkController {
                 hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
             }
             return String.join("-", hexadecimal);
-        } catch (Exception e) {
-            //RestServerLogger.debug(this.getClass().getName(), "No mac server found!");
+        } catch (Exception ignored) {
+            //Ignored.
         }
         return "";
     }

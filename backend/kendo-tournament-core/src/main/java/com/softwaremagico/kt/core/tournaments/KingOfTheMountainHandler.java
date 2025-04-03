@@ -69,11 +69,6 @@ public class KingOfTheMountainHandler extends LeagueHandler {
         return createFights(tournament, teamsOrder, 0, createdBy);
     }
 
-    private int getNextLevel(Tournament tournament) {
-        //Each group on a different level, to ensure that the last group winner is the king of the mountain and the winner of the league.
-        return (int) groupProvider.count(tournament);
-    }
-
     @Override
     public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, Integer level, String createdBy) {
         //Create the first fight.

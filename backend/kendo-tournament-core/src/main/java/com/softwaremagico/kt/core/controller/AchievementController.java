@@ -243,6 +243,7 @@ public class AchievementController extends BasicInsertableController<Achievement
         if (participantsFromTournament == null) {
             participantsFromTournament = new HashMap<>();
         }
+        participantsFromTournament.computeIfAbsent(tournament, t -> participantsFromTournament.get(tournament));
         if (participantsFromTournament.get(tournament) == null) {
             participantsFromTournament.put(tournament, participantProvider.get(tournament));
         }
@@ -276,12 +277,12 @@ public class AchievementController extends BasicInsertableController<Achievement
             getDuelsFromTournament().forEach(duel -> {
                 scoresByParticipant.computeIfAbsent(duel.getCompetitor1(), k -> new ArrayList<>());
                 scoresByParticipant.computeIfAbsent(duel.getCompetitor2(), k -> new ArrayList<>());
-                duel.getCompetitor1Score().forEach(score -> {
-                    scoresByParticipant.get(duel.getCompetitor1()).add(score);
-                });
-                duel.getCompetitor2Score().forEach(score -> {
-                    scoresByParticipant.get(duel.getCompetitor2()).add(score);
-                });
+                duel.getCompetitor1Score().forEach(score ->
+                        scoresByParticipant.get(duel.getCompetitor1()).add(score)
+                );
+                duel.getCompetitor2Score().forEach(score ->
+                        scoresByParticipant.get(duel.getCompetitor2()).add(score)
+                );
             });
         }
         return scoresByParticipant;
@@ -293,12 +294,12 @@ public class AchievementController extends BasicInsertableController<Achievement
             getDuelsFromTournament().forEach(duel -> {
                 scoresReceivedByParticipant.computeIfAbsent(duel.getCompetitor1(), k -> new ArrayList<>());
                 scoresReceivedByParticipant.computeIfAbsent(duel.getCompetitor2(), k -> new ArrayList<>());
-                duel.getCompetitor1Score().forEach(score -> {
-                    scoresReceivedByParticipant.get(duel.getCompetitor2()).add(score);
-                });
-                duel.getCompetitor2Score().forEach(score -> {
-                    scoresReceivedByParticipant.get(duel.getCompetitor1()).add(score);
-                });
+                duel.getCompetitor1Score().forEach(score ->
+                        scoresReceivedByParticipant.get(duel.getCompetitor2()).add(score)
+                );
+                duel.getCompetitor2Score().forEach(score ->
+                        scoresReceivedByParticipant.get(duel.getCompetitor1()).add(score)
+                );
             });
         }
         return scoresReceivedByParticipant;
@@ -385,21 +386,21 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     public List<AchievementDTO> getTournamentAchievements(Integer tournamentId) {
-        final Tournament tournament = tournamentProvider.get(tournamentId)
+        final Tournament tournamentEntity = tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
-        return convertAll(getProvider().get(tournament));
+        return convertAll(getProvider().get(tournamentEntity));
     }
 
     public List<AchievementDTO> regenerateAllAchievements() {
         final long start = System.currentTimeMillis();
         final List<TournamentDTO> tournaments = tournamentConverter.convertAll(tournamentProvider.getAll().stream()
-                .map(TournamentConverterRequest::new).collect(Collectors.toList()));
+                .map(TournamentConverterRequest::new).toList());
         //Inserted tournaments from previpus version have same date in some cases.
         tournaments.sort(Comparator.comparing(TournamentDTO::getCreatedAt).thenComparing(TournamentDTO::getId));
         final List<AchievementDTO> achievementsGenerated = new ArrayList<>();
         achievementProvider.deleteAll();
-        for (final TournamentDTO tournament : tournaments) {
-            achievementsGenerated.addAll(generateAchievements(tournament));
+        for (final TournamentDTO tournamentDTO : tournaments) {
+            achievementsGenerated.addAll(generateAchievements(tournamentDTO));
         }
         for (AchievementsGeneratedAllTournamentsListener achievementsGeneratedAllTournamentsListener : achievementsGeneratedAllTournamentsListeners) {
             achievementsGeneratedAllTournamentsListener.generated(achievementsGenerated, tournaments);
@@ -413,9 +414,9 @@ public class AchievementController extends BasicInsertableController<Achievement
     }
 
     public List<AchievementDTO> regenerateAchievements(Integer tournamentId) {
-        final TournamentDTO tournament = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
+        final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournamentProvider.get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."))));
-        return regenerateAchievements(tournament);
+        return regenerateAchievements(tournamentDTO);
     }
 
     public List<AchievementDTO> regenerateAchievements(TournamentDTO tournament) {
@@ -1616,10 +1617,10 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementBronze(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
+        final Map<Participant, List<Role>> rolesByParticipantFromTournament = new HashMap<>(getRolesByParticipantUntil(tournament));
         //Remove the ones that have no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
-        rolesByParticipant.forEach((participant, roles) -> {
+        rolesByParticipantFromTournament.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_BRONZE) {
                 participants.remove(participant);
@@ -1638,10 +1639,10 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementSilver(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipantUntil(tournament));
+        final Map<Participant, List<Role>> rolesByParticipantFromTournament = new HashMap<>(getRolesByParticipantUntil(tournament));
         //Remove the ones that have no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipantUntil(tournament).keySet());
-        rolesByParticipant.forEach((participant, roles) -> {
+        rolesByParticipantFromTournament.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_SILVER) {
                 participants.remove(participant);
@@ -1660,10 +1661,10 @@ public class AchievementController extends BasicInsertableController<Achievement
      * @return a list of new achievements.
      */
     private List<Achievement> generateSweatyTenuguiAchievementGold(Tournament tournament) {
-        final Map<Participant, List<Role>> rolesByParticipant = new HashMap<>(getRolesByParticipant());
+        final Map<Participant, List<Role>> rolesByParticipantFromTournament = new HashMap<>(getRolesByParticipant());
         //Remove the ones that has no the required number of tournaments.
         final Set<Participant> participants = new HashSet<>(getRolesByParticipant().keySet());
-        rolesByParticipant.forEach((participant, roles) -> {
+        rolesByParticipantFromTournament.forEach((participant, roles) -> {
             if (roles.stream().filter(role -> role.getRoleType() == RoleType.COMPETITOR)
                     .toList().size() < DEFAULT_TOURNAMENT_VERY_LONG_NUMBER_GOLD) {
                 participants.remove(participant);

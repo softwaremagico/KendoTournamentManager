@@ -130,7 +130,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     }
 
     public boolean isValid() {
-        return getName().length() > 0 && getIdCard() != null && getIdCard().length() > 0;
+        return !getName().isEmpty() && getIdCard() != null && !getIdCard().isEmpty();
     }
 
     @Override

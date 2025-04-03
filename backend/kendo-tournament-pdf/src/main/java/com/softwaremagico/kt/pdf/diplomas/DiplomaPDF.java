@@ -64,7 +64,7 @@ public class DiplomaPDF extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        //No event needed
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DiplomaPDF extends PdfDocument {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.addCell(cell);
 
-        mainTable.writeSelectedRows(0, -1, (float) 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2f,
+        mainTable.writeSelectedRows(0, -1, 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2f,
                 writer.getDirectContent());
         mainTable.flushContent();
         mainTable.setWidthPercentage(TOTAL_WIDTH);

@@ -103,7 +103,7 @@ public class ZipController {
 
     public byte[] createZipData(List<ZipContent> content) throws IOException {
         if (content == null || content.isEmpty()) {
-            return null;
+            return new byte[0];
         }
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);

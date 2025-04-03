@@ -13,12 +13,12 @@ ENV HTML_ROOT_FOLDER /www
 #Set timezone.
 ENV TZ=${timezone}
 RUN apk add --no-cache curl tzdata && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+    ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 RUN mkdir -p /${HTML_ROOT_FOLDER}/errors
 
 # Download code
-RUN apk --no-cache add supervisor openssl curl unzip && \
+RUN apk --no-cache add curl openssl supervisor unzip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
     wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-frontend-docker.zip && \
