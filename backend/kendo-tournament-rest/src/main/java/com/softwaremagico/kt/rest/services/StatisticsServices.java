@@ -89,7 +89,7 @@ public class StatisticsServices {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by members.");
             return fightStatisticsController.estimateByMembers(tournamentController.get(tournamentId));
         }
-        if (checkByTeams.isPresent() && Boolean.TRUE.equals(checkByMembers.get())) {
+        if (checkByTeams.isPresent() && Boolean.TRUE.equals(checkByTeams.get())) {
             KendoTournamentLogger.debug(this.getClass(), "Forcing statistics by teams.");
             return fightStatisticsController.estimateByTeams(tournamentController.get(tournamentId));
         }
@@ -144,11 +144,9 @@ public class StatisticsServices {
         //If is a participant guest, only its own statistics can see.
         if (authentication != null) {
             final Optional<Participant> participant = participantProvider.findByTokenUsername(authentication.getName());
-            if (participant.isPresent()) {
-                if (!Objects.equals(participant.get().getId(), participantId)) {
-                    throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
-                            + "' is trying to access to statistics from user '" + participantId + "'.");
-                }
+            if (participant.isPresent() && !Objects.equals(participant.get().getId(), participantId)) {
+                throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
+                        + "' is trying to access to statistics from user '" + participantId + "'.");
             }
         }
         final ParticipantStatisticsDTO participantStatisticsDTO = participantStatisticsController.get(participantController.get(participantId));
@@ -189,11 +187,9 @@ public class StatisticsServices {
         //If is a participant guest, only its own statistics can see.
         if (authentication != null) {
             final Optional<Participant> participant = participantProvider.findByTokenUsername(authentication.getName());
-            if (participant.isPresent()) {
-                if (!Objects.equals(participant.get().getId(), participantId)) {
-                    throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
-                            + "' is trying to access to statistics from user '" + participantId + "'.");
-                }
+            if (participant.isPresent() && !Objects.equals(participant.get().getId(), participantId)) {
+                throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
+                        + "' is trying to access to statistics from user '" + participantId + "'.");
             }
         }
         return participantController.getYouAreTheWorstNightmareOf(participantController.get(participantId));
