@@ -23,6 +23,7 @@ package com.softwaremagico.kt.rest.security;
 
 import com.softwaremagico.kt.websockets.WebSocketConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.messaging.Message;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.messaging.access.intercept.MessageMatcherDelegatingAuthorizationManager;
 
@@ -43,7 +44,7 @@ public class WebSocketSecurityConfig {
      * @return
      */
     @Bean
-    public AuthorizationManager<?> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
+    public AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages
                 .nullDestMatcher().authenticated()
                 //.simpSubscribeDestMatchers("/user/queue/errors").permitAll()
