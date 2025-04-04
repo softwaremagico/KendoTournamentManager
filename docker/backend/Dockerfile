@@ -29,7 +29,7 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezo
 
 #Copy libraries
 RUN mkdir -p /opt/libraries/BOOT-INF/lib/
-COPY libraries/* /opt/libraries/BOOT-INF/lib/
+ADD libraries/* /opt/libraries/BOOT-INF/lib/
 
 #Download project and install it
 RUN apk --no-cache add curl openssl supervisor unzip zip && \

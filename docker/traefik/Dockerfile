@@ -11,8 +11,8 @@ RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezo
 RUN mkdir -p /config
 
 #Copy configuration
-COPY config/* /config/
-COPY traefik.yml /traefik.yml
+ADD config/* /config/
+ADD traefik.yml /traefik.yml
 
 # Replace email
 RUN sed -i "s|CUSTOM_EMAIL|${email}|g" /traefik.yml
