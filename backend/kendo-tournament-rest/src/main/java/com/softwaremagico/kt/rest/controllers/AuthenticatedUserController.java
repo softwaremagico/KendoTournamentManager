@@ -94,7 +94,7 @@ public class AuthenticatedUserController {
         //Update the new password.
         authenticatedUser.setPassword(newPassword);
         authenticatedUserProvider.save(authenticatedUser);
-        KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", username);
+        KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", user.getUsername());
     }
 
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {
