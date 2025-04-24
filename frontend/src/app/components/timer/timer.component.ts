@@ -218,7 +218,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     //Here only is launched when seconds changes from 1 to 0.
     if (this.seconds === 0 && this.minutes === 0 && !this.alarmOn) {
       this.alarmOn = true;
-      this.audioService.playAlarm();
+      this.audioService.playWhistleByTime(4);
       this.pauseTimer();
     }
     this.elapsedSeconds++;

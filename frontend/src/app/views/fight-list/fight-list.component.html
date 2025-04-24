@@ -81,6 +81,16 @@
                 matTooltip="{{'chronometerOff' | translate}}">
           <mat-icon>timer_off</mat-icon>
         </button>
+        <button (mousedown)="playWhistle()"
+                (mouseup)="stopWhistle()"
+                *ngIf="(RbacActivity.PLAY_WHISTLE | rbac : this.rbacService.getActivities())"
+                [matTooltipShowDelay]="500"
+                class="whisper-button"
+                color="primary"
+                mat-button
+                matTooltip="{{'playWhistle' | translate}}">
+          <mat-icon class="kendo-icon" svgIcon="whistle"></mat-icon>
+        </button>
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())
           || (RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())
           || (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"></mat-divider>
