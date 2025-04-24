@@ -37,6 +37,7 @@ import {EnvironmentService} from "../../environment.service";
 import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
 import {SenbatsuFightDialogBoxComponent} from "./senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.component";
+import {AudioService} from "../../services/audio.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -91,7 +92,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslateService,
               private systemOverloadService: SystemOverloadService,
-              private rxStompService: RxStompService, private loginService: LoginService) {
+              private rxStompService: RxStompService, private loginService: LoginService,
+              private audioService: AudioService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -958,4 +960,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   protected readonly TournamentType = TournamentType;
+
+  playWhistle() {
+    this.audioService.playWhistle();
+  }
+
+  stopWhistle() {
+    this.audioService.stopWhistle();
+  }
 }
