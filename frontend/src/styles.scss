@@ -175,3 +175,8 @@ a:active {
 .mat-toolbar a:active {
   color: var(--title-color);
 }
+
+/* Allow new lines on tooltips with this class */
+.tooltip-with-lines {
+  white-space: pre-line;
+}
