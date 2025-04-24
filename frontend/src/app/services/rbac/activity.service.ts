@@ -91,6 +91,7 @@ export class ActivityService {
       RbacActivity.DOWNLOAD_QR_CODE,
       RbacActivity.DOWNLOAD_PDF,
       RbacActivity.SHOW_TIMER,
+      RbacActivity.PLAY_WHISTLE,
       RbacActivity.EDIT_FIGHT_TIME,
     ];
   }
