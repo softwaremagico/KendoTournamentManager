@@ -41,7 +41,8 @@ export class IconModule {
       .addSvgIcon("zip-file", this.setPath(`${this.path}/zip-file.svg`))
       .addSvgIcon("yourWorstNightmare", this.setPath(`${this.path}/yourWorstNightmare.svg`))
       .addSvgIcon("youAreTheWorstNightmareOf", this.setPath(`${this.path}/youAreTheWorstNightmareOf.svg`))
-      .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`));
+      .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`))
+      .addSvgIcon("whistle", this.setPath(`${this.path}/whistle.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {
