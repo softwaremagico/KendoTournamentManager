@@ -33,11 +33,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -60,5 +62,13 @@ public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, C
                        @Parameter(description = "City where the club is located", required = true) @RequestParam(name = "city") String city,
                        Authentication authentication, HttpServletRequest request) {
         return getController().create(name, country, city, authentication.getName());
+    }
+
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Creates an entity.", security = @SecurityRequirement(name = "bearerAuth"))
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/new-club", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ClubDTO addNew(@Valid @RequestBody ClubDTO dto, Authentication authentication, HttpServletRequest request) {
+        return getController().create(dto, authentication.getName());
     }
 }

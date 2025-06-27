@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.softwaremagico.kt.core.exceptions.DataInputException;
 import com.softwaremagico.kt.persistence.values.ImageFormat;
+import jakarta.validation.constraints.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -34,7 +35,10 @@ public class ImageDTO extends ElementDTO {
     private static final String IMAGE_PNG_BASE_64 = "data:image/png;base64,";
     private static final String IMAGE_JPG_BASE_64 = "data:image/jpeg;base64,";
 
+    @NotNull
     private byte[] data;
+
+    @NotNull
     private ImageFormat imageFormat;
 
     public byte[] getData() {

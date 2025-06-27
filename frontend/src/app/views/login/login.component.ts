@@ -76,6 +76,8 @@ export class LoginComponent implements OnInit {
         } else if (error.status === 423) {
           this.loggerService.info(`Blocked IP!: ` + error);
           this.messageService.warningMessage("blockedUserError");
+        } else if (error.status === 400) {
+          console.error(error);
         } else {
           console.error(error);
           this.messageService.errorMessage("backendError");

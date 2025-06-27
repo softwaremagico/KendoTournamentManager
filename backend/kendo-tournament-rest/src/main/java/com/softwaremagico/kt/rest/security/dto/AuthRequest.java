@@ -21,8 +21,12 @@ package com.softwaremagico.kt.rest.security.dto;
  * #L%
  */
 
+import jakarta.validation.constraints.NotBlank;
+
 public class AuthRequest {
+    @NotBlank
     private String username;
+    @NotBlank
     private String password;
 
     public String getUsername() {

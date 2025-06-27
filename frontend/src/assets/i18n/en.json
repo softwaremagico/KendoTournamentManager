@@ -737,5 +737,6 @@
   "worstNightmareOf": "You are the worst nightmare of",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
-  "newVersionAvailable": "Version '{{newVersion}}' is available! Current version is '{{currentVersion}}'"
+  "newVersionAvailable": "Version '{{newVersion}}' is available! Current version is '{{currentVersion}}'",
+  "input_data_is_invalid": "Provided data are invalid!"
 }

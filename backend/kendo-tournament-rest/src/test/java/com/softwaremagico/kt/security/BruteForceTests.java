@@ -87,30 +87,16 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
         request.setPassword("invalidPassword");
 
         // 3 attempts to block the user.
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request))
-                        .with(csrf()))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
-
-        this.mockMvc
-                .perform(post("/auth/public/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(request)))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
-                .andReturn();
+        for (int i = 0; i < BruteForceService.MAX_ATTEMPTS; i++) {
+            this.mockMvc
+                    .perform(post("/auth/public/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(toJson(request))
+                            .with(csrf()))
+                    .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                    .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
+                    .andReturn();
+        }
 
         //Correct password, user blocked.
         request.setPassword(USER_PASSWORD);
