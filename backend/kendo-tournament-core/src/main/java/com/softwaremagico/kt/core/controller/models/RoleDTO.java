@@ -22,15 +22,19 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.persistence.values.RoleType;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
 public class RoleDTO extends ElementDTO {
 
+    @NotNull
     private TournamentDTO tournament;
 
+    @NotNull
     private ParticipantDTO participant;
 
+    @NotNull
     private RoleType roleType;
 
     private boolean diplomaPrinted = false;

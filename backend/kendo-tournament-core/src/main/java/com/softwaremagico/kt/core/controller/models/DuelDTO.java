@@ -25,6 +25,8 @@ import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.DuelType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.utils.NameUtils;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,21 +39,26 @@ public class DuelDTO extends ElementDTO {
     private ParticipantDTO competitor1;
     private ParticipantDTO competitor2;
 
+    @NotNull
     private TournamentDTO tournament;
+    @Size(max = Duel.POINTS_TO_WIN)
     private List<Score> competitor1Score = new ArrayList<>(); // M, K, T, D, H, I
+    @Size(max = Duel.POINTS_TO_WIN)
     private List<Score> competitor2Score = new ArrayList<>(); // M, K, T, D, H, I
     private Boolean competitor1Fault = false;
     private Boolean competitor2Fault = false;
+    @Size(max = Duel.POINTS_TO_WIN)
     private List<Integer> competitor1ScoreTime = new ArrayList<>();
+    @Size(max = Duel.POINTS_TO_WIN)
     private List<Integer> competitor2ScoreTime = new ArrayList<>();
     private Integer competitor1FaultTime;
     private Integer competitor2FaultTime;
+    @NotNull
     private DuelType type;
     private boolean finished;
     private Integer duration;
     private Integer totalDuration;
     private LocalDateTime startedAt;
-
     private LocalDateTime finishedAt;
 
     public DuelDTO() {

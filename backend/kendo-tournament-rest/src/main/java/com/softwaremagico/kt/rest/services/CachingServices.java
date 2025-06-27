@@ -46,7 +46,7 @@ public class CachingServices {
         this.cacheController = cacheController;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Clears all cache areas from the server.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(value = "")
     @ResponseStatus(HttpStatus.OK)

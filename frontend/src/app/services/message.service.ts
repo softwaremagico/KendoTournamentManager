@@ -83,6 +83,10 @@ export class MessageService implements OnDestroy {
     this.openSnackBar(message, 'error-snackbar', this.getDuration(message, 5));
   }
 
+  backendErrorMessage(error: number, code: string) {
+    this.openSnackBar(`Error '${error}' with code '${code}' received.`, 'error-snackbar', this.getDuration(code, 5));
+  }
+
   handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       //Log error

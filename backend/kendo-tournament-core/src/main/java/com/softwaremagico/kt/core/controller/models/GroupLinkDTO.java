@@ -21,10 +21,14 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
 public class GroupLinkDTO extends ElementDTO {
 
+    @NotNull
     private GroupDTO source;
 
+    @NotNull
     private GroupDTO destination;
 
     private int winner = 0;

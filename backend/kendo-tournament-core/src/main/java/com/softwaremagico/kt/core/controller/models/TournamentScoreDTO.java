@@ -22,11 +22,17 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.persistence.values.ScoreType;
+import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.Objects;
 
 public class TournamentScoreDTO extends ElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = 4330476792782921991L;
+
+    @NotNull
     private ScoreType scoreType;
 
     private int pointsByVictory = 1;

@@ -21,7 +21,10 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.util.Objects;
@@ -31,21 +34,28 @@ public class ClubDTO extends ElementDTO {
     @Serial
     private static final long serialVersionUID = -5342001958437046042L;
 
-    @NotBlank(message = "Name is mandatory")
+    @Size(max = ElementDTO.MAX_NORMAL_FIELD_LENGTH)
+    @NotBlank
     private String name = "";
 
+    @Size(max = ElementDTO.MAX_SMALL_FIELD_LENGTH)
     private String country = "";
 
+    @Size(max = ElementDTO.MAX_SMALL_FIELD_LENGTH)
     private String city = "";
 
+    @Size(max = ElementDTO.MAX_BIG_FIELD_LENGTH)
     private String address = "";
 
     private String representativeId = "";
 
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}|^$", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String email = "";
 
+    @Size(max = ElementDTO.MAX_SMALL_FIELD_LENGTH)
     private String phone = null;
 
+    @Size(max = ElementDTO.MAX_NORMAL_FIELD_LENGTH)
     private String web = "";
 
     public ClubDTO() {

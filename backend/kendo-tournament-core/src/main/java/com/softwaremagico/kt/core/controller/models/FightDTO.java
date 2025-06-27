@@ -21,18 +21,24 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class FightDTO extends ElementDTO {
+    @NotNull
     private TeamDTO team1;
+    @NotNull
     private TeamDTO team2;
+    @NotNull
     private TournamentDTO tournament;
     private Integer shiaijo;
     private List<DuelDTO> duels = new ArrayList<>();
     private LocalDateTime finishedAt;
+    @NotNull
     private Integer level;
 
     public FightDTO() {

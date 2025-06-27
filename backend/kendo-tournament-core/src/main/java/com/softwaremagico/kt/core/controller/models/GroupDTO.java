@@ -21,23 +21,31 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
 public class GroupDTO extends ElementDTO {
 
+    @NotNull
     private TournamentDTO tournament;
 
+    @NotNull
     private List<TeamDTO> teams;
 
+    @NotNull
     private Integer shiaijo;
 
+    @NotNull
     private Integer level;
 
+    @NotNull
     private Integer index;
 
     private List<FightDTO> fights;
 
+    @NotNull
     private Integer numberOfWinners;
 
     private List<DuelDTO> unties;

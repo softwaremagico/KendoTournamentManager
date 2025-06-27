@@ -154,7 +154,7 @@ public class QrService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/guest/tournament/{tournamentId}/pdf/port/{port}", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
@@ -177,7 +177,7 @@ public class QrService {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participant/{participantId}/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -195,7 +195,7 @@ public class QrService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the credentials to access as a guest for a tournament.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participant/{participantId}/statistics/port/{port}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -215,11 +215,12 @@ public class QrService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR code with the content.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "", produces = MediaType.IMAGE_PNG_VALUE, consumes = MediaType.TEXT_PLAIN_VALUE)
     public byte[] generateQrForAttendanceImage(@NotBlank @RequestBody String content,
+                                               @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                                HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
@@ -227,15 +228,16 @@ public class QrService {
         response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_PNG_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return qrController.generateQrCode(content).getData();
+        return qrController.generateQrCode(content, nightMode.orElse(false)).getData();
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Generates a QR as SVG image with the content.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/svg", consumes = MediaType.TEXT_PLAIN_VALUE, produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public String generateQrForAttendanceSvg(@NotBlank @RequestBody String content,
+                                             @RequestParam(name = "nightMode", required = false) Optional<Boolean> nightMode,
                                              HttpServletResponse response, HttpServletRequest request) {
 
         final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
@@ -243,6 +245,6 @@ public class QrService {
         response.setHeader(HttpHeaders.CONTENT_TYPE, "image/svg+xml");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
 
-        return new String(qrController.generateQrCodeAsSvg(content).getData(), StandardCharsets.UTF_8);
+        return new String(qrController.generateQrCodeAsSvg(content, nightMode.orElse(false)).getData(), StandardCharsets.UTF_8);
     }
 }

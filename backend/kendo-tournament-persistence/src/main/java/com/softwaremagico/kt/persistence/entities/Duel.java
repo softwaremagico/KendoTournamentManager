@@ -108,7 +108,7 @@ public class Duel extends Element {
     @Column(name = "competitor_2_fault")
     private Boolean competitor2Fault = false;
 
-    @Column(name = "type")
+    @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private DuelType type;
 
