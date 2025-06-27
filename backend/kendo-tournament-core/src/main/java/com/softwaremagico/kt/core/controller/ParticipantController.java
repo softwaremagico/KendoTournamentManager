@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class ParticipantController extends BasicInsertableController<Participant, ParticipantDTO, ParticipantRepository,
@@ -71,7 +72,7 @@ public class ParticipantController extends BasicInsertableController<Participant
         throw new UserNotFoundException(this.getClass(), "Invalid username '" + userName + "'!");
     }
 
-    public Token generateToken(String temporalToken) {
+    public Token generateFromToken(String temporalToken) {
         final Participant participant = getProvider().findByTemporalToken(temporalToken).orElseThrow(() ->
                 new UserNotFoundException(this.getClass(), "No user found for the provided token!"));
         try {
@@ -87,6 +88,16 @@ public class ParticipantController extends BasicInsertableController<Participant
             participant.setTemporalTokenExpiration(null);
             getProvider().save(participant);
         }
+    }
+
+
+    public List<ParticipantDTO> getYourWorstNightmare(ParticipantDTO participant) {
+        return convertAll(getProvider().getYourWorstNightmare(reverse(participant)));
+    }
+
+
+    public List<ParticipantDTO> getYouAreTheWorstNightmareOf(ParticipantDTO participant) {
+        return convertAll(getProvider().getYouAreTheWorstNightmareOf(reverse(participant)));
     }
 
 }

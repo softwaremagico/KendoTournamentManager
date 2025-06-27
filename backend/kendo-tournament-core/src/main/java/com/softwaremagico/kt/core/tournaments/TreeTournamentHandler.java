@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -91,7 +91,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             try {
                 return Integer.parseInt(numberOfWinnersProperty.getPropertyValue());
             } catch (Exception ignore) {
-
+                //Ignored.
             }
         }
         return 1;
@@ -106,7 +106,7 @@ public class TreeTournamentHandler extends LeagueHandler {
             try {
                 return Boolean.parseBoolean(maximizeFightsProperty.getPropertyValue());
             } catch (Exception ignore) {
-
+                //Ignored.
             }
         }
         return true;
@@ -159,12 +159,12 @@ public class TreeTournamentHandler extends LeagueHandler {
         int previousLevelSize = 0;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
             while (groupsByLevel.get(level).size()
-                    < ((((previousLevelSize
+                    < (((previousLevelSize
                     // Add +1 unless the number of winners 2.
                     // This +1 will be rounded later but is needed if even teams pass from the previous level.
                     + (level == 1 && numberOfWinners == 2 ? 0 : 1))
                     //Check on level 1 the number of winners.
-                    * (level == 1 ? numberOfWinners : 1))) / 2)) {
+                    * (level == 1 ? numberOfWinners : 1)) / 2)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
                 groupsByLevel.get(level).add(levelGroup);
@@ -285,12 +285,10 @@ public class TreeTournamentHandler extends LeagueHandler {
                 }
             } else {
                 // Normal levels, the number of groups must be the half rounded up that the previous one.
-                if ((numberOfWinners == 1 || level > 1)
-                        && (previousLevelSize == 1 || groupsByLevel.get(level).size() > ((previousLevelSize + 1) / 2))) {
-                    groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
-                    groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
-                    // The First level with 2 winners must have the same size that level zero.
-                } else if (numberOfWinners == 2 && groupsByLevel.get(level).size() > previousLevelSize) {
+                if (((numberOfWinners == 1 || level > 1)
+                        && (previousLevelSize == 1 || groupsByLevel.get(level).size() > ((previousLevelSize + 1) / 2)))
+                        // The First level with 2 winners must have the same size that level zero.
+                        || (numberOfWinners == 2 && groupsByLevel.get(level).size() > previousLevelSize)) {
                     groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
                     groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
                 }
@@ -374,7 +372,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         //Get the next level to continue if exists.
         final List<Group> tournamentGroups = groupProvider.getGroups(tournament);
         if (tournamentGroups == null) {
-            return null;
+            return new ArrayList<>();
         }
 
         final Integer nextLevel = getNextEmptyLevel(tournamentGroups);

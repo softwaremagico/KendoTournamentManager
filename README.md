@@ -8,7 +8,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![GitHub last commit](https://img.shields.io/github/last-commit/softwaremagico/KendoTournamentManager)](https://github.com/softwaremagico/KendoTournamentManager)
 [![CircleCI](https://circleci.com/gh/softwaremagico/KendoTournamentManager.svg?style=shield)](https://circleci.com/gh/softwaremagico/KendoTournamentManager)
-[![Time](https://img.shields.io/badge/development-651.5h-blueviolet.svg)]()
+[![Time](https://img.shields.io/badge/development-667h-blueviolet.svg)]()
 
 [![Powered by](https://img.shields.io/badge/powered%20by%20java-orange.svg?logo=OpenJDK&logoColor=white)]()
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-backend)
@@ -23,12 +23,10 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=kendo-tournament-frontend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=kendo-tournament-frontend)
 
 The Kendo Tournament Manager v2 is a [comprehensive tool](https://github.com/softwaremagico/KendoTournamentManager/wiki)
-designed to efficiently manage all your kendo tournament data in
-one convenient location.
-It caters to tournaments of varying sizes, offering versatility to accommodate any type of
-event for your kendo club.
-Drawing on 15 years of experience with different fighting structures, this tool aims to
-provide flexibility that serves your club's needs effectively.
+designed to efficiently manage all your kendo tournament data in one convenient location.
+It caters to tournaments of varying sizes, offering versatility to accommodate any type of event for your kendo club.
+Drawing on 15 years of experience with different fighting structures, this tool aims to provide flexibility that serves
+your club's needs effectively.
 
 <p align="center">
     <img src="https://github.com/softwaremagico/KendoTournamentManager/wiki/images/Scores-Example.png" width="500" alt="Scores example">
@@ -40,18 +38,37 @@ this tool has been rebuilt entirely with a focus on modern technologies.
 The new architecture allows for web deployment instead of being limited to desktop applications.
 This shift brings advantages like enhanced compatibility across different devices, enabling access from any Android or
 iOS device through a web browser.
-Moreover, it enhances scoring synchronization among multiple devices by centralizing
-all data in the cloud.
+Moreover, it enhances scoring synchronization among multiple devices by centralizing all data in the cloud.
 
 If you are seeking a desktop application, please visit
 the [Kendo Tournament Generator page](https://sourceforge.net/projects/kendotournament/files/) for more information.
 
-But if you are in need of a professional online tool, the project described here may be exactly what you are searching
-for. If you are interested in discovering the capabilities of this tool for your tournaments, you can explore the 
-[wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition) for details on its features 
-and customization choices. 
-Alternatively, for practical illustrations, you can directly check out a few description 
+But if you are in need of a more professional online tool, the project described here may be exactly what you are
+searching for. If you are interested in discovering the capabilities of this tool for your tournaments, you can explore
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition) for details on its
+features and customization choices.
+Alternatively, for practical illustrations, you can directly check out a few description
 [examples](https://github.com/softwaremagico/KendoTournamentManager/wiki/Full-Examples) provided.
+
+## What can this tool do for you or you and your club?
+
+Some improvements that you can quickly notice include:
+
+- Streamline the [creation](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-definition)
+  and [development](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution) of a
+  championship, league, or tournament in various formats, suitable for both professional and amateur levels.
+- Prevent scoring errors by
+  providing [instant tracking](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#scores)
+  and
+  automated [point counting](https://github.com/softwaremagico/KendoTournamentManager/wiki/Tournament-execution#advancing-on-the-matches).
+- Track participants' advancements while
+  displaying [their statistics](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Participants-statistics)
+  to monitor their progress over time.
+- [Encourage](https://github.com/softwaremagico/KendoTournamentManager/wiki/Statistics#Achievements) participation from
+  all club members in tournaments, regardless of their skill level.
+
+Additionally, there are many more details outlined in
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki).
 
 ## Installation
 
@@ -158,14 +175,16 @@ However, using mobile devices is not advised due to screen size limitations.
 
 # Using the application
 
-For instructions on using the application, please visit the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
+For instructions on using the application, please visit
+the [wiki](https://github.com/softwaremagico/KendoTournamentManager/wiki/).
 There, you will find comprehensive examples for various types of tournaments and guidance on how to configure them.
 
-## Default credentials.
+## Default credentials
 
-The default user credentials are as follows: Username: `admin@test.com`, Password: `asd123`.
-This user has administrative privileges and can create new accounts.
-It is important to change the password or delete this account for security reasons.
+The first time you attempt to access the application, there will be no registered users. You can enter any username and
+password to log in, and the system will immediately create an administrator account based on the information provided.
+This feature is only available if there are no users in the system, so it will be disabled as soon as you create the
+first administrator. Please make a note of the generated username and password and store it in a safe place.
 
 # Contributing to Kendo Tournament Manager v2
 

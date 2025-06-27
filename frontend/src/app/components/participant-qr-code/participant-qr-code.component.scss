@@ -14,7 +14,11 @@
 }
 
 .qr-code {
-  height: 400px;
+  display: block;
+  max-width:400px;
+  max-height:400px;
+  width: auto;
+  height: auto;
 }
 
 .mat-dialog-content {

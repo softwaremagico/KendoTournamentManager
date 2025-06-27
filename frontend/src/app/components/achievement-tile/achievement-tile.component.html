@@ -14,7 +14,7 @@
   <div *ngIf="totalAchievements>1" class="achievement-info total-achievement">{{totalAchievements}}</div>
 </div>
 <div *ngIf="achievements!=null && achievements.length>0 && tooltipHtml"
-     [innerHTML]="tooltipHtml"
+     [innerHTML]="tooltipHtml + totalHtml"
      [ngClass]="{
           'left-border': onLeftBorder,
           'center': !onRightBorder && !onLeftBorder,

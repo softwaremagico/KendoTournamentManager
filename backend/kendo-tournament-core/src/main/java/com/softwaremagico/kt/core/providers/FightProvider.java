@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -145,9 +145,9 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
     public void delete(Collection<Fight> fights) {
         if (fights != null) {
             final List<Group> groups = groupRepository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toSet()));
-            groups.forEach(group -> {
-                group.getFights().removeAll(fights);
-            });
+            groups.forEach(group ->
+                    group.getFights().removeAll(fights)
+            );
             groupRepository.saveAll(groups);
             super.delete(fights);
         }

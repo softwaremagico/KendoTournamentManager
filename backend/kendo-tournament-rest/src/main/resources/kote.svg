@@ -3,7 +3,7 @@
   #%L
   Kendo Tournament Manager (Core)
   %%
-  Copyright (C) 2021 - 2024 Softwaremagico
+  Copyright (C) 2021 - 2025 Softwaremagico
   %%
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <circle
-     style="fill:#ffffff;stroke:none;stroke-width:0.133672;stop-color:#000000"
+     style="stroke:none;stroke-width:0.133672;stop-color:#000000"
      id="path863"
      cx="184.57697"
      cy="184.57697"

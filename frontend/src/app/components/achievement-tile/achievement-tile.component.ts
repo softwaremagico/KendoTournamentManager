@@ -5,6 +5,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {formatDate} from "@angular/common";
 import {AchievementType} from "../../models/achievement-type.model";
 import {NameUtilsService} from "../../services/name-utils.service";
+import {AchievementsService} from "../../services/achievements.service";
 
 @Component({
   selector: 'app-achievement-tile',
@@ -25,6 +26,7 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   view: 'participant' | 'tournament';
 
   grade: AchievementGrade;
+  type: AchievementType;
   mouseX: number | undefined;
   mouseY: number | undefined;
   screenHeight: number | undefined;
@@ -35,8 +37,10 @@ export class AchievementTileComponent implements OnInit, OnChanges {
   totalAchievements: number;
 
   tooltipHtml: string;
+  totalHtml: string;
 
-  constructor(private translateService: TranslateService, private nameUtils: NameUtilsService) {
+  constructor(private translateService: TranslateService, private nameUtils: NameUtilsService,
+              private achievementsService: AchievementsService) {
 
   }
 
@@ -65,7 +69,13 @@ export class AchievementTileComponent implements OnInit, OnChanges {
             this.grade = AchievementGrade.GOLD;
             break;
           }
+          this.achievementType = achievement.achievementType;
         }
+      }
+      if (this.achievements && this.achievements?.length) {
+        this.achievementsService.countByType(this.achievementType).subscribe(_count => {
+          this.totalHtml = this.totalAchievedByText(_count);
+        });
       }
     }
     if (changes['view']) {
@@ -119,6 +129,21 @@ export class AchievementTileComponent implements OnInit, OnChanges {
     } else {
       return this.participantToolTipText();
     }
+  }
+
+  totalAchievedByText(total: number): string {
+    if (total) {
+      if (this.view === 'tournament') {
+        return '<div class="achieved-by-total"><br>'
+          + this.translateService.instant('achievementToolTipTotal', {totalParticipants: total})
+          + '</div>';
+      } else {
+        return '<div class="achieved-by-total"><br>'
+          + this.translateService.instant('achievementToolTipOthersTotal', {totalParticipants: total - 1})
+          + '</div>';
+      }
+    }
+    return "";
   }
 
   participantToolTipText(): string {

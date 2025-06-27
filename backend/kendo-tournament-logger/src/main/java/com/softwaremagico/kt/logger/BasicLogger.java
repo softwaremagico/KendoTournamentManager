@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,6 +28,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 public abstract class BasicLogger {
+
+    private static final String NEW_LINE_REGEX = "[\n\r\t]";
 
     protected BasicLogger() {
         super();
@@ -57,10 +59,10 @@ public abstract class BasicLogger {
         if (logger.isWarnEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
-                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
                 }
             }
-            final String templateWithClass = (className + ": " + messageTemplate).replaceAll("[\n\r\t]", "_");
+            final String templateWithClass = (className + ": " + messageTemplate).replaceAll(NEW_LINE_REGEX, "_");
             logger.warn(templateWithClass, arguments);
         }
     }
@@ -76,10 +78,10 @@ public abstract class BasicLogger {
         if (logger.isInfoEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
-                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
+            messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
             logger.info(messageTemplate, arguments);
         }
     }
@@ -95,7 +97,15 @@ public abstract class BasicLogger {
      * @param arguments       parameters to fill up the template
      */
     public static void info(Logger logger, String className, String messageTemplate, Object... arguments) {
-        info(logger, className + ": " + messageTemplate, arguments);
+        if (logger.isInfoEnabled() && messageTemplate != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                if (arguments[i] != null) {
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
+                }
+            }
+            final String templateWithClass = (className + ": " + messageTemplate).replaceAll(NEW_LINE_REGEX, "_");
+            logger.info(templateWithClass, arguments);
+        }
     }
 
     /**
@@ -109,10 +119,10 @@ public abstract class BasicLogger {
         if (logger.isDebugEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
-                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
+            messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
             logger.debug(messageTemplate, arguments);
         }
     }
@@ -131,10 +141,10 @@ public abstract class BasicLogger {
             // Replace pattern-breaking characters
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
-                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
+            messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
             logger.debug(String.format("%s: %s", className, messageTemplate), arguments); //NOSONAR
         }
     }
@@ -150,10 +160,10 @@ public abstract class BasicLogger {
         if (logger.isErrorEnabled() && messageTemplate != null) {
             for (int i = 0; i < arguments.length; i++) {
                 if (arguments[i] != null) {
-                    arguments[i] = arguments[i].toString().replaceAll("[\n\r\t]", "_");
+                    arguments[i] = arguments[i].toString().replaceAll(NEW_LINE_REGEX, "_");
                 }
             }
-            messageTemplate = messageTemplate.replaceAll("[\n\r\t]", "_");
+            messageTemplate = messageTemplate.replaceAll(NEW_LINE_REGEX, "_");
             logger.error(messageTemplate, arguments);
         }
     }
@@ -182,21 +192,18 @@ public abstract class BasicLogger {
     public static void errorMessageNotification(Logger logger, String className, String messageTemplate, Object... arguments) {
         if (logger.isErrorEnabled()) {
             severe(logger, className, messageTemplate, arguments);
-            //sendByEmail(logger, className, messageTemplate, arguments);
         }
     }
 
     public static void errorMessageNotification(Logger logger, String messageTemplate, Object... arguments) {
         if (logger.isErrorEnabled()) {
             severe(logger, messageTemplate, arguments);
-            //sendByEmail(logger, messageTemplate, arguments);
         }
     }
 
     public static void errorMessageNotification(Logger logger, String className, Throwable throwable) {
         if (logger.isErrorEnabled()) {
             logger.error("Exception on class {}:\n", className, throwable);
-            //sendByEmail(logger, className, getStackTrace(throwable));
         }
     }
 

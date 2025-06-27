@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.accreditations;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -221,6 +221,7 @@ public class ParticipantAccreditationCard extends PdfDocument {
                 case PRESS -> cell.setBackgroundColor(PRESS_COLOR);
                 case ORGANIZER -> cell.setBackgroundColor(ORGANIZER_COLOR);
                 default -> {
+                    //No default action.
                 }
             }
         } catch (NullPointerException npe) {

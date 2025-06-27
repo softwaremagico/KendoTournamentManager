@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,7 +50,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
 
     @Autowired
-    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
+    protected LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
                          TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
@@ -103,7 +103,7 @@ public abstract class LeagueHandler implements ITournamentManager {
         if (level == 0) {
             return getGroups(tournament);
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
@@ -175,7 +175,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     @Override
     public boolean isTheLastFight(Tournament tournament) {
         final List<Fight> fights = getFirstGroup(tournament).getFights();
-        return (fights.size() > 0) && (fights.size() == 1 || fights.get(fights.size() - 2).isOver());
+        return (!fights.isEmpty()) && (fights.size() == 1 || fights.get(fights.size() - 2).isOver());
     }
 
     @Override

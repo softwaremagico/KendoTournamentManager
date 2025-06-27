@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -85,18 +85,17 @@ public class TournamentController extends BasicInsertableController<Tournament, 
             return super.update(tournamentDTO, username);
         } finally {
             // We need to update all duels durations if already are defined, and duration is changed.
-            if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null) {
-                if (!Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
-                    //Update all duels
-                    final List<Duel> duels = duelProvider.get(previousData.get());
-                    duels.forEach(duel -> {
-                        if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
-                            duel.setTotalDuration(tournamentDTO.getDuelsDuration());
-                        }
-                    });
-                    if (!duels.isEmpty()) {
-                        duelProvider.saveAll(duels);
+            if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null
+                    && !Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
+                //Update all duels
+                final List<Duel> duels = duelProvider.get(previousData.get());
+                duels.forEach(duel -> {
+                    if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
+                        duel.setTotalDuration(tournamentDTO.getDuelsDuration());
                     }
+                });
+                if (!duels.isEmpty()) {
+                    duelProvider.saveAll(duels);
                 }
             }
         }

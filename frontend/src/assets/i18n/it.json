@@ -400,6 +400,7 @@
   "back": "Tornare",
   "chronometerOn": "Mostra il cronometro",
   "chronometerOff": "Nascondi cronometro",
+  "playWhistle": "Riprodurre il suono di un fischio.",
   "fields": "Campi",
   "avoidDuplicateFights": "Evita combatti duplicati",
   "maximizeFights": "Saotori Shiai.",
@@ -436,6 +437,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Ottenuto a:",
   "achievementToolTipObtainedAt": "Ottenuto a",
   "achievementToolTipObtainedBy": "Ottenuto da",
+  "achievementToolTipOthersTotal": "(Ottenuto da altri <b>{{totalParticipants}}</b> concorrenti).",
+  "achievementToolTipTotal": "(Ottenuto da <b>{{totalParticipants}}</b> concorrenti).",
   "time": "Tempi",
   "lockedAt": "Bloccato",
   "fightsStartedAt": "Inizio delle partite",
@@ -622,6 +625,7 @@
     "masterTheLoop": {
       "title": "Padroneggia il loop",
       "description": "Vinci una lega in loop.",
+      "normal": "Vinci una lega in loop.",
       "bronze": "Domina il loop in tre tornei nello stesso anno.",
       "silver": "Domina il loop in quattro tornei nello stesso anno.",
       "gold": "Domina il loop in cinque tornei nello stesso anno."
@@ -716,5 +720,11 @@
   "senbatsuRungLength": "Distanza tra i desafíos",
   "senbatsuRungLengthHint": "La massima disparità consentita nell'abilità tra due concorrenti allo scopo di stabilire una sfida.",
   "reverseOrder": "Invertire",
-  "reverseOrderHint": "Invertire l'ordine delle squadre."
+  "reverseOrderHint": "Invertire l'ordine delle squadre.",
+  "fightsEnded": "Tutti gli incontri sono finiti.",
+  "yourWorstNightmare": "Il tuo peggior incubo",
+  "worstNightmareOf": "Sei l'incubo peggiore di",
+  "darkMode": "Modalità Scura",
+  "lightMode": "Modalità Chiara",
+  "newVersionAvailable": "La versione '{{newVersion}}' è disponibile! La versione attuale è '{{currentVersion}}'."
 }

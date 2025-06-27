@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,6 +45,8 @@ import java.util.Objects;
         @Index(name = "ind_tournament", columnList = "tournament"),
 })
 public class Achievement extends Element {
+
+    private static final int HASH_MULTIPLIER = 31;
 
     @ManyToOne
     @JoinColumn(name = "participant", nullable = false)
@@ -121,5 +123,32 @@ public class Achievement extends Element {
                 + ", achievementType=" + achievementType
                 + ", achievementGrade=" + achievementGrade
                 + "} " + super.toString();
+    }
+
+    public String keyByUserAndType() {
+        return participant.getId() + "_" + achievementType + "_" + achievementGrade;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof Achievement that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        return participant.equals(that.participant) && tournament.equals(that.tournament) && achievementType == that.achievementType
+                && achievementGrade == that.achievementGrade;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = HASH_MULTIPLIER * result + participant.hashCode();
+        result = HASH_MULTIPLIER * result + tournament.hashCode();
+        result = HASH_MULTIPLIER * result + achievementType.hashCode();
+        result = HASH_MULTIPLIER * result + achievementGrade.hashCode();
+        return result;
     }
 }

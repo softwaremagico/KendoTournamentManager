@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -68,6 +68,8 @@ import java.util.Set;
 @RequestMapping("/rankings")
 public class RankingServices {
 
+    private static final String ATTACHMENT = "attachment";
+
     private final RankingController rankingController;
 
     private final TournamentController tournamentController;
@@ -95,7 +97,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingGroup(@Parameter(description = "Id of an existing group", required = true)
@@ -105,7 +107,8 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.guestPrivilege)")
     @Operation(summary = "Gets participants' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsScoreRankingTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -115,7 +118,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@RequestParam(name = "from") Optional<Integer> from,
@@ -125,7 +128,8 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.participantPrivilege)")
     @Operation(summary = "Gets participant global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompetitorRanking getCompetitorsRanking(@PathVariable("competitorId") Integer competitorId, HttpServletRequest request) {
@@ -133,7 +137,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/competitors/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
     public byte[] getCompetitorsGlobalScoreRankingAsPdf(@RequestParam(name = "from") Optional<Integer> from,
@@ -142,10 +146,11 @@ public class RankingServices {
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRanking(participants != null ? participants : new ArrayList<>(),
                 from.orElse(null));
         try {
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename("competitors score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -153,7 +158,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/clubs/{clubId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfCompetitorDTO> getCompetitorsGlobalScoreRanking(@Parameter(description = "Id of an existing club", required = true)
@@ -163,7 +168,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets participants' global ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitors/clubs/{clubId}/pdf", produces = MediaType.APPLICATION_JSON_VALUE)
     public byte[] getCompetitorsGlobalScoreRankingByClubAsPdf(@Parameter(description = "Id of an existing club", required = true)
@@ -171,10 +176,11 @@ public class RankingServices {
                                                               Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsGlobalScoreRankingByClub(clubId);
         try {
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename("club score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateCompetitorsScoreList(locale, null, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -182,19 +188,20 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets participants' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/competitors/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/competitors/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getCompetitorsScoreRankingTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                             @PathVariable("tournamentId") Integer tournamentId,
                                                             Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final List<ScoreOfCompetitorDTO> scores = rankingController.getCompetitorsScoreRanking(tournament);
         try {
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final byte[] bytes = pdfController.generateCompetitorsScoreList(locale, tournament, scores).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(tournament.getName() + " - competitors score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateCompetitorsScoreList(locale, tournament, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -202,7 +209,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/groups/{groupId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromGroup(@Parameter(description = "Id of an existing group", required = true)
@@ -212,7 +219,8 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
+            + " @securityService.guestPrivilege)")
     @Operation(summary = "Gets teams' ranking.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/teams/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ScoreOfTeamDTO> getTeamsScoreRankingFromTournament(@Parameter(description = "Id of an existing tournament", required = true)
@@ -222,19 +230,20 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/teams/tournaments/{tournamentId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/teams/tournaments/{tournamentId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getTeamsScoreRankingFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
         final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(tournament);
         try {
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final byte[] bytes = pdfController.generateTeamsScoreList(locale, tournament, scores).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(tournament.getName() + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateTeamsScoreList(locale, tournament, scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -242,20 +251,21 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets teams' ranking in a pdf file.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/teams/groups/{groupId}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/teams/groups/{groupId}/pdf", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getTeamsScoreRankingFromGroupAsPdf(@Parameter(description = "Id of an existing group", required = true)
                                                      @PathVariable("groupId") Integer groupId,
                                                      Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final GroupDTO groupDTO = groupController.get(groupId);
         final List<ScoreOfTeamDTO> scores = rankingController.getTeamsScoreRanking(groupDTO);
         try {
-            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+            final byte[] bytes = pdfController.generateTeamsScoreList(locale, groupDTO.getTournament(), scores).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                     .filename(groupDTO.getTournament().getName() + "_" + groupDTO.getLevel() + "-" + groupDTO.getIndex()
                             + " - teams score.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-            return pdfController.generateTeamsScoreList(locale, groupDTO.getTournament(), scores).generate();
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
@@ -263,7 +273,7 @@ public class RankingServices {
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets complete tournament summary as html", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/summary/{tournamentId}/html", produces = MediaType.TEXT_PLAIN_VALUE)
     public byte[] getTournamentsSummaryAsHtml(@Parameter(description = "Id of an existing tournament", required = true)
@@ -271,23 +281,25 @@ public class RankingServices {
                                               Locale locale, HttpServletResponse response, HttpServletRequest request) {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
 
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final byte[] bytes = htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename(tournament.getName() + ".txt").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-        return htmlController.generateBlogCode(locale, tournament).getWordpressFormat().getBytes(StandardCharsets.UTF_8);
+        return bytes;
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Download all files as a zip", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournament/{tournamentId}/zip")
     public byte[] startByEmail(@Parameter(description = "Id of an existing tournament", required = true)
                                @PathVariable("tournamentId") Integer tournamentId, Locale locale,
                                Authentication authentication, HttpServletResponse response, HttpServletRequest request) throws IOException {
         final TournamentDTO tournament = tournamentController.get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+        final byte[] bytes = zipController.createZipData(locale, tournament);
+        final ContentDisposition contentDisposition = ContentDisposition.builder(ATTACHMENT)
                 .filename(tournament.getName() + ".zip").build();
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-        return zipController.createZipData(locale, tournament);
+        return bytes;
     }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,7 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.converters.models.TournamentConverterRequest;
 import com.softwaremagico.kt.core.exceptions.ParticipantNotFoundException;
+import com.softwaremagico.kt.core.exceptions.SenbatsuTournamentFightsException;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
@@ -42,6 +43,7 @@ import com.softwaremagico.kt.core.tournaments.ITournamentManager;
 import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
+import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -222,15 +224,19 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         groupProvider.delete(tournament, level + 1);
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
-            final List<Fight> createdFights = getProvider().saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
-            tournamentProvider.markAsFinished(tournament, false);
-            final List<FightDTO> fightDTOS = convertAll(createdFights);
             try {
-                return fightDTOS;
-            } finally {
-                new Thread(() ->
-                        fightsAddedListeners.forEach(fightsAddedListener -> fightsAddedListener.created(fightDTOS, createdBy))
-                ).start();
+                final List<Fight> createdFights = getProvider().saveAll(selectedManager.createFights(tournament, teamsOrder, level, createdBy));
+                tournamentProvider.markAsFinished(tournament, false);
+                final List<FightDTO> fightDTOS = convertAll(createdFights);
+                try {
+                    return fightDTOS;
+                } finally {
+                    new Thread(() ->
+                            fightsAddedListeners.forEach(fightsAddedListener -> fightsAddedListener.created(fightDTOS, createdBy))
+                    ).start();
+                }
+            } catch (SenbatsuTournamentFightsException e) {
+                KendoTournamentLogger.warning(this.getClass(), e.getMessage());
             }
         }
         return new ArrayList<>();

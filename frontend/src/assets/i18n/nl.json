@@ -394,6 +394,7 @@
   "back": "Terugkomen",
   "chronometerOn": "Stopwatch tonen",
   "chronometerOff": "Stopwatch verbergen",
+  "playWhistle": "Het geluid van een fluitje reproduceren.",
   "fields": "Veld",
   "avoidDuplicateFights": "Vermijd dubbele overeenkomsten",
   "maximizeFights": "Saotori Shiai.",
@@ -430,6 +431,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Verkregen op:",
   "achievementToolTipObtainedAt": "Verkregen op",
   "achievementToolTipObtainedBy": "Verkregen door",
+  "achievementToolTipOthersTotal": "(Behaald door andere <b>{{totalParticipants}}</b> deelnemers).",
+  "achievementToolTipTotal": "(Behaald door <b>{{totalParticipants}}</b> deelnemers).",
   "time": "Tijd",
   "lockedAt": "Op slot",
   "fightsStartedAt": "Begin van wedstrijden",
@@ -616,6 +619,7 @@
     "masterTheLoop": {
       "title": "Beheers de lus",
       "description": "Win een competitie in Loop.",
+      "normal": "Win een competitie in Loop.",
       "bronze": "Domineer de lus in drie toernooien in hetzelfde jaar.",
       "silver": "Domineer de lus in vier toernooien in hetzelfde jaar.",
       "gold": "Domineer de lus in vijf toernooien in hetzelfde jaar."
@@ -710,5 +714,11 @@
   "senbatsuRungLength": "Afstand tussen de veilige afstanden",
   "senbatsuRungLengthHint": "Het maximaal toegestane verschil in bekwaamheid tussen twee concurrenten met als doel een uitdaging aan te gaan.",
   "reverseOrder": "Reverse",
-  "reverseOrderHint": "Draai de volgorde van de teams om."
+  "reverseOrderHint": "Draai de volgorde van de teams om.",
+  "fightsEnded": "Alle spellen zijn voorbij.",
+  "yourWorstNightmare": "Je ergste nachtmerrie",
+  "worstNightmareOf": "JJij bent de ergste nachtmerrie",
+  "darkMode": "Dunkler Modus",
+  "lightMode": "Heller Modus",
+  "newVersionAvailable": "Versie '{{newVersion}}' is beschikbaar! Huidige versie is '{{currentVersion}}'."
 }

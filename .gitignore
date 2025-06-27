@@ -27,3 +27,4 @@ target/*
 *.properties_bak
 *.properties.mysql
 *.properties.postgres
+*-raspdocker.properties

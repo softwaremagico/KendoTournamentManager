@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.exceptions;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -44,8 +45,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,7 +107,10 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
-        return new ResponseEntity<>(new ErrorResponse("NOT_FOUND", ex), HttpStatus.NOT_FOUND);
+        //Generated on this way, as endpoints that produces multiples formats (i.e. produces = {MediaType.APPLICATION_PDF_VALUE,
+        // MediaType.APPLICATION_JSON_VALUE}) must specify that the exception is JSON.
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorResponse(ex.getMessage(), "not_found"));
     }
 
     @ExceptionHandler(NoContentException.class)
@@ -201,16 +203,5 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         errors.forEach((key, value) -> message.append(key).append(": ").append(value).append("\n"));
         final ErrorResponse error = new ErrorResponse(message.toString(), ex);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-
-    private String getStacktrace(Throwable e) {
-        try {
-            final StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            return sw.toString();
-        } catch (Exception ex) {
-            return "";
-        }
     }
 }

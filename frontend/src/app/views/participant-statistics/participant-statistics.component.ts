@@ -39,7 +39,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
 
-  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
+  protected achievementsEnabled: boolean = JSON.parse(String(environment.achievementsEnabled));
 
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
@@ -48,6 +48,8 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public achievements: Achievement[];
 
   public participant: Participant;
+  public yourWorstNightmare: Participant[];
+  public youAreTheWorstNightmareOf: Participant[];
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               rbacService: RbacService, private systemOverloadService: SystemOverloadService,
@@ -138,6 +140,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.participantStatistics = ParticipantStatistics.clone(_participantStatistics);
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
+    });
+    this.statisticsService.getYourWorstNightmare(this.participantId!).subscribe((_yourWorstNightmare: Participant[]): void => {
+      this.yourWorstNightmare = _yourWorstNightmare;
+    });
+    this.statisticsService.getWorstNightmareOf(this.participantId!).subscribe((_youAreTheWorstNightmareOf: Participant[]): void => {
+      this.youAreTheWorstNightmareOf = _youAreTheWorstNightmareOf;
     });
     if (this.achievementsEnabled) {
       this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -209,8 +209,14 @@ public class RankingProvider {
     }
 
     public List<ScoreOfCompetitor> getCompetitorsGlobalScoreRanking(Collection<Participant> competitors, ScoreType scoreType, Integer fromNumberOfDays) {
+        //Show all competitors, or only the ones that have fights.
+        final boolean showAll;
         if (competitors == null || competitors.isEmpty()) {
             competitors = participantProvider.getAll();
+            showAll = false;
+        } else {
+            //If received a list of competitors, we will show all.
+            showAll = true;
         }
         //Get number since when is read the data.
         final LocalDateTime from = fromNumberOfDays != null && fromNumberOfDays != 0 ? LocalDate.now().minusDays(fromNumberOfDays).atStartOfDay() : null;
@@ -224,7 +230,9 @@ public class RankingProvider {
                 fight.getTeam1().getMembers().stream()).collect(Collectors.toCollection(HashSet::new));
         participantsInFights.addAll(fights.stream().flatMap(fight -> fight.getTeam2().getMembers().stream())
                 .collect(Collectors.toCollection(HashSet::new)));
-        competitors.retainAll(participantsInFights);
+        if (!showAll) {
+            competitors.retainAll(participantsInFights);
+        }
         for (final Participant competitor : competitors) {
             scores.add(new ScoreOfCompetitor(competitor, fights, unties, false));
         }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -69,21 +70,27 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         TournamentProvider, TournamentConverterRequest, TournamentConverter, TournamentController> {
     private final PdfController pdfController;
 
-    public TournamentServices(TournamentController tournamentController, PdfController pdfController) {
-        super(tournamentController);
+    private final KendoSecurityService kendoSecurityService;
+
+    public TournamentServices(TournamentController tournamentController, KendoSecurityService kendoSecurityService,
+                              PdfController pdfController) {
+        super(tournamentController, kendoSecurityService);
         this.pdfController = pdfController;
+        this.kendoSecurityService = kendoSecurityService;
     }
 
     /**
-     * This method is done due to @PreAuthorize cannot be overriden. TournamentService need to set a GUEST permission to it.
+     * This method is done due to @PreAuthorize cannot be overridden. TournamentService need to set a GUEST permission to it.
      *
      * @return an array of roles.
      */
     @Override
     public String[] requiredRoleForEntityById() {
-        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN", "ROLE_GUEST"};
+        return new String[]{kendoSecurityService.getGuestPrivilege(), kendoSecurityService.getParticipantPrivilege(),
+                kendoSecurityService.getViewerPrivilege(), kendoSecurityService.getEditorPrivilege(), kendoSecurityService.getAdminPrivilege()};
     }
 
+    @Override
     @Operation(summary = "Gets a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentDTO get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("id") Integer id,
@@ -91,6 +98,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         return super.get(id, request);
     }
 
+    @Override
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentDTO> getAll(HttpServletRequest request) {
@@ -99,7 +107,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         return tournaments;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a tournament with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/basic", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,9 +119,9 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         return getController().create(name, shiaijos, teamSize, type, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all accreditations from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "{tournamentId}/accreditations", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "{tournamentId}/accreditations", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getAllAccreditationsFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                           @PathVariable("tournamentId") Integer tournamentId,
                                                           @Parameter(description = "Filter by roles")
@@ -123,21 +131,22 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                           Locale locale, HttpServletResponse response, Authentication authentication,
                                                           HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - accreditations.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null ? onlyNew : false, authentication.getName(),
+            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null && onlyNew, authentication.getName(),
                     roles).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - accreditations.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets an accreditations from a participant of a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "{tournamentId}/accreditations/{roleType}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "{tournamentId}/accreditations/{roleType}", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getParticipantAccreditationFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                                  @PathVariable("tournamentId") Integer tournamentId,
                                                                  @PathVariable("roleType") RoleType roleType,
@@ -148,20 +157,21 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
             throw new InvalidRequestException(this.getClass(), "No participant provided!");
         }
         final TournamentDTO tournament = getController().get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - accreditations.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType, authentication.getName()).generate();
+            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType, authentication.getName()).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - accreditations.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all diplomas from a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "{tournamentId}/diplomas", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "{tournamentId}/diplomas", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getAllDiplomasFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                     @PathVariable("tournamentId") Integer tournamentId,
                                                     @Parameter(description = "Filter by roles")
@@ -171,20 +181,22 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                     Locale locale, HttpServletResponse response, Authentication authentication,
                                                     HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(tournament.getName() + " - diplomas.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentDiplomas(tournament, onlyNew != null ? onlyNew : false, authentication.getName(), roles).generate();
+            final byte[] bytes = pdfController.generateTournamentDiplomas(tournament, onlyNew != null && onlyNew,
+                    authentication.getName(), roles).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(tournament.getName() + " - diplomas.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets a diploma from a participant of a tournament.", security = @SecurityRequirement(name = "bearerAuth"))
-    @PostMapping(value = "{tournamentId}/diplomas", produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "{tournamentId}/diplomas", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public byte[] getParticipantDiplomaFromTournamentAsPdf(@Parameter(description = "Id of an existing tournament", required = true)
                                                            @PathVariable("tournamentId") Integer tournamentId,
                                                            @RequestBody ParticipantDTO participant,
@@ -193,18 +205,19 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
             throw new InvalidRequestException(this.getClass(), "No participant provided!");
         }
         final TournamentDTO tournament = getController().get(tournamentId);
-        final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
-                .filename(participant.getName() + " " + participant.getLastname() + " - diplomas.pdf").build();
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         try {
-            return pdfController.generateTournamentDiploma(tournament, participant).generate();
+            final byte[] bytes = pdfController.generateTournamentDiploma(tournament, participant).generate();
+            final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(participant.getName() + " " + participant.getLastname() + " - diplomas.pdf").build();
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
+            return bytes;
         } catch (InvalidXmlElementException | EmptyPdfBodyException e) {
             RestServerLogger.errorMessage(this.getClass(), e);
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a new tournament from the selected one.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "{tournamentId}/clone", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentDTO clone(@Parameter(description = "Id of an existing tournament", required = true)
@@ -213,7 +226,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         return getController().clone(tournamentId, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Set the number of winners that pass from level one to level two.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "{tournamentId}/winners/{numberOfWinners}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -225,7 +238,8 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         getController().setNumberOfWinners(tournamentId, numberOfWinners, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.guestPrivilege)")
     @Operation(summary = "Return the last unlocked tournament.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/unlocked/lasts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)

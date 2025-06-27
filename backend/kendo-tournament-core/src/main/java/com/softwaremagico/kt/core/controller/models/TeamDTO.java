@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,8 +34,6 @@ public class TeamDTO extends ElementDTO implements IName {
     private TournamentDTO tournament;
 
     private List<ParticipantDTO> members;
-
-    private Integer group;
 
     public TeamDTO() {
         super();

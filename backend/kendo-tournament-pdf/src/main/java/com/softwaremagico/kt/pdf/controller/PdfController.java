@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.controller;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -250,7 +250,7 @@ public class PdfController {
     }
 
     public TournamentQr generateTournamentQr(Locale locale, TournamentDTO tournament, Integer port) {
-        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId(), port);
+        final QrCodeDTO qrCodeDTO = qrController.generateGuestQrCodeForTournamentFights(tournament.getId(), port, false);
         return new TournamentQr(messageSource, locale, tournament, qrCodeDTO.getData(), null);
     }
 }

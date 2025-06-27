@@ -2,15 +2,11 @@
   width: 70px;
   height: 70px;
 
-  background: #ffffff;
+  background: var(--background-color);
 
   position: relative;
   display: inline-block;
   margin: 5px;
-}
-
-.dark-mode .achievement {
-  background: #303030;
 }
 
 .disabled img {
@@ -18,7 +14,7 @@
 }
 
 .dark-mode img {
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(223deg) brightness(111%) contrast(101%);
+  filter: invert(65%) sepia(100%) saturate(0%) hue-rotate(223deg) brightness(111%) contrast(101%);
 }
 
 .dark-mode .disabled img {
@@ -250,6 +246,12 @@
   display: flex;
   vertical-align: center;
   margin-left: -10%;
+}
+
+.achieved-by-total {
+  align-items: center;
+  font-size: 10px;
+  width: 100%;
 }
 
 .circle {

@@ -7,7 +7,7 @@ import {
   ApexNonAxisChartSeries,
   ApexResponsive,
   ApexTitleSubtitle,
-  ApexTooltip,
+  ApexTooltip, ApexYAxis,
   ChartComponent
 } from "ng-apexcharts";
 import {PieChartData} from "./pie-chart-data";

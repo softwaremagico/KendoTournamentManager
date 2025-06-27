@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -74,12 +74,12 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<Participant> createParticipants(Club club) {
-        List<Participant> members = new ArrayList<>();
+        List<Participant> membersCreated = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            members.add(
+            membersCreated.add(
                     participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
         }
-        return members;
+        return membersCreated;
     }
 
     protected Tournament createTournament(String tournamentName) {
@@ -87,15 +87,15 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<Role> createRoles(List<Participant> members, Tournament tournament) {
-        List<Role> roles = new ArrayList<>();
+        List<Role> rolesCreated = new ArrayList<>();
         for (Participant competitor : members) {
-            roles.add(roleRepository.save(new Role(tournament, competitor, RoleType.COMPETITOR)));
+            rolesCreated.add(roleRepository.save(new Role(tournament, competitor, RoleType.COMPETITOR)));
         }
-        return roles;
+        return rolesCreated;
     }
 
     protected List<Team> createTeams(List<Participant> members, Tournament tournament) {
-        List<Team> teams = new ArrayList<>();
+        List<Team> teamsCreated = new ArrayList<>();
         int teamIndex = 0;
         Team team = null;
         int teamMember = 0;
@@ -105,7 +105,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 teamIndex++;
                 team = new Team("Team" + String.format("%02d", teamIndex), tournament);
                 teamMember = 0;
-                teams.add(team);
+                teamsCreated.add(team);
             }
 
             // Add member.
@@ -118,26 +118,26 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 team = null;
             }
         }
-        return teams;
+        return teamsCreated;
     }
 
     protected Group createGroup(Tournament tournament, List<Team> teams) {
-        final Group group = new Group();
-        group.setTournament(tournament);
-        group.setLevel(0);
-        group.setIndex(0);
-        group.setTeams(teams);
-        return groupRepository.save(group);
+        final Group groupCreated = new Group();
+        groupCreated.setTournament(tournament);
+        groupCreated.setLevel(0);
+        groupCreated.setIndex(0);
+        groupCreated.setTeams(teams);
+        return groupRepository.save(groupCreated);
     }
 
     protected List<Fight> createFights(Tournament tournament, List<Team> teams, Group group) {
-        List<Fight> fights = new ArrayList<>();
+        List<Fight> fightsCreated = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
-            fights.add(fightRepository.save(new Fight(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL, null)));
+            fightsCreated.add(fightRepository.save(new Fight(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL, null)));
         }
-        group.setFights(fights);
+        group.setFights(fightsCreated);
         groupRepository.save(group);
-        return fights;
+        return fightsCreated;
     }
 
     protected void populateData() {
