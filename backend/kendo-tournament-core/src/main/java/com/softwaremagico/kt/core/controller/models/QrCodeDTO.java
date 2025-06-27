@@ -21,15 +21,18 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
 public class QrCodeDTO extends ImageDTO {
 
-    private String link;
+    @NotNull
+    private String content;
 
-    public String getLink() {
-        return link;
+    public String getContent() {
+        return content;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

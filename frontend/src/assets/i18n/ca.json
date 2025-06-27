@@ -742,5 +742,6 @@
   "worstNightmareOf": "Tu ets el pitjor malson de",
   "darkMode": "Mode Fosc",
   "lightMode": "Mode Clar",
-  "newVersionAvailable": "La versió '{{newVersion}}' està disponible! La versió actual és '{{currentVersion}}'."
+  "newVersionAvailable": "La versió '{{newVersion}}' està disponible! La versió actual és '{{currentVersion}}'.",
+  "input_data_is_invalid": "Les dades proporcionades no són vàlides!"
 }
