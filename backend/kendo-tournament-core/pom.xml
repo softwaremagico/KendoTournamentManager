@@ -71,6 +71,11 @@
             <artifactId>qr-code-with-logo</artifactId>
             <version>${qr-code.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.simonscholz</groupId>
+            <artifactId>qr-code-with-logo-svg</artifactId>
+            <version>${qr-code.version}</version>
+        </dependency>
         <!-- For SVG logs on QR -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
