@@ -720,5 +720,6 @@
   "worstNightmareOf": "Du bist der schlimmste Albtraum",
   "darkMode": "Donkere Modus",
   "lightMode": "Lichte Modus",
-  "newVersionAvailable": "Version '{{newVersion}}' ist verfügbar! Aktuelle Version ist '{{currentVersion}}'."
+  "newVersionAvailable": "Version '{{newVersion}}' ist verfügbar! Aktuelle Version ist '{{currentVersion}}'.",
+  "input_data_is_invalid": "Die angegebenen Daten sind ungültig!"
 }

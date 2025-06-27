@@ -49,7 +49,7 @@ import java.time.LocalDateTime;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
 public class Tournament extends Element implements IName {
-    private static final int DEFAULT_DURATION = 180;
+    public static final int DEFAULT_DURATION = 180;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)

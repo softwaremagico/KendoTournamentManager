@@ -24,9 +24,11 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.softwaremagico.kt.utils.NameUtils;
+import jakarta.validation.constraints.NotNull;
 
 public class ScoreOfCompetitorDTO {
 
+    @NotNull
     private ParticipantDTO competitor;
     private Integer wonDuels = null;
     private Integer drawDuels = null;

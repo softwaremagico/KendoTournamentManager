@@ -64,7 +64,7 @@ public class ClubServices extends BasicServices<Club, ClubDTO, ClubRepository, C
         return getController().create(name, country, city, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/new-club", produces = MediaType.APPLICATION_JSON_VALUE)

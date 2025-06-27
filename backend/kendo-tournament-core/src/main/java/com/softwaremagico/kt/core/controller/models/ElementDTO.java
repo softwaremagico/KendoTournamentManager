@@ -26,6 +26,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ElementDTO implements Serializable {
+    public static final int MAX_BIG_FIELD_LENGTH = 255;
+    public static final int MAX_NORMAL_FIELD_LENGTH = 50;
+    public static final int MAX_SMALL_FIELD_LENGTH = 20;
+    public static final int MIN_FIELD_LENGTH = 2;
+
     private Integer id;
     private LocalDateTime createdAt;
 

@@ -726,5 +726,6 @@
   "worstNightmareOf": "Sei l'incubo peggiore di",
   "darkMode": "Modalità Scura",
   "lightMode": "Modalità Chiara",
-  "newVersionAvailable": "La versione '{{newVersion}}' è disponibile! La versione attuale è '{{currentVersion}}'."
+  "newVersionAvailable": "La versione '{{newVersion}}' è disponibile! La versione attuale è '{{currentVersion}}'.",
+  "input_data_is_invalid": "I dati forniti non sono validi!"
 }

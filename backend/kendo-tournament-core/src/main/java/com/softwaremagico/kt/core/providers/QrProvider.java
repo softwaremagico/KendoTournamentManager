@@ -68,7 +68,7 @@ public class QrProvider {
     private static Map<Color, BufferedImage> qrLogoByBackground = new HashMap<>();
 
     public QrPositionalSquaresConfig crateSquareConfig(Boolean circleShaped, Double relativeSquareBorderRound,
-                                                       Color center, Color outerSquare, Color background) {
+                                                       Color center, Color innerSquare, Color outerSquare, Color outerBorder) {
         final QrPositionalSquaresConfig.Builder builder = new QrPositionalSquaresConfig.Builder();
 
         if (circleShaped != null) {
@@ -83,16 +83,16 @@ public class QrProvider {
             builder.centerColor(center);
         }
 
-        if (background != null) {
-            builder.innerSquareColor(background);
+        if (innerSquare != null) {
+            builder.innerSquareColor(innerSquare);
         }
 
         if (outerSquare != null) {
             builder.outerSquareColor(outerSquare);
         }
 
-        if (background != null) {
-            builder.outerBorderColor(background);
+        if (outerBorder != null) {
+            builder.outerBorderColor(outerBorder);
         }
 
         return builder.build();
@@ -100,7 +100,7 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color color, Color background) {
         return getQr(content, size, color, color, null, null,
-                crateSquareConfig(false, null, color, color, background),
+                crateSquareConfig(false, null, color, color, color, background),
                 null);
     }
 
@@ -110,7 +110,13 @@ public class QrProvider {
 
     public BufferedImage getQr(String content, Integer size, Color color, String resourceLogo, boolean circleShaped, Color background) {
         return getQr(content, size, color, color, background, resourceLogo,
-                crateSquareConfig(circleShaped, null, color, color, background),
+                crateSquareConfig(circleShaped, null, color, color, color, background),
+                null);
+    }
+
+    public BufferedImage getQr(String content, Integer size, Color borderColor, Color ink, Color background, String resourceLogo) {
+        return getQr(content, size, borderColor, ink, background, resourceLogo,
+                crateSquareConfig(false, null, ink, ink, borderColor, background),
                 null);
     }
 

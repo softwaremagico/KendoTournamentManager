@@ -104,9 +104,12 @@ public class QrController {
         }
     }
 
-    public QrCodeDTO generateQrCode(String content) {
+    public QrCodeDTO generateQrCode(String content, boolean nightMode) {
         try {
-            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER,
+                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
+                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE,
+                    LOGO_RESOURCE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
             qrCodeDTO.setImageFormat(ImageFormat.BASE64);
@@ -117,9 +120,11 @@ public class QrController {
         }
     }
 
-    public QrCodeDTO generateQrCodeAsSvg(String content) {
+    public QrCodeDTO generateQrCodeAsSvg(String content, boolean nightMode) {
         try {
-            final Document qrCode = qrProvider.getQrAsSvg(content, QR_SIZE, QR_BORDER, QR_COLOR, QR_BACKGROUND, LOGO_RESOURCE);
+            final Document qrCode = qrProvider.getQrAsSvg(content, QR_SIZE, QR_BORDER,
+                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
+                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE, LOGO_RESOURCE);
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             final StringWriter stringWriter = new StringWriter();
             transformer.transform(new DOMSource(qrCode), new StreamResult(stringWriter));
