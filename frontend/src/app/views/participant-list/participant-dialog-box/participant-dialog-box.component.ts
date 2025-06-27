@@ -84,6 +84,12 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   compareClubs(club1: any, club2: any): boolean {
+    if (club2 == undefined && club1 == undefined) {
+      return true;
+    }
+    if ((club2 == undefined && club1 != undefined) || (club2 != undefined && club1 == undefined)) {
+      return false
+    }
     return club1.name === club2.name && club1.id === club2.id;
   }
 

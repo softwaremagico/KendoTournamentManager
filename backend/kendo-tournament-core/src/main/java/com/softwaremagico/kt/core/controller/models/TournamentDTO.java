@@ -21,24 +21,31 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.utils.IName;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TournamentDTO extends ElementDTO implements IName {
 
+    @NotNull
     private String name;
 
+    @NotNull
     private Integer shiaijos;
 
+    @NotNull
     private Integer teamSize;
 
+    @NotNull
     private TournamentType type;
 
     private TournamentScoreDTO tournamentScore;
 
+    @NotNull
     private Integer duelsDuration;
 
     private boolean locked;
@@ -54,12 +61,17 @@ public class TournamentDTO extends ElementDTO implements IName {
     }
 
     public TournamentDTO(String name, int shiaijos, int teamSize, TournamentType type) {
+        this(name, shiaijos, teamSize, type, null);
+    }
+
+    public TournamentDTO(String name, int shiaijos, int teamSize, TournamentType type, Integer duelsDuration) {
         this();
         setName(name);
         setShiaijos(shiaijos);
         setTeamSize(teamSize);
         setType(type);
         setTournamentScore(new TournamentScoreDTO());
+        setDuelsDuration(duelsDuration != null ? duelsDuration : Tournament.DEFAULT_DURATION);
     }
 
     public String getName() {

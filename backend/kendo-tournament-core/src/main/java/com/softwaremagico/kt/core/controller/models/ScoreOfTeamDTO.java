@@ -23,12 +23,14 @@ package com.softwaremagico.kt.core.controller.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
 public class ScoreOfTeamDTO extends ElementDTO {
 
+    @NotNull
     private TeamDTO team;
     @JsonIgnore
     private List<FightDTO> fights;

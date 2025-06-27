@@ -21,11 +21,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -38,7 +36,6 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,10 +69,6 @@ public class Fight extends Element {
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
-
-    @Column(name = "finished_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
-    private LocalDateTime finishedAt;
 
     @Column(name = "fight_level", nullable = false)
     private Integer level = 0;

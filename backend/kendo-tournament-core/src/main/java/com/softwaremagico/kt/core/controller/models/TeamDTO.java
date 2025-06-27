@@ -22,6 +22,7 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.utils.IName;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,13 @@ import java.util.Objects;
 
 public class TeamDTO extends ElementDTO implements IName {
 
+    @NotNull
     private String name;
 
+    @NotNull
     private TournamentDTO tournament;
 
+    @NotNull
     private List<ParticipantDTO> members;
 
     public TeamDTO() {

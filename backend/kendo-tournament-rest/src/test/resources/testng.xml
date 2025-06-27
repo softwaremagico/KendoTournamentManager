@@ -18,6 +18,7 @@
                 <!-- working on local, but not on ci github-->
                 <exclude name="fightsWebsockets"/>
                 <include name="participantAccess"/>
+                <include name="dataValidation"/>
             </run>
         </groups>
         <classes>
@@ -29,6 +30,7 @@
             <class name="com.softwaremagico.kt.rest.RestSimpleChampionshipTest"/>
             <class name="com.softwaremagico.kt.rest.UserRegisterTests"/>
             <class name="com.softwaremagico.kt.rest.ParticipantAccessTests"/>
+            <class name="com.softwaremagico.kt.rest.DataValidationTest"/>
             <class name="com.softwaremagico.kt.websockets.BasicWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
         </classes>

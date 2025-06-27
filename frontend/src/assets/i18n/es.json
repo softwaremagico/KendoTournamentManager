@@ -738,5 +738,6 @@
   "worstNightmareOf": "Eres la peor pesadilla de",
   "darkMode": "Modo Oscuro",
   "lightMode": "Modo Claro",
-  "newVersionAvailable": "¡La versión '{{newVersion}}' está disponible! La versión actual es '{{currentVersion}}'."
+  "newVersionAvailable": "¡La versión '{{newVersion}}' está disponible! La versión actual es '{{currentVersion}}'.",
+  "input_data_is_invalid": "¡Los datos proporcionados no son válidos!"
 }
