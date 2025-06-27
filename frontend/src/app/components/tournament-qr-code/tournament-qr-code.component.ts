@@ -6,6 +6,7 @@ import {QrService} from "../../services/qr.service";
 import {QrCode} from "../../models/qr-code.model";
 import {RbacActivity} from "../../services/rbac/rbac.activity";
 import {RbacService} from "../../services/rbac/rbac.service";
+import {UserSessionService} from "../../services/user-session.service";
 
 @Component({
   selector: 'app-tournament-qr-code',
@@ -23,13 +24,13 @@ export class TournamentQrCodeComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<TournamentQrCodeComponent>,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament, port: number },
-              private qrService: QrService, public rbacService: RbacService) {
+              private qrService: QrService, private userSessionService: UserSessionService, public rbacService: RbacService) {
     this.tournament = data.tournament;
     this.port = data.port;
   }
 
   ngOnInit(): void {
-    this.qrService.getGuestsQr(this.tournament, this.port).subscribe((_qrCode: QrCode): void => {
+    this.qrService.getGuestsQr(this.tournament, this.userSessionService.getNightMode(), this.port).subscribe((_qrCode: QrCode): void => {
       if (_qrCode) {
         this.qrCode = _qrCode.base64;
         this.link = _qrCode.link;

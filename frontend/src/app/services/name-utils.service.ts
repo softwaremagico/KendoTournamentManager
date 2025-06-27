@@ -47,6 +47,11 @@ export class NameUtilsService {
     return this.spacesToCamel(participant.lastname + " " + this.getShortName(participant));
   }
 
+  getNameLastname(participant: Participant | undefined): string {
+    return this.getName(participant) + " " + this.getLastname(participant);
+  }
+
+
   getLastnameNameNoSpaces(participant: Participant | undefined): string {
     return this.getLastname(participant) + ", " + this.getShortName(participant);
   }

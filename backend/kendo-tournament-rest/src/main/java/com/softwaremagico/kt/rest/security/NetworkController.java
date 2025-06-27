@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,8 +40,8 @@ public class NetworkController {
                 hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
             }
             return String.join("-", hexadecimal);
-        } catch (Exception e) {
-            //RestServerLogger.debug(this.getClass().getName(), "No mac server found!");
+        } catch (Exception ignored) {
+            //Ignored.
         }
         return "";
     }

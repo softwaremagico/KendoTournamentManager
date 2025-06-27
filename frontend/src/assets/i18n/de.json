@@ -394,6 +394,7 @@
   "back": "Terugkomen",
   "chronometerOn": "Stoppuhr zeigen",
   "chronometerOff": "Stoppuhr ausblenden",
+  "playWhistle": "Reproduzieren Sie den Klang einer Pfeife.",
   "fields": "Feld",
   "avoidDuplicateFights": "Vermeiden sie doppelte übereinstimmungen",
   "maximizeFights": "Saotori Shiai.",
@@ -430,6 +431,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Erhalten bei:",
   "achievementToolTipObtainedAt": "Erhalten bei",
   "achievementToolTipObtainedBy": "Erhalten von",
+  "achievementToolTipOthersTotal": "(Erreicht von anderen <b>{{totalParticipants}}</b> Teilnehmern).",
+  "achievementToolTipTotal": "(Erreicht von <b>{{totalParticipants}}</b> Teilnehmern).",
   "time": "Zeit",
   "lockedAt": "Gesperrt",
   "fightsStartedAt": "Beginn der spiele",
@@ -616,6 +619,7 @@
     "masterTheLoop": {
       "title": "Meister die Schleife",
       "description": "Gewinne eine Liga in Rueda.",
+      "normal": "Gewinne eine Liga in Rueda.",
       "bronze": "Dominiere die Runde in drei Turnieren im selben Jahr.",
       "silver": "Dominiere die Runde in vier Turnieren im selben Jahr.",
       "gold": "Dominiere die Runde in fünf Turnieren im selben Jahr."
@@ -710,5 +714,11 @@
   "senbatsuRungLength": "Distanz zwischen Desafíos",
   "senbatsuRungLengthHint": "Der maximal zulässige Leistungsunterschied zwischen zwei Teilnehmern zum Zwecke der Festlegung einer Herausforderung.",
   "reverseOrder": "Reverse",
-  "reverseOrderHint": "Kehren Sie die Reihenfolge der Teams um."
+  "reverseOrderHint": "Kehren Sie die Reihenfolge der Teams um.",
+  "fightsEnded": "Alle Spiele sind vorbei.",
+  "yourWorstNightmare": "Dein schlimmster Albtraum",
+  "worstNightmareOf": "Du bist der schlimmste Albtraum",
+  "darkMode": "Donkere Modus",
+  "lightMode": "Lichte Modus",
+  "newVersionAvailable": "Version '{{newVersion}}' ist verfügbar! Aktuelle Version ist '{{currentVersion}}'."
 }

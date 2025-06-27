@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -69,7 +69,7 @@ public class AuthenticatedUserProvider {
             guest.setRoles(Collections.singleton(GUEST_ROLE));
             return Optional.of(guest);
         }
-        if (getDatabaseEncryptionKey() != null) {
+        if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isBlank()) {
             //Username is encrypted, use hash
             final Optional<AuthenticatedUser> authenticatedUser = authenticatedUserRepository.findByUsernameHash(username);
             if (authenticatedUser.isPresent()) {

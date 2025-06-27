@@ -31,6 +31,7 @@
                 <include name="numberOfWinners"/>
                 <include name="tournamentExtraProperties"/>
                 <include name="qrTest"/>
+                <include name="worstNightmareTest"/>
             </run>
         </groups>
         <classes>
@@ -54,7 +55,7 @@
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
-            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtilsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
@@ -63,6 +64,7 @@
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
             <class name="com.softwaremagico.kt.core.tests.QrTests"/>
+            <class name="com.softwaremagico.kt.core.tests.WorstNightmareTest"/>
         </classes>
     </test>
 </suite>

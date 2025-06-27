@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.converters.ElementConverter;
 import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 import com.softwaremagico.kt.core.providers.CrudProvider;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -56,8 +57,11 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
         CONTROLLER extends BasicInsertableController<ENTITY, DTO, REPOSITORY, PROVIDER, CONVERTER_REQUEST, CONVERTER>> {
     private final CONTROLLER controller;
 
-    protected BasicServices(CONTROLLER controller) {
+    private final KendoSecurityService kendoSecurityService;
+
+    protected BasicServices(CONTROLLER controller, KendoSecurityService kendoSecurityService) {
         this.controller = controller;
+        this.kendoSecurityService = kendoSecurityService;
     }
 
     protected CONTROLLER getController() {
@@ -70,10 +74,10 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
      * @return an array of roles.
      */
     public String[] requiredRoleForEntityById() {
-        return new String[]{"ROLE_VIEWER", "ROLE_EDITOR", "ROLE_ADMIN"};
+        return new String[]{kendoSecurityService.getViewerPrivilege(), kendoSecurityService.getEditorPrivilege(), kendoSecurityService.getAdminPrivilege()};
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DTO> getAll(HttpServletRequest request) {
@@ -81,7 +85,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/ids", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DTO> getAll(@RequestBody Collection<Integer> ids, HttpServletRequest request) {
@@ -89,7 +93,8 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.guestPrivilege, @securityService.viewerPrivilege, @securityService.editorPrivilege, "
+            + "@securityService.adminPrivilege)")
     @Operation(summary = "Counts all entities.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public long count(HttpServletRequest request) {
@@ -97,7 +102,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole(#root.this.requiredRoleForEntityById())")
+    @PreAuthorize("hasAnyAuthority(#root.this.requiredRoleForEntityById())")
     @Operation(summary = "Gets an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public DTO get(@Parameter(description = "Id of an existing entity", required = true) @PathVariable("id") Integer id,
@@ -106,7 +111,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -115,7 +120,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a set of entities.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -127,7 +132,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -137,7 +142,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -146,14 +151,14 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes a collection of entities.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@RequestBody Collection<DTO> dtos, Authentication authentication, HttpServletRequest request) {
         getController().delete(dtos, authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public DTO update(@Valid @RequestBody DTO dto, Authentication authentication, HttpServletRequest request) {
@@ -161,7 +166,7 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a list of fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DTO> update(@Valid @RequestBody List<DTO> dtos, Authentication authentication, HttpServletRequest request) {

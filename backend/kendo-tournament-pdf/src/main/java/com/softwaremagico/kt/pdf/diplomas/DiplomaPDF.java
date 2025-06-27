@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.diplomas;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,7 +64,7 @@ public class DiplomaPDF extends PdfDocument {
 
     @Override
     protected void addDocumentWriterEvents(PdfWriter writer) {
-
+        //No event needed
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DiplomaPDF extends PdfDocument {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         mainTable.addCell(cell);
 
-        mainTable.writeSelectedRows(0, -1, (float) 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2f,
+        mainTable.writeSelectedRows(0, -1, 0, document.getPageSize().getHeight() * nameHeight + PdfTheme.DIPLOMA_FONT_SIZE / 2f,
                 writer.getDirectContent());
         mainTable.flushContent();
         mainTable.setWidthPercentage(TOTAL_WIDTH);

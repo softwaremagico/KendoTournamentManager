@@ -4,6 +4,10 @@
   font-size: 150%;
 }
 
+.app-title.title {
+  color: var(--title-color);
+}
+
 :host(.dark-mode) {
   display: flex;
   flex-direction: column;

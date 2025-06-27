@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -107,8 +107,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
                 return estimateLeagueStatistics(teamSize, teams);
             case LOOP:
                 return estimateLoopStatistics(tournament, teamSize, teams);
-            case CUSTOMIZED:
-            case KING_OF_THE_MOUNTAIN:
+            case CUSTOMIZED, KING_OF_THE_MOUNTAIN:
             default:
                 return null;
         }
@@ -123,7 +122,7 @@ public class TournamentFightStatisticsProvider extends CrudProvider<TournamentFi
         if (durationAverage != null && durationAverage > 0 && tournamentFightStatistics.getDuelsNumber() != null) {
             tournamentFightStatistics.setAverageTime(durationAverage);
             tournamentFightStatistics.setEstimatedTime(tournamentFightStatistics.getDuelsNumber() * (durationAverage + TIME_BETWEEN_DUELS)
-                    + (tournamentFightStatistics.getFightsNumber() != null ? (long) TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
+                    + (tournamentFightStatistics.getFightsNumber() != null ? TIME_BETWEEN_FIGHTS * tournamentFightStatistics.getFightsNumber() : 0));
         }
         return tournamentFightStatistics;
     }

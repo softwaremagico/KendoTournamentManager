@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -92,7 +92,6 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     private static final RoleType ROLE_TYPE = RoleType.REFEREE;
 
     private static final String TEAM_NAME = "Name";
-    private static final Integer TEAM_GROUP = 129;
 
     private static final List<Score> DUEL_SCORES = Arrays.asList(Score.MEN, Score.DO);
     private static final Boolean DUEL_FAULTS = true;
@@ -169,8 +168,6 @@ public class ConverterTest extends AbstractTestNGSpringContextTests {
     private void checkParticipant(Participant participant) {
         Assert.assertEquals(participant.getName(), PARTICIPANT_NAME);
         Assert.assertEquals(participant.getLastname(), PARTICIPANT_LASTNAME);
-        //Assert.assertEquals(participant.getIdCard(), PARTICIPANT_ID_CARD);
-        //checkClub(participant.getClub());
     }
 
     private TournamentScore createTournamentScore() {

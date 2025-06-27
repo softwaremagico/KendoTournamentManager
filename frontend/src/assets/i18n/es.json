@@ -411,6 +411,7 @@
   "back": "Volver",
   "chronometerOn": "Mostrar cronómetro",
   "chronometerOff": "Ocutlar cronómetro",
+  "playWhistle": "Reproducir el sonido de un silbato.",
   "fields": "Campos",
   "avoidDuplicateFights": "Evita partidos duplicados",
   "maximizeFights": "Saotori Shiai.",
@@ -447,6 +448,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtenido en:",
   "achievementToolTipObtainedAt": "Obtained en",
   "achievementToolTipObtainedBy": "Obtained por",
+  "achievementToolTipOthersTotal": "(Obtenido por otros <b>{{totalParticipants}}</b> competidores).",
+  "achievementToolTipTotal": "(Obtenido por <b>{{totalParticipants}}</b> competidores).",
   "time": "Tiempos",
   "lockedAt": "Bloqueado",
   "fightsStartedAt": "Inicio partidos",
@@ -629,6 +632,7 @@
     "masterTheLoop": {
       "title": "Domina el bucle",
       "description": "Gana un Liga en Rueda.",
+      "normal": "Gana un Liga en Rueda.",
       "bronze": "Domina el bucle en tres torneos durante el mismo año.",
       "silver": "Domina el bucle en cuatro torneos durante el mismo año.",
       "gold": "Domina el bucle en cinco torneos durante el mismo año."
@@ -728,5 +732,11 @@
   "senbatsuRungLength": "Distancia entre desafíos",
   "senbatsuRungLengthHint": "La disparidad máxima permitida en la capacidad entre dos competidores con el fin de establecer un desafío.",
   "reverseOrder": "Invertir",
-  "reverseOrderHint": "Invertir el orden de los equipos."
+  "reverseOrderHint": "Invertir el orden de los equipos.",
+  "fightsEnded": "Todos los partidos han terminado.",
+  "yourWorstNightmare": "Tu peor pesadilla",
+  "worstNightmareOf": "Eres la peor pesadilla de",
+  "darkMode": "Modo Oscuro",
+  "lightMode": "Modo Claro",
+  "newVersionAvailable": "¡La versión '{{newVersion}}' está disponible! La versión actual es '{{currentVersion}}'."
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.events;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,12 +40,10 @@ public class FooterEvent extends PdfPageEventHelper {
      */
     @Override
     public void onEndPage(PdfWriter writer, Document document) {
-        //if (writer.getPageNumber() % 2 == 0) {
         final PdfContentByte cb = writer.getDirectContent();
         final Phrase footer = new Phrase("Created using 'Kendo Tournament Manager v2'",
                 new Font(PdfTheme.getFooterFont(), PdfTheme.FOOTER_FONT_SIZE));
         ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, footer, (document.right() - document.left()) / 2 + document.leftMargin(),
                 document.bottom() + BOTTOM_MARGIN, 0);
-        //}
     }
 }

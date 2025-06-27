@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,6 +28,7 @@ import com.softwaremagico.kt.core.converters.models.DuelConverterRequest;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.repositories.DuelRepository;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -46,11 +47,11 @@ import java.util.List;
 public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
         DuelProvider, DuelConverterRequest, DuelConverter, DuelController> {
 
-    public DuelServices(DuelController duelController) {
-        super(duelController);
+    public DuelServices(DuelController duelController, KendoSecurityService kendoSecurityService) {
+        super(duelController, kendoSecurityService);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/groups/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromGroup(@Parameter(description = "Id of the group.", required = true) @PathVariable("groupId") Integer groupId,
@@ -59,7 +60,7 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all duels from competitor.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/competitor/{competitorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getByCompetitor(@Parameter(description = "Id of the competitor.", required = true)
@@ -70,7 +71,7 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets all untie duel.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromTournament(@Parameter(description = "Id of the tournament.", required = true) @PathVariable("tournamentId")
@@ -80,7 +81,8 @@ public class DuelServices extends BasicServices<Duel, DuelDTO, DuelRepository,
     }
 
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.participantPrivilege)")
     @Operation(summary = "Gets all untie duel where one participant is involved.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participant/{participantId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<DuelDTO> getUntiesFromParticipant(@Parameter(description = "Id of the participant.", required = true)

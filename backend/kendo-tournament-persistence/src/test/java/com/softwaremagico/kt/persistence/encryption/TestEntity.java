@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -79,10 +79,6 @@ public class TestEntity {
     @Column(length = 4 * COLUMN_LENGTH, nullable = false)
     @Convert(converter = TimestampCryptoConverter.class)
     private Timestamp timestampColumn;
-
-    public TestEntity() {
-
-    }
 
     public static TestEntity newEntity() {
         TestEntity randomEntity = new TestEntity();

@@ -10,6 +10,7 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 import {TournamentFightStatistics} from "../models/tournament-fight-statistics.model";
 import {TournamentStatistics} from "../models/tournament-statistics.model";
 import {ParticipantStatistics} from "../models/participant-statistics.model";
+import {Participant} from "../models/participant";
 
 @Injectable({
   providedIn: 'root'
@@ -85,6 +86,30 @@ export class StatisticsService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.logOnlyError<ParticipantStatistics>(`get id=${participantId}`))
+      );
+  }
+
+
+  getYourWorstNightmare(participantId: number): Observable<Participant[]> {
+    const url: string = `${this.baseUrl}/participants/your-worst-nightmare/${participantId}`;
+    return this.http.get<Participant[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched worst nightmare for participant id=${participantId}`)
+        }),
+        catchError(this.messageService.logOnlyError<Participant[]>(`get id=${participantId}`))
+      );
+  }
+
+
+  getWorstNightmareOf(participantId: number): Observable<Participant[]> {
+    const url: string = `${this.baseUrl}/participants/worst-nightmare-of/${participantId}`;
+    return this.http.get<Participant[]>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`fetched worst nightmare to participant id=${participantId}`),
+        }),
+        catchError(this.messageService.logOnlyError<Participant[]>(`get id=${participantId}`))
       );
   }
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -99,7 +99,7 @@ public class Group extends Element {
      * @return
      */
     public static boolean areFightsOverOrNull(List<Fight> fights) {
-        if (fights.size() > 0) {
+        if (!fights.isEmpty()) {
             for (final Fight fight : fights) {
                 if (!fight.isOver()) {
                     return false;

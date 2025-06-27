@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -67,11 +67,6 @@ public class KingOfTheMountainHandler extends LeagueHandler {
     @Override
     public List<Fight> createInitialFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
         return createFights(tournament, teamsOrder, 0, createdBy);
-    }
-
-    private int getNextLevel(Tournament tournament) {
-        //Each group on a different level, to ensure that the last group winner is the king of the mountain and the winner of the league.
-        return (int) groupProvider.count(tournament);
     }
 
     @Override

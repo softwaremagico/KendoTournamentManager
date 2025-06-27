@@ -37,6 +37,7 @@ import {EnvironmentService} from "../../environment.service";
 import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
 import {SenbatsuFightDialogBoxComponent} from "./senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.component";
+import {AudioService} from "../../services/audio.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -91,7 +92,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               private membersOrderChangedService: MembersOrderChangedService, private messageService: MessageService,
               rbacService: RbacService, private translateService: TranslateService,
               private systemOverloadService: SystemOverloadService,
-              private rxStompService: RxStompService, private loginService: LoginService) {
+              private rxStompService: RxStompService, private loginService: LoginService,
+              private audioService: AudioService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -324,15 +326,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.selectedGroup = groups[0];
     }
 
+    this.selectFirstUnfinishedDuel();
+
     this.resetFilter();
-    //Use a timeout or refresh before the components are drawn.
-    setTimeout((): void => {
-      if (!this.selectFirstUnfinishedDuel() && this.getUnties().length === 0
-        && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN && this.tournament.type !== TournamentType.BUBBLE_SORT
-        && this.tournament.type !== TournamentType.SENBATSU) {
-        this.showTeamsClassification(true);
-      }
-    }, 1000);
   }
 
   private setLevelTagVisibility(sortedGroups: Group[]): void {
@@ -357,7 +353,8 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   openConfirmationGenerateElementsDialog(): void {
     if (this.getFights().length > 0) {
       let dialogRef: MatDialogRef<ConfirmationDialogComponent> = this.dialog.open(ConfirmationDialogComponent, {
-        disableClose: false
+        disableClose: false,
+        restoreFocus: false,
       });
       dialogRef.componentInstance.messageTag = "deleteFightsWarning"
 
@@ -494,6 +491,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         width: '90vw',
         height: height,
         maxWidth: '1000px',
+        restoreFocus: false,
         data: {
           action: Action.Add,
           entity: fight,
@@ -512,6 +510,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         width: '90vw',
         height: height,
         maxWidth: '1000px',
+        restoreFocus: false,
         data: {
           action: Action.Add,
           entity: fight,
@@ -604,6 +603,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       const dialogRef: MatDialogRef<TeamRankingComponent> = this.dialog.open(TeamRankingComponent, {
         panelClass: 'pop-up-panel',
         width: '85vw',
+        restoreFocus: false,
         data: {tournament: this.tournament, group: this.selectedGroup, finished: fightsFinished}
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -636,8 +636,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   showTimer(show: boolean): void {
-    this.timer = show;
-    this.resetTimerPosition.next(show);
+    if (this.canStartFight(this.selectedDuel)) {
+      this.timer = show;
+      this.resetTimerPosition.next(show);
+    }
   }
 
   setIpponScores(duel: Duel): void {
@@ -667,7 +669,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   canStartFight(duel: Duel | undefined): boolean {
-    return duel?.competitor1 !== null && duel?.competitor2 !== null;
+    return duel != undefined && duel?.competitor1 !== null && duel?.competitor2 !== null;
   }
 
   finishDuel(): void {
@@ -687,7 +689,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             if (this.getFights().length < this.groups[0].teams.length - 1) {
               this.addElement();
             } else {
-              this.showClassification();
+              this.showFightsFinishedMessage();
             }
           } else {
             // Tournament, each group must have a winner. Show for each group the winners.
@@ -745,6 +747,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       } else {
         if (showClassification && this.tournament.type !== TournamentType.KING_OF_THE_MOUNTAIN
           && this.tournament.type !== TournamentType.BUBBLE_SORT && this.tournament.type !== TournamentType.SENBATSU) {
+          this.showFightsFinishedMessage();
           this.showClassification();
         }
         this.finishTournament(new Date());
@@ -760,6 +763,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     } else {
       this.showCompetitorsClassification();
     }
+  }
+
+  showFightsFinishedMessage(): void {
+    this.messageService.infoMessage("fightsEnded");
   }
 
   finishTournament(date: Date | undefined): void {
@@ -953,4 +960,12 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   protected readonly TournamentType = TournamentType;
+
+  playWhistle() {
+    this.audioService.playWhistle();
+  }
+
+  stopWhistle() {
+    this.audioService.stopWhistle();
+  }
 }

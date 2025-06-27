@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -60,7 +60,6 @@ import java.util.Objects;
 
 @Service
 public class TournamentProvider extends CrudProvider<Tournament, Integer, TournamentRepository> {
-    private static final int CACHE_EXPIRATION_TIME = 20 * 1000;
     public static final int DEFAULT_TEAM_SIZE = 3;
     private final TournamentExtraPropertyRepository tournamentExtraPropertyRepository;
     private final GroupRepository groupRepository;
@@ -156,8 +155,6 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             return new ArrayList<>();
         }
         // Due to LocalDateTime encryption countByGreaterThan is not working very well.
-        // final Pageable pageable = PageRequest.of(0, elementsToRetrieve, Sort.Direction.DESC, "createdAt");
-        // return getRepository().findByCreatedAtLessThan(tournament.getCreatedAt(), pageable);
         final List<Tournament> tournaments = getRepository().findAll();
         tournaments.sort(Comparator.comparing(Tournament::getCreatedAt).reversed());
         return tournaments.subList(tournaments.indexOf(tournament) + 1, Math.min(tournaments.indexOf(tournament) + 1 + elementsToRetrieve, tournaments.size()));
@@ -199,7 +196,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
         final Tournament tournament = get(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
         final ITournamentManager tournamentManager = tournamentHandlerSelector.selectManager(tournament.getType());
-        if (tournamentManager instanceof TreeTournamentHandler) {
+        if (tournamentManager instanceof TreeTournamentHandler treeTournamentHandler) {
             tournamentExtraPropertyRepository.deleteByTournamentAndPropertyKey(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
             tournamentExtraPropertyRepository.save(new TournamentExtraProperty(tournament,
                     TournamentExtraPropertyKey.NUMBER_OF_WINNERS, String.valueOf(numberOfWinners)));
@@ -213,7 +210,7 @@ public class TournamentProvider extends CrudProvider<Tournament, Integer, Tourna
             }
 
             //Resize tournament
-            ((TreeTournamentHandler) tournamentManager).recreateGroupSize(tournament, numberOfWinners);
+            treeTournamentHandler.recreateGroupSize(tournament, numberOfWinners);
             KendoTournamentLogger.info(this.getClass(), "Updated tournament '{}' with number of winners '{}' by '{}'", tournament, numberOfWinners, updatedBy);
         } else {
             KendoTournamentLogger.warning(this.getClass(), "Cannot change the number of winners as tournament is of type '{}'.", tournament.getType());

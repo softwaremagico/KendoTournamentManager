@@ -17,6 +17,7 @@ import {TournamentExtraPropertyKey} from "../../models/tournament-extra-property
 import {TournamentExtendedProperty} from "../../models/tournament-extended-property.model";
 import {MessageService} from "../../services/message.service";
 import {Router} from "@angular/router";
+import {NameUtilsService} from "../../services/name-utils.service";
 
 @Component({
   selector: 'app-team-ranking',
@@ -40,7 +41,8 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
               },
               private rankingService: RankingService, public translateService: TranslateService, public dialog: MatDialog,
               private tournamentExtendedPropertiesService: TournamentExtendedPropertiesService, private messageService: MessageService,
-              public override rbacService: RbacService, private router: Router) {
+              public override rbacService: RbacService, private router: Router,
+              private nameUtils: NameUtilsService) {
     super(rbacService);
     this.tournament = data.tournament;
     this.group = data.group;
@@ -77,7 +79,6 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
   importantDrawWinner(): boolean {
     for (let i = 0; i < this.numberOfWinners; i++) {
       if (this.isDrawWinner(i)) {
-        console.log("Found draws on index ", i);
         return true;
       }
     }
@@ -156,5 +157,13 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
       this.closeDialog();
       this.router.navigate(['/tournaments/statistics'], {state: {tournamentId: this.tournament.id}});
     }
+  }
+
+  getTeamMembers(team: Team): string {
+    let teamMembers: string = "";
+    for (const member of team.members) {
+      teamMembers += this.nameUtils.getNameLastname(member) + "\n";
+    }
+    return teamMembers;
   }
 }

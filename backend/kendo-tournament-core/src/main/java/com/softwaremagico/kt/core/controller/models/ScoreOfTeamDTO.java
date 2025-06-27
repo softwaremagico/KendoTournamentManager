@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo TournamentDTO Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -128,9 +128,8 @@ public class ScoreOfTeamDTO extends ElementDTO {
     public void setUntieDuels() {
         untieDuels = 0;
         unties.forEach(duel -> {
-            if ((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1) {
-                untieDuels++;
-            } else if ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1) {
+            if (((team.getMembers().contains(duel.getCompetitor1())) && duel.getWinner() == -1)
+                    || ((team.getMembers().contains(duel.getCompetitor2())) && duel.getWinner() == 1)) {
                 untieDuels++;
             }
         });

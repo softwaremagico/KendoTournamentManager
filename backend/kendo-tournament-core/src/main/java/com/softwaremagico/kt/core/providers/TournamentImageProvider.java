@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -135,6 +135,7 @@ public class TournamentImageProvider extends CrudProvider<TournamentImage, Integ
             case DIPLOMA -> tournamentImage.setData(getDefaultDiploma());
             case PHOTO -> tournamentImage.setData(getDefaultPhoto());
             default -> {
+                //Not needed
             }
         }
         return tournamentImage;

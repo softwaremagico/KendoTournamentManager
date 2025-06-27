@@ -413,6 +413,7 @@
   "back": "Going back",
   "chronometerOn": "Show Chronometer",
   "chronometerOff": "Hide Chronometer",
+  "playWhistle": "Reproduce the sound of a whistle",
   "fields": "Fields",
   "redTeam": "Red Team",
   "whiteTeam": "White Team",
@@ -451,6 +452,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtained at:<br>",
   "achievementToolTipObtainedAt": "Obtained at",
   "achievementToolTipObtainedBy": "Obtained by",
+  "achievementToolTipOthersTotal": "(Obtained by other <b>{{totalParticipants}}</b> competitors.)",
+  "achievementToolTipTotal": "(Obtained by <b>{{totalParticipants}}</b> competitors.)",
   "time": "Time",
   "lockedAt": "Locked at",
   "fightsStartedAt": "Matches started at",
@@ -633,6 +636,7 @@
     "masterTheLoop": {
       "title": "Master the loop",
       "description": "Win a Loop Tournament.",
+      "normal": "Win a Loop Tournament.",
       "bronze": "Master the loop in three tournaments during the same year.",
       "silver": "Master the loop in four tournaments during the same year.",
       "gold": "Master the loop in five tournaments during the same year."
@@ -727,5 +731,11 @@
   "senbatsuRungLength": "Challenge distance",
   "senbatsuRungLengthHint": "The maximum allowable disparity in ability between two competitors for the purpose of establishing a challenge.",
   "reverseOrder": "Reverse",
-  "reverseOrderHint": "Reverse teams' order"
+  "reverseOrderHint": "Reverse teams' order",
+  "fightsEnded": "All matches have finished.",
+  "yourWorstNightmare": "Your worst nightmare",
+  "worstNightmareOf": "You are the worst nightmare of",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "newVersionAvailable": "Version '{{newVersion}}' is available! Current version is '{{currentVersion}}'"
 }

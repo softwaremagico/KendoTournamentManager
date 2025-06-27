@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,6 +54,16 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
             HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes
             """)
     List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournament") Tournament tournament, @Param("differentRoleTypes") long differentRoleTypes);
+
+    @Query("""
+            SELECT r.participant FROM Role r WHERE
+               r.tournament IN :tournaments
+            GROUP BY r.participant
+            HAVING COUNT(DISTINCT r.roleType) >= :differentRoleTypes
+            """)
+    List<Participant> findParticipantsWithMoreRoleTypesThan(@Param("tournaments") Collection<Tournament> tournaments,
+                                                            @Param("differentRoleTypes") long differentRoleTypes);
+
 
     @Query("SELECT a.participant FROM Achievement a WHERE a.participant IN :participants AND a.achievementType=:achievementType")
     List<Participant> findParticipantsWithAchievementFromList(@Param("achievementType") AchievementType achievementType, List<Participant> participants);

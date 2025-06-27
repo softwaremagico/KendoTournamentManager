@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * KendoTournamentManager
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -130,7 +130,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     }
 
     public boolean isValid() {
-        return getName().length() > 0 && getIdCard() != null && getIdCard().length() > 0;
+        return !getName().isEmpty() && getIdCard() != null && !getIdCard().isEmpty();
     }
 
     @Override
@@ -235,7 +235,7 @@ public class Participant extends Element implements Comparable<Participant>, IPa
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(AvailableRole.ROLE_PARTICIPANT.name()));
+        return Collections.singleton(new SimpleGrantedAuthority(AvailableRole.PARTICIPANT.name()));
     }
 
     @Override

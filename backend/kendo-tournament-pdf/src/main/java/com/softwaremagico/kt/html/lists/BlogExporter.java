@@ -4,7 +4,7 @@ package com.softwaremagico.kt.html.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -255,7 +255,6 @@ public class BlogExporter {
 
     private String getDrawFight(FightDTO fightDTO, int duel) {
         // Draw Fights
-        final String draw;
         if (fightDTO.getDuels().get(duel).getWinner() == 0 && fightDTO.isOver()) {
             return "<div style=\"text-align: center;\">"
                     + Score.DRAW.getPdfAbbreviation()
@@ -275,7 +274,6 @@ public class BlogExporter {
     }
 
     private boolean getFaults(FightDTO fightDTO, int duel, boolean leftTeam) {
-        final boolean faults;
         if (leftTeam) {
             return fightDTO.getDuels().get(duel).getCompetitor1Fault();
         } else {
@@ -305,6 +303,7 @@ public class BlogExporter {
             }
             return time;
         } catch (Exception ignored) {
+            //Ignored.
         }
         return -1;
     }

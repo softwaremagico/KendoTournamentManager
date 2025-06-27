@@ -406,6 +406,7 @@
   "back": "Tornar",
   "chronometerOn": "Mostra cronòmetre",
   "chronometerOff": "Amagar cronòmetre",
+  "playWhistle": "Reprodueix el so d'un xiulet.",
   "fields": "Camps",
   "avoidDuplicateFights": "Evitar partits duplicats",
   "maximizeFights": "Saotori Shiai.",
@@ -442,6 +443,8 @@
   "achievementToolTip": "<b>{{achievementType}}</b><br>{{achievementDescription}}<br>Obtingut a:",
   "achievementToolTipObtainedAt": "Obtingut a",
   "achievementToolTipObtainedBy": "Obtingut per",
+  "achievementToolTipOthersTotal": "(Obtingut per altres <b>{{totalParticipants}}</b> competidors).",
+  "achievementToolTipTotal": "(Obtingut per <b>{{totalParticipants}}</b> competidors).",
   "time": "Temps",
   "lockedAt": "Bloquejat",
   "fightsStartedAt": "Inici partits",
@@ -628,6 +631,7 @@
     "masterTheLoop": {
       "title": "Domina el bucle",
       "description": "Guanya una Lliga a Roda.",
+      "normal": "Guanya una Lliga a Roda.",
       "bronze": "Domina el bucle en tres tornejos durant el mateix any.",
       "silver": "Domina el bucle en quatre tornejos durant el mateix any.",
       "gold": "Domina el bucle a cinc torneigs durant el mateix any."
@@ -732,5 +736,11 @@
   "senbatsuRungLength": "Distància entre desafiaments",
   "senbatsuRungLengthHint": "La disparitat màxima permesa a la capacitat entre dos competidors per tal d'establir un desafiament.",
   "reverseOrder": "Invertir",
-  "reverseOrderHint": "Invertir l'ordre dels equips."
+  "reverseOrderHint": "Invertir l'ordre dels equips.",
+  "fightsEnded": "Tots els partits s'han acabat.",
+  "yourWorstNightmare": "El teu pitjor malson",
+  "worstNightmareOf": "Tu ets el pitjor malson de",
+  "darkMode": "Mode Fosc",
+  "lightMode": "Mode Clar",
+  "newVersionAvailable": "La versió '{{newVersion}}' està disponible! La versió actual és '{{currentVersion}}'."
 }

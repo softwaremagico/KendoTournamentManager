@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,12 +51,9 @@ public class TournamentHandlerSelector {
         switch (type) {
             case LOOP:
                 return loopLeagueHandler;
-            case TREE:
-            case CHAMPIONSHIP:
+            case TREE, CHAMPIONSHIP:
                 return treeTournamentHandler;
             case CUSTOM_CHAMPIONSHIP:
-                //manager = new CustomChampionship(tournament);
-                //manager.fillGroups();
                 break;
             case CUSTOMIZED:
                 return customTournamentHandler;

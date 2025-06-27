@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -163,6 +163,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
 
 
     @Transactional
+    @Override
     public GroupDTO update(GroupDTO groupDTO, String username) {
         validate(groupDTO);
         final GroupDTO oldGroupDTO = get(groupDTO.getId());

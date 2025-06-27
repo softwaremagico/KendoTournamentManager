@@ -39,7 +39,10 @@ export class IconModule {
       .addSvgIcon("one-winner", this.setPath(`${this.path}/one-winner.svg`))
       .addSvgIcon("two-winners", this.setPath(`${this.path}/two-winners.svg`))
       .addSvgIcon("zip-file", this.setPath(`${this.path}/zip-file.svg`))
-      .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`));
+      .addSvgIcon("yourWorstNightmare", this.setPath(`${this.path}/yourWorstNightmare.svg`))
+      .addSvgIcon("youAreTheWorstNightmareOf", this.setPath(`${this.path}/youAreTheWorstNightmareOf.svg`))
+      .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`))
+      .addSvgIcon("whistle", this.setPath(`${this.path}/whistle.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

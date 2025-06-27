@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -77,7 +77,7 @@ public class BasicLogging extends AbstractLogging {
      */
     @Before(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
     public void beforeAdvice(JoinPoint joinPoint) {
-
+        //Not needed.
     }
 
     @Around(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
@@ -99,6 +99,7 @@ public class BasicLogging extends AbstractLogging {
      */
     @After(value = "(selectAll() || isAnnotated()) && !avoidClasses()")
     public void afterAdvice() {
+        //Not needed.
     }
 
     /**

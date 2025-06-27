@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -151,6 +151,7 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
         Assert.assertEquals(achievementsDTOs.get(0).getParticipant(), theKing);
     }
 
+    @Override
     @AfterClass(alwaysRun = true)
     public void wipeOut() {
         super.wipeOut();

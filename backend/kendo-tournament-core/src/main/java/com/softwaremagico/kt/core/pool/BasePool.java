@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.pool;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,10 +32,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class BasePool<ElementId, Type> {
-    // Elements by id;
-    private Map<ElementId, Long> elementsTime; // id -> time.
-    private Map<ElementId, Type> elementsById;
+public abstract class BasePool<ID, E> {
+    //Elements by id;
+    private Map<ID, Long> elementsTime; // id -> time.
+    private Map<ID, E> elementsById;
 
     protected BasePool() {
         reset();
@@ -47,7 +47,7 @@ public abstract class BasePool<ElementId, Type> {
         elementsById = new ConcurrentHashMap<>();
     }
 
-    public synchronized void addElement(Type element, ElementId key) {
+    public synchronized void addElement(E element, ID key) {
         PoolLogger.debug(this.getClass(), "Adding element '" + element + "' with key '" + key + "'.");
         if (getExpirationTime() > 0) {
             elementsTime.put(key, System.currentTimeMillis());
@@ -58,20 +58,20 @@ public abstract class BasePool<ElementId, Type> {
     /**
      * Gets all previously stored elements of a user in a site.
      *
-     * @param elementId element key for the pool.
+     * @param id element key for the pool.
      * @return the element that has the selected key.
      */
-    public synchronized Type getElement(ElementId elementId) {
-        if (elementId != null && getExpirationTime() > 0) {
+    public synchronized E getElement(ID id) {
+        if (id != null && getExpirationTime() > 0) {
             final long now = System.currentTimeMillis();
-            ElementId storedObjectId;
+            ID storedObjectId;
             if (elementsTime.size() > 0) {
                 PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsTime.size() + ".");
-                final Map<ElementId, Long> elementsByTimeChecked = new ConcurrentHashMap<>(elementsTime);
-                final Map<ElementId, Type> elementsByIdChecked = new ConcurrentHashMap<>(elementsById);
-                final Iterator<ElementId> elementByTime = elementsByTimeChecked.keySet().iterator();
+                final Map<ID, Long> elementsByTimeChecked = new ConcurrentHashMap<>(elementsTime);
+                final Map<ID, E> elementsByIdChecked = new ConcurrentHashMap<>(elementsById);
+                final Iterator<ID> elementByTime = elementsByTimeChecked.keySet().iterator();
 
-                for (final Entry<ElementId, Long> elementsByTimeEntry : elementsByTimeChecked.entrySet()) {
+                for (final Entry<ID, Long> elementsByTimeEntry : elementsByTimeChecked.entrySet()) {
                     storedObjectId = elementByTime.next();
                     if (elementsByTimeEntry.getValue() != null
                             && (now - elementsByTimeEntry.getValue()) > getExpirationTime()) {
@@ -88,10 +88,10 @@ public abstract class BasePool<ElementId, Type> {
                                         "Cache: " + elementsByIdChecked.get(storedObjectId).getClass().getName()
                                                 + " is dirty! ");
                                 removeElement(storedObjectId);
-                            } else if (Objects.equals(storedObjectId, elementId)) {
+                            } else if (Objects.equals(storedObjectId, id)) {
                                 PoolLogger.info(this.getClass(), "Cache: "
                                         + elementsByIdChecked.get(storedObjectId).getClass().getName()
-                                        + " store hit for " + elementId);
+                                        + " store hit for " + id);
                                 return elementsByIdChecked.get(storedObjectId);
                             }
                         }
@@ -99,18 +99,18 @@ public abstract class BasePool<ElementId, Type> {
                 }
             }
         }
-        PoolLogger.debug(this.getClass(), "Object with Id '" + elementId + "' - Cache Miss.");
+        PoolLogger.debug(this.getClass(), "Object with Id '" + id + "' - Cache Miss.");
         return null;
     }
 
-    public synchronized ElementId getKey(Type element) {
+    public synchronized ID getKey(E element) {
         if (element != null && getExpirationTime() > 0) {
             final long now = System.currentTimeMillis();
-            ElementId storedObjectId;
+            ID storedObjectId;
             if (elementsTime.size() > 0) {
                 PoolLogger.debug(this.getClass(), "Elements on cache: " + elementsTime.size() + ".");
-                for (final ElementId elementId : new ConcurrentHashMap<>(elementsTime).keySet()) {
-                    storedObjectId = elementId;
+                for (final ID id : new ConcurrentHashMap<>(elementsTime).keySet()) {
+                    storedObjectId = id;
                     if (elementsTime.get(storedObjectId) != null
                             && (now - elementsTime.get(storedObjectId)) > getExpirationTime()) {
                         PoolLogger.debug(this.getClass(), "Element '" + elementsTime.get(storedObjectId)
@@ -144,35 +144,35 @@ public abstract class BasePool<ElementId, Type> {
     public abstract long getExpirationTime();
 
 
-    public Set<Type> getAllPooledElements() {
+    public Set<E> getAllPooledElements() {
         return new HashSet<>(elementsById.values());
     }
 
 
-    public Set<ElementId> getAllPooledKeys() {
+    public Set<ID> getAllPooledKeys() {
         return new HashSet<>(elementsById.keySet());
     }
 
 
-    public Map<ElementId, Type> getElementsById() {
+    public Map<ID, E> getElementsById() {
         return elementsById;
     }
 
 
-    public Long getElementsTime(ElementId elementId) {
-        return elementsTime.get(elementId);
+    public Long getElementsTime(ID id) {
+        return elementsTime.get(id);
     }
 
-    public Map<ElementId, Long> getElementsTime() {
+    public Map<ID, Long> getElementsTime() {
         return elementsTime;
     }
 
 
-    public synchronized Type removeElement(ElementId elementId) {
-        if (elementId != null) {
-            PoolLogger.debug(this.getClass(), "Removing element '" + elementId + "'.");
-            elementsTime.remove(elementId);
-            return elementsById.remove(elementId);
+    public synchronized E removeElement(ID id) {
+        if (id != null) {
+            PoolLogger.debug(this.getClass(), "Removing element '" + id + "'.");
+            elementsTime.remove(id);
+            return elementsById.remove(id);
         }
         return null;
     }
@@ -184,5 +184,5 @@ public abstract class BasePool<ElementId, Type> {
      * @return if it is dirty or not.
      */
 
-    public abstract boolean isDirty(Type element);
+    public abstract boolean isDirty(E element);
 }

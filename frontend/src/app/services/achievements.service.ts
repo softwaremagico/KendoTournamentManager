@@ -8,6 +8,8 @@ import {SystemOverloadService} from "./notifications/system-overload.service";
 import {Observable} from "rxjs";
 import {catchError, tap} from "rxjs/operators";
 import {Achievement} from "../models/achievement.model";
+import {AchievementType} from "../models/achievement-type.model";
+import {AchievementGrade} from "../models/achievement-grade.model";
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +59,32 @@ export class AchievementsService {
           complete: () => this.systemOverloadService.isBusy.next(false),
         }),
         catchError(this.messageService.handleError<Achievement[]>(`generating tournaments achievements`))
+      );
+  }
+
+  countByTypes(): Observable<Map<AchievementType, Map<AchievementGrade, number>>> {
+    const url: string = `${this.baseUrl}/count/types`;
+    return this.http.get<Map<AchievementType, Map<AchievementGrade, number>>>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting achievements count`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<Map<AchievementType, Map<AchievementGrade, number>>>(`getting achievements count`))
+      );
+  }
+
+  countByType(type: AchievementType): Observable<number> {
+    const url: string = `${this.baseUrl}/count/types/${type}`;
+    return this.http.get<number>(url)
+      .pipe(
+        tap({
+          next: () => this.loggerService.info(`getting achievements count`),
+          error: () => this.systemOverloadService.isBusy.next(false),
+          complete: () => this.systemOverloadService.isBusy.next(false),
+        }),
+        catchError(this.messageService.handleError<number>(`getting achievements count`))
       );
   }
 }
