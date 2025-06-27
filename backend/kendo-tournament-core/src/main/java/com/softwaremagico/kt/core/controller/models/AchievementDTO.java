@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serial;
 
@@ -33,12 +34,15 @@ public class AchievementDTO extends ElementDTO {
 
     private static final int HASH_MAGIC = 31;
 
+    @NotNull
     private ParticipantDTO participant;
 
     private TournamentDTO tournament;
 
+    @NotNull
     private AchievementType achievementType;
 
+    @NotNull
     private AchievementGrade achievementGrade;
 
     public ParticipantDTO getParticipant() {

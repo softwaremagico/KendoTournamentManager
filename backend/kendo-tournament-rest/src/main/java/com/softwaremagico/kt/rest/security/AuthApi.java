@@ -44,6 +44,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -122,7 +123,7 @@ public class AuthApi {
 
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<IAuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         try {
             //Check if the IP is blocked.

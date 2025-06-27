@@ -22,13 +22,16 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.persistence.entities.Participant;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
 public class TemporalToken {
 
+    @NotNull
     private String content;
 
+    @NotNull
     private LocalDateTime temporalTokenExpirationTime;
 
     public TemporalToken() {

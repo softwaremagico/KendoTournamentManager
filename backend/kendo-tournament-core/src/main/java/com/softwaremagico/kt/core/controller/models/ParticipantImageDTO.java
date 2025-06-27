@@ -21,8 +21,11 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
 public class ParticipantImageDTO extends ImageDTO {
 
+    @NotNull
     private ParticipantDTO participant;
 
     public ParticipantDTO getParticipant() {
