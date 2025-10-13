@@ -27,3 +27,17 @@ User the file generated on `kendo-tournament-rest/target/kendo-tournament-backen
 # Update docker configuration
 
 Update the `.env` file with the new version and release names. 
+
+# Deploy library to GitHub and Mvn Repository
+
+For uploading a SNAPSHOT version on GitHub
+
+```
+ mvn deploy -DskipTests -DdeploySnapshot=true
+```
+
+For uploading a stable version on Mvn Repository
+
+```
+ mvn release:prepare release:perform
+```
