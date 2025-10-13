@@ -44,5 +44,7 @@ jobs:
             "-Dsonar.projectName=Kendo Tournament Manager"
             -Dsonar.projectKey=kendo-tournament-backend
             -Dsonar.java.binaries=.
+            -Dsonar.tests=**/src/test
+            -Dsonar.exclusions=**/src/test
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
