@@ -43,5 +43,9 @@ jobs:
             -Dsonar.organization=softwaremagico
             "-Dsonar.projectName=Kendo Tournament Manager"
             -Dsonar.projectKey=kendo-tournament-backend
+            -Dsonar.java.binaries=.
+            -Dsonar.tests=kendo-tournament-persistence/src/test2,kendo-tournament-core/src/test,kendo-tournament-pdf/src/test,kendo-tournament-rest/src/test
+            -Dsonar.test.inclusions=kendo-tournament-persistence/src/test,kendo-tournament-core/src/test,kendo-tournament-pdf/src/test,kendo-tournament-rest/src/test
+            -Dsonar.exclusions=kendo-tournament-persistence/src/test,kendo-tournament-core/src/test,kendo-tournament-pdf/src/test,kendo-tournament-rest/src/test
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
