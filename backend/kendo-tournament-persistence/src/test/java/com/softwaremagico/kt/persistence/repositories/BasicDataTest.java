@@ -40,8 +40,8 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
-    private static final Integer MEMBERS = 1;
-    private static final Integer TEAMS = 3;
+    private static final Integer NUMBER_OF_MEMBERS = 1;
+    private static final Integer TEAMS_SIZE = 3;
     private static final String TOURNAMENT_NAME = "basicTournamentTest";
 
     private static final Integer SHIAIJO = 0;
@@ -75,7 +75,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
 
     protected List<Participant> createParticipants(Club club) {
         List<Participant> membersCreated = new ArrayList<>();
-        for (int i = 0; i < MEMBERS * TEAMS; i++) {
+        for (int i = 0; i < NUMBER_OF_MEMBERS * TEAMS_SIZE; i++) {
             membersCreated.add(
                     participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
         }
@@ -83,7 +83,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected Tournament createTournament(String tournamentName) {
-        return tournamentRepository.save(new Tournament(tournamentName, 1, MEMBERS, TournamentType.LEAGUE, null));
+        return tournamentRepository.save(new Tournament(tournamentName, 1, NUMBER_OF_MEMBERS, TournamentType.LEAGUE, null));
     }
 
     protected List<Role> createRoles(List<Participant> members, Tournament tournament) {
@@ -114,7 +114,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
             teamMember++;
 
             // Team filled up, create a new team.
-            if (teamMember >= MEMBERS) {
+            if (teamMember >= NUMBER_OF_MEMBERS) {
                 team = null;
             }
         }
