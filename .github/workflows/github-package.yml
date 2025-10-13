@@ -1,0 +1,26 @@
+name: Publish package to GitHub Packages
+
+# Only trigger, when the build workflow succeeded
+on:
+  workflow_run:
+    workflows: ["Backend"]
+    types:
+      - completed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Publish package
+        run: mvn --batch-mode deploy -DskipTests -DdeploySnapshot=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
