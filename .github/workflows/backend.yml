@@ -45,5 +45,6 @@ jobs:
             -Dsonar.projectKey=kendo-tournament-backend
             -Dsonar.java.binaries=.
             -Dsonar.verbose=true
+            -Dsonar.exclusions=kendo-tournament-persistence/src/test,kendo-tournament-core/src/test,kendo-tournament-pdf/src/test,kendo-tournament-rest/src/test
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
