@@ -21,6 +21,6 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Publish package
-        run: mvn --batch-mode deploy -DskipTests -DdeploySnapshot=true
+        run: mvn --batch-mode deploy -DskipTests -DdeploySnapshot=true --file backend/pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
