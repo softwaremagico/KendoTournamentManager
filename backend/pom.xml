@@ -25,8 +25,7 @@
 
     <scm>
         <connection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentManager.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentManager.git
-        </developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/softwaremagico/KendoTournamentManager.git</developerConnection>
         <url>https://github.com/softwaremagico/KendoTournamentManager.git</url>
         <tag>kendo-tournament-2.0.0</tag>
     </scm>
@@ -105,6 +104,7 @@
         <javassist.version>3.25.0-GA</javassist.version>
         <qr-code.version>0.4.0</qr-code.version>
         <apache-batik.version>1.17</apache-batik.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
     </properties>
 
     <build>
@@ -209,5 +209,82 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!***REMOVED***GPG Signature on release -->
+        <profile>
+            <id>release-sign-artifacts</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <activation>
+                <property>
+                    <name>!deploySnapshot</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!***REMOVED***mvn deploy -DskipTests -DdeploySnapshot=true -->
+            <!***REMOVED***Needs github auth token -->
+            <id>snap-repository</id>
+            <activation>
+                <property>
+                    <name>deploySnapshot</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/softwaremagico/KendoTournamentManager</url>
+                </repository>
+                <snapshotRepository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/softwaremagico/KendoTournamentManager</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+
+        <profile>
+            <id>prod-repository</id>
+            <activation>
+                <property>
+                    <name>!deploySnapshot</name>
+                </property>
+            </activation>
+            <properties>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
 </project>
