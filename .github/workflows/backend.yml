@@ -19,7 +19,8 @@ on:
 
 
 jobs:
-  sonarqube:
+  build:
+    name: Build and Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,12 +36,13 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file backend/pom.xml
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6.0.0
+        uses: SonarSource/sonarqube-scan-action@master
         with:
           projectBaseDir: backend
           args: >
             -Dsonar.organization=softwaremagico
             "-Dsonar.projectName=Kendo Tournament Manager"
             -Dsonar.projectKey=kendo-tournament-backend
+            -Dsonar.java.binaries=.
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
