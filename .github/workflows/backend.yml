@@ -28,5 +28,11 @@ jobs:
           fetch-depth: 0
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6.0.0
+        with:
+          projectBaseDir: backend
+          args: >
+            -Dsonar.organization=softwaremagico
+            "-Dsonar.projectName=Kendo Tournament Manager"
+            -Dsonar.projectKey=kendo-tournament-backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
