@@ -62,3 +62,5 @@ jobs:
         with:
           tag_name: ${{ steps.last-release-tag.outputs.new_tag }}
           release_name: ${{ steps.last-release-tag.outputs.new_tag }}
+          draft: false
+          prerelease: false
