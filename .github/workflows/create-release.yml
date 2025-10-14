@@ -101,7 +101,7 @@ jobs:
           asset_name: kendo-tournament-backend.jar
           tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
-          draft: true
+          draft: false
 
 
 #  frontend:
