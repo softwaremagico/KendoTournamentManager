@@ -162,7 +162,7 @@ jobs:
           asset_name: kendo-tournament-frontend-docker.zip
           tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
-          draft: true
+          draft: false
 
       # Basic Resource
 
@@ -182,5 +182,5 @@ jobs:
           asset_name: kendo-tournament-frontend.zip
           tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
-          draft: true
+          draft: false
 
