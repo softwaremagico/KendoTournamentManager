@@ -99,7 +99,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: backend/kendo-tournament-rest/target/kendo-tournament-backend.jar
           asset_name: kendo-tournament-backend.jar
-          tag: ${{needs.deploy.outputs.newtag}}
+          tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
           draft: true
 
