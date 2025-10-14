@@ -158,8 +158,8 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/kendo-tournament-frontend-docker.zi
-          asset_name: kendo-tournament-frontend-docker.zi
+          file: dist/kendo-tournament-frontend-docker.zip
+          asset_name: kendo-tournament-frontend-docker.zip
           tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
           draft: true
