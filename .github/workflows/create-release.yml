@@ -133,6 +133,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Compiling docker resources
         run: ng build --configuration docker --output-hashing=all
