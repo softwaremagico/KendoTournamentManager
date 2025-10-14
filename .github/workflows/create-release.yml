@@ -160,7 +160,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/kendo-tournament-frontend-docker.zi
           asset_name: kendo-tournament-frontend-docker.zi
-          tag: ${{ steps.last-release-tag.outputs.new_tag }}
+          tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
           draft: true
 
@@ -180,7 +180,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/kendo-tournament-frontend.zip
           asset_name: kendo-tournament-frontend.zip
-          tag: ${{ steps.last-release-tag.outputs.new_tag }}
+          tag: ${{needs.version.outputs.new-tag}}
           overwrite: true
           draft: true
 
