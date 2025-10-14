@@ -73,6 +73,9 @@ jobs:
 #    name: Add backend binaries to this release
 #    runs-on: ubuntu-latest
 #    needs: version
+#    defaults:
+#      run:
+#        working-directory: 'backend'
 #
 #    steps:
 #      - uses: actions/checkout@v4
@@ -91,13 +94,13 @@ jobs:
 #          cache: maven
 #
 #      - name: Build with Maven
-#        run: mvn -B package --file backend/pom.xml -DskipTests
+#        run: mvn -B package --file pom.xml -DskipTests
 #
 #      - name: Upload backend binaries to release
 #        uses: svenstaro/upload-release-action@v2
 #        with:
 #          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: backend/kendo-tournament-rest/target/kendo-tournament-backend.jar
+#          file: kendo-tournament-rest/target/kendo-tournament-backend.jar
 #          asset_name: kendo-tournament-backend.jar
 #          tag: ${{needs.version.outputs.new-tag}}
 #          overwrite: true
@@ -108,6 +111,9 @@ jobs:
     name: Add frontend files to this release
     runs-on: ubuntu-latest
     needs: version
+    defaults:
+      run:
+        working-directory: 'frontend'
 
     strategy:
       matrix:
@@ -129,19 +135,18 @@ jobs:
           cache: 'npm'
 
       - name: Compiling docker resources
-        working-directory: frontend
         run: ng build --configuration docker --output-hashing=all
 
       - name: zip docker resource
         run: |
-          rm -f frontend/dist/kendo-tournament-frontend-docker.zip
-          zip -r frontend/dist/kendo-tournament-frontend-docker.zip frontend/dist/frontend    
+          rm -f dist/kendo-tournament-frontend-docker.zip
+          zip -r dist/kendo-tournament-frontend-docker.zip dist/frontend    
 
       - name: Upload docker frontend code to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: frontend/dist/kendo-tournament-frontend-docker.zi
+          file: dist/kendo-tournament-frontend-docker.zi
           asset_name: kendo-tournament-frontend-docker.zi
           tag: ${{ steps.last-release-tag.outputs.new_tag }}
           overwrite: true
@@ -155,19 +160,18 @@ jobs:
           cache: 'npm'
 
       - name: Compiling basic resources
-        working-directory: frontend
         run: ng build --configuration production --output-hashing=all
 
       - name: zip basic resource
         run: |
-          rm -f frontend/dist/kendo-tournament-frontend.zip
-          zip -r frontend/dist/kendo-tournament-frontend.zip frontend/dist/frontend   
+          rm -f dist/kendo-tournament-frontend.zip
+          zip -r dist/kendo-tournament-frontend.zip /dist/frontend   
 
       - name: Upload frontend code to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: frontend/dist/kendo-tournament-frontend.zip
+          file: dist/kendo-tournament-frontend.zip
           asset_name: kendo-tournament-frontend.zip
           tag: ${{ steps.last-release-tag.outputs.new_tag }}
           overwrite: true
