@@ -128,12 +128,10 @@ jobs:
       - name: Display used tag
         run: echo "Release tag is ${{needs.version.outputs.new-tag}}"
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Install Angular
+        uses: actions/angular-github-actions
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          version: 12.2.7
 
       - name: npm dependencies
         run: npm install
@@ -141,7 +139,9 @@ jobs:
       - name: Checking node
         run: node -v
 
-      - name: Compiling docker resources
+      # Docker Resource
+
+      - name: Building docker resources
         run: ng build --configuration docker --output-hashing=all
 
       - name: zip docker resource
@@ -159,14 +159,9 @@ jobs:
           overwrite: true
           draft: true
 
+      # Basic Resource
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Compiling basic resources
+      - name: Building basic resources
         run: ng build --configuration production --output-hashing=all
 
       - name: zip basic resource
