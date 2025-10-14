@@ -138,6 +138,9 @@ jobs:
       - name: npm dependencies
         run: npm install
 
+      - name: Checking node
+        run: node -v
+
       - name: Compiling docker resources
         run: ng build --configuration docker --output-hashing=all
 
