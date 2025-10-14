@@ -54,7 +54,7 @@ jobs:
 
       - id: assign
         name: Set environment variable
-        run: echo "NEW_TAG=${{ steps.last-release-tag.outputs.new_tag }}" >> GITHUB_OUTPUT
+        run: echo "NEW_TAG=${{ steps.last-release-tag.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
 
       - name: Display new tag
         run: echo "New tag is $NEW_TAG"
