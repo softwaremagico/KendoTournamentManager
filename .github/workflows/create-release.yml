@@ -120,13 +120,23 @@ jobs:
         node-version: [ 18.x ]
 
     steps:
-      - name: Install Angular
-        uses: actions/angular-github-actions
+      - uses: actions/checkout@v4
         with:
-          version: 12.2.7
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
+          fetch-depth: 0
 
       - name: Display used tag
         run: echo "Release tag is ${{needs.version.outputs.new-tag}}"
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Angular
+        uses: npm i -g @angular/cli
 
       - name: npm dependencies
         run: npm install
