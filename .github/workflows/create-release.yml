@@ -127,7 +127,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: ng build --configuration docker --output-hashing=all
+
+      - name: Compiling docker resources
+        working-directory: frontend
+        run: ng build --configuration docker --output-hashing=all
 
       - name: zip docker resource
         run: |
@@ -150,7 +153,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: ng build --configuration production --output-hashing=all
+
+      - name: Compiling basic resources
+        working-directory: frontend
+        run: ng build --configuration production --output-hashing=all
 
       - name: zip basic resource
         run: |
