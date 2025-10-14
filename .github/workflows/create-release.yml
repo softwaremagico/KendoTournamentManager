@@ -120,18 +120,13 @@ jobs:
         node-version: [ 18.x ]
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          # Disabling shallow clones is recommended for improving the relevancy of reporting
-          fetch-depth: 0
-
-      - name: Display used tag
-        run: echo "Release tag is ${{needs.version.outputs.new-tag}}"
-
       - name: Install Angular
         uses: actions/angular-github-actions
         with:
           version: 12.2.7
+
+      - name: Display used tag
+        run: echo "Release tag is ${{needs.version.outputs.new-tag}}"
 
       - name: npm dependencies
         run: npm install
