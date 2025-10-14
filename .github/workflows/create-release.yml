@@ -8,23 +8,57 @@ on:
 name: Create Release
 
 jobs:
-  build:
-    name: Create Release
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Create Release
-        id: create_release
-        uses: comnoco/create-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      - uses: actions/checkout@v4
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: true
-          prerelease: true
+          fetch-depth: 0  # Fetch all commits and tags
+
+      - name: Get last non-pre-release tag
+        id: last-release-tag
+        run: |
+          # Fetch all tags and filter for non-pre-release tags
+          non_pre_release_tags=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname)
+          
+          # Get the last non-pre-release tag
+          last_non_pre_release_tag=$(echo "$non_pre_release_tags" | head -n 1)
+          
+          if [ -z "$last_non_pre_release_tag" ]; then
+            # If no non-pre-release tags found, get the last pre-release tag
+            last_pre_release_tag=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*-rc.*' --sort=-v:refname | head -n 1)
+          
+            if [ -z "$last_pre_release_tag" ]; then
+              # If no tags found at all, create the initial version
+              new_tag="v0.0.1"
+            else
+              # Extract major, minor, and patch components from the last pre-release tag
+              IFS='.' read -r major minor patch rc_number <<< "$last_pre_release_tag"
+              # Remove the -rc suffix
+              new_tag="v$major.$minor.$patch"
+            fi
+          else
+            # Extract major, minor, and patch components from the last non-pre-release tag
+            IFS='.' read -r major minor patch <<< "$last_non_pre_release_tag"
+            # Increment the patch version
+            incremented_patch=$((patch + 1))
+            new_tag="$major.$minor.$incremented_patch"
+          fi
+          
+          echo "Last non-pre-release tag: $last_non_pre_release_tag"
+          echo "New tag: $new_tag"
+          echo "::set-output name=new_tag::$new_tag"
+
+      - name: Set environment variable
+        run: echo "NEW_TAG=${{ steps.last-release-tag.outputs.new_tag }}" >> $GITHUB_ENV
+
+      - name: Display new tag
+        run: echo "New tag is $NEW_TAG"
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.last-release-tag.outputs.new_tag }}
+          release_name: ${{ steps.last-release-tag.outputs.new_tag }}
