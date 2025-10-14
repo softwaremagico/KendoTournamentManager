@@ -136,7 +136,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Install Angular
-        uses: npm i -g @angular/cli
+        run: npm i -g @angular/cli
 
       - name: npm dependencies
         run: npm install
