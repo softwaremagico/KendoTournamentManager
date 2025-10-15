@@ -16,6 +16,11 @@ jobs:
     outputs:
       new-tag: ${{ steps.assign.outputs.NEW_TAG }}
     steps:
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all commits and tags
+
       - name: Get last non-pre-release tag
         id: last-release-tag
         run: |
@@ -80,7 +85,7 @@ jobs:
           fetch-depth: 0
 
       - name: Display used tag
-        run: echo "Release tag is ${{needs.version.outputs.new-tag}}"
+        run: echo "Release tag is ${{needs.release.outputs.new-tag}}"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -98,7 +103,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: backend/kendo-tournament-rest/target/kendo-tournament-backend.jar
           asset_name: kendo-tournament-backend.jar
-          tag: ${{needs.version.outputs.new-tag}}
+          tag: ${{needs.release.outputs.new-tag}}
           overwrite: true
           draft: false
 
@@ -123,7 +128,7 @@ jobs:
           fetch-depth: 0
 
       - name: Display used tag
-        run: echo "Release tag is ${{needs.version.outputs.new-tag}}"
+        run: echo "Release tag is ${{needs.release.outputs.new-tag}}"
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -157,7 +162,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: frontend/dist/kendo-tournament-frontend-docker.zip
           asset_name: kendo-tournament-frontend-docker.zip
-          tag: ${{needs.version.outputs.new-tag}}
+          tag: ${{needs.release.outputs.new-tag}}
           overwrite: true
           draft: false
 
@@ -177,7 +182,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: frontend/dist/kendo-tournament-frontend.zip
           asset_name: kendo-tournament-frontend.zip
-          tag: ${{needs.version.outputs.new-tag}}
+          tag: ${{needs.release.outputs.new-tag}}
           overwrite: true
           draft: false
 
