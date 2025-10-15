@@ -27,5 +27,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: danielchabr/pr-labels-checker@v3.1
         with:
-          hasSome: breaking change,feature,bug,style,refactor,test,chore,docs,ci,dependencies
+          hasSome: breaking change,feature,bug,style,refactor,test,chore,docs,documentation,ci,dependencies,enhancement,
           githubToken: $
