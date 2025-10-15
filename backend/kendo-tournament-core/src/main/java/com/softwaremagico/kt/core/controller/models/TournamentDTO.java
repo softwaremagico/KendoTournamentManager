@@ -26,10 +26,14 @@ import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.utils.IName;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TournamentDTO extends ElementDTO implements IName {
+
+    @Serial
+    private static final long serialVersionUID = -1072147970042436687L;
 
     @NotNull
     private String name;
