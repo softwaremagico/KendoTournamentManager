@@ -29,6 +29,7 @@ import com.softwaremagico.kt.utils.NameUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,9 @@ import java.util.Set;
 public class ParticipantDTO extends ElementDTO implements IParticipantName, IAuthenticatedUser {
 
     private static final int HASH_VALUE = 31;
+
+    @Serial
+    private static final long serialVersionUID = -646370421493264121L;
 
     private String idCard;
 

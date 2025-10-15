@@ -23,7 +23,12 @@ package com.softwaremagico.kt.core.controller.models;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
+
 public class QrCodeDTO extends ImageDTO {
+
+    @Serial
+    private static final long serialVersionUID = 1511975109651921168L;
 
     @NotNull
     private String content;

@@ -28,12 +28,17 @@ import com.softwaremagico.kt.utils.NameUtils;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class DuelDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 7680746819192793994L;
+
     private static final int CHARACTERS_TO_SHOW = 10;
 
     private ParticipantDTO competitor1;
