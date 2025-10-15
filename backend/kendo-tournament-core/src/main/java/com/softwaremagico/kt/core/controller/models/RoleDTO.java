@@ -24,9 +24,13 @@ package com.softwaremagico.kt.core.controller.models;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.Objects;
 
 public class RoleDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 1581295035177168112L;
 
     @NotNull
     private TournamentDTO tournament;

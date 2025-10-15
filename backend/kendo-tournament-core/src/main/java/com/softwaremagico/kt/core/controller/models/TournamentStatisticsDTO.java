@@ -23,11 +23,15 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.RoleType;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.Map;
 
 public class TournamentStatisticsDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 3369949989764424142L;
 
     private TournamentFightStatisticsDTO tournamentFightStatistics;
 

@@ -12,6 +12,7 @@ import {TournamentImageSelectorComponent} from "./tournament-image-selector/tour
 import {TournamentScoreEditorComponent} from "./tournament-score-editor/tournament-score-editor.component";
 import {TranslateService} from "@ngx-translate/core";
 import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/tournament-extra-properties.component";
+import {InputLimits} from "../../../utils/input-limits";
 
 @Component({
   selector: 'app-tournament-dialog-box',
@@ -19,6 +20,12 @@ import {TournamentExtraPropertiesComponent} from "./tournament-extra-properties/
   styleUrls: ['./tournament-dialog-box.component.scss']
 })
 export class TournamentDialogBoxComponent extends RbacBasedComponent {
+
+  protected TOURNAMENT_NAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected TOURNAMENT_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected TOURNAMENT_TYPE_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected TOURNAMENT_TYPE_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected TOURNAMENT_DUELS_DURATION_MAX_LENGTH: number = InputLimits.TINY_FIELD_LENGTH;
 
   tournament: Tournament;
   title: string;
@@ -61,7 +68,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
       tournamentName: new UntypedFormControl({
         value: this.tournament.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(60)]),
+      }, [Validators.required, Validators.minLength(this.TOURNAMENT_NAME_MIN_LENGTH), Validators.maxLength(this.TOURNAMENT_NAME_MAX_LENGTH)]),
       shiaijos: new UntypedFormControl({
         value: this.tournament.shiaijos,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
@@ -69,7 +76,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
       tournamentType: new UntypedFormControl({
         value: this.tournament.type,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      }, [Validators.required, Validators.minLength(this.TOURNAMENT_TYPE_MIN_LENGTH), Validators.maxLength(this.TOURNAMENT_TYPE_MAX_LENGTH)]),
       teamSize: new UntypedFormControl({
         value: this.tournament.teamSize,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
@@ -77,7 +84,7 @@ export class TournamentDialogBoxComponent extends RbacBasedComponent {
       duelsDuration: new UntypedFormControl({
         value: this.tournament.duelsDuration,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.maxLength(20)]),
+      }, [Validators.required, Validators.maxLength(this.TOURNAMENT_DUELS_DURATION_MAX_LENGTH)]),
       scoreTypes: new UntypedFormControl({
         value: this.tournament.tournamentScore?.scoreType,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
