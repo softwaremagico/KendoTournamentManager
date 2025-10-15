@@ -9,6 +9,7 @@ jobs:
       contents: write
       pull-requests: write
       id-token: write
+      checks: write
     runs-on: ubuntu-latest
     outputs:
       new-tag: ${{ steps.assign.outputs.NEW_TAG }}
