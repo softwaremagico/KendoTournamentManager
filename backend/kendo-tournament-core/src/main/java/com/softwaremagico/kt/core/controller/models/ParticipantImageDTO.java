@@ -23,7 +23,12 @@ package com.softwaremagico.kt.core.controller.models;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
+
 public class ParticipantImageDTO extends ImageDTO {
+
+    @Serial
+    private static final long serialVersionUID = -1972572694233042107L;
 
     @NotNull
     private ParticipantDTO participant;

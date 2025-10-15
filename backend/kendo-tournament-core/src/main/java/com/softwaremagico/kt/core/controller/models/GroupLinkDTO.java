@@ -23,7 +23,12 @@ package com.softwaremagico.kt.core.controller.models;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
+
 public class GroupLinkDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 2360843566067605915L;
 
     @NotNull
     private GroupDTO source;

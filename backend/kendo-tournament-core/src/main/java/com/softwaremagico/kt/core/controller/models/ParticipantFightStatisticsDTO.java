@@ -21,9 +21,13 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.io.Serial;
 import java.util.Objects;
 
 public class ParticipantFightStatisticsDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 7868206856267549959L;
 
     private Long menNumber;
 
