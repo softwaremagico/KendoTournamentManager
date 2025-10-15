@@ -24,9 +24,13 @@ package com.softwaremagico.kt.core.controller.models;
 import com.softwaremagico.kt.utils.IParticipantName;
 import com.softwaremagico.kt.utils.NameUtils;
 
+import java.io.Serial;
 import java.util.Objects;
 
 public class ParticipantReducedDTO extends ParticipantDTO implements IParticipantName {
+
+    @Serial
+    private static final long serialVersionUID = 6947724065869806700L;
 
     public ParticipantReducedDTO() {
     }
