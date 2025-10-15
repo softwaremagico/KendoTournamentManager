@@ -1,4 +1,4 @@
-name: Release Drafter
+name: Create Release Draft
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
       - opened
       - reopened
       - synchronize
-  workflow_dispatch:
 
 permissions:
   contents: read
