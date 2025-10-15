@@ -45,6 +45,9 @@ autolabeler:
   - label: 'feature'
     title:
       - '/feat:/i'
+  - label: 'enhancement'
+    title:
+      - '/feat:/i'
   - label: 'bug'
     title:
       - '/fix:/i'
@@ -61,6 +64,9 @@ autolabeler:
     title:
       - '/chore:/i'
   - label: 'docs'
+    title:
+      - '/docs:/i'
+  - label: 'documentation'
     title:
       - '/docs:/i'
   - label: 'ci'
