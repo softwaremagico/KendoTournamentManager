@@ -62,6 +62,10 @@ jobs:
           name: ${{ steps.last-release-tag.outputs.new_tag }}
           version: ${{ steps.last-release-tag.outputs.new_tag }}
           publish: true
+      - uses: danielchabr/pr-labels-checker@v3.1
+        with:
+          hasSome: breaking change,feature,bug,style,refactor,test,chore,docs,documentation,ci,dependencies,enhancement,
+          githubToken: $
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
