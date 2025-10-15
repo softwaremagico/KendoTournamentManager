@@ -16,23 +16,49 @@ jobs:
     outputs:
       new-tag: ${{ steps.assign.outputs.NEW_TAG }}
     steps:
-      - name: Get variables
-        id: version
-        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/v}"
-
-      - uses: actions/checkout@v4
-        with:
-          ref: v${{ steps.version.outputs.version }}
+      - name: Get last non-pre-release tag
+        id: last-release-tag
+        run: |
+          # Fetch all tags and filter for non-pre-release tags
+          non_pre_release_tags=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname)
+          
+          # Get the last non-pre-release tag
+          last_non_pre_release_tag=$(echo "$non_pre_release_tags" | head -n 1)
+          
+          if [ -z "$last_non_pre_release_tag" ]; then
+            # If no non-pre-release tags found, get the last pre-release tag
+            last_pre_release_tag=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*-rc.*' --sort=-v:refname | head -n 1)
+          
+            if [ -z "$last_pre_release_tag" ]; then
+              # If no tags found at all, create the initial version
+              new_tag="v0.0.1"
+            else
+              # Extract major, minor, and patch components from the last pre-release tag
+              IFS='.' read -r major minor patch rc_number <<< "$last_pre_release_tag"
+              # Remove the -rc suffix
+              new_tag="v$major.$minor.$patch"
+            fi
+          else
+            # Extract major, minor, and patch components from the last non-pre-release tag
+            IFS='.' read -r major minor patch <<< "$last_non_pre_release_tag"
+            # Increment the patch version
+            incremented_patch=$((patch + 1))
+            new_tag="$major.$minor.$incremented_patch"
+          fi
+          
+          echo "Last non-pre-release tag: $last_non_pre_release_tag"
+          echo "New tag: $new_tag"
+          echo "::set-output name=new_tag::$new_tag"
 
       - id: assign
         name: Set environment variable
-        run: echo "NEW_TAG=${{ steps.version.outputs.version }}" >> "$GITHUB_OUTPUT"
+        run: echo "NEW_TAG=${{ steps.last-release-tag.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
 
       - uses: release-drafter/release-drafter@v5
         with:
-          tag: v${{ steps.version.outputs.version }}
-          name: v${{ steps.version.outputs.version }}
-          version: v${{ steps.version.outputs.version }}
+          tag: ${{ steps.last-release-tag.outputs.new_tag }}
+          name: ${{ steps.last-release-tag.outputs.new_tag }}
+          version: ${{ steps.last-release-tag.outputs.new_tag }}
           publish: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
