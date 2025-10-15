@@ -49,5 +49,5 @@ Whenever a new pull request (PR) is created, a draft release is either generated
 as configured in `release-drafter.yml`.
 It is essential that each PR includes appropriate labels to ensure accurate documentation generation.
 
-To finalize a draft and create an official release, a new tag corresponding to the version must be created, as specified in `release.yml`.
+To finalize a draft and create an official release, a new git tag corresponding to the new version must be created.
 Subsequently, the system will package all relevant code and binaries directly into the release.
