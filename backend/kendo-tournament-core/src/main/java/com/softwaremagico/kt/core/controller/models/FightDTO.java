@@ -23,12 +23,17 @@ package com.softwaremagico.kt.core.controller.models;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class FightDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 1275809681534444389L;
+
     @NotNull
     private TeamDTO team1;
     @NotNull

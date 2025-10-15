@@ -23,10 +23,14 @@ package com.softwaremagico.kt.core.controller.models;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Objects;
 
 public class GroupDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = 6150597710422425177L;
 
     @NotNull
     private TournamentDTO tournament;
