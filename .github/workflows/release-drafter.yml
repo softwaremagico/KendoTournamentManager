@@ -9,6 +9,7 @@ on:
       - opened
       - reopened
       - synchronize
+  workflow_dispatch:
 
 permissions:
   contents: read
