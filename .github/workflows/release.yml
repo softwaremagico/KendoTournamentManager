@@ -57,16 +57,16 @@ jobs:
         name: Set environment variable
         run: echo "NEW_TAG=${{ steps.last-release-tag.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
 
-      - uses: release-drafter/release-drafter@v5
+      - uses: release-drafter/release-drafter@v6
         with:
           tag: ${{ steps.last-release-tag.outputs.new_tag }}
           name: ${{ steps.last-release-tag.outputs.new_tag }}
           version: ${{ steps.last-release-tag.outputs.new_tag }}
           publish: true
-      - uses: danielchabr/pr-labels-checker@v3.1
+      - uses: danielchabr/pr-labels-checker@v3.3
         with:
           hasSome: breaking change,feature,bug,style,refactor,test,chore,docs,documentation,ci,dependencies,enhancement,
-          githubToken: $
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
