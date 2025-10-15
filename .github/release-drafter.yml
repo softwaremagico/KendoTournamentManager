@@ -75,4 +75,5 @@ commitish: main
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&'
 template: |
+  ## What’s Changed
   $CHANGES
