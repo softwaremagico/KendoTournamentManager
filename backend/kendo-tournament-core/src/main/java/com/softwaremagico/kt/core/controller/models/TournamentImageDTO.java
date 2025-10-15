@@ -37,6 +37,7 @@ public class TournamentImageDTO extends ElementDTO {
     private static final String IMAGE_PNG_BASE_64 = "data:image/png;base64,";
     private static final String IMAGE_JPG_BASE_64 = "data:image/jpeg;base64,";
 
+
     @NotNull
     private TournamentDTO tournament;
 

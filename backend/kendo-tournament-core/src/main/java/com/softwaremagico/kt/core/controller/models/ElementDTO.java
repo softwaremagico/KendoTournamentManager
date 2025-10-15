@@ -33,7 +33,8 @@ public class ElementDTO implements Serializable {
 
     public static final int MAX_BIG_FIELD_LENGTH = 255;
     public static final int MAX_NORMAL_FIELD_LENGTH = 50;
-    public static final int MAX_SMALL_FIELD_LENGTH = 20;
+    public static final int MAX_SMALL_FIELD_LENGTH = 25;
+    public static final int MAX_TINY_FIELD_LENGTH = 10;
     public static final int MIN_FIELD_LENGTH = 2;
 
     private Integer id;
