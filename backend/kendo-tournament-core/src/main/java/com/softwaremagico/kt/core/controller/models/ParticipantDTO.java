@@ -42,6 +42,9 @@ public class ParticipantDTO extends ElementDTO implements IParticipantName, IAut
 
     private static final int HASH_VALUE = 31;
 
+    @Serial
+    private static final long serialVersionUID = -646370421493264121L;
+
     private String idCard;
 
     @NotBlank

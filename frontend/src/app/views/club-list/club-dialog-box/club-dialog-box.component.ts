@@ -6,6 +6,7 @@ import {RbacBasedComponent} from "../../../components/RbacBasedComponent";
 import {RbacService} from "../../../services/rbac/rbac.service";
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
+import {InputLimits} from "../../../utils/input-limits";
 
 @Component({
   selector: 'app-club-dialog-box',
@@ -13,6 +14,21 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
   styleUrls: ['./club-dialog-box.component.scss']
 })
 export class ClubDialogBoxComponent extends RbacBasedComponent {
+
+  protected CLUB_NAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected CLUB_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected CLUB_COUNTRY_MAX_LENGTH: number = InputLimits.MAX_SMALL_FIELD_LENGTH;
+  protected CLUB_COUNTRY_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected CLUB_CITY_MAX_LENGTH: number = InputLimits.MAX_SMALL_FIELD_LENGTH;
+  protected CLUB_CITY_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected CLUB_ADDRESS_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected CLUB_ADDRESS_MAX_LENGTH: number = InputLimits.MAX_BIG_FIELD_LENGTH;
+  protected CLUB_EMAIL_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected CLUB_PHONE_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected CLUB_PHONE_MAX_LENGTH: number = InputLimits.MAX_SMALL_FIELD_LENGTH;
+  protected CLUB_WEB_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected CLUB_WEB_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+
 
   club: Club;
   title: string;
@@ -35,31 +51,32 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
       clubName: new UntypedFormControl({
         value: this.club.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(40)]),
+      }, [Validators.required, Validators.minLength(this.CLUB_NAME_MIN_LENGTH), Validators.maxLength(this.CLUB_NAME_MAX_LENGTH)]),
       clubCountry: new UntypedFormControl({
         value: this.club.country,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      }, [Validators.required, Validators.minLength(this.CLUB_COUNTRY_MIN_LENGTH), Validators.maxLength(this.CLUB_COUNTRY_MAX_LENGTH)]),
       clubCity: new UntypedFormControl({
         value: this.club.city,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
+      }, [Validators.required, Validators.minLength(this.CLUB_CITY_MIN_LENGTH), Validators.maxLength(this.CLUB_CITY_MAX_LENGTH)]),
       clubAddress: new UntypedFormControl({
         value: this.club.address,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.minLength(4), Validators.maxLength(40)]),
+      }, [Validators.minLength(this.CLUB_ADDRESS_MIN_LENGTH), Validators.maxLength(this.CLUB_ADDRESS_MAX_LENGTH)]),
       clubEmail: new UntypedFormControl({
         value: this.club.email,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.email]),
+      }, [Validators.email, Validators.maxLength(this.CLUB_EMAIL_MAX_LENGTH)]),
       clubPhone: new UntypedFormControl({
         value: this.club.phone,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.pattern("[- +()0-9]+"), Validators.minLength(4), Validators.maxLength(20)]),
+      }, [Validators.pattern("[- +()0-9]+"), Validators.minLength(this.CLUB_PHONE_MIN_LENGTH), Validators.maxLength(this.CLUB_PHONE_MAX_LENGTH)]),
       clubWeb: new UntypedFormControl({
         value: this.club.web,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_TOURNAMENT)
-      }, [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'), Validators.minLength(4), Validators.maxLength(75)]),
+      }, [Validators.pattern('(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?'),
+        Validators.minLength(this.CLUB_WEB_MIN_LENGTH), Validators.maxLength(this.CLUB_WEB_MAX_LENGTH)]),
     });
   }
 
