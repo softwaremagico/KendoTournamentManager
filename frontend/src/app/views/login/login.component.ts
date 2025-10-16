@@ -10,7 +10,7 @@ import {AuthenticatedUser} from "../../models/authenticated-user";
 import {HttpHeaders} from "@angular/common/http";
 import {InfoService} from "../../services/info.service";
 import {TranslateService} from "@ngx-translate/core";
-import {environment} from "../../../environments/environment";
+import {EnvironmentService} from "../../environment.service";
 
 const {version: appVersion} = require('../../../../package.json')
 
@@ -25,12 +25,12 @@ export class LoginComponent implements OnInit {
   loginForm: UntypedFormGroup;
   appVersion: string;
 
-  protected checkForNewVersion: boolean = JSON.parse(String(environment.checkForNewVersion));
+  protected checkForNewVersion: boolean =  this.environmentService.isCheckForNewVersion();
 
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private loginService: LoginService, private rbacService: RbacService,
               private formBuilder: UntypedFormBuilder, private messageService: MessageService, private loggerService: LoggerService,
-              private infoService: InfoService, private translateService: TranslateService) {
+              private infoService: InfoService, private translateService: TranslateService, private environmentService: EnvironmentService) {
     this.appVersion = appVersion;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
