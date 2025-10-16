@@ -45,7 +45,7 @@ jobs:
         run: |
           cd docker
           VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
-          docker build -t softwaremagico/kendo-tournament-backend:latest -t softwaremagico/kendo-tournament-backend:${VERSION} --build-arg release=${VERSION} build/
+          docker build -t softwaremagico/kendo-tournament-backend:latest -t softwaremagico/kendo-tournament-backend:${VERSION} --build-arg release=${VERSION} backend/
 
 #      - name: Setting tags to backend image
 #        run: docker image tag kendo-tournament-backend softwaremagico/kendo-tournament-backend
