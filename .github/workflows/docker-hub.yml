@@ -25,7 +25,7 @@ jobs:
 #      - name: Set up Docker Buildx
 #        uses: docker/setup-buildx-action@v3
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
 #      - name: Build docker-compose
 #        run: docker buildx bake --file docker-compose.yml
@@ -51,5 +51,5 @@ jobs:
 #      - name: Setting tags to backend image
 #        run: docker image tag kendo-tournament-backend softwaremagico/kendo-tournament-backend
 #
-#      - name: Pushing backend image
-#        run: docker push softwaremagico/kendo-tournament-backend
+      - name: Pushing backend image
+        run: docker push softwaremagico/kendo-tournament-backend
