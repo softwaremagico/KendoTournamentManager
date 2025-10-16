@@ -171,8 +171,9 @@ jobs:
 
       - name: zip basic resource
         run: |
-          rm -f dist/kendo-tournament-frontend.zip
-          zip -r dist/kendo-tournament-frontend.zip dist/frontend   
+          mv dist/
+          rm -f kendo-tournament-frontend.zip
+          zip -r kendo-tournament-frontend.zip frontend   
 
       - name: Upload frontend code to release
         uses: svenstaro/upload-release-action@v2
