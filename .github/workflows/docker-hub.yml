@@ -38,4 +38,4 @@ jobs:
           source: "{{defaultContext}}:docker"
           push: true
           set: |
-            *.tags=user/app:latest
+            *.tags=softwaremagico/kendo-tournament-manager:latest
