@@ -41,14 +41,20 @@ jobs:
 #          set: |
 #            *.tags=softwaremagico/kendo-tournament-manager-backend:latest
 
-      - name: Creating docker images
+      - name: Creating backend docker images
         run: |
           cd docker
           VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
           docker build -t softwaremagico/kendo-tournament-manager-backend:latest -t softwaremagico/kendo-tournament-manager-backend:${VERSION} --build-arg release=${VERSION} backend/
 
-#      - name: Setting tags to backend image
-#        run: docker image tag kendo-tournament-backend softwaremagico/kendo-tournament-backend
-#
+      - name: Creating frontend docker images
+        run: |
+          cd docker
+          VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
+          docker build -t softwaremagico/kendo-tournament-manager-frontend:latest -t softwaremagico/kendo-tournament-manager-frontend:${VERSION} --build-arg release=${VERSION} frontend/          
+
       - name: Pushing backend image
-        run: docker push softwaremagico/kendo-tournament-backend
+        run: docker push softwaremagico/kendo-tournament-manager-backend
+
+      - name: Pushing frontend image
+        run: docker push softwaremagico/kendo-tournament-manager-frontend
