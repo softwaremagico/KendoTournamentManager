@@ -22,7 +22,7 @@ import {ParticipantService} from "../../services/participant.service";
 import {Participant} from "../../models/participant";
 import {LoginService} from "../../services/login.service";
 import {MatDialog} from "@angular/material/dialog";
-import {environment} from "../../../environments/environment";
+import {EnvironmentService} from "../../environment.service";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -39,7 +39,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
 
-  protected achievementsEnabled: boolean = JSON.parse(String(environment.achievementsEnabled));
+  protected achievementsEnabled: boolean = this.environmentService.isAchievementsEnabled();
 
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
@@ -56,7 +56,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
               private translateService: TranslateService, private rankingService: RankingService,
               private achievementService: AchievementsService, private participantService: ParticipantService,
-              private loginService: LoginService, public dialog: MatDialog) {
+              private loginService: LoginService, public dialog: MatDialog, private environmentService: EnvironmentService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
