@@ -32,11 +32,22 @@ jobs:
 #        with:
 #          projectBaseDir: docker
 
-      - name: Publish docker image
-        uses: docker/bake-action@v6
+#      - name: Publish backend docker image
+#        uses: docker/bake-action@v6
+#        with:
+#          source: "{{defaultContext}}:docker"
+#          workdir: "docker"
+#          push: true
+#          set: |
+#            *.tags=softwaremagico/kendo-tournament-manager-backend:latest
+
+      - name: Creating docker images
+        run: docker-compose build
         with:
-          source: "{{defaultContext}}:docker"
           workdir: "docker"
-          push: true
-          set: |
-            *.tags=softwaremagico/kendo-tournament-manager:latest
+
+      - name: Setting tags to backend image
+        run: docker image tag kendo-tournament-backend softwaremagico/kendo-tournament-backend
+
+      - name: Pushing backend image
+        run: docker push softwaremagico/kendo-tournament-backend
