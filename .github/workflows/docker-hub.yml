@@ -46,15 +46,13 @@ jobs:
           cd docker
           VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
           docker build -t softwaremagico/kendo-tournament-manager-backend:latest -t softwaremagico/kendo-tournament-manager-backend:${VERSION} --build-arg release=${VERSION} backend/
+          docker push softwaremagico/kendo-tournament-manager-backend:latest
+          docker push softwaremagico/kendo-tournament-manager-backend:${VERSION}
 
       - name: Creating frontend docker images
         run: |
           cd docker
           VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
-          docker build -t softwaremagico/kendo-tournament-manager-frontend:latest -t softwaremagico/kendo-tournament-manager-frontend:${VERSION} --build-arg release=${VERSION} frontend/          
-
-      - name: Pushing backend image
-        run: docker push softwaremagico/kendo-tournament-manager-backend
-
-      - name: Pushing frontend image
-        run: docker push softwaremagico/kendo-tournament-manager-frontend
+          docker build -t softwaremagico/kendo-tournament-manager-frontend:latest -t softwaremagico/kendo-tournament-manager-frontend:${VERSION} --build-arg release=${VERSION} frontend/
+          docker push softwaremagico/kendo-tournament-manager-frontend:latest
+          docker push softwaremagico/kendo-tournament-manager-frontend:${VERSION}
