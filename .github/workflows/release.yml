@@ -151,8 +151,9 @@ jobs:
 
       - name: zip docker resource
         run: |
-          rm -f dist/kendo-tournament-frontend-docker.zip
-          zip -r dist/kendo-tournament-frontend-docker.zip dist/frontend    
+          cd dist/
+          rm -f kendo-tournament-frontend-docker.zip
+          zip -r kendo-tournament-frontend-docker.zip frontend    
 
       - name: Upload docker frontend code to release
         uses: svenstaro/upload-release-action@v2
