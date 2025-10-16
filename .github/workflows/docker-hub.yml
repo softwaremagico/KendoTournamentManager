@@ -16,6 +16,9 @@ jobs:
     # More about permissions here: https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
     permissions: write-all
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -27,7 +30,15 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Build docker-compose
-        run: docker buildx bake --file docker-compose.yml
+#      - name: Build docker-compose
+#        run: docker buildx bake --file docker-compose.yml
+#        with:
+#          projectBaseDir: docker
+
+      - name: Publish docker image
+        uses: docker/build-push-action@v6
         with:
-          projectBaseDir: docker
+          context: "{{defaultContext}}:docker"
+          push: true
+          file: docker-compose.yml
+          tags: softwaremagico/kendo-tournament-manager:latest
