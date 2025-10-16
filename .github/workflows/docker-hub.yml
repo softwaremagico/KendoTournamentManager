@@ -36,6 +36,7 @@ jobs:
         uses: docker/bake-action@v6
         with:
           source: "{{defaultContext}}:docker"
+          workdir: "docker"
           push: true
           set: |
             *.tags=softwaremagico/kendo-tournament-manager:latest
