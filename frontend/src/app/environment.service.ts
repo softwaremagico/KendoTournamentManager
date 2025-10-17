@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core';
-import {Environment} from "./environment.interface";
-import {environment} from '../environments/environment';
+import {EnvironmentData} from "./environment-data.interface";
+import {Environment} from '../environments/environment';
 
-declare let __config: Environment;
+declare let __config: EnvironmentData;
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentService {
 
-  private backendUrl: string = __config.backendUrl ? __config.backendUrl : environment.backendUrl;
-  private websocketUrl: string = __config.websocketsUrl ? __config.websocketsUrl : environment.websocketsUrl;
-  private websocketPrefix: string = __config.websocketsTopicPrefix ? __config.websocketsUrl : environment.websocketsUrl;
-  private achievementsEnabled: boolean = __config.achievementsEnabled ? __config.achievementsEnabled : environment.achievementsEnabled;
-  private checkForNewVersion: boolean = __config.checkForNewVersion ? __config.checkForNewVersion : environment.checkForNewVersion;
+  private backendUrl: string = __config.backendUrl ? __config.backendUrl : Environment.backendUrl;
+  private websocketUrl: string = __config.websocketsUrl ? __config.websocketsUrl : Environment.websocketsUrl;
+  private websocketPrefix: string = __config.websocketsTopicPrefix ? __config.websocketsTopicPrefix : Environment.websocketsTopicPrefix;
+  private achievementsEnabled: boolean = __config.achievementsEnabled ? __config.achievementsEnabled : (Environment.achievementsEnabled as unknown as boolean);
+  private checkForNewVersion: boolean = __config.checkForNewVersion ? __config.checkForNewVersion : (Environment.checkForNewVersion as unknown as boolean);
 
   getBackendUrl(): string {
     return this.backendUrl;
