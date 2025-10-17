@@ -75,7 +75,8 @@ public class JwtTokenUtil {
             try {
                 calculatedJwtExpiration = Long.parseLong(jwtExpiration);
             } catch (NumberFormatException e) {
-                RestServerLogger.warning(this.getClass().getName(), "jwt.expiration value '{}' is invalid", jwtExpiration);
+                RestServerLogger.warning(this.getClass().getName(), "jwt.expiration value '{}' is invalid. Setting default to '{}'.",
+                        jwtExpiration, JWT_EXPIRATION);
                 calculatedJwtExpiration = JWT_EXPIRATION;
             }
         }
