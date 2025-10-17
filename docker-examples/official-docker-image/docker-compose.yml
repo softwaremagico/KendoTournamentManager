@@ -97,6 +97,8 @@ services:
     working_dir: /opt/kendo-tournament-backend/
     depends_on:
       - "kendo-tournament-database"
+    environment:
+      - EXTERNAL_CONFIG_FILE=/opt/kendo-tournament-backend/application.properties
     labels:
       - "traefik.enable=true"
       - "traefik.backend=kendo-tournament-backend"
