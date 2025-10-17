@@ -1,4 +1,4 @@
-export interface Environment {
+export interface EnvironmentData {
   backendUrl: string;
   websocketsUrl: string;
   websocketsTopicPrefix: string;
