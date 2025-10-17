@@ -53,7 +53,7 @@ jobs:
         run: |
           cd docker
           VERSION=`grep -hnr "version=" .env | cut -d '=' -f 2`
-          docker build -t softwaremagico/kendo-tournament-manager-frontend:latest -t softwaremagico/kendo-tournament-manager-frontend:${VERSION} --build-arg release=${VERSION} --build-arg achievements_enabled=true --build-arg check_new_version_enabled=true --build-arg protocol=http frontend/
+          docker build -t softwaremagico/kendo-tournament-manager-frontend:latest -t softwaremagico/kendo-tournament-manager-frontend:${VERSION} --build-arg release=${VERSION} --build-arg achievements_enabled=true --build-arg check_new_version_enabled=true --build-arg protocol=http --build-arg websocket_protocol=http --build-arg machine_domain=localhost frontend/
           docker push softwaremagico/kendo-tournament-manager-frontend:latest
           docker push softwaremagico/kendo-tournament-manager-frontend:${VERSION}
 
