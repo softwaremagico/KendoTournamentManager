@@ -86,4 +86,10 @@ export class Duel extends Element {
     }
     return true;
   }
+
+  public isStarted(): boolean {
+    return this.duration != undefined
+      || this.competitor1Score.length > 0 || this.competitor2Score.length > 0
+      || this.competitor1Fault || this.competitor2Fault;
+  }
 }

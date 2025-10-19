@@ -164,30 +164,18 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     this.membersOrderChangedService.membersOrderChanged.pipe(takeUntil(this.destroySubject)).subscribe((_fight: Fight): void => {
       let onlyNewFights: boolean = false;
       let updatedFights: boolean = false;
-      if (_fight && this.groups) {
+      if (_fight && this.groups && this.tournament) {
         this.resetFilter();
         for (const group of this.groups) {
           for (const fight of group.fights) {
-            if (onlyNewFights && fight.team1.id === _fight.team1.id) {
-              for (let i = 0; i < this.tournament.teamSize; i++) {
-                if (!fight.duels[i].duration) {
-                  fight.duels[i].competitor1 = _fight.duels[i].competitor1;
-                  this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
-                  updatedFights = true;
-                }
-              }
-            } else if (onlyNewFights && fight.team2.id === _fight.team2.id) {
-              for (let i = 0; i < this.tournament.teamSize; i++) {
-                if (!fight.duels[i].duration) {
-                  fight.duels[i].competitor2 = _fight.duels[i].competitor2;
-                  this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
-                  updatedFights = true;
-                }
-              }
-            }
             //Only this fight and the next ones. Not the previous ones.
             if (fight === _fight) {
               onlyNewFights = true;
+            }
+            if (onlyNewFights) {
+              if (this.updateTeamOrder(fight, _fight)) {
+                updatedFights = true;
+              }
             }
           }
         }
@@ -209,6 +197,28 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       }
     });
+  }
+
+  updateTeamOrder(fight: Fight, fightReordered: Fight): boolean {
+    let updatedFights: boolean = false;
+    for (let i = 0; i < this.tournament.teamSize; i++) {
+      if (fight.duels[i] && !fight.duels[i].duration) {
+        if (fight.team1.id === fightReordered.team1.id) {
+          fight.duels[i].competitor1 = fightReordered.duels[i].competitor1;
+        } else if (fight.team2.id === fightReordered.team1.id) {
+          fight.duels[i].competitor2 = fightReordered.duels[i].competitor1;
+        } else if (fight.team1.id === fightReordered.team2.id) {
+          fight.duels[i].competitor1 = fightReordered.duels[i].competitor2;
+        } else if (fight.team2.id === fightReordered.team2.id) {
+          fight.duels[i].competitor2 = fightReordered.duels[i].competitor2;
+        } else {
+          continue;
+        }
+        this.duelChangedService.isDuelUpdated.next(fight.duels[i]);
+        updatedFights = true;
+      }
+    }
+    return updatedFights;
   }
 
   @HostListener('document:keypress', ['$event'])
