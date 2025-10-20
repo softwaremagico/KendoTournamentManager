@@ -184,6 +184,7 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${license-maven-plugin.version}</version>
                 <configuration>
+                    <organizationName>SoftwareMagico</organizationName>
                     <inceptionYear>2021</inceptionYear>
                     <licenseName>agpl_v3</licenseName>
                     <excludes>
