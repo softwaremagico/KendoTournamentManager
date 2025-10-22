@@ -130,8 +130,9 @@ services:
     restart: always
     networks:
       - containers
+      - external
     ports:
-      - "8080"
+      - "8080:8080"
     volumes:
       - /dev/urandom:/dev/random
     container_name: kendo-tournament-backend
