@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +82,7 @@ import java.util.Set;
 public class AuthApi {
     private static final int MAX_WAITING_SECONDS = 10;
     private static final long MILLIS = 1000L;
+    public static final String SESSION_HEADER = "X-Session";
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticatedUserController authenticatedUserController;
@@ -162,8 +164,7 @@ public class AuthApi {
 
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                        .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
@@ -217,8 +218,7 @@ public class AuthApi {
 
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                        .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
@@ -244,8 +244,7 @@ public class AuthApi {
         final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                .header(HttpHeaders.EXPIRES, String.valueOf(milliseconds))
+                .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
                 .body(token.getParticipant());
     }
 
@@ -334,18 +333,27 @@ public class AuthApi {
     @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
+    public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest,
+                                          @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
         JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),
                 new Date(jwtExpiration));
+        final String accessToken = jwtTokenUtil.generateAccessToken(user, ip);
+        final String session = jwtTokenUtil.getSession(accessToken);
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
-                .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                .headers(getLoginHeaders(accessToken, jwtExpiration, session))
                 .build();
     }
 
 
+    private HttpHeaders getLoginHeaders(String jwtToken, long expirationTime, String session) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
+        headers.add(HttpHeaders.EXPIRES, String.valueOf(expirationTime));
+        headers.add(SESSION_HEADER, session);
+        return headers;
+    }
 }

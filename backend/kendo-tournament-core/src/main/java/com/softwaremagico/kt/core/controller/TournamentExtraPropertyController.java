@@ -63,13 +63,13 @@ public class TournamentExtraPropertyController extends BasicInsertableController
     }
 
     @Override
-    public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username) {
+    public TournamentExtraPropertyDTO update(TournamentExtraPropertyDTO dto, String username, String session) {
         getProvider().deleteByTournamentAndProperty(tournamentConverter.reverse(dto.getTournament()), dto.getPropertyKey());
         //Remove any existing group if changed.
         if (dto.getPropertyKey() == TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP) {
             groupProvider.delete(tournamentConverter.reverse(dto.getTournament()));
         }
-        return super.update(dto, username);
+        return super.update(dto, username, session);
     }
 
     public List<TournamentExtraPropertyDTO> getByTournamentId(Integer tournamentId) {

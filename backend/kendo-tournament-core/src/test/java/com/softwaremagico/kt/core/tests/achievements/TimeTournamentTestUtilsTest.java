@@ -114,7 +114,7 @@ public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
             participant.setCreatedAt(LocalDateTime.now().minusYears(years).minusHours(1));
             years--;
         }
-        participantController.updateAll(participants, null);
+        participantController.updateAll(participants, null, null);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")

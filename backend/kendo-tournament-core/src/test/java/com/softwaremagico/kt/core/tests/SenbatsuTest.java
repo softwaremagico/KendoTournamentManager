@@ -209,7 +209,7 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(4))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team05");
-        fightController.create(fight, null);
+        fightController.create(fight, null, null);
     }
 
     @Test(dependsOnMethods = {"addTeams"}, expectedExceptions = InvalidFightException.class)
@@ -222,7 +222,7 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(4))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team02");
         Assert.assertEquals(fight.getTeam2().getName(), "Team05");
-        fightController.create(fight, null);
+        fightController.create(fight, null, null);
     }
 
 
@@ -236,13 +236,13 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(2))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team03");
-        fight = fightController.create(fight, null);
+        fight = fightController.create(fight, null, null);
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
         fight.getDuels().get(0).addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
-        fightController.update(fight, null);
+        fightController.update(fight, null, null);
 
         //Save the fight at group.
         Group group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
@@ -261,13 +261,13 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(1))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team02");
         Assert.assertEquals(fight.getTeam2().getName(), "Team01");
-        fight = fightController.create(fight, null);
+        fight = fightController.create(fight, null, null);
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
         fight.getDuels().get(0).addCompetitor2Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
-        fightController.update(fight, null);
+        fightController.update(fight, null, null);
 
         //Save the fight at group.
         group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
@@ -287,13 +287,13 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(1))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team04");
-        fight = fightController.create(fight, null);
+        fight = fightController.create(fight, null, null);
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
         fight.getDuels().get(0).addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
-        fightController.update(fight, null);
+        fightController.update(fight, null, null);
 
         //Save the fight at group.
         group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
@@ -314,13 +314,13 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(2))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team01");
         Assert.assertEquals(fight.getTeam2().getName(), "Team06");
-        fight = fightController.create(fight, null);
+        fight = fightController.create(fight, null, null);
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
         fight.getDuels().get(0).addCompetitor1Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
-        fightController.update(fight, null);
+        fightController.update(fight, null, null);
 
         //Save the fight at group.
         group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);
@@ -342,13 +342,13 @@ public class SenbatsuTest extends AbstractTestNGSpringContextTests {
                 teamConverter.convert(new TeamConverterRequest(teams.get(1))), 0, 0);
         Assert.assertEquals(fight.getTeam1().getName(), "Team05");
         Assert.assertEquals(fight.getTeam2().getName(), "Team01");
-        fight = fightController.create(fight, null);
+        fight = fightController.create(fight, null, null);
         fightController.generateDuels(fight, null);
 
         //Wins Team01.
         fight.getDuels().get(0).addCompetitor2Score(Score.DO);
         fight.getDuels().forEach(duel -> duel.setFinished(true));
-        fightController.update(fight, null);
+        fightController.update(fight, null, null);
 
         //Save the fight at group.
         group = senbatsuTournamentHandler.getGroups(tournament, 0).get(0);

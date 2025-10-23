@@ -119,9 +119,9 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 10);
-        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament1DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament1DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament1DTO, bambooAchievementParticipant, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament1DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament1DTO, loveSharerSometimes, RoleType.VOLUNTEER), null, null);
         achievementController.generateAchievements(tournament1DTO);
     }
 
@@ -129,8 +129,8 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 9);
-        roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
-        roleController.create(new RoleDTO(tournament2DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament2DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null, null);
+        roleController.create(new RoleDTO(tournament2DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
         achievementController.generateAchievements(tournament2DTO);
     }
 
@@ -138,8 +138,8 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament3() {
         tournament3DTO = addTournament(TOURNAMENT3_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 8);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
-        roleController.create(new RoleDTO(tournament3DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament3DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null, null);
+        roleController.create(new RoleDTO(tournament3DTO, loveSharerSometimes, RoleType.VOLUNTEER), null, null);
         achievementController.generateAchievements(tournament3DTO);
     }
 
@@ -147,8 +147,8 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament4() {
         tournament4DTO = addTournament(TOURNAMENT4_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 7);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament4DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
-        roleController.create(new RoleDTO(tournament4DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
+        roleController.create(new RoleDTO(tournament4DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null, null);
+        roleController.create(new RoleDTO(tournament4DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
         achievementController.generateAchievements(tournament4DTO);
     }
 
@@ -156,10 +156,10 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament5() {
         tournament5DTO = addTournament(TOURNAMENT5_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 6);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.PRESS), null);
-        roleController.create(new RoleDTO(tournament5DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament5DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
-        roleController.create(new RoleDTO(tournament5DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament5DTO, bambooAchievementParticipant, RoleType.PRESS), null, null);
+        roleController.create(new RoleDTO(tournament5DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament5DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null, null);
+        roleController.create(new RoleDTO(tournament5DTO, loveSharerSometimes, RoleType.VOLUNTEER), null, null);
         achievementController.generateAchievements(tournament5DTO);
     }
 
@@ -167,9 +167,9 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament6() {
         tournament6DTO = addTournament(TOURNAMENT6_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 5);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament6DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null);
-        roleController.create(new RoleDTO(tournament6DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament6DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament6DTO, bambooAchievementParticipant, RoleType.COMPETITOR), null, null);
+        roleController.create(new RoleDTO(tournament6DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament6DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null, null);
         achievementController.generateAchievements(tournament6DTO);
     }
 
@@ -177,9 +177,9 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament7() {
         tournament7DTO = addTournament(TOURNAMENT7_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 4);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament7DTO, bambooAchievementParticipant, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament7DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
-        roleController.create(new RoleDTO(tournament7DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament7DTO, bambooAchievementParticipant, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament7DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null, null);
+        roleController.create(new RoleDTO(tournament7DTO, loveSharerSometimes, RoleType.VOLUNTEER), null, null);
         achievementController.generateAchievements(tournament7DTO);
     }
 
@@ -187,9 +187,9 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament8() {
         tournament8DTO = addTournament(TOURNAMENT8_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 3);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament8DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null);
-        roleController.create(new RoleDTO(tournament8DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament8DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament8DTO, bambooAchievementParticipant, RoleType.ORGANIZER), null, null);
+        roleController.create(new RoleDTO(tournament8DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament8DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null, null);
         achievementController.generateAchievements(tournament8DTO);
     }
 
@@ -197,9 +197,9 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament9() {
         tournament9DTO = addTournament(TOURNAMENT9_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 2);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament9DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null);
-        roleController.create(new RoleDTO(tournament9DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament9DTO, loveSharerSometimes, RoleType.VOLUNTEER), null);
+        roleController.create(new RoleDTO(tournament9DTO, bambooAchievementParticipant, RoleType.VOLUNTEER), null, null);
+        roleController.create(new RoleDTO(tournament9DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament9DTO, loveSharerSometimes, RoleType.VOLUNTEER), null, null);
         achievementController.generateAchievements(tournament9DTO);
     }
 
@@ -207,9 +207,9 @@ public class RoleAchievementsTest extends TournamentTestUtils {
     public void prepareTournament10() {
         tournament10DTO = addTournament(TOURNAMENT10_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 1);
         //Create Tournament
-        roleController.create(new RoleDTO(tournament10DTO, bambooAchievementParticipant, RoleType.PRESS), null);
-        roleController.create(new RoleDTO(tournament10DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null);
-        roleController.create(new RoleDTO(tournament10DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null);
+        roleController.create(new RoleDTO(tournament10DTO, bambooAchievementParticipant, RoleType.PRESS), null, null);
+        roleController.create(new RoleDTO(tournament10DTO, iLoveTheFlagsParticipantSometimes, RoleType.REFEREE), null, null);
+        roleController.create(new RoleDTO(tournament10DTO, looksGoodFromFarAwaySometimes, RoleType.ORGANIZER), null, null);
         achievementController.generateAchievements(tournament10DTO);
     }
 
