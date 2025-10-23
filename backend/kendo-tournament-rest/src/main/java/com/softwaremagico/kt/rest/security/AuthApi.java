@@ -354,6 +354,7 @@ public class AuthApi {
         headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
         headers.add(HttpHeaders.EXPIRES, String.valueOf(expirationTime));
         headers.add(SESSION_HEADER, session);
+        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, SESSION_HEADER);
         return headers;
     }
 }
