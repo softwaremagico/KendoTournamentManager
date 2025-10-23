@@ -67,7 +67,6 @@ export class SenbatsuFightDialogBoxComponent extends FightDialogBoxComponent imp
 
       //Disable teams that are not reachable.
       const challengeDistance: number = Number(_challengeProperty.propertyValue);
-      console.log(challengeDistance)
       this.teamDragDisabled = _teams.slice(challengeDistance);
     });
 

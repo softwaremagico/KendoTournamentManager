@@ -38,6 +38,7 @@ import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,6 +56,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -128,11 +130,13 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                           @RequestParam(name = "roles", required = false) RoleType[] roles,
                                                           @Parameter(description = "Not printed before")
                                                           @RequestParam(name = "onlyNew", required = false) Boolean onlyNew,
+                                                          @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                                           Locale locale, HttpServletResponse response, Authentication authentication,
                                                           HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
         try {
-            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null && onlyNew, authentication.getName(),
+            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, onlyNew != null && onlyNew,
+                    authentication.getName(), session,
                     roles).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - accreditations.pdf").build();
@@ -151,6 +155,7 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                                  @PathVariable("tournamentId") Integer tournamentId,
                                                                  @PathVariable("roleType") RoleType roleType,
                                                                  @RequestBody ParticipantDTO participant,
+                                                                 @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                                                  Locale locale, HttpServletResponse response, Authentication authentication,
                                                                  HttpServletRequest request) {
         if (participant == null) {
@@ -158,7 +163,8 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
         }
         final TournamentDTO tournament = getController().get(tournamentId);
         try {
-            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType, authentication.getName()).generate();
+            final byte[] bytes = pdfController.generateTournamentAccreditations(locale, tournament, participant, roleType, authentication.getName(), session)
+                    .generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - accreditations.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
@@ -178,12 +184,13 @@ public class TournamentServices extends BasicServices<Tournament, TournamentDTO,
                                                     @RequestParam(name = "roles", required = false) RoleType[] roles,
                                                     @Parameter(description = "Not printed before")
                                                     @RequestParam(name = "onlyNew", required = false) Boolean onlyNew,
+                                                    @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                                     Locale locale, HttpServletResponse response, Authentication authentication,
                                                     HttpServletRequest request) throws NoContentException {
         final TournamentDTO tournament = getController().get(tournamentId);
         try {
             final byte[] bytes = pdfController.generateTournamentDiplomas(tournament, onlyNew != null && onlyNew,
-                    authentication.getName(), roles).generate();
+                    authentication.getName(), session, roles).generate();
             final ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
                     .filename(tournament.getName() + " - diplomas.pdf").build();
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());

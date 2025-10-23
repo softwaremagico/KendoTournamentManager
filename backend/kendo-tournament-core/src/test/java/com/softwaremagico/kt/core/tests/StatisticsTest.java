@@ -126,22 +126,22 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     private void generateRoles(TournamentDTO tournamentDTO) {
         //Add Competitors Roles
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(i), RoleType.COMPETITOR), null, null);
         }
 
         //Add Referee Roles
         for (int i = 0; i < REFEREES; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.REFEREE), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + i), RoleType.REFEREE), null, null);
         }
 
         //Add Organizer Roles
         for (int i = 0; i < ORGANIZER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.ORGANIZER), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + i), RoleType.ORGANIZER), null, null);
         }
 
         //Add Volunteer Roles
         for (int i = 0; i < VOLUNTEER; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.VOLUNTEER), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(MEMBERS * TEAMS + REFEREES + ORGANIZER + i), RoleType.VOLUNTEER), null, null);
         }
     }
 
@@ -164,10 +164,10 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
 
             // Add member.
             teamDTO.addMember(competitorRoleDTO.getParticipant());
-            teamDTO = teamController.update(teamDTO, null);
+            teamDTO = teamController.update(teamDTO, null, null);
 
             if (teamMember == 0) {
-                groupController.addTeams(groupDTO.getId(), Collections.singletonList(teamDTO), null);
+                groupController.addTeams(groupDTO.getId(), Collections.singletonList(teamDTO), null, null);
             }
 
             teamMember++;
@@ -182,26 +182,26 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
     @BeforeClass
     public void prepareData() {
         //Add club
-        final ClubDTO clubDTO = clubController.create(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY, null);
+        final ClubDTO clubDTO = clubController.create(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY, null, null);
 
         //Add participants
         participantsDTOs = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS + REFEREES + ORGANIZER + VOLUNTEER; i++) {
             participantsDTOs.add(participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i),
-                    String.format("lastname%s", i), clubDTO), null));
+                    String.format("lastname%s", i), clubDTO), null, null));
         }
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
     public void prepareTournament() {
         //Create Tournament
-        tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
-        tournamentController.update(tournament1DTO, null);
+        tournament1DTO = tournamentController.create(new TournamentDTO(TOURNAMENT1_NAME, 1, MEMBERS, TournamentType.LEAGUE), null, null);
+        tournamentController.update(tournament1DTO, null, null);
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournament1DTO,
-                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null, null);
         generateRoles(tournament1DTO);
         addTeams(tournament1DTO);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
 
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
@@ -213,7 +213,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         fightDTOs.get(0).getDuels().get(0).setCompetitor1Fault(true);
         fightDTOs.get(0).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         competitor1 = fightDTOs.get(0).getDuels().get(0).getCompetitor1();
 
 
@@ -222,38 +222,38 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(1).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(1).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
 
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).setDuration(DUEL_DURATION);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
 
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.DO);
         fightDTOs.get(1).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         fightDTOs.get(1).getDuels().get(1).addCompetitor2Score(Score.HANSOKU);
         fightDTOs.get(1).getDuels().get(1).addCompetitor2Score(Score.HANSOKU);
         fightDTOs.get(1).getDuels().get(1).setDuration(DUEL_DURATION);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.TSUKI);
         fightDTOs.get(1).getDuels().get(2).addCompetitor2Score(Score.TSUKI);
         fightDTOs.get(1).getDuels().get(2).setDuration(DUEL_DURATION);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         fightDTOs.get(2).getDuels().get(0).addCompetitor2Score(Score.IPPON);
         fightDTOs.get(2).getDuels().get(0).addCompetitor2Score(Score.IPPON);
         fightDTOs.get(2).getDuels().get(0).setDuration(DUEL_DURATION);
         fightDTOs.get(2).getDuels().get(0).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         fightDTOs.get(3).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(3).getDuels().get(1).addCompetitor2Score(Score.MEN);
@@ -261,7 +261,7 @@ public class StatisticsTest extends AbstractTransactionalTestNGSpringContextTest
         fightDTOs.get(3).getDuels().get(1).setCompetitor1Fault(true);
         fightDTOs.get(3).getDuels().get(1).setCompetitor2Fault(true);
         fightDTOs.get(3).getDuels().get(0).setFinished(true);
-        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null));
+        fightDTOs.set(3, fightController.update(fightDTOs.get(3), null, null));
 
         totalFights = fightDTOs.size();
 

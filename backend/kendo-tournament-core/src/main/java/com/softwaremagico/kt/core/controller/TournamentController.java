@@ -62,8 +62,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     @Override
-    public TournamentDTO create(TournamentDTO tournamentDTO, String username) {
-        final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username);
+    public TournamentDTO create(TournamentDTO tournamentDTO, String username, String session) {
+        final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username, session);
         final Group group = new Group();
         group.setCreatedBy(username);
         groupProvider.addGroup(reverse(createdTournamentDTO), group);
@@ -72,7 +72,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
-    public TournamentDTO update(TournamentDTO tournamentDTO, String username) {
+    public TournamentDTO update(TournamentDTO tournamentDTO, String username, String session) {
         //If a tournament is locked we can define it as finished (maybe fights are not finished by time).
         if (tournamentDTO.isLocked() && tournamentDTO.getFinishedAt() == null) {
             tournamentDTO.setFinishedAt(LocalDateTime.now());
@@ -82,7 +82,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         }
         final Optional<Tournament> previousData = getProvider().get(tournamentDTO.getId());
         try {
-            return super.update(tournamentDTO, username);
+            return super.update(tournamentDTO, username, session);
         } finally {
             // We need to update all duels durations if already are defined, and duration is changed.
             if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null
@@ -118,8 +118,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     @Override
-    public void deleteById(Integer id, String username) {
-        delete(get(id), username);
+    public void deleteById(Integer id, String username, String session) {
+        delete(get(id), username, session);
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {

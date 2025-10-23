@@ -9,6 +9,8 @@ export class AuthenticatedUser extends DatabaseObject {
   public jwt: string;
   public expires: number;
   public roles: UserRoles[];
+  //Session is obtained from X-Session header when log-in.
+  public session: string;
 
   constructor() {
     super();
