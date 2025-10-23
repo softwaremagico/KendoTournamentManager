@@ -38,7 +38,6 @@ public class GroupDTO extends ElementDTO {
     @NotNull
     private List<TeamDTO> teams;
 
-    @NotNull
     private Integer shiaijo;
 
     @NotNull
@@ -49,7 +48,6 @@ public class GroupDTO extends ElementDTO {
 
     private List<FightDTO> fights;
 
-    @NotNull
     private Integer numberOfWinners;
 
     private List<DuelDTO> unties;
