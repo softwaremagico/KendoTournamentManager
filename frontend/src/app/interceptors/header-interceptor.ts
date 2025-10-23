@@ -11,7 +11,8 @@ export class HeaderInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const request: HttpRequest<any> = req.clone({
-      headers: req.headers.append('Authorization', 'Bearer ' + this.loginService.getJwtValue()),
+      headers: req.headers.append('Authorization', 'Bearer ' + this.loginService.getJwtValue()).append('X-Session',
+        localStorage.getItem('session') ? localStorage.getItem('session') + "" : ""),
     });
     return next.handle(request);
   }

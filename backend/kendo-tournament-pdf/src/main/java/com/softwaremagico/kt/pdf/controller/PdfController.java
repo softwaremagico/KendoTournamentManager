@@ -152,7 +152,7 @@ public class PdfController {
     }
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO, Boolean onlyNews,
-                                                                         String username, RoleType... roleTypes) throws NoContentException {
+                                                                         String username, String session, RoleType... roleTypes) throws NoContentException {
         final List<RoleDTO> roleDTOS = roleController.getForAccreditations(tournamentDTO, onlyNews,
                 roleTypes != null ? Arrays.asList(roleTypes) : new ArrayList<>());
         if (roleDTOS.isEmpty()) {
@@ -173,20 +173,20 @@ public class PdfController {
                     defaultPhoto != null ? defaultPhoto.getData() : null);
         } finally {
             roleDTOS.forEach(roleDTO -> roleDTO.setAccreditationPrinted(true));
-            roleController.updateAll(roleDTOS, username);
+            roleController.updateAll(roleDTOS, username, session);
         }
     }
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
-                                                                         ParticipantDTO participantDTO, RoleType type, String username) {
+                                                                         ParticipantDTO participantDTO, RoleType type, String username, String session) {
         if (type == null) {
             type = RoleType.COMPETITOR;
         }
-        return generateTournamentAccreditations(locale, tournamentDTO, participantDTO, new RoleDTO(tournamentDTO, participantDTO, type), username);
+        return generateTournamentAccreditations(locale, tournamentDTO, participantDTO, new RoleDTO(tournamentDTO, participantDTO, type), username, session);
     }
 
     public TournamentAccreditationCards generateTournamentAccreditations(Locale locale, TournamentDTO tournamentDTO,
-                                                                         ParticipantDTO participantDTO, RoleDTO roleDTO, String username) {
+                                                                         ParticipantDTO participantDTO, RoleDTO roleDTO, String username, String session) {
         final TournamentImageDTO accreditationBackground = tournamentImageController.get(tournamentDTO, TournamentImageType.ACCREDITATION);
         final TournamentImageDTO banner = tournamentImageController.get(tournamentDTO, TournamentImageType.BANNER);
         final TournamentImageDTO defaultPhoto = tournamentImageController.get(tournamentDTO, TournamentImageType.PHOTO);
@@ -209,12 +209,12 @@ public class PdfController {
         } finally {
             if (roleDTO.getId() != null) {
                 roleDTO.setAccreditationPrinted(true);
-                roleController.update(roleDTO, username);
+                roleController.update(roleDTO, username, session);
             }
         }
     }
 
-    public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO, Boolean onlyNews, String username, RoleType... roleTypes)
+    public DiplomaPDF generateTournamentDiplomas(TournamentDTO tournamentDTO, Boolean onlyNews, String username, String session, RoleType... roleTypes)
             throws NoContentException {
         final List<RoleDTO> roleDTOS = roleController.getForDiplomas(tournamentDTO, onlyNews,
                 roleTypes != null ? Arrays.asList(roleTypes) : new ArrayList<>());
@@ -227,7 +227,7 @@ public class PdfController {
             return new DiplomaPDF(participantDTOS, diploma != null ? diploma.getData() : null, getNamePosition(tournamentDTO));
         } finally {
             roleDTOS.forEach(roleDTO -> roleDTO.setDiplomaPrinted(true));
-            roleController.updateAll(roleDTOS, username);
+            roleController.updateAll(roleDTOS, username, session);
         }
     }
 

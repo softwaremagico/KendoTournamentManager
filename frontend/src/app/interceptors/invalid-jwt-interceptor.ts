@@ -15,7 +15,7 @@ export class InvalidJwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
-      catchError((error): void => {
+      catchError((error) => {
         //If on JWT, the IP is changed, launch a 409 error. 401 and 423 are for invalid or expired jwt. As Jwt is invalid now, logging again.
         if (error.status === 409 || error.status === 401 || error.status === 423) {
           this.loginService.logout();

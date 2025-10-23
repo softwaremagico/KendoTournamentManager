@@ -120,9 +120,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if (JwtFilterLogger.isDebugEnabled()) {
             JwtFilterLogger.debug(this.getClass().getName(), "\nJWT Obtained:\n"
-                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
+                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tSession: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
                     jwtTokenUtil.getExpirationDate(token), jwtTokenUtil.getUserId(token), jwtTokenUtil.getUsername(token),
-                    jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
+                    jwtTokenUtil.getSession(token), jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
         }
 
         // Get user identity and set it on the spring security context

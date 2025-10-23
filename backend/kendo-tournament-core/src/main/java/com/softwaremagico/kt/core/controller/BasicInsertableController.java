@@ -50,15 +50,15 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     private final CONVERTER converter;
 
     public interface ElementCreatedListener {
-        void created(ElementDTO element, String actor);
+        void created(ElementDTO element, String actor, String session);
     }
 
     public interface ElementUpdatedListener {
-        void updated(ElementDTO element, String actor);
+        void updated(ElementDTO element, String actor, String session);
     }
 
     public interface ElementDeletedListener {
-        void deleted(ElementDTO element, String actor);
+        void deleted(ElementDTO element, String actor, String session);
     }
 
     protected BasicInsertableController(PROVIDER provider, CONVERTER converter) {
@@ -100,7 +100,7 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
     }
 
     @Transactional
-    public DTO update(DTO dto, String username) {
+    public DTO update(DTO dto, String username, String session) {
         dto.setUpdatedBy(username);
         validate(dto);
         final DTO updatedDTO = convert(super.getProvider().save(reverse(dto)));
@@ -110,12 +110,13 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         } finally {
             //Advise the frontend!
             new Thread(() ->
-                    elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO, username))).start();
+                    elementUpdatedListeners.forEach(elementUpdatedListener ->
+                            elementUpdatedListener.updated(updatedDTO, username, session))).start();
         }
     }
 
     @Transactional
-    public List<DTO> updateAll(List<DTO> dtos, String username) {
+    public List<DTO> updateAll(List<DTO> dtos, String username, String session) {
         final List<DTO> refreshedData = new ArrayList<>();
         dtos.forEach(dto -> {
             dto.setUpdatedBy(username);
@@ -127,12 +128,13 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             //Advise the frontend!
             new Thread(() ->
                     refreshedData.forEach(updatedDTO ->
-                            elementUpdatedListeners.forEach(elementUpdatedListener -> elementUpdatedListener.updated(updatedDTO, username)))).start();
+                            elementUpdatedListeners.forEach(elementUpdatedListener ->
+                                    elementUpdatedListener.updated(updatedDTO, username, session)))).start();
         }
     }
 
     @Transactional
-    public DTO create(DTO dto, String username) {
+    public DTO create(DTO dto, String username, String session) {
         if (dto.getCreatedBy() == null && username != null) {
             dto.setCreatedBy(username);
         }
@@ -144,12 +146,13 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
         } finally {
             //Advise the frontend!
             new Thread(() ->
-                    elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO, username))).start();
+                    elementCreatedListeners.forEach(elementCreatedListener ->
+                            elementCreatedListener.created(savedDTO, username, session))).start();
         }
     }
 
     @Transactional
-    public List<DTO> create(Collection<DTO> dtos, String username) {
+    public List<DTO> create(Collection<DTO> dtos, String username, String session) {
         dtos.forEach(dto -> {
             if (dto.getCreatedBy() == null && username != null) {
                 dto.setCreatedBy(username);
@@ -163,29 +166,32 @@ public abstract class BasicInsertableController<ENTITY, DTO extends ElementDTO, 
             //Advise the frontend!
             new Thread(() ->
                     savedDTOs.forEach(savedDTO ->
-                            elementCreatedListeners.forEach(elementCreatedListener -> elementCreatedListener.created(savedDTO, username)))).start();
+                            elementCreatedListeners.forEach(elementCreatedListener ->
+                                    elementCreatedListener.created(savedDTO, username, session)))).start();
         }
     }
 
 
-    public void delete(DTO entity, String username) {
+    public void delete(DTO entity, String username, String session) {
         try {
             getProvider().delete(reverse(entity));
         } finally {
             //Advise the frontend!
             new Thread(() ->
-                    elementDeletedListeners.forEach(elementDeletedListener -> elementDeletedListener.deleted(entity, username))).start();
+                    elementDeletedListeners.forEach(elementDeletedListener ->
+                            elementDeletedListener.deleted(entity, username, session))).start();
         }
     }
 
-    public void delete(Collection<DTO> entities, String username) {
+    public void delete(Collection<DTO> entities, String username, String session) {
         try {
             getProvider().delete(reverseAll(entities));
         } finally {
             //Advise the frontend!
             new Thread(() ->
                     entities.forEach(deletedDTO ->
-                            elementDeletedListeners.forEach(elementDeletedListener -> elementDeletedListener.deleted(deletedDTO, username)))).start();
+                            elementDeletedListeners.forEach(elementDeletedListener ->
+                                    elementDeletedListener.deleted(deletedDTO, username, session)))).start();
         }
     }
 

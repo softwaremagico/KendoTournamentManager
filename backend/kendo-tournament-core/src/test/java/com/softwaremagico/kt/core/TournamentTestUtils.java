@@ -77,13 +77,13 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
 
     protected List<ParticipantDTO> addParticipants(int members, int teams, int referees, int organizers, int volunteer, int press, int extra) {
         //Add club
-        final ClubDTO clubDTO = clubController.create(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY, null);
+        final ClubDTO clubDTO = clubController.create(CLUB_NAME, CLUB_COUNTRY, CLUB_CITY, null, null);
 
         //Add participants
         participantsDTOs = new ArrayList<>();
         for (int i = 0; i < members * teams + referees + organizers + volunteer + press + extra; i++) {
             participantsDTOs.add(participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i),
-                    String.format("lastname%s", i), clubDTO), null));
+                    String.format("lastname%s", i), clubDTO), null, null));
         }
         if (extra > 0) {
             return participantsDTOs.subList(participantsDTOs.size() - extra - 1, participantsDTOs.size());
@@ -94,27 +94,27 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
     protected void generateRoles(TournamentDTO tournamentDTO, int members, int teams, int referees, int organizers, int volunteers, int press) {
         //Add Competitors Roles
         for (int i = 0; i < members * teams; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(i), RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(i), RoleType.COMPETITOR), null, null);
         }
 
         //Add Referee Roles
         for (int i = 0; i < referees; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + i), RoleType.REFEREE), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + i), RoleType.REFEREE), null, null);
         }
 
         //Add organizer Roles
         for (int i = 0; i < organizers; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + referees + i), RoleType.ORGANIZER), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + referees + i), RoleType.ORGANIZER), null, null);
         }
 
         //Add volunteer Roles
         for (int i = 0; i < volunteers; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + referees + organizers + i), RoleType.VOLUNTEER), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + referees + organizers + i), RoleType.VOLUNTEER), null, null);
         }
 
         //Add Press Roles
         for (int i = 0; i < press; i++) {
-            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + referees + organizers + volunteers + i), RoleType.PRESS), null);
+            roleController.create(new RoleDTO(tournamentDTO, participantsDTOs.get(members * teams + referees + organizers + volunteers + i), RoleType.PRESS), null, null);
         }
     }
 
@@ -153,10 +153,10 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
 
             // Add member.
             teamDTO.addMember(competitorRoleDTO.getParticipant());
-            teamDTO = teamController.update(teamDTO, null);
+            teamDTO = teamController.update(teamDTO, null, null);
 
             if (teamMember == 0) {
-                groupController.addTeams(groupDTO.getId(), Collections.singletonList(teamDTO), null);
+                groupController.addTeams(groupDTO.getId(), Collections.singletonList(teamDTO), null, null);
             }
 
             teamMember++;
@@ -174,12 +174,12 @@ public abstract class TournamentTestUtils extends AbstractTransactionalTestNGSpr
 
     protected TournamentDTO addTournament(String tournamentName, int members, int teams, int referees, int organizers, int volunteers, int press, TournamentType type, int minutesPast) {
         //Create Tournament
-        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null);
+        TournamentDTO tournamentDTO = tournamentController.create(new TournamentDTO(tournamentName, 1, members, type), null, null);
         tournamentDTO.setCreatedAt(LocalDateTime.now().minusMinutes(minutesPast));
-        tournamentController.update(tournamentDTO, null);
+        tournamentController.update(tournamentDTO, null, null);
         if (TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION.getAllowedTournaments().contains(type)) {
             tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
-                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
+                    TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null, null);
         }
         generateRoles(tournamentDTO, members, teams, referees, organizers, volunteers, press);
         addTeams(tournamentDTO, members);
