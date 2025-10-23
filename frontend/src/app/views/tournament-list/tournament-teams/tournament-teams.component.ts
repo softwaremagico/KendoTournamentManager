@@ -43,6 +43,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
   members: Map<Team, (Participant | undefined)[]> = new Map<Team, (Participant | undefined)[]>();
   groups: Group[];
   teamSize: number[];
+  protected addingTeam: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<TournamentTeamsComponent>, private messageService: MessageService,
               private loggerService: LoggerService, private teamService: TeamService, private roleService: RoleService,
@@ -319,6 +320,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
     const team: Team = new Team();
     team.tournament = this.tournament;
 
+    this.addingTeam = true;
     this.teamService.add(team).pipe(
       tap((): void => {
         this.loggerService.info("Adding new team.");
@@ -339,7 +341,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
       this.teams.push(_team);
       this.members.set(_team, []);
       this.statisticsChangedService.areStatisticsChanged.next(true);
-    });
+    }).add(() => this.addingTeam = false);
   }
 
   deleteTeam(team: Team): void {
