@@ -1,0 +1,198 @@
+version: '3.9'
+
+
+volumes:
+  kendo-tournament-database:
+  ssl-certificates:
+  logs:
+  config:
+
+
+networks:
+  containers:
+    internal: true
+  external:
+    internal: false
+
+
+services:
+
+  kendo-tournament-rproxy:
+    build:
+      context: ./traefik
+      args:
+        - email
+        - timezone
+    image: "kendo-tournament-rproxy"
+    container_name: "kendo-tournament-rproxy"
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=external"
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - external
+      - containers
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "ssl-certificates:/letsencrypt"
+      - "logs:/var/log"
+    labels:
+      - "traefik.enable=true"
+      - "--global.checknewversion=false"
+      - "--global.sendanonymoususage=false"
+      - "traefik.http.middlewares.limit.buffering.maxRequestBodyBytes=10000000"
+      - "traefik.http.routers.dashboard.rule=Host(`$machine_domain`) && (PathPrefix(`/api/`) || PathPrefix(`/dashboard/`))"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=http"
+#      - "traefik.http.routers.dashboard.tls.certresolver=https"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
+      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+      # currently: admin:0b186336d5
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
+      # profiles:
+      #      - donotstart
+
+
+  kendo-tournament-frontend:
+    build:
+      context: ./frontend
+      args:
+        - release
+        - machine_domain
+        - protocol
+        - timezone
+        - websocket_protocol
+        - achievements_enabled
+        - check_new_version_enabled
+    image: kendo-tournament-frontend
+    restart: always
+    networks:
+      - containers
+    ports:
+      - "4200"
+    volumes:
+      - /dev/urandom:/dev/random
+    container_name: kendo-tournament-frontend
+    hostname: kendo-tournament-frontend
+    working_dir: /www
+    environment:
+      - NODE_PATH=/usr/local/lib/node_modules/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=kendo-tournament-frontend"
+      - "traefik.http.routers.kendo-tournament-frontend.entrypoints=http"
+ #     - "traefik.http.routers.kendo-tournament-frontend.tls.certresolver=https"
+      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`) && PathPrefix(`/`)"
+      - "traefik.docker.network=containers"
+      - "traefik.http.services.kendo-tournament-frontend.loadbalancer.server.port=4200"
+    healthcheck:
+      test: curl --fail --request GET --silent http://localhost:4200 || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    depends_on:
+      - "kendo-tournament-backend"
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+
+  kendo-tournament-backend:
+    build:
+      context: ./backend
+      args:
+        - release
+        - machine_domain
+        - protocol
+        - database_password
+        - database_user
+        - database_name
+        - database_type
+        - database_dialect
+        - database_port
+        - database_encryption_key
+        - jwt_expiration
+        - jwt_guest_expiration
+        - jwt_secret
+        - jwt_ip_check
+        - timezone
+        - enable_guest_user
+        - database_populate_default_data
+    image: kendo-tournament-backend
+    restart: always
+    networks:
+      - containers
+    ports:
+      - "8080"
+    volumes:
+      - /dev/urandom:/dev/random
+    container_name: kendo-tournament-backend
+    hostname: kendo-tournament-backend
+    working_dir: /opt/kendo-tournament-backend/
+    depends_on:
+      - "kendo-tournament-database"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=kendo-tournament-backend"
+      - "traefik.http.routers.kendo-tournament-backend.entrypoints=http"
+      #- "traefik.http.routers.kendo-tournament-backend.tls.certresolver=https"
+      - "traefik.http.routers.kendo-tournament-backend.rule=Host(`${machine_domain}`) && PathPrefix(`/kendo-tournament-backend`)"
+
+      - "traefik.http.routers.kendo-tournament-backend-api.rule=Host(`${machine_domain}`) && (PathPrefix(`/kendo-tournament-backend/swagger{any:.*}`) || PathPrefix(`/kendo-tournament-backend/v3/api-{any:.*}`))"
+      - "traefik.http.routers.kendo-tournament-backend-api.entrypoints=http"
+      #- "traefik.http.routers.kendo-tournament-backend-api.tls.certresolver=https"
+      # Protect swagger with basic auth
+      - "traefik.http.routers.kendo-tournament-backend-api.middlewares=auth"
+      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping. To create user:password pair, it's possible to use this command:
+      # echo $(htpasswd -nB user) | sed -e s/\\$/\\$\\$/g
+      # currently: admin:0b186336d5
+      - "traefik.http.middlewares.auth.basicauth.users=admin:$$2y$$05$$KsvV8RNOCQhrJTVPA7A4mO1oxh2OsAHucgn19OrK8khFGFM.kXmZO"
+      - "traefik.docker.network=containers"
+      - "traefik.http.services.kendo-tournament-backend.loadbalancer.server.port=8080"
+    healthcheck:
+      test: curl -k --fail --request GET --silent http://localhost:8080/kendo-tournament-backend/info/health-check || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+
+  kendo-tournament-database:
+    image: postgres:14
+    restart: always
+    networks:
+      - containers
+      - external
+    ports:
+      - "5432:5432"
+    volumes:
+      - kendo-tournament-database:/var/lib/postgresql/data
+    container_name: kendo-tournament-database
+    hostname: kendo-tournament-database
+    environment:
+      - POSTGRES_PASSWORD=${database_password}
+      - POSTGRES_USER=${database_user}
+      - POSTGRES_DB=${database_name}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 3
+      start_period: 80s
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
