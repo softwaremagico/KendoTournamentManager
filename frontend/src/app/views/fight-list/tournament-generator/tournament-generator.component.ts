@@ -43,6 +43,7 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   totalTeams: number;
 
   numberOfWinners: number = 1;
+  protected updatingGroup: boolean = false;
 
   constructor(private router: Router, rbacService: RbacService, private tournamentService: TournamentService,
               private dialog: MatDialog, private fightService: FightService, private messageService: MessageService,
@@ -76,13 +77,17 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
   }
 
   addGroup(): void {
-    if (this.groupsLevelZero.length < this.totalTeams / 2) {
+    if (this.groupsLevelZero.length < this.totalTeams / 2 && !this.updatingGroup) {
+      this.updatingGroup = true;
       this.tournamentBracketsEditorComponent.addGroup();
     }
   }
 
   deleteGroup(): void {
-    this.tournamentBracketsEditorComponent.deleteLast();
+    if (!this.updatingGroup) {
+      this.updatingGroup = true;
+      this.tournamentBracketsEditorComponent.deleteLast();
+    }
   }
 
   openConfirmationGenerateElementsDialog(): void {
@@ -110,6 +115,10 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
     this.groupsLevelZero = this.groups.filter((g: Group): boolean => {
       return g.level === 0;
     });
+  }
+
+  groupsActionsDisabled(disabled: boolean) {
+    this.updatingGroup = false;
   }
 
   teamsSizeUpdated(totalTeams: number): void {
