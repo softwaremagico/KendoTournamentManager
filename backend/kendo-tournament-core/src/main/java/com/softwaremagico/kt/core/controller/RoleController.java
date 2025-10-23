@@ -111,11 +111,11 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
     }
 
     @Override
-    public RoleDTO create(RoleDTO roleDTO, String username) {
+    public RoleDTO create(RoleDTO roleDTO, String username, String session) {
         //Delete any previous role.
         delete(roleDTO.getParticipant(), roleDTO.getTournament());
         //Add the new role.
-        return super.create(roleDTO, username);
+        return super.create(roleDTO, username, session);
     }
 
     @Override

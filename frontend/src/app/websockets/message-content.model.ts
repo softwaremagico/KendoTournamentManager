@@ -3,5 +3,6 @@ export class MessageContent {
   payload: string;
   type: string;
   actor: string;
+  session?: string;
   parameters?: Object
 }

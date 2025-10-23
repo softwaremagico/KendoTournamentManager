@@ -163,7 +163,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
         final FightDTO fightDTO = new FightDTO();
         fightDTO.setShiaijo(3);
 
-        webSocketController.fightUpdated(fightDTO, null);
+        webSocketController.fightUpdated(fightDTO, null, null);
 
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(fightDTO));

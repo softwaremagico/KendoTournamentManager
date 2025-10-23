@@ -94,27 +94,27 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
     public void prepareTournament1() {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TournamentType.LOOP, 2);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //Winner is Participant2
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1ScoreTime(11);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         masterTheLoop = fightDTOs.get(0).getDuels().get(2).getCompetitor1();
 
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(1).getDuels().get(0).addCompetitor1ScoreTime(11);
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(2).getDuels().get(0).addCompetitor1ScoreTime(11);
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
 
         achievementController.generateAchievements(tournament1DTO);
@@ -124,14 +124,14 @@ public class TournamentTypeAchievementsTest extends TournamentTestUtils {
     public void prepareTournament2() {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, TournamentType.KING_OF_THE_MOUNTAIN, 1);
-        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null));
+        List<FightDTO> fightDTOs = new ArrayList<>(fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null, null));
 
         //Winner is Participant2
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1ScoreTime(11);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.DO);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
         theKing = fightDTOs.get(0).getDuels().get(2).getCompetitor1();
 
         achievementController.generateAchievements(tournament2DTO);

@@ -21,6 +21,7 @@ package com.softwaremagico.kt;
  * #L%
  */
 
+import com.softwaremagico.kt.rest.security.AuthApi;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -53,7 +55,9 @@ public class ServerConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+                registry.addMapping("/**").allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
+                        .allowedHeaders(HttpHeaders.AUTHORIZATION)
+                        .exposedHeaders(HttpHeaders.AUTHORIZATION, HttpHeaders.EXPIRES, AuthApi.SESSION_HEADER, AuthApi.SESSION_HEADER);
             }
         };
     }
