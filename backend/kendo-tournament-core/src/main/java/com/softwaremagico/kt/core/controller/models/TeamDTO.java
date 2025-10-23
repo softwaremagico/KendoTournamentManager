@@ -34,13 +34,11 @@ public class TeamDTO extends ElementDTO implements IName {
     @Serial
     private static final long serialVersionUID = 5937160785074835788L;
 
-    @NotNull
     private String name;
 
     @NotNull
     private TournamentDTO tournament;
 
-    @NotNull
     private List<ParticipantDTO> members;
 
     public TeamDTO() {
