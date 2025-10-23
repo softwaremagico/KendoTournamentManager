@@ -15,6 +15,50 @@ networks:
 services:
 
 
+  kendo-tournament-frontend:
+    build:
+      context: ./frontend
+      args:
+        - release
+        - machine_domain
+        - protocol
+        - timezone
+        - websocket_protocol
+        - achievements_enabled
+        - check_new_version_enabled
+    image: kendo-tournament-frontend
+    restart: unless-stopped
+    networks:
+      - containers
+    ports:
+      - "4200"
+    volumes:
+      - /dev/urandom:/dev/random
+    container_name: kendo-tournament-frontend
+    hostname: kendo-tournament-frontend
+    working_dir: /www
+    environment:
+      - NODE_PATH=/usr/local/lib/node_modules/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=kendo-tournament-frontend"
+      - "traefik.http.routers.kendo-tournament-frontend.entrypoints=http"
+      - "traefik.http.routers.kendo-tournament-frontend.rule=Host(`${machine_domain}`) && PathPrefix(`/`)"
+      - "traefik.docker.network=containers"
+      - "traefik.http.services.kendo-tournament-frontend.loadbalancer.server.port=4200"
+    healthcheck:
+      test: curl --fail --request GET --silent http://localhost:4200 || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    depends_on:
+      - "kendo-tournament-backend"
+    logging:
+      options:
+        max-size: "2m"
+        max-file: "5"
+
+
   kendo-tournament-backend:
     build:
       context: ./backend
@@ -94,7 +138,7 @@ services:
       - POSTGRES_USER=${database_user}
       - POSTGRES_DB=${database_name}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
       interval: 30s
       timeout: 60s
       retries: 3
