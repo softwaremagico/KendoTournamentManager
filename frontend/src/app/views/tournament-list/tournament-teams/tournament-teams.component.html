@@ -54,6 +54,7 @@
         </div>
       </div>
       <div *ngIf="(RbacActivity.CREATE_TEAM | rbac : this.rbacService.getActivities())" class="new-team"
+           [ngStyle]="{'pointer-events': addingTeam ? 'none' : 'auto'}"
            (click)="addTeam()"
            (keydown)="addTeam()">
         <div class="row">{{'addTeamToTournament' | translate}}</div>
