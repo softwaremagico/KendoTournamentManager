@@ -94,8 +94,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     });
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      console.log(messageContent.session, messageContent.session !== localStorage.getItem('session'))
-      if (messageContent.topic == "Group" && (!messageContent.session || true || messageContent.session !== localStorage.getItem('session'))) {
+      if (messageContent.topic == "Group" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         this.updateData(false, messageContent.actor == localStorage.getItem('username'));
       }
     });
