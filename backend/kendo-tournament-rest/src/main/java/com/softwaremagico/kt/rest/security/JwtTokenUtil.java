@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 @Component
 public class JwtTokenUtil {
@@ -45,8 +46,9 @@ public class JwtTokenUtil {
     private static final long JWT_EXPIRATION = 1200000;
     private static final int ID_INDEX = 0;
     private static final int USERNAME_INDEX = 1;
-    private static final int IP_INDEX = 2;
-    private static final int MAC_INDEX = 3;
+    private static final int SESSION_INDEX = 2;
+    private static final int IP_INDEX = 3;
+    private static final int MAC_INDEX = 4;
 
     //JWT Secret key
     private static final int RANDOM_LEFT_LIMIT = 48; // numeral '0'
@@ -123,12 +125,21 @@ public class JwtTokenUtil {
 
 
     public String generateAccessToken(IAuthenticatedUser user, String userIp) {
-        return generateAccessToken(user, userIp, jwtExpiration);
+        return generateAccessToken(user, userIp, jwtExpiration, UUID.randomUUID().toString());
+    }
+
+    public String generateAccessToken(IAuthenticatedUser user, String userIp, String session) {
+        return generateAccessToken(user, userIp, jwtExpiration, session);
     }
 
     public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime) {
+        return generateAccessToken(user, userIp, expirationTime, UUID.randomUUID().toString());
+    }
+
+    public String generateAccessToken(IAuthenticatedUser user, String userIp, Long expirationTime, String session) {
         return Jwts.builder()
-                .setSubject(String.format("%s,%s,%s,%s", user.getId(), user.getUsername(), userIp, networkController.getHostMac()))
+                .setSubject(String.format("%s,%s,%s,%s,%s", user.getId(), user.getUsername(), session != null ? session : UUID.randomUUID(),
+                        userIp, networkController.getHostMac()))
                 .setIssuer(JWT_ISSUER)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime)) // 1 week
@@ -177,6 +188,19 @@ public class JwtTokenUtil {
             return claims.getSubject().split(",")[USERNAME_INDEX];
         } catch (Exception e) {
             JwtFilterLogger.warning(this.getClass().getName(), "No filed 'user name' on JWT token!");
+            return null;
+        }
+    }
+
+    public String getSession(String token) {
+        final Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        try {
+            return claims.getSubject().split(",")[SESSION_INDEX];
+        } catch (Exception e) {
+            JwtFilterLogger.debug(this.getClass().getName(), "No session information on JWT token!");
             return null;
         }
     }

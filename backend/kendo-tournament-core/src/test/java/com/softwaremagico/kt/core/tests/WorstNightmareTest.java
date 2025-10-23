@@ -78,117 +78,117 @@ public class WorstNightmareTest extends TournamentTestUtils {
 
     @BeforeClass(dependsOnMethods = "createTournaments")
     public void prepareTournament1() {
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null, null);
 
         //P0 vs P3
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P1 vs P4
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(1).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P2 vs P5
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P6 vs P3
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P7 vs P4
         fightDTOs.get(1).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P8 vs P5
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P6 vs P0
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(0).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //P7 vs P1
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //P8 vs P2
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
     }
 
     @BeforeClass(dependsOnMethods = "createTournaments")
     public void prepareTournament2() {
-        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null, null);
 
         //P0 vs P3
         fightDTOs.get(0).getDuels().get(0).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P1 vs P4
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(1).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P2 vs P5
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(0).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(0).getDuels().get(2).setFinished(true);
-        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(0, fightController.update(fightDTOs.get(0), null, null));
 
         //P6 vs P3
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(0).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(0), null, null));
 
         //P7 vs P4
         fightDTOs.get(1).getDuels().get(1).addCompetitor2Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(1).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P8 vs P5
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(1).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(1).getDuels().get(2).setFinished(true);
-        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null));
+        fightDTOs.set(1, fightController.update(fightDTOs.get(1), null, null));
 
         //P6 vs P0
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(0).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(0).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //P7 vs P1
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(1).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(1).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
 
         //P8 vs P2
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.KOTE);
         fightDTOs.get(2).getDuels().get(2).addCompetitor1Score(Score.MEN);
         fightDTOs.get(2).getDuels().get(2).setFinished(true);
-        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null));
+        fightDTOs.set(2, fightController.update(fightDTOs.get(2), null, null));
     }
 
     @Test

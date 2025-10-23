@@ -155,7 +155,7 @@ public class RestSimpleChampionshipTest extends AbstractTestNGSpringContextTests
             fightController.generateDuels(fight, null);
         });
         group.getUnties().clear();
-        groupController.update(group, null);
+        groupController.update(group, null, null);
     }
 
     private void resetGroup(TournamentDTO tournamentDTO) {

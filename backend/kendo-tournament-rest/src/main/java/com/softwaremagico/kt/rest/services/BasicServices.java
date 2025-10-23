@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.converters.ElementConverter;
 import com.softwaremagico.kt.core.converters.models.ConverterRequest;
 import com.softwaremagico.kt.core.providers.CrudProvider;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Collection;
@@ -115,8 +117,10 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     @Operation(summary = "Creates an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DTO add(@Valid @RequestBody DTO dto, Authentication authentication, HttpServletRequest request) {
-        return controller.create(dto, authentication.getName());
+    public DTO add(@Valid @RequestBody DTO dto, Authentication authentication,
+                   @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                   HttpServletRequest request) {
+        return controller.create(dto, authentication.getName(), session);
     }
 
 
@@ -124,11 +128,13 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     @Operation(summary = "Creates a set of entities.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DTO> add(@Valid @RequestBody Collection<DTO> dtos, Authentication authentication, HttpServletRequest request) {
+    public List<DTO> add(@Valid @RequestBody Collection<DTO> dtos, Authentication authentication,
+                         @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                         HttpServletRequest request) {
         if (dtos == null || dtos.isEmpty()) {
             throw new BadRequestException(getClass(), "Data is missing");
         }
-        return getController().create(dtos, authentication.getName());
+        return getController().create(dtos, authentication.getName(), session);
     }
 
 
@@ -137,8 +143,10 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@Parameter(description = "Id of an existing entity", required = true) @PathVariable("id") Integer id,
-                       Authentication authentication, HttpServletRequest request) {
-        controller.deleteById(id, authentication.getName());
+                       Authentication authentication,
+                       @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                       HttpServletRequest request) {
+        controller.deleteById(id, authentication.getName(), session);
     }
 
 
@@ -146,34 +154,42 @@ public abstract class BasicServices<ENTITY, DTO extends ElementDTO, REPOSITORY e
     @Operation(summary = "Deletes an entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody DTO dto, Authentication authentication, HttpServletRequest request) {
-        controller.delete(dto, authentication.getName());
+    public void delete(@RequestBody DTO dto,
+                       @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                       Authentication authentication, HttpServletRequest request) {
+        controller.delete(dto, authentication.getName(), session);
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes a collection of entities.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/delete/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@RequestBody Collection<DTO> dtos, Authentication authentication, HttpServletRequest request) {
-        getController().delete(dtos, authentication.getName());
+    public void delete(@RequestBody Collection<DTO> dtos, Authentication authentication,
+                       @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                       HttpServletRequest request) {
+        getController().delete(dtos, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a entity.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DTO update(@Valid @RequestBody DTO dto, Authentication authentication, HttpServletRequest request) {
-        return controller.update(dto, authentication.getName());
+    public DTO update(@Valid @RequestBody DTO dto, Authentication authentication,
+                      @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                      HttpServletRequest request) {
+        return controller.update(dto, authentication.getName(), session);
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a list of fights.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DTO> update(@Valid @RequestBody List<DTO> dtos, Authentication authentication, HttpServletRequest request) {
+    public List<DTO> update(@Valid @RequestBody List<DTO> dtos, Authentication authentication,
+                            @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                            HttpServletRequest request) {
         if (dtos == null) {
             throw new BadRequestException(getClass(), "Data is missing");
         }
-        return getController().updateAll(dtos, authentication.getName());
+        return getController().updateAll(dtos, authentication.getName(), session);
     }
 
 }

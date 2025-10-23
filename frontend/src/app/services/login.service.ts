@@ -11,6 +11,7 @@ import {ActivityService} from "./rbac/activity.service";
 import {AuthGuestRequest} from "./models/auth-guest-request";
 import {TemporalToken} from "./models/temporal-token";
 import {UserRoles} from "./rbac/user-roles";
+import {TokenService} from "./token-service";
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,7 @@ export class LoginService {
         map((response: any) => {
           response.body.jwt = response.headers.get('Authorization');
           response.body.expires = response.headers.get('Expires');
+          response.body.session = response.headers.get('X-Session');
           return response.body;
         }));
   }
@@ -56,6 +58,7 @@ export class LoginService {
         map((response: any) => {
           response.body.jwt = response.headers.get('Authorization');
           response.body.expires = response.headers.get('Expires');
+          response.body.session = response.headers.get('X-Session');
           return response.body;
         }));
   }
@@ -71,6 +74,7 @@ export class LoginService {
         map((response: any) => {
           response.body.jwt = response.headers.get('Authorization');
           response.body.expires = response.headers.get('Expires');
+          response.body.session = response.headers.get('X-Session');
           return response.body;
         }));
   }
@@ -108,6 +112,7 @@ export class LoginService {
       });
     this.activityService.setRoles(authenticatedUser.roles);
     localStorage.setItem('username', authenticatedUser.username);
+    localStorage.setItem('session', authenticatedUser.session);
     callback(authenticatedUser.jwt, authenticatedUser.expires);
   }
 
@@ -157,8 +162,8 @@ export class LoginService {
             });
             throw new Error('Server returned no response');
           }
-          const authToken: string | null = response.headers.get('authorization');
-          let expiration: number = Number(response.headers.get('expires'));
+          const authToken: string | null = response.headers.get('Authorization');
+          let expiration: number = Number(response.headers.get('Expires'));
           if (!authToken || !expiration) {
             this.autoRenewToken(jwt, -1, (jwt: string, expires: number): void => {
             });

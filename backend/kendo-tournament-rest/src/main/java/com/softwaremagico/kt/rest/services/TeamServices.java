@@ -38,6 +38,7 @@ import com.softwaremagico.kt.pdf.controller.PdfController;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.rest.exceptions.BadRequestException;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,6 +56,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -138,7 +140,9 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
     @Operation(summary = "Defines the teams.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/set", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<TeamDTO> set(@RequestBody List<TeamDTO> teamsDTOs, Authentication authentication, HttpServletRequest request) {
+    public List<TeamDTO> set(@RequestBody List<TeamDTO> teamsDTOs, Authentication authentication,
+                             @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                             HttpServletRequest request) {
         if (teamsDTOs == null || teamsDTOs.isEmpty()) {
             throw new BadRequestException(getClass(), "Team data is missing");
         }
@@ -148,7 +152,7 @@ public class TeamServices extends BasicServices<Team, TeamDTO, TeamRepository,
             }
         });
         getController().delete(teamsDTOs.get(0).getTournament());
-        return getController().create(teamsDTOs, authentication.getName());
+        return getController().create(teamsDTOs, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
