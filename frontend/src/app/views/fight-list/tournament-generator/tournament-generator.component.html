@@ -28,14 +28,14 @@
         </button>
         <button (click)="changeNumberOfWinners(1)"
                 *ngIf="(numberOfWinners == 2) && (RbacActivity.EDIT_TOURNAMENT | rbac : this.rbacService.getActivities())"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
                 matTooltip="{{'winnerNumber' | translate}}">
           <mat-icon class="kendo-icon" svgIcon="two-winners"></mat-icon>
         </button>
         <button (click)="deleteGroup()" *ngIf="(RbacActivity.DELETE_GROUP | rbac : this.rbacService.getActivities())"
-                [disabled]="groupsDisabled || (tournament && tournament.locked)"
+                [disabled]="groupsDisabled || (tournament && tournament.locked) || updatingGroup || groups.length < 1"
                 [matTooltipShowDelay]="500"
                 class="delete-button" color="warn" mat-button
                 matTooltip="{{'delete' | translate}}">
@@ -69,6 +69,7 @@
                                       [droppingDisabled]="groupsDisabled"
                                       [groupsDisabled]="groupsDisabled"
                                       (onGroupsUpdated)="groupsUpdated($event)"
+                                      (onGroupsDisabled)="groupsActionsDisabled($event)"
                                       (onTeamsLengthUpdated)="teamsSizeUpdated($event)">
       </app-tournament-brackets-editor>
     </div>

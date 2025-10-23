@@ -106,11 +106,11 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public TeamDTO create(TeamDTO teamDTO, String username) {
+    public TeamDTO create(TeamDTO teamDTO, String username, String session) {
         if (teamDTO.getName() == null) {
             teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
-        final TeamDTO storedTeamDTO = super.create(teamDTO, username);
+        final TeamDTO storedTeamDTO = super.create(teamDTO, username, session);
         storedTeamDTO.setTournament(teamDTO.getTournament());
         return storedTeamDTO;
     }
@@ -120,13 +120,13 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username) {
+    public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username, String session) {
         teamsDTOs.forEach(teamDTO -> {
             if (teamDTO.getName() == null) {
                 teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
             }
         });
-        return super.create(teamsDTOs, username);
+        return super.create(teamsDTOs, username, session);
     }
 
     public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
@@ -147,8 +147,8 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public TeamDTO update(TeamDTO teamDTO, String username) {
-        final TeamDTO dbTeam = super.update(teamDTO, username);
+    public TeamDTO update(TeamDTO teamDTO, String username, String session) {
+        final TeamDTO dbTeam = super.update(teamDTO, username, session);
         dbTeam.setTournament(teamDTO.getTournament());
         return dbTeam;
     }
