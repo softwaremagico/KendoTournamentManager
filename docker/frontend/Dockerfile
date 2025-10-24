@@ -40,7 +40,9 @@ RUN sed -i "s|ROOT_FOLDER|${HTML_ROOT_FOLDER}|g" /etc/nginx/conf.d/default.conf 
     sed -i "s|DOCKER:BACKEND_PROTOCOL|${protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
     sed -i "s|DOCKER:WEBSOCKET_PROTOCOL|${websocket_protocol}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
     sed -i "s|\"DOCKER:ACHIEVEMENTS_ENABLED\"|${achievements_enabled}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
-    sed -i "s|\"DOCKER:CHECK_FOR_NEW_VERSION\"|${check_new_version_enabled}|g" ${HTML_ROOT_FOLDER}/main.*.js
+    sed -i "s|\"DOCKER:CHECK_FOR_NEW_VERSION\"|${check_new_version_enabled}|g" ${HTML_ROOT_FOLDER}/main.*.js && \
+    #Delete config.js content, as is an example on the code and will be set as external volume when needed.
+    echo "__config = {}" > /www/config/config.js
 
 #Working in the app directory
 WORKDIR ${HTML_ROOT_FOLDER}
