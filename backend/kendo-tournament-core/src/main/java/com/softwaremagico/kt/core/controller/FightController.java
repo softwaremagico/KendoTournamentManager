@@ -221,7 +221,7 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
                         ExceptionType.INFO)));
         //Delete any deeper level. If a group changes, the inner levels are invalid.
         getProvider().delete(tournament, level + 1);
-        groupProvider.delete(tournament, level + 1);
+        //groupProvider.delete(tournament, level + 1);
         final ITournamentManager selectedManager = tournamentHandlerSelector.selectManager(tournament.getType());
         if (selectedManager != null) {
             try {
