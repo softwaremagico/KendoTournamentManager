@@ -27,6 +27,8 @@
                 <include name="tournament5GroupsTwoWinnersTest"/>
                 <include name="tournament6GroupsTwoWinnersTest"/>
                 <include name="tournamentLevelNotFinishedTest"/>
+                <include name="deleteGroupsOneWinnerTest"/>
+                <include name="deleteGroupsTwoWinnersTest"/>
                 <include name="groupsTest"/>
                 <include name="groupsTest"/>
                 <include name="numberOfWinners"/>
@@ -45,6 +47,8 @@
             <class name="com.softwaremagico.kt.core.tests.tournament.Tournament5GroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.Tournament6GroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLevelNotFinishedTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentDeleteGroupsOneWinnerTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentDeleteGroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.LeagueWithFinalFightTest"/>
             <class name="com.softwaremagico.kt.core.tests.LoopLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
