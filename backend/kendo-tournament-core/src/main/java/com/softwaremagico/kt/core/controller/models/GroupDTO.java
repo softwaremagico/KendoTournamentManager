@@ -136,4 +136,14 @@ public class GroupDTO extends ElementDTO {
     public int hashCode() {
         return Objects.hash(super.hashCode(), getTournament(), getTeams(), getShiaijo(), getLevel(), getFights(), getNumberOfWinners(), getUnties());
     }
+
+    @Override
+    public String toString() {
+        return "Group{"
+                + "tournament=" + tournament
+                + ", shiaijo=" + shiaijo
+                + ", level=" + level
+                + ", index=" + index
+                + '}';
+    }
 }
