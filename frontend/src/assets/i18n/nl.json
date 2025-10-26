@@ -111,7 +111,7 @@
   "european": "Europeaan",
   "europeanHint": "De winnaar wordt verkregen door gewonnen wedstrijden. Als er een gelijke stand is, worden de gelijk gespeelde wedstrijden geteld. Als er ook een gelijkspel is, hanteren we dezelfde procedure bij duels. Als de stand van de wedstrijden en duels ook gelijk is, worden de treffers geteld.",
   "international": "Internationaal",
-  "internationalHint": "De winnaar wordt verkregen door gewonnen wedstrijden. Als er een gelijke stand is, worden de gelijk gespeelde wedstrijden geteld. Als er ook een gelijkspel is, worden de gewonnen duels geteld. Als er nog steeds een gelijkspel is, wordt eerst het aantal treffers geteld en als het gelijkspel niet wordt opgelost, worden de gelijkspelde duels geteld.",
+  "internationalHint": "De winnaar wordt verkregen door gewonnen wedstrijden. Als er een gelijke stand is, worden de gelijk gespeelde wedstrijden geteld. Als er ook een gelijkspel is, worden de gewonnen duels geteld. Als er nog steeds een gelijkspel is, wordt eerst het aantal treffers geteld en als het gelijkspel niet wordt opgelost, worden de gelijkspelde duels geteld. Houd er rekening mee dat het verschil met het Europese format is dat remiseduels worden genegeerd.",
   "custom": "Aangepaste",
   "customHint": "Hiermee kunt u aangepaste waarden voor uw toernooi definiëren.",
   "win_over_draws": "Overwinning op gelijkspel",
