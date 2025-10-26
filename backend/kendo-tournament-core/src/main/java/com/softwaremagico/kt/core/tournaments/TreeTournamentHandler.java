@@ -262,7 +262,7 @@ public class TreeTournamentHandler extends LeagueHandler {
         final Map<Integer, List<Group>> groupsByLevel = GroupUtils.orderByLevel(tournamentGroups);
         int previousLevelSize = Integer.MAX_VALUE - 1;
         for (final Integer level : new HashSet<>(groupsByLevel.keySet())) {
-            //If previous level has no groups, remove all.
+            //If the previous level has no groups, remove all.
             if (level > 0 && (!groupsByLevel.containsKey(level - 1) || groupsByLevel.get(level - 1).isEmpty())) {
                 while (!groupsByLevel.get(level).isEmpty()) {
                     groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
@@ -278,9 +278,16 @@ public class TreeTournamentHandler extends LeagueHandler {
                         groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
                     }
                 } else if (level == 1) {
-                    while (GroupUtils.getNextPowerOfTwo((groupsByLevel.get(0).size() * numberOfWinners) / 2) < groupsByLevel.get(level).size()) {
+                    while (GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(0).size() * numberOfWinners) + 1) / 2) < groupsByLevel.get(level).size()) {
                         groupProvider.deleteGroupByLevelAndIndex(tournament, level, groupsByLevel.get(level).size() - 1);
                         groupsByLevel.get(level).remove(groupsByLevel.get(level).size() - 1);
+                    }
+                    //When only one group is left in level 0, and one winner is selected. No groups on other levels.
+                    if (numberOfWinners == 1 && groupsByLevel.get(0).size() == 1) {
+                        while (!groupsByLevel.get(1).isEmpty()) {
+                            groupProvider.deleteGroupByLevelAndIndex(tournament, 1, groupsByLevel.get(1).size() - 1);
+                            groupsByLevel.get(1).remove(groupsByLevel.get(1).size() - 1);
+                        }
                     }
                 }
             } else {
