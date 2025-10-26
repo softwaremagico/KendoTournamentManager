@@ -109,7 +109,7 @@
   "european": "Europeo",
   "europeanHint": "El ganador se obtiene por partidos ganados. Si hay empate, se cuentan los partidos empatados. Si también hay empate, se utiliza el mismo procedimiento con los duelos. Si los partidos y duelos ganados también son un empate, se cuentan los golpes.",
   "international": "Internacional",
-  "internationalHint": "El ganador se obtiene por partidos ganados. Si hay empate, se cuentan los combates empatados. Si también hay empate se cuentan los combates ganados. Si sigue habiendo empate, primero se cuenta el número de golpes y si no se resuelve el empate, se cuentan los combates empatados.",
+  "internationalHint": "El ganador se obtiene por partidos ganados. Si hay empate, se cuentan los combates empatados. Si también hay empate se cuentan los combates ganados. Si sigue habiendo empate, primero se cuenta el número de golpes y si no se resuelve el empate, se cuentan los combates empatados. Tenga en cuenta que la diferencia con el formato europeo es que los duelos con empates se ignoran.",
   "custom": "Personalizado",
   "customHint": "Te permite definir valores personalizados para tu torneo.",
   "win_over_draws": "Victoria sobre el empate",

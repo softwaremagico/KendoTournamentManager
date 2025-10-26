@@ -142,7 +142,7 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
                                 deleted++;
                                 groupsByLevel.get(i).remove(groupsByLevel.get(i).size() - 1);
                             }
-                            //Remove last single groups if previous level has only one group.
+                            //Remove last single groups if the previous level has only one group.
                             if (groupsByLevel.get(i - 1).size() == 1) {
                                 getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
                                 deleted++;
@@ -150,7 +150,8 @@ public class GroupProvider extends CrudProvider<Group, Integer, GroupRepository>
                             }
                         }
                     } else if (i == 1 && groupsByLevel.get(0).get(0).getNumberOfWinners() == 2 && !groupsByLevel.get(i).isEmpty()) {
-                        while ((groupsByLevel.get(0).size() + 1) < groupsByLevel.get(i).size()) {
+                        // Decrease level one if needed.
+                        while ((groupsByLevel.get(0).size() + 1) < groupsByLevel.get(1).size()) {
                             //Delete last group.
                             getRepository().delete(groupsByLevel.get(i).get(groupsByLevel.get(i).size() - 1));
                             deleted++;
