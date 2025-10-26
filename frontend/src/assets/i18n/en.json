@@ -318,7 +318,7 @@
   "european": "European",
   "europeanHint": "Winner is obtained by won matches. If there is a tie, then draw matches are counted. If there is also a tie we use the same procedure with duels. If matches and duels won are also a tie, hits are counted.",
   "international": "International",
-  "internationalHint": "Winner is obtained by won matches. If there is a tie, then draw matches are counted. If there is also a tie we count the won fights. If still there is a tie, first count the number of hits and if the tie is not solved, count the draw fights.",
+  "internationalHint": "Winner is obtained by won matches. If there is a tie, then draw matches are counted. If there is also a tie we count the won fights. If still there is a tie, first count the number of hits and if the tie is not solved, count the draw fights. Please note that, unlike the European format, draw duels are not considered.",
   "custom": "Custom",
   "customHint": "You can define custom values for your tournament",
   "scoreRules": "Score Rules",
