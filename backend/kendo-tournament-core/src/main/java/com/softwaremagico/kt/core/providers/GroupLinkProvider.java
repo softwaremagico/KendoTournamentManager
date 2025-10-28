@@ -115,10 +115,10 @@ public class GroupLinkProvider {
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
                     //If it has the same number of groups, can be use the standard way.
                     && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size())) {
+                final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(), winnerOrder);
                 //Special case, use federation templates.
-                if (numberOfWinners > 1 && (currentLevelGroups.size() == TEMPLATE_12 || currentLevelGroups.size() == TEMPLATE_6
-                        || currentLevelGroups.size() == TEMPLATE_3)) {
-                    return nextLevelGroups.get(getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(), winnerOrder));
+                if (numberOfWinners > 1 && templateDestination >= 0) {
+                    return nextLevelGroups.get(templateDestination);
                 }
                 if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
                     return nextLevelGroups.get(spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
