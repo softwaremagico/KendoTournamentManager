@@ -24,16 +24,19 @@ package com.softwaremagico.kt.core.tests.tournament;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.GroupController;
+import com.softwaremagico.kt.core.controller.GroupLinkController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
+import com.softwaremagico.kt.core.controller.models.GroupLinkDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
+import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
@@ -49,19 +52,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SpringBootTest
-@Test(groups = {"deleteGroupsOneWinnerTest"})
-public class TournamentDeleteGroupsOneWinnerTest extends AbstractTestNGSpringContextTests {
+@Test(groups = {"shiaijosTest"})
+public class TournamentShiaijosTest extends AbstractTestNGSpringContextTests {
 
     private static final int MEMBERS = 1;
-    private static final int GROUPS = 8;
+    private static final int GROUPS = 6;
     private static final String TOURNAMENT_NAME = "TournamentTest";
-    private TournamentDTO tournamentDTO = null;
+    private static TournamentDTO tournamentDTO = null;
 
     @Autowired
     private TournamentController tournamentController;
-
-    @Autowired
-    private TournamentExtraPropertyController tournamentExtraPropertyController;
 
     @Autowired
     private TournamentConverter tournamentConverter;
@@ -90,11 +90,14 @@ public class TournamentDeleteGroupsOneWinnerTest extends AbstractTestNGSpringCon
     @Autowired
     private TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
+    @Autowired
+    private GroupLinkController groupLinkController;
+
 
     @Test
     public void addTournament() {
         Assert.assertEquals(tournamentController.count(), 0);
-        TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
+        TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 2, MEMBERS, TournamentType.TREE);
         tournamentDTO = tournamentController.create(newTournament, null, null);
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentConverter.reverse(tournamentDTO), TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "true"));
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentConverter.reverse(tournamentDTO), TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "false"));
@@ -102,7 +105,7 @@ public class TournamentDeleteGroupsOneWinnerTest extends AbstractTestNGSpringCon
     }
 
     @Test(dependsOnMethods = "addTournament")
-    public void add8Groups() {
+    public void add6Groups() {
         //The First group is already inserted.
         treeTournamentHandler.adjustGroupsSizeRemovingOddNumbers(tournamentConverter.reverse(tournamentDTO), 1);
 
@@ -111,50 +114,31 @@ public class TournamentDeleteGroupsOneWinnerTest extends AbstractTestNGSpringCon
             groupDTO.setTournament(tournamentDTO);
             groupDTO.setIndex(i);
             groupDTO.setLevel(0);
-            groupDTO.setShiaijo(0);
-            groupDTO.setNumberOfWinners(2);
+            groupDTO.setShiaijo((GROUPS / (GROUPS / 2)));
+            groupDTO.setNumberOfWinners(1);
             groupController.create(groupDTO, null, null);
         }
-        Assert.assertEquals(groupController.count(), 15);
+        Assert.assertEquals(groupController.count(), 13);
     }
 
-    @Test(dependsOnMethods = {"add8Groups"})
-    public void deleteGroupsOneByOne() {
+    @Test(dependsOnMethods = {"add6Groups"})
+    public void checkShiaijos() {
         final List<GroupDTO> level0Groups = groupController.get(tournamentDTO).stream().filter(g -> g.getLevel() == 0)
                 .sorted(Comparator.comparing(GroupDTO::getIndex)).collect(Collectors.toList());
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 14);
+        Assert.assertEquals(level0Groups.get(0).getShiaijo(), 0);
+        Assert.assertEquals(level0Groups.get(1).getShiaijo(), 0);
+        Assert.assertEquals(level0Groups.get(2).getShiaijo(), 0);
+        Assert.assertEquals(level0Groups.get(3).getShiaijo(), 1);
+        Assert.assertEquals(level0Groups.get(4).getShiaijo(), 1);
+        Assert.assertEquals(level0Groups.get(5).getShiaijo(), 1);
 
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 13);
-
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 12);
-
-        //4 groups left
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 7);
-
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 6);
-
-        //2 groups left
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 3);
-
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 1);
-
-        groupController.delete(level0Groups.get(level0Groups.size() - 1), null, null);
-        level0Groups.remove(level0Groups.size() - 1);
-        Assert.assertEquals(groupController.count(), 0);
+        final List<GroupLinkDTO> links = groupLinkController.getLinks(tournamentConverter.reverse(tournamentDTO));
+        Assert.assertEquals(links.get(0).getDestination().getShiaijo(), 0);
+        Assert.assertEquals(links.get(1).getDestination().getShiaijo(), 0);
+        Assert.assertEquals(links.get(2).getDestination().getShiaijo(), 0);
+        Assert.assertEquals(links.get(3).getDestination().getShiaijo(), 1);
+        Assert.assertEquals(links.get(4).getDestination().getShiaijo(), 1);
+        Assert.assertEquals(links.get(5).getDestination().getShiaijo(), 1);
     }
 
     @AfterClass(alwaysRun = true)
