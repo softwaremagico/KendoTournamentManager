@@ -38,11 +38,11 @@ import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAU
 
 /**
  * Requeriements for championships arrows calculations: *
- *  -   One pool must always have one team.
- *  -   two 1st winners cannot be assigned to the same pool.
- *  -   When possible, 1st winners must not change shiaijo.
- *  -   Only a 2nd winner can be on a bye, if all 1st winners are on a bye.
- *  -   Two teams that have been faced in the first column must avoid to face again until the end of the tournament
+ * -   One pool must always have one team.
+ * -   two 1st winners cannot be assigned to the same pool.
+ * -   When possible, 1st winners must not change shiaijo.
+ * -   Only a 2nd winner can be on a bye, if all 1st winners are on a bye.
+ * -   Two teams that have been faced in the first column must avoid to face again until the end of the tournament
  */
 @Service
 public class GroupLinkProvider {
@@ -210,10 +210,20 @@ public class GroupLinkProvider {
                 return destinationGroupLevelSize - (sourceGroupLevelSize - sourceGroupLevelIndex - 1) - 1;
             }
         } else if (winnerOrder == 1) {
-            if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
-                return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex) - (destinationGroupLevelSize - sourceGroupLevelSize) / 2;
+            final int groupsDifferenceBetweenSecondAndFirstLevel = destinationGroupLevelSize - sourceGroupLevelSize;
+            final int firstHalf = (sourceGroupLevelSize + 1) / 2;
+            if (groupsDifferenceBetweenSecondAndFirstLevel > firstHalf) {
+                if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+                    return destinationGroupLevelSize - sourceGroupLevelSize + sourceGroupLevelIndex;
+                } else {
+                    return  sourceGroupLevelIndex;
+                }
             } else {
-                return (destinationGroupLevelSize / 2) - (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
+                if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
+                    return (destinationGroupLevelSize / 2) + (sourceGroupLevelIndex) - (destinationGroupLevelSize - sourceGroupLevelSize) / 2;
+                } else {
+                    return (destinationGroupLevelSize / 2) - (sourceGroupLevelSize - sourceGroupLevelIndex - 1);
+                }
             }
         } else {
             return -1;
