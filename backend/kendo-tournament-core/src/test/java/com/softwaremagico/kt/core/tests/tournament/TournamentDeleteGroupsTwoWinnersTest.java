@@ -56,7 +56,7 @@ public class TournamentDeleteGroupsTwoWinnersTest extends AbstractTestNGSpringCo
     private static final int MEMBERS = 1;
     private static final int GROUPS = 8;
     private static final String TOURNAMENT_NAME = "TournamentTest";
-    private static TournamentDTO tournamentDTO = null;
+    private TournamentDTO tournamentDTO = null;
 
     @Autowired
     private TournamentController tournamentController;
