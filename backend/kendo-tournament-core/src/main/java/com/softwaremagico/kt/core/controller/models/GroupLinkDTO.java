@@ -61,4 +61,13 @@ public class GroupLinkDTO extends ElementDTO {
     public void setWinner(int winner) {
         this.winner = winner;
     }
+
+    @Override
+    public String toString() {
+        return "GroupLink{"
+                + "source=" + (source != null ? source.getLevel() : "null") + "-" + (source != null ? source.getIndex() : "null")
+                + ", destination=" + (destination != null ? destination.getLevel() : "null") + "-" + (destination != null ? destination.getIndex() : "null")
+                + ", winner=" + winner
+                + '}';
+    }
 }
