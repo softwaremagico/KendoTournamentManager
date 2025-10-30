@@ -37,6 +37,7 @@
                 <include name="worstNightmareTest"/>
                 <include name="validationTests"/>
                 <include name="shiaijosTest"/>
+                <include name="tournamentLinkTest"/>
             </run>
         </groups>
         <classes>
@@ -52,6 +53,7 @@
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentDeleteGroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.LeagueWithFinalFightTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentShiaijosTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLinkTests"/>
             <class name="com.softwaremagico.kt.core.tests.LoopLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainFiFoTest"/>
