@@ -24,6 +24,7 @@ package com.softwaremagico.kt.core.providers;
 import com.softwaremagico.kt.core.providers.links.Pool11To16winners2;
 import com.softwaremagico.kt.core.providers.links.Pool11To8winners1;
 import com.softwaremagico.kt.core.providers.links.Pool12To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool13To16winners2;
 import com.softwaremagico.kt.core.providers.links.Pool3to4winners2;
 import com.softwaremagico.kt.core.providers.links.Pool6to4winners1;
 import com.softwaremagico.kt.core.providers.links.Pool6to8winners2;
@@ -54,6 +55,7 @@ import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAU
 @Service
 public class GroupLinkProvider {
 
+    private static final int SOURCE_13 = 13;
     private static final int SOURCE_12 = 12;
     private static final int SOURCE_11 = 11;
     private static final int SOURCE_9 = 9;
@@ -250,14 +252,17 @@ public class GroupLinkProvider {
     }
 
     private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder) {
+        if (sourceGroupLevelSize == SOURCE_13 && numberOfWinners == 2) {
+            return Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
+            return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
         if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 1) {
             return Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
         if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 2) {
             return Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
-        }
-        if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
-            return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
         if (sourceGroupLevelSize == SOURCE_9 && numberOfWinners == 1) {
             return Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
