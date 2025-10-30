@@ -348,6 +348,73 @@ public class TournamentLinkTests extends TreeTournamentBasedTests {
         checkGroupRules(tournamentDTO, winners);
     }
 
+
+    @Test
+    public void thirteenGroupsOneWinner() {
+        final int winners = 1;
+        TournamentDTO tournamentDTO = createTournament(13, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 28);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+    @Test
+    public void thirteenGroupsTwoWinners() {
+        final int winners = 2;
+        TournamentDTO tournamentDTO = createTournament(13, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 44);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+
+    @Test
+    public void fourteenGroupsOneWinner() {
+        final int winners = 1;
+        TournamentDTO tournamentDTO = createTournament(14, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 29);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+    @Test
+    public void fourteenGroupsTwoWinners() {
+        final int winners = 2;
+        TournamentDTO tournamentDTO = createTournament(14, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 45);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+
+    @Test
+    public void fifteenGroupsOneWinner() {
+        final int winners = 1;
+        TournamentDTO tournamentDTO = createTournament(15, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 30);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+    @Test
+    public void fifteenGroupsTwoWinners() {
+        final int winners = 2;
+        TournamentDTO tournamentDTO = createTournament(15, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 46);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+    @Test
+    public void sixteenGroupsOneWinner() {
+        final int winners = 1;
+        TournamentDTO tournamentDTO = createTournament(16, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 31);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
+    @Test
+    public void sixteenGroupsTwoWinners() {
+        final int winners = 2;
+        TournamentDTO tournamentDTO = createTournament(16, MEMBERS, winners);
+        Assert.assertEquals(groupController.get(tournamentDTO).size(), 47);
+        checkGroupRules(tournamentDTO, winners);
+    }
+
     @AfterMethod
     public void deleteTournament() {
         super.deleteTournament();
