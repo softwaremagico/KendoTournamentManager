@@ -113,7 +113,7 @@
   "european": "Europeo",
   "europeanHint": "Il vincitore si ottiene dalle partite vinte. Se c'è un pareggio, le partite in parità vengono conteggiate. Se c'è anche un pareggio, utilizziamo la stessa procedura con i duelli. Se anche il punteggio delle partite e dei duelli è un pareggio, i colpi vengono conteggiati.",
   "international": "Internazionale",
-  "internationalHint": "Il vincitore si ottiene dalle partite vinte. Se c'è un pareggio, le partite in parità vengono conteggiate. In caso di nueva parità vengono conteggiati i duelli vinti. Se c'è ancora un pareggio, viene contato per primo il numero di colpi e se il pareggio non viene risolto, vengono conteggiati i duelli in parità. Da notare che la differenza con il formato europeo è che i duelli in parità vengono ignorati.",
+  "internationalHint": "Il vincitore si ottiene dalle partite vinte. Se c'è un pareggio, le partite in parità vengono conteggiate. In caso di nueva parità vengono conteggiati i duelli vinti. Se c'è ancora un pareggio, viene contato il numero di colpi. Da notare che la differenza con il formato europeo è che i duelli in parità vengono ignorati.",
   "custom": "Personalizzato",
   "customHint": "Ti permette di definire valori personalizzati per il tuo torneo.",
   "win_over_draws": "Vittoria sul pareggio",

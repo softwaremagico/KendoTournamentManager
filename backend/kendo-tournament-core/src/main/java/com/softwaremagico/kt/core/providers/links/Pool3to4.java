@@ -2,7 +2,7 @@ package com.softwaremagico.kt.core.providers.links;
 
 public enum Pool3to4 {
     WINNER_1A(0, 0, 0),
-    WINNER_1B(1, 0, 4),
+    WINNER_1B(1, 0, 3),
     WINNER_2A(0, 1, 2),
     WINNER_2B(1, 1, 1),
     WINNER_3A(0, 2, 3),
