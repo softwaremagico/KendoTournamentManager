@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.providers.links.Pool11To16winners2;
 import com.softwaremagico.kt.core.providers.links.Pool11To8winners1;
 import com.softwaremagico.kt.core.providers.links.Pool12To16winners2;
 import com.softwaremagico.kt.core.providers.links.Pool3to4winners2;
@@ -251,6 +252,9 @@ public class GroupLinkProvider {
     private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder) {
         if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 1) {
             return Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 2) {
+            return Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
         if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
             return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);

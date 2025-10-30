@@ -33,7 +33,9 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @SpringBootTest
 @Test(groups = {"tournamentLinkTest"})
@@ -100,21 +102,58 @@ public class TournamentLinkTests extends TreeTournamentBasedTests {
         }
     }
 
-    private void checkNotTwoFirstWinnersAsIncomingArrow() {
-
+    private void checkNotTwoFirstWinnersAsIncomingArrow(TournamentDTO tournament, int winners) {
+        //If I have two first winners together, means that 2nd winners together are full.
+        if (winners == 1) {
+            return;
+        }
+        final List<GroupLinkDTO> secondLevelGroups = getGroupLinksToLevel(tournament, 1);
+        //Check if two winners are together. Two first winners are together if the destination groups number for first winners are less than the original one.
+        Assert.assertEquals(getGroupFromLevel(tournament, 0).size(),
+                secondLevelGroups.stream().filter(groupLinkDTO -> groupLinkDTO.getWinner() == 0).toList().size());
     }
 
-    private void noSecondPlaceWinnerOnByeUnlessNecessary() {
-
+    private List<GroupLinkDTO> getGroupLinksToLevel(TournamentDTO tournament, int level) {
+        return groupLinkController.getLinks(tournament).stream()
+                .filter(groupLinkDTO -> groupLinkDTO.getDestination().getLevel() == level).toList();
     }
 
-    private void doNotRepeatFightsUntilTheEnd() {
+    private List<GroupDTO> getGroupFromLevel(TournamentDTO tournament, int level) {
+        return groupController.get(tournament).stream().filter(groupDTO -> groupDTO.getLevel() == level).toList();
+    }
 
+
+    private void noSecondPlaceWinnerOnByeUnlessNecessary(TournamentDTO tournament) {
+        final List<GroupLinkDTO> groupLinkDTOs = getGroupLinksToLevel(tournament, 1);
+        final Set<GroupDTO> byes = getByes(tournament, 1);
+        for (GroupLinkDTO groupLinkDTO : groupLinkDTOs) {
+            //If a second winner goes to a bye
+            if (groupLinkDTO.getWinner() == 1 && byes.contains(groupLinkDTO.getDestination())) {
+                //All first winners are on a bye.
+                Assert.assertTrue(byes.containsAll(groupLinkDTOs.stream().filter(g -> g.getWinner() == 0)
+                        .map(GroupLinkDTO::getDestination).toList()));
+            }
+        }
+    }
+
+
+    private Set<GroupDTO> getByes(TournamentDTO tournament, int level) {
+        final List<GroupLinkDTO> groupLinkDTOs = getGroupLinksToLevel(tournament, level);
+        Set<GroupDTO> groupsFromLevel = new HashSet<>(getGroupFromLevel(tournament, level));
+        Set<GroupDTO> seenGroups = new HashSet<>();
+        for (GroupLinkDTO g : groupLinkDTOs) {
+            if (!seenGroups.add(g.getDestination())) {
+                groupsFromLevel.remove(g.getDestination());
+            }
+        }
+        return groupsFromLevel;
     }
 
     private void checkGroupRules(TournamentDTO tournamentDTO, int winners) {
         assertEachPoolIncomingArrowsNumber(tournamentDTO);
         assertEachPoolOutcomingArrowsNumber(tournamentDTO, winners);
+        checkNotTwoFirstWinnersAsIncomingArrow(tournamentDTO, winners);
+        noSecondPlaceWinnerOnByeUnlessNecessary(tournamentDTO);
     }
 
 
