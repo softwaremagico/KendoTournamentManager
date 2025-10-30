@@ -118,10 +118,27 @@ public class TreeTournamentHandler extends LeagueHandler {
         if (group.getLevel() > 0) {
             throw new InvalidGroupException(this.getClass(), "Groups can only be added at level 0.");
         }
+        correctGroupWinners(tournament, group);
         final Group savedGroup = groupProvider.addGroup(tournament, group);
         adjustGroupSize(tournament, getNumberOfWinners(tournament));
         adjustGroupsShiaijos(tournament);
         return savedGroup;
+    }
+
+
+    private void correctGroupWinners(Tournament tournament, Group group) {
+        final TournamentExtraProperty numberOfWinners = tournamentExtraPropertyProvider
+                .getByTournamentAndProperty(tournament, TournamentExtraPropertyKey.NUMBER_OF_WINNERS);
+        if (numberOfWinners != null) {
+            try {
+                final int winners = Integer.parseInt(numberOfWinners.getPropertyValue());
+                if (group.getLevel() == 0 && winners != group.getNumberOfWinners()) {
+                    group.setNumberOfWinners(winners);
+                }
+            } catch (Exception e) {
+                KendoTournamentLogger.errorMessage(this.getClass(), e);
+            }
+        }
     }
 
 
@@ -143,7 +160,7 @@ public class TreeTournamentHandler extends LeagueHandler {
                 .getByTournamentAndProperty(tournament,
                         TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, DEFAULT_ODD_TEAMS_RESOLUTION_ASAP);
 
-        //Update the shiaijo numbers.
+        //Update the group size.
         if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue())) {
             adjustGroupsSizeRemovingOddNumbers(tournament, numberOfWinners);
         } else {
@@ -187,8 +204,8 @@ public class TreeTournamentHandler extends LeagueHandler {
                     //It is not a power of two.
                     && (groupsByLevel.get(level).size()
                     < GroupUtils.getNextPowerOfTwo(((groupsByLevel.get(level - 1).size() * (level == 1 ? numberOfWinners : 1)) + 1) / 2))
-                    //Except the Last level, that has only one group. Skip this if the previous level has more than one winner.
-                    && !(groupsByLevel.get(level).size() == 1 && previousLevelSize == 2 && groupsByLevel.get(level - 1).get(0).getNumberOfWinners() > 1)) {
+                    //Except the Last level, that has only one group. Unless the previous level has more than one winner.
+                    && !(groupsByLevel.get(level).size() == 1 && previousLevelSize == 2 && groupsByLevel.get(level - 1).get(0).getNumberOfWinners() == 1)) {
                 final Group levelGroup = new Group(tournament, level, groupsByLevel.get(level).size());
                 groupProvider.addGroup(tournament, levelGroup);
                 groupsByLevel.get(level).add(levelGroup);
