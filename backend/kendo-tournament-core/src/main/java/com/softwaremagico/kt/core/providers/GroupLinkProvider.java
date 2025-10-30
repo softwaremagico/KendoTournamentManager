@@ -21,9 +21,12 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
-import com.softwaremagico.kt.core.providers.links.Pool12To16;
-import com.softwaremagico.kt.core.providers.links.Pool3to4;
-import com.softwaremagico.kt.core.providers.links.Pool6to8;
+import com.softwaremagico.kt.core.providers.links.Pool11To8winners1;
+import com.softwaremagico.kt.core.providers.links.Pool12To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool3to4winners2;
+import com.softwaremagico.kt.core.providers.links.Pool6to4winners1;
+import com.softwaremagico.kt.core.providers.links.Pool6to8winners2;
+import com.softwaremagico.kt.core.providers.links.Pool9to8winners1;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -50,9 +53,11 @@ import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAU
 @Service
 public class GroupLinkProvider {
 
-    private static final int TEMPLATE_12 = 12;
-    private static final int TEMPLATE_6 = 6;
-    private static final int TEMPLATE_3 = 3;
+    private static final int SOURCE_12 = 12;
+    private static final int SOURCE_11 = 11;
+    private static final int SOURCE_9 = 9;
+    private static final int SOURCE_6 = 6;
+    private static final int SOURCE_3 = 3;
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final GroupProvider groupProvider;
@@ -115,9 +120,10 @@ public class GroupLinkProvider {
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
                     //If it has the same number of groups, can be use the standard way.
                     && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size())) {
-                final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(), winnerOrder);
+                final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(),
+                        numberOfWinners, winnerOrder);
                 //Special case, use federation templates.
-                if (numberOfWinners > 1 && templateDestination >= 0) {
+                if (templateDestination >= 0) {
                     return nextLevelGroups.get(templateDestination);
                 }
                 if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
@@ -242,15 +248,25 @@ public class GroupLinkProvider {
         }
     }
 
-    private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int winnerOrder) {
-        if (sourceGroupLevelSize == TEMPLATE_12) {
-            return Pool12To16.getDestination(sourceGroupLevelIndex, winnerOrder);
+    private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder) {
+        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 1) {
+            return Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
-        if (sourceGroupLevelSize == TEMPLATE_6) {
-            return Pool6to8.getDestination(sourceGroupLevelIndex, winnerOrder);
+        if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
+            return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
-        if (sourceGroupLevelSize == TEMPLATE_3) {
-            return Pool3to4.getDestination(sourceGroupLevelIndex, winnerOrder);
+        if (sourceGroupLevelSize == SOURCE_9 && numberOfWinners == 1) {
+            return Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_6) {
+            if (numberOfWinners == 1) {
+                return Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+            } else {
+                return Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+            }
+        }
+        if (sourceGroupLevelSize == SOURCE_3 && numberOfWinners == 2) {
+            return Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
         }
         return -1;
     }
