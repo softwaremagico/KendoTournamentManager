@@ -297,11 +297,11 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   }
 
   private getFightsByShiaijo(shiaijo: number): Fight[] {
-    return this.groups.filter(group => group.shiaijo == shiaijo || !shiaijo).flatMap((group: Group) => group.fights);
+    return this.groups.filter(group => group.shiaijo == shiaijo || shiaijo == -1).flatMap((group: Group) => group.fights);
   }
 
   private getUntiesByShiaijo(shiaijo: number): Duel[] {
-    return this.groups.filter(group => group.shiaijo == shiaijo || !shiaijo).flatMap((group: Group) => group.unties)
+    return this.groups.filter(group => group.shiaijo == shiaijo || shiaijo == -1).flatMap((group: Group) => group.unties)
   }
 
   private refreshFights(): void {
@@ -724,7 +724,6 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       });
     }
-    console.log("selectedGroup", this.selectedGroup);
   }
 
   unfinishDuel(): void {
