@@ -96,7 +96,7 @@ public class Tournament extends Element implements IName {
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy) {
-        this(name, shiaijos, teamSize, type, createdBy, ScoreType.CLASSIC);
+        this(name, shiaijos, teamSize, type, createdBy, ScoreType.INTERNATIONAL);
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy, ScoreType scoreType) {
