@@ -55,7 +55,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectedFight: Fight | undefined;
   selectedDuel: Duel | undefined;
-  selectedGroup: Group | undefined;
+  selectedGroup: Group | undefined | null;
 
   tournament: Tournament;
   timer: boolean = false;
@@ -294,6 +294,14 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   private getUnties(): Duel[] {
     return this.groups.flatMap((group: Group) => group.unties)
+  }
+
+  private getFightsByShiaijo(shiaijo: number): Fight[] {
+    return this.groups.filter(group => group.shiaijo == shiaijo || !shiaijo).flatMap((group: Group) => group.fights);
+  }
+
+  private getUntiesByShiaijo(shiaijo: number): Duel[] {
+    return this.groups.filter(group => group.shiaijo == shiaijo || !shiaijo).flatMap((group: Group) => group.unties)
   }
 
   private refreshFights(): void {
@@ -691,9 +699,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
       this.duelService.update(this.selectedDuel).subscribe((): void => {
         this.messageService.infoMessage("infoDuelFinished");
-        const selectedGroup: Group | null = this.getGroup(this.selectedDuel);
+        this.selectedGroup = this.getGroup(this.selectedDuel);
         let showClassification: boolean = true;
-        if (selectedGroup != null) {
+        if (this.selectedGroup != null) {
           // Senbatsu, has a limited number of fights
           if (this.tournament.type === TournamentType.SENBATSU) {
             if (this.getFights().length < this.groups[0].teams.length - 1) {
@@ -703,7 +711,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             }
           } else {
             // Tournament, each group must have a winner. Show for each group the winners.
-            if (this.tournament.type === TournamentType.CHAMPIONSHIP && Group.isFinished(selectedGroup)) {
+            if (this.tournament.type === TournamentType.CHAMPIONSHIP && Group.isFinished(this.selectedGroup)) {
               //Shows group classification. And if there is a tie score can be solved.
               this.showClassification();
               showClassification = false;
@@ -716,6 +724,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
       });
     }
+    console.log("selectedGroup", this.selectedGroup);
   }
 
   unfinishDuel(): void {
@@ -834,23 +843,23 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectFirstUnfinishedDuel(): boolean {
     this.resetFilter();
-    const fights: Fight[] = this.getFights();
-    const unties: Duel[] = this.getUnties();
+    const fights: Fight[] = this.getFightsByShiaijo(this.selectedShiaijo);
+    const unties: Duel[] = this.getUntiesByShiaijo(this.selectedShiaijo);
     if (fights) {
       for (const fight of fights) {
+        for (const duel of unties) {
+          if (!duel.finished) {
+            this.selectedFight = undefined;
+            this.selectDuel(duel);
+            return true;
+          }
+        }
         for (const duel of fight.duels) {
           if (!duel.finished) {
             this.selectedFight = fight;
             this.selectDuel(duel);
             return true;
           }
-        }
-      }
-      for (const duel of unties) {
-        if (!duel.finished) {
-          this.selectedFight = undefined;
-          this.selectDuel(duel);
-          return true;
         }
       }
     }
