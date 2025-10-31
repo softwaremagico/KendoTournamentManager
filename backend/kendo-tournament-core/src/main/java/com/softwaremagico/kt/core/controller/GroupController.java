@@ -38,6 +38,7 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
@@ -63,6 +64,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final DuelConverter duelConverter;
     private final TeamConverter teamConverter;
     private final TournamentHandlerSelector tournamentHandlerSelector;
+    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
 
     private final Set<GroupsUpdatedListener> groupsUpdatedListeners = new HashSet<>();
 
@@ -76,7 +78,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
                            DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter,
-                           TournamentHandlerSelector tournamentHandlerSelector) {
+                           TournamentHandlerSelector tournamentHandlerSelector, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -86,6 +88,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.duelConverter = duelConverter;
         this.teamConverter = teamConverter;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
+        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
 

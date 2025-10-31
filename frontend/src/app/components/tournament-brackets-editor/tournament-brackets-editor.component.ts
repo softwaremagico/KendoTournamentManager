@@ -202,10 +202,6 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       })
       const lastGroup: Group = level0Groups.reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
         prev : current, level0Groups[level0Groups.length - 1]);
-      console.log("deleting", lastGroup)
-      console.log(this.groups.filter((g: Group): boolean => {
-        return g.level === 0;
-      }))
       this.deleteGroup(lastGroup);
     }
   }
