@@ -21,6 +21,14 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.providers.links.Pool11To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool11To8winners1;
+import com.softwaremagico.kt.core.providers.links.Pool12To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool13To16winners2;
+import com.softwaremagico.kt.core.providers.links.Pool3to4winners2;
+import com.softwaremagico.kt.core.providers.links.Pool6to4winners1;
+import com.softwaremagico.kt.core.providers.links.Pool6to8winners2;
+import com.softwaremagico.kt.core.providers.links.Pool9to8winners1;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
@@ -46,6 +54,13 @@ import static com.softwaremagico.kt.core.tournaments.TreeTournamentHandler.DEFAU
  */
 @Service
 public class GroupLinkProvider {
+
+    private static final int SOURCE_13 = 13;
+    private static final int SOURCE_12 = 12;
+    private static final int SOURCE_11 = 11;
+    private static final int SOURCE_9 = 9;
+    private static final int SOURCE_6 = 6;
+    private static final int SOURCE_3 = 3;
 
     private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
     private final GroupProvider groupProvider;
@@ -108,6 +123,12 @@ public class GroupLinkProvider {
             if (Boolean.parseBoolean(oddTeamsResolvedAsapProperty.getPropertyValue()) && sourceGroup.getLevel() == 0
                     //If it has the same number of groups, can be use the standard way.
                     && currentLevelGroups.size() != nextLevelGroups.size() && !GroupUtils.isPowerOfTwo(currentLevelGroups.size())) {
+                final int templateDestination = getWinnersByFederationTemplates(sourceGroup.getIndex(), currentLevelGroups.size(),
+                        numberOfWinners, winnerOrder);
+                //Special case, use federation templates.
+                if (templateDestination >= 0) {
+                    return nextLevelGroups.get(templateDestination);
+                }
                 if (currentLevelGroups.size() < nextLevelGroups.size() && numberOfWinners > 1 && currentLevelGroups.size() % 2 == 1) {
                     return nextLevelGroups.get(spreadWinnersOnTreeAsMuchAsPossible(sourceGroup.getIndex(),
                             currentLevelGroups.size(), nextLevelGroups.size(), winnerOrder));
@@ -216,7 +237,7 @@ public class GroupLinkProvider {
                 if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
                     return destinationGroupLevelSize - sourceGroupLevelSize + sourceGroupLevelIndex;
                 } else {
-                    return  sourceGroupLevelIndex;
+                    return sourceGroupLevelIndex;
                 }
             } else {
                 if (sourceGroupLevelIndex <= (sourceGroupLevelSize - 1) / 2) {
@@ -228,5 +249,34 @@ public class GroupLinkProvider {
         } else {
             return -1;
         }
+    }
+
+    private int getWinnersByFederationTemplates(int sourceGroupLevelIndex, int sourceGroupLevelSize, int numberOfWinners, int winnerOrder) {
+        if (sourceGroupLevelSize == SOURCE_13 && numberOfWinners == 2) {
+            return Pool13To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_12 && numberOfWinners == 2) {
+            return Pool12To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 1) {
+            return Pool11To8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_11 && numberOfWinners == 2) {
+            return Pool11To16winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_9 && numberOfWinners == 1) {
+            return Pool9to8winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        if (sourceGroupLevelSize == SOURCE_6) {
+            if (numberOfWinners == 1) {
+                return Pool6to4winners1.getDestination(sourceGroupLevelIndex, winnerOrder);
+            } else {
+                return Pool6to8winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+            }
+        }
+        if (sourceGroupLevelSize == SOURCE_3 && numberOfWinners == 2) {
+            return Pool3to4winners2.getDestination(sourceGroupLevelIndex, winnerOrder);
+        }
+        return -1;
     }
 }

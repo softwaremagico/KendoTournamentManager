@@ -111,7 +111,7 @@
   "european": "Europäisch",
   "europeanHint": "Der Gewinner wird durch gewonnene Matches ermittelt. Bei Gleichstand werden die unentschiedenen Spiele gezählt. Gibt es auch ein Unentschieden, wenden wir das gleiche Verfahren mit Zweikämpfen an. Stehen auch die Matches und Duelle unentschieden, werden die Treffer gezählt.",
   "international": "Internationale",
-  "internationalHint": "Der Gewinner wird durch gewonnene Matches ermittelt. Bei Gleichstand werden die unentschiedenen Spiele gezählt. Bei ebenfalls Gleichstand werden die gewonnenen Duelle gewertet. Besteht weiterhin Gleichstand, wird zuerst die Anzahl der Treffer gezählt und wird der Gleichstand nicht entschieden, werden die unentschiedenen Duelle gezählt. Beachten Sie, dass der Unterschied zum europäischen Format darin besteht, dass Unentschieden-Duelle ignoriert werden.",
+  "internationalHint": "Der Sieger wird anhand der gewonnenen Spiele ermittelt. Bei Gleichstand zählt die Anzahl der unentschiedenen Spiele. Besteht weiterhin Gleichstand, zählt die Anzahl der gewonnenen Spiele. Sollte auch dann noch Gleichstand herrschen, zählt die Anzahl der Treffer. Im Gegensatz zum europäischen Format werden unentschiedene Spiele nicht gewertet.",
   "custom": "Angepasst",
   "customHint": "Es ermöglicht Ihnen, benutzerdefinierte Werte für Ihr Turnier zu definieren.",
   "win_over_draws": "Sieg über Unentschieden",
