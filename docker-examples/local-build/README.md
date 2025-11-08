@@ -3,8 +3,6 @@ You can customise the `.env` file
 You need nodejs 20 installed, angular 15 & maven in order to build locally frontend & backend.
 This is a totally unsafe way to run the tournament, should be used only for testing purposes.
 
-Remember to copy this folder to the root directory of the project, so the script can find the needed files for creating the docker containers.
-
 After it, execute:
 
 ```
