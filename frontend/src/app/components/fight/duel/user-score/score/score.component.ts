@@ -87,14 +87,14 @@ export class ScoreComponent implements OnInit, OnChanges {
         } else {
           if (!this.swapTeams) {
             if (this.duel.competitor1Score[this.index] !== undefined) {
-              this.duel.competitor1Score.splice(this.index, 1);
-              this.duel.competitor1ScoreTime.splice(this.index, 1);
+              delete this.duel.competitor1Score[this.index];
+              delete this.duel.competitor1ScoreTime[this.index];
               updated = true;
             }
           } else {
             if (this.duel.competitor2Score[this.index] !== undefined) {
-              this.duel.competitor2Score.splice(this.index, 1);
-              this.duel.competitor2ScoreTime.splice(this.index, 1);
+              delete this.duel.competitor2Score[this.index];
+              delete this.duel.competitor2ScoreTime[this.index];
               updated = true;
             }
           }
@@ -117,14 +117,14 @@ export class ScoreComponent implements OnInit, OnChanges {
         } else {
           if (!this.swapTeams) {
             if (this.duel.competitor2Score[this.index] !== undefined) {
-              this.duel.competitor2Score.splice(this.index, 1);
-              this.duel.competitor2ScoreTime.splice(this.index, 1);
+              delete this.duel.competitor2Score[this.index];
+              delete this.duel.competitor2ScoreTime[this.index];
               updated = true;
             }
           } else {
             if (this.duel.competitor1Score[this.index] !== undefined) {
-              this.duel.competitor1Score.splice(this.index, 1);
-              this.duel.competitor1ScoreTime.splice(this.index, 1);
+              delete this.duel.competitor1Score[this.index];
+              delete this.duel.competitor1ScoreTime[this.index];
               updated = true;
             }
           }
