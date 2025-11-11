@@ -69,7 +69,6 @@ export class ScoreComponent implements OnInit, OnChanges {
   private updateDuel(score: Score): boolean {
     let updated: boolean = false;
     if (score) {
-      console.log('before', this.duel.competitor1Score)
       if (this.left) {
         if (score !== Score.EMPTY) {
           if (!this.swapTeams) {
@@ -135,7 +134,6 @@ export class ScoreComponent implements OnInit, OnChanges {
     if (updated) {
       this.scoreUpdatedService.isScoreUpdated.next(this.duel);
     }
-    console.log('after', this.duel.competitor1Score)
     return updated;
   }
 
