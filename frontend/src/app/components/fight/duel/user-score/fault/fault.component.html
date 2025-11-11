@@ -1,10 +1,10 @@
-<div [matMenuTriggerFor]="menu" class="fault" *ngIf="!locked &&
+<div [matMenuTriggerFor]="duel.finished ? null : menu" class="fault" *ngIf="!locked &&
 (RbacActivity.ASSIGN_FAULTS | rbac : this.rbacService.getActivities())">
   <mat-menu #menu="matMenu">
-    <button (click)="updateFault(true)" *ngIf="this.duel.competitor1 !== null && this.duel.competitor2 !== null"
+    <button [disabled]="duel.finished" (click)="updateFault(true)"
             mat-menu-item>{{'fault' | translate}}
     </button>
-    <button (click)="updateFault(false)" mat-menu-item>{{'clear' | translate}}</button>
+    <button [disabled]="duel.finished" (click)="updateFault(false)" mat-menu-item>{{'clear' | translate}}</button>
   </mat-menu>
   <div *ngIf="(this.left && !this.swapTeams) || (!this.left && this.swapTeams) ?
        this.duel.competitor1Fault && this.duel.competitor1Fault : this.duel.competitor2Fault"
