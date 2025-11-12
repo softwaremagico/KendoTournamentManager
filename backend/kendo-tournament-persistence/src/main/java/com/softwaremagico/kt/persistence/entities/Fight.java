@@ -272,11 +272,11 @@ public class Fight extends Element {
     }
 
     public Integer getScoreTeam1() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().stream().filter(Objects::nonNull).toList().size()).sum();
     }
 
     public Integer getScoreTeam2() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().stream().filter(Objects::nonNull).toList().size()).sum();
     }
 }
 
