@@ -209,9 +209,9 @@ public class Fight extends Element {
     public Integer getScore(Participant competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(Duel::getCompetitor1ScoreValue).sum();
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(Duel::getCompetitor2ScoreValue).sum();
         return score;
     }
 
@@ -272,11 +272,11 @@ public class Fight extends Element {
     }
 
     public Integer getScoreTeam1() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().stream().filter(Objects::nonNull).toList().size()).sum();
+        return getDuels().stream().mapToInt(Duel::getCompetitor1ScoreValue).sum();
     }
 
     public Integer getScoreTeam2() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().stream().filter(Objects::nonNull).toList().size()).sum();
+        return getDuels().stream().mapToInt(Duel::getCompetitor2ScoreValue).sum();
     }
 }
 
