@@ -274,4 +274,10 @@ public class FightController extends BasicInsertableController<Fight, FightDTO, 
         return convertAll(getProvider().getBy(Collections.singletonList(participant)));
     }
 
+    public boolean scoresGoesFromCompetitorsNameToCenter(int tournamentId) {
+        return getProvider().scoresGoesFromCompetitorsNameToCenter(tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "',",
+                        ExceptionType.INFO)));
+    }
+
 }
