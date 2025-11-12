@@ -204,7 +204,8 @@ public class FightServices extends BasicServices<Fight, FightDTO, FightRepositor
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege,"
             + " @securityService.participantPrivilege)")
-    @Operation(summary = "Checks if the scores are added from the competitor's name, to the center of the sheet.", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Checks if the scores are added from the competitor's name, to the center of the sheet.",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/scores-from-name-to-center/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean scoresGoesFromCompetitorsNameToCenter(@Parameter(description = "Id of an existing tournament", required = true)
                                                          @PathVariable("tournamentId") Integer tournamentId,
