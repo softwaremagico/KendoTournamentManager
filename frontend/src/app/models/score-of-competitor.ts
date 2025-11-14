@@ -5,6 +5,7 @@ export class ScoreOfCompetitor {
   public wonDuels: number;
   public drawDuels: number;
   public hits: number;
+  public hitsLost: number;
   public duelsDone: number;
   public wonFights: number;
   public drawFights: number;
@@ -16,6 +17,7 @@ export class ScoreOfCompetitor {
     target.wonDuels = source.wonDuels;
     target.drawDuels = source.drawDuels;
     target.hits = source.hits;
+    target.hitsLost = source.hitsLost;
     target.duelsDone = source.duelsDone;
     target.wonFights = source.wonFights;
     target.drawFights = source.drawFights;

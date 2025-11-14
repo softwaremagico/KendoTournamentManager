@@ -8,6 +8,7 @@ export class ScoreOfTeam {
   public drawDuels: number;
   public untieDuels: number;
   public hits: number;
+  public hitsLost: number;
   public sortingIndex: number;
 
   public static copy(source: ScoreOfTeam, target: ScoreOfTeam): void {
@@ -16,6 +17,7 @@ export class ScoreOfTeam {
     target.wonDuels = source.wonDuels;
     target.drawDuels = source.drawDuels;
     target.hits = source.hits;
+    target.hitsLost = source.hitsLost;
     target.untieDuels = source.untieDuels;
     if (source.team !== undefined) {
       target.team = Team.clone(source.team);

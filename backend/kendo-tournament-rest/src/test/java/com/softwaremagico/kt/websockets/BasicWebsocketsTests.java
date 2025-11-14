@@ -24,7 +24,6 @@ package com.softwaremagico.kt.websockets;
 import com.softwaremagico.kt.EchoWebSocketController;
 import com.softwaremagico.kt.core.providers.AuthenticatedUserProvider;
 import com.softwaremagico.kt.persistence.entities.AuthenticatedUser;
-import com.softwaremagico.kt.persistence.entities.IAuthenticatedUser;
 import com.softwaremagico.kt.rest.controllers.AuthenticatedUserController;
 import com.softwaremagico.kt.rest.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +102,7 @@ public class BasicWebsocketsTests extends AbstractTestNGSpringContextTests {
         authenticatedUser = authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         headers = new WebSocketHttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken((IAuthenticatedUser) authenticatedUser, "127.0.0.1"));
+        headers.set("Authorization", "Bearer " + jwtTokenUtil.generateAccessToken(authenticatedUser, "127.0.0.1"));
     }
 
 

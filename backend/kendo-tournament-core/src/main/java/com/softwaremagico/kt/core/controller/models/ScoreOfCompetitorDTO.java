@@ -34,6 +34,7 @@ public class ScoreOfCompetitorDTO {
     private Integer drawDuels = null;
     private Integer untieDuels = null;
     private Integer hits = null;
+    private Integer hitsLost = null;
     private Integer untieHits = null;
     private Integer duelsDone = null;
     private Integer wonFights = null;
@@ -90,6 +91,14 @@ public class ScoreOfCompetitorDTO {
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getHitsLost() {
+        return hitsLost;
+    }
+
+    public void setHitsLost(Integer hitsLost) {
+        this.hitsLost = hitsLost;
     }
 
     public Integer getUntieHits() {
