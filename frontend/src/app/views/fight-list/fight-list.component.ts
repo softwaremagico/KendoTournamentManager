@@ -448,7 +448,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     if (this.selectedGroup) {
       const fight: Fight = new Fight();
       fight.tournament = this.tournament;
-      fight.shiaijo = 0;
+      fight.shiaijo = this.selectedGroup.shiaijo;
       fight.level = this.selectedGroup.level;
       fight.duels = [];
       this.openAddFightDialog('Add a new Fight', Action.Add, fight, this.selectedGroup, this.selectedFight);
