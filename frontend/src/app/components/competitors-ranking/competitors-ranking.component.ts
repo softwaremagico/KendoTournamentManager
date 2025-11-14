@@ -9,6 +9,7 @@ import {RbacService} from "../../services/rbac/rbac.service";
 import {Participant} from "../../models/participant";
 import {DOCUMENT} from "@angular/common";
 import {Club} from "../../models/club";
+import {ScoreType} from "../../models/score-type";
 
 @Component({
   selector: 'app-competitors-ranking',
@@ -111,4 +112,6 @@ export class CompetitorsRankingComponent extends RbacBasedComponent implements O
   daysChanged(): void {
     this.getRanking();
   }
+
+    protected readonly ScoreType = ScoreType;
 }

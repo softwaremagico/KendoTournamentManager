@@ -42,6 +42,7 @@ public class ScoreOfCompetitor {
     private Integer drawDuels = null;
     private Integer untieDuels = null;
     private Integer hits = null;
+    private Integer hitsLost = null;
     private Integer untieHits = null;
     private Integer duelsDone = null;
     private Integer wonFights = null;
@@ -84,6 +85,7 @@ public class ScoreOfCompetitor {
         wonDuels = null;
         drawDuels = null;
         hits = null;
+        hitsLost = null;
         totalFights = null;
         setDuelsWon();
         setDuelsDraw();
@@ -93,6 +95,7 @@ public class ScoreOfCompetitor {
         setUntieDuels();
         setUntieHits();
         setHits();
+        setHitsLost();
         setTotalFights();
     }
 
@@ -170,6 +173,15 @@ public class ScoreOfCompetitor {
         }
     }
 
+    public void setHitsLost() {
+        hitsLost = 0;
+        for (final Fight fight : fights) {
+            if (fight != null) {
+                hitsLost += fight.getScoreAgainst(competitor);
+            }
+        }
+    }
+
     public void setUntieDuels() {
         untieDuels = 0;
         unties.forEach(duel -> {
@@ -213,6 +225,14 @@ public class ScoreOfCompetitor {
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getHitsLost() {
+        return hitsLost;
+    }
+
+    public void setHitsLost(Integer hitsLost) {
+        this.hitsLost = hitsLost;
     }
 
     public Integer getDuelsDone() {
@@ -273,7 +293,8 @@ public class ScoreOfCompetitor {
 
     @Override
     public String toString() {
-        return "{" + NameUtils.getLastnameName(competitor) + " D:" + getWonDuels() + "/" + getDrawDuels() + ", H:" + getHits() + "}";
+        return "{" + NameUtils.getLastnameName(competitor) + " D:" + getWonDuels() + "/"
+                + getDrawDuels() + ", H:" + getHits() + ", HL:" + getHitsLost() + "}";
     }
 
 }
