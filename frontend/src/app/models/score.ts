@@ -36,7 +36,7 @@ export namespace Score {
   export function noCompetitor(): Score[] {
     const scores: Score[] = [];
     scores.push(Score.FUSEN_GACHI);
-    scores.push(Score.FUSEN_GACHI);
+    scores.push(Score.EMPTY);
     return scores;
   }
 
