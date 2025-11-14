@@ -236,7 +236,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       //Corrected selected items
       if (this.selectedFight) {
         for (const _group of this.groups) {
-          if (_group.fights.indexOf(this.selectedFight)) {
+          if (_group.fights.indexOf(this.selectedFight) >= 0) {
             selectedFightIndex = _group.fights.indexOf(this.selectedFight);
           }
         }
@@ -247,10 +247,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       this.groups.splice(groupIndex, 1, group);
       this.selectedGroup = this.groups[groupIndex];
       this.resetFilter();
-      if (this.selectedGroup && this.selectedFight && selectedFightIndex) {
+      if (this.selectedGroup && this.selectedFight && selectedFightIndex !== undefined) {
         this.selectFight(this.filteredFights.get(this.selectedGroup.id!)![selectedFightIndex]);
       } else {
-        this.selectFight(undefined);
+        this.selectFight(this.selectedFight);
       }
       if (this.selectedFight && selectedDuelIndex && this.selectedFight?.duels[selectedDuelIndex]) {
         this.selectDuel(this.selectedFight.duels[selectedDuelIndex]);
@@ -595,7 +595,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   selectFight(fight: Fight | undefined): void {
     this.selectedFight = fight;
     if (fight) {
-      this.selectedGroup = this.groups.find((group: Group): boolean => group.fights.indexOf(fight) >= 0)!;
+      this.selectedGroup = this.groups.find(group => group.fights.indexOf(fight) >= 0);
     } else {
       this.selectedGroup = undefined;
     }
