@@ -16,7 +16,8 @@
       <th class="competitor-ranking-header">{{ 'competitor' | translate }}</th>
       <th class="competitor-ranking-header">{{ 'duelsWon' | translate }}</th>
       <th class="competitor-ranking-header">{{ 'duelsDraw' | translate }}</th>
-      <th class="competitor-ranking-header">{{ 'histsWon' | translate }}</th>
+      <th class="competitor-ranking-header">{{ 'hitsWon' | translate }}</th>
+      <th *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="competitor-ranking-header">{{ 'hitsLost' | translate }}</th>
       <th class="competitor-ranking-header">{{ 'totalFights' | translate }}</th>
     </tr>
     </thead>
@@ -35,6 +36,9 @@
       </td>
       <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
           class="competitor-ranking-value">{{ scoreOfCompetitor.hits }}{{ (scoreOfCompetitor.untieHits ? "*" : "") }}
+      </td>
+      <td *ngIf="tournament && tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
+          class="competitor-ranking-value">{{ scoreOfCompetitor.hitsLost }}
       </td>
       <td [ngClass]="{'selected': competitor?.id === scoreOfCompetitor.competitor.id}"
           class="competitor-ranking-value">{{ scoreOfCompetitor.totalFights }}

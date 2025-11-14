@@ -45,6 +45,7 @@ public class ScoreOfTeam {
     private Integer drawDuels = null;
     private Integer untieDuels = null;
     private Integer hits = null;
+    private Integer hitsLost = null;
     private Integer level = null;
     private Integer sortingIndex = null;
 
@@ -81,6 +82,7 @@ public class ScoreOfTeam {
         drawDuels = null;
         untieDuels = null;
         hits = null;
+        hitsLost = null;
         level = null;
         fightsDone = null;
         setLevel();
@@ -91,6 +93,7 @@ public class ScoreOfTeam {
         setFightsDone();
         setUntieDuels();
         setHits();
+        setHitsLost();
     }
 
     public void setLevel() {
@@ -127,6 +130,10 @@ public class ScoreOfTeam {
 
     public void setHits() {
         hits = fights.stream().mapToInt(fight -> fight.getScore(team)).sum();
+    }
+
+    public void setHitsLost() {
+        hitsLost = fights.stream().mapToInt(fight -> fight.getScoreAgainst(team)).sum();
     }
 
     public void setUntieDuels() {
@@ -211,6 +218,14 @@ public class ScoreOfTeam {
         this.hits = hits;
     }
 
+    public Integer getHitsLost() {
+        return hitsLost;
+    }
+
+    public void setHitsLost(Integer hitsLost) {
+        this.hitsLost = hitsLost;
+    }
+
     public Integer getLevel() {
         return level;
     }
@@ -230,6 +245,7 @@ public class ScoreOfTeam {
     @Override
     public String toString() {
         return "{" + team.getName() + ": Fights:" + getWonFights() + "/" + getDrawFights() + ", Duels: "
-                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getUntieDuels())) + "}";
+                + getWonDuels() + "/" + getDrawDuels() + ", hits:" + getHits() + "*".repeat(Math.max(0, getUntieDuels()))
+                + ", hits lost:" + getHitsLost() + "}";
     }
 }

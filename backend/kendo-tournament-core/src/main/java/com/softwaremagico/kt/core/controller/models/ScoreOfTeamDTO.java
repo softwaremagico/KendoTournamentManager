@@ -47,6 +47,7 @@ public class ScoreOfTeamDTO extends ElementDTO {
     private Integer drawDuels = null;
     private Integer untieDuels = null;
     private Integer hits = null;
+    private Integer hitsLost = null;
     private Integer level = null;
     private Integer sortingIndex = null;
 
@@ -211,6 +212,14 @@ public class ScoreOfTeamDTO extends ElementDTO {
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public Integer getHitsLost() {
+        return hitsLost;
+    }
+
+    public void setHitsLost(Integer hitsLost) {
+        this.hitsLost = hitsLost;
     }
 
     public Integer getLevel() {
