@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,7 +71,7 @@ public class LeagueTest extends TournamentTestUtils {
         //Create Tournament
         tournament1DTO = addTournament(TOURNAMENT1_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 0);
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournament1DTO,
-                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null);
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.FIFO.name()), null, null);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
@@ -79,12 +79,12 @@ public class LeagueTest extends TournamentTestUtils {
         //Create Tournament
         tournament2DTO = addTournament(TOURNAMENT2_NAME, MEMBERS, TEAMS, REFEREES, ORGANIZER, VOLUNTEER, PRESS, 0);
         tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournament2DTO,
-                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.LIFO.name()), null);
+                TournamentExtraPropertyKey.LEAGUE_FIGHTS_ORDER_GENERATION, LeagueFightsOrder.LIFO.name()), null, null);
     }
 
     @Test
     public void checkFifoOrder() {
-        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament1DTO.getId(), TeamsOrder.SORTED, 0, null, null);
         Assert.assertEquals(fightDTOs.get(0).getTeam1().getName(), "Team01");
         Assert.assertEquals(fightDTOs.get(0).getTeam2().getName(), "Team02");
 
@@ -106,7 +106,7 @@ public class LeagueTest extends TournamentTestUtils {
 
     @Test
     public void checkLifoOrder() {
-        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null);
+        List<FightDTO> fightDTOs = fightController.createFights(tournament2DTO.getId(), TeamsOrder.SORTED, 0, null, null);
         Assert.assertEquals(fightDTOs.get(0).getTeam1().getName(), "Team01");
         Assert.assertEquals(fightDTOs.get(0).getTeam2().getName(), "Team02");
 
@@ -127,6 +127,7 @@ public class LeagueTest extends TournamentTestUtils {
     }
 
     @AfterClass(alwaysRun = true)
+    @Override
     public void wipeOut() {
         super.wipeOut();
     }

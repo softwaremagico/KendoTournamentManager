@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,11 +42,11 @@ public class CheckEncryptedDataStorageTest extends AbstractTransactionalTestNGSp
 
 
     public Set<TestEntity> createEntities() {
-        Set<TestEntity> entities = new HashSet<>();
+        Set<TestEntity> entitiesCreated = new HashSet<>();
         for (int i = 0; i < NUMBER_OF_ENTITIES; i++) {
-            entities.add(TestEntity.newEntity());
+            entitiesCreated.add(TestEntity.newEntity());
         }
-        return entities;
+        return entitiesCreated;
     }
 
     @Test

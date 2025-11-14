@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,24 +21,35 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import com.softwaremagico.kt.utils.IName;
+import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TournamentDTO extends ElementDTO implements IName {
 
+    @Serial
+    private static final long serialVersionUID = -1072147970042436687L;
+
+    @NotNull
     private String name;
 
+    @NotNull
     private Integer shiaijos;
 
+    @NotNull
     private Integer teamSize;
 
+    @NotNull
     private TournamentType type;
 
     private TournamentScoreDTO tournamentScore;
 
+    @NotNull
     private Integer duelsDuration;
 
     private boolean locked;
@@ -54,12 +65,17 @@ public class TournamentDTO extends ElementDTO implements IName {
     }
 
     public TournamentDTO(String name, int shiaijos, int teamSize, TournamentType type) {
+        this(name, shiaijos, teamSize, type, null);
+    }
+
+    public TournamentDTO(String name, int shiaijos, int teamSize, TournamentType type, Integer duelsDuration) {
         this();
         setName(name);
         setShiaijos(shiaijos);
         setTeamSize(teamSize);
         setType(type);
         setTournamentScore(new TournamentScoreDTO());
+        setDuelsDuration(duelsDuration != null ? duelsDuration : Tournament.DEFAULT_DURATION);
     }
 
     public String getName() {

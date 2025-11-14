@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,6 +44,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -62,6 +63,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,6 +82,7 @@ import java.util.Set;
 public class AuthApi {
     private static final int MAX_WAITING_SECONDS = 10;
     private static final long MILLIS = 1000L;
+    public static final String SESSION_HEADER = "X-Session";
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticatedUserController authenticatedUserController;
@@ -122,7 +125,7 @@ public class AuthApi {
 
     @Operation(summary = "Gets the JWT Token into the headers.")
     @PostMapping(path = "/public/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<IAuthenticatedUser> login(@RequestBody AuthRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<IAuthenticatedUser> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
         try {
             //Check if the IP is blocked.
@@ -161,8 +164,7 @@ public class AuthApi {
 
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                        .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
@@ -174,7 +176,7 @@ public class AuthApi {
             if (authenticatedUserController.countUsers() == 0) {
                 RestServerLogger.info(this.getClass().getName(), "Creating default user '" + request.getUsername().replaceAll("[\n\r\t]", "_") + "'.");
                 final AuthenticatedUser user = authenticatedUserController.createUser(
-                        null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ROLE_ADMIN);
+                        null, request.getUsername(), "Default", "Admin", request.getPassword(), AvailableRole.ADMIN);
                 final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
                 final String jwtToken = jwtTokenUtil.generateAccessToken(user, ip);
                 user.setPassword(jwtToken);
@@ -216,8 +218,7 @@ public class AuthApi {
 
                 //We generate the JWT token and return it as a response header along with the user identity information in the response body.
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                        .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                        .headers(getLoginHeaders(jwtToken, jwtExpiration, jwtTokenUtil.getSession(jwtToken)))
                         .body(user);
             } catch (UsernameNotFoundException e) {
                 RestServerLogger.warning(this.getClass().getName(), "Bad credentials!.");
@@ -234,7 +235,7 @@ public class AuthApi {
     public ResponseEntity<IAuthenticatedUser> getToken(@RequestBody TemporalToken temporalToken,
                                                        HttpServletRequest httpRequest) {
         final String ip = getClientIP(httpRequest);
-        final Token token = participantController.generateToken(temporalToken.getContent());
+        final Token token = participantController.generateFromToken(temporalToken.getContent());
 
         final ZonedDateTime zdt = token.getExpiration().atZone(ZoneId.systemDefault());
         final long milliseconds = zdt.toInstant().toEpochMilli();
@@ -243,12 +244,11 @@ public class AuthApi {
         final String jwtToken = jwtTokenUtil.generateAccessToken(token.getParticipant(), ip, jwtExpiration);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                .header(HttpHeaders.EXPIRES, String.valueOf(milliseconds))
+                .headers(getLoginHeaders(jwtToken, milliseconds, jwtTokenUtil.getSession(jwtToken)))
                 .body(token.getParticipant());
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Gets all users.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<AuthenticatedUser> getAll(HttpServletRequest httpRequest) {
@@ -256,21 +256,21 @@ public class AuthApi {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Registers a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser register(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.createUser(authentication.getName(), request);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Updates a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public AuthenticatedUser update(@RequestBody CreateUserRequest request, Authentication authentication, HttpServletRequest httpRequest) {
         return authenticatedUserController.updateUser(authentication.getName(), request);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Deletes a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping(path = "/register/{username}")
     public void delete(@Parameter(description = "Username of an existing user", required = true) @PathVariable("username") String username,
@@ -289,7 +289,7 @@ public class AuthApi {
         return xfHeader.split(",")[0];
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -303,7 +303,7 @@ public class AuthApi {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Updates a password.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(path = "/{username}/password", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -319,7 +319,8 @@ public class AuthApi {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
     @Operation(summary = "Get roles.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/roles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
@@ -327,22 +328,33 @@ public class AuthApi {
         return authenticatedUserController.getRoles(authentication.getName());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.participantPrivilege, @securityService.guestPrivilege)")
     @Operation(summary = "Renew JWT Token.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(path = "/jwt/renew", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest) {
+    public ResponseEntity<Void> getNewJWT(Authentication authentication, HttpServletRequest httpRequest,
+                                          @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token) {
         final IAuthenticatedUser user = authenticatedUserProvider.findByUsername(authentication.getName()).orElseThrow(() ->
                 new UsernameNotFoundException(String.format("User '%s' not found!", authentication.getName())));
         final String ip = getClientIP(httpRequest);
         final long jwtExpiration = jwtTokenUtil.getJwtExpirationTime();
         JwtFilterLogger.info(this.getClass(), "Renewing JWT token for '{}' expiring at '{}'.", authentication.getName(),
                 new Date(jwtExpiration));
+        final String accessToken = jwtTokenUtil.generateAccessToken(user, ip);
+        final String session = jwtTokenUtil.getSession(accessToken);
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateAccessToken(user, ip))
-                .header(HttpHeaders.EXPIRES, String.valueOf(jwtExpiration))
+                .headers(getLoginHeaders(accessToken, jwtExpiration, session))
                 .build();
     }
 
 
+    private HttpHeaders getLoginHeaders(String jwtToken, long expirationTime, String session) {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, jwtToken);
+        headers.add(HttpHeaders.EXPIRES, String.valueOf(expirationTime));
+        headers.add(SESSION_HEADER, session);
+        headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, SESSION_HEADER);
+        return headers;
+    }
 }

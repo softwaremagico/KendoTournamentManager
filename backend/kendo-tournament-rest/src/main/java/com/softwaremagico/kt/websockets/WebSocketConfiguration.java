@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -129,7 +129,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
         @Override
         public String getName() {
-            return null;
+            return name;
         }
     }
 }

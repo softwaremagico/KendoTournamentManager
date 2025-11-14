@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,8 +62,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     @Override
-    public TournamentDTO create(TournamentDTO tournamentDTO, String username) {
-        final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username);
+    public TournamentDTO create(TournamentDTO tournamentDTO, String username, String session) {
+        final TournamentDTO createdTournamentDTO = super.create(tournamentDTO, username, session);
         final Group group = new Group();
         group.setCreatedBy(username);
         groupProvider.addGroup(reverse(createdTournamentDTO), group);
@@ -72,7 +72,7 @@ public class TournamentController extends BasicInsertableController<Tournament, 
 
     @CacheEvict(allEntries = true, value = {"tournaments-by-id"})
     @Override
-    public TournamentDTO update(TournamentDTO tournamentDTO, String username) {
+    public TournamentDTO update(TournamentDTO tournamentDTO, String username, String session) {
         //If a tournament is locked we can define it as finished (maybe fights are not finished by time).
         if (tournamentDTO.isLocked() && tournamentDTO.getFinishedAt() == null) {
             tournamentDTO.setFinishedAt(LocalDateTime.now());
@@ -82,21 +82,20 @@ public class TournamentController extends BasicInsertableController<Tournament, 
         }
         final Optional<Tournament> previousData = getProvider().get(tournamentDTO.getId());
         try {
-            return super.update(tournamentDTO, username);
+            return super.update(tournamentDTO, username, session);
         } finally {
             // We need to update all duels durations if already are defined, and duration is changed.
-            if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null) {
-                if (!Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
-                    //Update all duels
-                    final List<Duel> duels = duelProvider.get(previousData.get());
-                    duels.forEach(duel -> {
-                        if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
-                            duel.setTotalDuration(tournamentDTO.getDuelsDuration());
-                        }
-                    });
-                    if (!duels.isEmpty()) {
-                        duelProvider.saveAll(duels);
+            if (previousData.isPresent() && tournamentDTO.getDuelsDuration() != null
+                    && !Objects.equals(previousData.get().getDuelsDuration(), tournamentDTO.getDuelsDuration())) {
+                //Update all duels
+                final List<Duel> duels = duelProvider.get(previousData.get());
+                duels.forEach(duel -> {
+                    if (!duel.isOver() || (duel.getDuration() != null && duel.getDuration() < tournamentDTO.getDuelsDuration())) {
+                        duel.setTotalDuration(tournamentDTO.getDuelsDuration());
                     }
+                });
+                if (!duels.isEmpty()) {
+                    duelProvider.saveAll(duels);
                 }
             }
         }
@@ -119,8 +118,8 @@ public class TournamentController extends BasicInsertableController<Tournament, 
     }
 
     @Override
-    public void deleteById(Integer id, String username) {
-        delete(get(id), username);
+    public void deleteById(Integer id, String username, String session) {
+        delete(get(id), username, session);
     }
 
     public List<TournamentDTO> getPreviousTo(TournamentDTO tournamentDTO, int elementsToRetrieve) {

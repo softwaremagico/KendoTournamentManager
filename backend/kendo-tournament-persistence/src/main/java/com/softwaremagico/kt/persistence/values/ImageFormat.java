@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.values;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,8 @@ package com.softwaremagico.kt.persistence.values;
 
 public enum ImageFormat {
     RAW,
-    BASE64;
+    BASE64,
+    SVG;
 
     public static ImageFormat getFormat(String name) {
         for (final ImageFormat format : ImageFormat.values()) {

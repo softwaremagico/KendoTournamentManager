@@ -4,18 +4,18 @@ package com.softwaremagico.kt.pdf;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -59,7 +59,7 @@ public class AccreditationTests extends BasicDataTest {
         List<RoleDTO> roles = roleController.get(tournament);
         roles.forEach(roleDTO -> Assert.assertFalse(roleDTO.isAccreditationPrinted()));
 
-        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null)
+        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null, null)
                 // No clue why are 3 pages and not 2.
                 .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
 
@@ -69,12 +69,12 @@ public class AccreditationTests extends BasicDataTest {
 
     @Test(dependsOnMethods = "generateAccreditations", expectedExceptions = NoContentException.class)
     public void generateNewAccreditations() {
-        pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null);
+        pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, true, null, null);
     }
 
     @Test(dependsOnMethods = "generateNewAccreditations")
     public void generateAccreditationsAgain() {
-        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, null, null)
+        Assert.assertEquals(pdfController.generateTournamentAccreditations(Locale.getDefault(), tournament, null, null, (String) null)
                 // No clue why are 3 pages and not 2.
                 .createFile(PDF_PATH_OUTPUT + "Accreditations.pdf"), Math.ceil(roles.size() / 4.0) + 1);
     }

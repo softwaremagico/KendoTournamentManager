@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,10 @@ import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.persistence.entities.Achievement;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.repositories.AchievementRepository;
+import com.softwaremagico.kt.persistence.values.AchievementGrade;
+import com.softwaremagico.kt.persistence.values.AchievementType;
 import com.softwaremagico.kt.rest.exceptions.InvalidRequestException;
+import com.softwaremagico.kt.rest.security.KendoSecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -45,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -55,12 +59,14 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
 
     private final ParticipantProvider participantProvider;
 
-    public AchievementServices(AchievementController achievementController, ParticipantProvider participantProvider) {
-        super(achievementController);
+    public AchievementServices(AchievementController achievementController, KendoSecurityService kendoSecurityService,
+                               ParticipantProvider participantProvider) {
+        super(achievementController, kendoSecurityService);
         this.participantProvider = participantProvider;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_PARTICIPANT')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.participantPrivilege)")
     @Operation(summary = "Gets participant's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/participants/{participantId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> getParticipantAchievements(@Parameter(description = "Id of an existing participant", required = true)
@@ -70,17 +76,15 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         //If is a participant guest, only its own statistics can see.
         if (authentication != null) {
             final Optional<Participant> participant = participantProvider.findByTokenUsername(authentication.getName());
-            if (participant.isPresent()) {
-                if (!Objects.equals(participant.get().getId(), participantId)) {
-                    throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
-                            + "' is trying to access to statistics from user '" + participantId + "'.");
-                }
+            if (participant.isPresent() && !Objects.equals(participant.get().getId(), participantId)) {
+                throw new InvalidRequestException(this.getClass(), "User '" + authentication.getName()
+                        + "' is trying to access to statistics from user '" + participantId + "'.");
             }
         }
         return getController().getParticipantAchievements(participantId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> getTournamentAchievements(@Parameter(description = "Id of an existing tournament", required = true)
@@ -89,7 +93,7 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         return getController().getTournamentAchievements(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Regenerates tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> regenerateTournamentAchievements(@Parameter(description = "Id of an existing tournament", required = true)
@@ -98,10 +102,31 @@ public class AchievementServices extends BasicServices<Achievement, AchievementD
         return getController().regenerateAchievements(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.adminPrivilege)")
     @Operation(summary = "Regenerates all tournament's achievement.", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping(value = "/tournaments/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<AchievementDTO> regenerateAllTournamentAchievements(HttpServletRequest request) {
         return getController().regenerateAllAchievements();
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Gets total achievements by type.", description = "Not includes duplicates",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count/types", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<AchievementType, Map<AchievementGrade, Integer>> countByType(HttpServletRequest request) {
+        return getController().getAchievementsCount();
+    }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.guestPrivilege, @securityService.viewerPrivilege, @securityService.editorPrivilege, "
+            + "@securityService.adminPrivilege, @securityService.participantPrivilege)")
+    @Operation(summary = "Gets total achievements by type.", description = "Not includes duplicates",
+            security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/count/types/{achievementType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long count(@Parameter(description = "Type to count", required = true)
+                      @PathVariable("achievementType") AchievementType achievementType,
+                      HttpServletRequest request) {
+        return getController().countAchievements(achievementType);
     }
 }

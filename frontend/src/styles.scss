@@ -1,6 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "basic-colors";
 
+.cdk-overlay-pane {
+  &.mat-tooltip-panel {
+    .mat-tooltip {
+      background: var(--tooltip-background);
+      font-size: 15px;
+      padding: 10px;
+    }
+  }
+}
+
+
 //Messages
 .mat-snack-bar-container.info-snackbar.message-service {
   background: #3700B3;
@@ -124,4 +135,48 @@ body {
 @font-face {
   font-family: "Square Sans Serif 7";
   src: local("Square Sans Serif 7"), url(./assets/fonts/square_sans_serif_7.ttf) format("truetype");
+}
+
+
+a:link {
+  color: var(--link);
+}
+
+/* visited link */
+a:visited {
+  color: var(--link-visited);
+}
+
+/* mouse over link */
+a:hover {
+  color: var(--link-hover);
+}
+
+/* selected link */
+a:active {
+  color: var(--link-active);
+}
+
+.mat-toolbar a:link {
+  color: var(--title-color);
+}
+
+/* visited link */
+.mat-toolbar a:visited {
+  color: var(--title-color);
+}
+
+/* mouse over link */
+.mat-toolbar a:hover {
+  color: var(--title-color);
+}
+
+/* selected link */
+.mat-toolbar a:active {
+  color: var(--title-color);
+}
+
+/* Allow new lines on tooltips with this class */
+.tooltip-with-lines {
+  white-space: pre-line;
 }

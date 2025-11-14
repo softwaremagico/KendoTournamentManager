@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -66,8 +66,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @AutoConfigureMockMvc(addFilters = false)
 public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
 
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
@@ -96,10 +96,6 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
     private WebSocketHttpHeaders headers;
 
     private AuthenticatedUser authenticatedUser;
-
-    private <T> String toJson(T object) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(object);
-    }
 
     private <T> T fromJson(String payload, Class<T> clazz) {
         try {
@@ -167,7 +163,7 @@ public class FightsWebsocketsTests extends AbstractTestNGSpringContextTests {
         final FightDTO fightDTO = new FightDTO();
         fightDTO.setShiaijo(3);
 
-        webSocketController.fightUpdated(fightDTO, null);
+        webSocketController.fightUpdated(fightDTO, null, null);
 
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(blockingQueue.poll()).isEqualTo(fightDTO));

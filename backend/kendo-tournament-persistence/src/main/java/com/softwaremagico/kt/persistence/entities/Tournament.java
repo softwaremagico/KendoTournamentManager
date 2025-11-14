@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,7 +49,7 @@ import java.time.LocalDateTime;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "tournaments")
 public class Tournament extends Element implements IName {
-    private static final int DEFAULT_DURATION = 180;
+    public static final int DEFAULT_DURATION = 180;
 
     @Column(name = "name", nullable = false)
     @Convert(converter = StringCryptoConverter.class)
@@ -96,7 +96,7 @@ public class Tournament extends Element implements IName {
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy) {
-        this(name, shiaijos, teamSize, type, createdBy, ScoreType.CLASSIC);
+        this(name, shiaijos, teamSize, type, createdBy, ScoreType.INTERNATIONAL);
     }
 
     public Tournament(String name, int shiaijos, int teamSize, TournamentType type, String createdBy, ScoreType scoreType) {
@@ -119,7 +119,10 @@ public class Tournament extends Element implements IName {
     }
 
     public Integer getTeamSize() {
-        return teamSize;
+        if (type != null && type != TournamentType.SENBATSU) {
+            return teamSize;
+        }
+        return 1;
     }
 
     public void setTeamSize(Integer teamSize) {

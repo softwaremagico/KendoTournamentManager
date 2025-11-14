@@ -1,15 +1,15 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="table-container">
   <table class="team-ranking-table">
-    <caption class="table-caption">{{'teamsRanking' | translate}}</caption>
+    <caption class="table-caption">{{ 'teamsRanking' | translate }}</caption>
     <thead>
     <tr>
-      <th class="team-ranking-header">{{'team' | translate}}</th>
-      <th class="team-ranking-header">{{'fightsWon' | translate}}</th>
-      <th class="team-ranking-header">{{'fightsDraw' | translate}}</th>
-      <th class="team-ranking-header">{{'duelsWon' | translate}}</th>
-      <th class="team-ranking-header">{{'duelsDraw' | translate}}</th>
-      <th class="team-ranking-header">{{'histsWon' | translate}}</th>
+      <th class="team-ranking-header">{{ 'team' | translate }}</th>
+      <th class="team-ranking-header">{{ 'fightsWon' | translate }}</th>
+      <th class="team-ranking-header">{{ 'fightsDraw' | translate }}</th>
+      <th class="team-ranking-header">{{ 'duelsWon' | translate }}</th>
+      <th class="team-ranking-header">{{ 'duelsDraw' | translate }}</th>
+      <th class="team-ranking-header">{{ 'histsWon' | translate }}</th>
     </tr>
     </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
@@ -20,13 +20,16 @@
           'draw': (teamScore.sortingIndex===0 && isDrawWinner(0)) ||
           (teamScore.sortingIndex===1 && isDrawWinner(1)) ||
           (teamScore.sortingIndex===2 && isDrawWinner(2))}"
-          class="team-ranking-value team-name">{{showIndex ? i + 1 + ". " : ""}}{{teamScore.team.name}}
+          [matTooltipShowDelay]="500"
+          matTooltip="{{getTeamMembers(teamScore.team)}}"
+          matTooltipClass="tooltip-with-lines"
+         class="team-ranking-value team-name">{{ showIndex ? i + 1 + ". " : "" }}{{ teamScore.team.name }}
       </td>
-      <td class="team-ranking-value">{{teamScore.wonFights}}</td>
-      <td class="team-ranking-value">{{teamScore.drawFights}}</td>
-      <td class="team-ranking-value">{{teamScore.wonDuels}}</td>
-      <td class="team-ranking-value">{{teamScore.drawDuels}}</td>
-      <td class="team-ranking-value">{{teamScore.hits}}{{(teamScore.untieDuels ? "*" : "")}}</td>
+      <td class="team-ranking-value">{{ teamScore.wonFights }}</td>
+      <td class="team-ranking-value">{{ teamScore.drawFights }}</td>
+      <td class="team-ranking-value">{{ teamScore.wonDuels }}</td>
+      <td class="team-ranking-value">{{ teamScore.drawDuels }}</td>
+      <td class="team-ranking-value">{{ teamScore.hits }}{{ (teamScore.untieDuels ? "*" : "") }}</td>
     </tr>
   </table>
 </div>
@@ -34,17 +37,17 @@
   <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
           (click)="downloadPDF()" mat-flat-button mat-raised-button>
     <mat-icon>file_download</mat-icon>
-    {{'download' | translate}}
+    {{ 'download' | translate }}
   </button>
   <button *ngIf="(RbacActivity.DOWNLOAD_PDF | rbac : this.rbacService.getActivities())"
           (click)="openStatistics()" mat-flat-button mat-raised-button>
     <mat-icon>bar_chart</mat-icon>
-    {{'statistics' | translate}}
+    {{ 'statistics' | translate }}
   </button>
   <button (click)="undrawAllTeams()" *ngIf="!tournament!.locked && fightsFinished && importantDrawWinner() &&
   (RbacActivity.CREATE_UNDRAW_FIGHTS | rbac : this.rbacService.getActivities())" mat-flat-button mat-raised-button>
     <mat-icon class="kendo-icon" svgIcon="undraw-score"></mat-icon>
-    {{'undraw' | translate}}
+    {{ 'undraw' | translate }}
   </button>
-  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{'close' | translate}}</button>
+  <button (click)="closeDialog()" color="primary" mat-flat-button mat-raised-button>{{ 'close' | translate }}</button>
 </div>

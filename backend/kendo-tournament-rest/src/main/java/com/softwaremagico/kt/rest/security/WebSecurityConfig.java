@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,7 +55,7 @@ import java.util.List;
 )
 public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            // ***REMOVED***Swagger
+            // -- Swagger
             "/v3/api-docs/**", "/swagger-ui/**",
             // Own
             "/",
@@ -109,10 +109,10 @@ public class WebSecurityConfig {
                                     response.sendError(HttpServletResponse.SC_FORBIDDEN, ex.getMessage());
                                 })
                 )
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests((requests) -> requests
+                .authorizeHttpRequests(requests -> requests
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -128,6 +128,8 @@ public class WebSecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
+        configuration.addExposedHeader(HttpHeaders.EXPIRES);
+        configuration.addExposedHeader(AuthApi.SESSION_HEADER);
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

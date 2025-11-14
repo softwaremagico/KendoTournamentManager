@@ -22,7 +22,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           console.error('An error occurred:', error.error.message);
         } else {
           // Log error.
-          console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
+          if (error.error) {
+            this.messageService.backendErrorMessage(error.status, error.error.code);
+            console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
+          }
         }
         if (error.status === 409 || error.status === 401 || error.status === 423) {
           //Ensure errors only from Kendo Tournament (for future external calls).

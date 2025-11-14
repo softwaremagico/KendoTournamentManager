@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -101,13 +101,13 @@ public class FightsList extends ParentList {
 
         for (int i = 0; i < tournamentDto.getShiaijos(); i++) {
             final int shiaijo = i;
-            final List<FightDTO> fights = this.fights.stream().filter(fightDTO -> fightDTO.getShiaijo().equals(shiaijo)).toList();
+            final List<FightDTO> fightsRow = this.fights.stream().filter(fightDTO -> fightDTO.getShiaijo().equals(shiaijo)).toList();
             mainTable.addCell(getEmptyRow());
             mainTable.addCell(getEmptyRow());
             mainTable.addCell(getHeader2(
                     messageSource.getMessage("tournament.shiaijo", null, locale) + " " + ShiaijoName.getShiaijoName(i), TABLE_BORDER));
 
-            for (final FightDTO fight : fights) {
+            for (final FightDTO fight : fightsRow) {
                 cell = new PdfPCell(fightTable(fight));
                 cell.setBorderWidth(BORDER_WIDTH);
                 cell.setColspan(TABLE_WITH.length);

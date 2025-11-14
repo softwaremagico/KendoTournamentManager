@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.statistics;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ package com.softwaremagico.kt.core.statistics;
 import com.softwaremagico.kt.persistence.values.RoleType;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class TournamentStatistics {
@@ -45,7 +45,7 @@ public class TournamentStatistics {
 
     private Integer teamSize;
 
-    private Map<RoleType, Long> numberOfParticipants = new HashMap<>();
+    private Map<RoleType, Long> numberOfParticipants = new EnumMap<>(RoleType.class);
 
     public TournamentFightStatistics getFightStatistics() {
         return tournamentFightStatistics;
@@ -73,7 +73,7 @@ public class TournamentStatistics {
 
     public void addNumberOfParticipants(RoleType roleType, Long number) {
         if (this.numberOfParticipants == null) {
-            this.numberOfParticipants = new HashMap<>();
+            this.numberOfParticipants = new EnumMap<>(RoleType.class);
         }
         this.numberOfParticipants.put(roleType, number);
     }

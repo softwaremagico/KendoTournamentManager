@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,6 +33,7 @@ import com.softwaremagico.kt.rest.security.dto.AuthRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -57,26 +58,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureMockMvc
 @Test(groups = "participantAccess")
 public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
 
     private static final String USER_NAME = USER_FIRST_NAME + "." + USER_LAST_NAME;
     private static final String USER_PASSWORD = "password";
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
-    private final static String CLUB_NAME = "Club";
+    private static final String CLUB_NAME = "Club";
 
-    private final static String PARTICIPANT_NAME = "Participant Name";
-    private final static String PARTICIPANT_LASTNAME = "Participant Last Name";
+    private static final String PARTICIPANT_NAME = "Participant Name";
+    private static final String PARTICIPANT_LASTNAME = "Participant Last Name";
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private WebApplicationContext context;
 
     @Autowired
     private AuthenticatedUserController authenticatedUserController;
@@ -87,6 +86,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
     @Autowired
     private ParticipantProvider participantProvider;
 
+    @Autowired
     private MockMvc mockMvc;
 
     private String jwtToken;
@@ -107,10 +107,6 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @BeforeClass
     public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
-
         authenticatedUserController.createUser(null, USER_NAME, USER_FIRST_NAME, USER_LAST_NAME, USER_PASSWORD, USER_ROLES);
 
         AuthRequest request = new AuthRequest();
@@ -217,7 +213,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOthersStatistics() throws Exception {
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(get("/statistics/participants/" + 25)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -225,7 +221,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andReturn();
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
     }
 
     @Test(dependsOnMethods = "generateToken")
@@ -241,7 +237,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
 
     @Test(dependsOnMethods = "generateToken")
     public void cannotAccessToOtherServices() throws Exception {
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(get("/participants")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -249,7 +245,7 @@ public class ParticipantAccessTests extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andReturn();
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @AfterClass(alwaysRun = true)

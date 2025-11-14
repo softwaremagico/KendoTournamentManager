@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 @Test(groups = {"tournamentExtraProperties"})
 public class TournamentExtraPropertiesTest extends AbstractTransactionalTestNGSpringContextTests {
 
-    private final static String USER = "Me";
+    private static final String USER = "Me";
 
     @Autowired
     private TournamentProvider tournamentProvider;

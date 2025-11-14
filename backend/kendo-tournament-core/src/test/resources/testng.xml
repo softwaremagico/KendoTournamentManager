@@ -11,6 +11,8 @@
                 <include name="simpleChampionshipTest"/>
                 <include name="loopChampionshipTest"/>
                 <include name="kingOfTheMountainTest"/>
+                <include name="bubleSortTest"/>
+                <include name="senbatsuTest"/>
                 <include name="converterTests"/>
                 <include name="scoreTests"/>
                 <include name="roleAchievementTests"/>
@@ -23,11 +25,19 @@
                 <include name="tournamentTwoWinnersTest"/>
                 <include name="tournament5GroupsTest"/>
                 <include name="tournament5GroupsTwoWinnersTest"/>
+                <include name="tournament6GroupsTwoWinnersTest"/>
                 <include name="tournamentLevelNotFinishedTest"/>
+                <include name="deleteGroupsOneWinnerTest"/>
+                <include name="deleteGroupsTwoWinnersTest"/>
+                <include name="groupsTest"/>
                 <include name="groupsTest"/>
                 <include name="numberOfWinners"/>
                 <include name="tournamentExtraProperties"/>
                 <include name="qrTest"/>
+                <include name="worstNightmareTest"/>
+                <include name="validationTests"/>
+                <include name="shiaijosTest"/>
+                <include name="tournamentLinkTest"/>
             </run>
         </groups>
         <classes>
@@ -37,24 +47,36 @@
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.Tournament5GroupsTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.Tournament5GroupsTwoWinnersTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.Tournament6GroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLevelNotFinishedTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentDeleteGroupsOneWinnerTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentDeleteGroupsTwoWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.tournament.LeagueWithFinalFightTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentShiaijosTest"/>
+            <class name="com.softwaremagico.kt.core.tests.tournament.TournamentLinkTests"/>
             <class name="com.softwaremagico.kt.core.tests.LoopLeagueTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainFiFoTest"/>
             <class name="com.softwaremagico.kt.core.tests.KingOfTheMountainLiFoTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortReversedTest"/>
+            <class name="com.softwaremagico.kt.core.tests.BubbleSortDrawTest"/>
+            <class name="com.softwaremagico.kt.core.tests.SenbatsuTest"/>
             <class name="com.softwaremagico.kt.core.tests.ConverterTest"/>
             <class name="com.softwaremagico.kt.core.tests.ScoreTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.RoleAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.ScoreAchievementsTest"/>
-            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtils"/>
+            <class name="com.softwaremagico.kt.core.tests.achievements.TimeTournamentTestUtilsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.TournamentTypeAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.achievements.SithKillsMasterAchievementsTest"/>
             <class name="com.softwaremagico.kt.core.tests.StatisticsTest"/>
             <class name="com.softwaremagico.kt.core.tests.GroupTreeTest"/>
+            <class name="com.softwaremagico.kt.core.tests.GroupTreeOddTeamsAsapTest"/>
             <class name="com.softwaremagico.kt.core.tests.NumberOfWinnersTest"/>
             <class name="com.softwaremagico.kt.core.tests.TournamentExtraPropertiesTest"/>
             <class name="com.softwaremagico.kt.core.tests.QrTests"/>
+            <class name="com.softwaremagico.kt.core.tests.WorstNightmareTest"/>
+            <class name="com.softwaremagico.kt.core.tests.ValidationTests"/>
         </classes>
     </test>
 </suite>

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,6 +29,7 @@ public class MessageContent {
     private String payload;
     private MessageContentType type;
     private String actor;
+    private String session;
 
     //Parameters as json content.
     private Object parameters;
@@ -48,10 +49,11 @@ public class MessageContent {
         setType(type);
     }
 
-    public MessageContent(String topic, String payload, MessageContentType type, String actor) {
+    public MessageContent(String topic, String payload, MessageContentType type, String actor, String session) {
         this(topic, payload);
         setType(type);
         setActor(actor);
+        setSession(session);
     }
 
     public MessageContent(String topic, String payload, MessageContentType type, Object parameters) {
@@ -97,5 +99,13 @@ public class MessageContent {
 
     public void setActor(String actor) {
         this.actor = actor;
+    }
+
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
     }
 }

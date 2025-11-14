@@ -9,7 +9,7 @@
     <parent>
         <artifactId>kendo-tournament-backend</artifactId>
         <groupId>com.softwaremagico</groupId>
-        <version>2.14.3</version>
+        <version>2.18.0</version>
     </parent>
 
 
@@ -57,6 +57,10 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>${jjwt.version}</version>
@@ -77,7 +81,7 @@
             <version>${springdoc.version}</version>
         </dependency>
 
-        <!***REMOVED***Caching dependencies -->
+        <!-- Caching dependencies -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -99,7 +103,7 @@
             <version>${javassist.version}</version>
         </dependency>
 
-        <!***REMOVED***Testing -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
@@ -163,7 +167,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!***REMOVED***Do not deploy this module in artifact -->
+            <!-- Do not deploy this module in artifact -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -171,7 +175,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <!***REMOVED***Skip any testing sql script from release jar -->
+            <!-- Skip any testing sql script from release jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,8 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
     List<Group> findByTournamentOrderByLevelAscIndexAsc(Tournament tournament);
 
     List<Group> findByTournamentAndLevelOrderByLevelAscIndexAsc(Tournament tournament, Integer level);
+
+    List<Group> findByTournamentAndLevelIsGreaterThanEqual(Tournament tournament, Integer level);
 
     Group findByTournamentAndLevelAndIndex(Tournament tournament, Integer level, Integer index);
 

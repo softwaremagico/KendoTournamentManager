@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.achievements;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,7 @@ import java.util.List;
 
 @SpringBootTest
 @Test(groups = {"darumaAchievementTests"})
-public class TimeTournamentTestUtils extends TournamentTestUtils {
+public class TimeTournamentTestUtilsTest extends TournamentTestUtils {
     private static final int MEMBERS = 3;
     private static final int TEAMS = 4;
 
@@ -114,7 +114,7 @@ public class TimeTournamentTestUtils extends TournamentTestUtils {
             participant.setCreatedAt(LocalDateTime.now().minusYears(years).minusHours(1));
             years--;
         }
-        participantController.updateAll(participants, null);
+        participantController.updateAll(participants, null, null);
     }
 
     @BeforeClass(dependsOnMethods = "prepareData")
@@ -264,6 +264,7 @@ public class TimeTournamentTestUtils extends TournamentTestUtils {
     }
 
     @AfterClass(alwaysRun = true)
+     @Override
     public void wipeOut() {
         super.wipeOut();
     }

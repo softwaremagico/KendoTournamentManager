@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.encryption;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,11 +31,11 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
 
     private final ICipherEngine cipherEngine;
 
-    public AbstractCryptoConverter() {
+    protected AbstractCryptoConverter() {
         this(AbstractCryptoConverter.generateEngine());
     }
 
-    public AbstractCryptoConverter(ICipherEngine cipherEngine) {
+    protected AbstractCryptoConverter(ICipherEngine cipherEngine) {
         this.cipherEngine = cipherEngine;
     }
 
@@ -46,11 +46,7 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     @Override
     public String convertToDatabaseColumn(T attribute) {
         if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isEmpty() && isNotNullOrEmpty(attribute)) {
-            try {
-                return encrypt(attribute);
-            } catch (InvalidEncryptionException e) {
-                throw new RuntimeException(e);
-            }
+            return encrypt(attribute);
         }
         return entityAttributeToString(attribute);
     }
@@ -58,11 +54,7 @@ public abstract class AbstractCryptoConverter<T> implements AttributeConverter<T
     @Override
     public T convertToEntityAttribute(String dbData) {
         if (getDatabaseEncryptionKey() != null && !getDatabaseEncryptionKey().isEmpty() && dbData != null && !dbData.isEmpty()) {
-            try {
-                return decrypt(dbData);
-            } catch (InvalidEncryptionException e) {
-                throw new RuntimeException(e);
-            }
+            return decrypt(dbData);
         }
         return stringToEntityAttribute(dbData);
     }

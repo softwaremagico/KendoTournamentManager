@@ -6,7 +6,9 @@ export enum TournamentExtraPropertyKey {
   KING_DRAW_RESOLUTION = 'KING_DRAW_RESOLUTION',
   DIPLOMA_NAME_HEIGHT = 'DIPLOMA_NAME_HEIGHT',
   NUMBER_OF_WINNERS = 'NUMBER_OF_WINNERS',
-  LEAGUE_FIGHTS_ORDER_GENERATION = 'LEAGUE_FIGHTS_ORDER_GENERATION'
+  LEAGUE_FIGHTS_ORDER_GENERATION = 'LEAGUE_FIGHTS_ORDER_GENERATION',
+  ODD_FIGHTS_RESOLVED_ASAP = 'ODD_FIGHTS_RESOLVED_ASAP',
+  SENBATSU_CHALLENGE_DISTANCE = 'SENBATSU_CHALLENGE_DISTANCE'
 }
 
 export namespace TournamentExtraPropertyKey {
@@ -25,6 +27,14 @@ export namespace TournamentExtraPropertyKey {
 
   export function avoidDuplicateFightsGeneration(): boolean {
     return true;
+  }
+
+  export function oddFightsResolvedAsap(): boolean {
+    return true;
+  }
+
+  export function senbatsuChallengeDistance(): number {
+    return 3;
   }
 
   export function getByKey(key: string) {

@@ -52,6 +52,9 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
   onGroupsUpdated: EventEmitter<Group[]> = new EventEmitter();
 
   @Output()
+  onGroupsDisabled: EventEmitter<boolean> = new EventEmitter();
+
+  @Output()
   onTeamsLengthUpdated: EventEmitter<number> = new EventEmitter();
 
 
@@ -83,22 +86,22 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.groupsUpdatedService.areTeamListUpdated.subscribe((): void => {
-      this.updateData(true);
+      this.updateData(true, false);
     });
     this.numberOfWinnersUpdatedService.numberOfWinners.subscribe((numberOfWinners: number): void => {
       this.numberOfWinnersFirstLevel = numberOfWinners;
-      this.updateData(true);
+      this.updateData(true, false);
     });
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/groups').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.topic == "Group") {
-        this.updateData(false);
+      if (messageContent.topic == "Group" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
+        this.updateData(false, messageContent.actor == localStorage.getItem('username'));
       }
     });
     this.tournamentChangedService.isTournamentChanged.subscribe((_tournament: Tournament): void => {
       this.tournament = _tournament;
       if (_tournament) {
-        this.updateData(true);
+        this.updateData(true, false);
       }
     })
   }
@@ -107,7 +110,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     this.topicSubscription?.unsubscribe();
   }
 
-  updateData(showBusy: boolean): void {
+  updateData(showBusy: boolean, ownAction: boolean): void {
     this.systemOverloadService.isBusy.next(showBusy);
     if (this.tournament?.id) {
       const teamsRequest: Observable<Team[]> = this.teamService.getFromTournament(this.tournament);
@@ -123,6 +126,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
 
         this.groups = _groups;
         this.onGroupsUpdated.emit(_groups);
+        this.onGroupsDisabled.emit(ownAction);
         this.groupsUpdatedService.areGroupsUpdated.next(_groups);
         const groupTeamsIds: number[] = _groups.flatMap((group: Group): Team[] => group.teams).map((t: Team): number => t.id!);
         this.onTeamsLengthUpdated.next(_teams.length);
@@ -187,16 +191,17 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     }).length;
     this.groupService.addGroup(group).subscribe((_group: Group): void => {
       //Refresh all groups, also other levels that can change.
-      this.updateData(true);
+      this.updateData(true, false);
     });
   }
 
   deleteLast(): void {
     if (this.groups.length > 0) {
-      const lastGroup: Group = this.groups.filter((g: Group): boolean => {
+      const level0Groups: Group[] = this.groups.filter((g: Group): boolean => {
         return g.level === 0;
-      }).reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
-        prev : current, this.groups[this.groups.length - 1]);
+      })
+      const lastGroup: Group = level0Groups.reduce((prev: Group, current: Group): Group => (prev.index > current.index) ?
+        prev : current, level0Groups[level0Groups.length - 1]);
       this.deleteGroup(lastGroup);
     }
   }
@@ -206,7 +211,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       this.systemOverloadService.isBusy.next(true);
       this.groupService.deleteGroup(group).subscribe((): void => {
         //Refresh all groups, also other levels that can change.
-        this.updateData(true);
+        this.updateData(true, false);
       });
     }
   }
@@ -233,7 +238,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
       const pdf: jsPDF = new jsPDF(jsPdfOptions);
       pdf.addImage(result, 'PNG', 25, 25, widthMM * ratio, heightMM * ratio);
       pdf.save(this.tournament.name + '.pdf');
-    }).catch(error => {
+    }).catch((): void => {
     });
   }
 
@@ -298,7 +303,7 @@ export class TournamentBracketsEditorComponent implements OnInit, OnDestroy {
     //Ensure all groups are updated.
     forkJoin(observables)
       .subscribe((): void => {
-        this.updateData(true);
+        this.updateData(true, false);
       });
   }
 

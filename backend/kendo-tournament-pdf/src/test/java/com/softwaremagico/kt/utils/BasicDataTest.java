@@ -4,7 +4,7 @@ package com.softwaremagico.kt.utils;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -79,37 +79,37 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private FightController fightController;
 
     protected ClubDTO createClub() {
-        return clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null);
+        return clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null, null);
     }
 
     protected List<ParticipantDTO> createParticipants(ClubDTO club) {
-        List<ParticipantDTO> members = new ArrayList<>();
+        List<ParticipantDTO> participants = new ArrayList<>();
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            members.add(participantController.create(
-                    new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club), null));
+            participants.add(participantController.create(
+                    new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club), null, null));
         }
-        return members;
+        return participants;
     }
 
     protected TournamentDTO createTournament() {
-        return tournamentController.create(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE), null);
+        return tournamentController.create(new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.LEAGUE), null, null);
     }
 
     protected List<RoleDTO> createRoles(List<ParticipantDTO> members, TournamentDTO tournament) {
-        List<RoleDTO> roles = new ArrayList<>();
+        List<RoleDTO> rolesCreated = new ArrayList<>();
         for (ParticipantDTO competitor : members) {
-            roles.add(roleController.create(new RoleDTO(tournament, competitor, RoleType.COMPETITOR), null));
+            rolesCreated.add(roleController.create(new RoleDTO(tournament, competitor, RoleType.COMPETITOR), null, null));
         }
-        return roles;
+        return rolesCreated;
     }
 
     protected RoleDTO createReferee() {
-        ParticipantDTO referee = participantController.create(new ParticipantDTO("Ref001", "Referee", "Referee", club), null);
-        return roleController.create(new RoleDTO(tournament, referee, RoleType.REFEREE), null);
+        ParticipantDTO referee = participantController.create(new ParticipantDTO("Ref001", "Referee", "Referee", club), null, null);
+        return roleController.create(new RoleDTO(tournament, referee, RoleType.REFEREE), null, null);
     }
 
     protected List<TeamDTO> createTeams(List<ParticipantDTO> members, TournamentDTO tournament) {
-        List<TeamDTO> teams = new ArrayList<>();
+        List<TeamDTO> teamsCreated = new ArrayList<>();
         int teamIndex = 0;
         TeamDTO team = null;
         int teamMember = 0;
@@ -119,14 +119,14 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 teamIndex++;
                 team = new TeamDTO("Team" + String.format("%02d", teamIndex), tournament);
                 teamMember = 0;
-                team = teamController.create(team, null);
-                teams.add(team);
+                team = teamController.create(team, null, null);
+                teamsCreated.add(team);
             }
 
             // Add member.
             team.addMember(competitor);
-            team = teamController.update(team, null);
-            teams.set(teams.size() - 1, team);
+            team = teamController.update(team, null, null);
+            teamsCreated.set(teamsCreated.size() - 1, team);
             teamMember++;
 
             // Team filled up, create a new team.
@@ -134,19 +134,19 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 team = null;
             }
         }
-        return teams;
+        return teamsCreated;
     }
 
     protected GroupDTO createGroup(TournamentDTO tournament, List<TeamDTO> teams) {
-        final GroupDTO group = new GroupDTO();
-        group.setTournament(tournament);
-        group.setLevel(0);
-        group.setTeams(teams);
-        return groupController.create(group, null);
+        final GroupDTO groupsCreated = new GroupDTO();
+        groupsCreated.setTournament(tournament);
+        groupsCreated.setLevel(0);
+        groupsCreated.setTeams(teams);
+        return groupController.create(groupsCreated, null, null);
     }
 
     protected List<FightDTO> createFights(TournamentDTO tournament, List<TeamDTO> teams, GroupDTO group) {
-        List<FightDTO> fights = new ArrayList<>();
+        List<FightDTO> fightsCreated = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
             FightDTO fightDTO = new FightDTO(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL);
             List<DuelDTO> duels = new ArrayList<>();
@@ -155,11 +155,11 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                         tournament, null));
             }
             fightDTO.setDuels(duels);
-            fights.add(fightController.create(fightDTO, null));
+            fightsCreated.add(fightController.create(fightDTO, null, null));
         }
-        group.setFights(fights);
-        groupController.create(group, null);
-        return fights;
+        group.setFights(fightsCreated);
+        groupController.create(group, null, null);
+        return fightsCreated;
     }
 
     protected void resolveFights() {
@@ -179,7 +179,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 duel.setCompetitor1Score(scores);
                 counter++;
             }
-            fightController.update(fight, null);
+            fightController.update(fight, null, null);
         }
     }
 

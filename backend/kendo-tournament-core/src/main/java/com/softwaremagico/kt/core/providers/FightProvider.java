@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,6 +28,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
+import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -99,6 +100,14 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
         getRepository().deleteByTournament(tournament);
     }
 
+    public void delete(Tournament tournament, int level) {
+        groupRepository.findByTournamentAndLevelIsGreaterThanEqual(tournament, level).forEach(group -> {
+            group.setFights(new ArrayList<>());
+            groupRepository.save(group);
+        });
+        getRepository().deleteByTournamentAndLevelGreaterThanEqual(tournament, level);
+    }
+
     public long count(Tournament tournament) {
         return getRepository().countByTournament(tournament);
     }
@@ -137,9 +146,9 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
     public void delete(Collection<Fight> fights) {
         if (fights != null) {
             final List<Group> groups = groupRepository.findDistinctByFightsIdIn(fights.stream().map(Fight::getId).collect(Collectors.toSet()));
-            groups.forEach(group -> {
-                group.getFights().removeAll(fights);
-            });
+            groups.forEach(group ->
+                    group.getFights().removeAll(fights)
+            );
             groupRepository.saveAll(groups);
             super.delete(fights);
         }
@@ -151,6 +160,33 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
 
     public List<Fight> findByTournamentAndShiaijo(Tournament tournament, int shiaijo) {
         return getRepository().findByTournamentAndShiaijo(tournament, shiaijo);
+    }
+
+    public boolean scoresGoesFromCompetitorsNameToCenter(Tournament tournament) {
+        final List<Fight> fights = getRepository().findByTournament(tournament);
+        for (Fight fight : fights) {
+            if (fight.getDuels() != null) {
+                for (Duel duel : fight.getDuels()) {
+                    if (scoresGoesFromCompetitorsNameToCenter(duel.getCompetitor1Score())) {
+                        return true;
+                    }
+                    if (scoresGoesFromCompetitorsNameToCenter(duel.getCompetitor2Score())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean scoresGoesFromCompetitorsNameToCenter(List<Score> scores) {
+        if (scores.size() == 1) {
+            return false;
+        }
+        //Scores are set at index 1 before index 0;
+        return (scores.size() > 1
+                && scores.get(0) == null
+                && scores.get(1) != null && scores.get(1) != Score.EMPTY);
     }
 
 }

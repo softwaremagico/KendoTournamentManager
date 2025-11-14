@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ import java.util.Arrays;
 @Test(groups = {"imageRepository"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ParticipantImageRepositoryTests extends AbstractTestNGSpringContextTests {
-    private final static String IMAGE_RESOURCE = "kendo.jpg";
+    private static final String IMAGE_RESOURCE = "kendo.jpg";
 
     @Autowired
     private ParticipantImageRepository photoRepository;

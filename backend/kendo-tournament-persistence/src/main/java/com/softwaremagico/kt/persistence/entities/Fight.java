@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,11 +21,9 @@ package com.softwaremagico.kt.persistence.entities;
  * #L%
  */
 
-import com.softwaremagico.kt.persistence.encryption.LocalDateTimeCryptoConverter;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -38,7 +36,6 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,10 +69,6 @@ public class Fight extends Element {
     @JoinTable(name = "duels_by_fight", joinColumns = @JoinColumn(name = "fight_id"), inverseJoinColumns = @JoinColumn(name = "duel_id"))
     @OrderColumn(name = "duel_index")
     private List<Duel> duels = new ArrayList<>();
-
-    @Column(name = "finished_at")
-    @Convert(converter = LocalDateTimeCryptoConverter.class)
-    private LocalDateTime finishedAt;
 
     @Column(name = "fight_level", nullable = false)
     private Integer level = 0;
@@ -167,7 +160,7 @@ public class Fight extends Element {
         return null;
     }
 
-    public Team getLooser() {
+    public Team getLoser() {
         final Team winner = getWinner();
         if (winner == null) {
             return null;
@@ -216,9 +209,9 @@ public class Fight extends Element {
     public Integer getScore(Participant competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(Duel::getCompetitor1ScoreValue).sum();
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(Duel::getCompetitor2ScoreValue).sum();
         return score;
     }
 
@@ -279,11 +272,11 @@ public class Fight extends Element {
     }
 
     public Integer getScoreTeam1() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        return getDuels().stream().mapToInt(Duel::getCompetitor1ScoreValue).sum();
     }
 
     public Integer getScoreTeam2() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return getDuels().stream().mapToInt(Duel::getCompetitor2ScoreValue).sum();
     }
 }
 

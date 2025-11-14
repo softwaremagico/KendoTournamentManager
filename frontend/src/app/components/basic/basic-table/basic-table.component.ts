@@ -61,7 +61,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
   connectToWebsockets(): void {
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/creates').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type && messageContent.type.toLowerCase() == "created") {
+      if (messageContent.type && messageContent.type.toLowerCase() == "created" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
           const element = JSON.parse(messageContent.payload);
           if (this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id) < 0) {
@@ -74,7 +74,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/updates').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type && messageContent.type.toLowerCase() == "updated") {
+      if (messageContent.type && messageContent.type.toLowerCase() == "updated" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
           const element = JSON.parse(messageContent.payload);
           let index: number = this.basicTableData.dataSource.data.findIndex(obj => obj.id === element.id);
@@ -93,7 +93,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
 
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/deletes').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      if (messageContent.type && messageContent.type.toLowerCase() == "deleted") {
+      if (messageContent.type && messageContent.type.toLowerCase() == "deleted" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
         if (this.basicTableData.element === messageContent.topic || this.basicTableData.element + "DTO" === messageContent.topic) {
           const element = JSON.parse(messageContent.payload);
           this.basicTableData.dataSource.data = this.basicTableData.dataSource.data.filter(obj => obj.id !== element.id);
@@ -133,7 +133,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  filter(filter: string) {
+  filter(filter: string): void {
     this.basicTableData.dataSource.filter = filter;
   }
 
@@ -141,7 +141,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
     return this.basicTableData.visibleColumns.includes(column);
   }
 
-  toggleColumnVisibility(column: string) {
+  toggleColumnVisibility(column: string): void {
     const index: number = this.basicTableData.visibleColumns.indexOf(column);
     if (index !== -1) {
       this.basicTableData.visibleColumns.splice(index, 1);
@@ -164,7 +164,7 @@ export class BasicTableComponent implements OnInit, OnDestroy {
   }
 
 
-  onPaginateChange($event: PageEvent) {
+  onPaginateChange($event: PageEvent): void {
     this.userSessionService.setItemsPerPage($event.pageSize);
   }
 

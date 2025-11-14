@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BruteForceService extends BasePool<String, Integer> {
     private static final Long EXPIRATION_TIME = 10 * 60 * 1000L;
-    private static final int MAX_ATTEMPTS = 3;
+    public static final int MAX_ATTEMPTS = 10;
 
     public void loginSucceeded(String key) {
         removeElement(key);

@@ -102,7 +102,7 @@ export abstract class CustomChartComponent implements OnInit {
   protected getChart(type: ChartType, width: number, height: number | undefined, shadow: boolean, showToolbar: boolean): ApexChart {
     return {
       width: width,
-      //height: height,
+      height: height ? height : width,
       type: type,
       dropShadow: this.getShadow(shadow),
       toolbar: this.getToolbar(showToolbar),

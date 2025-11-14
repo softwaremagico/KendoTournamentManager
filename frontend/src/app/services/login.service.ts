@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {map, tap} from "rxjs/operators";
-import {CookieService} from "ngx-cookie-service";
 
 import {AuthenticatedUser} from "../models/authenticated-user";
 import {AuthRequest} from "./models/auth-request";
@@ -11,6 +10,8 @@ import {Router} from "@angular/router";
 import {ActivityService} from "./rbac/activity.service";
 import {AuthGuestRequest} from "./models/auth-guest-request";
 import {TemporalToken} from "./models/temporal-token";
+import {UserRoles} from "./rbac/user-roles";
+import {TokenService} from "./token-service";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class LoginService {
   private interval: NodeJS.Timeout | null;
 
   constructor(private http: HttpClient, private environmentService: EnvironmentService,
-              private cookies: CookieService, private activityService: ActivityService, private router: Router) {
+              private activityService: ActivityService, private router: Router) {
     if (this.getJwtExpirationValue() !== undefined && this.getJwtExpirationValue() > 0) {
       this.autoRenewToken(this.getJwtValue(), (this.getJwtExpirationValue() - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
         (jwt: string, expires: number): void => {
@@ -41,6 +42,7 @@ export class LoginService {
         map((response: any) => {
           response.body.jwt = response.headers.get('Authorization');
           response.body.expires = response.headers.get('Expires');
+          response.body.session = response.headers.get('X-Session');
           return response.body;
         }));
   }
@@ -56,6 +58,7 @@ export class LoginService {
         map((response: any) => {
           response.body.jwt = response.headers.get('Authorization');
           response.body.expires = response.headers.get('Expires');
+          response.body.session = response.headers.get('X-Session');
           return response.body;
         }));
   }
@@ -71,37 +74,18 @@ export class LoginService {
         map((response: any) => {
           response.body.jwt = response.headers.get('Authorization');
           response.body.expires = response.headers.get('Expires');
+          response.body.session = response.headers.get('X-Session');
           return response.body;
         }));
-  }
-
-  //Basic login for guests.
-  setUserSession(username: string, password: string): void {
-    this.login(username, password).subscribe({
-      next: (authenticatedUser: AuthenticatedUser): void => {
-        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
-        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
-          (): void => {
-          });
-        this.activityService.setRoles(authenticatedUser.roles);
-        localStorage.setItem('username', username);
-      },
-      error: (error): void => {
-        this.router.navigate(["/"]);
-      }
-    });
   }
 
   setGuestUserSession(tournamentId: number, callback: (token: string, expiration: number) => void): void {
     this.loginAsGuest(tournamentId).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
-        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
-        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
-          (): void => {
-          });
-        this.activityService.setRoles(authenticatedUser.roles);
-        localStorage.setItem('username', 'guest');
-        callback(authenticatedUser.jwt, authenticatedUser.expires);
+        this.setAuthenticatedUser(authenticatedUser, callback);
+        localStorage.setItem('account', 'guest');
+        debugger
+        localStorage.setItem('tournamentId', tournamentId + "");
       },
       error: (): void => {
         this.router.navigate(["/"]);
@@ -112,13 +96,8 @@ export class LoginService {
   setParticipantUserSession(temporalToken: string, callback: (token: string, expiration: number) => void): void {
     this.loginAsParticipant(temporalToken).subscribe({
       next: (authenticatedUser: AuthenticatedUser): void => {
-        this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
-        this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
-          (): void => {
-          });
-        this.activityService.setRoles(authenticatedUser.roles);
-        localStorage.setItem('username', authenticatedUser.username);
-        callback(authenticatedUser.jwt, authenticatedUser.expires);
+        this.setAuthenticatedUser(authenticatedUser, callback);
+        localStorage.setItem('account', 'participant');
       },
       error: (): void => {
         this.router.navigate(["/"]);
@@ -126,33 +105,49 @@ export class LoginService {
     });
   }
 
+  setAuthenticatedUser(authenticatedUser: AuthenticatedUser, callback: (token: string, expiration: number) => void): void {
+    this.setJwtValue(authenticatedUser.jwt, authenticatedUser.expires);
+    this.autoRenewToken(authenticatedUser.jwt, (authenticatedUser.expires - (new Date()).getTime()) - LoginService.JWT_RENEW_MARGIN,
+      (): void => {
+      });
+    this.activityService.setRoles(authenticatedUser.roles);
+    localStorage.setItem('username', authenticatedUser.username);
+    localStorage.setItem('session', authenticatedUser.session);
+    callback(authenticatedUser.jwt, authenticatedUser.expires);
+  }
+
+  public refreshDataFormJwt(): void {
+    if (this.getJwtValue()) {
+      this.getUserRoles().subscribe((_roles: string[]): void => {
+        this.activityService.setRoles(UserRoles.getByKeys(_roles));
+      });
+    }
+  }
+
   logout(): void {
-    this.cookies.delete("jwt");
-    this.cookies.delete("selectedLanguage");
-    this.cookies.delete("jwt_expires");
     sessionStorage.clear();
+    localStorage.clear();
   }
 
   public setJwtValue(token: string, expires: number): void {
     localStorage.setItem("jwt", token);
-    this.cookies.set("jwt", token);
-    this.cookies.set("jwt_expires", expires.toString());
+    localStorage.setItem("jwt_expires", expires.toString());
   }
 
-  public getJwtValue(): string {
-    return this.cookies.get("jwt");
+  public getJwtValue(): string | null {
+    return localStorage.getItem("jwt");
   }
 
   getJwtExpirationValue(): number {
-    return Number(this.cookies.get("jwt_expires"));
+    return Number(localStorage.getItem("jwt_expires"));
   }
 
-  public autoRenewToken(jwt: string, expiration: number, callback: (token: string, expiration: number) => void): void {
+  public autoRenewToken(jwt: string | null, expiration: number, callback: (token: string, expiration: number) => void): void {
     if (this.interval != null) {
       clearInterval(this.interval);
       this.interval = null;
     }
-    if (expiration > 0) {
+    if (expiration > 0 && jwt != null) {
       this.setIntervalRenew(jwt, expiration, callback);
     }
   }
@@ -167,8 +162,8 @@ export class LoginService {
             });
             throw new Error('Server returned no response');
           }
-          const authToken: string | null = response.headers.get('authorization');
-          let expiration: number = Number(response.headers.get('expires'));
+          const authToken: string | null = response.headers.get('Authorization');
+          let expiration: number = Number(response.headers.get('Expires'));
           if (!authToken || !expiration) {
             this.autoRenewToken(jwt, -1, (jwt: string, expires: number): void => {
             });
@@ -187,12 +182,12 @@ export class LoginService {
     }, timeout);
   }
 
-  getUserRoles(): Observable<String[]> {
+  getUserRoles(): Observable<string[]> {
     const url: string = `${this.baseUrl}/roles`;
-    return this.http.get<String[]>(url)
+    return this.http.get<string[]>(url)
       .pipe(
         tap({
-          next: (_roles: String[]) => console.info(`Obtained '${_roles}' roles!`)
+          next: (_roles: string[]) => console.info(`Obtained '${_roles}' roles!`)
         })
       );
   }

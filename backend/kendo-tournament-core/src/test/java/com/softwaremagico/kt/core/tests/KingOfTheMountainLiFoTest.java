@@ -4,26 +4,23 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
 
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
-import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.DuelProvider;
@@ -38,7 +35,6 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.DrawResolution;
 import com.softwaremagico.kt.core.tournaments.KingOfTheMountainHandler;
-import com.softwaremagico.kt.core.tournaments.SimpleLeagueHandler;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
@@ -184,7 +180,7 @@ public class KingOfTheMountainLiFoTest extends AbstractTestNGSpringContextTests 
             }
         }
 
-        Assert.assertEquals(TEAMS, teamProvider.count(tournament));
+        Assert.assertEquals(teamProvider.count(tournament), TEAMS);
     }
 
     @Test(dependsOnMethods = {"addTeams"})
@@ -263,7 +259,7 @@ public class KingOfTheMountainLiFoTest extends AbstractTestNGSpringContextTests 
         Assert.assertEquals(tournamentFights.get(3).getTeam1().getName(), "Team01");
         Assert.assertEquals(tournamentFights.get(3).getTeam2().getName(), "Team02");
 
-        //Finish the fight. Team1 loose now
+        //Finish the fight. Team1 loses now
         tournamentFights.get(3).getDuels().get(0).addCompetitor2Score(Score.KOTE);
         tournamentFights.get(3).getDuels().forEach(duel -> duel.setFinished(true));
         fightProvider.save(tournamentFights.get(3));

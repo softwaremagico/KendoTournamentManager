@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,11 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.InvalidExtraPropertyException;
+import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
+import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TournamentExtraPropertyRepository;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +37,38 @@ import java.util.List;
 @Service
 public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtraProperty, Integer, TournamentExtraPropertyRepository> {
 
+    private final GroupRepository groupRepository;
+
     @Autowired
-    public TournamentExtraPropertyProvider(TournamentExtraPropertyRepository repository) {
+    public TournamentExtraPropertyProvider(TournamentExtraPropertyRepository repository, GroupRepository groupRepository) {
         super(repository);
+        this.groupRepository = groupRepository;
     }
+
 
     public List<TournamentExtraProperty> getAll(Tournament tournament) {
         return getRepository().findByTournament(tournament);
     }
 
+
+    public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key, Object defaultValue) {
+        TournamentExtraProperty extraProperty = getByTournamentAndProperty(tournament, key);
+        if (extraProperty == null) {
+            extraProperty = save(new TournamentExtraProperty(tournament, key, String.valueOf(defaultValue)));
+        }
+        return extraProperty;
+    }
+
+
     public TournamentExtraProperty getByTournamentAndProperty(Tournament tournament, TournamentExtraPropertyKey key) {
         return getRepository().findByTournamentAndPropertyKey(tournament, key);
     }
 
+
     public List<TournamentExtraProperty> getLatestPropertiesByCreatedBy(String createdBy) {
         return getRepository().findDistinctPropertyKeyByCreatedByHashOrderByCreatedAtDesc(createdBy);
     }
+
 
     public int delete(Tournament tournament) {
         return getRepository().deleteByTournament(tournament);
@@ -61,11 +80,41 @@ public class TournamentExtraPropertyProvider extends CrudProvider<TournamentExtr
         getRepository().flush();
     }
 
+
     @Override
     public TournamentExtraProperty save(TournamentExtraProperty entity) {
+        if (!entity.getPropertyKey().getAllowedTournaments().contains(entity.getTournament().getType())) {
+            throw new InvalidExtraPropertyException(this.getClass(), "Tournament '" + entity.getTournament()
+                    + "' cannot have property '" + entity.getPropertyKey() + "'");
+        }
         deleteByTournamentAndProperty(entity.getTournament(), entity.getPropertyKey());
+
+        //Refresh groups number of winners.
+        updateGroupNumberOfWinners(entity);
+
         return getRepository().save(entity);
     }
+
+
+    private void updateGroupNumberOfWinners(TournamentExtraProperty entity) {
+        if (entity.getPropertyKey() == TournamentExtraPropertyKey.NUMBER_OF_WINNERS) {
+            new Thread(() -> {
+                try {
+                    final int tournamentNumberOfWinners = Integer.parseInt(entity.getPropertyValue());
+                    final List<Group> groups = groupRepository.findByTournamentOrderByLevelAscIndexAsc(entity.getTournament());
+                    for (Group group : groups) {
+                        if (group.getLevel() == 0 && group.getNumberOfWinners() != tournamentNumberOfWinners) {
+                            group.setNumberOfWinners(tournamentNumberOfWinners);
+                            groupRepository.save(group);
+                        }
+                    }
+                } catch (Exception e) {
+                    //Property ignored.
+                }
+            }).start();
+        }
+    }
+
 
     @Override
     public List<TournamentExtraProperty> saveAll(Collection<TournamentExtraProperty> tournamentExtraProperties) {

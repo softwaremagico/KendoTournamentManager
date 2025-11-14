@@ -4,7 +4,7 @@ package com.softwaremagico.kt.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,8 +34,8 @@ import org.testng.annotations.Test;
 @SpringBootTest
 public class PasswordTests extends AbstractTestNGSpringContextTests {
     private static final String USER_NAME = "user";
-    private final static String USER_FIRST_NAME = "Test";
-    private final static String USER_LAST_NAME = "User";
+    private static final String USER_FIRST_NAME = "Test";
+    private static final String USER_LAST_NAME = "User";
     private static final String USER_PASSWORD = "password";
 
     private static final String USER_NEW_PASSWORD = "password2";

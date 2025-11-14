@@ -4,7 +4,7 @@ package com.softwaremagico.kt.logger;
  * #%L
  * Kendo Tournament Manager (Logger)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ import org.springframework.http.HttpStatus;
 
 public abstract class LoggedException extends RuntimeException {
     private static final long serialVersionUID = -2118048384077287599L;
-    private HttpStatus status;
+    private final HttpStatus status;
 
     protected LoggedException(Class<?> clazz, String message, ExceptionType type, HttpStatus status) {
         super(message);
@@ -48,13 +48,15 @@ public abstract class LoggedException extends RuntimeException {
     }
 
     protected LoggedException(Class<?> clazz, Throwable e, HttpStatus status) {
-        this(clazz, e);
+        super(e);
+        KendoTournamentLogger.errorMessage(clazz, e);
         this.status = status;
     }
 
-    public LoggedException(Class<?> clazz, Throwable e) {
+    protected LoggedException(Class<?> clazz, Throwable e) {
         super(e);
         KendoTournamentLogger.errorMessage(clazz, e);
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     public HttpStatus getStatus() {

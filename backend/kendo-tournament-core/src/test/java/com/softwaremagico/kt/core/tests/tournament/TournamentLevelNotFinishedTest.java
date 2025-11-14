@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.tournament;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,21 +24,20 @@ package com.softwaremagico.kt.core.tests.tournament;
 import com.softwaremagico.kt.core.controller.ClubController;
 import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
-import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.GroupController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.RoleController;
 import com.softwaremagico.kt.core.controller.TeamController;
 import com.softwaremagico.kt.core.controller.TournamentController;
+import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.GroupDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.RoleDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.core.converters.FightConverter;
-import com.softwaremagico.kt.core.converters.GroupConverter;
-import com.softwaremagico.kt.core.converters.TeamConverter;
 import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
@@ -49,6 +48,7 @@ import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
+import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
 import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -94,16 +94,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
     private ClubController clubController;
 
     @Autowired
-    private GroupConverter groupConverter;
-
-    @Autowired
-    private TeamConverter teamConverter;
-
-    @Autowired
     private RankingProvider rankingProvider;
-
-    @Autowired
-    private FightStatisticsController fightStatisticsController;
 
     @Autowired
     private GroupController groupController;
@@ -117,18 +108,21 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
     @Autowired
     private FightConverter fightConverter;
 
+    @Autowired
+    private TournamentExtraPropertyController tournamentExtraPropertyController;
+
     private ClubDTO clubDTO;
 
 
     @Test
     public void addClub() {
-        clubDTO = clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null);
+        clubDTO = clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null, null);
     }
 
     @Test(dependsOnMethods = "addClub")
     public void addParticipants() {
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), clubDTO), null);
+            participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), clubDTO), null, null);
         }
     }
 
@@ -136,14 +130,16 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
     public void addTournament() {
         Assert.assertEquals(tournamentController.count(), 0);
         TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
-        tournamentDTO = tournamentController.create(newTournament, null);
+        tournamentDTO = tournamentController.create(newTournament, null, null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO,
+                TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "false"), null, null);
         Assert.assertEquals(tournamentController.count(), 1);
     }
 
     @Test(dependsOnMethods = {"addTournament"})
     public void addRoles() {
         for (ParticipantDTO competitor : participantController.get()) {
-            roleController.create(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR), null, null);
         }
         Assert.assertEquals(roleController.count(tournamentDTO), participantController.count());
     }
@@ -157,7 +153,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
             groupDTO.setIndex(i);
             groupDTO.setLevel(0);
             groupDTO.setShiaijo(0);
-            groupController.create(groupDTO, null);
+            groupController.create(groupDTO, null, null);
         }
         Assert.assertEquals(groupController.count(), 7);
     }
@@ -180,11 +176,11 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
 
             // Add member.
             team.addMember(competitor);
-            team = teamController.create(team, null);
+            team = teamController.create(team, null, null);
 
             //Add the new team to a group
             if (teamMember == 0) {
-                groupController.addTeams(groups.get((teamIndex - 1) / (TEAMS / GROUPS)).getId(), Collections.singletonList(team), null);
+                groupController.addTeams(groups.get((teamIndex - 1) / (TEAMS / GROUPS)).getId(), Collections.singletonList(team), null, null);
             }
 
             teamMember++;
@@ -195,7 +191,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
             }
         }
 
-        Assert.assertEquals(TEAMS, teamController.count(tournamentDTO));
+        Assert.assertEquals(teamController.count(tournamentDTO), TEAMS);
 
         final List<Group> tournamentGroups = groupController.getGroups(tournamentDTO, 0);
         for (Group group : tournamentGroups) {
@@ -222,7 +218,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
 
@@ -232,7 +228,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(1).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team06");
 
@@ -241,7 +237,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         groups.get(2).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(2).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(2)).get(0).getName(), "Team11");
 
@@ -250,7 +246,7 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         groups.get(3).getFights().get(2).getDuels().get(1).addCompetitor2Score(Score.MEN);
         groups.get(3).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
     }
 
@@ -266,9 +262,9 @@ public class TournamentLevelNotFinishedTest extends AbstractTestNGSpringContextT
         duelController.delete(tournamentDTO);
         teamController.delete(tournamentDTO);
         roleController.delete(tournamentDTO);
-        tournamentController.delete(tournamentDTO, null);
+        tournamentController.delete(tournamentDTO, null, null);
         participantController.deleteAll();
-        clubController.delete(clubDTO, null);
+        clubController.delete(clubDTO, null, null);
         Assert.assertEquals(fightController.count(), 0);
         Assert.assertEquals(duelController.count(), 0);
     }

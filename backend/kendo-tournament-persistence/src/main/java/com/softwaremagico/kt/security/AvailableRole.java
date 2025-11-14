@@ -4,7 +4,7 @@ package com.softwaremagico.kt.security;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,21 +22,19 @@ package com.softwaremagico.kt.security;
  */
 
 public enum AvailableRole {
-    ROLE_VIEWER,
+    VIEWER,
 
-    ROLE_EDITOR,
+    EDITOR,
 
-    ROLE_ADMIN,
+    ADMIN,
 
-    ROLE_PARTICIPANT,
+    PARTICIPANT,
 
-    ROLE_GUEST;
-
-    public static final String ROLE_PREFIX = "ROLE_";
+    GUEST;
 
     public static AvailableRole get(String roleName) {
         for (final AvailableRole availableRole : AvailableRole.values()) {
-            if (availableRole.name().equalsIgnoreCase(ROLE_PREFIX + roleName)) {
+            if (availableRole.name().equalsIgnoreCase(roleName)) {
                 return availableRole;
             }
         }

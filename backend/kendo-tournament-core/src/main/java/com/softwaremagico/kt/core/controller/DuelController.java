@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -74,7 +74,7 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
     }
 
     public interface FightUpdatedListener {
-        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel, String actor);
+        void finished(TournamentDTO tournament, FightDTO fight, DuelDTO duel, String actor, String session);
     }
 
     @Autowired
@@ -121,9 +121,9 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
 
     @Override
     @CacheEvict(allEntries = true, value = {"ranking", "competitors-ranking"})
-    public DuelDTO update(DuelDTO duel, String username) {
+    public DuelDTO update(DuelDTO duel, String username, String session) {
         try {
-            return super.update(duel, username);
+            return super.update(duel, username, session);
         } finally {
             new Thread(() -> {
                 //If a shiaijo has finished, send a message to all computers.
@@ -138,7 +138,8 @@ public class DuelController extends BasicInsertableController<Duel, DuelDTO, Due
                 final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
 
                 //Fight is updated, refresh screens.
-                fightsUpdatedListeners.forEach(fightUpdatedListener -> fightUpdatedListener.finished(tournamentDTO, fightDTO, duel, username));
+                fightsUpdatedListeners.forEach(fightUpdatedListener ->
+                        fightUpdatedListener.finished(tournamentDTO, fightDTO, duel, username, session));
 
                 if (tournament.getShiaijos() > 1) {
                     final List<Fight> fightsOfShiaijo = fightProvider.findByTournamentAndShiaijo(tournament, fight.getShiaijo());

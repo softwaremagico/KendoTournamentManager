@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,14 +22,22 @@ package com.softwaremagico.kt.core.controller.models;
  */
 
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
 
 public class TournamentExtraPropertyDTO extends ElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = -4825047701201067422L;
 
+    @NotNull
     private TournamentDTO tournament;
 
+    @NotNull
     private TournamentExtraPropertyKey propertyKey;
 
+    @NotNull
     private String propertyValue;
 
     public TournamentExtraPropertyDTO() {

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf.lists;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -72,7 +72,7 @@ public class TeamList extends ParentList {
         for (final ParticipantDTO member : teamDTO.getMembers()) {
             String memberName;
             try {
-                if (member.getLastname() != null && member.getLastname().length() > 0) {
+                if (member.getLastname() != null && !member.getLastname().isEmpty()) {
                     memberName = NameUtils.getLastnameName(member);
                 } else {
                     memberName = " ";

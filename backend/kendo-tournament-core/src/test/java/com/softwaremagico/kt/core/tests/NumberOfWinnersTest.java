@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -96,6 +96,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
         Tournament tournamentChangingWinners = new Tournament(TOURNAMENT_TWO_WINNERS_NAME, 1, MEMBERS, TournamentType.TREE, null);
         tournamentChangingWinners = tournamentProvider.save(tournamentChangingWinners);
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "false"));
 
 
         treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(0, tournamentChangingWinners));
@@ -171,6 +172,7 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
         Tournament tournamentChangingWinners = new Tournament(TOURNAMENT_TWO_WINNERS_NAME, 1, MEMBERS, TournamentType.TREE, null);
         tournamentChangingWinners = tournamentProvider.save(tournamentChangingWinners);
         tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "1"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentChangingWinners, TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "false"));
 
 
         treeTournamentHandler.addGroup(tournamentChangingWinners, generateGroup(0, tournamentChangingWinners));
@@ -186,8 +188,6 @@ public class NumberOfWinnersTest extends AbstractTestNGSpringContextTests {
 
     @AfterClass(alwaysRun = true)
     public void deleteTournament() {
-        groupProvider.deleteAll();
-        tournamentExtraPropertyProvider.deleteAll();
-        tournamentProvider.deleteAll();
+        removeGroups();
     }
 }

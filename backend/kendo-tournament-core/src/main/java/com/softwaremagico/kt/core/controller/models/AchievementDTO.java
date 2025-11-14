@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,15 +23,26 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.AchievementGrade;
 import com.softwaremagico.kt.persistence.values.AchievementType;
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
 
 public class AchievementDTO extends ElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = 700852091905611286L;
+
+    private static final int HASH_MAGIC = 31;
+
+    @NotNull
     private ParticipantDTO participant;
 
     private TournamentDTO tournament;
 
+    @NotNull
     private AchievementType achievementType;
 
+    @NotNull
     private AchievementGrade achievementGrade;
 
     public ParticipantDTO getParticipant() {
@@ -74,5 +85,28 @@ public class AchievementDTO extends ElementDTO {
                 + ", achievementType=" + achievementType
                 + ", achievementGrade=" + achievementGrade
                 + "} " + super.toString();
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof AchievementDTO that)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        return participant.equals(that.participant) && tournament.equals(that.tournament) && achievementType == that.achievementType
+                && achievementGrade == that.achievementGrade;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = HASH_MAGIC * result + participant.hashCode();
+        result = HASH_MAGIC * result + tournament.hashCode();
+        result = HASH_MAGIC * result + achievementType.hashCode();
+        result = HASH_MAGIC * result + achievementGrade.hashCode();
+        return result;
     }
 }

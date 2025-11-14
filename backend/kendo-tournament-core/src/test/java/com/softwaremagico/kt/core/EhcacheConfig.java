@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,17 +28,4 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 public class EhcacheConfig {
 
-//    @Bean
-//    public JCacheManagerFactoryBean cacheManagerFactoryBean() throws Exception {
-//        JCacheManagerFactoryBean jCacheManagerFactoryBean = new JCacheManagerFactoryBean();
-//        jCacheManagerFactoryBean.setCacheManagerUri(new ClassPathResource("ehcache.xml").getURI());
-//        return jCacheManagerFactoryBean;
-//    }
-//
-//    @Bean
-//    public CacheManager cacheManager() throws Exception {
-//        final JCacheCacheManager jCacheCacheManager = new JCacheCacheManager();
-//        jCacheCacheManager.setCacheManager(cacheManagerFactoryBean().getObject());
-//        return jCacheCacheManager;
-//    }
 }

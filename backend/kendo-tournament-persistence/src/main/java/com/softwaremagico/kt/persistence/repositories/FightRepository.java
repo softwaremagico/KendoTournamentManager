@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,18 +43,14 @@ public interface FightRepository extends JpaRepository<Fight, Integer> {
 
     List<Fight> findByTournamentAndLevel(Tournament tournament, Integer level);
 
-    List<Fight> findByTournamentAndFinishedAtIsNotNull(Tournament tournament);
-
     @Query("SELECT DISTINCT f FROM Fight f LEFT JOIN f.duels d WHERE d.competitor1 IN :participants or d.competitor2 IN :participants")
     List<Fight> findByParticipantIn(@Param("participants") Collection<Participant> participants);
 
-    long countByTournamentAndFinishedAtIsNull(Tournament tournament);
-
     long countByTournament(Tournament tournament);
 
-    Optional<Fight> findFirstByTournamentAndFinishedAtIsNullOrderByCreatedAtAsc(Tournament tournament);
-
     long deleteByTournament(Tournament tournament);
+
+    long deleteByTournamentAndLevelGreaterThanEqual(Tournament tournament, int level);
 
     Optional<Fight> findFirstByTournamentOrderByLevelDesc(Tournament tournament);
 

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,12 +37,6 @@ import java.util.List;
 @Test(groups = {"groupRepository"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class GroupRepositoryTests extends BasicDataTest {
-    private static final String CLUB_NAME = "ClubName";
-    private static final String CLUB_COUNTRY = "ClubCountry";
-    private static final String CLUB_CITY = "ClubCity";
-    private static final Integer MEMBERS = 1;
-    private static final Integer TEAMS = 3;
-    private static final String TOURNAMENT_NAME = "groupTournamentTest";
 
     @Autowired
     private GroupRepository groupRepository;

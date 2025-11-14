@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.score;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,10 +35,8 @@ public class ScoreOfTeamCustom implements Comparator<ScoreOfTeam> {
 
     @Override
     public int compare(ScoreOfTeam scoreOfTeam1, ScoreOfTeam scoreOfTeam2) {
-        if (checkLevel) {
-            if (!Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
-                return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
-            }
+        if (checkLevel && !Objects.equals(scoreOfTeam1.getLevel(), scoreOfTeam2.getLevel())) {
+            return scoreOfTeam2.getLevel().compareTo(scoreOfTeam1.getLevel());
         }
 
         if (scoreOfTeam1.getWonFights() * scoreOfTeam1.getTeam().getTournament().getTournamentScore().getPointsByVictory() + scoreOfTeam1.getDrawFights()

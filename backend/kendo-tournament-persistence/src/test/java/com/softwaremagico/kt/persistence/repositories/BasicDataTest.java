@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.repositories;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,8 +40,8 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     private static final String CLUB_NAME = "ClubName";
     private static final String CLUB_COUNTRY = "ClubCountry";
     private static final String CLUB_CITY = "ClubCity";
-    private static final Integer MEMBERS = 1;
-    private static final Integer TEAMS = 3;
+    private static final Integer NUMBER_OF_MEMBERS = 1;
+    private static final Integer TEAMS_SIZE = 3;
     private static final String TOURNAMENT_NAME = "basicTournamentTest";
 
     private static final Integer SHIAIJO = 0;
@@ -74,28 +74,28 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
     }
 
     protected List<Participant> createParticipants(Club club) {
-        List<Participant> members = new ArrayList<>();
-        for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            members.add(
+        List<Participant> membersCreated = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_MEMBERS * TEAMS_SIZE; i++) {
+            membersCreated.add(
                     participantRepository.save(new Participant(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), club)));
         }
-        return members;
+        return membersCreated;
     }
 
     protected Tournament createTournament(String tournamentName) {
-        return tournamentRepository.save(new Tournament(tournamentName, 1, MEMBERS, TournamentType.LEAGUE, null));
+        return tournamentRepository.save(new Tournament(tournamentName, 1, NUMBER_OF_MEMBERS, TournamentType.LEAGUE, null));
     }
 
     protected List<Role> createRoles(List<Participant> members, Tournament tournament) {
-        List<Role> roles = new ArrayList<>();
+        List<Role> rolesCreated = new ArrayList<>();
         for (Participant competitor : members) {
-            roles.add(roleRepository.save(new Role(tournament, competitor, RoleType.COMPETITOR)));
+            rolesCreated.add(roleRepository.save(new Role(tournament, competitor, RoleType.COMPETITOR)));
         }
-        return roles;
+        return rolesCreated;
     }
 
     protected List<Team> createTeams(List<Participant> members, Tournament tournament) {
-        List<Team> teams = new ArrayList<>();
+        List<Team> teamsCreated = new ArrayList<>();
         int teamIndex = 0;
         Team team = null;
         int teamMember = 0;
@@ -105,7 +105,7 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
                 teamIndex++;
                 team = new Team("Team" + String.format("%02d", teamIndex), tournament);
                 teamMember = 0;
-                teams.add(team);
+                teamsCreated.add(team);
             }
 
             // Add member.
@@ -114,30 +114,30 @@ public abstract class BasicDataTest extends AbstractTestNGSpringContextTests {
             teamMember++;
 
             // Team filled up, create a new team.
-            if (teamMember >= MEMBERS) {
+            if (teamMember >= NUMBER_OF_MEMBERS) {
                 team = null;
             }
         }
-        return teams;
+        return teamsCreated;
     }
 
     protected Group createGroup(Tournament tournament, List<Team> teams) {
-        final Group group = new Group();
-        group.setTournament(tournament);
-        group.setLevel(0);
-        group.setIndex(0);
-        group.setTeams(teams);
-        return groupRepository.save(group);
+        final Group groupCreated = new Group();
+        groupCreated.setTournament(tournament);
+        groupCreated.setLevel(0);
+        groupCreated.setIndex(0);
+        groupCreated.setTeams(teams);
+        return groupRepository.save(groupCreated);
     }
 
     protected List<Fight> createFights(Tournament tournament, List<Team> teams, Group group) {
-        List<Fight> fights = new ArrayList<>();
+        List<Fight> fightsCreated = new ArrayList<>();
         for (int i = 0; i < teams.size(); i++) {
-            fights.add(fightRepository.save(new Fight(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL, null)));
+            fightsCreated.add(fightRepository.save(new Fight(tournament, teams.get((i) % teams.size()), teams.get((i + 1) % teams.size()), SHIAIJO, LEVEL, null)));
         }
-        group.setFights(fights);
+        group.setFights(fightsCreated);
         groupRepository.save(group);
-        return fights;
+        return fightsCreated;
     }
 
     protected void populateData() {

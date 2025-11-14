@@ -29,7 +29,7 @@ import {Achievement} from "../../models/achievement.model";
 import {AchievementsService} from "../../services/achievements.service";
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
-import {environment} from "../../../environments/environment";
+import {Environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -48,7 +48,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
   public fightsOverData: GaugeChartData;
 
-  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
+  protected achievementsEnabled: boolean = JSON.parse(String(Environment.achievementsEnabled));
 
   private readonly tournamentId: number | undefined;
   public tournamentStatistics: TournamentStatistics | undefined = undefined;

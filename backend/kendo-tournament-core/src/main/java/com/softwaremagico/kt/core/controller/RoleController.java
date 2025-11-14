@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -111,11 +111,11 @@ public class RoleController extends BasicInsertableController<Role, RoleDTO, Rol
     }
 
     @Override
-    public RoleDTO create(RoleDTO roleDTO, String username) {
+    public RoleDTO create(RoleDTO roleDTO, String username, String session) {
         //Delete any previous role.
         delete(roleDTO.getParticipant(), roleDTO.getTournament());
         //Add the new role.
-        return super.create(roleDTO, username);
+        return super.create(roleDTO, username, session);
     }
 
     @Override

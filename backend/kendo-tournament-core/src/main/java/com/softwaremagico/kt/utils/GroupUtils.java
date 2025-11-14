@@ -4,7 +4,7 @@ package com.softwaremagico.kt.utils;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,9 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 public final class GroupUtils {
+
     private GroupUtils() {
 
     }
+
 
     public static Map<Integer, List<Group>> orderByLevel(List<Group> groups) {
         final Map<Integer, List<Group>> sortedGroups = new HashMap<>();
@@ -48,6 +50,7 @@ public final class GroupUtils {
         return sortedGroups;
     }
 
+
     public static Map<Integer, List<GroupDTO>> orderDTOByLevel(List<GroupDTO> groups) {
         final Map<Integer, List<GroupDTO>> sortedGroups = new HashMap<>();
         groups.forEach(group -> {
@@ -55,5 +58,18 @@ public final class GroupUtils {
             sortedGroups.get(group.getLevel()).add(group);
         });
         return sortedGroups;
+    }
+
+
+    public static int getNextPowerOfTwo(int x) {
+        while (!isPowerOfTwo(x)) {
+            x++;
+        }
+        return x;
+    }
+
+
+    public static boolean isPowerOfTwo(int x) {
+        return (x != 0) && (x & (x - 1)) == 0;
     }
 }

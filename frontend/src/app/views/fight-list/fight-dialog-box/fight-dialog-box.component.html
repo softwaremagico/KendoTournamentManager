@@ -1,9 +1,9 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
-<div cdkDropListGroup class="fights-creator">
+<div cdkDropListGroup class="fights-creator" [ngClass]="{'horizontal' : horizontalTeams }">
   <div (cdkDropListDropped)="dropTeam($event)" [cdkDropListData]="teamListData.filteredTeams"
        cdkDropList
-       class="teams-container">
-    <team-list [teamListData]="teamListData"></team-list>
+       class="teams-container" [ngClass]="{'horizontal' : horizontalTeams }">
+    <team-list [teamListData]="teamListData" [horizontal]="horizontalTeams" [grid]="grid" [ngClass]="{'horizontal' : horizontalTeams }"></team-list>
   </div>
   <div class="new-fight-title">
     <h2 [class.red-ribbon]="!swappedColors" [class.white-ribbon]="swappedColors"

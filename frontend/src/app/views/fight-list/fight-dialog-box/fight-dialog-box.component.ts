@@ -31,51 +31,59 @@ export class FightDialogBoxComponent implements OnInit {
 
   swappedColors: boolean = false;
   swappedTeams: boolean = false;
+  horizontalTeams: boolean = false;
+  grid: boolean = false;
 
   selectedTeam1: Team[] = [];
   selectedTeam2: Team[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<FightDialogBoxComponent>,
-    private teamService: TeamService,
-    private fightService: FightService,
-    private groupServices: GroupService,
-    private messageService: MessageService,
-    private groupUpdatedService: GroupUpdatedService,
+    protected teamService: TeamService,
+    protected fightService: FightService,
+    protected groupServices: GroupService,
+    protected messageService: MessageService,
+    protected groupUpdatedService: GroupUpdatedService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {
-      title: string,
       action: Action,
       entity: Fight,
       group: Group,
       previousFight: Fight | undefined,
       tournament: Tournament,
       swappedColors: boolean,
-      swappedTeams: boolean
+      swappedTeams: boolean,
+      horizontalTeams: boolean,
+      grid: boolean,
     }
   ) {
     this.group = data.group;
     this.previousFight = data.previousFight;
     this.fight = data.entity;
-    this.title = data.title;
     this.action = data.action;
     this.actionName = Action[data.action];
     this.tournament = data.tournament;
     this.swappedColors = data.swappedColors;
     this.swappedTeams = data.swappedTeams;
+    this.horizontalTeams = data.horizontalTeams;
+    this.grid = data.grid;
   }
 
   ngOnInit(): void {
-    this.teamService.getFromTournament(this.tournament).subscribe((teams: Team[]): void => {
-      teams.sort(function (a: Team, b: Team) {
+    this.getTeams();
+  }
+
+  getTeams(): void {
+    this.teamService.getRemainingFromTournament(this.tournament).subscribe((_teams: Team[]): void => {
+      _teams.sort(function (a: Team, b: Team) {
         return a.name.localeCompare(b.name);
       });
-      this.teamListData.teams = teams;
-      this.teamListData.filteredTeams = teams;
+      this.teamListData.teams = _teams;
+      this.teamListData.filteredTeams = _teams;
     });
   }
 
-  closeDialog() {
-    this.dialogRef.close();
+  closeDialog(): void {
+    this.dialogRef.close({action: Action.Cancel, data: this.data});
   }
 
   dropTeam(event: CdkDragDrop<Team[], any>): Team {
@@ -96,7 +104,7 @@ export class FightDialogBoxComponent implements OnInit {
     return (drop.data.length === 0 || drop.data.length === 1 && drop.data!.includes(item.data));
   }
 
-  addFights() {
+  addFights(): void {
     this.fight.team1 = this.selectedTeam1[0];
     this.fight.team2 = this.selectedTeam2[0];
 
@@ -111,7 +119,7 @@ export class FightDialogBoxComponent implements OnInit {
       this.groupServices.update(this.group).subscribe((_group: Group): void => {
         this.messageService.infoMessage("addFightMessage");
         this.groupUpdatedService.isGroupUpdated.next(_group);
-        this.dialogRef.close(this.fight);
+        this.dialogRef.close({action: this.action, data: this.data});
       });
     });
 

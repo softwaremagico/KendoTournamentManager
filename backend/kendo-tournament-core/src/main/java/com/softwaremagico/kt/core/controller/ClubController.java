@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,6 +27,7 @@ import com.softwaremagico.kt.core.converters.models.ClubConverterRequest;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -43,7 +44,8 @@ public class ClubController extends BasicInsertableController<Club, ClubDTO, Clu
         return new ClubConverterRequest(club);
     }
 
-    public ClubDTO create(String name, String country, String city, String username) {
-        return create(convert(getProvider().add(name, country, city)), username);
+    @Transactional
+    public ClubDTO create(String name, String country, String city, String username, String session) {
+        return create(convert(getProvider().add(name, country, city)), username, session);
     }
 }

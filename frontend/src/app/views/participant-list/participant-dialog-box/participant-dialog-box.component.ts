@@ -12,6 +12,7 @@ import {FileService} from "../../../services/file.service";
 import {MessageService} from "../../../services/message.service";
 import {ParticipantImage} from "../../../models/participant-image.model";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
+import {InputLimits} from "../../../utils/input-limits";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -19,6 +20,13 @@ import {RbacActivity} from "../../../services/rbac/rbac.activity";
   styleUrls: ['./participant-dialog-box.component.scss']
 })
 export class ParticipantDialogBoxComponent extends RbacBasedComponent implements OnInit {
+
+  protected USER_NAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected USER_NAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected USER_LASTNAME_MIN_LENGTH: number = InputLimits.MIN_FIELD_LENGTH;
+  protected USER_LASTNAME_MAX_LENGTH: number = InputLimits.MAX_NORMAL_FIELD_LENGTH;
+  protected USER_ID_MAX_LENGTH: number = InputLimits.MAX_SMALL_FIELD_LENGTH;
+
 
   participant: Participant;
   title: string;
@@ -51,15 +59,15 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       name: new UntypedFormControl({
         value: this.participant.name,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
-      }, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
+      }, [Validators.required, Validators.minLength(this.USER_NAME_MIN_LENGTH), Validators.maxLength(this.USER_NAME_MAX_LENGTH)]),
       lastname: new UntypedFormControl({
         value: this.participant.lastname,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
-      }, [Validators.required, Validators.minLength(2), Validators.maxLength(40)]),
+      }, [Validators.required, Validators.minLength(this.USER_LASTNAME_MIN_LENGTH), Validators.maxLength(this.USER_LASTNAME_MAX_LENGTH)]),
       idCard: new UntypedFormControl({
         value: this.participant.idCard,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
-      }, [Validators.maxLength(20)]),
+      }, [Validators.maxLength(this.USER_ID_MAX_LENGTH)]),
       club: new UntypedFormControl({
         value: this.participant.club,
         disabled: !rbacService.isAllowed(RbacActivity.EDIT_PARTICIPANT)
@@ -84,6 +92,12 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   }
 
   compareClubs(club1: any, club2: any): boolean {
+    if (club2 == undefined && club1 == undefined) {
+      return true;
+    }
+    if ((club2 == undefined && club1 != undefined) || (club2 != undefined && club1 == undefined)) {
+      return false
+    }
     return club1.name === club2.name && club1.id === club2.id;
   }
 
@@ -114,6 +128,7 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
 
   openDialog(title: string, action: Action, participant: Participant): void {
     const dialogRef = this.dialog.open(ParticipantPictureDialogBoxComponent, {
+      panelClass: 'pop-up-panel',
       width: '700px',
       data: {
         title: title, action: action, participant: participant

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,11 +23,15 @@ package com.softwaremagico.kt.core.controller.models;
 
 import com.softwaremagico.kt.persistence.values.RoleType;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class ParticipantStatisticsDTO extends ElementDTO {
+
+    @Serial
+    private static final long serialVersionUID = -1980459158365146224L;
 
     private ParticipantFightStatisticsDTO participantFightStatistics;
 
@@ -41,7 +45,7 @@ public class ParticipantStatisticsDTO extends ElementDTO {
 
     private long totalTournaments;
 
-    private Map<RoleType, Long> rolesPerformed = new HashMap<>();
+    private Map<RoleType, Long> rolesPerformed = new EnumMap<>(RoleType.class);
 
     public ParticipantFightStatisticsDTO getParticipantFightStatistics() {
         return participantFightStatistics;

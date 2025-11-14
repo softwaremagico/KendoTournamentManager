@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,15 +31,23 @@ import com.softwaremagico.kt.core.providers.QrProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
+import com.softwaremagico.kt.persistence.values.ImageFormat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
+import org.w3c.dom.Document;
 
 import javax.imageio.ImageIO;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -51,7 +59,11 @@ public class QrController {
     private static final String LOGO_RESOURCE = "/kote.svg";
     private static final String QR_FORMAT = "png";
     private static final Integer QR_SIZE = 500;
-    private static final Color QR_COLOR = Color.decode("#001239");
+    private static final Color QR_COLOR_LIGHT_MODE = Color.decode("#001239");
+    private static final Color QR_COLOR_NIGHT_MODE = Color.decode("#b0a3d5");
+    private static final Color BACKGROUND_LIGHT_MODE = Color.decode("#ffffff");
+    private static final Color BACKGROUND_NIGHT_MODE = Color.decode("#424242");
+    private static final Color QR_BORDER = null;
 
     private final QrProvider qrProvider;
 
@@ -72,19 +84,56 @@ public class QrController {
     }
 
     @Cacheable(cacheNames = "qr-codes", key = "#tournamentId")
-    public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port) {
+    public QrCodeDTO generateGuestQrCodeForTournamentFights(Integer tournamentId, Integer port, boolean nightMode) {
         //Check that exists.
         final Tournament tournament = tournamentProvider.get(tournamentId).orElseThrow(() ->
                 new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'."));
         try {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + TOURNAMENT_FIGHTS_URL
                     + "?tournamentId=" + tournament.getId() + "&user=guest";
-            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
+                    !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
+                    LOGO_RESOURCE,
+                    !nightMode ? BACKGROUND_LIGHT_MODE : BACKGROUND_NIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
-            qrCodeDTO.setLink(link);
+            qrCodeDTO.setContent(link);
             return qrCodeDTO;
         } catch (IOException e) {
+            throw new UnexpectedValueException(this.getClass(), e);
+        }
+    }
+
+    public QrCodeDTO generateQrCode(String content, boolean nightMode) {
+        try {
+            final BufferedImage qrCode = qrProvider.getQr(content, QR_SIZE, QR_BORDER,
+                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
+                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE,
+                    LOGO_RESOURCE);
+            final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+            qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
+            qrCodeDTO.setImageFormat(ImageFormat.BASE64);
+            qrCodeDTO.setContent(content);
+            return qrCodeDTO;
+        } catch (IOException e) {
+            throw new UnexpectedValueException(this.getClass(), e);
+        }
+    }
+
+    public QrCodeDTO generateQrCodeAsSvg(String content, boolean nightMode) {
+        try {
+            final Document qrCode = qrProvider.getQrAsSvg(content, QR_SIZE, QR_BORDER,
+                    nightMode ? QR_COLOR_NIGHT_MODE : QR_COLOR_LIGHT_MODE,
+                    nightMode ? BACKGROUND_NIGHT_MODE : BACKGROUND_LIGHT_MODE, LOGO_RESOURCE);
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final StringWriter stringWriter = new StringWriter();
+            transformer.transform(new DOMSource(qrCode), new StreamResult(stringWriter));
+            final QrCodeDTO qrCodeDTO = new QrCodeDTO();
+            qrCodeDTO.setData(stringWriter.toString().getBytes(StandardCharsets.UTF_8));
+            qrCodeDTO.setImageFormat(ImageFormat.SVG);
+            qrCodeDTO.setContent(content);
+            return qrCodeDTO;
+        } catch (TransformerException e) {
             throw new UnexpectedValueException(this.getClass(), e);
         }
     }
@@ -96,7 +145,7 @@ public class QrController {
      * @param port          if the frontend is running on a different port.
      * @return
      */
-    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId, Integer port) {
+    public QrCodeDTO generateParticipantQrCodeForStatistics(Integer participantId, Integer port, boolean nightMode) {
         final Participant participant = participantProvider.get(participantId).orElseThrow(() ->
                 new ParticipantNotFoundException(this.getClass(), "No participant found with id '" + participantId + "'."));
 
@@ -106,10 +155,13 @@ public class QrController {
             final String link = schema + "://" + machineDomain + (port != null ? ":" + port : "") + PARTICIPANT_STATISTICS_URL
                     + "?participantId=" + participantId + "&temporalToken="
                     + URLEncoder.encode(temporalToken.getContent(), StandardCharsets.UTF_8);
-            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE, QR_COLOR, LOGO_RESOURCE);
+            final BufferedImage qrCode = qrProvider.getQr(link, QR_SIZE,
+                    !nightMode ? QR_COLOR_LIGHT_MODE : QR_COLOR_NIGHT_MODE,
+                    LOGO_RESOURCE,
+                    !nightMode ? BACKGROUND_LIGHT_MODE : BACKGROUND_NIGHT_MODE);
             final QrCodeDTO qrCodeDTO = new QrCodeDTO();
             qrCodeDTO.setData(toByteArray(qrCode, QR_FORMAT));
-            qrCodeDTO.setLink(link);
+            qrCodeDTO.setContent(link);
             return qrCodeDTO;
         } catch (IOException e) {
             throw new UnexpectedValueException(this.getClass(), e);

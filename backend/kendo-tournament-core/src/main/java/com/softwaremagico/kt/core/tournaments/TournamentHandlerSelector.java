@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,27 +31,29 @@ public class TournamentHandlerSelector {
     private final LoopLeagueHandler loopLeagueHandler;
     private final TreeTournamentHandler treeTournamentHandler;
     private final KingOfTheMountainHandler kingOfTheMountainHandler;
+    private final BubbleSortTournamentHandler bubbleSortTournamentHandler;
+    private final SenbatsuTournamentHandler senbatsuTournamentHandler;
 
     public TournamentHandlerSelector(SimpleLeagueHandler simpleLeagueHandler, CustomLeagueHandler customTournamentHandler,
                                      LoopLeagueHandler loopLeagueHandler, TreeTournamentHandler treeTournamentHandler,
-                                     KingOfTheMountainHandler kingOfTheMountainHandler) {
+                                     KingOfTheMountainHandler kingOfTheMountainHandler, BubbleSortTournamentHandler bubbleSortTournamentHandler,
+                                     SenbatsuTournamentHandler senbatsuTournamentHandler) {
         this.simpleLeagueHandler = simpleLeagueHandler;
         this.customTournamentHandler = customTournamentHandler;
         this.loopLeagueHandler = loopLeagueHandler;
         this.treeTournamentHandler = treeTournamentHandler;
         this.kingOfTheMountainHandler = kingOfTheMountainHandler;
+        this.bubbleSortTournamentHandler = bubbleSortTournamentHandler;
+        this.senbatsuTournamentHandler = senbatsuTournamentHandler;
     }
 
     public ITournamentManager selectManager(TournamentType type) {
         switch (type) {
             case LOOP:
                 return loopLeagueHandler;
-            case TREE:
-            case CHAMPIONSHIP:
+            case TREE, CHAMPIONSHIP:
                 return treeTournamentHandler;
             case CUSTOM_CHAMPIONSHIP:
-                //manager = new CustomChampionship(tournament);
-                //manager.fillGroups();
                 break;
             case CUSTOMIZED:
                 return customTournamentHandler;
@@ -59,6 +61,10 @@ public class TournamentHandlerSelector {
                 return kingOfTheMountainHandler;
             case LEAGUE:
                 return simpleLeagueHandler;
+            case BUBBLE_SORT:
+                return bubbleSortTournamentHandler;
+            case SENBATSU:
+                return senbatsuTournamentHandler;
             default:
                 break;
         }

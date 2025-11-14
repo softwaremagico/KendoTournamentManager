@@ -19,34 +19,34 @@
         </button>
       </div>
     </div>
-    <h1 class="name" *ngIf="participant">{{participant.name}} {{participant.lastname}}</h1>
+    <h1 class="name" *ngIf="participant">{{ participant.name }} {{ participant.lastname }}</h1>
     <div class="statistics-container">
       <div class="dashboard">
 
         <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
-            <h3>{{'roles' | translate}}</h3>
+            <h3>{{ 'roles' | translate }}</h3>
           </div>
-          <!***REMOVED***aria-hidden="true" to avoid complains from sonarcloud -->
+          <!-- aria-hidden="true" to avoid complains from sonarcloud -->
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr *ngFor="let roleType of roleTypes">
-              <td *ngIf="participantStatistics">{{roleType.toLowerCase() | translate}}:</td>
-              <td *ngIf="participantStatistics">{{numberOfPerformedRoles(roleType)}}</td>
+              <td *ngIf="participantStatistics">{{ roleType.toLowerCase() | translate }}:</td>
+              <td *ngIf="participantStatistics">{{ numberOfPerformedRoles(roleType) }}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
-            <h3>{{'tournaments' | translate}}</h3>
+            <h3>{{ 'tournaments' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td class="single">{{'tournaments' | translate}}:</td>
-              <td>{{participantStatistics.tournaments}}</td>
+              <td class="single">{{ 'tournaments' | translate }}:</td>
+              <td>{{ participantStatistics.tournaments }}</td>
             </tr>
             <tr>
-              <td class="single">{{'duels' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.duelsNumber}}</td>
+              <td class="single">{{ 'duels' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.duelsNumber }}</td>
             </tr>
           </table>
         </div>
@@ -54,42 +54,42 @@
         <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon>timer</mat-icon>
-            <h3>{{'time' | translate}}</h3>
+            <h3>{{ 'time' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td>{{'createdAt' | translate}}:</td>
-              <td>{{convertDate(participantStatistics.participantCreatedAt)}}</td>
+              <td>{{ 'createdAt' | translate }}:</td>
+              <td>{{ convertDate(participantStatistics.participantCreatedAt) }}</td>
             </tr>
             <tr>
-              <td>{{'duelsAverage' | translate}}:</td>
-              <td>{{convertSeconds(participantStatistics.participantFightStatistics.averageTime)}}</td>
+              <td>{{ 'duelsAverage' | translate }}:</td>
+              <td>{{ convertSeconds(participantStatistics.participantFightStatistics.averageTime) }}</td>
             </tr>
             <tr>
-              <td>{{'quickestHit' | translate}}:</td>
-              <td>{{convertSeconds(participantStatistics.participantFightStatistics.quickestHit)}}</td>
+              <td>{{ 'quickestHit' | translate }}:</td>
+              <td>{{ convertSeconds(participantStatistics.participantFightStatistics.quickestHit) }}</td>
             </tr>
             <tr>
-              <td>{{'quickestReceivedHit' | translate}}:</td>
-              <td>{{convertSeconds(participantStatistics.participantFightStatistics.quickestReceivedHit)}}</td>
+              <td>{{ 'quickestReceivedHit' | translate }}:</td>
+              <td>{{ convertSeconds(participantStatistics.participantFightStatistics.quickestReceivedHit) }}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="fight"></mat-icon>
-            <h3>{{'duels' | translate}}</h3>
+            <h3>{{ 'duels' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td class="single">{{'duelsWon' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.wonDuels}}</td>
+              <td class="single">{{ 'duelsWon' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.wonDuels }}</td>
             </tr>
             <tr>
-              <td class="single">{{'duelsDraw' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.drawDuels}}</td>
+              <td class="single">{{ 'duelsDraw' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.drawDuels }}</td>
             </tr>
             <tr>
-              <td class="single">{{'duelsLost' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.lostDuels}}</td>
+              <td class="single">{{ 'duelsLost' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.lostDuels }}</td>
             </tr>
           </table>
         </div>
@@ -97,46 +97,46 @@
         <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="match"></mat-icon>
-            <h3>{{'hits' | translate}}</h3>
+            <h3>{{ 'hits' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td>{{'men' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.menNumber}}</td>
+              <td>{{ 'men' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.menNumber }}</td>
             </tr>
             <tr>
-              <td>{{'kote' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.koteNumber}}</td>
+              <td>{{ 'kote' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.koteNumber }}</td>
             </tr>
             <tr>
-              <td>{{'do' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.doNumber}}</td>
+              <td>{{ 'do' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.doNumber }}</td>
             </tr>
             <tr>
-              <td>{{'tsuki' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.tsukiNumber}}</td>
+              <td>{{ 'tsuki' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.tsukiNumber }}</td>
             </tr>
             <tr>
-              <td>{{'hansoku' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.hansokuNumber}}</td>
+              <td>{{ 'hansoku' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.hansokuNumber }}</td>
             </tr>
             <tr>
-              <td>{{'ippon' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.ipponNumber}}</td>
+              <td>{{ 'ippon' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.ipponNumber }}</td>
             </tr>
             <tr>
-              <td>{{'fusenGachi' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.fusenGachiNumber}}</td>
+              <td>{{ 'fusenGachi' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.fusenGachiNumber }}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon>flag</mat-icon>
-            <h3>{{'faults' | translate}}</h3>
+            <h3>{{ 'faults' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td class="single">{{'faults' | translate}}
-                : {{participantStatistics.participantFightStatistics.faults}}
+              <td class="single">{{ 'faults' | translate }}
+                : {{ participantStatistics.participantFightStatistics.faults }}
               </td>
             </tr>
           </table>
@@ -145,46 +145,46 @@
         <div class="box-statistics box ">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon flip" svgIcon="match"></mat-icon>
-            <h3>{{'receivedHits' | translate}}</h3>
+            <h3>{{ 'receivedHits' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td>{{'men' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedMenNumber}}</td>
+              <td>{{ 'men' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedMenNumber }}</td>
             </tr>
             <tr>
-              <td>{{'kote' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedKoteNumber}}</td>
+              <td>{{ 'kote' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedKoteNumber }}</td>
             </tr>
             <tr>
-              <td>{{'do' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedDoNumber}}</td>
+              <td>{{ 'do' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedDoNumber }}</td>
             </tr>
             <tr>
-              <td>{{'tsuki' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedTsukiNumber}}</td>
+              <td>{{ 'tsuki' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedTsukiNumber }}</td>
             </tr>
             <tr>
-              <td>{{'hansoku' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedHansokuNumber}}</td>
+              <td>{{ 'hansoku' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedHansokuNumber }}</td>
             </tr>
             <tr>
-              <td>{{'ippon' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedIpponNumber}}</td>
+              <td>{{ 'ippon' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedIpponNumber }}</td>
             </tr>
             <tr>
-              <td>{{'fusenGachi' | translate}}:</td>
-              <td>{{participantStatistics.participantFightStatistics.receivedFusenGachiNumber}}</td>
+              <td>{{ 'fusenGachi' | translate }}:</td>
+              <td>{{ participantStatistics.participantFightStatistics.receivedFusenGachiNumber }}</td>
             </tr>
           </table>
           <div class="statistics-table-title">
             <mat-icon class="flip">flag</mat-icon>
-            <h3>{{'receivedFaults' | translate}}</h3>
+            <h3>{{ 'receivedFaults' | translate }}</h3>
           </div>
           <table *ngIf="participantStatistics" aria-hidden="true" class="statistics-table">
             <tr>
-              <td class="single">{{'faults' | translate}}
-                : {{participantStatistics.participantFightStatistics.receivedFaults}}
+              <td class="single">{{ 'faults' | translate }}
+                : {{ participantStatistics.participantFightStatistics.receivedFaults }}
               </td>
             </tr>
           </table>
@@ -193,7 +193,7 @@
         <div class="box-statistics box  scrollable">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="competitors-classification"></mat-icon>
-            <h3>{{'competitorsRanking' | translate}}</h3>
+            <h3>{{ 'competitorsRanking' | translate }}</h3>
           </div>
           <table *ngIf="competitorRanking" aria-hidden="true" class="statistics-table">
             <tr>
@@ -205,14 +205,14 @@
                     'ranking-very-bad': competitorRanking.ranking / competitorRanking.total > 0.9}
                   "
                   class="ranking your-ranking">
-                {{competitorRanking.ranking + 1}}
+                {{ competitorRanking.ranking + 1 }}
               </td>
             </tr>
             <tr>
               <td class="ranking">of</td>
             </tr>
             <tr>
-              <td class="ranking total-ranking">{{competitorRanking.total}}</td>
+              <td class="ranking total-ranking">{{ competitorRanking.total }}</td>
             </tr>
           </table>
         </div>
@@ -220,7 +220,7 @@
         <div class="box-statistics box  scrollable">
           <div class="statistics-table-title">
             <mat-icon class="kendo-icon" svgIcon="gauge"></mat-icon>
-            <h3>{{'performance' | translate}}</h3>
+            <h3>{{ 'performance' | translate }}</h3>
           </div>
           <app-progress-bar *ngFor="let value of performance; let i = index" [barIcon]="value[0].toLowerCase()"
                             [ngClass]="'bar-'+i"
@@ -228,6 +228,36 @@
                             [text]="value[0] | translate"
                             [hint]="value[0] + 'Hint' | translate"
           ></app-progress-bar>
+        </div>
+
+        <div class="box-statistics box  scrollable">
+          <div class="statistics-table-title">
+            <mat-icon class="kendo-icon" svgIcon="yourWorstNightmare"></mat-icon>
+            <h3>{{ 'yourWorstNightmare' | translate }}</h3>
+          </div>
+          <table aria-hidden="true" class="statistics-table">
+            <tr *ngFor="let nightmare of yourWorstNightmare">
+              <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}</td>
+            </tr>
+          </table>
+          <table *ngIf="!yourWorstNightmare || !yourWorstNightmare.length" aria-hidden="true" class="statistics-table">
+            <tr>
+              <td class="single">--</td>
+            </tr>
+          </table>
+          <div class="statistics-table-title">
+            <mat-icon class="kendo-icon" svgIcon="youAreTheWorstNightmareOf"></mat-icon>
+            <h3>{{ 'worstNightmareOf' | translate }}</h3>
+          </div>
+          <table aria-hidden="true" class="statistics-table">
+            <tr *ngFor="let nightmare of youAreTheWorstNightmareOf">
+              <td class="single">{{ nightmare.name }} {{ nightmare.lastname }}
+              </td>
+            </tr>
+            <tr *ngIf="!youAreTheWorstNightmareOf || !youAreTheWorstNightmareOf.length">
+              <td class="single">--</td>
+            </tr>
+          </table>
         </div>
 
         <app-pie-chart *ngIf="!!hitsTypeChartData" [data]="hitsTypeChartData"
@@ -240,7 +270,7 @@
         <div *ngIf="achievementsEnabled" class="box-statistics box  achievements-box">
           <div class="statistics-table-title">
             <mat-icon>stars</mat-icon>
-            <h3>{{'achievements' | translate}}</h3>
+            <h3>{{ 'achievements' | translate }}</h3>
           </div>
           <app-achievement-wall [achievements]="achievements"
                                 [view]="'participant'"></app-achievement-wall>

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,9 @@ package com.softwaremagico.kt.core.controller;
  */
 
 import com.softwaremagico.kt.core.controller.models.GroupLinkDTO;
+import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.core.converters.GroupLinkConverter;
+import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.GroupLinkConverterRequest;
 import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.GroupLinkProvider;
@@ -30,20 +32,27 @@ import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.GroupLink;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.repositories.GroupLinkRepository;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
-public class GroupLinkController extends BasicInsertableController<GroupLink, GroupLinkDTO, GroupLinkRepository,
-        GroupLinkProvider, GroupLinkConverterRequest, GroupLinkConverter> {
+public class GroupLinkController {
 
     private final TournamentProvider tournamentProvider;
+    private final GroupLinkProvider groupLinkProvider;
+    private final GroupLinkConverter groupLinkConverter;
+    private final TournamentConverter tournamentConverter;
 
-    public GroupLinkController(GroupLinkProvider provider, GroupLinkConverter converter, TournamentProvider tournamentProvider) {
-        super(provider, converter);
+    public GroupLinkController(TournamentProvider tournamentProvider, GroupLinkProvider groupLinkProvider, GroupLinkConverter groupLinkConverter,
+                               TournamentConverter tournamentConverter) {
         this.tournamentProvider = tournamentProvider;
+        this.groupLinkProvider = groupLinkProvider;
+        this.groupLinkConverter = groupLinkConverter;
+        this.tournamentConverter = tournamentConverter;
     }
 
 
@@ -57,8 +66,17 @@ public class GroupLinkController extends BasicInsertableController<GroupLink, Gr
                         ExceptionType.INFO)));
     }
 
+    public List<GroupLinkDTO> getLinks(TournamentDTO tournamentDTO) {
+        return getLinks(tournamentConverter.reverse(tournamentDTO));
+    }
+
     public List<GroupLinkDTO> getLinks(Tournament tournament) {
-        return convertAll(getProvider().generateLinks(tournament));
+        return convertAll(groupLinkProvider.generateLinks(tournament));
+    }
+
+    private List<GroupLinkDTO> convertAll(Collection<GroupLink> entities) {
+        return new ArrayList<>(groupLinkConverter.convertAll(entities.stream().map(this::createConverterRequest)
+                .collect(Collectors.toCollection(ArrayList::new))));
     }
 
 

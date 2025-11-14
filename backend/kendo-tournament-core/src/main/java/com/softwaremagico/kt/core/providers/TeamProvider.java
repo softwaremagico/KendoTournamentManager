@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.providers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,6 @@ import com.softwaremagico.kt.core.exceptions.TeamNotFoundException;
 import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
-import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +38,10 @@ import java.util.Optional;
 public class TeamProvider extends CrudProvider<Team, Integer, TeamRepository> {
     private final RoleProvider roleProvider;
 
-    private final GroupRepository groupRepository;
-
     @Autowired
-    public TeamProvider(TeamRepository repository, RoleProvider roleProvider, GroupRepository groupRepository) {
+    public TeamProvider(TeamRepository repository, RoleProvider roleProvider) {
         super(repository);
         this.roleProvider = roleProvider;
-        this.groupRepository = groupRepository;
     }
 
     public Team update(Team team, List<Participant> members) {

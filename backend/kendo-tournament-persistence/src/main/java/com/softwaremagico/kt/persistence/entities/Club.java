@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -174,7 +174,7 @@ public class Club extends Element implements Comparable<Club> {
     }
 
     public String getMail() {
-        return email;
+        return getEmail();
     }
 
     /**
@@ -183,7 +183,7 @@ public class Club extends Element implements Comparable<Club> {
      * @param email
      */
     public void setMail(String email) {
-        this.email = email;
+        setEmail(email);
     }
 
     public String getPhone() {
@@ -224,6 +224,8 @@ public class Club extends Element implements Comparable<Club> {
 
         return collator.compare(getName() + getCity(), c.getName() + c.getCity());
     }
+
+
 
 
 }

@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.services;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ package com.softwaremagico.kt.rest.services;
 import com.softwaremagico.kt.core.controller.TournamentExtraPropertyController;
 import com.softwaremagico.kt.core.controller.models.TournamentExtraPropertyDTO;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
+import com.softwaremagico.kt.rest.security.AuthApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,7 +54,8 @@ public class TournamentExtraPropertiesServices {
         this.tournamentExtraPropertyController = tournamentExtraPropertyController;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_GUEST')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege, "
+            + "@securityService.guestPrivilege)")
     @Operation(summary = "Gets tournament's properties.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentExtraPropertyDTO> get(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
@@ -60,7 +63,7 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.getByTournamentId(tournamentId);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets tournament's properties by key.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/tournaments/{tournamentId}/key/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO getByKey(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
@@ -71,25 +74,28 @@ public class TournamentExtraPropertiesServices {
         return tournamentExtraPropertyController.getByTournamentAndProperty(tournamentId, key);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Creates a tournament property with some basic information.", security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO add(TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
-                                          Authentication authentication, HttpServletRequest request) {
-        return tournamentExtraPropertyController.create(tournamentExtraPropertyDTO, authentication.getName());
+                                          Authentication authentication,
+                                          @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
+                                          HttpServletRequest request) {
+        return tournamentExtraPropertyController.create(tournamentExtraPropertyDTO, authentication.getName(), session);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Updates a tournament property.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public TournamentExtraPropertyDTO update(@RequestBody TournamentExtraPropertyDTO tournamentExtraPropertyDTO,
+                                             @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                                              Authentication authentication, HttpServletRequest request) {
         tournamentExtraPropertyDTO.setCreatedBy(authentication.getName());
-        return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName());
+        return tournamentExtraPropertyController.update(tournamentExtraPropertyDTO, authentication.getName(), session);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_VIEWER', 'ROLE_EDITOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Get latest selected properties from a user.", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping(value = "/latest", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TournamentExtraPropertyDTO> getLatest(Authentication authentication, HttpServletRequest request) {

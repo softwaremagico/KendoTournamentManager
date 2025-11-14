@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.managers;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,14 +33,17 @@ import java.util.List;
 public class KingOfTheMountainFightManager {
 
     public List<Fight> createFights(Tournament tournament, List<Team> teams, Integer level, String createdBy) {
-        return createOneFightsForEachTeam(tournament, teams, level, createdBy);
+        return createFirstFight(tournament, teams, level, createdBy);
     }
 
     private Fight createFight(Tournament tournament, Team team1, Team team2, Integer shiaijo, Integer level, String createdBy) {
         return new Fight(tournament, team1, team2, shiaijo, level, createdBy);
     }
 
-    private List<Fight> createOneFightsForEachTeam(Tournament tournament, List<Team> teams, int level, String createdBy) {
+    /**
+     * Only the first two teams are used, as only first fight can be defined.
+     */
+    private List<Fight> createFirstFight(Tournament tournament, List<Team> teams, int level, String createdBy) {
         if (teams == null || tournament == null || teams.size() < 2) {
             return new ArrayList<>();
         }
@@ -48,16 +51,9 @@ public class KingOfTheMountainFightManager {
 
         // If only exists two teams, there are only one fight. If no, as many
         // fights as teams
-        for (int i = 0; i < (teams.size() > 2 ? teams.size() : 1); i++) {
-            final Team team1 = teams.get(i);
-            final Team team2 = teams.get((i + 1) % teams.size());
-
-            if (fights.size() % 2 == 0) {
-                fights.add(createFight(tournament, team1, team2, 0, level, createdBy));
-            } else {
-                fights.add(createFight(tournament, team2, team1, 0, level, createdBy));
-            }
-        }
+        final Team team1 = teams.get(0);
+        final Team team2 = teams.get(1);
+        fights.add(createFight(tournament, team1, team2, 0, level, createdBy));
         return fights;
     }
 }

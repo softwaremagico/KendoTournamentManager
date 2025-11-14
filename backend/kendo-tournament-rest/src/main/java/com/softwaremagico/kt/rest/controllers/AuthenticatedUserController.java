@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.controllers;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,7 +71,7 @@ public class AuthenticatedUserController {
     public AuthenticatedUser createUser(String creator, String username, String firstName, String lastName, String password, AvailableRole... roles) {
         final String[] roleTags = new String[roles.length];
         for (int i = 0; i < roles.length; i++) {
-            roleTags[i] = roles[i].name().replaceAll(AvailableRole.ROLE_PREFIX, "").toLowerCase();
+            roleTags[i] = roles[i].name().toLowerCase();
         }
         return createUser(creator, username, firstName, lastName, password, roleTags);
     }
@@ -86,15 +86,15 @@ public class AuthenticatedUserController {
 
         final AuthenticatedUser authenticatedUser = (AuthenticatedUser) user;
 
-        //Check old password.
+        //Check the old password.
         if (!BCrypt.checkpw(oldPassword, authenticatedUser.getPassword())) {
             throw new InvalidPasswordException(this.getClass(), "Provided password is incorrect!");
         }
 
-        //Update new password.
+        //Update the new password.
         authenticatedUser.setPassword(newPassword);
         authenticatedUserProvider.save(authenticatedUser);
-        KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", username);
+        KendoTournamentLogger.info(this.getClass(), "Password updated correctly by '{}'!", user.getUsername());
     }
 
     public AuthenticatedUser updateUser(String updater, CreateUserRequest createUserRequest) {

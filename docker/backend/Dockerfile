@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:22-jdk-alpine
 
 ARG release
 ARG machine_domain
@@ -25,14 +25,14 @@ ENV PATH "$PATH:${JAVA_HOME}/bin"
 
 #Set timezone.
 ENV TZ=${timezone}
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/"$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 #Copy libraries
 RUN mkdir -p /opt/libraries/BOOT-INF/lib/
 ADD libraries/* /opt/libraries/BOOT-INF/lib/
 
 #Download project and install it
-RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
+RUN apk --no-cache add curl openssl supervisor unzip zip && \
     mkdir -p /opt/${project_name} && \
     cd /opt/${project_name} && \
     wget https://github.com/softwaremagico/KendoTournamentManager/releases/download/${release}/kendo-tournament-backend.jar && \
@@ -66,8 +66,8 @@ RUN apt-get update && apt-get install -y supervisor openssl zip unzip curl && \
     zip /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/classes/application.properties && \
     cd /opt/libraries && \
     zip -0 /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/* && \
-    zip -d /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/mysql-connector* && \
-    apt-get autoremove -y openssl zip unzip
+    #zip -d /opt/${project_name}/kendo-tournament-backend.jar BOOT-INF/lib/mysql-connector* && \
+    apk del openssl zip unzip
 
 #Copy configuration files.
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf

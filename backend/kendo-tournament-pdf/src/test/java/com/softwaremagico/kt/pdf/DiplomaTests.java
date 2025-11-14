@@ -4,7 +4,7 @@ package com.softwaremagico.kt.pdf;
  * #%L
  * Kendo Tournament Manager (PDF)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,7 +58,7 @@ public class DiplomaTests extends BasicDataTest {
         List<RoleDTO> roles = roleController.get(tournament);
         roles.forEach(roleDTO -> Assert.assertFalse(roleDTO.isDiplomaPrinted()));
 
-        Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, true, null)
+        Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, true, null, null)
                 // No clue why are 7 pages and not 6.
                 .createFile(PDF_PATH_OUTPUT + "Diplomas.pdf"), roles.size() + 1);
 
@@ -68,12 +68,12 @@ public class DiplomaTests extends BasicDataTest {
 
     @Test(dependsOnMethods = "generateDiplomas", expectedExceptions = NoContentException.class)
     public void generateNewDiplomas() {
-        pdfController.generateTournamentDiplomas(tournament, true, null);
+        pdfController.generateTournamentDiplomas(tournament, true, null, null);
     }
 
     @Test(dependsOnMethods = "generateNewDiplomas")
     public void generateDiplomasAgain() {
-        Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, false, null)
+        Assert.assertEquals(pdfController.generateTournamentDiplomas(tournament, false, null, null)
                 // No clue why are 7 pages and not 6. 6 Members + 1 referee
                 .createFile(PDF_PATH_OUTPUT + "Diplomas.pdf"), roles.size() + 1 + 1);
     }

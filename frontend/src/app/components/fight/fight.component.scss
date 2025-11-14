@@ -1,6 +1,6 @@
 .fight {
   border-width: 2px;
-  border-color: var(--border-color);
+  border-color: var(--fight-border-color);
   border-style: solid;
   padding: 5px;
   width: 100%;
@@ -19,9 +19,9 @@
   text-align: center;
   padding: 20px;
   border-width: 2px;
-  border-color: var(--background-color);
+  border-color: var(--ribbon-border);
   border-style: solid;
-  background-color: var(--contrast-color);
+  background-color: var(--ribbon-background);
 }
 
 .red-ribbon {
@@ -39,10 +39,10 @@
   text-align: center;
   padding: 20px;
   border-width: 2px;
-  border-color: var(--background-color);
+  border-color: var(--ribbon-border);
   border-style: solid;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  background-color: var(--contrast-color);
+  background-color: var(--ribbon-background);
 }
 
 .white-ribbon {

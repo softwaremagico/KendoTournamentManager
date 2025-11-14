@@ -4,7 +4,7 @@ package com.softwaremagico.kt.persistence.entities;
  * #%L
  * Kendo Tournament Manager (Persistence)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,9 @@ import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Cacheable
@@ -106,7 +108,7 @@ public class Duel extends Element {
     @Column(name = "competitor_2_fault")
     private Boolean competitor2Fault = false;
 
-    @Column(name = "type")
+    @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private DuelType type;
 
@@ -141,6 +143,17 @@ public class Duel extends Element {
         setCompetitor2(competitor2);
         setTournament(tournament);
         setCreatedBy(createdBy);
+    }
+
+    public Set<Participant> getCompetitors() {
+        final Set<Participant> competitors = new HashSet<>();
+        if (competitor1 != null) {
+            competitors.add(competitor1);
+        }
+        if (competitor2 != null) {
+            competitors.add(competitor2);
+        }
+        return competitors;
     }
 
     public Participant getCompetitor1() {
@@ -229,6 +242,15 @@ public class Duel extends Element {
             return getCompetitor1();
         } else if (getWinner() > 0) {
             return getCompetitor2();
+        }
+        return null;
+    }
+
+    public Participant getCompetitorLooser() {
+        if (getWinner() < 0) {
+            return getCompetitor2();
+        } else if (getWinner() > 0) {
+            return getCompetitor1();
         }
         return null;
     }

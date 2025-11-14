@@ -4,7 +4,7 @@ package com.softwaremagico.kt.websockets;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,6 @@ import com.softwaremagico.kt.core.controller.DuelController;
 import com.softwaremagico.kt.core.controller.FightController;
 import com.softwaremagico.kt.core.controller.FightStatisticsController;
 import com.softwaremagico.kt.core.controller.GroupController;
-import com.softwaremagico.kt.core.controller.GroupLinkController;
 import com.softwaremagico.kt.core.controller.ParticipantController;
 import com.softwaremagico.kt.core.controller.ParticipantImageController;
 import com.softwaremagico.kt.core.controller.ParticipantStatisticsController;
@@ -48,7 +47,6 @@ public class WebsocketElements {
                              FightController fightController,
                              FightStatisticsController fightStatisticsController,
                              GroupController groupController,
-                             GroupLinkController groupLinkController,
                              ParticipantController participantController,
                              ParticipantImageController participantImageController,
                              ParticipantStatisticsController participantStatisticsController,
@@ -84,10 +82,6 @@ public class WebsocketElements {
         groupController.addElementCreatedListeners((webSocketController::elementCreated));
         groupController.addElementUpdatedListeners((webSocketController::elementUpdated));
         groupController.addElementDeletedListeners((webSocketController::elementDeleted));
-
-        groupLinkController.addElementCreatedListeners((webSocketController::elementCreated));
-        groupLinkController.addElementUpdatedListeners((webSocketController::elementUpdated));
-        groupLinkController.addElementDeletedListeners((webSocketController::elementDeleted));
 
         participantController.addElementCreatedListeners((webSocketController::elementCreated));
         participantController.addElementUpdatedListeners((webSocketController::elementUpdated));

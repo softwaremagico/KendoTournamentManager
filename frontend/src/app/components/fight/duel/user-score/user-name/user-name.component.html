@@ -4,12 +4,14 @@
   <div cdkDragHandle class="drag-handle">
     <mat-icon *ngIf="reorderAllowed && (this.duel.duration ? this.duel.duration < 1 : true)">swap_vert</mat-icon>
   </div>
-  <div class="user-name-text" [ngClass]="{'highlighted': highlightParticipant()}">{{ displayName }}</div>
+  <div class="user-name-text" [ngClass]="{'highlighted': highlightParticipant()}" (dblclick)="openStatistics()">
+    {{ displayName }}
+  </div>
 </div>
 <div *ngIf="!participant" [cdkDragData]="participant" [class.left]="left" [class.right]="!left" cdkDrag
      class="user-name">
   <div cdkDragHandle class="drag-handle">
     <mat-icon *ngIf="reorderAllowed && (this.duel.duration ? this.duel.duration < 1 : true)">swap_vert</mat-icon>
   </div>
-  ***REMOVED*** ***REMOVED***
+  --- ---
 </div>

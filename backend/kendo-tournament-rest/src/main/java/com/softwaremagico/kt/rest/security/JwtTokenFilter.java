@@ -4,7 +4,7 @@ package com.softwaremagico.kt.rest.security;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -120,9 +120,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if (JwtFilterLogger.isDebugEnabled()) {
             JwtFilterLogger.debug(this.getClass().getName(), "\nJWT Obtained:\n"
-                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
+                            + "\tExpiration date: '{}'\n\tUser id: '{}'\n\tUsername: '{}'\n\tSession: '{}'\n\tIp: '{}'\n\tMAC: '{}'\n",
                     jwtTokenUtil.getExpirationDate(token), jwtTokenUtil.getUserId(token), jwtTokenUtil.getUsername(token),
-                    jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
+                    jwtTokenUtil.getSession(token), jwtTokenUtil.getUserIp(token), jwtTokenUtil.getHostMac(token));
         }
 
         // Get user identity and set it on the spring security context

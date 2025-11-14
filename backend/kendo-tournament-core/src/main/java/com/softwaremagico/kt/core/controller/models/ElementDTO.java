@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Rest)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,11 +21,22 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class ElementDTO implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2675307452768380087L;
+
+    public static final int MAX_BIG_FIELD_LENGTH = 255;
+    public static final int MAX_NORMAL_FIELD_LENGTH = 50;
+    public static final int MAX_SMALL_FIELD_LENGTH = 25;
+    public static final int MAX_TINY_FIELD_LENGTH = 10;
+    public static final int MIN_FIELD_LENGTH = 2;
+
     private Integer id;
     private LocalDateTime createdAt;
 

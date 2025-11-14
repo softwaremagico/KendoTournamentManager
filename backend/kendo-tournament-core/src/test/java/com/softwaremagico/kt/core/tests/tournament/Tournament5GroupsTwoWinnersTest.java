@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tests.tournament;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,10 +45,12 @@ import com.softwaremagico.kt.core.converters.TournamentConverter;
 import com.softwaremagico.kt.core.converters.models.FightConverterRequest;
 import com.softwaremagico.kt.core.managers.TeamsOrder;
 import com.softwaremagico.kt.core.providers.RankingProvider;
+import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.score.ScoreOfTeam;
 import com.softwaremagico.kt.core.tournaments.TreeTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.TournamentExtraProperty;
 import com.softwaremagico.kt.persistence.values.RoleType;
 import com.softwaremagico.kt.persistence.values.Score;
 import com.softwaremagico.kt.persistence.values.TournamentExtraPropertyKey;
@@ -123,18 +125,21 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
     @Autowired
     private FightConverter fightConverter;
 
+    @Autowired
+    private TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
+
     private ClubDTO clubDTO;
 
 
     @Test
     public void addClub() {
-        clubDTO = clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null);
+        clubDTO = clubController.create(new ClubDTO(CLUB_NAME, CLUB_CITY), null, null);
     }
 
     @Test(dependsOnMethods = "addClub")
     public void addParticipants() {
         for (int i = 0; i < MEMBERS * TEAMS; i++) {
-            participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), clubDTO), null);
+            participantController.create(new ParticipantDTO(String.format("0000%s", i), String.format("name%s", i), String.format("lastname%s", i), clubDTO), null, null);
         }
     }
 
@@ -142,16 +147,18 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
     public void addTournament() {
         Assert.assertEquals(tournamentController.count(), 0);
         TournamentDTO newTournament = new TournamentDTO(TOURNAMENT_NAME, 1, MEMBERS, TournamentType.TREE);
-        tournamentDTO = tournamentController.create(newTournament, null);
+        tournamentDTO = tournamentController.create(newTournament, null, null);
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentConverter.reverse(tournamentDTO), TournamentExtraPropertyKey.ODD_FIGHTS_RESOLVED_ASAP, "false"));
+        tournamentExtraPropertyProvider.save(new TournamentExtraProperty(tournamentConverter.reverse(tournamentDTO), TournamentExtraPropertyKey.MAXIMIZE_FIGHTS, "false"));
         Assert.assertEquals(tournamentController.count(), 1);
 
-        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"), null);
+        tournamentExtraPropertyController.create(new TournamentExtraPropertyDTO(tournamentDTO, TournamentExtraPropertyKey.NUMBER_OF_WINNERS, "2"), null, null);
     }
 
     @Test(dependsOnMethods = {"addTournament"})
     public void addRoles() {
         for (ParticipantDTO competitor : participantController.get()) {
-            roleController.create(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR), null);
+            roleController.create(new RoleDTO(tournamentDTO, competitor, RoleType.COMPETITOR), null, null);
         }
         Assert.assertEquals(roleController.count(tournamentDTO), participantController.count());
     }
@@ -159,7 +166,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
     @Test(dependsOnMethods = "addTournament")
     public void add5Groups() {
         //First group is already inserted.
-        treeTournamentHandler.adjustGroupsSize(tournamentConverter.reverse(tournamentDTO), 2);
+        treeTournamentHandler.adjustGroupsSizeRemovingOddNumbers(tournamentConverter.reverse(tournamentDTO), 2);
 
         for (int i = 1; i < GROUPS; i++) {
             final GroupDTO groupDTO = new GroupDTO();
@@ -167,7 +174,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
             groupDTO.setIndex(i);
             groupDTO.setLevel(0);
             groupDTO.setShiaijo(0);
-            groupController.create(groupDTO, null);
+            groupController.create(groupDTO, null, null);
         }
         Assert.assertEquals(groupController.count(), 16);
     }
@@ -190,11 +197,11 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
 
             // Add member.
             team.addMember(competitor);
-            team = teamController.create(team, null);
+            team = teamController.create(team, null, null);
 
             //Add the new team to a group
             if (teamMember == 0) {
-                groupController.addTeams(groups.get(((teamIndex - 1) / (TEAMS / GROUPS)) % GROUPS).getId(), Collections.singletonList(team), null);
+                groupController.addTeams(groups.get(((teamIndex - 1) / (TEAMS / GROUPS)) % GROUPS).getId(), Collections.singletonList(team), null, null);
             }
 
             teamMember++;
@@ -205,7 +212,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
             }
         }
 
-        Assert.assertEquals(TEAMS, teamController.count(tournamentDTO));
+        Assert.assertEquals(teamController.count(tournamentDTO), TEAMS);
 
         final List<Group> tournamentGroups = groupController.getGroups(tournamentDTO, 0);
         for (Group group : tournamentGroups) {
@@ -241,7 +248,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(1).getName(), "Team02");
@@ -253,7 +260,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(1).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(1).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team06");
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(1).getName(), "Team04");
@@ -264,7 +271,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(2).getFights().get(1).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(2).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(2)).get(0).getName(), "Team09");
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(2)).get(1).getName(), "Team08");
@@ -275,7 +282,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(3).getFights().get(2).getDuels().get(1).addCompetitor1Score(Score.MEN);
         groups.get(3).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(3)).get(0).getName(), "Team10");
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(3)).get(1).getName(), "Team12");
@@ -286,7 +293,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(4).getFights().get(1).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(4).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(4)).get(0).getName(), "Team13");
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(4)).get(1).getName(), "Team14");
@@ -331,7 +338,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team01");
 
@@ -340,7 +347,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(1).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team02");
 
@@ -349,7 +356,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(2).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(2).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(2)).get(0).getName(), "Team04");
 
@@ -358,7 +365,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(3).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(3).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(3)).get(0).getName(), "Team10");
 
@@ -367,7 +374,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(4).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(4).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(4)).get(0).getName(), "Team13");
     }
@@ -402,7 +409,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team02");
 
@@ -411,7 +418,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(1).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team04");
 
@@ -445,7 +452,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(1).getFights().get(0).getDuels().get(0).addCompetitor2Score(Score.MEN);
         groups.get(1).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(1)).get(0).getName(), "Team13");
     }
@@ -472,7 +479,7 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         groups.get(0).getFights().get(0).getDuels().get(0).addCompetitor1Score(Score.MEN);
         groups.get(0).getFights().forEach(fight -> {
             fight.getDuels().forEach(duel -> duel.setFinished(true));
-            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null);
+            fightController.update(fightConverter.convert(new FightConverterRequest(fight)), null, null);
         });
         Assert.assertEquals(rankingProvider.getTeamsRanking(groups.get(0)).get(0).getName(), "Team02");
     }
@@ -510,9 +517,9 @@ public class Tournament5GroupsTwoWinnersTest extends AbstractTestNGSpringContext
         duelController.delete(tournamentDTO);
         teamController.delete(tournamentDTO);
         roleController.delete(tournamentDTO);
-        tournamentController.delete(tournamentDTO, null);
+        tournamentController.delete(tournamentDTO, null, null);
         participantController.deleteAll();
-        clubController.delete(clubDTO, null);
+        clubController.delete(clubDTO, null, null);
         Assert.assertEquals(fightController.count(), 0);
         Assert.assertEquals(duelController.count(), 0);
     }

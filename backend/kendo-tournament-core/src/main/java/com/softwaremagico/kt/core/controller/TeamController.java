@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,11 +32,13 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.exceptions.ValidateBadRequestException;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
+import com.softwaremagico.kt.core.tournaments.SenbatsuTournamentHandler;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.persistence.entities.Team;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import com.softwaremagico.kt.persistence.repositories.TeamRepository;
+import com.softwaremagico.kt.persistence.values.TournamentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -51,16 +53,19 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     private final TournamentConverter tournamentConverter;
     private final ParticipantConverter participantConverter;
     private final GroupRepository groupRepository;
+    private final SenbatsuTournamentHandler senbatsuTournamentHandler;
 
 
     @Autowired
     public TeamController(TeamProvider provider, TeamConverter converter, TournamentProvider tournamentProvider,
-                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter, GroupRepository groupRepository) {
+                          TournamentConverter tournamentConverter, ParticipantConverter participantConverter, GroupRepository groupRepository,
+                          SenbatsuTournamentHandler senbatsuTournamentHandler) {
         super(provider, converter);
         this.tournamentProvider = tournamentProvider;
         this.tournamentConverter = tournamentConverter;
         this.participantConverter = participantConverter;
         this.groupRepository = groupRepository;
+        this.senbatsuTournamentHandler = senbatsuTournamentHandler;
     }
 
     @Override
@@ -81,9 +86,18 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
                 .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
         final List<TeamDTO> teams = convertAll(getProvider().getAll(tournament));
         if (teams.isEmpty()) {
-            return convertAll(getProvider().createDefaultTeams(tournament, createdBy));
+            return convertAllNotSorted(getProvider().createDefaultTeams(tournament, createdBy));
         }
         return teams;
+    }
+
+    public List<TeamDTO> getAllRemainingByTournament(Integer tournamentId, String createdBy) {
+        final Tournament tournament = tournamentProvider.get(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(getClass(), "No tournament found with id '" + tournamentId + "'."));
+        if (tournament.getType() != TournamentType.SENBATSU) {
+            return getAllByTournament(tournamentId, createdBy);
+        }
+        return convertAllNotSorted(senbatsuTournamentHandler.getNextTeamsOrderedByRanks(tournament, null));
     }
 
     public long countByTournament(Integer tournamentId) {
@@ -92,11 +106,11 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public TeamDTO create(TeamDTO teamDTO, String username) {
+    public TeamDTO create(TeamDTO teamDTO, String username, String session) {
         if (teamDTO.getName() == null) {
             teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
         }
-        final TeamDTO storedTeamDTO = super.create(teamDTO, username);
+        final TeamDTO storedTeamDTO = super.create(teamDTO, username, session);
         storedTeamDTO.setTournament(teamDTO.getTournament());
         return storedTeamDTO;
     }
@@ -106,13 +120,13 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username) {
+    public List<TeamDTO> create(Collection<TeamDTO> teamsDTOs, String username, String session) {
         teamsDTOs.forEach(teamDTO -> {
             if (teamDTO.getName() == null) {
                 teamDTO.setName(getProvider().getNextDefaultName(tournamentConverter.reverse(teamDTO.getTournament())));
             }
         });
-        return super.create(teamsDTOs, username);
+        return super.create(teamsDTOs, username, session);
     }
 
     public TeamDTO delete(TournamentDTO tournamentDTO, ParticipantDTO member) {
@@ -133,8 +147,8 @@ public class TeamController extends BasicInsertableController<Team, TeamDTO, Tea
     }
 
     @Override
-    public TeamDTO update(TeamDTO teamDTO, String username) {
-        final TeamDTO dbTeam = super.update(teamDTO, username);
+    public TeamDTO update(TeamDTO teamDTO, String username, String session) {
+        final TeamDTO dbTeam = super.update(teamDTO, username, session);
         dbTeam.setTournament(teamDTO.getTournament());
         return dbTeam;
     }

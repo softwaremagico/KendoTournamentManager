@@ -22,7 +22,7 @@ import {ParticipantService} from "../../services/participant.service";
 import {Participant} from "../../models/participant";
 import {LoginService} from "../../services/login.service";
 import {MatDialog} from "@angular/material/dialog";
-import {environment} from "../../../environments/environment";
+import {EnvironmentService} from "../../environment.service";
 
 @Component({
   selector: 'app-participant-statistics',
@@ -39,7 +39,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public roleTypes: RoleType[] = RoleType.toArray();
   public competitorRanking: CompetitorRanking;
 
-  protected achievementsEnabled: boolean = JSON.parse(environment.achievementsEnabled);
+  protected achievementsEnabled: boolean = this.environmentService.isAchievementsEnabled();
 
   public hitsTypeChartData: PieChartData;
   public receivedHitsTypeChartData: PieChartData;
@@ -48,13 +48,15 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
   public achievements: Achievement[];
 
   public participant: Participant;
+  public yourWorstNightmare: Participant[];
+  public youAreTheWorstNightmareOf: Participant[];
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
               rbacService: RbacService, private systemOverloadService: SystemOverloadService,
               private userSessionService: UserSessionService, private statisticsService: StatisticsService,
               private translateService: TranslateService, private rankingService: RankingService,
               private achievementService: AchievementsService, private participantService: ParticipantService,
-              private loginService: LoginService, public dialog: MatDialog) {
+              private loginService: LoginService, public dialog: MatDialog, private environmentService: EnvironmentService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
@@ -67,6 +69,9 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       //Gets participant from URL parameter (from QR codes).
       this.participantId = Number(this.activatedRoute.snapshot.queryParamMap.get('participantId'));
       this.temporalToken = this.activatedRoute.snapshot.queryParamMap.get('temporalToken');
+      if (this.temporalToken) {
+        this.loginService.logout()
+      }
       if (!this.participantId || isNaN(this.participantId)) {
         this.goBackToUsers();
       }
@@ -96,6 +101,7 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       if (this.temporalToken) {
         this.loginService.setParticipantUserSession(this.temporalToken, (): void => {
           this.initializeData();
+          this.router.navigate([]);
         });
       } else {
         this.goBackToUsers();
@@ -134,6 +140,12 @@ export class ParticipantStatisticsComponent extends RbacBasedComponent implement
       this.participantStatistics = ParticipantStatistics.clone(_participantStatistics);
       this.initializeScoreStatistics(this.participantStatistics);
       this.systemOverloadService.isTransactionalBusy.next(false);
+    });
+    this.statisticsService.getYourWorstNightmare(this.participantId!).subscribe((_yourWorstNightmare: Participant[]): void => {
+      this.yourWorstNightmare = _yourWorstNightmare;
+    });
+    this.statisticsService.getWorstNightmareOf(this.participantId!).subscribe((_youAreTheWorstNightmareOf: Participant[]): void => {
+      this.youAreTheWorstNightmareOf = _youAreTheWorstNightmareOf;
     });
     if (this.achievementsEnabled) {
       this.achievementService.getParticipantAchievements(this.participantId!).subscribe((_achievements: Achievement[]): void => {

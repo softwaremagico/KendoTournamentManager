@@ -43,12 +43,12 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
       if (state['participantId'] && !isNaN(Number(state['participantId']))) {
         this.participantId = Number(state['participantId']);
       } else {
-        this.goBackToUsers();
+        this.goBackToStatistics();
       }
     }
   }
 
-  goBackToUsers(): void {
+  goBackToStatistics(): void {
     this.router.navigate(['/participants/statistics'], {state: {participantId: this.participantId}});
   }
 
@@ -56,7 +56,7 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
     if (this.participantId) {
       this.initializeData();
     } else {
-      this.goBackToUsers();
+      this.goBackToStatistics();
     }
   }
 
@@ -80,6 +80,9 @@ export class ParticipantFightListComponent extends RbacBasedComponent implements
           this.competitorFights.get(tournament)?.push(_fight);
         }
         this.tournaments = [...this.competitorFights.keys()];
+
+        this.tournaments.sort((a: Tournament, b: Tournament): number =>
+          a.createdAt && b.createdAt ? (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) : 0);
 
         //Undraw fights.
         this.competitorUndraws = new Map<Tournament, Duel[]>();

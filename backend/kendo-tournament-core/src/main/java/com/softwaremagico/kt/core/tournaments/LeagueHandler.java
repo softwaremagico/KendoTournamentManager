@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.tournaments;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,7 +50,7 @@ public abstract class LeagueHandler implements ITournamentManager {
 
 
     @Autowired
-    public LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
+    protected LeagueHandler(GroupProvider groupProvider, TeamProvider teamProvider, RankingProvider rankingProvider,
                          TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
         this.groupProvider = groupProvider;
         this.teamProvider = teamProvider;
@@ -58,7 +58,7 @@ public abstract class LeagueHandler implements ITournamentManager {
         this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
-    protected Group getGroup(Tournament tournament) {
+    protected Group getFirstGroup(Tournament tournament) {
         final List<Group> groups = groupProvider.getGroups(tournament);
         if (groups.isEmpty()) {
             final Group group = new Group();
@@ -103,14 +103,14 @@ public abstract class LeagueHandler implements ITournamentManager {
         if (level == 0) {
             return getGroups(tournament);
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
     @Override
     public List<Group> getGroups(Tournament tournament) {
         final List<Group> groups = new ArrayList<>();
-        groups.add(getGroup(tournament));
+        groups.add(getFirstGroup(tournament));
         return groups;
     }
 
@@ -149,15 +149,15 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public void setDefaultFightAreas(Tournament tournament) {
-        final Group group = getGroup(tournament);
+        final Group group = getFirstGroup(tournament);
         group.setShiaijo(0);
         groupProvider.save(group);
     }
 
     @Override
     public Group getGroup(Tournament tournament, Fight fight) {
-        if (getGroup(tournament).isFightOfGroup(fight)) {
-            return getGroup(tournament);
+        if (getFirstGroup(tournament).isFightOfGroup(fight)) {
+            return getFirstGroup(tournament);
         }
         return null;
     }
@@ -174,20 +174,20 @@ public abstract class LeagueHandler implements ITournamentManager {
 
     @Override
     public boolean isTheLastFight(Tournament tournament) {
-        final List<Fight> fights = getGroup(tournament).getFights();
-        return (fights.size() > 0) && (fights.size() == 1 || fights.get(fights.size() - 2).isOver());
+        final List<Fight> fights = getFirstGroup(tournament).getFights();
+        return (!fights.isEmpty()) && (fights.size() == 1 || fights.get(fights.size() - 2).isOver());
     }
 
     @Override
     public void removeFights(Tournament tournament) {
-        final Group group = getGroup(tournament);
+        final Group group = getFirstGroup(tournament);
         group.removeFights();
         groupProvider.save(group);
     }
 
     @Override
     public void removeTeams(Tournament tournament) {
-        final Group group = getGroup(tournament);
+        final Group group = getFirstGroup(tournament);
         group.removeTeams();
         groupProvider.save(group);
     }
@@ -203,8 +203,8 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public void createNextLevel() throws TournamentFinishedException {
-        // Only one level is needed.
+    public void createNextLevel(Tournament tournament) throws TournamentFinishedException {
+        // Only one level is necessary.
     }
 
     @Override
@@ -214,7 +214,7 @@ public abstract class LeagueHandler implements ITournamentManager {
     }
 
     @Override
-    public List<Fight> createFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
+    public List<Fight> createInitialFights(Tournament tournament, TeamsOrder teamsOrder, String createdBy) {
         return createFights(tournament, teamsOrder, 0, createdBy);
     }
 

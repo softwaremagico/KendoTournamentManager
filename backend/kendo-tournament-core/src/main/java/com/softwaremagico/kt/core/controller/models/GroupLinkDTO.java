@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +21,19 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
+
 public class GroupLinkDTO extends ElementDTO {
 
+    @Serial
+    private static final long serialVersionUID = 2360843566067605915L;
+
+    @NotNull
     private GroupDTO source;
 
+    @NotNull
     private GroupDTO destination;
 
     private int winner = 0;
@@ -51,5 +60,14 @@ public class GroupLinkDTO extends ElementDTO {
 
     public void setWinner(int winner) {
         this.winner = winner;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupLink{"
+                + "source=" + (source != null ? source.getLevel() : "null") + "-" + (source != null ? source.getIndex() : "null")
+                + ", destination=" + (destination != null ? destination.getLevel() : "null") + "-" + (destination != null ? destination.getIndex() : "null")
+                + ", winner=" + winner
+                + '}';
     }
 }

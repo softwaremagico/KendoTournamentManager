@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.controller.models;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,16 @@ package com.softwaremagico.kt.core.controller.models;
  * #L%
  */
 
+import jakarta.validation.constraints.NotNull;
+
+import java.io.Serial;
+
 public class ParticipantImageDTO extends ImageDTO {
 
+    @Serial
+    private static final long serialVersionUID = -1972572694233042107L;
+
+    @NotNull
     private ParticipantDTO participant;
 
     public ParticipantDTO getParticipant() {

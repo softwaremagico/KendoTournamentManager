@@ -4,7 +4,7 @@ package com.softwaremagico.kt.core.converters;
  * #%L
  * Kendo Tournament Manager (Core)
  * %%
- * Copyright (C) 2021 - 2024 Softwaremagico
+ * Copyright (C) 2021 - 2025 Softwaremagico
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,5 +43,13 @@ public abstract class ElementConverter<ENTITY, DTO extends ElementDTO, REQUEST e
         //Returns the DTOs sorted by creation time by default
         return from.stream().map(this::convert).sorted(Comparator.comparing(ElementDTO::getCreatedAt,
                 Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+    }
+
+    public List<DTO> convertAllNotSorted(Collection<REQUEST> from) {
+        if (from == null) {
+            return new ArrayList<>();
+        }
+        //Returns the DTOs sorted by creation time by default
+        return from.stream().map(this::convert).collect(Collectors.toList());
     }
 }
