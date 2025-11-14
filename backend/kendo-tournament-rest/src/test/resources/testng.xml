@@ -15,7 +15,7 @@
                 <include name="userRegister"/>
                 <include name="passwordTests"/>
                 <include name="websockets"/>
-                <!***REMOVED***working on local, but not on ci github-->
+                <!-- working on local, but not on ci github-->
                 <exclude name="fightsWebsockets"/>
                 <include name="participantAccess"/>
                 <include name="dataValidation"/>

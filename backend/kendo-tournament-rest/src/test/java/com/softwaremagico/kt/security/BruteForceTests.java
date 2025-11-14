@@ -100,7 +100,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
 
         //Correct password, user blocked.
         request.setPassword(USER_PASSWORD);
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ public class BruteForceTests extends AbstractTestNGSpringContextTests {
                 .andExpect(MockMvcResultMatchers.status().isLocked())
                 .andExpect(MockMvcResultMatchers.header().doesNotExist(HttpHeaders.AUTHORIZATION))
                 .andReturn();
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test

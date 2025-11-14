@@ -55,7 +55,7 @@ import java.util.List;
 )
 public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            // ***REMOVED***Swagger
+            // -- Swagger
             "/v3/api-docs/**", "/swagger-ui/**",
             // Own
             "/",

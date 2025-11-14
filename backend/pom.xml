@@ -64,7 +64,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.0</version>
-        <relativePath/> <!***REMOVED***lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <distributionManagement>
@@ -161,12 +161,12 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${spotbugs.version}</version>
                 <configuration>
-                    <!***REMOVED***Enables analysis which takes more memory but finds more bugs.
+                    <!-- Enables analysis which takes more memory but finds more bugs.
                         If you run out of memory, changes the value of the effort element to 'Low'. -->
                     <effort>Max</effort>
-                    <!***REMOVED***Build fail if problems are found -->
+                    <!-- Build fail if problems are found -->
                     <failOnError>true</failOnError>
-                    <!***REMOVED***Reports all bugs (values are max, medium and max) -->
+                    <!-- Reports all bugs (values are max, medium and max) -->
                     <threshold>High</threshold>
                 </configuration>
                 <executions>
@@ -206,7 +206,7 @@
     </build>
 
     <profiles>
-        <!***REMOVED***GPG Signature on release -->
+        <!-- GPG Signature on release -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -234,8 +234,8 @@
             </build>
         </profile>
         <profile>
-            <!***REMOVED***mvn deploy -DskipTests -DdeploySnapshot=true -->
-            <!***REMOVED***Needs github auth token -->
+            <!-- mvn deploy -DskipTests -DdeploySnapshot=true -->
+            <!-- Needs github auth token -->
             <id>snap-repository</id>
             <activation>
                 <property>

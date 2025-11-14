@@ -21,7 +21,7 @@
             <mat-icon class="kendo-icon" svgIcon="card"></mat-icon>
             <h3>{{'participants' | translate}}</h3>
           </div>
-          <!***REMOVED***aria-hidden="true" to avoid complains from sonarcloud -->
+          <!-- aria-hidden="true" to avoid complains from sonarcloud -->
           <table *ngIf="tournamentStatistics" aria-hidden="true" class="statistics-table">
             <tr *ngFor="let roleType of roleTypes">
               <td *ngIf="tournamentStatistics">{{roleType.toLowerCase() | translate}}:</td>

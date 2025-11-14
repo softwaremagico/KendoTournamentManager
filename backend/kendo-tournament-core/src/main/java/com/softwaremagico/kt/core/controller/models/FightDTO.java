@@ -183,9 +183,9 @@ public class FightDTO extends ElementDTO {
     public Integer getScore(ParticipantDTO competitor) {
         int score = 0;
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+                (Objects.equals(duel.getCompetitor1(), competitor))).mapToInt(DuelDTO::getCompetitor1ScoreValue).sum();
         score += getDuels().stream().filter(duel ->
-                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+                (Objects.equals(duel.getCompetitor2(), competitor))).mapToInt(DuelDTO::getCompetitor2ScoreValue).sum();
         return score;
     }
 
@@ -200,11 +200,11 @@ public class FightDTO extends ElementDTO {
     }
 
     public Integer getScoreTeam1() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor1Score().size()).sum();
+        return getDuels().stream().mapToInt(DuelDTO::getCompetitor1ScoreValue).sum();
     }
 
     public Integer getScoreTeam2() {
-        return getDuels().stream().mapToInt(duel -> duel.getCompetitor2Score().size()).sum();
+        return getDuels().stream().mapToInt(DuelDTO::getCompetitor2ScoreValue).sum();
     }
 
     public Integer getDuelsWon(ParticipantDTO competitor) {

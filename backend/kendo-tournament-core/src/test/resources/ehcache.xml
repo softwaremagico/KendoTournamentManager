@@ -7,7 +7,7 @@
         http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
     <service>
-        <!***REMOVED*** jsr-107-compliant-atomics is for using with JCache -->
+        <!--  jsr-107-compliant-atomics is for using with JCache -->
         <jsr107:defaults enable-management="true" enable-statistics="true" default-template="default" jsr-107-compliant-atomics="true">
         </jsr107:defaults>
     </service>

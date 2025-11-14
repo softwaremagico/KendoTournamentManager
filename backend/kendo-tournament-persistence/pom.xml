@@ -34,14 +34,14 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!***REMOVED***For BCrypt on password -->
+        <!-- For BCrypt on password -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!***REMOVED***Caching system -->
+        <!-- Caching system -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
@@ -95,7 +95,7 @@
         </dependency>
 
 
-        <!***REMOVED***Javadoc fails without this dependency -->
+        <!-- Javadoc fails without this dependency -->
         <dependency>
             <groupId>javax.interceptor</groupId>
             <artifactId>javax.interceptor-api</artifactId>
@@ -103,7 +103,7 @@
         </dependency>
 
 
-        <!***REMOVED***Testing -->
+        <!-- Testing -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

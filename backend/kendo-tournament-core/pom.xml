@@ -28,7 +28,7 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.14</version>
         </dependency>
-        <!***REMOVED***HTTP headers -->
+        <!-- HTTP headers -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -40,7 +40,7 @@
             </exclusions>
         </dependency>
 
-        <!***REMOVED***Validation -->
+        <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -76,7 +76,7 @@
             <artifactId>qr-code-with-logo-svg</artifactId>
             <version>${qr-code.version}</version>
         </dependency>
-        <!***REMOVED***For SVG logs on QR -->
+        <!-- For SVG logs on QR -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
@@ -93,7 +93,7 @@
         </dependency>
 
 
-        <!***REMOVED***Testing -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

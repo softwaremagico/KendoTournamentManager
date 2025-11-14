@@ -28,6 +28,7 @@ import com.softwaremagico.kt.persistence.entities.Participant;
 import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.FightRepository;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
+import com.softwaremagico.kt.persistence.values.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -159,6 +160,33 @@ public class FightProvider extends CrudProvider<Fight, Integer, FightRepository>
 
     public List<Fight> findByTournamentAndShiaijo(Tournament tournament, int shiaijo) {
         return getRepository().findByTournamentAndShiaijo(tournament, shiaijo);
+    }
+
+    public boolean scoresGoesFromCompetitorsNameToCenter(Tournament tournament) {
+        final List<Fight> fights = getRepository().findByTournament(tournament);
+        for (Fight fight : fights) {
+            if (fight.getDuels() != null) {
+                for (Duel duel : fight.getDuels()) {
+                    if (scoresGoesFromCompetitorsNameToCenter(duel.getCompetitor1Score())) {
+                        return true;
+                    }
+                    if (scoresGoesFromCompetitorsNameToCenter(duel.getCompetitor2Score())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean scoresGoesFromCompetitorsNameToCenter(List<Score> scores) {
+        if (scores.size() == 1) {
+            return false;
+        }
+        //Scores are set at index 1 before index 0;
+        return (scores.size() > 1
+                && scores.get(0) == null
+                && scores.get(1) != null && scores.get(1) != Score.EMPTY);
     }
 
 }

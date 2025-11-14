@@ -233,7 +233,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- Begin Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- Begin Expected Logged Exception -------------------------");
         this.mockMvc
                 .perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -241,7 +241,7 @@ public class TestAuthApi extends AbstractTestNGSpringContextTests {
                         .content(toJson(request))
                         .with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
-        System.out.println("***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***- End Expected Logged Exception ***REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED******REMOVED***-");
+        System.out.println("------------------------- End Expected Logged Exception -------------------------");
     }
 
     @Test(dependsOnMethods = "testJwt")

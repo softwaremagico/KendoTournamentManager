@@ -89,3 +89,9 @@
   padding-right: 3px;
   padding-left: 2px;
 }
+
+.disabled {
+  pointer-events: none;
+  opacity: .5;
+}
+

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
-    <!***REMOVED***Stop output INFO at start -->
+    <!-- Stop output INFO at start -->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -20,16 +20,16 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <maxHistory>10</maxHistory>
-            <!***REMOVED***daily rollover -->
+            <!-- daily rollover -->
             <fileNamePattern>/logs/kendo-tournament/kendo.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!***REMOVED***or whenever the file size reaches 100MB -->
+                <!-- or whenever the file size reaches 100MB -->
                 <maxFileSize>100MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
 
-    <!***REMOVED***Custom ones -->
+    <!-- Custom ones -->
     <logger name="com.softwaremagico.kt.logger.KendoTournamentLogger" additivity="false" level="DEBUG">
         <appender-ref ref="DAILY"/>
         <appender-ref ref="CONSOLE"/>
@@ -71,7 +71,7 @@
     </logger>
 
 
-    <!***REMOVED***Default ones -->
+    <!-- Default ones -->
     <logger name="org.springframework" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="DAILY"/>
@@ -111,7 +111,7 @@
     <logger name="org.ehcache.core.EhcacheManager" additivity="false" level="INFO">
         <appender-ref ref="CONSOLE"/>
     </logger>
-    <!***REMOVED***For showing hibernate statistics -->
+    <!-- For showing hibernate statistics -->
     <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false"
             level="ERROR">
         <appender-ref ref="CONSOLE"/>
