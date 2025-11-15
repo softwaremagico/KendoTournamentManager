@@ -2,7 +2,7 @@
 
 cd ../../frontend
 rm -rf ./dist
-npm install
+npm ci
 ng build --configuration=docker
 cd ./dist
 zip -r frontend.zip ./frontend
