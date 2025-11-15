@@ -9,7 +9,8 @@
       <th class="team-ranking-header">{{ 'fightsDraw' | translate }}</th>
       <th class="team-ranking-header">{{ 'duelsWon' | translate }}</th>
       <th class="team-ranking-header">{{ 'duelsDraw' | translate }}</th>
-      <th class="team-ranking-header">{{ 'histsWon' | translate }}</th>
+      <th class="team-ranking-header">{{ 'hitsWon' | translate }}</th>
+      <th *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="team-ranking-header">{{ 'hitsLost' | translate }}</th>
     </tr>
     </thead>
     <tr *ngFor="let teamScore of teamScores; let i = index">
@@ -30,6 +31,7 @@
       <td class="team-ranking-value">{{ teamScore.wonDuels }}</td>
       <td class="team-ranking-value">{{ teamScore.drawDuels }}</td>
       <td class="team-ranking-value">{{ teamScore.hits }}{{ (teamScore.untieDuels ? "*" : "") }}</td>
+      <td *ngIf="tournament.tournamentScore && tournament.tournamentScore.scoreType == ScoreType.EUROPEAN" class="team-ranking-value">{{ teamScore.hitsLost }}</td>
     </tr>
   </table>
 </div>

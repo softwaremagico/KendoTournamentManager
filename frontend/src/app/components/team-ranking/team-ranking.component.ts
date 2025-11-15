@@ -18,6 +18,7 @@ import {TournamentExtendedProperty} from "../../models/tournament-extended-prope
 import {MessageService} from "../../services/message.service";
 import {Router} from "@angular/router";
 import {NameUtilsService} from "../../services/name-utils.service";
+import {ScoreType} from "../../models/score-type";
 
 @Component({
   selector: 'app-team-ranking',
@@ -166,4 +167,6 @@ export class TeamRankingComponent extends RbacBasedComponent implements OnInit {
     }
     return teamMembers;
   }
+
+  protected readonly ScoreType = ScoreType;
 }
