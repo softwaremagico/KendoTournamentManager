@@ -204,6 +204,7 @@
                  *ngFor="let fight of filteredFights.get(group.id!)"
                  [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectMode"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
+                 [projectMode]="projectMode"
                  [swapTeams]="swappedTeams"></fight>
 
           <div class="unties-list">

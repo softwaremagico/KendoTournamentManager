@@ -196,6 +196,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const fight: Fight = JSON.parse(messageContent.payload);
         if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
           this.replaceFight(fight);
+          if(this.projectMode) {
+            //Remove any finished fight.
+            this.filter('')
+          }
         } else if (messageContent.type.toLowerCase() == "created") {
           this.refreshFights();
         }
