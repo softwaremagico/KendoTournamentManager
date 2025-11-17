@@ -29,7 +29,7 @@ import {Achievement} from "../../models/achievement.model";
 import {AchievementsService} from "../../services/achievements.service";
 import {Tournament} from "../../models/tournament";
 import {TournamentService} from "../../services/tournament.service";
-import {Environment} from "../../../environments/environment";
+import {EnvironmentService} from "../../environment.service";
 
 @Component({
   selector: 'app-tournament-statistics',
@@ -48,7 +48,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
   public hitsByTournament: StackedBarChartData = new StackedBarChartData();
   public fightsOverData: GaugeChartData;
 
-  protected achievementsEnabled: boolean = JSON.parse(String(Environment.achievementsEnabled));
+  protected achievementsEnabled: boolean = this.environmentService.isAchievementsEnabled();
 
   private readonly tournamentId: number | undefined;
   public tournamentStatistics: TournamentStatistics | undefined = undefined;
@@ -77,7 +77,7 @@ export class TournamentStatisticsComponent extends RbacBasedComponent implements
               private statisticsService: StatisticsService, private userSessionService: UserSessionService,
               private rankingService: RankingService, private nameUtilsService: NameUtilsService,
               private translateService: TranslateService, private achievementService: AchievementsService,
-              private tournamentService: TournamentService) {
+              private tournamentService: TournamentService, private environmentService: EnvironmentService) {
     super(rbacService);
     let state = this.router.getCurrentNavigation()?.extras.state;
     if (state) {
