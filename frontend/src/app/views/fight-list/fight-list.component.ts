@@ -196,13 +196,20 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const fight: Fight = JSON.parse(messageContent.payload);
         if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
           this.replaceFight(fight);
-          if(this.projectMode) {
+          if (this.projectMode) {
             //Remove any finished fight.
-            this.filter('')
+            this.resetFilter();
           }
         } else if (messageContent.type.toLowerCase() == "created") {
           this.refreshFights();
         }
+      }
+    });
+
+    this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/unties').subscribe((message: Message): void => {
+      const messageContent: MessageContent = JSON.parse(message.body);
+      if (messageContent.topic == "Duel" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
+        this.refreshFights();
       }
     });
   }
@@ -927,15 +934,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
     for (const group of this.groups) {
       if (group.fights) {
-        this.filteredFights.set(group.id!, group.fights.filter((fight: Fight) =>
-          (!this.hideFinishedFights || !this.isFightOver(fight)) &&
-          fight != null && (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
-            (fight.team1 ? fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
-            (fight.team2 ? fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
-            (fight.team1 && fight.team1.members ? fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+        this.filteredFights.set(group.id!, group.fights.filter((_fight: Fight) =>
+          _fight != null &&
+          (this.selectedShiaijo < 0 || _fight.shiaijo == this.selectedShiaijo) &&
+          (!this.hideFinishedFights || !this.isFightOver(_fight)) &&
+          ((_fight.team1 ? _fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
+            (_fight.team2 ? _fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
+            (_fight.team1 && _fight.team1.members ? _fight.team1.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
               user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
               (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) : "") ||
-            (fight.team2 && fight.team2.members ? fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
+            (_fight.team2 && _fight.team2.members ? _fight.team2.members.some(user => user !== undefined && (user.lastname.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
               user.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) ||
               (user.club ? user.club.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : ""))) : "")))
         );
@@ -944,15 +952,16 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
       }
 
       if (group.unties) {
-        this.filteredUnties.set(group.id!, group.unties.filter((duel: Duel) =>
-          (this.selectedShiaijo < 0 || group.shiaijo == this.selectedShiaijo) && (
-            (duel.competitor1 ? duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
-            (duel.competitor1 ? duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
-            (duel.competitor1 && duel.competitor1!.club ? duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+        this.filteredUnties.set(group.id!, group.unties.filter((_duel: Duel) =>
+          (this.selectedShiaijo < 0 || group.shiaijo == this.selectedShiaijo) &&
+          (!this.hideFinishedFights || !this.isOver(_duel)) &&
+          ((_duel.competitor1 ? _duel.competitor1!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (_duel.competitor1 ? _duel.competitor1!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || _duel.competitor1!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (_duel.competitor1 && _duel.competitor1!.club ? _duel.competitor1!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
 
-            (duel.competitor2 ? duel.competitor2!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
-            (duel.competitor2 ? duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
-            (duel.competitor2 && duel.competitor2!.club ? duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""))));
+            (_duel.competitor2 ? _duel.competitor2!.lastname.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (_duel.competitor2 ? _duel.competitor2!.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) || _duel.competitor2!.idCard.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : "") ||
+            (_duel.competitor2 && _duel.competitor2!.club ? _duel.competitor2!.club.name.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "").includes(filter) : ""))));
       } else {
         this.filteredUnties.set(group.id!, []);
       }
@@ -1006,7 +1015,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   changeProjectMode(mode: boolean) {
     this.projectMode = mode;
     this.hideFinishedFights = mode;
-    this.filter('');
+    this.resetFilter();
     this.projectModeChangedService.isProjectMode.next(mode);
   }
 

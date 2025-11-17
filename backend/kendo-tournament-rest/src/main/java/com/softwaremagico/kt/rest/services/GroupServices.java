@@ -168,9 +168,10 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
     @PutMapping(value = "/{groupId}/unties", produces = MediaType.APPLICATION_JSON_VALUE)
     public GroupDTO addUnties(@Parameter(description = "Id of the group to update", required = true) @PathVariable("groupId") Integer groupId,
                               @RequestBody List<DuelDTO> duelDTOs,
+                              @RequestHeader(value = AuthApi.SESSION_HEADER, required = false) String session,
                               Authentication authentication,
                               HttpServletRequest request) {
-        return getController().addUnties(groupId, duelDTOs, authentication.getName());
+        return getController().addUnties(groupId, duelDTOs, authentication.getName(), session);
     }
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")

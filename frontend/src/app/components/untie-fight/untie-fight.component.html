@@ -7,6 +7,7 @@
           (click)="selectDuel(duel)"
           (keydown)="selectDuel(duel)"
           [selected]="selected" [swapTeams]="swapTeams"
+          [projectMode]="projectMode"
           class="duel"></duel>
   </div>
   <div [class.red-ribbon]="swapColors" [class.white-ribbon]="!swapColors" class="right-team ribbon-icon">

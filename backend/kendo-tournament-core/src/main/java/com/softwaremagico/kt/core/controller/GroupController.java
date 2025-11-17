@@ -38,11 +38,11 @@ import com.softwaremagico.kt.core.exceptions.TournamentNotFoundException;
 import com.softwaremagico.kt.core.providers.DuelProvider;
 import com.softwaremagico.kt.core.providers.FightProvider;
 import com.softwaremagico.kt.core.providers.GroupProvider;
-import com.softwaremagico.kt.core.providers.TournamentExtraPropertyProvider;
 import com.softwaremagico.kt.core.providers.TournamentProvider;
 import com.softwaremagico.kt.core.tournaments.TournamentHandlerSelector;
 import com.softwaremagico.kt.logger.ExceptionType;
 import com.softwaremagico.kt.persistence.entities.Group;
+import com.softwaremagico.kt.persistence.entities.Tournament;
 import com.softwaremagico.kt.persistence.repositories.GroupRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +64,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     private final DuelConverter duelConverter;
     private final TeamConverter teamConverter;
     private final TournamentHandlerSelector tournamentHandlerSelector;
-    private final TournamentExtraPropertyProvider tournamentExtraPropertyProvider;
-
+    private final Set<UntieUpdatedListener> untiesUpdatedListeners = new HashSet<>();
     private final Set<GroupsUpdatedListener> groupsUpdatedListeners = new HashSet<>();
 
 
@@ -73,12 +72,16 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         void updated(TournamentDTO tournament, String actor, String session);
     }
 
+    public interface UntieUpdatedListener {
+        void finished(TournamentDTO tournament, DuelDTO duel, String actor, String session);
+    }
+
 
     @Autowired
     public GroupController(GroupProvider provider, GroupConverter converter, TournamentConverter tournamentConverter,
                            TournamentProvider tournamentProvider, FightProvider fightProvider, FightConverter fightConverter,
                            DuelProvider duelProvider, DuelConverter duelConverter, TeamConverter teamConverter,
-                           TournamentHandlerSelector tournamentHandlerSelector, TournamentExtraPropertyProvider tournamentExtraPropertyProvider) {
+                           TournamentHandlerSelector tournamentHandlerSelector) {
         super(provider, converter);
         this.tournamentConverter = tournamentConverter;
         this.tournamentProvider = tournamentProvider;
@@ -88,12 +91,15 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         this.duelConverter = duelConverter;
         this.teamConverter = teamConverter;
         this.tournamentHandlerSelector = tournamentHandlerSelector;
-        this.tournamentExtraPropertyProvider = tournamentExtraPropertyProvider;
     }
 
 
     public void addGroupUpdatedListeners(GroupsUpdatedListener listener) {
         groupsUpdatedListeners.add(listener);
+    }
+
+    public void addUntieUpdatedListener(UntieUpdatedListener listener) {
+        untiesUpdatedListeners.add(listener);
     }
 
 
@@ -203,6 +209,9 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
                     groupsUpdatedListeners.forEach(groupsUpdatedListener ->
                             groupsUpdatedListener.updated(groupDTO.getTournament(), username, session))
             ).start();
+            if (!unties.isEmpty()) {
+                sendUntieChangeMessageThroughWebsocket(unties, username, session);
+            }
         }
     }
 
@@ -289,7 +298,7 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
     }
 
 
-    public GroupDTO addUnties(Integer groupId, List<DuelDTO> duelDTOS, String username) {
+    public GroupDTO addUnties(Integer groupId, List<DuelDTO> duelDTOS, String username, String session) {
         final GroupDTO groupDTO = get(groupId);
         duelDTOS.forEach(duelDTO -> {
             duelDTO.setCreatedBy(username);
@@ -297,7 +306,24 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         });
         groupDTO.getUnties().addAll(duelDTOS);
         groupDTO.setUpdatedBy(username);
-        return convert(getProvider().save(reverse(groupDTO)));
+        try {
+            return convert(getProvider().save(reverse(groupDTO)));
+        } finally {
+            //Send update information to all devices.
+            sendUntieChangeMessageThroughWebsocket(duelDTOS, username, session);
+        }
+    }
+
+    private void sendUntieChangeMessageThroughWebsocket(List<DuelDTO> duelDTOS, String username, String session) {
+        new Thread(() -> {
+            for (DuelDTO duelDTO : duelDTOS) {
+                final Tournament tournament = tournamentProvider.get(duelDTO.getTournament().getId()).orElseThrow(()
+                        -> new TournamentNotFoundException(this.getClass(), "No tournament found for duel '" + duelDTO + "'."));
+                final TournamentDTO tournamentDTO = tournamentConverter.convert(new TournamentConverterRequest(tournament));
+                untiesUpdatedListeners.forEach(untieUpdatedListener ->
+                        untieUpdatedListener.finished(tournamentDTO, duelDTO, username, session));
+            }
+        }).start();
     }
 
 

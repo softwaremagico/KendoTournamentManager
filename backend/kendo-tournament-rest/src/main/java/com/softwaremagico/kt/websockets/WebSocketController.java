@@ -23,10 +23,12 @@ package com.softwaremagico.kt.websockets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.softwaremagico.kt.core.controller.models.DuelDTO;
 import com.softwaremagico.kt.core.controller.models.ElementDTO;
 import com.softwaremagico.kt.core.controller.models.FightDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
 import com.softwaremagico.kt.logger.WebsocketsLogger;
+import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Fight;
 import com.softwaremagico.kt.persistence.entities.Group;
 import com.softwaremagico.kt.websockets.models.MessageContent;
@@ -45,6 +47,7 @@ import java.util.List;
 public class WebSocketController {
 
     public static final String FIGHTS_MAPPING = "/fights";
+    public static final String UNTIES_MAPPING = "/unties";
     public static final String GROUPS_MAPPING = "/groups";
     public static final String CREATING_MAPPING = "/creates";
     public static final String UPDATING_MAPPING = "/updates";
@@ -137,6 +140,21 @@ public class WebSocketController {
             WebsocketsLogger.debug(this.getClass(), "Sending fights '{}'.", fights);
             this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + FIGHTS_MAPPING,
                     new MessageContent(Fight.class.getSimpleName(), toJson(fights), MessageContentType.CREATED, actor, session));
+        } catch (Exception e) {
+            WebsocketsLogger.errorMessage(this.getClass(), e);
+        }
+    }
+
+    /**
+     * Sends a duelDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #UNTIES_MAPPING}.
+     *
+     * @param duelDTO the duelDTO to send.
+     */
+    public void untieUpdated(@Payload DuelDTO duelDTO, String actor, String session) {
+        try {
+            WebsocketsLogger.debug(this.getClass(), "Sending duelDTO '{}'.", duelDTO);
+            this.messagingTemplate.convertAndSend(WebSocketConfiguration.SOCKET_SEND_PREFIX + UNTIES_MAPPING,
+                    new MessageContent(Duel.class.getSimpleName(), toJson(duelDTO), MessageContentType.UPDATED, actor, session));
         } catch (Exception e) {
             WebsocketsLogger.errorMessage(this.getClass(), e);
         }
