@@ -48,7 +48,7 @@ public class ScoreOfCompetitorWinOverDraws implements Comparator<ScoreOfCompetit
             return scoreOfCompetitor2.getDuelsDone().compareTo(scoreOfCompetitor1.getDuelsDone());
         }
 
-        // Same obtained score, order by name;
+        // Same obtained score, order by name
         return NameUtils.getLastnameName(scoreOfCompetitor1.getCompetitor()).compareTo(NameUtils.getLastnameName(scoreOfCompetitor2.getCompetitor()));
     }
 }

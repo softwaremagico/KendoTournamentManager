@@ -90,10 +90,6 @@
 
     <!-- Checks for Headers                                -->
     <!-- See https://checkstyle.org/config_header.html   -->
-    <!-- <module name="Header"> -->
-    <!--   <property name="headerFile" value="${checkstyle.header.file}"/> -->
-    <!--   <property name="fileExtensions" value="java"/> -->
-    <!-- </module> -->
 
     <module name="TreeWalker">
 
@@ -155,7 +151,6 @@
         <!-- See https://checkstyle.org/config_coding.html -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <!--<module name="HiddenField"/>-->
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>
@@ -166,7 +161,6 @@
 
         <!-- Checks for class design                         -->
         <!-- See https://checkstyle.org/config_design.html -->
-        <!--<module name="DesignForExtension"/>-->
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
@@ -175,16 +169,9 @@
         <!-- Miscellaneous other checks.                   -->
         <!-- See https://checkstyle.org/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-        <!--        <module name="FinalParameters"/>-->
         <module name="FinalLocalVariable"/>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
-
-        <!--        &lt;!&ndash; https://checkstyle.org/config_filters.html#SuppressionXpathFilter &ndash;&gt;-->
-        <!--        <module name="SuppressionXpathFilter">-->
-        <!--            <property name="file" value="${main.basedir}/checkstyle-suppressions.xml"/>-->
-        <!--            <property name="optional" value="false"/>-->
-        <!--        </module>-->
 
     </module>
 </module>

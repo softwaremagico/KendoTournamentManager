@@ -122,11 +122,10 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                     wonDuelsWithDuration++;
                 }
             }
-            if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)) {
-                if (duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
-                    totalDuelLostsWithDuration += duel.getDuration();
-                    lostDuelsWithDuration++;
-                }
+            if (duel.getCompetitorWinner() != null && !Objects.equals(duel.getCompetitorWinner(), participant)
+                    && duel.getDuration() != null && duel.getDuration() > Duel.DEFAULT_DURATION) {
+                totalDuelLostsWithDuration += duel.getDuration();
+                lostDuelsWithDuration++;
             }
         }
         if (participantDurationAverage > 0) {
@@ -166,15 +165,12 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
                 case MEN -> participantFightStatistics.setMenNumber(participantFightStatistics.getMenNumber() + 1);
                 case KOTE -> participantFightStatistics.setKoteNumber(participantFightStatistics.getKoteNumber() + 1);
                 case DO -> participantFightStatistics.setDoNumber(participantFightStatistics.getDoNumber() + 1);
-                case TSUKI ->
-                        participantFightStatistics.setTsukiNumber(participantFightStatistics.getTsukiNumber() + 1);
-                case HANSOKU ->
-                        participantFightStatistics.setHansokuNumber(participantFightStatistics.getHansokuNumber() + 1);
-                case IPPON ->
-                        participantFightStatistics.setIpponNumber(participantFightStatistics.getIpponNumber() + 1);
-                case FUSEN_GACHI ->
-                        participantFightStatistics.setFusenGachiNumber(participantFightStatistics.getFusenGachiNumber() + 1);
+                case TSUKI -> participantFightStatistics.setTsukiNumber(participantFightStatistics.getTsukiNumber() + 1);
+                case HANSOKU -> participantFightStatistics.setHansokuNumber(participantFightStatistics.getHansokuNumber() + 1);
+                case IPPON -> participantFightStatistics.setIpponNumber(participantFightStatistics.getIpponNumber() + 1);
+                case FUSEN_GACHI -> participantFightStatistics.setFusenGachiNumber(participantFightStatistics.getFusenGachiNumber() + 1);
                 default -> {
+                    //Do nothing for empty score.
                 }
             }
         }
@@ -185,21 +181,15 @@ public class ParticipantFightStatisticsProvider extends CrudProvider<Participant
         scores = scores.parallelStream().filter(Objects::nonNull).toList();
         for (final Score score : scores) {
             switch (score) {
-                case MEN ->
-                        participantFightStatistics.setReceivedMenNumber(participantFightStatistics.getReceivedMenNumber() + 1);
-                case KOTE ->
-                        participantFightStatistics.setReceivedKoteNumber(participantFightStatistics.getReceivedKoteNumber() + 1);
-                case DO ->
-                        participantFightStatistics.setReceivedDoNumber(participantFightStatistics.getReceivedDoNumber() + 1);
-                case TSUKI ->
-                        participantFightStatistics.setReceivedTsukiNumber(participantFightStatistics.getReceivedTsukiNumber() + 1);
-                case HANSOKU ->
-                        participantFightStatistics.setReceivedHansokuNumber(participantFightStatistics.getReceivedHansokuNumber() + 1);
-                case IPPON ->
-                        participantFightStatistics.setReceivedIpponNumber(participantFightStatistics.getReceivedIpponNumber() + 1);
-                case FUSEN_GACHI ->
-                        participantFightStatistics.setReceivedFusenGachiNumber(participantFightStatistics.getReceivedFusenGachiNumber() + 1);
+                case MEN -> participantFightStatistics.setReceivedMenNumber(participantFightStatistics.getReceivedMenNumber() + 1);
+                case KOTE -> participantFightStatistics.setReceivedKoteNumber(participantFightStatistics.getReceivedKoteNumber() + 1);
+                case DO -> participantFightStatistics.setReceivedDoNumber(participantFightStatistics.getReceivedDoNumber() + 1);
+                case TSUKI -> participantFightStatistics.setReceivedTsukiNumber(participantFightStatistics.getReceivedTsukiNumber() + 1);
+                case HANSOKU -> participantFightStatistics.setReceivedHansokuNumber(participantFightStatistics.getReceivedHansokuNumber() + 1);
+                case IPPON -> participantFightStatistics.setReceivedIpponNumber(participantFightStatistics.getReceivedIpponNumber() + 1);
+                case FUSEN_GACHI -> participantFightStatistics.setReceivedFusenGachiNumber(participantFightStatistics.getReceivedFusenGachiNumber() + 1);
                 default -> {
+                    //Do nothing for empty score.
                 }
             }
         }

@@ -18,9 +18,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- #L%
 ---
-INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (1, 'admin@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Admin', 'User');
-INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (2, 'viewer@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Viewer', 'User');
-INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (3, 'editor@test.com', '$2a$12$hawW3GfY4/Ib/1.9KdVvVObw2t4FsXjkYApy5xlJf.P5GO3K72OSm', 'Editor', 'User');
+INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (1, 'admin@test.com', '$2y$salt$redactedhash:19000:0:99999:7:::', 'Admin', 'User');
+INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (2, 'viewer@test.com', '$2y$salt$redactedhash:19000:0:99999:7:::', 'Viewer', 'User');
+INSERT INTO authenticated_users (id, username, password, name, lastname) VALUES (3, 'editor@test.com', '$2y$salt$redactedhash:19000:0:99999:7:::', 'Editor', 'User');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'admin');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (1, 'viewer');
 INSERT INTO authenticated_user_roles (authenticated_user, roles) VALUES (2, 'viewer');
