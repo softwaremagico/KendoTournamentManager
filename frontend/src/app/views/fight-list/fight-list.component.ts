@@ -208,9 +208,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
     this.topicSubscription = this.rxStompService.watch(this.websocketsPrefix + '/unties').subscribe((message: Message): void => {
       const messageContent: MessageContent = JSON.parse(message.body);
-      console.log(message.body);
       if (messageContent.topic == "Duel" && (!messageContent.session || messageContent.session !== localStorage.getItem('session'))) {
-        console.log("!!!!!");
         this.refreshFights();
       }
     });
