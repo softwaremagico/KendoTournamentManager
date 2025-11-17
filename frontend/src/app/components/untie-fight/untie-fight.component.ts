@@ -26,6 +26,9 @@ export class UntieFightComponent extends KendoComponent implements OnInit {
   @Input()
   swapTeams: boolean;
 
+  @Input()
+  projectMode: boolean;
+
   @Output() onSelectedDuel: EventEmitter<any> = new EventEmitter();
 
   constructor(private duelChangedService: DuelChangedService) {

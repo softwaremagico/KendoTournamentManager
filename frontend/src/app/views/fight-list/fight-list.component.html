@@ -198,7 +198,7 @@
         <h3 *ngIf="filteredFights.get(group.id!)?.length! > 0"
             [ngClass]="{'group-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
             class="group-name">{{ 'group' | translate }} {{ group.index + 1 }}</h3>
-        <div *ngIf="filteredFights.get(group.id!)?.length! > 0"
+        <div *ngIf="filteredFights.get(group.id!)?.length! > 0 || filteredUnties.get(group.id!)?.length! > 0"
              [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
           <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
@@ -213,6 +213,7 @@
                          (keydown)="selectDuel(duel)"
                          [ngClass]="{duelSelected: duel === selectedDuel, over: isOver(duel)}"
                          [selected]="duel === selectedDuel" [swapColors]="swappedColors"
+                         [projectMode]="projectMode"
                          [swapTeams]="swappedTeams"></untie-fight>
           </div>
         </div>
