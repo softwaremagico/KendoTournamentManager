@@ -1,7 +1,7 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div class="fight-view">
   <div class="fights-table">
-    <div class="upper-menu">
+    <div class="upper-menu" *ngIf="!projectMode">
       <div class="cell">
         <button (click)="goBackToTournament()"
                 *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
@@ -93,7 +93,8 @@
         </button>
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())
           || (RbacActivity.SWAP_FIGHTS | rbac : this.rbacService.getActivities())
-          || (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"></mat-divider>
+          || (RbacActivity.CHANGE_MEMBERS_ORDER | rbac : this.rbacService.getActivities())"
+                     class="actions-divider"></mat-divider>
         <button (click)="swapColors()"
                 *ngIf="(RbacActivity.CHANGE_FIGHT_COLORS | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500" class="exchange-colors"
@@ -124,7 +125,8 @@
           <mat-icon class="kendo-icon" svgIcon="member-order-disable"></mat-icon>
         </button>
         <mat-divider [vertical]="true" *ngIf="(RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities()) ||
-            (RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"></mat-divider>
+            (RbacActivity.READ_COMPETITORS_RANKINGS | rbac : this.rbacService.getActivities())"
+                     class="order-divider"></mat-divider>
         <button (click)="showTeamsClassification(areAllDuelsOver())" *ngIf="((tournament && tournament.teamSize && tournament.teamSize>1) || (tournament && tournament.type === kingOfTheMountainType)
                 || (tournament && tournament.type === bubbleSortType) || (tournament && tournament.type === TournamentType.SENBATSU))
                  && (RbacActivity.READ_TEAMS_RANKINGS | rbac : this.rbacService.getActivities())"
@@ -155,9 +157,21 @@
                 matTooltip="{{'fightList' | translate}}">
           <mat-icon>file_download</mat-icon>
         </button>
+        <mat-divider [vertical]="true"
+                     *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                     class="expand-divider"></mat-divider>
+        <button (click)="project()"
+                *ngIf="(RbacActivity.DOWNLOAD_ALL_FIGHTS | rbac : this.rbacService.getActivities())"
+                [disabled]="!groups[0] || !groups[0].fights || groups[0].fights.length == 0"
+                [matTooltipShowDelay]="500"
+                class="expand-button" color="primary"
+                mat-button
+                matTooltip="{{'fightList' | translate}}">
+          <mat-icon>present_to_all</mat-icon>
+        </button>
       </div>
     </div>
-    <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1">
+    <div class="filter-shiaijo" *ngIf="tournament!=undefined && tournament!.shiaijos! > 1 && !projectMode">
       <div class="shiaijo-label">
         {{ 'shiaijo'| translate }}
       </div>
@@ -165,7 +179,8 @@
         {{ getShiaijoTag() }}
       </div>
     </div>
-    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"></app-filter>
+    <app-filter (filterChanged)="filter($event)" (reset)="filter('')" [resetValue]="resetFilterValue"
+                *ngIf="!projectMode"></app-filter>
     <app-timer (onPlayPressed)="duelStarted($event[0])" (onSoftTimerChanged)="updateDuelElapsedTime($event[0], false)"
                (onTimerChanged)="updateDuelElapsedTime($event[0], true)" (onTimerFinished)="finishDuel()"
                (timeDurationChanged)="updateDuelDuration($event[0])"
@@ -175,7 +190,7 @@
                [startingMinutes]="getDuelDefaultMinutesDuration()"
                [shown]="timer"
                [startingSeconds]="getDuelDefaultSecondsDuration()"></app-timer>
-    <div class="fight-container">
+    <div class="fight-container" [ngClass]="{'project-mode': projectMode}">
       <div *ngFor="let group of groups" class="fight-list">
         <h2 *ngIf="showLevelTags && showLevelOfGroup.get(group) && filteredLevels.includes(group.level)"
             [ngClass]="{'level-name-hidden': groups.length < 2 || filteredFights.get(group.id!)?.length == 0}"
@@ -187,8 +202,9 @@
              [ngClass]="{'fights-of-group': groups.length > 1 && filteredFights.get(group.id!)?.length! > 0}">
           <fight (click)="selectFight(fight)" (keydown)="selectFight(fight)" (onSelectedDuel)="selectDuel($event)"
                  *ngFor="let fight of filteredFights.get(group.id!)"
-                 [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight"
+                 [fight]="fight" [over]="isFightOver(fight)" [selected]="fight === selectedFight && !projectMode"
                  [showAvatars]="showAvatars" [swapColors]="swappedColors"
+                 [projectMode]="projectMode"
                  [swapTeams]="swappedTeams"></fight>
 
           <div class="unties-list">

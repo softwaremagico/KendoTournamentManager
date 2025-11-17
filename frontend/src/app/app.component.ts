@@ -11,6 +11,7 @@ import {RbacService} from "./services/rbac/rbac.service";
 import {RbacBasedComponent} from "./components/RbacBasedComponent";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {DarkModeService} from "./services/notifications/dark-mode.service";
+import {ProjectModeChangedService} from "./services/notifications/project-mode-changed.service";
 
 @Component({
   selector: 'app-root',
@@ -23,12 +24,13 @@ export class AppComponent extends RbacBasedComponent {
   selectedRow: string = '';
   nightModeEnabled: boolean = false;
   @HostBinding('class') className = '';
+  hideMenu = false;
 
   constructor(public translate: TranslateService, public loginService: LoginService, public loggedInService: LoggedInService,
               private userSessionService: UserSessionService, private dialog: MatDialog, private router: Router,
               private overlay: OverlayContainer, private _renderer: Renderer2,
               private messageService: MessageService, rbacService: RbacService,
-              private darkModeService: DarkModeService) {
+              private darkModeService: DarkModeService, private projectModeChangedService: ProjectModeChangedService) {
     super(rbacService);
     translate.addLangs(['en', 'es', 'it', 'de', 'nl', 'ca']);
     translate.setDefaultLang('en');
@@ -39,6 +41,9 @@ export class AppComponent extends RbacBasedComponent {
     }
     this.nightModeEnabled = userSessionService.getNightMode();
     this.setDarkModeTheme();
+    projectModeChangedService.isProjectMode.subscribe((_mode: boolean): void => {
+      this.hideMenu = _mode;
+    });
   }
 
   toggleMenu(selectedRow: string): void {

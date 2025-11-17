@@ -32,6 +32,9 @@ export class ScoreComponent implements OnInit, OnChanges {
   @Input()
   locked: boolean = true;
 
+  @Input()
+  projectMode: boolean;
+
   scoreRepresentation: string;
 
   timeRepresentation: string | undefined;

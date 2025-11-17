@@ -38,6 +38,7 @@ import {MessageContent} from "../../websockets/message-content.model";
 import {LoginService} from "../../services/login.service";
 import {SenbatsuFightDialogBoxComponent} from "./senbatsu-fight-dialog-box/senbatsu-fight-dialog-box.component";
 import {AudioService} from "../../services/audio.service";
+import {ProjectModeChangedService} from "../../services/notifications/project-mode-changed.service";
 
 @Component({
   selector: 'app-fight-list',
@@ -79,6 +80,9 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
 
   selectedShiaijo: number = -1;
 
+  projectMode: boolean = false;
+  hideFinishedFights: boolean = false;
+
   private topicSubscription: Subscription;
 
 
@@ -93,7 +97,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
               rbacService: RbacService, private translateService: TranslateService,
               private systemOverloadService: SystemOverloadService,
               private rxStompService: RxStompService, private loginService: LoginService,
-              private audioService: AudioService) {
+              private audioService: AudioService, private projectModeChangedService: ProjectModeChangedService) {
     super(rbacService);
     this.filteredFights = new Map<number, Fight[]>();
     this.filteredUnties = new Map<number, Duel[]>();
@@ -192,6 +196,10 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         const fight: Fight = JSON.parse(messageContent.payload);
         if (!messageContent.type || messageContent.type.toLowerCase() == "updated") {
           this.replaceFight(fight);
+          if(this.projectMode) {
+            //Remove any finished fight.
+            this.filter('')
+          }
         } else if (messageContent.type.toLowerCase() == "created") {
           this.refreshFights();
         }
@@ -221,10 +229,13 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     return updatedFights;
   }
 
-  @HostListener('document:keypress', ['$event'])
+  @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
     if (event.key === 't') {
       this.showTimer(!this.timer);
+    }
+    if (event.key === 'Escape') {
+      this.changeProjectMode(false);
     }
   }
 
@@ -917,6 +928,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
     for (const group of this.groups) {
       if (group.fights) {
         this.filteredFights.set(group.id!, group.fights.filter((fight: Fight) =>
+          (!this.hideFinishedFights || !this.isFightOver(fight)) &&
           fight != null && (this.selectedShiaijo < 0 || fight.shiaijo == this.selectedShiaijo) && (
             (fight.team1 ? fight.team1.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
             (fight.team2 ? fight.team2.name.normalize('NFD').replace(/\p{Diacritic}/gu, "").toLowerCase().includes(filter) : "") ||
@@ -986,4 +998,17 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
   stopWhistle() {
     this.audioService.stopWhistle();
   }
+
+  project() {
+    this.changeProjectMode(!this.projectMode);
+  }
+
+  changeProjectMode(mode: boolean) {
+    this.projectMode = mode;
+    this.hideFinishedFights = mode;
+    this.filter('');
+    this.projectModeChangedService.isProjectMode.next(mode);
+  }
+
+
 }

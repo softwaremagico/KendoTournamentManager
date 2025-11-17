@@ -29,6 +29,9 @@ export class UserScoreComponent {
   locked: boolean = false;
 
   @Input()
+  projectMode: boolean;
+
+  @Input()
   highlightedParticipantId: number | undefined;
 
   isUntie(): boolean {
