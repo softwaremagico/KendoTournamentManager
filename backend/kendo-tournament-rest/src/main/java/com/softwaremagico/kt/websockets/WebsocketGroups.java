@@ -31,7 +31,8 @@ public class WebsocketGroups {
 
         //Refresh screens when a group is updated.
         groupController.addGroupUpdatedListeners(webSocketController::groupsUpdated);
-
+        groupController.addUntieUpdatedListener((tournament, duel, actor, session)
+                -> webSocketController.untieUpdated(duel, actor, session));
     }
 
 }

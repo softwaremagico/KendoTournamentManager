@@ -1,4 +1,4 @@
-<div [matMenuTriggerFor]="duel.finished ? null : menu" class="fault" *ngIf="!locked &&
+<div [matMenuTriggerFor]="duel.finished || projectMode ? null : menu" class="fault" *ngIf="!locked &&
 (RbacActivity.ASSIGN_FAULTS | rbac : this.rbacService.getActivities())">
   <mat-menu #menu="matMenu">
     <button [disabled]="duel.finished" (click)="updateFault(true)"

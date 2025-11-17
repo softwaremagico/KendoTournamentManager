@@ -28,6 +28,9 @@ export class FaultComponent implements OnInit, OnChanges {
   @Input()
   locked: boolean = true;
 
+  @Input()
+  projectMode: boolean;
+
   timeRepresentation: string | undefined;
 
   mouseX: number | undefined;
