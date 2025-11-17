@@ -1,5 +1,5 @@
 .fight {
-  border-width: 2px;
+  border-width: 2px 0 2px 0;
   border-color: var(--fight-border-color);
   border-style: solid;
   padding: 5px;
@@ -18,37 +18,48 @@
   transform: rotate(180deg);
   text-align: center;
   padding: 20px;
-  border-width: 2px;
-  border-color: var(--ribbon-border);
   border-style: solid;
-  background-color: var(--ribbon-background);
+  //background-color: var(--ribbon-background);
+  text-transform: uppercase;
+  border-width: 2px 2px 2px 0;
+  border-color: var(--fight-border-color);
+  line-height: 25px;
+  max-width: 56px;
+  overflow: clip;
 }
 
 .red-ribbon {
-  color: red;
+  color: var(--ribbon-background);
   //To be below the timer
   z-index: -1;
+  background-color: var(--red-team-color);
+}
+
+.white-ribbon {
+  color: var(--ribbon-background);
+  //To be below the timer
+  z-index: -1;
+  background-color: var(--white-team-color);
 }
 
 .ribbon-icon {
   transform: rotate(0deg);
+  border-width: 2px 0 2px 2px;
 }
 
 .right-team {
   writing-mode: vertical-rl;
   text-align: center;
   padding: 20px;
-  border-width: 2px;
-  border-color: var(--ribbon-border);
   border-style: solid;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-  background-color: var(--ribbon-background);
-}
-
-.white-ribbon {
-  color: white;
-  //To be below the timer
-  z-index: -1;
+  //text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  //background-color: var(--ribbon-background);
+  text-transform: uppercase;
+  border-width: 2px 2px 2px 0;
+  border-color: var(--fight-border-color);
+  line-height: 25px;
+  max-width: 56px;
+  overflow: clip;
 }
 
 .fight-container {
