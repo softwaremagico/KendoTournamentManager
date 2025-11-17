@@ -71,7 +71,6 @@ public class WebSocketController {
      * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
      *
      * @param element the element created.
-     * @return
      */
     public void elementCreated(@Payload ElementDTO element, String actor, String session) {
         try {
@@ -87,7 +86,6 @@ public class WebSocketController {
      * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
      *
      * @param element the element created.
-     * @return
      */
     public void elementUpdated(@Payload ElementDTO element, String actor, String session) {
         try {
@@ -103,7 +101,6 @@ public class WebSocketController {
      * Sends an Element to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #CREATING_MAPPING}.
      *
      * @param element the element created.
-     * @return
      */
     public void elementDeleted(@Payload ElementDTO element, String actor, String session) {
         try {
@@ -119,7 +116,6 @@ public class WebSocketController {
      * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #FIGHTS_MAPPING}.
      *
      * @param fight the fight to send.
-     * @return
      */
     public void fightUpdated(@Payload FightDTO fight, String actor, String session) {
         try {
@@ -135,7 +131,6 @@ public class WebSocketController {
      * Sends a fightDTO to {@value com.softwaremagico.kt.websockets.WebSocketConfiguration#SOCKET_SEND_PREFIX} + {@value #FIGHTS_MAPPING}.
      *
      * @param fights the fight to send.
-     * @return
      */
     public void fightsCreated(@Payload List<FightDTO> fights, String actor, String session) {
         try {
@@ -152,7 +147,6 @@ public class WebSocketController {
      * + {@value #GROUPS_MAPPING}.
      *
      * @param tournamentDTO the tournament that is modified.
-     * @return
      */
     public void groupsUpdated(@Payload TournamentDTO tournamentDTO, String actor, String session) {
         try {
