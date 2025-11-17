@@ -3,7 +3,13 @@
   max-height: 80vh;
   min-height: 50vh;
   overflow-y: auto;
-  padding: 20px;
+  padding-left: 20px;
+}
+
+.fight-container.project-mode {
+  height: 100%;
+  max-height: 100%;
+  overflow: scroll;
 }
 
 .upper-menu {
@@ -16,6 +22,7 @@
 
 .fight-list {
   width: 99%;
+  height: 100%;
 }
 
 .unties-list {
@@ -41,6 +48,7 @@
 
 .group-name-hidden {
   visibility: hidden;
+  height: 0;
 }
 
 .filter-shiaijo {
@@ -69,6 +77,16 @@ h2.level-name {
   font-size: 25px;
   padding-top: 40px;
   font-weight: bold;
+}
+
+@media screen and (max-width: 1550px) {
+  .expand-divider {
+    display: none !important;
+  }
+
+  .expand-button {
+    display: none !important;
+  }
 }
 
 @media screen and (max-width: 1450px) {
@@ -107,7 +125,15 @@ h2.level-name {
     display: none !important;
   }
 
+  .order-divider {
+    display: none !important;
+  }
+
   .competitors-classification {
+    display: none !important;
+  }
+
+  .actions-divider {
     display: none !important;
   }
 }
@@ -128,6 +154,7 @@ h2.level-name {
   .delete-button {
     display: none !important;
   }
+
 }
 
 @media screen and (max-height: 850px) {
