@@ -51,7 +51,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   seconds: number;
   private clockHandler: NodeJS.Timeout | null;
   elapsedSeconds: number = 0;
-  private alarmOn: boolean;
+  private alarmRinging: boolean;
   totalTime: number;
   increasedTime: number = 0;
   started: boolean = false;
@@ -156,6 +156,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
   startTimer(): void {
     this.started = true;
     this.onPlayPressed.emit([this.elapsedSeconds]);
+    this.alarmRinging = false;
   };
 
   pauseTimer(): void {
@@ -169,7 +170,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
     this.onTimerFinished.emit([true]);
     this.resetVariables(this.minutes, this.seconds, false);
-    this.alarmOn = false;
+    this.alarmRinging = false;
     this.elapsedSeconds = 0;
     //Removing focus from the button for finishing timer, or space key will also finish the duel.
     if (document.activeElement) {
@@ -191,7 +192,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
         this.elapsedSeconds = 0;
         this.onTimerChanged.emit([this.elapsedSeconds]);
         this.resetVariablesAsSeconds(this.totalTime + this.increasedTime, false);
-        this.alarmOn = false;
+        this.alarmRinging = false;
       }
     });
   }
@@ -216,8 +217,8 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
       this.seconds--;
     }
     //Here only is launched when seconds changes from 1 to 0.
-    if (this.seconds === 0 && this.minutes === 0 && !this.alarmOn) {
-      this.alarmOn = true;
+    if (this.seconds === 0 && this.minutes === 0 && !this.alarmRinging) {
+      this.alarmRinging = true;
       this.audioService.playWhistleByTime(4);
       this.pauseTimer();
     }
@@ -262,7 +263,7 @@ export class TimerComponent extends RbacBasedComponent implements OnInit {
     }
     this.timeDurationChanged.emit([rawSeconds + this.elapsedSeconds]);
     this.onTimerChanged.emit([this.elapsedSeconds]);
-    this.alarmOn = false;
+    this.alarmRinging = false;
   }
 
   setMinutesEditable(editable: boolean): void {
