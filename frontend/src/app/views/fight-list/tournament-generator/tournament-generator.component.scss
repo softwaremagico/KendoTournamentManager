@@ -21,3 +21,18 @@
     height: 75vh;
   }
 }
+
+@media screen and (max-width: 800px) {
+  .refresh-group {
+    display: none !important;
+  }
+
+  .download-divider {
+    display: none !important;
+  }
+
+  .download {
+    display: none !important;
+  }
+
+}

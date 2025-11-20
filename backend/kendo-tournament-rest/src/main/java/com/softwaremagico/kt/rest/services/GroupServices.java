@@ -192,4 +192,16 @@ public class GroupServices extends BasicServices<Group, GroupDTO, GroupRepositor
             throw new BadRequestException(this.getClass(), e.getMessage());
         }
     }
+
+
+    @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
+    @Operation(summary = "Recalculate teams and fights from a group that has not started.", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping(value = "/refresh/tournaments/{tournamentId}/levels/{level}", produces = {MediaType.APPLICATION_PDF_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public void refreshNonStartedGroups(@Parameter(description = "Id of an existing tournament", required = true) @PathVariable("tournamentId")
+                                        Integer tournamentId,
+                                        @Parameter(description = "Group level to starting the checks.", required = false) @PathVariable("level")
+                                        Integer level,
+                                        HttpServletResponse response, HttpServletRequest request) {
+        getController().refreshGroupContent(tournamentId, level == null ? 0 : level);
+    }
 }

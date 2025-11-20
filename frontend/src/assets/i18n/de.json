@@ -723,5 +723,6 @@
   "darkMode": "Donkere Modus",
   "lightMode": "Lichte Modus",
   "newVersionAvailable": "Version '{{newVersion}}' ist verfügbar! Aktuelle Version ist '{{currentVersion}}'.",
-  "input_data_is_invalid": "Die angegebenen Daten sind ungültig!"
+  "input_data_is_invalid": "Die angegebenen Daten sind ungültig!",
+  "refreshStructure": "Korrigieren Sie die Struktur der Gruppen, denen keine Kampfeinsätze zugewiesen sind."
 }
