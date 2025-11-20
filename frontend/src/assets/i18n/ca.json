@@ -745,5 +745,6 @@
   "darkMode": "Mode Fosc",
   "lightMode": "Mode Clar",
   "newVersionAvailable": "La versió '{{newVersion}}' està disponible! La versió actual és '{{currentVersion}}'.",
-  "input_data_is_invalid": "Les dades proporcionades no són vàlides!"
+  "input_data_is_invalid": "Les dades proporcionades no són vàlides!",
+  "refreshStructure": "Corrige la estructura de los grupos que no tienen ningún combate asignado."
 }

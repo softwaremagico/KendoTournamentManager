@@ -168,4 +168,10 @@ export class TournamentGeneratorComponent extends RbacBasedComponent implements 
       this.messageService.infoMessage('infoTournamentUpdated');
     });
   }
+
+  refreshGroups() {
+    this.groupService.refreshNonStartedGroups(this.tournamentId, 1).subscribe((): void => {
+      this.tournamentBracketsEditorComponent.updateData(true, true);
+    });
+  }
 }

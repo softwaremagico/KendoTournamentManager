@@ -723,5 +723,6 @@
   "darkMode": "Dunkler Modus",
   "lightMode": "Heller Modus",
   "newVersionAvailable": "Versie '{{newVersion}}' is beschikbaar! Huidige versie is '{{currentVersion}}'.",
-  "input_data_is_invalid": "De opgegeven gegevens zijn ongeldig!"
+  "input_data_is_invalid": "De opgegeven gegevens zijn ongeldig!",
+  "refreshStructure": "Verbeter de structuur van groepen waaraan geen gevechtstaken zijn toegewezen."
 }

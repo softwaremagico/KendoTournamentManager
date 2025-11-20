@@ -336,4 +336,17 @@ public class GroupController extends BasicInsertableController<Group, GroupDTO, 
         return getProvider().delete(tournamentConverter.reverse(tournamentDTO));
     }
 
+    public void refreshGroupContent(Integer tournamentId, Integer level) {
+        final List<Group> tournamentGroups = getProvider().getGroups(tournamentProvider.get(tournamentId).orElseThrow(()
+                -> new TournamentNotFoundException(this.getClass(), "No tournament found with id '" + tournamentId + "'.")));
+
+        //Remove teams assignation.
+        for (Group group : tournamentGroups) {
+            if (group.getLevel() >= level && (group.getFights() == null || group.getFights().isEmpty())) {
+                group.getTeams().clear();
+                getProvider().save(group);
+            }
+        }
+    }
+
 }

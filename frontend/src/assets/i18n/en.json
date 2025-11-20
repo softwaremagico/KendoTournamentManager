@@ -740,5 +740,6 @@
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
   "newVersionAvailable": "Version '{{newVersion}}' is available! Current version is '{{currentVersion}}'",
-  "input_data_is_invalid": "Provided data are invalid!"
+  "input_data_is_invalid": "Provided data are invalid!",
+  "refreshStructure": "Correct the structure of groups that do not have any assigned fight."
 }
