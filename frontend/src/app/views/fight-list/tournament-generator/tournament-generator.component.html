@@ -41,8 +41,16 @@
                 matTooltip="{{'delete' | translate}}">
           <mat-icon>clear</mat-icon>
         </button>
+        <button (click)="refreshGroups()" *ngIf="(RbacActivity.REFRESH_GROUPS | rbac : this.rbacService.getActivities())"
+                [disabled]="(tournament && tournament.locked) || updatingGroup || groups.length < 1"
+                [matTooltipShowDelay]="500"
+                color="primary" mat-button
+                class="refresh-group"
+                matTooltip="{{'refreshStructure' | translate}}">
+          <mat-icon>settings_backup_restore</mat-icon>
+        </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(numberOfWinners == 2) && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
+                     *ngIf="(RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
         ></mat-divider>
         <button (click)="openConfirmationGenerateElementsDialog()"
                 *ngIf="isWizardEnabled && (RbacActivity.CREATE_FIGHT | rbac : this.rbacService.getActivities())"
@@ -53,12 +61,14 @@
           <mat-icon>auto_fix_high</mat-icon>
         </button>
         <mat-divider [vertical]="true"
-                     *ngIf="(numberOfWinners == 2) && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
+                     class="download-divider"
+                     *ngIf="(RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
         ></mat-divider>
         <button (click)="downloadPDF()"
                 *ngIf="isWizardEnabled && (RbacActivity.DOWNLOAD_GROUPS_PDF | rbac : this.rbacService.getActivities())"
                 [matTooltipShowDelay]="500"
                 color="primary" mat-button
+                class="download"
                 matTooltip="{{'download' | translate}}">
           <mat-icon>file_download</mat-icon>
         </button>

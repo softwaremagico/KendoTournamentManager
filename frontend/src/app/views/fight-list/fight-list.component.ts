@@ -509,6 +509,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
             this.groupService.update(this.selectedGroup).subscribe((): void => {
               this.messageService.infoMessage("fightDeleted");
               this.refreshFights();
+              this.selectFirstUnfinishedDuel();
             });
           }
         }
@@ -873,7 +874,7 @@ export class FightListComponent extends RbacBasedComponent implements OnInit, On
         }
         for (const duel of fight.duels) {
           if (!duel.finished) {
-            this.selectedFight = fight;
+            this.selectFight(fight);
             this.selectDuel(duel);
             return true;
           }
