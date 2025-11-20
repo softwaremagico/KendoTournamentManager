@@ -126,7 +126,9 @@ public class Participant extends Element implements Comparable<Participant>, IPa
     }
 
     public void setIdCard(String value) {
-        idCard = value.replace("-", "").replace(" ", "").trim().toUpperCase();
+        if (value != null) {
+            idCard = value.replace("-", "").replace(" ", "").trim().toUpperCase();
+        }
     }
 
     public boolean isValid() {

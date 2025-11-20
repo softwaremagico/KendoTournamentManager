@@ -23,6 +23,7 @@ package com.softwaremagico.kt.core.providers;
 
 import com.softwaremagico.kt.core.controller.models.TemporalToken;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Duel;
 import com.softwaremagico.kt.persistence.entities.Participant;
@@ -142,6 +143,19 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         }
         KendoTournamentLogger.warning(this.getClass(), "Invalid id obtained from '{}'.", tokenUsername.replaceAll("[\n\r\t]", "_"));
         return Optional.empty();
+    }
+
+    public Optional<Participant> findByIdCard(String idCard) {
+        if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
+            final List<Participant> participants = getRepository().findAll();
+            for (Participant participant : participants) {
+                if (participant.getIdCard().equalsIgnoreCase(idCard)) {
+                    return Optional.of(participant);
+                }
+            }
+            return Optional.empty();
+        }
+        return getRepository().findByIdCard(idCard);
     }
 
     public List<Participant> getYourWorstNightmare(Participant sourceParticipant) {

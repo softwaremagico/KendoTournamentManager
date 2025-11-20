@@ -51,7 +51,7 @@ import java.time.LocalDateTime;
 public class Tournament extends Element implements IName {
     public static final int DEFAULT_DURATION = 180;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Convert(converter = StringCryptoConverter.class)
     private String name;
 
