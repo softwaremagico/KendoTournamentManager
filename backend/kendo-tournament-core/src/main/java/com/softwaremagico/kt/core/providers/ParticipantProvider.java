@@ -149,7 +149,7 @@ public class ParticipantProvider extends CrudProvider<Participant, Integer, Part
         if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
             final List<Participant> participants = getRepository().findAll();
             for (Participant participant : participants) {
-                if (participant.getIdCard().equalsIgnoreCase(idCard)) {
+                if (participant.getIdCard() != null && participant.getIdCard().equalsIgnoreCase(idCard)) {
                     return Optional.of(participant);
                 }
             }

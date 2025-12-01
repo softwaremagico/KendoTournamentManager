@@ -5,6 +5,7 @@
 
 .mat-dialog-content {
   overflow: visible;
+  position: relative;
 }
 
 .mat-form-field {
@@ -13,4 +14,8 @@
 
 .mat-raised-button {
   width: 150px;
+}
+
+.floating-button {
+  float: right;
 }

@@ -58,6 +58,8 @@ public class TeamCsv extends CsvReader<Team> {
     @Override
     public List<Team> readCSV(String csvContent) {
         final String[] headers = getHeaders(csvContent);
+        checkHeaders(headers, NAME_HEADER, TOURNAMENT_HEADER, MEMBER1_HEADER, MEMBER2_HEADER, MEMBER3_HEADER, MEMBER4_HEADER, MEMBER5_HEADER, MEMBER6_HEADER,
+                MEMBER7_HEADER, MEMBER8_HEADER, MEMBER9_HEADER);
         final String[] content = getContent(csvContent);
         final List<Team> teams = new ArrayList<>();
 
@@ -92,6 +94,14 @@ public class TeamCsv extends CsvReader<Team> {
             addMember(teamLine, team, member7Index);
             addMember(teamLine, team, member8Index);
             addMember(teamLine, team, member9Index);
+
+            //Remove latest null members
+            for (int i = team.getMembers().size() - 1; i >= 0; i--) {
+                if (team.getMembers().get(i) != null) {
+                    break;
+                }
+                team.getMembers().remove(i);
+            }
 
             teams.add(team);
         }

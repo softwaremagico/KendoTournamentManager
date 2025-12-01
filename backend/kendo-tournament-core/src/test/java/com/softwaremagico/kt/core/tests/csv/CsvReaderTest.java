@@ -10,12 +10,12 @@ package com.softwaremagico.kt.core.tests.csv;
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
@@ -25,6 +25,7 @@ import com.softwaremagico.kt.core.controller.CsvController;
 import com.softwaremagico.kt.core.controller.TournamentController;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TournamentDTO;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
@@ -140,5 +141,20 @@ public class CsvReaderTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(0).getIdCard(), "00000001");
         Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(1).getIdCard(), "00000002");
         Assert.assertEquals(teamProvider.getAll().get(0).getMembers().get(2).getIdCard(), "00000003");
+    }
+
+    @Test(expectedExceptions = InvalidCsvFieldException.class)
+    public void checkInvalidTeamCSV() throws URISyntaxException, IOException {
+        csvController.addTeams(readCsvFile(CLUBS_CSV_FILE_PATH), null);
+    }
+
+    @Test(expectedExceptions = InvalidCsvFieldException.class)
+    public void checkInvalidClubCSV() throws URISyntaxException, IOException {
+        csvController.addClubs(readCsvFile(TEAMS_CSV_FILE_PATH), null);
+    }
+
+    @Test(expectedExceptions = InvalidCsvFieldException.class)
+    public void checkInvalidParticipantCSV() throws URISyntaxException, IOException {
+        csvController.addParticipants(readCsvFile(CLUBS_CSV_FILE_PATH), null);
     }
 }

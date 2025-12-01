@@ -46,6 +46,7 @@ public class ParticipantCsv extends CsvReader<Participant> {
     @Override
     public List<Participant> readCSV(String csvContent) {
         final String[] headers = getHeaders(csvContent);
+        checkHeaders(headers, NAME_HEADER, LASTNAME_HEADER, ID_CARD_HEADER, CLUB_HEADER, CLUB_CITY_HEADER);
         final String[] content = getContent(csvContent);
         final List<Participant> participants = new ArrayList<>();
 

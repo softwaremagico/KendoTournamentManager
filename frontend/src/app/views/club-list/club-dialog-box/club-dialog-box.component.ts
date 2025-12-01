@@ -7,6 +7,9 @@ import {RbacService} from "../../../services/rbac/rbac.service";
 import {UntypedFormControl, UntypedFormGroup, Validators} from "@angular/forms";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {InputLimits} from "../../../utils/input-limits";
+import {CsvService} from "../../../services/csv-service";
+import {MessageService} from "../../../services/message.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-club-dialog-box',
@@ -38,7 +41,8 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
   registerForm: UntypedFormGroup;
 
   constructor(
-    public dialogRef: MatDialogRef<ClubDialogBoxComponent>, rbacService: RbacService,
+    public dialogRef: MatDialogRef<ClubDialogBoxComponent>, rbacService: RbacService, public csvService: CsvService,
+    public messageService: MessageService, private translateService: TranslateService,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { title: string, action: Action, entity: Club }) {
     super(rbacService);
@@ -95,4 +99,25 @@ export class ClubDialogBoxComponent extends RbacBasedComponent {
     this.dialogRef.close({action: Action.Cancel});
   }
 
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addClubs(file).subscribe(_clubs => {
+          if(_clubs.length==0) {
+            this.messageService.infoMessage('clubStored');
+            //We cancel action or will be saved later again.
+            this.dialogRef.close({action: Action.Cancel});
+          }else{
+            const parameters: object = {element: _clubs[0].name};
+            this.translateService.get('failedOnCsvField', parameters).subscribe((message: string): void => {
+              this.messageService.errorMessage(message);
+            });
+          }
+        });
+      }
+    }
+  }
 }

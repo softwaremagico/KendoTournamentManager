@@ -25,6 +25,8 @@ import com.softwaremagico.kt.core.controller.CsvController;
 import com.softwaremagico.kt.core.controller.models.ClubDTO;
 import com.softwaremagico.kt.core.controller.models.ParticipantDTO;
 import com.softwaremagico.kt.core.controller.models.TeamDTO;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvRowException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,8 +58,12 @@ public class CsvServices {
     @Operation(summary = "Add clubs from a CSV file. Returns any failed club attempt.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/clubs", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ClubDTO> addClubs(@RequestParam("file") MultipartFile file,
-                                  Authentication authentication, HttpServletRequest request) throws IOException {
-        return csvController.addClubs(new String(file.getBytes(), StandardCharsets.UTF_8), authentication.getName());
+                                  Authentication authentication, HttpServletRequest request) throws IOException, InvalidCsvFieldException {
+        final List<ClubDTO> failedClubs = csvController.addClubs(new String(file.getBytes(), StandardCharsets.UTF_8), authentication.getName());
+        if (!failedClubs.isEmpty()) {
+            throw new InvalidCsvRowException(this.getClass(), "Some clubs have not been inserted correctly!", failedClubs.size());
+        }
+        return failedClubs;
     }
 
 
@@ -65,8 +71,13 @@ public class CsvServices {
     @Operation(summary = "Add participants from a CSV file. Returns any failed participant attempt.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/participants", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ParticipantDTO> addParticipants(@RequestParam("file") MultipartFile file,
-                                                Authentication authentication, HttpServletRequest request) throws IOException {
-        return csvController.addParticipants(new String(file.getBytes(), StandardCharsets.UTF_8), authentication.getName());
+                                                Authentication authentication, HttpServletRequest request) throws IOException, InvalidCsvFieldException {
+        final List<ParticipantDTO> failedParticipants = csvController.addParticipants(new String(file.getBytes(), StandardCharsets.UTF_8),
+                authentication.getName());
+        if (!failedParticipants.isEmpty()) {
+            throw new InvalidCsvRowException(this.getClass(), "Some participants have not been inserted correctly!", failedParticipants.size());
+        }
+        return failedParticipants;
     }
 
 
@@ -74,7 +85,11 @@ public class CsvServices {
     @Operation(summary = "Add teams from a CSV file. Returns any failed team attempt.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping(value = "/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<TeamDTO> addTeams(@RequestParam("file") MultipartFile file,
-                                  Authentication authentication, HttpServletRequest request) throws IOException {
-        return csvController.addTeams(new String(file.getBytes(), StandardCharsets.UTF_8), authentication.getName());
+                                  Authentication authentication, HttpServletRequest request) throws IOException, InvalidCsvFieldException {
+        final List<TeamDTO> failedTeams = csvController.addTeams(new String(file.getBytes(), StandardCharsets.UTF_8), authentication.getName());
+        if (!failedTeams.isEmpty()) {
+            throw new InvalidCsvRowException(this.getClass(), "Some teams have not been inserted correctly!", failedTeams.size());
+        }
+        return failedTeams;
     }
 }

@@ -21,6 +21,7 @@ package com.softwaremagico.kt.core.csv;
  * #L%
  */
 
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
 import com.softwaremagico.kt.persistence.entities.Element;
 
 import java.util.Arrays;
@@ -32,6 +33,13 @@ public abstract class CsvReader<E extends Element> {
 
     public abstract List<E> readCSV(String csvContent);
 
+    protected void checkHeaders(String[] fileHeaders, String... elementHeaders) throws InvalidCsvFieldException {
+        for (String header : fileHeaders) {
+            if (getHeaderIndex(elementHeaders, header) < 0) {
+                throw new InvalidCsvFieldException(this.getClass(), "Invalid header '" + header + "'.", header);
+            }
+        }
+    }
 
     public String[] getHeaders(String content) {
         final String[] lines = content.replace("#", "").split(LINE_SEPARATOR);
@@ -52,7 +60,7 @@ public abstract class CsvReader<E extends Element> {
 
     public int getHeaderIndex(String[] headers, String header) {
         for (int i = 0; i < headers.length; i++) {
-            if (headers[i] != null && headers[i].trim().equalsIgnoreCase(header)) {
+            if (header != null && headers[i] != null && headers[i].trim().equalsIgnoreCase(header.trim())) {
                 return i;
             }
         }

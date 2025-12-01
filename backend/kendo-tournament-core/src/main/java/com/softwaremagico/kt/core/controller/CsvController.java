@@ -33,13 +33,17 @@ import com.softwaremagico.kt.core.converters.models.TeamConverterRequest;
 import com.softwaremagico.kt.core.csv.ClubCsv;
 import com.softwaremagico.kt.core.csv.ParticipantCsv;
 import com.softwaremagico.kt.core.csv.TeamCsv;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
 import com.softwaremagico.kt.core.providers.ClubProvider;
 import com.softwaremagico.kt.core.providers.ParticipantProvider;
+import com.softwaremagico.kt.core.providers.RoleProvider;
 import com.softwaremagico.kt.core.providers.TeamProvider;
 import com.softwaremagico.kt.logger.KendoTournamentLogger;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.entities.Participant;
+import com.softwaremagico.kt.persistence.entities.Role;
 import com.softwaremagico.kt.persistence.entities.Team;
+import com.softwaremagico.kt.persistence.values.RoleType;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
@@ -61,9 +65,11 @@ public class CsvController {
     private final TeamProvider teamProvider;
     private final TeamConverter teamConverter;
 
+    private final RoleProvider roleProvider;
+
     public CsvController(ClubCsv clubCsv, ClubProvider clubProvider, ClubConverter clubConverter,
                          ParticipantCsv participantCsv, ParticipantProvider participantProvider, ParticipantConverter participantConverter,
-                         TeamCsv teamCsv, TeamProvider teamProvider, TeamConverter teamConverter) {
+                         TeamCsv teamCsv, TeamProvider teamProvider, TeamConverter teamConverter, RoleProvider roleProvider) {
         this.clubCsv = clubCsv;
         this.clubProvider = clubProvider;
         this.clubConverter = clubConverter;
@@ -73,6 +79,7 @@ public class CsvController {
         this.teamCsv = teamCsv;
         this.teamProvider = teamProvider;
         this.teamConverter = teamConverter;
+        this.roleProvider = roleProvider;
     }
 
 
@@ -87,8 +94,10 @@ public class CsvController {
                         KendoTournamentLogger.warning(this.getClass(), "Club '" + club.getName() + "' from '"
                                 + club.getCity() + "' already exists. Will be updated.");
                         club.setId(storedClub.get().getId());
+                        club.setUpdatedBy(uploadedBy);
+                    } else {
+                        club.setCreatedBy(uploadedBy);
                     }
-                    club.setCreatedBy(uploadedBy);
                     clubProvider.save(club);
                 } else {
                     KendoTournamentLogger.warning(this.getClass(), "Club with invalid name and/or city.");
@@ -111,6 +120,7 @@ public class CsvController {
                 if (participantProvider.findByIdCard(participant.getIdCard()).isPresent()) {
                     KendoTournamentLogger.severe(this.getClass().getName(), "Participant '" + participant.getIdCard() + "' with name '"
                             + participant.getName() + " " + participant.getLastname() + "' already exists.");
+                    participant.setUpdatedBy(uploadedBy);
                     failedParticipants.add(participantConverter.convert(new ParticipantConverterRequest(participant)));
                 } else {
                     participant.setCreatedBy(uploadedBy);
@@ -130,14 +140,25 @@ public class CsvController {
         final List<Team> teams = teamCsv.readCSV(csvContent);
         final List<TeamDTO> failedTeams = new ArrayList<>();
         for (Team team : teams) {
+            if (team.getTournament() == null) {
+                KendoTournamentLogger.severe(this.getClass().getName(), "Team '" + team.getName() + "' has assigned a tournament that does not exists.");
+                failedTeams.add(teamConverter.convert(new TeamConverterRequest(team)));
+                continue;
+            }
+            if (team.getMembers().size() > team.getTournament().getTeamSize()) {
+                throw new InvalidCsvFieldException(this.getClass(), "Team size is incorrect!", null);
+            }
+            setTeamMemberRoles(team);
             try {
                 final Optional<Team> storedTeam = teamProvider.get(team.getTournament(), team.getName());
                 if (storedTeam.isPresent()) {
                     KendoTournamentLogger.warning(this.getClass(), "Team '" + team.getName() + "' already exists on tournament '"
                             + team.getTournament().getName() + "'. Will be updated.");
                     team.setId(storedTeam.get().getId());
+                    team.setUpdatedBy(uploadedBy);
+                } else {
+                    team.setCreatedBy(uploadedBy);
                 }
-                team.setCreatedBy(uploadedBy);
                 teamProvider.save(team);
             } catch (Exception e) {
                 KendoTournamentLogger.errorMessage(this.getClass(), e);
@@ -145,5 +166,21 @@ public class CsvController {
             }
         }
         return failedTeams;
+    }
+
+    private void setTeamMemberRoles(Team team) {
+        if (team.getTournament() == null) {
+            return;
+        }
+        //Define roles for team members.
+        team.getMembers().forEach(member -> {
+            final Role role = roleProvider.get(team.getTournament(), member);
+            if (role == null) {
+                roleProvider.save(new Role(team.getTournament(), member, RoleType.COMPETITOR));
+            } else {
+                role.setRoleType(RoleType.COMPETITOR);
+                roleProvider.save(role);
+            }
+        });
     }
 }

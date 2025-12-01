@@ -68,6 +68,7 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
     private static final String[] USER_ROLES = new String[]{"admin", "viewer"};
 
     private static final String ONE_CLUBS_CSV_FILE_PATH = "csv/oneClub.csv";
+    private static final String CLUBS_CSV_FILE_PATH = "csv/clubs.csv";
 
     @Autowired
     private MockMvc mockMvc;
@@ -129,8 +130,23 @@ public class CsvServicesTest extends AbstractTestNGSpringContextTests {
 
         //One is malformed, so it is returned as an error.
         final List<ClubDTO> clubDTO = Arrays.asList(fromJson(createResult.getResponse().getContentAsString(), ClubDTO[].class));
-        Assert.assertEquals(clubDTO.size(), 1);
-        Assert.assertEquals(clubDTO.get(0).getName(), "Il Clan Dei Camorristi");
+        Assert.assertEquals(clubDTO.size(), 0);
+    }
+
+    @Test
+    public void uploadInvalidClubs() throws Exception {
+        Assert.assertNotNull(jwtToken);
+
+        final byte[] bytes = Files.readAllBytes(Paths.get(getClass().getClassLoader()
+                .getResource(CLUBS_CSV_FILE_PATH).toURI()));
+
+        this.mockMvc
+                .perform(multipart("/csv/clubs")
+                        .file("file", bytes)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .with(csrf()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
     }
 
 

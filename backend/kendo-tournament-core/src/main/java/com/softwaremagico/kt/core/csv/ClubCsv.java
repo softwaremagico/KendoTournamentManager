@@ -40,6 +40,7 @@ public class ClubCsv extends CsvReader<Club> {
     @Override
     public List<Club> readCSV(String csvContent) {
         final String[] headers = getHeaders(csvContent);
+        checkHeaders(headers, NAME_HEADER, COUNTRY_HEADER, CITY_HEADER, ADDRESS_HEADER, EMAIL_HEADER, PHONE_HEADER, WEB_HEADER);
         final String[] content = getContent(csvContent);
         final List<Club> clubs = new ArrayList<>();
 
@@ -65,4 +66,5 @@ public class ClubCsv extends CsvReader<Club> {
         }
         return clubs;
     }
+
 }

@@ -1,5 +1,16 @@
 <app-mat-spinner-overlay [overlay]="true"></app-mat-spinner-overlay>
 <div cdkDropListGroup class="teams-container">
+  <button (click)="fileInput.click()"
+          *ngIf="(RbacActivity.CREATE_CLUB_CSV | rbac : this.rbacService.getActivities())"
+          class="floating-button"
+          color="secundary"
+          mat-flat-button
+          mat-mini-fab
+          type="button">
+    <mat-icon class="kendo-icon" svgIcon="csv-file-small"></mat-icon>
+    <input #fileInput (change)="handleFileInput($event)" accept="text/csv" style="display:none;"
+           type="file"/>
+  </button>
   <div (cdkDropListDropped)="removeFromTeam($event)" [attr.data-tournament-size]="tournament.teamSize"
        [cdkDropListData]="userListData.filteredParticipants"
        cdkDropList
