@@ -19,6 +19,7 @@
                 <exclude name="fightsWebsockets"/>
                 <include name="participantAccess"/>
                 <include name="dataValidation"/>
+                <include name="csvServices"/>
             </run>
         </groups>
         <classes>
@@ -31,6 +32,7 @@
             <class name="com.softwaremagico.kt.rest.UserRegisterTests"/>
             <class name="com.softwaremagico.kt.rest.ParticipantAccessTests"/>
             <class name="com.softwaremagico.kt.rest.DataValidationTest"/>
+            <class name="com.softwaremagico.kt.rest.CsvServicesTest"/>
             <class name="com.softwaremagico.kt.websockets.BasicWebsocketsTests"/>
             <class name="com.softwaremagico.kt.websockets.FightsWebsocketsTests"/>
         </classes>

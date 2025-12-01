@@ -18,6 +18,8 @@ export class MessageService implements OnDestroy {
 
   private messageSubscription: Subscription;
 
+  private snackBarActive: boolean = false;
+
   constructor(public snackBar: MatSnackBar, private translateService: TranslateService,
               private loggerService: LoggerService, private rxStompService: RxStompService,
               private environmentService: EnvironmentService) {
@@ -58,12 +60,19 @@ export class MessageService implements OnDestroy {
   }
 
   private openSnackBar(message: string, cssClass: string, duration: number, action?: string): void {
-    this.snackBar.open(this.translateService.instant(message), action, {
-      duration: duration,
-      panelClass: [cssClass, 'message-service'],
-      verticalPosition: 'top',
-      horizontalPosition: 'right'
-    });
+    if (!this.snackBarActive) {
+      this.snackBarActive = true;
+      const snackBarRef = this.snackBar.open(this.translateService.instant(message), action, {
+        duration: duration,
+        panelClass: [cssClass, 'message-service'],
+        verticalPosition: 'top',
+        horizontalPosition: 'right'
+      });
+      snackBarRef.afterDismissed().subscribe(() => {
+        //Show only one message and not overlap if one already exists.
+        this.snackBarActive = false;
+      });
+    }
   }
 
 

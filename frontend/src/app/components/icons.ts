@@ -42,7 +42,8 @@ export class IconModule {
       .addSvgIcon("yourWorstNightmare", this.setPath(`${this.path}/yourWorstNightmare.svg`))
       .addSvgIcon("youAreTheWorstNightmareOf", this.setPath(`${this.path}/youAreTheWorstNightmareOf.svg`))
       .addSvgIcon("sorted", this.setPath(`${this.path}/sorted.svg`))
-      .addSvgIcon("whistle", this.setPath(`${this.path}/whistle.svg`));
+      .addSvgIcon("whistle", this.setPath(`${this.path}/whistle.svg`))
+      .addSvgIcon("csv-file-small", this.setPath(`${this.path}/csv-file-small.svg`));
   }
 
   private setPath(url: string): SafeResourceUrl {

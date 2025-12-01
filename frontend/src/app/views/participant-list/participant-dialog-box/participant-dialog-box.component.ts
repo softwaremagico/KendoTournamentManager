@@ -13,6 +13,8 @@ import {MessageService} from "../../../services/message.service";
 import {ParticipantImage} from "../../../models/participant-image.model";
 import {RbacActivity} from "../../../services/rbac/rbac.activity";
 import {InputLimits} from "../../../utils/input-limits";
+import {CsvService} from "../../../services/csv-service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-participant-dialog-box',
@@ -39,13 +41,13 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
   participantPicture: string | undefined;
 
   constructor(
-    public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService,
+    public dialogRef: MatDialogRef<ParticipantDialogBoxComponent>, rbacService: RbacService, public csvService: CsvService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: {
       title: string,
       action: Action,
       entity: Participant,
       clubs: Club[]
-    }, public dialog: MatDialog,
+    }, public dialog: MatDialog, private translateService: TranslateService,
     private pictureUpdatedService: PictureUpdatedService, private fileService: FileService, private messageService: MessageService) {
     super(rbacService);
     this.participant = data.entity;
@@ -141,5 +143,28 @@ export class ParticipantDialogBoxComponent extends RbacBasedComponent implements
       this.messageService.infoMessage("pictureDeleted");
       this.participantPicture = undefined;
     });
+  }
+
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addParticipants(file).subscribe(_participants => {
+          if (_participants.length == 0) {
+            this.messageService.infoMessage('infoParticipantStored');
+            //We cancel action or will be saved later again.
+            this.dialogRef.close({action: Action.Cancel});
+          } else {
+            const parameters: object = {element: _participants[0].name};
+            this.translateService.get('failedOnCsvField', parameters).subscribe((message: string): void => {
+              this.messageService.errorMessage(message);
+            });
+          }
+        });
+      }
+    }
   }
 }

@@ -21,10 +21,14 @@ package com.softwaremagico.kt.core.providers;
  * #L%
  */
 
+import com.softwaremagico.kt.persistence.encryption.KeyProperty;
 import com.softwaremagico.kt.persistence.entities.Club;
 import com.softwaremagico.kt.persistence.repositories.ClubRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClubProvider extends CrudProvider<Club, Integer, ClubRepository> {
@@ -36,5 +40,19 @@ public class ClubProvider extends CrudProvider<Club, Integer, ClubRepository> {
 
     public Club add(String name, String country, String city) {
         return getRepository().save(new Club(name, country, city));
+    }
+
+    public Optional<Club> findBy(String name, String city) {
+        //If encrypt is enabled.
+        if (KeyProperty.getDatabaseEncryptionKey() != null && !KeyProperty.getDatabaseEncryptionKey().isBlank()) {
+            final List<Club> clubs = getRepository().findAll();
+            for (Club club : clubs) {
+                if (club.getName().equalsIgnoreCase(name) && club.getCity().equalsIgnoreCase(city)) {
+                    return Optional.of(club);
+                }
+            }
+            return Optional.empty();
+        }
+        return getRepository().findByNameIgnoreCaseAndCityIgnoreCase(name, city);
     }
 }
