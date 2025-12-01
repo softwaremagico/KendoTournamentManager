@@ -29,6 +29,9 @@ import {Role} from "../../../models/role";
 import {ScoreOfCompetitor} from "../../../models/score-of-competitor";
 import {TournamentType} from "../../../models/tournament-type";
 import {getBalancedMember} from "../../../utils/teams/members";
+import {Action} from "../../../action";
+import {CsvService} from "../../../services/csv-service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-tournament-teams',
@@ -50,7 +53,7 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
               public nameUtilsService: NameUtilsService, private systemOverloadService: SystemOverloadService,
               rbacService: RbacService, private groupService: GroupService, private fightService: FightService,
               private rankingService: RankingService, private statisticsChangedService: StatisticsChangedService,
-              private filterResetService: FilterResetService,
+              private filterResetService: FilterResetService, public csvService: CsvService, private translateService: TranslateService,
               @Optional() @Inject(MAT_DIALOG_DATA) public data: { tournament: Tournament }) {
     super(rbacService);
     this.tournament = data.tournament;
@@ -486,6 +489,28 @@ export class TournamentTeamsComponent extends RbacBasedComponent implements OnIn
         anchor.href = downloadURL;
         anchor.click();
       });
+    }
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let fileList: FileList | null = element.files;
+    if (fileList) {
+      const file: File | null = fileList.item(0);
+      if (file) {
+        this.csvService.addTeams(file).subscribe(_teams => {
+          if (_teams.length == 0) {
+            this.messageService.infoMessage('teamStored');
+            //We cancel action or will be saved later again.
+            this.dialogRef.close({action: Action.Cancel});
+          } else {
+            const parameters: object = {element: _teams[0].name};
+            this.translateService.get('failedOnCsvField', parameters).subscribe((message: string): void => {
+              this.messageService.errorMessage(message);
+            });
+          }
+        });
+      }
     }
   }
 }

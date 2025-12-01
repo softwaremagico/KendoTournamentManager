@@ -22,6 +22,8 @@ package com.softwaremagico.kt.rest.exceptions;
  */
 
 import com.softwaremagico.kt.core.exceptions.InvalidChallengeDistanceException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvFieldException;
+import com.softwaremagico.kt.core.exceptions.InvalidCsvRowException;
 import com.softwaremagico.kt.core.exceptions.InvalidFightException;
 import com.softwaremagico.kt.core.exceptions.InvalidGroupException;
 import com.softwaremagico.kt.core.exceptions.LevelNotFinishedException;
@@ -184,6 +186,20 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> invalidFightException(Exception ex) {
         RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "invalid_fight", ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCsvFieldException.class)
+    public ResponseEntity<Object> invalidCsvFieldException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "Invalid field: " + ((InvalidCsvFieldException) ex).getHeader(), ex),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCsvRowException.class)
+    public ResponseEntity<Object> invalidCsvRowException(Exception ex) {
+        RestServerExceptionLogger.errorMessage(this.getClass().getName(), ex);
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), "Elements failed: " + ((InvalidCsvRowException) ex).getNumberOfFailedRows(), ex),
+                HttpStatus.BAD_REQUEST);
     }
 
 

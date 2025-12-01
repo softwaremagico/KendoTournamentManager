@@ -29,6 +29,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -39,4 +40,6 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     List<Tournament> findByCreatedAtLessThan(LocalDateTime createdAt);
 
     List<Tournament> findByLocked(boolean locked);
+
+    Optional<Tournament> findByName(String name);
 }

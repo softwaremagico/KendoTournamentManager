@@ -38,6 +38,7 @@
                 <include name="validationTests"/>
                 <include name="shiaijosTest"/>
                 <include name="tournamentLinkTest"/>
+                <include name="csvReader"/>
             </run>
         </groups>
         <classes>
@@ -77,6 +78,7 @@
             <class name="com.softwaremagico.kt.core.tests.QrTests"/>
             <class name="com.softwaremagico.kt.core.tests.WorstNightmareTest"/>
             <class name="com.softwaremagico.kt.core.tests.ValidationTests"/>
+            <class name="com.softwaremagico.kt.core.tests.csv.CsvReaderTest"/>
         </classes>
     </test>
 </suite>

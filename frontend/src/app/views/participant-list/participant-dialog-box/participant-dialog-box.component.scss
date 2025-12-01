@@ -5,6 +5,7 @@
 
 .mat-dialog-content {
   overflow: visible;
+  position: relative;
 }
 
 .mat-form-field {
@@ -38,7 +39,6 @@
 }
 
 .floating-button {
-  position: absolute;
-  margin-left: 120px;
-  margin-top: -150px;
+  float: right;
 }
+
