@@ -19,25 +19,29 @@
            mat-button
            matTooltip="{{'registry' | translate}}">
           <mat-icon>edit_note</mat-icon>
-          <span class="upper-menu-title">{{ 'registry' | translate }}</span>
-          <mat-icon *ngIf="selectedRow !== 'Registry'">expand_more</mat-icon>
-          <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
+          <div class="tag-arrow">
+            <span class="upper-menu-title">{{ 'registry' | translate }}</span>
+            <mat-icon *ngIf="selectedRow !== 'Registry'">expand_more</mat-icon>
+            <mat-icon *ngIf="selectedRow === 'Registry'">expand_less</mat-icon>
+          </div>
         </a>
         <a (click)="toggleMenu('')"
            *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
            [matTooltipShowDelay]="500"
            mat-button matTooltip="{{'competitions' | translate}}"
            routerLink="/tournaments">
-          <mat-icon class="kendo-icon" svgIcon="teams-classification"></mat-icon>
+          <mat-icon>emoji_events</mat-icon>
           <span class="upper-menu-title">{{ 'competitions' | translate }}</span>
         </a>
         <a (click)="toggleMenu('Admin')" *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.getActivities())"
            [matTooltipShowDelay]="500" mat-button
            matTooltip="{{'administration' | translate}}">
           <mat-icon>admin_panel_settings</mat-icon>
-          <span class="upper-menu-title">{{ 'administration' | translate }}</span>
-          <mat-icon *ngIf="selectedRow !== 'Admin'">expand_more</mat-icon>
-          <mat-icon *ngIf="selectedRow === 'Admin'">expand_less</mat-icon>
+          <div class="tag-arrow">
+            <span class="upper-menu-title">{{ 'administration' | translate }}</span>
+            <mat-icon *ngIf="selectedRow !== 'Admin'">expand_more</mat-icon>
+            <mat-icon *ngIf="selectedRow === 'Admin'">expand_less</mat-icon>
+          </div>
         </a>
         <a (click)="toggleMenu('Settings')" *ngIf="(RbacActivity.CHANGE_LANGUAGE | rbac : this.rbacService.getActivities()) ||
            (RbacActivity.CHANGE_PASSWORD | rbac : this.rbacService.getActivities()) ||
@@ -45,9 +49,11 @@
            [matTooltipShowDelay]="500" mat-button
            matTooltip="{{'profile' | translate}}">
           <mat-icon>account_circle</mat-icon>
-          <span class="upper-menu-title">{{ 'profile' | translate }}</span>
-          <mat-icon *ngIf="selectedRow !== 'Settings'">expand_more</mat-icon>
-          <mat-icon *ngIf="selectedRow === 'Settings'">expand_less</mat-icon>
+          <div class="tag-arrow">
+            <span class="upper-menu-title">{{ 'profile' | translate }}</span>
+            <mat-icon *ngIf="selectedRow !== 'Settings'">expand_more</mat-icon>
+            <mat-icon *ngIf="selectedRow === 'Settings'">expand_less</mat-icon>
+          </div>
         </a>
         <a (click)="openWiki()" [matTooltipShowDelay]="500" mat-button matTooltip="{{'titleHelp' | translate}}">
           <mat-icon>help</mat-icon>
@@ -160,7 +166,7 @@
         <mat-list-item *ngIf="(RbacActivity.READ_ALL_TOURNAMENTS | rbac : this.rbacService.getActivities())"
                        [matTooltipShowDelay]="500"
                        matTooltip="{{'competitions' | translate}}" routerLink="/tournaments">
-          <mat-icon class="left-kendo-icon" svgIcon="teams-classification"></mat-icon>
+          <mat-icon>emoji_events</mat-icon>
           <span class="left-menu-single-entry">{{ 'competitions' | translate }}</span>
         </mat-list-item>
         <mat-expansion-panel *ngIf="(RbacActivity.READ_ALL_USERS | rbac : this.rbacService.getActivities())"

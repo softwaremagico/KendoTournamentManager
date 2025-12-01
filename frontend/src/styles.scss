@@ -180,3 +180,14 @@ a:active {
 .tooltip-with-lines {
   white-space: pre-line;
 }
+
+.mat-mdc-button > .mat-icon {
+  font-size: 1.5rem !important;
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+}
+
+.mat-mdc-menu-content {
+  margin-right: 20px !important;
+  margin-left: 10px !important;
+}

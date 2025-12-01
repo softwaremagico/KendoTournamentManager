@@ -1,5 +1,5 @@
 <div class="filter">
-  <mat-form-field>
+  <mat-form-field class="filter-field">
     <input (keyup)="filter($event)" [(ngModel)]="filterString" [disabled]="disabled" matInput
            (focus)="focus()" (focusout)="focusout()"
            placeholder="{{'filter' | translate}}"

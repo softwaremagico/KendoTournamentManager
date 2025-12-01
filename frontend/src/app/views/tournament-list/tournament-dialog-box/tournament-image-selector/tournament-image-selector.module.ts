@@ -7,8 +7,8 @@ import {TranslateModule} from "@ngx-translate/core";
 import {MatButtonModule} from "@angular/material/button";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSpinnerOverlayModule} from "../../../../components/mat-spinner-overlay/mat-spinner-overlay.module";
-import {MatSliderModule} from "@angular/material/slider";
 import {FormsModule} from "@angular/forms";
+import {MatLegacySliderModule} from "@angular/material/legacy-slider";
 
 
 @NgModule({
@@ -24,7 +24,7 @@ import {FormsModule} from "@angular/forms";
     MatButtonModule,
     MatDialogModule,
     MatSpinnerOverlayModule,
-    MatSliderModule,
+    MatLegacySliderModule,
     FormsModule
   ]
 })
